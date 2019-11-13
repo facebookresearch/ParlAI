@@ -1,0 +1,15 @@
+\section*{Description\+: A dataset of 25k conversations grounded in emotional situations to facilitate training and evaluating dialogue systems. See \href{https://arxiv.org/abs/1811.00207}{\tt https\+://arxiv.\+org/abs/1811.\+00207} for more information. }
+
+Dataset has been released under the CC B\+Y-\/\+NC license. Empathetic\+Dialogue\+Teacher returns examples like so\+:
+\begin{DoxyItemize}
+\item \mbox{[}text\mbox{]}\+: context line (previous utterance by \textquotesingle{}speaker\textquotesingle{})
+\item \mbox{[}labels\mbox{]}\+: label line (current utterance by \textquotesingle{}listener\textquotesingle{}) with additional task specific fields\+:
+\item \mbox{[}situation\mbox{]}\+: a 1-\/3 sentence description of the situation that the conversation is
+\item \mbox{[}emotion\mbox{]}\+: one of 32 emotion words Other optional fields\+:
+\item \mbox{[}prepend\+\_\+ctx\mbox{]}\+: fasttext prediction on context line -\/ or None
+\item \mbox{[}prepend\+\_\+cand\mbox{]}\+: fasttext prediction on label line (candidate) -\/ or None
+\item \mbox{[}deepmoji\+\_\+ctx\mbox{]}\+: vector encoding from deepmoji penultimate layer -\/ or None
+\item \mbox{[}deepmoji\+\_\+cand\mbox{]}\+: vector encoding from deepmoji penultimate layer for label line (candidate) -\/ or None
+\end{DoxyItemize}
+
+Tags\+: \#\+Empathetic\+Dialogues, \#\+All, \#\+Chit\+Chat 

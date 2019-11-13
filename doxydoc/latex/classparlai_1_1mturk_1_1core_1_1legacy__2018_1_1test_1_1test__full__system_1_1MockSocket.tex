@@ -1,0 +1,225 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket}{}\section{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket}\index{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket@{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4d744098fe9a3e3efee2a09fbaae41e0}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_abd0988fb013adc98c3ff1b4d1ed40402}{send} (self, packet)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_ab385ddbacb3cd1f6315d4cd44e530c5a}{close} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a8ee2cf3f33a582daace35f6ca8d9389a}{do\+\_\+nothing} (self, args)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_aa112de240558ca7b11d5b5b61838b1eb}{launch\+\_\+socket} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a24e7588b1330ebe50423cdfed7f11374}{last\+\_\+messages}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a5e2362f162ac68cbc8ef7e6c8c356c23}{connected}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a71c8013d07129adaf161734fcd0f7d63}{disconnected}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a1f98802a97d72a1fcddcbbcdab42e6dc}{closed}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4880b2d86e4a803c00b8a3b1b9b83eeb}{ws}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a390a8d5ddb5ab5e78079a83bf16c88d7}{should\+\_\+heartbeat}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a9f9ba0003113026f7bd4e0cc4d6c3b24}{fake\+\_\+workers}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a89cd4136510a4128b6307982f97103b1}{port}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a531df078fba32032d5bbc2aa913b5ee9}{handlers}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a98bef1be4e0a793cc81bd1f378e39eda}{listen\+\_\+thread}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 104 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4d744098fe9a3e3efee2a09fbaae41e0}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4d744098fe9a3e3efee2a09fbaae41e0}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 105 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_ab385ddbacb3cd1f6315d4cd44e530c5a}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_ab385ddbacb3cd1f6315d4cd44e530c5a}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!close@{close}}
+\index{close@{close}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 123 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+closed, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+closed, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+closed, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+closed, parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a8ee2cf3f33a582daace35f6ca8d9389a}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a8ee2cf3f33a582daace35f6ca8d9389a}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!do\+\_\+nothing@{do\+\_\+nothing}}
+\index{do\+\_\+nothing@{do\+\_\+nothing}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{do\+\_\+nothing()}{do\_nothing()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+do\+\_\+nothing (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+
+
+Definition at line 129 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_aa112de240558ca7b11d5b5b61838b1eb}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_aa112de240558ca7b11d5b5b61838b1eb}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!launch\+\_\+socket@{launch\+\_\+socket}}
+\index{launch\+\_\+socket@{launch\+\_\+socket}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{launch\+\_\+socket()}{launch\_socket()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+launch\+\_\+socket (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 132 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_abd0988fb013adc98c3ff1b4d1ed40402}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_abd0988fb013adc98c3ff1b4d1ed40402}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!send@{send}}
+\index{send@{send}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{send()}{send()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{packet }\end{DoxyParamCaption})}
+
+
+
+Definition at line 120 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a1f98802a97d72a1fcddcbbcdab42e6dc}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a1f98802a97d72a1fcddcbbcdab42e6dc}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!closed@{closed}}
+\index{closed@{closed}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{closed}{closed}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+closed}
+
+
+
+Definition at line 109 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a5e2362f162ac68cbc8ef7e6c8c356c23}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a5e2362f162ac68cbc8ef7e6c8c356c23}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!connected@{connected}}
+\index{connected@{connected}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{connected}{connected}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+connected}
+
+
+
+Definition at line 107 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a71c8013d07129adaf161734fcd0f7d63}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a71c8013d07129adaf161734fcd0f7d63}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!disconnected@{disconnected}}
+\index{disconnected@{disconnected}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{disconnected}{disconnected}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+disconnected}
+
+
+
+Definition at line 108 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a9f9ba0003113026f7bd4e0cc4d6c3b24}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a9f9ba0003113026f7bd4e0cc4d6c3b24}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!fake\+\_\+workers@{fake\+\_\+workers}}
+\index{fake\+\_\+workers@{fake\+\_\+workers}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{fake\+\_\+workers}{fake\_workers}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+fake\+\_\+workers}
+
+
+
+Definition at line 112 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a531df078fba32032d5bbc2aa913b5ee9}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a531df078fba32032d5bbc2aa913b5ee9}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!handlers@{handlers}}
+\index{handlers@{handlers}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{handlers}{handlers}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+handlers}
+
+
+
+Definition at line 115 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a24e7588b1330ebe50423cdfed7f11374}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a24e7588b1330ebe50423cdfed7f11374}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!last\+\_\+messages@{last\+\_\+messages}}
+\index{last\+\_\+messages@{last\+\_\+messages}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{last\+\_\+messages}{last\_messages}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+last\+\_\+messages}
+
+
+
+Definition at line 106 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a98bef1be4e0a793cc81bd1f378e39eda}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a98bef1be4e0a793cc81bd1f378e39eda}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!listen\+\_\+thread@{listen\+\_\+thread}}
+\index{listen\+\_\+thread@{listen\+\_\+thread}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{listen\+\_\+thread}{listen\_thread}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+listen\+\_\+thread}
+
+
+
+Definition at line 178 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a89cd4136510a4128b6307982f97103b1}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a89cd4136510a4128b6307982f97103b1}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!port@{port}}
+\index{port@{port}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+port}
+
+
+
+Definition at line 113 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a390a8d5ddb5ab5e78079a83bf16c88d7}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a390a8d5ddb5ab5e78079a83bf16c88d7}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!should\+\_\+heartbeat@{should\+\_\+heartbeat}}
+\index{should\+\_\+heartbeat@{should\+\_\+heartbeat}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{should\+\_\+heartbeat}{should\_heartbeat}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+should\+\_\+heartbeat}
+
+
+
+Definition at line 111 of file test\+\_\+full\+\_\+system.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4880b2d86e4a803c00b8a3b1b9b83eeb}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockSocket_a4880b2d86e4a803c00b8a3b1b9b83eeb}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}!ws@{ws}}
+\index{ws@{ws}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::test\+::test\+\_\+full\+\_\+system\+::\+Mock\+Socket}}
+\subsubsection{\texorpdfstring{ws}{ws}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws}
+
+
+
+Definition at line 110 of file test\+\_\+full\+\_\+system.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/legacy\+\_\+2018/test/\hyperlink{legacy__2018_2test_2test__full__system_8py}{test\+\_\+full\+\_\+system.\+py}\end{DoxyCompactItemize}

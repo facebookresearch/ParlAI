@@ -1,5 +1,8 @@
 <map id="parlai.utils.misc.Predictor.predict" name="parlai.utils.misc.Predictor.predict">
-<area shape="rect" id="node1" title=" " alt="" coords="536,66,748,93"/>
-<area shape="rect" id="node2" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="280,29,488,71"/>
-<area shape="rect" id="node3" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="5,66,232,93"/>
+<area shape="rect" id="node2" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a0988c186c27ab70d318ea30e39a0a5cc" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batch_act" alt="" coords="280,129,488,171"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="265,78,503,105"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="590,5,750,47"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="551,71,789,112"/>
+<area shape="rect" id="node5" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="566,188,774,229"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="571,137,769,163"/>
 </map>

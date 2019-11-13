@@ -1,0 +1,52 @@
+By creating an internal subfolder, you can set up your own custom agents and tasks, create your own model zoo, and manage it all with a separate git repository. We\textquotesingle{}ve set it up so you can now work inside the Parl\+AI folder without the risk of accidentally pushing your work to the public Parl\+AI repo. We\textquotesingle{}ve also added some convenient shortcuts to mirror what we provide in the {\ttfamily parlai} folder.
+
+\subsection*{How to}
+
+Start by creating a new folder named parlai\+\_\+internal and copying the contents of this folder. (We\textquotesingle{}ve added this to .gitignore already.)
+
+
+\begin{DoxyCode}
+cd ~/ParlAI
+mkdir parlai\_internal
+cp -r example\_parlai\_internal/ parlai\_internal
+cd parlai\_internal
+\end{DoxyCode}
+
+
+We\textquotesingle{}ve ignored this folder, but that\textquotesingle{}s it. If you want to set this up as a separate git repository (e.\+g. for version control) you can follow the standard steps for creating a new repo (feel free to do this however you prefer).
+
+
+\begin{DoxyCode}
+git init
+git add .
+git commit -m "Initialize parlai\_internal"
+\end{DoxyCode}
+
+
+You can connect this to a new github repository if desired. \href{https://github.com/new}{\tt Create a new repo} (you don\textquotesingle{}t need to initialize with a R\+E\+A\+D\+ME), and then follow the instructions to push an existing repository from command line.
+
+\subsection*{Some features}
+
+We also provide a number of shortcuts which mirror the public repo.
+
+You can do {\ttfamily from parlai\+\_\+internal.\+X.\+Y import Z} to use your custom modules.
+
+Additionally, you can invoke your internal model agents from command line with {\ttfamily -\/m internal\+:model}. Providing this argument will cause the parser to look for {\ttfamily parlai\+\_\+internal.\+agents.\+model.\+model.\+Model\+Agent}. As an example, we provide {\ttfamily \hyperlink{parrot_8py}{parlai\+\_\+internal/agents/parrot/parrot.\+py}}. You could call (from the top-\/level Parl\+AI folder)\+:
+
+
+\begin{DoxyCode}
+python examples/display\_model.py -t babi:task10k:1 -m internal:parrot
+\end{DoxyCode}
+
+
+Similarly, you can add private tasks under a tasks folder here and invoke them with {\ttfamily -\/t internal\+:taskname}. The parser will look for {\ttfamily parlai\+\_\+internal.\+tasks.\+taskname.\+taskname.\+Default\+Teacher}.
+
+You can even create your own model zoo of pretrained models. {\ttfamily parlai\+\_\+internal/zoo/.internal\+\_\+zoo\+\_\+path} needs to be modified to contain the path to the folder containing all of your models. Once you\textquotesingle{}ve done that, you can use those models by simply adding {\ttfamily -\/mf /rest/of/modelfilepath}. For example, if you change {\ttfamily .internal\+\_\+zoo\+\_\+path} to be {\ttfamily /private/home/user/checkpoints} and you have a model at {\ttfamily /private/home/user/checkpoints/model\+\_\+file/model}, you could use {\ttfamily -\/mf izoo\+:model\+\_\+file/model}.
+
+And you can use as many of these in combination as you would like. For instance, to evaluate a model file that uses an internal agent definition on an internal task, you would do\+:
+
+
+\begin{DoxyCode}
+python examples/eval\_model.py -t internal:taskname -m internal:model -mf izoo:model\_file/model
+\end{DoxyCode}
+ 

@@ -1,0 +1,4 @@
+<map id="parlai.agents.drqa.model.DocReaderModel.update" name="parlai.agents.drqa.model.DocReaderModel.update">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#aaefd7c0afecedb97555c466befd2a68c" title="parlai.agents.drqa.model.\lDocReaderModel.cuda" alt="" coords="251,5,419,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#ac509d418866e6d8bd2ad29eaf1152f52" title="parlai.agents.drqa.model.\lDocReaderModel.reset_parameters" alt="" coords="221,71,449,112"/>
+</map>

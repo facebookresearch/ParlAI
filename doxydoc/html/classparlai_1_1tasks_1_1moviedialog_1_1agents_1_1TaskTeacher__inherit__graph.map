@@ -1,9 +1,7 @@
 <map id="parlai.tasks.moviedialog.agents.TaskTeacher" name="parlai.tasks.moviedialog.agents.TaskTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,497,215,539"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title=" " alt="" coords="14,408,206,449"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="21,319,199,360"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="24,229,196,271"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="22,155,198,181"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="29,80,191,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="81,5,139,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title="parlai.core.teachers.FbDialog\lTeacher" alt="" coords="14,408,206,449"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title="parlai.core.teachers.Dialog\lTeacher" alt="" coords="21,319,199,360"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="24,229,196,271"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="22,155,198,181"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="29,80,191,107"/>
 </map>

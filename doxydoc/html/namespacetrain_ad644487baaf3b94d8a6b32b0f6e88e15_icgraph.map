@@ -1,0 +1,10 @@
+<map id="train.get_metrics" name="train.get_metrics">
+<area shape="rect" id="node2" href="$namespacetrain.html#a9719cda8ba718637950ea11259aa636c" title="train.additional_validate" alt="" coords="172,133,331,159"/>
+<area shape="rect" id="node3" href="$namespacetrain.html#a425ccbcfa57820b4ad788f4c71772f0f" title="train.ablation_exp" alt="" coords="435,17,559,43"/>
+<area shape="rect" id="node5" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#aeb512556b4b9915ef95a15f5aaac6464" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.batch_valid" alt="" coords="667,71,904,112"/>
+<area shape="rect" id="node7" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a3952413e8c53e750ab43a0098c646d39" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.batch_valid_with_data" alt="" coords="379,125,616,167"/>
+<area shape="rect" id="node9" href="$namespacetrain.html#a55c2b31c8e13b7aa621b3954392bdb93" title="train.get_accuracy" alt="" coords="433,191,562,218"/>
+<area shape="rect" id="node4" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#ae08c05229937617056b9054565a10840" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.overall_ablation" alt="" coords="667,5,904,47"/>
+<area shape="rect" id="node6" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a56de28aa93db7fed38e30a16e85a1222" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.overall_add_val" alt="" coords="955,71,1192,112"/>
+<area shape="rect" id="node8" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a4f7dcbc08b7657c55f7b5facfdda4488" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.overall_run_data_breakdown" alt="" coords="664,136,907,177"/>
+</map>

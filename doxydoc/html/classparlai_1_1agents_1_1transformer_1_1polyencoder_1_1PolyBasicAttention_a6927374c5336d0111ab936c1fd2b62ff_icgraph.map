@@ -1,0 +1,8 @@
+<map id="parlai.agents.transformer.polyencoder.PolyBasicAttention.forward" name="parlai.agents.transformer.polyencoder.PolyBasicAttention.forward">
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1148,21,1361,62"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1409,80,1623,121"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="297,74,532,130"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1148,138,1361,180"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="580,37,816,78"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="864,80,1100,121"/>
+</map>

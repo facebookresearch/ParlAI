@@ -1,0 +1,51 @@
+\hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1layers}{}\section{parlai.\+agents.\+drqa.\+layers Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1drqa_1_1layers}\index{parlai.\+agents.\+drqa.\+layers@{parlai.\+agents.\+drqa.\+layers}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1BilinearSeqAttn}{Bilinear\+Seq\+Attn}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn}{Linear\+Seq\+Attn}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch}{Seq\+Attn\+Match}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN}{Stacked\+B\+R\+NN}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1layers_a4ef6f28cb2997c68a15b05137b75dcc4}{uniform\+\_\+weights} (x, x\+\_\+mask)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1layers_a8d0e781e00db1c2d843b21a056554f65}{weighted\+\_\+avg} (x, weights)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1layers_a4ef6f28cb2997c68a15b05137b75dcc4}\label{namespaceparlai_1_1agents_1_1drqa_1_1layers_a4ef6f28cb2997c68a15b05137b75dcc4}} 
+\index{parlai\+::agents\+::drqa\+::layers@{parlai\+::agents\+::drqa\+::layers}!uniform\+\_\+weights@{uniform\+\_\+weights}}
+\index{uniform\+\_\+weights@{uniform\+\_\+weights}!parlai\+::agents\+::drqa\+::layers@{parlai\+::agents\+::drqa\+::layers}}
+\subsubsection{\texorpdfstring{uniform\+\_\+weights()}{uniform\_weights()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+uniform\+\_\+weights (\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{x\+\_\+mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return uniform weights over non-masked input.\end{DoxyVerb}
+ 
+
+Definition at line 254 of file layers.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1layers_a8d0e781e00db1c2d843b21a056554f65}\label{namespaceparlai_1_1agents_1_1drqa_1_1layers_a8d0e781e00db1c2d843b21a056554f65}} 
+\index{parlai\+::agents\+::drqa\+::layers@{parlai\+::agents\+::drqa\+::layers}!weighted\+\_\+avg@{weighted\+\_\+avg}}
+\index{weighted\+\_\+avg@{weighted\+\_\+avg}!parlai\+::agents\+::drqa\+::layers@{parlai\+::agents\+::drqa\+::layers}}
+\subsubsection{\texorpdfstring{weighted\+\_\+avg()}{weighted\_avg()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+weighted\+\_\+avg (\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{weights }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}x = batch * len * d
+weights = batch * len
+\end{DoxyVerb}
+ 
+
+Definition at line 264 of file layers.\+py.
+

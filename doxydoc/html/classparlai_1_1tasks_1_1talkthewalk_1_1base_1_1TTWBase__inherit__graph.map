@@ -1,11 +1,9 @@
 <map id="parlai.tasks.talkthewalk.base.TTWBase" name="parlai.tasks.talkthewalk.base.TTWBase">
-<area shape="rect" id="node1" title=" " alt="" coords="765,71,960,112"/>
-<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideLocalizeTeacher.html" title=" " alt="" coords="1008,5,1215,47"/>
-<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideTeacher.html" title=" " alt="" coords="1008,71,1215,112"/>
-<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1TouristTeacher.html" title=" " alt="" coords="1008,136,1215,177"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="545,71,717,112"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="321,78,497,105"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,78,273,105"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,78,63,105"/>
-<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="1263,136,1469,177"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideLocalizeTeacher.html" title="parlai.tasks.talkthewalk.agents.\lGuideLocalizeTeacher" alt="" coords="1008,5,1215,47"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideTeacher.html" title="parlai.tasks.talkthewalk.agents.\lGuideTeacher" alt="" coords="1008,71,1215,112"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1TouristTeacher.html" title="parlai.tasks.talkthewalk.agents.\lTouristTeacher" alt="" coords="1008,136,1215,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="545,71,717,112"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="321,78,497,105"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="111,78,273,105"/>
+<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1DefaultTeacher.html" title="parlai.tasks.talkthewalk.agents.\lDefaultTeacher" alt="" coords="1263,136,1469,177"/>
 </map>

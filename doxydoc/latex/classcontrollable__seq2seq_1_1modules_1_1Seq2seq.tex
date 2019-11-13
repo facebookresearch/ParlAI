@@ -1,0 +1,242 @@
+\hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq}{}\section{controllable\+\_\+seq2seq.\+modules.\+Seq2seq Class Reference}
+\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq}\index{controllable\+\_\+seq2seq.\+modules.\+Seq2seq@{controllable\+\_\+seq2seq.\+modules.\+Seq2seq}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+modules.\+Seq2seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1Seq2seq__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+modules.\+Seq2seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1Seq2seq__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a7e0be48d22af98a3102a3aba537f8c7d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embeddingsize, hiddensize, numlayers=2, dropout=0, bidirectional=False, rnn\+\_\+class=\textquotesingle{}lstm\textquotesingle{}, lookuptable=\textquotesingle{}unique\textquotesingle{}, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ae781db54c21b31be8b07e40505f6e60d}{decoder}=\textquotesingle{}same\textquotesingle{}, numsoftmax=1, attention=\textquotesingle{}none\textquotesingle{}, attention\+\_\+length=48, attention\+\_\+time=\textquotesingle{}post\textquotesingle{}, padding\+\_\+idx=0, start\+\_\+idx=1, unknown\+\_\+idx=3, input\+\_\+dropout=0, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a644daa8d07b032b4787c42df2bdcca51}{longest\+\_\+label}=1, control\+\_\+settings=None)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a024903e38d40e82ab471528d94afcd5c}{forward} (self, xs, ctrl\+\_\+inputs=None, ys=None, cands=None, prev\+\_\+enc=None, maxlen=None, seq\+\_\+len=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_aa7b91aeeac7dd5a42118ef75c61b02df}{attn\+\_\+type}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a53c2e1a8a5839edfe73c422f4c1b6ffe}{N\+U\+L\+L\+\_\+\+I\+DX}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a644daa8d07b032b4787c42df2bdcca51}{longest\+\_\+label}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ae781db54c21b31be8b07e40505f6e60d}{decoder}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ad071948b0df5e3a8605e3ad79f911188}{encoder}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a3225f2b7c92867cc6b894bef41856d92}{output}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ac0f54e9ab06d61927ad37cf4617f5485}{R\+N\+N\+\_\+\+O\+P\+TS} = \{\textquotesingle{}rnn\textquotesingle{}\+: nn.\+R\+NN, \textquotesingle{}gru\textquotesingle{}\+: nn.\+G\+RU, \textquotesingle{}lstm\textquotesingle{}\+: nn.\+L\+S\+TM\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Sequence to sequence parent module.\end{DoxyVerb}
+ 
+
+Definition at line 66 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a7e0be48d22af98a3102a3aba537f8c7d}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a7e0be48d22af98a3102a3aba537f8c7d}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embeddingsize,  }\item[{}]{hiddensize,  }\item[{}]{numlayers = {\ttfamily 2},  }\item[{}]{dropout = {\ttfamily 0},  }\item[{}]{bidirectional = {\ttfamily False},  }\item[{}]{rnn\+\_\+class = {\ttfamily \textquotesingle{}lstm\textquotesingle{}},  }\item[{}]{lookuptable = {\ttfamily \textquotesingle{}unique\textquotesingle{}},  }\item[{}]{decoder = {\ttfamily \textquotesingle{}same\textquotesingle{}},  }\item[{}]{numsoftmax = {\ttfamily 1},  }\item[{}]{attention = {\ttfamily \textquotesingle{}none\textquotesingle{}},  }\item[{}]{attention\+\_\+length = {\ttfamily 48},  }\item[{}]{attention\+\_\+time = {\ttfamily \textquotesingle{}post\textquotesingle{}},  }\item[{}]{padding\+\_\+idx = {\ttfamily 0},  }\item[{}]{start\+\_\+idx = {\ttfamily 1},  }\item[{}]{unknown\+\_\+idx = {\ttfamily 3},  }\item[{}]{input\+\_\+dropout = {\ttfamily 0},  }\item[{}]{longest\+\_\+label = {\ttfamily 1},  }\item[{}]{control\+\_\+settings = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize seq2seq model.
+
+See cmdline args in Seq2seqAgent for description of arguments.
+\end{DoxyVerb}
+ 
+
+Definition at line 92 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a024903e38d40e82ab471528d94afcd5c}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a024903e38d40e82ab471528d94afcd5c}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!forward@{forward}}
+\index{forward@{forward}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{ctrl\+\_\+inputs = {\ttfamily None},  }\item[{}]{ys = {\ttfamily None},  }\item[{}]{cands = {\ttfamily None},  }\item[{}]{prev\+\_\+enc = {\ttfamily None},  }\item[{}]{maxlen = {\ttfamily None},  }\item[{}]{seq\+\_\+len = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get output predictions from the model.
+
+:param xs:
+    (bsz x seqlen) LongTensor input to the encoder
+:param ys:
+    expected output from the decoder. used for teacher forcing
+    to calculate loss.
+:param cands:
+    set of candidates to rank
+:param prev_enc:
+    if you know you'll pass in the same xs multiple times, you can pass
+    in the encoder output from the last forward pass to skip
+    recalcuating the same encoder output.
+:param maxlen:
+    max number of tokens to decode. if not set, will use the length of
+    the longest label this model has seen. ignored when ys is not None.
+:param seq_len:
+    this is the sequence length of the input (xs), i.e. xs.size(1). we
+    use this to recover the proper output sizes in the case when we
+    distribute over multiple gpus
+:param ctrl_inputs:
+    (bsz x num_controls) LongTensor containing control vars
+
+:returns:
+    scores, candidate scores, and encoder states
+
+    - scores contains the model's predicted token scores.
+      (bsz x seqlen x num_features)
+    - candidate scores are the score the model assigned to each candidate
+      (bsz x num_cands)
+    - encoder states are the (output, hidden, attn_mask) states from the
+      encoder. feed this back in to skip encoding on the next call.
+\end{DoxyVerb}
+ 
+
+Definition at line 309 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+\_\+decode(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+\_\+decode(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+\_\+decode\+\_\+forced(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+\_\+decode\+\_\+forced(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+\_\+encode(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+\_\+encode(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+\_\+rank(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+\_\+rank(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+longest\+\_\+label, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+longest\+\_\+label, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+longest\+\_\+label, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+longest\+\_\+label, and parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+longest\+\_\+label.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a024903e38d40e82ab471528d94afcd5c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a024903e38d40e82ab471528d94afcd5c_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_aa7b91aeeac7dd5a42118ef75c61b02df}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_aa7b91aeeac7dd5a42118ef75c61b02df}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!attn\+\_\+type@{attn\+\_\+type}}
+\index{attn\+\_\+type@{attn\+\_\+type}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{attn\+\_\+type}{attn\_type}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+attn\+\_\+type}
+
+
+
+Definition at line 102 of file modules.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ae781db54c21b31be8b07e40505f6e60d}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ae781db54c21b31be8b07e40505f6e60d}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!decoder@{decoder}}
+\index{decoder@{decoder}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{decoder}{decoder}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+decoder}
+
+
+
+Definition at line 109 of file modules.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ad071948b0df5e3a8605e3ad79f911188}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ad071948b0df5e3a8605e3ad79f911188}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!encoder@{encoder}}
+\index{encoder@{encoder}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+encoder}
+
+
+
+Definition at line 130 of file modules.\+py.
+
+
+
+Referenced by modules.\+Kvmemnn.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a644daa8d07b032b4787c42df2bdcca51}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a644daa8d07b032b4787c42df2bdcca51}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!longest\+\_\+label@{longest\+\_\+label}}
+\index{longest\+\_\+label@{longest\+\_\+label}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{longest\+\_\+label}{longest\_label}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+longest\+\_\+label}
+
+
+
+Definition at line 106 of file modules.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a53c2e1a8a5839edfe73c422f4c1b6ffe}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a53c2e1a8a5839edfe73c422f4c1b6ffe}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}}
+\index{N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{N\+U\+L\+L\+\_\+\+I\+DX}{NULL\_IDX}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX}
+
+
+
+Definition at line 104 of file modules.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a3225f2b7c92867cc6b894bef41856d92}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_a3225f2b7c92867cc6b894bef41856d92}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!output@{output}}
+\index{output@{output}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+output}
+
+
+
+Definition at line 150 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ac0f54e9ab06d61927ad37cf4617f5485}\label{classcontrollable__seq2seq_1_1modules_1_1Seq2seq_ac0f54e9ab06d61927ad37cf4617f5485}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}!R\+N\+N\+\_\+\+O\+P\+TS@{R\+N\+N\+\_\+\+O\+P\+TS}}
+\index{R\+N\+N\+\_\+\+O\+P\+TS@{R\+N\+N\+\_\+\+O\+P\+TS}!controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq@{controllable\+\_\+seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{R\+N\+N\+\_\+\+O\+P\+TS}{RNN\_OPTS}}
+{\footnotesize\ttfamily dictionary controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+R\+N\+N\+\_\+\+O\+P\+TS = \{\textquotesingle{}rnn\textquotesingle{}\+: nn.\+R\+NN, \textquotesingle{}gru\textquotesingle{}\+: nn.\+G\+RU, \textquotesingle{}lstm\textquotesingle{}\+: nn.\+L\+S\+TM\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 69 of file modules.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{projects_2controllable__dialogue_2controllable__seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

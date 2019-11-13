@@ -1,0 +1,323 @@
+\hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable}{}\section{parlai.\+utils.\+thread.\+Shared\+Table Class Reference}
+\label{classparlai_1_1utils_1_1thread_1_1SharedTable}\index{parlai.\+utils.\+thread.\+Shared\+Table@{parlai.\+utils.\+thread.\+Shared\+Table}}
+
+
+Inheritance diagram for parlai.\+utils.\+thread.\+Shared\+Table\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=205pt]{classparlai_1_1utils_1_1thread_1_1SharedTable__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+thread.\+Shared\+Table\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=205pt]{classparlai_1_1utils_1_1thread_1_1SharedTable__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a52b58b8d6ad0ba31cf2e3236afe970a5}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, init\+\_\+dict=None)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a6b6c4f7fb5887de4e2c82b0c11b6d680}{\+\_\+\+\_\+len\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a6c386b5fba3bd7ff0715c808decbaa54}{\+\_\+\+\_\+iter\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_afac82c3717ad0344c5bdfc7b8913d796}{\+\_\+\+\_\+contains\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a624b898ff3294a8be69ad796640cc7ee}{\+\_\+\+\_\+getitem\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a43bc2c55c2125ce9c4848933fadeef5c}{\+\_\+\+\_\+setitem\+\_\+\+\_\+} (self, key, value)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a567947ad20bdc1ad18815fc1883ea247}{\+\_\+\+\_\+delitem\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_aa18f723bbdfce0ab50d9c36b20cec2c7}{\+\_\+\+\_\+str\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_af4577c8c954666ac3905a6215835bbd0}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_ab9acef58b28d0c992c841a4cc11a5df2}{get\+\_\+lock} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_aec0fa85ca2544dd6220db34c7da01a08}{idx}
+\item 
+\hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_a722e0cb6428af2282f4a2697c2c86d01}{arrays}
+\item 
+\hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_ad1a6839c09b909c73c7b57ece300d4d4}{tensors}
+\item 
+\hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_aa9c342b24e24a93c40950671a326d014}{lock}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classparlai_1_1utils_1_1thread_1_1SharedTable_afe67b490096de733e17e35834a5b55f4}{types} = \{int\+: ctypes.\+c\+\_\+int, float\+: ctypes.\+c\+\_\+float, bool\+: ctypes.\+c\+\_\+bool\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Provides a simple shared-memory table of integers, floats, or strings.
+
+Use this class as follows:
+
+.. code-block:: python
+
+    tbl = SharedTable({'cnt': 0})
+    with tbl.get_lock():
+        tbl['startTime'] = time.time()
+    for i in range(10):
+        with tbl.get_lock():
+            tbl['cnt'] += 1
+\end{DoxyVerb}
+ 
+
+Definition at line 18 of file thread.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a52b58b8d6ad0ba31cf2e3236afe970a5}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a52b58b8d6ad0ba31cf2e3236afe970a5}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{init\+\_\+dict = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a shared memory version of each element of the initial dictionary.
+
+Creates an empty array otherwise, which will extend
+automatically when keys are added.
+
+Each different type (all supported types listed in the ``types`` array
+above) has its own array. For each key we store an index into the
+appropriate array as well as the type of value stored for that key.
+\end{DoxyVerb}
+ 
+
+Definition at line 36 of file thread.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_afac82c3717ad0344c5bdfc7b8913d796}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_afac82c3717ad0344c5bdfc7b8913d796}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+contains\+\_\+\+\_\+()}{\_\_contains\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+contains\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+
+
+Definition at line 94 of file thread.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a567947ad20bdc1ad18815fc1883ea247}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a567947ad20bdc1ad18815fc1883ea247}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+delitem\+\_\+\+\_\+@{\+\_\+\+\_\+delitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+delitem\+\_\+\+\_\+@{\+\_\+\+\_\+delitem\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+delitem\+\_\+\+\_\+()}{\_\_delitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+delitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+
+
+Definition at line 143 of file thread.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a624b898ff3294a8be69ad796640cc7ee}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a624b898ff3294a8be69ad796640cc7ee}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+getitem\+\_\+\+\_\+()}{\_\_getitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+getitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return shared value if key is available.\end{DoxyVerb}
+ 
+
+Definition at line 97 of file thread.\+py.
+
+
+
+References parlai.\+utils.\+thread.\+Shared\+Table.\+arrays, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+arrays, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a6c386b5fba3bd7ff0715c808decbaa54}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a6c386b5fba3bd7ff0715c808decbaa54}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+iter\+\_\+\+\_\+@{\+\_\+\+\_\+iter\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+iter\+\_\+\+\_\+@{\+\_\+\+\_\+iter\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+iter\+\_\+\+\_\+()}{\_\_iter\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+iter\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 91 of file thread.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a6b6c4f7fb5887de4e2c82b0c11b6d680}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a6b6c4f7fb5887de4e2c82b0c11b6d680}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+len\+\_\+\+\_\+()}{\_\_len\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+len\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 88 of file thread.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_af4577c8c954666ac3905a6215835bbd0}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_af4577c8c954666ac3905a6215835bbd0}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the object type and memory location with the mapping.\end{DoxyVerb}
+ 
+
+Definition at line 160 of file thread.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a43bc2c55c2125ce9c4848933fadeef5c}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a43bc2c55c2125ce9c4848933fadeef5c}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+setitem\+\_\+\+\_\+()}{\_\_setitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key,  }\item[{}]{value }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}If key is in table, update it. Otherwise, extend the array to make room.
+
+This uses additive resizing not multiplicative, since the number
+of keys is not likely to change frequently during a run, so do not
+abuse it.
+
+Raises an error if you try to change the type of the value stored for
+that key -- if you need to do this, you must delete the key first.
+\end{DoxyVerb}
+ 
+
+Definition at line 107 of file thread.\+py.
+
+
+
+References parlai.\+utils.\+thread.\+Shared\+Table.\+arrays, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+arrays, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, parlai.\+utils.\+thread.\+Shared\+Table.\+types, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+types.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_aa18f723bbdfce0ab50d9c36b20cec2c7}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_aa18f723bbdfce0ab50d9c36b20cec2c7}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+str\+\_\+\+\_\+()}{\_\_str\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+str\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return simple dict representation of the mapping.\end{DoxyVerb}
+ 
+
+Definition at line 151 of file thread.\+py.
+
+
+
+References parlai.\+utils.\+thread.\+Shared\+Table.\+arrays, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+arrays, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+idx, parlai.\+utils.\+thread.\+Shared\+Table.\+tensors, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+tensors.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_ab9acef58b28d0c992c841a4cc11a5df2}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_ab9acef58b28d0c992c841a4cc11a5df2}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!get\+\_\+lock@{get\+\_\+lock}}
+\index{get\+\_\+lock@{get\+\_\+lock}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{get\+\_\+lock()}{get\_lock()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+thread.\+Shared\+Table.\+get\+\_\+lock (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the lock.\end{DoxyVerb}
+ 
+
+Definition at line 165 of file thread.\+py.
+
+
+
+References parlai.\+utils.\+thread.\+Shared\+Table.\+lock, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+lock, and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+lock.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_a722e0cb6428af2282f4a2697c2c86d01}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_a722e0cb6428af2282f4a2697c2c86d01}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!arrays@{arrays}}
+\index{arrays@{arrays}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{arrays}{arrays}}
+{\footnotesize\ttfamily parlai.\+utils.\+thread.\+Shared\+Table.\+arrays}
+
+
+
+Definition at line 50 of file thread.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), and parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+str\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_aec0fa85ca2544dd6220db34c7da01a08}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_aec0fa85ca2544dd6220db34c7da01a08}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!idx@{idx}}
+\index{idx@{idx}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{idx}{idx}}
+{\footnotesize\ttfamily parlai.\+utils.\+thread.\+Shared\+Table.\+idx}
+
+
+
+Definition at line 48 of file thread.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+contains\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+delitem\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+iter\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), and parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+str\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_aa9c342b24e24a93c40950671a326d014}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_aa9c342b24e24a93c40950671a326d014}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!lock@{lock}}
+\index{lock@{lock}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{lock}{lock}}
+{\footnotesize\ttfamily parlai.\+utils.\+thread.\+Shared\+Table.\+lock}
+
+
+
+Definition at line 86 of file thread.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+get\+\_\+lock().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_ad1a6839c09b909c73c7b57ece300d4d4}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_ad1a6839c09b909c73c7b57ece300d4d4}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!tensors@{tensors}}
+\index{tensors@{tensors}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{tensors}{tensors}}
+{\footnotesize\ttfamily parlai.\+utils.\+thread.\+Shared\+Table.\+tensors}
+
+
+
+Definition at line 51 of file thread.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+contains\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+delitem\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+iter\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), and parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+str\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1thread_1_1SharedTable_afe67b490096de733e17e35834a5b55f4}\label{classparlai_1_1utils_1_1thread_1_1SharedTable_afe67b490096de733e17e35834a5b55f4}} 
+\index{parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}!types@{types}}
+\index{types@{types}!parlai\+::utils\+::thread\+::\+Shared\+Table@{parlai\+::utils\+::thread\+::\+Shared\+Table}}
+\subsubsection{\texorpdfstring{types}{types}}
+{\footnotesize\ttfamily dictionary parlai.\+utils.\+thread.\+Shared\+Table.\+types = \{int\+: ctypes.\+c\+\_\+int, float\+: ctypes.\+c\+\_\+float, bool\+: ctypes.\+c\+\_\+bool\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 34 of file thread.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{thread_8py}{thread.\+py}\end{DoxyCompactItemize}

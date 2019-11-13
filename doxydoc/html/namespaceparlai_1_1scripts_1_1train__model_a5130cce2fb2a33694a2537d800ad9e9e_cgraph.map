@@ -1,0 +1,9 @@
+<map id="parlai.scripts.train_model.setup_args" name="parlai.scripts.train_model.setup_args">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1distributed.html#a9bb1dac198180590ef8c6b6c6f9fc2c4" title="parlai.utils.distributed.is\l_primary_worker" alt="" coords="190,5,349,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1scripts_1_1train__model.html#a70da71a6f4f9ad144666e6353d9278e3" title="parlai.scripts.train\l_model.load_eval_worlds" alt="" coords="185,71,353,112"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1distributed.html#a023acb5e3b66e1f27e21247c35661279" title="parlai.utils.distributed.is\l_distributed" alt="" coords="420,5,579,47"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1agents.html#aa5af5dd1d2f9da491b60348d479b849f" title="parlai.core.agents.create\l_agent_from_shared" alt="" coords="417,71,582,112"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="401,137,597,163"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="645,96,809,137"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="654,161,801,203"/>
+</map>

@@ -1,0 +1,158 @@
+\hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher}{}\section{parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher}\index{parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher@{parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=234pt]{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=234pt]{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a508d7db21bcb258cbeb1d89c5f33d6a3}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a6c7dc5e3c5478b3769b28bd7f854a88b}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a587f3fcfacc5a44c81b4b083f61a0fad}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_ac6074b82541ad78c9a4306877aff0764}{num\+\_\+episodes} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_aced6b44c6ab5da0943ebd6f16acc5339}{convos}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a231381551fe76fdbf333c0fd8c671b5e}{num\+\_\+ex}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Teacher for written two-person dialogues with labels being relevant/useful
+parts in the input sentence. The different datatypes of the labels within
+the data have also been encoded as `label_types`
+\end{DoxyVerb}
+ 
+
+Definition at line 222 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a508d7db21bcb258cbeb1d89c5f33d6a3}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a508d7db21bcb258cbeb1d89c5f33d6a3}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 229 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a6c7dc5e3c5478b3769b28bd7f854a88b}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a6c7dc5e3c5478b3769b28bd7f854a88b}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx }\end{DoxyParamCaption})}
+
+
+
+Definition at line 244 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+convos, parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+convos, parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+convos, parlai.\+agents.\+repeat\+\_\+query.\+repeat\+\_\+query.\+Repeat\+Query\+Agent.\+id, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+id, parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+id, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+id, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+id, parlai.\+agents.\+repeat\+\_\+label.\+repeat\+\_\+label.\+Repeat\+Label\+Agent.\+id, parlai.\+core.\+agents.\+Agent.\+id, parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+id, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+id, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+id, parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+id, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+id, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+id, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+id, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+id, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+id.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_ac6074b82541ad78c9a4306877aff0764}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_ac6074b82541ad78c9a4306877aff0764}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 269 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+convos, parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+convos, parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+convos, parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+num\+\_\+ex, parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+num\+\_\+ex, and parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+ex.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_ac6074b82541ad78c9a4306877aff0764_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a587f3fcfacc5a44c81b4b083f61a0fad}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a587f3fcfacc5a44c81b4b083f61a0fad}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 266 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+num\+\_\+ex, parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+num\+\_\+ex, and parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+ex.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_aced6b44c6ab5da0943ebd6f16acc5339}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_aced6b44c6ab5da0943ebd6f16acc5339}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!convos@{convos}}
+\index{convos@{convos}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{convos}{convos}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+convos}
+
+
+
+Definition at line 235 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+get(), and parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+episodes().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a231381551fe76fdbf333c0fd8c671b5e}\label{classparlai_1_1tasks_1_1taskmaster_1_1agents_1_1SelfDialogueSegmentTeacher_a231381551fe76fdbf333c0fd8c671b5e}} 
+\index{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}!num\+\_\+ex@{num\+\_\+ex}}
+\index{num\+\_\+ex@{num\+\_\+ex}!parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher@{parlai\+::tasks\+::taskmaster\+::agents\+::\+Self\+Dialogue\+Segment\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+ex}{num\_ex}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+ex}
+
+
+
+Definition at line 236 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+episodes(), and parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+num\+\_\+examples().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/taskmaster/\hyperlink{parlai_2tasks_2taskmaster_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

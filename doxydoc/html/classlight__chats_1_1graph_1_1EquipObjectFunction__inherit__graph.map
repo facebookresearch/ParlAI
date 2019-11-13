@@ -1,7 +1,5 @@
 <map id="light_chats.graph.EquipObjectFunction" name="light_chats.graph.EquipObjectFunction">
-<area shape="rect" id="node1" title=" " alt="" coords="114,155,310,196"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1WearObjectFunction.html" title=" " alt="" coords="5,244,200,285"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1WieldObjectFunction.html" title=" " alt="" coords="225,244,421,285"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html" title=" " alt="" coords="107,80,317,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="183,5,241,32"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1WearObjectFunction.html" title="light_chats.graph.WearObject\lFunction" alt="" coords="5,244,200,285"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1WieldObjectFunction.html" title="light_chats.graph.WieldObject\lFunction" alt="" coords="225,244,421,285"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html" title="light_chats.graph.GraphFunction" alt="" coords="107,80,317,107"/>
 </map>

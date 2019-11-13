@@ -1,0 +1,6 @@
+<map id="mastering_the_dungeon.tasks.graph_world2.graph.Graph.display_room_edges" name="mastering_the_dungeon.tasks.graph_world2.graph.Graph.display_room_edges">
+<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#ad1d29bcd12397fa3b8813799f9b4f058" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.look" alt="" coords="285,23,517,64"/>
+<area shape="rect" id="node3" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a6a9b3f161580f744e976edd2e67f1b23" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.move_agent" alt="" coords="565,64,797,105"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="845,5,1077,47"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="1125,35,1357,76"/>
+</map>

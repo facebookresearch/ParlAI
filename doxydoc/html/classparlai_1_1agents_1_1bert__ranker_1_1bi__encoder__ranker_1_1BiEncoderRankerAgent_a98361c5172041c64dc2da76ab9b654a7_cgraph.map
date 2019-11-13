@@ -1,0 +1,4 @@
+<map id="parlai.agents.bert_ranker.bi_encoder_ranker.BiEncoderRankerAgent.encode_candidates" name="parlai.agents.bert_ranker.bi_encoder_ranker.BiEncoderRankerAgent.encode_candidates">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers.html#ae5621255d8851c9628c116cb6db4c28c" title="parlai.agents.bert\l_ranker.helpers.surround" alt="" coords="270,5,435,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker.html#afd88e1e1699d975ab19ea38e8ae77e20" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.to\l_bert_input" alt="" coords="257,71,448,127"/>
+</map>

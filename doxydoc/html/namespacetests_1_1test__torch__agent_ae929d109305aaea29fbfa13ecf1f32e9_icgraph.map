@@ -1,0 +1,16 @@
+<map id="tests.test_torch_agent.get_agent" name="tests.test_torch_agent.get_agent">
+<area shape="rect" id="node2" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a81c474c311d1825377b107d40d567d8a" title="tests.test_torch_agent.Test\lTorchAgent.test__add_person_tokens" alt="" coords="228,5,471,47"/>
+<area shape="rect" id="node3" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#ab5ef383cb36b970850bb3e171c832f36" title="tests.test_torch_agent.Test\lTorchAgent.test__check_truncate" alt="" coords="240,71,459,112"/>
+<area shape="rect" id="node4" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a9bce672782a5d1408c104fd89d2d403f" title="tests.test_torch_agent.Test\lTorchAgent.test__vectorize_text" alt="" coords="244,136,455,177"/>
+<area shape="rect" id="node5" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#aed82743e884c933453d912cfa8c7ec7f" title="tests.test_torch_agent.Test\lTorchAgent.test_batch_act" alt="" coords="258,201,441,243"/>
+<area shape="rect" id="node6" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#aad1075dad0c291b524d84ec9526177dd" title="tests.test_torch_agent.Test\lTorchAgent.test_batchify" alt="" coords="258,267,441,308"/>
+<area shape="rect" id="node7" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a3c5504828399a2bb0d776baf1a744f71" title="tests.test_torch_agent.Test\lTorchAgent.test_history" alt="" coords="258,332,441,373"/>
+<area shape="rect" id="node8" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#aadf263b222e27bfd83d568148683a8e0" title="tests.test_torch_agent.Test\lTorchAgent.test_interactive_mode" alt="" coords="239,397,460,439"/>
+<area shape="rect" id="node9" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a7c1c12023294608a146271f4fe1574ea" title="tests.test_torch_agent.Test\lTorchAgent.test_last_reply" alt="" coords="258,463,441,504"/>
+<area shape="rect" id="node10" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#abe59ca8c2f6927c0ba6f0e5ce7d3a4f2" title="tests.test_torch_agent.Test\lTorchAgent.test_match_batch" alt="" coords="251,528,448,569"/>
+<area shape="rect" id="node11" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a0a7c1df7d947bdc260afa6dad21d78b9" title="tests.test_torch_agent.Test\lTorchAgent.test_mock" alt="" coords="258,593,441,635"/>
+<area shape="rect" id="node12" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a9954f92efc8cc7a9770f90f3a297d397" title="tests.test_torch_agent.Test\lTorchAgent.test_mturk_racehistory" alt="" coords="236,659,463,700"/>
+<area shape="rect" id="node13" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#ae3b6e4145176ba5d5e9179756d064332" title="tests.test_torch_agent.Test\lTorchAgent.test_observe" alt="" coords="258,724,441,765"/>
+<area shape="rect" id="node14" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#af3d1c7681a30a06684117464ccefb15d" title="tests.test_torch_agent.Test\lTorchAgent.test_share" alt="" coords="258,789,441,831"/>
+<area shape="rect" id="node15" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a551847086a9d8bf6bc04ea1efeacf608" title="tests.test_torch_agent.Test\lTorchAgent.test_vectorize" alt="" coords="258,855,441,896"/>
+</map>

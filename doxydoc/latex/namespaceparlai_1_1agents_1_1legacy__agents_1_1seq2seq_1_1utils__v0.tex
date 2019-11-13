@@ -1,0 +1,126 @@
+\hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0 Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam}{Beam}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils}{Padding\+Utils}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1SharedTable}{Shared\+Table}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_ac7cb3ffae208474d6e67f37ecfe07f64}{maintain\+\_\+dialog\+\_\+history} (history, observation, reply=\textquotesingle{}\textquotesingle{}, history\+Length=1, use\+Replies=\textquotesingle{}label\+\_\+else\+\_\+model\textquotesingle{}, dict=None, use\+Start\+End\+Indices=True, split\+Sentences=False)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_af377ec61bfc0423461e7b409ffc883b9}{round\+\_\+sigfigs} (x, sigfigs=4)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a96c8bd68b645f94b1257c37f8c5646f5}{is\+\_\+tensor} (v)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a5fbd3301b67f00d6d146fb01c7cd7626}{modelzoo\+\_\+path} (datapath, path)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a96c8bd68b645f94b1257c37f8c5646f5}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a96c8bd68b645f94b1257c37f8c5646f5}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}!is\+\_\+tensor@{is\+\_\+tensor}}
+\index{is\+\_\+tensor@{is\+\_\+tensor}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}}
+\subsubsection{\texorpdfstring{is\+\_\+tensor()}{is\_tensor()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+is\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{v }\end{DoxyParamCaption})}
+
+
+
+Definition at line 720 of file utils\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_ac7cb3ffae208474d6e67f37ecfe07f64}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_ac7cb3ffae208474d6e67f37ecfe07f64}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}!maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}}
+\index{maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}}
+\subsubsection{\texorpdfstring{maintain\+\_\+dialog\+\_\+history()}{maintain\_dialog\_history()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+maintain\+\_\+dialog\+\_\+history (\begin{DoxyParamCaption}\item[{}]{history,  }\item[{}]{observation,  }\item[{}]{reply = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{history\+Length = {\ttfamily 1},  }\item[{}]{use\+Replies = {\ttfamily \textquotesingle{}label\+\_\+else\+\_\+model\textquotesingle{}},  }\item[{}]{dict = {\ttfamily None},  }\item[{}]{use\+Start\+End\+Indices = {\ttfamily True},  }\item[{}]{split\+Sentences = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Keeps track of dialog history, up to a truncation length.
+Either includes replies from the labels, model, or not all using param 'replies'.\end{DoxyVerb}
+ 
+
+Definition at line 328 of file utils\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observe().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_ac7cb3ffae208474d6e67f37ecfe07f64_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a5fbd3301b67f00d6d146fb01c7cd7626}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a5fbd3301b67f00d6d146fb01c7cd7626}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}!modelzoo\+\_\+path@{modelzoo\+\_\+path}}
+\index{modelzoo\+\_\+path@{modelzoo\+\_\+path}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}}
+\subsubsection{\texorpdfstring{modelzoo\+\_\+path()}{modelzoo\_path()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path (\begin{DoxyParamCaption}\item[{}]{datapath,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}If path starts with 'models', then we remap it to the model zoo path
+within the data directory (default is ParlAI/data/models).
+We download models from the model zoo if they are not here yet.\end{DoxyVerb}
+ 
+
+Definition at line 728 of file utils\+\_\+v0.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts(), parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+zoo.\+fasttext\+\_\+vectors.\+build.\+download(), parlai.\+zoo.\+fasttext\+\_\+cc\+\_\+vectors.\+build.\+download(), parlai.\+core.\+params.\+get\+\_\+model\+\_\+name(), controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information(), controllable\+\_\+seq2seq.\+arora.\+learn\+\_\+arora(), parlai.\+agents.\+drqa.\+utils.\+load\+\_\+embeddings(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+receive\+\_\+metrics(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+receive\+\_\+metrics(), parlai.\+agents.\+drqa.\+config.\+set\+\_\+defaults(), and tests.\+test\+\_\+dict.\+Test\+Dictionary.\+test\+\_\+set\+\_\+model\+\_\+file\+\_\+without\+\_\+dict\+\_\+file().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a5fbd3301b67f00d6d146fb01c7cd7626_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_a5fbd3301b67f00d6d146fb01c7cd7626_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_af377ec61bfc0423461e7b409ffc883b9}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_af377ec61bfc0423461e7b409ffc883b9}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}!round\+\_\+sigfigs@{round\+\_\+sigfigs}}
+\index{round\+\_\+sigfigs@{round\+\_\+sigfigs}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0}}
+\subsubsection{\texorpdfstring{round\+\_\+sigfigs()}{round\_sigfigs()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs (\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{sigfigs = {\ttfamily 4} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 383 of file utils\+\_\+v0.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+aggregate\+\_\+metrics(), parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports(), parlai.\+scripts.\+eval\+\_\+ppl.\+eval\+\_\+ppl(), generator.\+agents.\+End\+To\+End\+Agent.\+report(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+report(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+report(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+report(), parlai.\+core.\+metrics.\+Metrics.\+report(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+report(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+report(), transresnet.\+transresnet.\+Transresnet\+Agent.\+report(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+report(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+report(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+report(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+report(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+report(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), tests.\+test\+\_\+utils.\+Test\+Utils.\+test\+\_\+round\+\_\+sigfigs(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_af377ec61bfc0423461e7b409ffc883b9_icgraph}
+\end{center}
+\end{figure}

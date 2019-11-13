@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.dev.agents.MTurkAgent.wait_for_hit_completion" name="parlai.mturk.core.dev.agents.MTurkAgent.wait_for_hit_completion">
-<area shape="rect" id="node1" title=" " alt="" coords="288,39,523,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a2b0576f33db15042a1520f6c9b4157c2" title=" " alt="" coords="27,5,218,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a13d1446c41c7342e3d23719cf190d304" title=" " alt="" coords="5,71,240,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a2b0576f33db15042a1520f6c9b4157c2" title="parlai.mturk.core.dev.agents.\lMTurkAgent.shutdown" alt="" coords="310,5,501,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a13d1446c41c7342e3d23719cf190d304" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.shutdown" alt="" coords="288,71,523,112"/>
 </map>

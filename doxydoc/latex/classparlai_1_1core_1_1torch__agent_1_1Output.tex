@@ -1,0 +1,64 @@
+\hypertarget{classparlai_1_1core_1_1torch__agent_1_1Output}{}\section{parlai.\+core.\+torch\+\_\+agent.\+Output Class Reference}
+\label{classparlai_1_1core_1_1torch__agent_1_1Output}\index{parlai.\+core.\+torch\+\_\+agent.\+Output@{parlai.\+core.\+torch\+\_\+agent.\+Output}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+agent.\+Output\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classparlai_1_1core_1_1torch__agent_1_1Output__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+agent.\+Output\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classparlai_1_1core_1_1torch__agent_1_1Output__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1Output_a490f5e29040c643f20b63c23e7359627}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, text=None, text\+\_\+candidates=None, kwargs)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Output is an object containing agent predictions.
+
+This is the expected return type of the train_step and eval_step functions,
+though agents can choose to return None if they do not want to answer.
+
+:param List[str] text:
+    list of strings of length bsz containing the predictions of the model
+
+:param List[List[str]] text_candidates:
+    list of lists of length bsz containing ranked predictions of the model.
+    each sub-list is an ordered ranking of strings, of variable length.
+\end{DoxyVerb}
+ 
+
+Definition at line 125 of file torch\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1Output_a490f5e29040c643f20b63c23e7359627}\label{classparlai_1_1core_1_1torch__agent_1_1Output_a490f5e29040c643f20b63c23e7359627}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+Output@{parlai\+::core\+::torch\+\_\+agent\+::\+Output}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+agent\+::\+Output@{parlai\+::core\+::torch\+\_\+agent\+::\+Output}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+Output.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text = {\ttfamily None},  }\item[{}]{text\+\_\+candidates = {\ttfamily None},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 140 of file torch\+\_\+agent.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__agent_8py}{torch\+\_\+agent.\+py}\end{DoxyCompactItemize}

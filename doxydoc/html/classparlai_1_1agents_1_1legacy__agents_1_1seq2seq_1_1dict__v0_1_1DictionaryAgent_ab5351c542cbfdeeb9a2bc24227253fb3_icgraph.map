@@ -1,18 +1,17 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.resize_to_max" name="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.resize_to_max">
-<area shape="rect" id="node1" title=" " alt="" coords="1000,253,1179,323"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a346cc45c8e6eba82cb76878445e843cf" title=" " alt="" coords="783,180,950,236"/>
-<area shape="rect" id="node15" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#aa2697be1f1556da06f77d7eadf7cb9c6" title=" " alt="" coords="783,260,950,316"/>
-<area shape="rect" id="node16" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a84cb4fabf5d0e92e3f80ac16bdfd0ccc" title=" " alt="" coords="781,341,952,382"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#ab2838da6f97c13b8eae241ac6db59417" title=" " alt="" coords="561,144,733,200"/>
-<area shape="rect" id="node13" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#aacac3c53a7aef02a731d427fcb8bdf87" title=" " alt="" coords="561,224,733,280"/>
-<area shape="rect" id="node14" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a0c6a8d8b67fe978549b328e7b7b07450" title=" " alt="" coords="562,305,733,346"/>
-<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="228,86,513,127"/>
-<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#afcebdb70582204709f5e4365dde00bcb" title=" " alt="" coords="271,151,470,193"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acc5f2818eae15ab8ebe81924600bb6fe" title=" " alt="" coords="271,5,471,61"/>
-<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a7758fcd79e9a391b4f4bd45e030fc59b" title=" " alt="" coords="271,363,471,419"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aea9aca40dd1bb1976f4042565b172d88" title=" " alt="" coords="285,217,456,258"/>
-<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a86c41e705170f0b2e56a5bbc378aead9" title=" " alt="" coords="275,283,467,339"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1World.html#ae2b8ea006564cbefbe8520f45fb71040" title=" " alt="" coords="9,319,176,361"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a1b7aed0a7b56712f22ee8b04c65d7c00" title=" " alt="" coords="5,189,180,230"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a0425099fbc33cb97d6fbe67dbd2e8a1f" title=" " alt="" coords="5,254,180,295"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a346cc45c8e6eba82cb76878445e843cf" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.sort" alt="" coords="234,232,401,288"/>
+<area shape="rect" id="node15" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#aa2697be1f1556da06f77d7eadf7cb9c6" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.sort" alt="" coords="234,312,401,368"/>
+<area shape="rect" id="node16" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a84cb4fabf5d0e92e3f80ac16bdfd0ccc" title="parlai.core.dict.Dictionary\lAgent.sort" alt="" coords="232,393,403,434"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary.html#ac92ccf75b3d43ba887fa828935f30fd4" title="parlai.agents.fairseq.fairseq.\l_FairseqDictionary.__init__" alt="" coords="451,319,637,361"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#ab2838da6f97c13b8eae241ac6db59417" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.save" alt="" coords="458,159,630,215"/>
+<area shape="rect" id="node13" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#aacac3c53a7aef02a731d427fcb8bdf87" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.save" alt="" coords="458,239,630,295"/>
+<area shape="rect" id="node14" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a0c6a8d8b67fe978549b328e7b7b07450" title="parlai.core.dict.Dictionary\lAgent.save" alt="" coords="459,385,629,426"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acc5f2818eae15ab8ebe81924600bb6fe" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.shutdown" alt="" coords="685,5,885,61"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a7758fcd79e9a391b4f4bd45e030fc59b" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.shutdown" alt="" coords="685,85,885,141"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a86c41e705170f0b2e56a5bbc378aead9" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.shutdown" alt="" coords="689,165,881,221"/>
+<area shape="rect" id="node11" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#afcebdb70582204709f5e4365dde00bcb" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent.shutdown" alt="" coords="686,311,885,353"/>
+<area shape="rect" id="node12" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aea9aca40dd1bb1976f4042565b172d88" title="parlai.core.dict.Dictionary\lAgent.shutdown" alt="" coords="700,246,871,287"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1World.html#ae2b8ea006564cbefbe8520f45fb71040" title="parlai.core.worlds.World.\l__exit__" alt="" coords="937,67,1104,109"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a1b7aed0a7b56712f22ee8b04c65d7c00" title="parlai.core.worlds.Hogwild\lWorld.display" alt="" coords="933,133,1108,174"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a0425099fbc33cb97d6fbe67dbd2e8a1f" title="parlai.core.worlds.Hogwild\lWorld.episode_done" alt="" coords="933,198,1108,239"/>
 </map>

@@ -1,12 +1,39 @@
 <map id="parlai.scripts.train_model.TrainLoop.train" name="parlai.scripts.train_model.TrainLoop.train">
-<area shape="rect" id="node1" title=" " alt="" coords="5,261,160,302"/>
-<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8ef64c11f101d087ceb83d21621b9665" title=" " alt="" coords="222,129,369,170"/>
-<area shape="rect" id="node8" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a352f759a644e87251c37931bf276309a" title=" " alt="" coords="437,319,635,361"/>
-<area shape="rect" id="node10" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a707bb03792ef7427f5ddbb66184a9756" title=" " alt="" coords="208,261,383,302"/>
-<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#aaa614b60a1667ddad7492afb347290ee" title=" " alt="" coords="445,121,627,177"/>
-<area shape="rect" id="node4" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#ad45bc64e9420a8e7e81beb6951f43690" title=" " alt="" coords="431,202,641,243"/>
-<area shape="rect" id="node5" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1b8d75bb6c0c8b273939431f580b282d" title=" " alt="" coords="718,9,878,65"/>
-<area shape="rect" id="node6" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1dd41281ca4a9caf25fe22f1ca075555" title=" " alt="" coords="454,41,618,97"/>
-<area shape="rect" id="node7" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a94493761834ef80a5db3f43aa38afbcf" title=" " alt="" coords="689,151,907,193"/>
-<area shape="rect" id="node9" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8df2f7941dae8fd810292beed85a7634" title=" " alt="" coords="716,312,880,368"/>
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1agents.html#ad0d54074d4bcc148bb415ab5515a53b5" title="parlai.core.agents.create\l_agent" alt="" coords="213,163,378,204"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="945,355,1125,382"/>
+<area shape="rect" id="node14" href="$namespaceparlai_1_1utils_1_1distributed.html#a023acb5e3b66e1f27e21247c35661279" title="parlai.utils.distributed.is\l_distributed" alt="" coords="955,811,1114,852"/>
+<area shape="rect" id="node15" href="$namespaceparlai_1_1utils_1_1distributed.html#a9bb1dac198180590ef8c6b6c6f9fc2c4" title="parlai.utils.distributed.is\l_primary_worker" alt="" coords="715,852,873,893"/>
+<area shape="rect" id="node16" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8ef64c11f101d087ceb83d21621b9665" title="parlai.scripts.train\l_model.TrainLoop.log" alt="" coords="222,1079,369,1120"/>
+<area shape="rect" id="node21" href="$namespaceparlai_1_1utils_1_1distributed.html#a99b61b4756577c6542039c238d670dba" title="parlai.utils.distributed.num\l_workers" alt="" coords="707,565,881,607"/>
+<area shape="rect" id="node22" href="$namespaceparlai_1_1core_1_1params.html#afd1a47c94990168ea9e70d894a79bd2c" title="parlai.core.params.print\l_announcements" alt="" coords="216,1503,375,1544"/>
+<area shape="rect" id="node23" href="$namespaceparlai_1_1scripts_1_1train__model.html#a496dfe3bf04da9b55d261b4c8d6229a7" title="parlai.scripts.train\l_model.run_eval" alt="" coords="477,407,602,448"/>
+<area shape="rect" id="node27" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a352f759a644e87251c37931bf276309a" title="parlai.scripts.train\l_model.TrainLoop.save_model" alt="" coords="440,575,639,616"/>
+<area shape="rect" id="node29" href="$namespaceparlai_1_1scripts_1_1train__model.html#a5130cce2fb2a33694a2537d800ad9e9e" title="parlai.scripts.train\l_model.setup_args" alt="" coords="229,1327,361,1368"/>
+<area shape="rect" id="node35" href="$namespaceparlai_1_1utils_1_1distributed.html#a269d3c7284127d9b287b9b61e9161de6" title="parlai.utils.distributed.sync\l_object" alt="" coords="451,911,628,952"/>
+<area shape="rect" id="node36" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a707bb03792ef7427f5ddbb66184a9756" title="parlai.scripts.train\l_model.TrainLoop.validate" alt="" coords="208,721,383,763"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1agents.html#a7eb0ec391b94a2adc51acdf8d2a35a68" title="parlai.core.agents.compare\l_init_model_opts" alt="" coords="705,123,883,164"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="960,185,1109,241"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1core_1_1agents.html#a14a9d134d76ffd0509e50703d0f2c949" title="parlai.core.agents.get\l_agent_module" alt="" coords="721,5,867,47"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1core_1_1params.html#a6d160324f6af84562334fd0698141074" title="parlai.core.params.get\l_model_name" alt="" coords="719,188,869,229"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1core_1_1agents.html#a213df46dd21144eb4c056bb58c294c5d" title="parlai.core.agents.load\l_agent_module" alt="" coords="463,79,616,120"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#a7c97ef3250327bc549ac652a481be0cf" title="parlai.utils.misc.load\l_opt_file" alt="" coords="964,119,1105,160"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="1177,199,1381,226"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="1429,199,1611,226"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1core_1_1agents.html#a7a5f5076b35ce376d8b46bfb362bfc53" title="parlai.core.agents.name\l_to_agent_class" alt="" coords="954,5,1115,47"/>
+<area shape="rect" id="node13" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="1208,348,1351,389"/>
+<area shape="rect" id="node17" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#aaa614b60a1667ddad7492afb347290ee" title="parlai.scripts.train\l_model.TrainLoop._cleanup\l_inaccurate_metrics" alt="" coords="449,1254,630,1310"/>
+<area shape="rect" id="node18" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#ad45bc64e9420a8e7e81beb6951f43690" title="parlai.scripts.train\l_model.TrainLoop._compute_eta" alt="" coords="434,1108,645,1149"/>
+<area shape="rect" id="node19" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1b8d75bb6c0c8b273939431f580b282d" title="parlai.scripts.train\l_model.TrainLoop._nice\l_format" alt="" coords="459,977,619,1033"/>
+<area shape="rect" id="node20" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1dd41281ca4a9caf25fe22f1ca075555" title="parlai.scripts.train\l_model.TrainLoop._sync\l_training_metrics" alt="" coords="457,1174,621,1230"/>
+<area shape="rect" id="node24" href="$namespaceparlai_1_1core_1_1metrics.html#ae323045c05ed03d93c260521ebb8bf71" title="parlai.core.metrics.aggregate\l_task_reports" alt="" coords="699,407,889,448"/>
+<area shape="rect" id="node25" href="$namespaceparlai_1_1core_1_1metrics.html#ae7769a6b628f41081e0f43043d52031a" title="parlai.core.metrics.normalize\l_answer" alt="" coords="940,407,1129,448"/>
+<area shape="rect" id="node26" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#af377ec61bfc0423461e7b409ffc883b9" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.round_sigfigs" alt="" coords="960,490,1109,546"/>
+<area shape="rect" id="node28" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8df2f7941dae8fd810292beed85a7634" title="parlai.scripts.train\l_model.TrainLoop._save\l_train_stats" alt="" coords="712,631,876,687"/>
+<area shape="rect" id="node30" href="$namespaceparlai_1_1scripts_1_1train__model.html#a70da71a6f4f9ad144666e6353d9278e3" title="parlai.scripts.train\l_model.load_eval_worlds" alt="" coords="455,1385,623,1427"/>
+<area shape="rect" id="node31" href="$namespaceparlai_1_1core_1_1agents.html#aa5af5dd1d2f9da491b60348d479b849f" title="parlai.core.agents.create\l_agent_from_shared" alt="" coords="711,1385,877,1427"/>
+<area shape="rect" id="node32" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="696,1502,892,1529"/>
+<area shape="rect" id="node33" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="953,1461,1117,1503"/>
+<area shape="rect" id="node34" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="961,1527,1108,1568"/>
+<area shape="rect" id="node37" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a94493761834ef80a5db3f43aa38afbcf" title="parlai.scripts.train\l_model.TrainLoop._average_dicts" alt="" coords="431,692,648,733"/>
+<area shape="rect" id="node38" href="$namespaceparlai_1_1utils_1_1distributed.html#a9ef5bf0debf512ddbeb045327bfd87ef" title="parlai.utils.distributed.all\l_gather_list" alt="" coords="713,769,875,811"/>
 </map>

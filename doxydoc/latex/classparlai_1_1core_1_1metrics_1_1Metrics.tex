@@ -1,0 +1,253 @@
+\hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics}{}\section{parlai.\+core.\+metrics.\+Metrics Class Reference}
+\label{classparlai_1_1core_1_1metrics_1_1Metrics}\index{parlai.\+core.\+metrics.\+Metrics@{parlai.\+core.\+metrics.\+Metrics}}
+
+
+Inheritance diagram for parlai.\+core.\+metrics.\+Metrics\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1metrics_1_1Metrics__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+metrics.\+Metrics\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1metrics_1_1Metrics__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a58ecf4b635e97145e7cea37acac9f8d8}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt)
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a3d15255e3daf76e9aeabd23c94f879cf}{\+\_\+\+\_\+str\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a652e6f48f5754c1365f18a7f2c86353b}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_ab1a5a659f2c5747af5d0b674dc647742}{update} (self, observation, labels)
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_ae96ffa8a0a1044cdcfcf6cf15fa139ee}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a72759455e9d5ebab2775aed1fa7f952a}{clear} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_ad4d95ce9a2d1fdecf7fd9ef7cf282a15}{metrics}
+\item 
+\hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_ae0d3620f86dd5cd08e4d1c097ac6dde4}{metrics\+\_\+list}
+\item 
+\hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a6bf169112945fa8e28547e8c4464b5d6}{eval\+\_\+pr}
+\item 
+\hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics_a8075a929d40c06f5bbae755b98126c71}{flags}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class that maintains evaluation metrics over dialog.\end{DoxyVerb}
+ 
+
+Definition at line 233 of file metrics.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a58ecf4b635e97145e7cea37acac9f8d8}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a58ecf4b635e97145e7cea37acac9f8d8}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 236 of file metrics.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a652e6f48f5754c1365f18a7f2c86353b}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a652e6f48f5754c1365f18a7f2c86353b}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 279 of file metrics.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+eval\+\_\+pr, parlai.\+core.\+metrics.\+Metrics.\+flags, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+utils.\+misc.\+no\+\_\+lock(), parlai.\+core.\+metrics.\+normalize\+\_\+answer(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1metrics_1_1Metrics_a652e6f48f5754c1365f18a7f2c86353b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a3d15255e3daf76e9aeabd23c94f879cf}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a3d15255e3daf76e9aeabd23c94f879cf}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+str\+\_\+\+\_\+()}{\_\_str\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+str\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 276 of file metrics.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a72759455e9d5ebab2775aed1fa7f952a}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a72759455e9d5ebab2775aed1fa7f952a}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!clear@{clear}}
+\index{clear@{clear}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+clear (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Clear all the metrics.\end{DoxyVerb}
+ 
+
+Definition at line 417 of file metrics.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+eval\+\_\+pr, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics\+\_\+list, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1metrics_1_1Metrics_a72759455e9d5ebab2775aed1fa7f952a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_ae96ffa8a0a1044cdcfcf6cf15fa139ee}\label{classparlai_1_1core_1_1metrics_1_1Metrics_ae96ffa8a0a1044cdcfcf6cf15fa139ee}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!report@{report}}
+\index{report@{report}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report the metrics over all data seen so far.\end{DoxyVerb}
+ 
+
+Definition at line 388 of file metrics.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+Metrics.\+eval\+\_\+pr, parlai.\+core.\+metrics.\+Metrics.\+flags, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics\+\_\+list, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1metrics_1_1Metrics_ae96ffa8a0a1044cdcfcf6cf15fa139ee_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_ab1a5a659f2c5747af5d0b674dc647742}\label{classparlai_1_1core_1_1metrics_1_1Metrics_ab1a5a659f2c5747af5d0b674dc647742}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!update@{update}}
+\index{update@{update}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+Metrics.\+update (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation,  }\item[{}]{labels }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update metrics based on an observation and true labels.\end{DoxyVerb}
+ 
+
+Definition at line 318 of file metrics.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+\_\+update\+\_\+ranking\+\_\+metrics(), parlai.\+core.\+metrics.\+Metrics.\+flags, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics\+\_\+list, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setstate\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1metrics_1_1Metrics_ab1a5a659f2c5747af5d0b674dc647742_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1metrics_1_1Metrics_ab1a5a659f2c5747af5d0b674dc647742_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a6bf169112945fa8e28547e8c4464b5d6}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a6bf169112945fa8e28547e8c4464b5d6}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!eval\+\_\+pr@{eval\+\_\+pr}}
+\index{eval\+\_\+pr@{eval\+\_\+pr}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{eval\+\_\+pr}{eval\_pr}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+Metrics.\+eval\+\_\+pr}
+
+
+
+Definition at line 267 of file metrics.\+py.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+clear(), and parlai.\+core.\+metrics.\+Metrics.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_a8075a929d40c06f5bbae755b98126c71}\label{classparlai_1_1core_1_1metrics_1_1Metrics_a8075a929d40c06f5bbae755b98126c71}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!flags@{flags}}
+\index{flags@{flags}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{flags}{flags}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+Metrics.\+flags}
+
+
+
+Definition at line 271 of file metrics.\+py.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+report(), and parlai.\+core.\+metrics.\+Metrics.\+update().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_ad4d95ce9a2d1fdecf7fd9ef7cf282a15}\label{classparlai_1_1core_1_1metrics_1_1Metrics_ad4d95ce9a2d1fdecf7fd9ef7cf282a15}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!metrics@{metrics}}
+\index{metrics@{metrics}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{metrics}{metrics}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+Metrics.\+metrics}
+
+
+
+Definition at line 237 of file metrics.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+clear(), generator.\+agents.\+End\+To\+End\+Agent.\+compute\+\_\+loss(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+compute\+\_\+loss(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), generator.\+agents.\+End\+To\+End\+Agent.\+report(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+report(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report(), parlai.\+core.\+metrics.\+Metrics.\+report(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+report(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+report(), transresnet.\+transresnet.\+Transresnet\+Agent.\+report(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+report(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+report(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+report(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), generator.\+agents.\+End\+To\+End\+Agent.\+reset\+\_\+metrics(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+reset\+\_\+metrics(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+reset\+\_\+metrics(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+reset\+\_\+metrics(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+reset\+\_\+metrics(), transresnet.\+transresnet.\+Transresnet\+Agent.\+reset\+\_\+metrics(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+reset\+\_\+metrics(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+reset\+\_\+metrics(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+reset\+\_\+metrics(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+reset\+\_\+metrics(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+share(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+train\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+core.\+metrics.\+Metrics.\+update(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+dia\+\_\+metrics(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+fee\+\_\+metrics(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+update\+\_\+metrics(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1metrics_1_1Metrics_ae0d3620f86dd5cd08e4d1c097ac6dde4}\label{classparlai_1_1core_1_1metrics_1_1Metrics_ae0d3620f86dd5cd08e4d1c097ac6dde4}} 
+\index{parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}!metrics\+\_\+list@{metrics\+\_\+list}}
+\index{metrics\+\_\+list@{metrics\+\_\+list}!parlai\+::core\+::metrics\+::\+Metrics@{parlai\+::core\+::metrics\+::\+Metrics}}
+\subsubsection{\texorpdfstring{metrics\+\_\+list}{metrics\_list}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+Metrics.\+metrics\+\_\+list}
+
+
+
+Definition at line 239 of file metrics.\+py.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+Metrics.\+clear(), parlai.\+core.\+metrics.\+Metrics.\+report(), and parlai.\+core.\+metrics.\+Metrics.\+update().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{metrics_8py}{metrics.\+py}\end{DoxyCompactItemize}

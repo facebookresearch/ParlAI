@@ -1,0 +1,6 @@
+<map id="server.get_config_module" name="server.get_config_module">
+<area shape="rect" id="node2" href="$classserver_1_1TaskListHandler.html#a137d4866bf8522230742085684e903c5" title="server.TaskListHandler.get" alt="" coords="234,5,413,32"/>
+<area shape="rect" id="node4" href="$classserver_1_1AssignmentHandler.html#aafff6382132dfeb120d0fd1889ab079c" title="server.AssignmentHandler.get" alt="" coords="224,56,423,83"/>
+<area shape="rect" id="node5" href="$classserver_1_1TaskRunHandler.html#aafdad98a65fe99f154621ec74b593d78" title="server.TaskRunHandler.post" alt="" coords="229,107,418,133"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="471,23,676,65"/>
+</map>

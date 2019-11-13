@@ -1,5 +1,3 @@
 <map id="server.BlockHandler" name="server.BlockHandler">
-<area shape="rect" id="node1" title=" " alt="" coords="5,155,145,181"/>
-<area shape="rect" id="node2" href="$classserver_1_1BaseHandler.html" title=" " alt="" coords="7,80,144,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="17,5,133,32"/>
+<area shape="rect" id="node2" href="$classserver_1_1BaseHandler.html" title="server.BaseHandler" alt="" coords="7,80,144,107"/>
 </map>

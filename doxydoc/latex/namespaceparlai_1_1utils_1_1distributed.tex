@@ -1,0 +1,298 @@
+\hypertarget{namespaceparlai_1_1utils_1_1distributed}{}\section{parlai.\+utils.\+distributed Namespace Reference}
+\label{namespaceparlai_1_1utils_1_1distributed}\index{parlai.\+utils.\+distributed@{parlai.\+utils.\+distributed}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_afd854992e4cc6571b120b9e179cd4a7a}{validate\+\_\+params} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a023acb5e3b66e1f27e21247c35661279}{is\+\_\+distributed} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a99b61b4756577c6542039c238d670dba}{num\+\_\+workers} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a9bb1dac198180590ef8c6b6c6f9fc2c4}{is\+\_\+primary\+\_\+worker} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a601345e55fc3fc3845c43efa1a04db56}{override\+\_\+print} (suppress=False, prefix=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a9ef5bf0debf512ddbeb045327bfd87ef}{all\+\_\+gather\+\_\+list} (data, max\+\_\+size=16384)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_a269d3c7284127d9b287b9b61e9161de6}{sync\+\_\+object} (data, max\+\_\+size=16384)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1distributed_afc64140f9a6437dc1a2b2bd4294ba8ef}{check\+\_\+synced\+\_\+parameters} (model)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1distributed_a4383b14f0cb5162d90f1141db981d942}{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = True
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a9ef5bf0debf512ddbeb045327bfd87ef}\label{namespaceparlai_1_1utils_1_1distributed_a9ef5bf0debf512ddbeb045327bfd87ef}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!all\+\_\+gather\+\_\+list@{all\+\_\+gather\+\_\+list}}
+\index{all\+\_\+gather\+\_\+list@{all\+\_\+gather\+\_\+list}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{all\+\_\+gather\+\_\+list()}{all\_gather\_list()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+all\+\_\+gather\+\_\+list (\begin{DoxyParamCaption}\item[{}]{data,  }\item[{}]{max\+\_\+size = {\ttfamily 16384} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Gather arbitrary data from all nodes into a list.
+
+Similar to `~torch.distributed.all_gather` but for arbitrary Python
+data. Note that *data* must be picklable.
+
+:param data:
+    data from the local worker to be gathered on other workers
+:param int max_size:
+    maximum size of the data to be gathered across workers
+
+:returns:
+    a list containing [data1, data2, ...] of all workers
+\end{DoxyVerb}
+ 
+
+Definition at line 109 of file distributed.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+utils.\+distributed.\+is\+\_\+distributed().
+
+
+
+Referenced by parlai.\+utils.\+distributed.\+check\+\_\+synced\+\_\+parameters(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a9ef5bf0debf512ddbeb045327bfd87ef_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a9ef5bf0debf512ddbeb045327bfd87ef_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_afc64140f9a6437dc1a2b2bd4294ba8ef}\label{namespaceparlai_1_1utils_1_1distributed_afc64140f9a6437dc1a2b2bd4294ba8ef}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!check\+\_\+synced\+\_\+parameters@{check\+\_\+synced\+\_\+parameters}}
+\index{check\+\_\+synced\+\_\+parameters@{check\+\_\+synced\+\_\+parameters}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{check\+\_\+synced\+\_\+parameters()}{check\_synced\_parameters()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+check\+\_\+synced\+\_\+parameters (\begin{DoxyParamCaption}\item[{}]{model }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check that all parameters across all workers are the same.
+
+Always returns True, or raises an AssertionError if they are not
+synchronized.
+
+:param torch.nn.Module model: A pytorch model.
+:return: True
+\end{DoxyVerb}
+ 
+
+Definition at line 227 of file distributed.\+py.
+
+
+
+References parlai.\+utils.\+distributed.\+all\+\_\+gather\+\_\+list(), make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+utils.\+distributed.\+is\+\_\+distributed(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_afc64140f9a6437dc1a2b2bd4294ba8ef_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a023acb5e3b66e1f27e21247c35661279}\label{namespaceparlai_1_1utils_1_1distributed_a023acb5e3b66e1f27e21247c35661279}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!is\+\_\+distributed@{is\+\_\+distributed}}
+\index{is\+\_\+distributed@{is\+\_\+distributed}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{is\+\_\+distributed()}{is\_distributed()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+is\+\_\+distributed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return if we are in distributed mode.\end{DoxyVerb}
+ 
+
+Definition at line 54 of file distributed.\+py.
+
+
+
+Referenced by parlai.\+utils.\+distributed.\+all\+\_\+gather\+\_\+list(), parlai.\+scripts.\+build\+\_\+dict.\+build\+\_\+dict(), parlai.\+utils.\+distributed.\+check\+\_\+synced\+\_\+parameters(), parlai.\+utils.\+distributed.\+is\+\_\+primary\+\_\+worker(), parlai.\+utils.\+distributed.\+num\+\_\+workers(), parlai.\+utils.\+distributed.\+sync\+\_\+object(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a023acb5e3b66e1f27e21247c35661279_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a9bb1dac198180590ef8c6b6c6f9fc2c4}\label{namespaceparlai_1_1utils_1_1distributed_a9bb1dac198180590ef8c6b6c6f9fc2c4}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!is\+\_\+primary\+\_\+worker@{is\+\_\+primary\+\_\+worker}}
+\index{is\+\_\+primary\+\_\+worker@{is\+\_\+primary\+\_\+worker}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{is\+\_\+primary\+\_\+worker()}{is\_primary\_worker()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+is\+\_\+primary\+\_\+worker (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine if we are the primary (master) worker.
+
+Returns False if we are a secondary worker. Returns True if we are either
+(1) not in distributed mode (2) or are the primary (rank 0) worker.
+\end{DoxyVerb}
+ 
+
+Definition at line 67 of file distributed.\+py.
+
+
+
+References parlai.\+utils.\+distributed.\+is\+\_\+distributed().
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), parlai.\+scripts.\+train\+\_\+model.\+setup\+\_\+args(), parlai.\+utils.\+distributed.\+sync\+\_\+object(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a9bb1dac198180590ef8c6b6c6f9fc2c4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a9bb1dac198180590ef8c6b6c6f9fc2c4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a99b61b4756577c6542039c238d670dba}\label{namespaceparlai_1_1utils_1_1distributed_a99b61b4756577c6542039c238d670dba}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!num\+\_\+workers@{num\+\_\+workers}}
+\index{num\+\_\+workers@{num\+\_\+workers}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{num\+\_\+workers()}{num\_workers()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+num\+\_\+workers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the total number of workers.\end{DoxyVerb}
+ 
+
+Definition at line 59 of file distributed.\+py.
+
+
+
+References parlai.\+utils.\+distributed.\+is\+\_\+distributed().
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a99b61b4756577c6542039c238d670dba_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a99b61b4756577c6542039c238d670dba_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a601345e55fc3fc3845c43efa1a04db56}\label{namespaceparlai_1_1utils_1_1distributed_a601345e55fc3fc3845c43efa1a04db56}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!override\+\_\+print@{override\+\_\+print}}
+\index{override\+\_\+print@{override\+\_\+print}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{override\+\_\+print()}{override\_print()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+override\+\_\+print (\begin{DoxyParamCaption}\item[{}]{suppress = {\ttfamily False},  }\item[{}]{prefix = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Context manager to override the print to suppress or modify output.
+Recommended usage is to call this with suppress=True for all non-primary workers,
+or call with a prefix of rank on all workers.
+>>> with override_print(prefix="rank{}".format(rank)):
+...     my_computation()
+:param bool suppress:
+    if true, all future print statements are noops.
+:param str prefix:
+    if not None, this string is prefixed to all future print statements.
+\end{DoxyVerb}
+ 
+
+Definition at line 78 of file distributed.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a269d3c7284127d9b287b9b61e9161de6}\label{namespaceparlai_1_1utils_1_1distributed_a269d3c7284127d9b287b9b61e9161de6}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!sync\+\_\+object@{sync\+\_\+object}}
+\index{sync\+\_\+object@{sync\+\_\+object}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{sync\+\_\+object()}{sync\_object()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+sync\+\_\+object (\begin{DoxyParamCaption}\item[{}]{data,  }\item[{}]{max\+\_\+size = {\ttfamily 16384} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sync an object among all workers.
+
+All workers will return the same value for `data` when returning from this
+method, always using the primary worker's version. Useful for ensuring control
+flow decisions are made the same.
+
+:param object data:
+    The object to synchronize. Must be pickleable.
+:param int max_size:
+    The maximum size of this object in bytes. Large values than 255^2 are not
+    supported.
+
+:return: the synchronized data
+\end{DoxyVerb}
+ 
+
+Definition at line 173 of file distributed.\+py.
+
+
+
+References parlai.\+utils.\+distributed.\+is\+\_\+distributed(), and parlai.\+utils.\+distributed.\+is\+\_\+primary\+\_\+worker().
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a269d3c7284127d9b287b9b61e9161de6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1distributed_a269d3c7284127d9b287b9b61e9161de6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_afd854992e4cc6571b120b9e179cd4a7a}\label{namespaceparlai_1_1utils_1_1distributed_afd854992e4cc6571b120b9e179cd4a7a}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!validate\+\_\+params@{validate\+\_\+params}}
+\index{validate\+\_\+params@{validate\+\_\+params}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{validate\+\_\+params()}{validate\_params()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+distributed.\+validate\+\_\+params (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ensure sane combinations of command line parameters for distributed training.
+
+Raises exceptions if anything is wrong, otherwise returns None.
+\end{DoxyVerb}
+ 
+
+Definition at line 28 of file distributed.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1distributed_a4383b14f0cb5162d90f1141db981d942}\label{namespaceparlai_1_1utils_1_1distributed_a4383b14f0cb5162d90f1141db981d942}} 
+\index{parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}!T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}}
+\index{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}!parlai\+::utils\+::distributed@{parlai\+::utils\+::distributed}}
+\subsubsection{\texorpdfstring{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}{TORCH\_AVAILABLE}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+distributed.\+T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE = True}
+
+
+
+Definition at line 23 of file distributed.\+py.
+

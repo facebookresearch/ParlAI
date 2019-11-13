@@ -1,0 +1,15 @@
+<map id="parlai.core.pytorch_data_teacher.process" name="parlai.core.pytorch_data_teacher.process">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher.html#aa4e63cd7dd1a904a8424a096f7ca1f63" title="parlai.core.pytorch\l_data_teacher.PytorchDataTeacher.next_batch" alt="" coords="208,195,504,236"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher.html#a62003fefcf480fb16038acb7e40b4f15" title="parlai.core.pytorch\l_data_teacher.PytorchDataTeacher.next\l_example" alt="" coords="227,289,485,345"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#afa75426a7578e8aad5b74964219345be" title="parlai.core.teachers.Fixed\lDialogTeacher.batch_act" alt="" coords="575,165,747,207"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="817,5,1056,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title="parlai.core.torch_agent.\lTorchAgent.act" alt="" coords="857,71,1016,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title="parlai.core.worlds.Batch\lWorld.parley" alt="" coords="855,136,1018,177"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="837,202,1036,229"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="857,253,1017,295"/>
+<area shape="rect" id="node9" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="833,319,1041,360"/>
+<area shape="rect" id="node11" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title="parlai.tasks.coco_caption.agents.\lDefaultTeacher.next_example" alt="" coords="552,231,769,272"/>
+<area shape="rect" id="node12" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title="parlai.tasks.flickr30k.agents.\lDefaultTeacher.next_example" alt="" coords="563,296,759,337"/>
+<area shape="rect" id="node13" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a42df8da64edbf22fcc976b1cd02ef252" title="parlai.tasks.vqa_v1.agents.\lOeTeacher.next_example" alt="" coords="569,361,752,403"/>
+<area shape="rect" id="node14" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a759b2dcb341b657fda29c71a7a5354b4" title="parlai.core.teachers.Fixed\lDialogTeacher.act" alt="" coords="575,427,747,468"/>
+</map>

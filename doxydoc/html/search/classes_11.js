@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['randomcandidateagent',['RandomCandidateAgent',['../classparlai_1_1agents_1_1random__candidate_1_1random__candidate_1_1RandomCandidateAgent.html',1,'parlai::agents::random_candidate::random_candidate']]],
+  ['randomprojection',['RandomProjection',['../classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1RandomProjection.html',1,'parlai::agents::legacy_agents::seq2seq::modules_v0']]],
+  ['ranker',['Ranker',['../classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Ranker.html',1,'parlai::agents::legacy_agents::seq2seq::modules_v0']]],
+  ['redirecthandler',['RedirectHandler',['../classserver_1_1RedirectHandler.html',1,'server']]],
+  ['regexptokenizer',['RegexpTokenizer',['../classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1regexp__tokenizer_1_1RegexpTokenizer.html',1,'parlai::agents::tfidf_retriever::tokenizers::regexp_tokenizer']]],
+  ['rejectionhandler',['RejectionHandler',['../classserver_1_1RejectionHandler.html',1,'server']]],
+  ['remoteagentagent',['RemoteAgentAgent',['../classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent.html',1,'parlai::agents::remote_agent::remote_agent']]],
+  ['removeobjectfunction',['RemoveObjectFunction',['../classlight__chats_1_1graph_1_1RemoveObjectFunction.html',1,'light_chats::graph']]],
+  ['repeatlabelagent',['RepeatLabelAgent',['../classparlai_1_1agents_1_1repeat__label_1_1repeat__label_1_1RepeatLabelAgent.html',1,'parlai::agents::repeat_label::repeat_label']]],
+  ['repeatqueryagent',['RepeatQueryAgent',['../classparlai_1_1agents_1_1repeat__query_1_1repeat__query_1_1RepeatQueryAgent.html',1,'parlai::agents::repeat_query::repeat_query']]],
+  ['repeatteacher',['RepeatTeacher',['../classrepeat_1_1RepeatTeacher.html',1,'repeat']]],
+  ['rephrasepersonaworld',['RephrasePersonaWorld',['../classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html',1,'parlai::mturk::tasks::personachat::personachat_rephrase::worlds']]],
+  ['retrieverreaderagent',['RetrieverReaderAgent',['../classparlai_1_1agents_1_1retriever__reader_1_1retriever__reader_1_1RetrieverReaderAgent.html',1,'parlai::agents::retriever_reader::retriever_reader']]],
+  ['retry',['retry',['../classparlai_1_1utils_1_1testing_1_1retry.html',1,'parlai::utils::testing']]],
+  ['reversehandler',['ReverseHandler',['../classserver_1_1ReverseHandler.html',1,'server']]],
+  ['rnndecoder',['RNNDecoder',['../classparlai_1_1agents_1_1seq2seq_1_1modules_1_1RNNDecoder.html',1,'parlai.agents.seq2seq.modules.RNNDecoder'],['../classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder.html',1,'parlai.agents.legacy_agents.seq2seq.modules_v1.RNNDecoder'],['../classcontrollable__seq2seq_1_1modules_1_1RNNDecoder.html',1,'controllable_seq2seq.modules.RNNDecoder']]],
+  ['rnndocreader',['RnnDocReader',['../classparlai_1_1agents_1_1drqa_1_1rnn__reader_1_1RnnDocReader.html',1,'parlai::agents::drqa::rnn_reader']]],
+  ['rnnencoder',['RNNEncoder',['../classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNEncoder.html',1,'parlai.agents.legacy_agents.seq2seq.modules_v1.RNNEncoder'],['../classparlai_1_1agents_1_1seq2seq_1_1modules_1_1RNNEncoder.html',1,'parlai.agents.seq2seq.modules.RNNEncoder'],['../classcontrollable__seq2seq_1_1modules_1_1RNNEncoder.html',1,'controllable_seq2seq.modules.RNNEncoder']]],
+  ['rnnmodel',['RNNModel',['../classparlai_1_1agents_1_1language__model_1_1modules_1_1RNNModel.html',1,'parlai::agents::language_model::modules']]],
+  ['roleonboardworld',['RoleOnboardWorld',['../classigc__evals_1_1worlds_1_1RoleOnboardWorld.html',1,'igc_evals.worlds.RoleOnboardWorld'],['../classimage__chat__collection_1_1worlds_1_1RoleOnboardWorld.html',1,'image_chat_collection.worlds.RoleOnboardWorld'],['../classstack__rank__evals_1_1worlds_1_1RoleOnboardWorld.html',1,'stack_rank_evals.worlds.RoleOnboardWorld'],['../classpersonality__captions_1_1worlds_1_1RoleOnboardWorld.html',1,'personality_captions.worlds.RoleOnboardWorld'],['../classworlds_1_1RoleOnboardWorld.html',1,'worlds.RoleOnboardWorld']]],
+  ['runhandler',['RunHandler',['../classserver_1_1RunHandler.html',1,'server']]],
+  ['runlisthandler',['RunListHandler',['../classserver_1_1RunListHandler.html',1,'server']]]
+];

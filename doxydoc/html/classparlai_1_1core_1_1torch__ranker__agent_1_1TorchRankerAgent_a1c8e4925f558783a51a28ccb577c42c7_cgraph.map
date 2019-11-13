@@ -1,0 +1,8 @@
+<map id="parlai.core.torch_ranker_agent.TorchRankerAgent.encode_candidates" name="parlai.core.torch_ranker_agent.TorchRankerAgent.encode_candidates">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#ab0c47ca129aeec437446202c941e0a56" title="parlai.agents.memnn.memnn.\lMemnnAgent.encode_candidates" alt="" coords="288,5,503,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#ae73fe8d98b46a7ef18ef7115f29c999d" title="parlai.agents.transformer.polyencoder.\lPolyencoderAgent.encode_candidates" alt="" coords="273,71,517,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a98361c5172041c64dc2da76ab9b654a7" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.\lBiEncoderRankerAgent.encode\l_candidates" alt="" coords="293,136,497,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6067345dff7fefda2809ea3bd63cd8fd" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent.encode\l_candidates" alt="" coords="275,231,515,287"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers.html#ae5621255d8851c9628c116cb6db4c28c" title="parlai.agents.bert\l_ranker.helpers.surround" alt="" coords="578,115,743,156"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker.html#afd88e1e1699d975ab19ea38e8ae77e20" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.to\l_bert_input" alt="" coords="565,181,756,237"/>
+</map>

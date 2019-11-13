@@ -1,8 +1,5 @@
 <map id="parlai.agents.transformer.polyencoder.PolyencoderAgent" name="parlai.agents.transformer.polyencoder.PolyencoderAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,249,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="40,244,215,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="48,155,207,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="37,80,87,107"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,80,274,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="164,5,221,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent" alt="" coords="40,244,215,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="48,155,207,196"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="111,80,274,107"/>
 </map>

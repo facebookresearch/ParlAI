@@ -1,7 +1,6 @@
 <map id="parlai.mturk.core.agents.MTurkAgent.wait_for_status" name="parlai.mturk.core.agents.MTurkAgent.wait_for_status">
-<area shape="rect" id="node1" title=" " alt="" coords="5,89,192,130"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title=" " alt="" coords="455,14,621,55"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title=" " alt="" coords="240,55,407,97"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a95b2a76b6e8ec7e045542450ee49f971" title=" " alt="" coords="240,121,407,162"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab7e57409d6591f78a3b9d28c5a0f98e6" title=" " alt="" coords="240,186,407,227"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title="parlai.mturk.core.agents.\lAssignState.get_status" alt="" coords="240,5,407,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title="parlai.mturk.core.agents.\lMTurkAgent.get_status" alt="" coords="240,71,407,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a95b2a76b6e8ec7e045542450ee49f971" title="parlai.mturk.core.agents.\lAssignState.is_final" alt="" coords="240,136,407,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab7e57409d6591f78a3b9d28c5a0f98e6" title="parlai.mturk.core.agents.\lMTurkAgent.is_final" alt="" coords="240,201,407,243"/>
 </map>

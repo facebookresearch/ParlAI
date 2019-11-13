@@ -1,0 +1,5 @@
+<map id="parlai.mturk.core.dev.test.test_mturk_manager.assert_equal_by" name="parlai.mturk.core.dev.test.test_mturk_manager.assert_equal_by">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__mturk__manager_1_1TestMTurkManagerLifecycleFunctions.html#a33dbbefd45dab90f29727329657e7767" title="parlai.mturk.core.dev.test.test\l_mturk_manager.TestMTurkManagerLifecycle\lFunctions.test_full_lifecycle" alt="" coords="272,5,560,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__mturk__manager_1_1TestMTurkManagerUnitFunctions.html#a9439aba4f729dacb09ac64fd0dccbf0f" title="parlai.mturk.core.dev.test.test\l_mturk_manager.TestMTurkManagerUnit\lFunctions.test_onboarding_function" alt="" coords="286,85,546,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__mturk__manager_1_1TestMTurkManagerUnitFunctions.html#a6fe5e5af6b831868b8570f8015efafea" title="parlai.mturk.core.dev.test.test\l_mturk_manager.TestMTurkManagerUnit\lFunctions.test_wait_for_task_expirations" alt="" coords="286,165,546,221"/>
+</map>

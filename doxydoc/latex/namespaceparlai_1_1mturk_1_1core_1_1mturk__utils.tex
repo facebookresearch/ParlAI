@@ -1,0 +1,504 @@
+\hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils}{}\section{parlai.\+mturk.\+core.\+mturk\+\_\+utils Namespace Reference}
+\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils}\index{parlai.\+mturk.\+core.\+mturk\+\_\+utils@{parlai.\+mturk.\+core.\+mturk\+\_\+utils}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a018a49fdf2cf6ff4c0b279d2f5b1bff0}{setup\+\_\+aws\+\_\+credentials} ()
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a4add40f6a463a3feb100a3c960ba3405}{calculate\+\_\+mturk\+\_\+cost} (payment\+\_\+opt)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a68fb1962cbfa751d20f701da94ada62b}{check\+\_\+mturk\+\_\+balance} (balance\+\_\+needed, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a3f54e0bc76066fc3a784d6b2e3fc13bb}{create\+\_\+hit\+\_\+config} (opt, task\+\_\+description, unique\+\_\+worker, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a577e2527c04682284394b0951a090695}{get\+\_\+mturk\+\_\+client} (is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a389ca1d743e6319cb35916a6b0d7867d}{delete\+\_\+qualification} (qualification\+\_\+id, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a54121023abc81124ba03cc50d5f23af3}{find\+\_\+qualification} (qualification\+\_\+name, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_ae5d70edec5817ee9e05b9675320859d7}{find\+\_\+or\+\_\+create\+\_\+qualification} (qualification\+\_\+name, description, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a640e2d9d121507f92649cccbd27e3af9}{give\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, value=None, is\+\_\+sandbox=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a9221bb896f04cca6c0acac4bc127fdbf}{remove\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, is\+\_\+sandbox=True, reason=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2812666cca37ae0fa15e1843d3a87cd4}{create\+\_\+hit\+\_\+type} (hit\+\_\+title, hit\+\_\+description, hit\+\_\+keywords, hit\+\_\+reward, assignment\+\_\+duration\+\_\+in\+\_\+seconds, is\+\_\+sandbox, qualifications=None, auto\+\_\+approve\+\_\+delay=7 $\ast$24 $\ast$3600)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2e92dde4f8ec17749f22f83b6d362d4f}{create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type} (opt, page\+\_\+url, hit\+\_\+type\+\_\+id, num\+\_\+assignments, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a960c8639f5fa43ab8be109eb48ea1925}{expire\+\_\+hit} (is\+\_\+sandbox, hit\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a98c01409407393818d100c21a4e07742}{setup\+\_\+sns\+\_\+topic} (task\+\_\+name, server\+\_\+url, task\+\_\+group\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_accc5838e30ccf9ab95050ab11ac0d973}{subscribe\+\_\+to\+\_\+hits} (hit\+\_\+type\+\_\+id, is\+\_\+sandbox, sns\+\_\+arn)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a03b8f25675cb76e8b27205ca5d26e623}{send\+\_\+test\+\_\+notif} (topic\+\_\+arn, event\+\_\+type)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a669fa20824749469221df338aa8a0e8e}{delete\+\_\+sns\+\_\+topic} (topic\+\_\+arn)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_aee608122885844b570d86be9f0a5d731}{region\+\_\+name} = \textquotesingle{}us-\/east-\/1\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_acb7b9577d828e5c693ca1c20069c5d14}{aws\+\_\+profile\+\_\+name} = \textquotesingle{}parlai\+\_\+mturk\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a46a5a1362c84f2ab158459d11e5ff75b}{client} = None
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a707afd86b31fd970b726f481d15f570a}{parent\+\_\+dir} = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a4add40f6a463a3feb100a3c960ba3405}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a4add40f6a463a3feb100a3c960ba3405}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!calculate\+\_\+mturk\+\_\+cost@{calculate\+\_\+mturk\+\_\+cost}}
+\index{calculate\+\_\+mturk\+\_\+cost@{calculate\+\_\+mturk\+\_\+cost}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{calculate\+\_\+mturk\+\_\+cost()}{calculate\_mturk\_cost()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+calculate\+\_\+mturk\+\_\+cost (\begin{DoxyParamCaption}\item[{}]{payment\+\_\+opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}MTurk Pricing: https://requester.mturk.com/pricing
+20% fee on the reward and bonus amount (if any) you pay Workers.
+HITs with 10 or more assignments will be charged an additional
+20% fee on the reward you pay Workers.
+
+Example payment_opt format for paying reward:
+{
+    'type': 'reward',
+    'num_total_assignments': 1,
+    'reward': 0.05  # in dollars
+}
+
+Example payment_opt format for paying bonus:
+{
+    'type': 'bonus',
+    'amount': 1000  # in dollars
+}
+\end{DoxyVerb}
+ 
+
+Definition at line 73 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a68fb1962cbfa751d20f701da94ada62b}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a68fb1962cbfa751d20f701da94ada62b}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!check\+\_\+mturk\+\_\+balance@{check\+\_\+mturk\+\_\+balance}}
+\index{check\+\_\+mturk\+\_\+balance@{check\+\_\+mturk\+\_\+balance}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{check\+\_\+mturk\+\_\+balance()}{check\_mturk\_balance()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+check\+\_\+mturk\+\_\+balance (\begin{DoxyParamCaption}\item[{}]{balance\+\_\+needed,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Checks to see if there is at least balance_needed amount in the
+requester account, returns True if the balance is greater than
+balance_needed
+\end{DoxyVerb}
+ 
+
+Definition at line 101 of file mturk\+\_\+utils.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a68fb1962cbfa751d20f701da94ada62b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a3f54e0bc76066fc3a784d6b2e3fc13bb}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a3f54e0bc76066fc3a784d6b2e3fc13bb}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!create\+\_\+hit\+\_\+config@{create\+\_\+hit\+\_\+config}}
+\index{create\+\_\+hit\+\_\+config@{create\+\_\+hit\+\_\+config}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{create\+\_\+hit\+\_\+config()}{create\_hit\_config()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+config (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{task\+\_\+description,  }\item[{}]{unique\+\_\+worker,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Writes a HIT config to file\end{DoxyVerb}
+ 
+
+Definition at line 137 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2812666cca37ae0fa15e1843d3a87cd4}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2812666cca37ae0fa15e1843d3a87cd4}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!create\+\_\+hit\+\_\+type@{create\+\_\+hit\+\_\+type}}
+\index{create\+\_\+hit\+\_\+type@{create\+\_\+hit\+\_\+type}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{create\+\_\+hit\+\_\+type()}{create\_hit\_type()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type (\begin{DoxyParamCaption}\item[{}]{hit\+\_\+title,  }\item[{}]{hit\+\_\+description,  }\item[{}]{hit\+\_\+keywords,  }\item[{}]{hit\+\_\+reward,  }\item[{}]{assignment\+\_\+duration\+\_\+in\+\_\+seconds,  }\item[{}]{is\+\_\+sandbox,  }\item[{}]{qualifications = {\ttfamily None},  }\item[{}]{auto\+\_\+approve\+\_\+delay = {\ttfamily 7~$\ast$~24~$\ast$~3600} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a HIT type to be used to generate HITs of the requested params\end{DoxyVerb}
+ 
+
+Definition at line 283 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2812666cca37ae0fa15e1843d3a87cd4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2812666cca37ae0fa15e1843d3a87cd4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2e92dde4f8ec17749f22f83b6d362d4f}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2e92dde4f8ec17749f22f83b6d362d4f}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type@{create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type}}
+\index{create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type@{create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type()}{create\_hit\_with\_hit\_type()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{page\+\_\+url,  }\item[{}]{hit\+\_\+type\+\_\+id,  }\item[{}]{num\+\_\+assignments,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates the actual HIT given the type and page to direct clients to\end{DoxyVerb}
+ 
+
+Definition at line 327 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a2e92dde4f8ec17749f22f83b6d362d4f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a389ca1d743e6319cb35916a6b0d7867d}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a389ca1d743e6319cb35916a6b0d7867d}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!delete\+\_\+qualification@{delete\+\_\+qualification}}
+\index{delete\+\_\+qualification@{delete\+\_\+qualification}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+qualification()}{delete\_qualification()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+delete\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{qualification\+\_\+id,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Deletes a qualification by id\end{DoxyVerb}
+ 
+
+Definition at line 177 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a389ca1d743e6319cb35916a6b0d7867d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a669fa20824749469221df338aa8a0e8e}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a669fa20824749469221df338aa8a0e8e}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!delete\+\_\+sns\+\_\+topic@{delete\+\_\+sns\+\_\+topic}}
+\index{delete\+\_\+sns\+\_\+topic@{delete\+\_\+sns\+\_\+topic}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+sns\+\_\+topic()}{delete\_sns\_topic()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+delete\+\_\+sns\+\_\+topic (\begin{DoxyParamCaption}\item[{}]{topic\+\_\+arn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 441 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a960c8639f5fa43ab8be109eb48ea1925}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a960c8639f5fa43ab8be109eb48ea1925}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!expire\+\_\+hit@{expire\+\_\+hit}}
+\index{expire\+\_\+hit@{expire\+\_\+hit}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{expire\+\_\+hit()}{expire\_hit()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+expire\+\_\+hit (\begin{DoxyParamCaption}\item[{}]{is\+\_\+sandbox,  }\item[{}]{hit\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 366 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a960c8639f5fa43ab8be109eb48ea1925_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_ae5d70edec5817ee9e05b9675320859d7}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_ae5d70edec5817ee9e05b9675320859d7}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!find\+\_\+or\+\_\+create\+\_\+qualification@{find\+\_\+or\+\_\+create\+\_\+qualification}}
+\index{find\+\_\+or\+\_\+create\+\_\+qualification@{find\+\_\+or\+\_\+create\+\_\+qualification}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{find\+\_\+or\+\_\+create\+\_\+qualification()}{find\_or\_create\_qualification()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{qualification\+\_\+name,  }\item[{}]{description,  }\item[{}]{is\+\_\+sandbox,  }\item[{}]{must\+\_\+be\+\_\+owned = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Query amazon to find the existing qualification name, return the Id. If
+it exists and must_be_owned is true but we don't own it, this prints an
+error and returns none. If it doesn't exist, the qualification is created
+\end{DoxyVerb}
+ 
+
+Definition at line 220 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+qualification(), and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+qualification().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_ae5d70edec5817ee9e05b9675320859d7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_ae5d70edec5817ee9e05b9675320859d7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a54121023abc81124ba03cc50d5f23af3}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a54121023abc81124ba03cc50d5f23af3}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!find\+\_\+qualification@{find\+\_\+qualification}}
+\index{find\+\_\+qualification@{find\+\_\+qualification}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{find\+\_\+qualification()}{find\_qualification()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{qualification\+\_\+name,  }\item[{}]{is\+\_\+sandbox,  }\item[{}]{must\+\_\+be\+\_\+owned = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Query amazon to find the existing qualification name, return the Id,
+otherwise return none.
+If must_be_owned is true, it only returns qualifications owned by the user.
+Will return False if it finds another's qualification
+\end{DoxyVerb}
+ 
+
+Definition at line 183 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a54121023abc81124ba03cc50d5f23af3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a54121023abc81124ba03cc50d5f23af3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a577e2527c04682284394b0951a090695}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a577e2527c04682284394b0951a090695}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!get\+\_\+mturk\+\_\+client@{get\+\_\+mturk\+\_\+client}}
+\index{get\+\_\+mturk\+\_\+client@{get\+\_\+mturk\+\_\+client}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{get\+\_\+mturk\+\_\+client()}{get\_mturk\_client()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client (\begin{DoxyParamCaption}\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the appropriate mturk client given sandbox option\end{DoxyVerb}
+ 
+
+Definition at line 162 of file mturk\+\_\+utils.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+check\+\_\+mturk\+\_\+balance(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+delete\+\_\+qualification(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+expire\+\_\+hit(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+find\+\_\+qualification(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+give\+\_\+worker\+\_\+qualification(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+send\+\_\+test\+\_\+notif(), and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+subscribe\+\_\+to\+\_\+hits().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a577e2527c04682284394b0951a090695_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a640e2d9d121507f92649cccbd27e3af9}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a640e2d9d121507f92649cccbd27e3af9}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!give\+\_\+worker\+\_\+qualification@{give\+\_\+worker\+\_\+qualification}}
+\index{give\+\_\+worker\+\_\+qualification@{give\+\_\+worker\+\_\+qualification}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{give\+\_\+worker\+\_\+qualification()}{give\_worker\_qualification()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+give\+\_\+worker\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{worker\+\_\+id,  }\item[{}]{qualification\+\_\+id,  }\item[{}]{value = {\ttfamily None},  }\item[{}]{is\+\_\+sandbox = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Give a qualification to the given worker\end{DoxyVerb}
+ 
+
+Definition at line 244 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client(), and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a640e2d9d121507f92649cccbd27e3af9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a9221bb896f04cca6c0acac4bc127fdbf}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a9221bb896f04cca6c0acac4bc127fdbf}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!remove\+\_\+worker\+\_\+qualification@{remove\+\_\+worker\+\_\+qualification}}
+\index{remove\+\_\+worker\+\_\+qualification@{remove\+\_\+worker\+\_\+qualification}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{remove\+\_\+worker\+\_\+qualification()}{remove\_worker\_qualification()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{worker\+\_\+id,  }\item[{}]{qualification\+\_\+id,  }\item[{}]{is\+\_\+sandbox = {\ttfamily True},  }\item[{}]{reason = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Give a qualification to the given worker\end{DoxyVerb}
+ 
+
+Definition at line 266 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type(), and parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+give\+\_\+worker\+\_\+qualification().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a9221bb896f04cca6c0acac4bc127fdbf_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a9221bb896f04cca6c0acac4bc127fdbf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a03b8f25675cb76e8b27205ca5d26e623}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a03b8f25675cb76e8b27205ca5d26e623}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!send\+\_\+test\+\_\+notif@{send\+\_\+test\+\_\+notif}}
+\index{send\+\_\+test\+\_\+notif@{send\+\_\+test\+\_\+notif}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{send\+\_\+test\+\_\+notif()}{send\_test\_notif()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+send\+\_\+test\+\_\+notif (\begin{DoxyParamCaption}\item[{}]{topic\+\_\+arn,  }\item[{}]{event\+\_\+type }\end{DoxyParamCaption})}
+
+
+
+Definition at line 424 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a03b8f25675cb76e8b27205ca5d26e623_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a018a49fdf2cf6ff4c0b279d2f5b1bff0}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a018a49fdf2cf6ff4c0b279d2f5b1bff0}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!setup\+\_\+aws\+\_\+credentials@{setup\+\_\+aws\+\_\+credentials}}
+\index{setup\+\_\+aws\+\_\+credentials@{setup\+\_\+aws\+\_\+credentials}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+aws\+\_\+credentials()}{setup\_aws\_credentials()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+setup\+\_\+aws\+\_\+credentials (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 23 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a98c01409407393818d100c21a4e07742}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a98c01409407393818d100c21a4e07742}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!setup\+\_\+sns\+\_\+topic@{setup\+\_\+sns\+\_\+topic}}
+\index{setup\+\_\+sns\+\_\+topic@{setup\+\_\+sns\+\_\+topic}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+sns\+\_\+topic()}{setup\_sns\_topic()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+setup\+\_\+sns\+\_\+topic (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{server\+\_\+url,  }\item[{}]{task\+\_\+group\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 373 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_accc5838e30ccf9ab95050ab11ac0d973}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_accc5838e30ccf9ab95050ab11ac0d973}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!subscribe\+\_\+to\+\_\+hits@{subscribe\+\_\+to\+\_\+hits}}
+\index{subscribe\+\_\+to\+\_\+hits@{subscribe\+\_\+to\+\_\+hits}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{subscribe\+\_\+to\+\_\+hits()}{subscribe\_to\_hits()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+subscribe\+\_\+to\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{hit\+\_\+type\+\_\+id,  }\item[{}]{is\+\_\+sandbox,  }\item[{}]{sns\+\_\+arn }\end{DoxyParamCaption})}
+
+
+
+Definition at line 405 of file mturk\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_accc5838e30ccf9ab95050ab11ac0d973_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_acb7b9577d828e5c693ca1c20069c5d14}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_acb7b9577d828e5c693ca1c20069c5d14}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!aws\+\_\+profile\+\_\+name@{aws\+\_\+profile\+\_\+name}}
+\index{aws\+\_\+profile\+\_\+name@{aws\+\_\+profile\+\_\+name}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{aws\+\_\+profile\+\_\+name}{aws\_profile\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+aws\+\_\+profile\+\_\+name = \textquotesingle{}parlai\+\_\+mturk\textquotesingle{}}
+
+
+
+Definition at line 17 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a46a5a1362c84f2ab158459d11e5ff75b}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a46a5a1362c84f2ab158459d11e5ff75b}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!client@{client}}
+\index{client@{client}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{client}{client}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+client = None}
+
+
+
+Definition at line 18 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a707afd86b31fd970b726f481d15f570a}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_a707afd86b31fd970b726f481d15f570a}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!parent\+\_\+dir@{parent\+\_\+dir}}
+\index{parent\+\_\+dir@{parent\+\_\+dir}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{parent\+\_\+dir}{parent\_dir}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+parent\+\_\+dir = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))}
+
+
+
+Definition at line 20 of file mturk\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_aee608122885844b570d86be9f0a5d731}\label{namespaceparlai_1_1mturk_1_1core_1_1mturk__utils_aee608122885844b570d86be9f0a5d731}} 
+\index{parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}!region\+\_\+name@{region\+\_\+name}}
+\index{region\+\_\+name@{region\+\_\+name}!parlai\+::mturk\+::core\+::mturk\+\_\+utils@{parlai\+::mturk\+::core\+::mturk\+\_\+utils}}
+\subsubsection{\texorpdfstring{region\+\_\+name}{region\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+region\+\_\+name = \textquotesingle{}us-\/east-\/1\textquotesingle{}}
+
+
+
+Definition at line 16 of file mturk\+\_\+utils.\+py.
+

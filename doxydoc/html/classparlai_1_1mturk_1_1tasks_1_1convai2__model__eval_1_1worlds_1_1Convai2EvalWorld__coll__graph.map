@@ -1,6 +1,4 @@
 <map id="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld" name="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,244,255,285"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="52,155,208,196"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="49,80,211,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="101,5,159,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title="parlai.core.worlds.Multi\lAgentDialogWorld" alt="" coords="52,155,208,196"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="49,80,211,107"/>
 </map>

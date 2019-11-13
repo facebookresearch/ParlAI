@@ -1,7 +1,5 @@
 <map id="parlai.mturk.core.dev.test.test_full_system.TestMTurkWorld" name="parlai.mturk.core.dev.test.test_full_system.TestMTurkWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,203,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="9,244,199,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="9,155,199,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="23,80,185,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="75,5,133,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkTaskWorld.html" title="parlai.mturk.core.dev.worlds.\lMTurkTaskWorld" alt="" coords="9,244,199,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld" alt="" coords="9,155,199,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="23,80,185,107"/>
 </map>

@@ -1,6 +1,7 @@
 <map id="parlai.agents.transformer.transformer.TransformerRankerAgent.batchify" name="parlai.agents.transformer.transformer.TransformerRankerAgent.batchify">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,245,112"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a6fbfdde4ec69ec4050fa4005c6608f1a" title=" " alt="" coords="293,5,500,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a42b30bed79467abe02d8b7c65ff33b9c" title=" " alt="" coords="303,71,490,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afa491bf2384b017711ad722b5341b405" title=" " alt="" coords="317,136,476,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a6fbfdde4ec69ec4050fa4005c6608f1a" title="parlai.agents.seq2seq.seq2seq.\lSeq2seqAgent.is_valid" alt="" coords="293,5,500,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a42b30bed79467abe02d8b7c65ff33b9c" title="parlai.agents.fairseq.fairseq.\lFairseqAgent.is_valid" alt="" coords="303,71,490,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afa491bf2384b017711ad722b5341b405" title="parlai.core.torch_agent.\lTorchAgent.is_valid" alt="" coords="317,136,476,177"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="548,13,728,39"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="776,5,919,47"/>
 </map>

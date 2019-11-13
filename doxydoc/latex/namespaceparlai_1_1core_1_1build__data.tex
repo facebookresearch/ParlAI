@@ -1,0 +1,428 @@
+\hypertarget{namespaceparlai_1_1core_1_1build__data}{}\section{parlai.\+core.\+build\+\_\+data Namespace Reference}
+\label{namespaceparlai_1_1core_1_1build__data}\index{parlai.\+core.\+build\+\_\+data@{parlai.\+core.\+build\+\_\+data}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ad834e1a9be02e18a6c2de2b03b9a8f10}{built} (path, version\+\_\+string=None)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a2527e6d29b0ccb7b841182890ac36a59}{mark\+\_\+done} (path, version\+\_\+string=None)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ab74f0e428f05e5d91fa93c8afb367622}{download} (url, path, fname, redownload=False)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a6ce042fedd4194bd016845bbe7a8facf}{make\+\_\+dir} (path)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a1678b8a042eeb9d9c8e9de08f52e496b}{move} (path1, path2)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a24ab3b7e68e41adf774df058d330ff33}{remove\+\_\+dir} (path)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a4d33f97932682a8513904022d852f3cf}{untar} (path, fname, delete\+Tar=True)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_a7cbfdf246ca40dc3ed9f8613deb14a00}{unzip} (path, fname, delete\+Zip=True)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_adc4feba864e2a0d0663cdf6bf84afaf6}{cat} (file1, file2, outfile, delete\+Files=True)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ac9224da5c4e4ce9d1f4ab05e837c1f45}{download\+\_\+from\+\_\+google\+\_\+drive} (gd\+\_\+id, destination)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ad2fe6222094caae59f304931aee0952a}{get\+\_\+model\+\_\+dir} (datapath)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ab697f23f05d3e36d7979fe5e0ed7911e}{download\+\_\+models} (opt, fnames, model\+\_\+folder, version=\textquotesingle{}v1.\+0\textquotesingle{}, path=\textquotesingle{}aws\textquotesingle{}, use\+\_\+model\+\_\+type=False)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ad06e9e38ca85db9c4a676ccd9ae41649}{modelzoo\+\_\+path} (datapath, path)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1build__data_ae259aeb321a77560fbcd23028178c897}{download\+\_\+multiprocess} (urls, path, num\+\_\+processes=32, chunk\+\_\+size=100, dest\+\_\+filenames=None, error\+\_\+path=None)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ad834e1a9be02e18a6c2de2b03b9a8f10}\label{namespaceparlai_1_1core_1_1build__data_ad834e1a9be02e18a6c2de2b03b9a8f10}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!built@{built}}
+\index{built@{built}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{built()}{built()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+built (\begin{DoxyParamCaption}\item[{}]{path,  }\item[{}]{version\+\_\+string = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check if '.built' flag has been set for that task.
+
+If a version_string is provided, this has to match, or the version
+is regarded as not built.
+\end{DoxyVerb}
+ 
+
+Definition at line 27 of file build\+\_\+data.\+py.
+
+
+
+Referenced by parlai.\+zoo.\+pretrained\+\_\+transformers.\+build.\+download(), and parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ad834e1a9be02e18a6c2de2b03b9a8f10_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_adc4feba864e2a0d0663cdf6bf84afaf6}\label{namespaceparlai_1_1core_1_1build__data_adc4feba864e2a0d0663cdf6bf84afaf6}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!cat@{cat}}
+\index{cat@{cat}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{cat()}{cat()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+cat (\begin{DoxyParamCaption}\item[{}]{file1,  }\item[{}]{file2,  }\item[{}]{outfile,  }\item[{}]{delete\+Files = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Concatenate two files to an outfile, possibly deleting the originals.\end{DoxyVerb}
+ 
+
+Definition at line 211 of file build\+\_\+data.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ab74f0e428f05e5d91fa93c8afb367622}\label{namespaceparlai_1_1core_1_1build__data_ab74f0e428f05e5d91fa93c8afb367622}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!download@{download}}
+\index{download@{download}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{download()}{download()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+download (\begin{DoxyParamCaption}\item[{}]{url,  }\item[{}]{path,  }\item[{}]{fname,  }\item[{}]{redownload = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Download file using `requests`.
+
+If ``redownload`` is set to false, then
+will not download tar file again if it is present (default ``True``).
+\end{DoxyVerb}
+ 
+
+Definition at line 65 of file build\+\_\+data.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, eval\+\_\+ppl.\+int, and parlai.\+core.\+build\+\_\+data.\+move().
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+download\+\_\+images.\+download\+\_\+images(), parlai.\+core.\+build\+\_\+data.\+download\+\_\+models(), transresnet.\+modules.\+load\+\_\+fasttext\+\_\+embeddings(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+receive\+\_\+metrics().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ab74f0e428f05e5d91fa93c8afb367622_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1build__data_ab74f0e428f05e5d91fa93c8afb367622_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ac9224da5c4e4ce9d1f4ab05e837c1f45}\label{namespaceparlai_1_1core_1_1build__data_ac9224da5c4e4ce9d1f4ab05e837c1f45}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!download\+\_\+from\+\_\+google\+\_\+drive@{download\+\_\+from\+\_\+google\+\_\+drive}}
+\index{download\+\_\+from\+\_\+google\+\_\+drive@{download\+\_\+from\+\_\+google\+\_\+drive}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{download\+\_\+from\+\_\+google\+\_\+drive()}{download\_from\_google\_drive()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+download\+\_\+from\+\_\+google\+\_\+drive (\begin{DoxyParamCaption}\item[{}]{gd\+\_\+id,  }\item[{}]{destination }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Use the requests package to download a file from Google Drive.\end{DoxyVerb}
+ 
+
+Definition at line 230 of file build\+\_\+data.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ab697f23f05d3e36d7979fe5e0ed7911e}\label{namespaceparlai_1_1core_1_1build__data_ab697f23f05d3e36d7979fe5e0ed7911e}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!download\+\_\+models@{download\+\_\+models}}
+\index{download\+\_\+models@{download\+\_\+models}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{download\+\_\+models()}{download\_models()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+download\+\_\+models (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{fnames,  }\item[{}]{model\+\_\+folder,  }\item[{}]{version = {\ttfamily \textquotesingle{}v1.0\textquotesingle{}},  }\item[{}]{path = {\ttfamily \textquotesingle{}aws\textquotesingle{}},  }\item[{}]{use\+\_\+model\+\_\+type = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Download models into the ParlAI model zoo from a url.
+
+:param fnames: list of filenames to download
+:param model_folder: models will be downloaded into models/model_folder/model_type
+:param path: url for downloading models; defaults to downloading from AWS
+:param use_model_type: whether models are categorized by type in AWS
+\end{DoxyVerb}
+ 
+
+Definition at line 257 of file build\+\_\+data.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+built(), parlai.\+core.\+build\+\_\+data.\+download(), parlai.\+core.\+build\+\_\+data.\+make\+\_\+dir(), parlai.\+core.\+build\+\_\+data.\+mark\+\_\+done(), parlai.\+core.\+build\+\_\+data.\+remove\+\_\+dir(), and parlai.\+core.\+build\+\_\+data.\+untar().
+
+
+
+Referenced by parlai.\+zoo.\+image\+\_\+chat.\+transresnet\+\_\+multimodal.\+download(), parlai.\+zoo.\+self\+\_\+feeding.\+hh131k\+\_\+hb60k\+\_\+fb60k\+\_\+st1k.\+download(), parlai.\+zoo.\+personality\+\_\+captions.\+transresnet.\+download(), parlai.\+zoo.\+convai2.\+kvmemnn.\+download(), parlai.\+zoo.\+wizard\+\_\+of\+\_\+wikipedia.\+full\+\_\+dialogue\+\_\+retrieval\+\_\+model.\+download(), parlai.\+zoo.\+wikipedia\+\_\+full.\+tfidf\+\_\+retriever.\+download(), parlai.\+zoo.\+drqa.\+squad.\+download(), parlai.\+zoo.\+glove\+\_\+vectors.\+build.\+download(), parlai.\+zoo.\+convai2.\+seq2seq.\+download(), parlai.\+zoo.\+wizard\+\_\+of\+\_\+wikipedia.\+end2end\+\_\+generator.\+download(), parlai.\+zoo.\+wikipedia\+\_\+2016-\/12-\/21.\+tfidf\+\_\+retriever.\+download(), parlai.\+zoo.\+light.\+biranker\+\_\+dialogue.\+download(), parlai.\+zoo.\+controllable\+\_\+dialogue.\+build.\+download(), parlai.\+zoo.\+dialogue\+\_\+safety.\+single\+\_\+turn.\+download(), parlai.\+zoo.\+pretrained\+\_\+transformers.\+build.\+download(), parlai.\+zoo.\+dialogue\+\_\+safety.\+multi\+\_\+turn.\+download(), parlai.\+utils.\+testing.\+download\+\_\+unittest\+\_\+models(), parlai.\+core.\+build\+\_\+data.\+get\+\_\+model\+\_\+dir(), eval\+\_\+hits.\+main(), and eval\+\_\+f1.\+main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ab697f23f05d3e36d7979fe5e0ed7911e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1build__data_ab697f23f05d3e36d7979fe5e0ed7911e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ae259aeb321a77560fbcd23028178c897}\label{namespaceparlai_1_1core_1_1build__data_ae259aeb321a77560fbcd23028178c897}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!download\+\_\+multiprocess@{download\+\_\+multiprocess}}
+\index{download\+\_\+multiprocess@{download\+\_\+multiprocess}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{download\+\_\+multiprocess()}{download\_multiprocess()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+download\+\_\+multiprocess (\begin{DoxyParamCaption}\item[{}]{urls,  }\item[{}]{path,  }\item[{}]{num\+\_\+processes = {\ttfamily 32},  }\item[{}]{chunk\+\_\+size = {\ttfamily 100},  }\item[{}]{dest\+\_\+filenames = {\ttfamily None},  }\item[{}]{error\+\_\+path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Download items in parallel (e.g. for an image + dialogue task)
+
+Note: "of threading, multiprocess and pytorch.multiprocessing pick two".
+These three don't all play well together. On OS X, may hang upon successful finish.
+
+:param urls: Array of urls to download
+:param path: directory to save items in
+:param num_processes: number of processes to use
+:param chunk_size: chunk size to use
+:param dest_filenames: optional array of same length as url with filenames.
+ Images will be saved as path + dest_filename
+:param error_path: where to save error logs
+:return: array of tuples of (destination filename, http status code, error
+message if any). Note that upon failure, file may not actually be created.
+\end{DoxyVerb}
+ 
+
+Definition at line 349 of file build\+\_\+data.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+core.\+build\+\_\+data.\+modelzoo\+\_\+path().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ae259aeb321a77560fbcd23028178c897_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ad2fe6222094caae59f304931aee0952a}\label{namespaceparlai_1_1core_1_1build__data_ad2fe6222094caae59f304931aee0952a}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!get\+\_\+model\+\_\+dir@{get\+\_\+model\+\_\+dir}}
+\index{get\+\_\+model\+\_\+dir@{get\+\_\+model\+\_\+dir}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{get\+\_\+model\+\_\+dir()}{get\_model\_dir()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+get\+\_\+model\+\_\+dir (\begin{DoxyParamCaption}\item[{}]{datapath }\end{DoxyParamCaption})}
+
+
+
+Definition at line 251 of file build\+\_\+data.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+
+
+Referenced by parlai.\+zoo.\+pretrained\+\_\+transformers.\+build.\+download().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ad2fe6222094caae59f304931aee0952a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ad2fe6222094caae59f304931aee0952a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a6ce042fedd4194bd016845bbe7a8facf}\label{namespaceparlai_1_1core_1_1build__data_a6ce042fedd4194bd016845bbe7a8facf}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!make\+\_\+dir@{make\+\_\+dir}}
+\index{make\+\_\+dir@{make\+\_\+dir}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{make\+\_\+dir()}{make\_dir()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+make\+\_\+dir (\begin{DoxyParamCaption}\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make the directory and any nonexistent parent directories (`mkdir -p`).\end{DoxyVerb}
+ 
+
+Definition at line 153 of file build\+\_\+data.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+build\+\_\+data.\+download\+\_\+models(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+save(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+save().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_a6ce042fedd4194bd016845bbe7a8facf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a2527e6d29b0ccb7b841182890ac36a59}\label{namespaceparlai_1_1core_1_1build__data_a2527e6d29b0ccb7b841182890ac36a59}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!mark\+\_\+done@{mark\+\_\+done}}
+\index{mark\+\_\+done@{mark\+\_\+done}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{mark\+\_\+done()}{mark\_done()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+mark\+\_\+done (\begin{DoxyParamCaption}\item[{}]{path,  }\item[{}]{version\+\_\+string = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mark this path as prebuilt.
+
+Marks the path as done by adding a '.built' file with the current timestamp
+plus a version description string if specified.
+
+:param str path:
+    The file path to mark as built.
+
+:param str version_string:
+    The version of this dataset.
+\end{DoxyVerb}
+ 
+
+Definition at line 46 of file build\+\_\+data.\+py.
+
+
+
+References generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_a2527e6d29b0ccb7b841182890ac36a59_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_ad06e9e38ca85db9c4a676ccd9ae41649}\label{namespaceparlai_1_1core_1_1build__data_ad06e9e38ca85db9c4a676ccd9ae41649}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!modelzoo\+\_\+path@{modelzoo\+\_\+path}}
+\index{modelzoo\+\_\+path@{modelzoo\+\_\+path}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{modelzoo\+\_\+path()}{modelzoo\_path()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+modelzoo\+\_\+path (\begin{DoxyParamCaption}\item[{}]{datapath,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Map pretrain models filenames to their path on disk.
+
+If path starts with 'models:', then we remap it to the model zoo path
+within the data directory (default is ParlAI/data/models).
+We download models from the model zoo if they are not here yet.
+\end{DoxyVerb}
+ 
+
+Definition at line 297 of file build\+\_\+data.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download\+\_\+multiprocess(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_ad06e9e38ca85db9c4a676ccd9ae41649_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a1678b8a042eeb9d9c8e9de08f52e496b}\label{namespaceparlai_1_1core_1_1build__data_a1678b8a042eeb9d9c8e9de08f52e496b}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!move@{move}}
+\index{move@{move}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{move()}{move()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+move (\begin{DoxyParamCaption}\item[{}]{path1,  }\item[{}]{path2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Rename the given file.\end{DoxyVerb}
+ 
+
+Definition at line 160 of file build\+\_\+data.\+py.
+
+
+
+Referenced by parlai.\+core.\+build\+\_\+data.\+download().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_a1678b8a042eeb9d9c8e9de08f52e496b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a24ab3b7e68e41adf774df058d330ff33}\label{namespaceparlai_1_1core_1_1build__data_a24ab3b7e68e41adf774df058d330ff33}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!remove\+\_\+dir@{remove\+\_\+dir}}
+\index{remove\+\_\+dir@{remove\+\_\+dir}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{remove\+\_\+dir()}{remove\_dir()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+remove\+\_\+dir (\begin{DoxyParamCaption}\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Remove the given directory, if it exists.\end{DoxyVerb}
+ 
+
+Definition at line 165 of file build\+\_\+data.\+py.
+
+
+
+Referenced by parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_a24ab3b7e68e41adf774df058d330ff33_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a4d33f97932682a8513904022d852f3cf}\label{namespaceparlai_1_1core_1_1build__data_a4d33f97932682a8513904022d852f3cf}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!untar@{untar}}
+\index{untar@{untar}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{untar()}{untar()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+untar (\begin{DoxyParamCaption}\item[{}]{path,  }\item[{}]{fname,  }\item[{}]{delete\+Tar = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unpack the given archive file to the same directory.
+
+:param str path:
+    The folder containing the archive. Will contain the contents.
+
+:param str fname:
+    The filename of the archive file.
+
+:param bool deleteTar:
+    If true, the archive will be deleted after extraction.
+\end{DoxyVerb}
+ 
+
+Definition at line 170 of file build\+\_\+data.\+py.
+
+
+
+Referenced by parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1build__data_a4d33f97932682a8513904022d852f3cf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1build__data_a7cbfdf246ca40dc3ed9f8613deb14a00}\label{namespaceparlai_1_1core_1_1build__data_a7cbfdf246ca40dc3ed9f8613deb14a00}} 
+\index{parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}!unzip@{unzip}}
+\index{unzip@{unzip}!parlai\+::core\+::build\+\_\+data@{parlai\+::core\+::build\+\_\+data}}
+\subsubsection{\texorpdfstring{unzip()}{unzip()}}
+{\footnotesize\ttfamily def parlai.\+core.\+build\+\_\+data.\+unzip (\begin{DoxyParamCaption}\item[{}]{path,  }\item[{}]{fname,  }\item[{}]{delete\+Zip = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unzip the given archive file to the same directory.
+
+:param str path:
+    The folder containing the archive. Will contain the contents.
+
+:param str fname:
+    The filename of the archive file.
+
+:param bool deleteZip:
+    If true, the archive will be deleted after extraction.
+\end{DoxyVerb}
+ 
+
+Definition at line 190 of file build\+\_\+data.\+py.
+

@@ -1,0 +1,5 @@
+<map id="parlai.messenger.core.message_sender.create_list_element" name="parlai.messenger.core.message_sender.create_list_element">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a4359c421913c537e0003032b1d1b79b5" title="parlai.messenger.core.message\l_sender.create_compact_list\l_message" alt="" coords="260,5,467,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#a8bc08e730c5d1fbe4c4cc0d96746b30a" title="parlai.messenger.core.message\l_sender.MessageSender.send\l_fb_payload" alt="" coords="515,5,721,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#af18c8b2ca27ba3ff86eed8175cea2656" title="parlai.messenger.core.message\l_sender.MessageSender.typing_on" alt="" coords="769,13,996,54"/>
+</map>

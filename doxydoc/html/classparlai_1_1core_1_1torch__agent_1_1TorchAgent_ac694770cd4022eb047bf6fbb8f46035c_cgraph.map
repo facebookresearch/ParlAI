@@ -1,4 +1,4 @@
 <map id="parlai.core.torch_agent.TorchAgent.report" name="parlai.core.torch_agent.TorchAgent.report">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,164,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a151777a7e8d052ab4ce873d20a2b0c73" title=" " alt="" coords="212,5,375,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a151777a7e8d052ab4ce873d20a2b0c73" title="parlai.core.torch_agent.\lTorchAgent._gpu_usage" alt="" coords="212,5,375,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#af377ec61bfc0423461e7b409ffc883b9" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.round_sigfigs" alt="" coords="219,71,368,127"/>
 </map>

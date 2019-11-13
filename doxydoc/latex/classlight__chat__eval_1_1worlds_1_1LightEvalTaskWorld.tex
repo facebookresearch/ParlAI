@@ -1,0 +1,336 @@
+\hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld}{}\section{light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World Class Reference}
+\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld}\index{light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World}}
+
+
+Inheritance diagram for light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9f9e7de884af532dc436e72c8c0011fc}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, mturk\+\_\+agents, sample, \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad605071600d13b139e24541051eb4afb}{use\+\_\+train}, \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a272355df766ac2722a7547deb5755651}{max\+\_\+wrong})
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a0530e173b2c53acc0129ff45b628fece}{extract\+\_\+from\+\_\+flag} (self, text, flag)
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a55840132c24a5cd4147123774ed4dd55}{get\+\_\+current\+\_\+turn\+\_\+context} (self)
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ae0eca37fa3376ebcd24115d1246dfd81}{parley} (self)
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a950251a737281924e06c7720c2de9dd8}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a86acc8c22dd59f854c4a43f34d804975}{shutdown} (self)
+\item 
+def \hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad7b6b353e331f0e4eb6a0bc9198a58ee}{get\+\_\+custom\+\_\+task\+\_\+data} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ac8f15206b335ec5ea3498a3ee1b0f65f}{mturk\+\_\+agent}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a60c0b70ca0cfb7d35c2b0eac85df0cf1}{sample\+\_\+acts}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a54478e731c75aaf71048894bb762a005}{turn}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ab0ffce12733c1c46f5dc64b1a802f1e2}{episode\+Done}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a1deec2abb5e96799ec49097721586013}{completed}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9dac942996f55099107ba813e91ce437}{selections}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a89359a6fdc961c97b5859980b3790540}{corrects}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad605071600d13b139e24541051eb4afb}{use\+\_\+train}
+\item 
+\hyperlink{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a272355df766ac2722a7547deb5755651}{max\+\_\+wrong}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Task world steps the worker through a conversation, giving them cands
+to select from as if they are a retrieval model.
+\end{DoxyVerb}
+ 
+
+Definition at line 219 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9f9e7de884af532dc436e72c8c0011fc}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9f9e7de884af532dc436e72c8c0011fc}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{mturk\+\_\+agents,  }\item[{}]{sample,  }\item[{}]{use\+\_\+train,  }\item[{}]{max\+\_\+wrong }\end{DoxyParamCaption})}
+
+
+
+Definition at line 224 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a950251a737281924e06c7720c2de9dd8}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a950251a737281924e06c7720c2de9dd8}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 366 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, and parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done.
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a0530e173b2c53acc0129ff45b628fece}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a0530e173b2c53acc0129ff45b628fece}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!extract\+\_\+from\+\_\+flag@{extract\+\_\+from\+\_\+flag}}
+\index{extract\+\_\+from\+\_\+flag@{extract\+\_\+from\+\_\+flag}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{extract\+\_\+from\+\_\+flag()}{extract\_from\_flag()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+extract\+\_\+from\+\_\+flag (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{flag }\end{DoxyParamCaption})}
+
+
+
+Definition at line 237 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+current\+\_\+turn\+\_\+context().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a0530e173b2c53acc0129ff45b628fece_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a55840132c24a5cd4147123774ed4dd55}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a55840132c24a5cd4147123774ed4dd55}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!get\+\_\+current\+\_\+turn\+\_\+context@{get\+\_\+current\+\_\+turn\+\_\+context}}
+\index{get\+\_\+current\+\_\+turn\+\_\+context@{get\+\_\+current\+\_\+turn\+\_\+context}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+current\+\_\+turn\+\_\+context()}{get\_current\_turn\_context()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+current\+\_\+turn\+\_\+context (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 240 of file worlds.\+py.
+
+
+
+References light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+extract\+\_\+from\+\_\+flag(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+sample\+\_\+acts, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+turn, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+turn, and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+turn.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a55840132c24a5cd4147123774ed4dd55_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a55840132c24a5cd4147123774ed4dd55_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad7b6b353e331f0e4eb6a0bc9198a58ee}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad7b6b353e331f0e4eb6a0bc9198a58ee}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!get\+\_\+custom\+\_\+task\+\_\+data@{get\+\_\+custom\+\_\+task\+\_\+data}}
+\index{get\+\_\+custom\+\_\+task\+\_\+data@{get\+\_\+custom\+\_\+task\+\_\+data}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+custom\+\_\+task\+\_\+data()}{get\_custom\_task\_data()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+custom\+\_\+task\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 372 of file worlds.\+py.
+
+
+
+References light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+corrects, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+sample\+\_\+acts, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+selections, and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+use\+\_\+train.
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ae0eca37fa3376ebcd24115d1246dfd81}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ae0eca37fa3376ebcd24115d1246dfd81}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!parley@{parley}}
+\index{parley@{parley}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 342 of file worlds.\+py.
+
+
+
+References light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+completed, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+corrects, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+current\+\_\+turn\+\_\+context(), light\+\_\+chat\+\_\+eval.\+worlds.\+is\+\_\+disconnected(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+max\+\_\+wrong, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+sample\+\_\+acts, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+selections, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+turn, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+turn, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+turn, and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+use\+\_\+train.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ae0eca37fa3376ebcd24115d1246dfd81_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a86acc8c22dd59f854c4a43f34d804975}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a86acc8c22dd59f854c4a43f34d804975}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 369 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a1deec2abb5e96799ec49097721586013}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a1deec2abb5e96799ec49097721586013}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!completed@{completed}}
+\index{completed@{completed}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{completed}{completed}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+completed}
+
+
+
+Definition at line 229 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+review\+\_\+work(), and parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a89359a6fdc961c97b5859980b3790540}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a89359a6fdc961c97b5859980b3790540}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!corrects@{corrects}}
+\index{corrects@{corrects}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{corrects}{corrects}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+corrects}
+
+
+
+Definition at line 231 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ab0ffce12733c1c46f5dc64b1a802f1e2}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ab0ffce12733c1c46f5dc64b1a802f1e2}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+episode\+Done}
+
+
+
+Definition at line 228 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a272355df766ac2722a7547deb5755651}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a272355df766ac2722a7547deb5755651}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!max\+\_\+wrong@{max\+\_\+wrong}}
+\index{max\+\_\+wrong@{max\+\_\+wrong}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+wrong}{max\_wrong}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+max\+\_\+wrong}
+
+
+
+Definition at line 235 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ac8f15206b335ec5ea3498a3ee1b0f65f}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ac8f15206b335ec5ea3498a3ee1b0f65f}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!mturk\+\_\+agent@{mturk\+\_\+agent}}
+\index{mturk\+\_\+agent@{mturk\+\_\+agent}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{mturk\+\_\+agent}{mturk\_agent}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+mturk\+\_\+agent}
+
+
+
+Definition at line 225 of file worlds.\+py.
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a60c0b70ca0cfb7d35c2b0eac85df0cf1}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a60c0b70ca0cfb7d35c2b0eac85df0cf1}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!sample\+\_\+acts@{sample\+\_\+acts}}
+\index{sample\+\_\+acts@{sample\+\_\+acts}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{sample\+\_\+acts}{sample\_acts}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+sample\+\_\+acts}
+
+
+
+Definition at line 226 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+current\+\_\+turn\+\_\+context(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9dac942996f55099107ba813e91ce437}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a9dac942996f55099107ba813e91ce437}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!selections@{selections}}
+\index{selections@{selections}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{selections}{selections}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+selections}
+
+
+
+Definition at line 230 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a54478e731c75aaf71048894bb762a005}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_a54478e731c75aaf71048894bb762a005}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!turn@{turn}}
+\index{turn@{turn}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{turn}{turn}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+turn}
+
+
+
+Definition at line 227 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+current\+\_\+turn\+\_\+context(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+\mbox{\Hypertarget{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad605071600d13b139e24541051eb4afb}\label{classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld_ad605071600d13b139e24541051eb4afb}} 
+\index{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}!use\+\_\+train@{use\+\_\+train}}
+\index{use\+\_\+train@{use\+\_\+train}!light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World@{light\+\_\+chat\+\_\+eval\+::worlds\+::\+Light\+Eval\+Task\+World}}
+\subsubsection{\texorpdfstring{use\+\_\+train}{use\_train}}
+{\footnotesize\ttfamily light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+use\+\_\+train}
+
+
+
+Definition at line 234 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/light/light\+\_\+chat\+\_\+eval/\hyperlink{parlai_2mturk_2tasks_2light_2light__chat__eval_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

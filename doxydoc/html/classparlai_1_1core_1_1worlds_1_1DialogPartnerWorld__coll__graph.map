@@ -1,5 +1,3 @@
 <map id="parlai.core.worlds.DialogPartnerWorld" name="parlai.core.worlds.DialogPartnerWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,155,171,196"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="7,80,169,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="59,5,117,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="7,80,169,107"/>
 </map>

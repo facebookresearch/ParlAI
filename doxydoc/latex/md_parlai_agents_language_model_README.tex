@@ -1,0 +1,16 @@
+The {\bfseries language model} is an agent which trains an R\+NN on a language modeling task. It is adapted from the language model featured in Pytorch\textquotesingle{}s examples repo \href{https://github.com/pytorch/examples/tree/master/word_language_model}{\tt here}.
+
+\subsection*{Basic Examples}
+
+Train a language model with embedding size 128 and sequence length 30 on the Persona-\/\+Chat task. 
+\begin{DoxyCode}
+python examples/train\_model.py -m language\_model -t personachat -esz 128 -sl 30 -mf
+       /tmp/LM\_personachat\_test.mdl
+\end{DoxyCode}
+
+
+After training, load and evaluate that model on the Persona-\/\+Chat test set. 
+\begin{DoxyCode}
+python examples/eval\_model.py -m language\_model -t personachat -mf /tmp/LM\_personachat\_test.mdl -dt test
+\end{DoxyCode}
+ 

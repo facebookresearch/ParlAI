@@ -1,0 +1,399 @@
+\hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent}{}\section{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent}\index{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent@{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=210pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=210pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a7c734ad9e54fd95fc080e9e51f7a7bbc}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a2c83d3c7e15884871dbfabea9f110933}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_adc3f036e92741d87db95e47dfc5fc0ef}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ad5edc81f811cfdd89c8518619f5ae15a}{observe} (self, obs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af4e39c5613a045434a38d260e6fc03e6}{act} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af0deeaf3d545dac60187f95d30b48171}{save} (self, path=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a3701001e1de9bcc2d110a318799101c1}{load} (self, fname)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a87f02e724544fa1531486c1f8f0e2f68}{build\+\_\+query\+\_\+representation} (self, query)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aefd4949ff6e98ac3ccb4b7348794080d}{add\+\_\+cmdline\+\_\+args} (parser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_afdd605338d0cea9ff8813474b07c21e0}{id}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a766788ecf47ab2d015b92dc2c9c191e3}{length\+\_\+penalty}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aedad9637cf632a08f3008765d3debcfa}{dictionary}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a2c83d3c7e15884871dbfabea9f110933}{opt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a8644e518e11536f13338eafcda213d0c}{history}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ae7e51422143ac04c563c6af1d777a564}{episode\+Done}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aa7619e8bcb4c75322f0ce7ac9a6cb860}{label\+\_\+candidates}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a5bc444602ee2228fd3340a5c6a5615d8}{observation}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Information Retrieval baseline.\end{DoxyVerb}
+ 
+
+Definition at line 211 of file ir\+\_\+baseline.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a7c734ad9e54fd95fc080e9e51f7a7bbc}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a7c734ad9e54fd95fc080e9e51f7a7bbc}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize agent.\end{DoxyVerb}
+ 
+
+Definition at line 240 of file ir\+\_\+baseline.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af4e39c5613a045434a38d260e6fc03e6}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af4e39c5613a045434a38d260e6fc03e6}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!act@{act}}
+\index{act@{act}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Generate a response to the previously seen observation(s).\end{DoxyVerb}
+ 
+
+Definition at line 270 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+build\+\_\+query\+\_\+representation(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+get\+I\+D(), parlai.\+core.\+agents.\+Agent.\+get\+I\+D(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+label\+\_\+candidates, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+length\+\_\+penalty, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+rank\+\_\+candidates().
+
+
+
+Referenced by parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+act\+\_\+blocking().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af4e39c5613a045434a38d260e6fc03e6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af4e39c5613a045434a38d260e6fc03e6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aefd4949ff6e98ac3ccb4b7348794080d}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aefd4949ff6e98ac3ccb4b7348794080d}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add command line args specific to this agent.\end{DoxyVerb}
+ 
+
+Definition at line 215 of file ir\+\_\+baseline.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a87f02e724544fa1531486c1f8f0e2f68}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a87f02e724544fa1531486c1f8f0e2f68}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!build\+\_\+query\+\_\+representation@{build\+\_\+query\+\_\+representation}}
+\index{build\+\_\+query\+\_\+representation@{build\+\_\+query\+\_\+representation}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+query\+\_\+representation()}{build\_query\_representation()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+build\+\_\+query\+\_\+representation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build representation of query, e.g. words or n-grams.
+
+:param query: string to represent.
+
+:returns: dictionary containing 'words' dictionary (token => frequency)
+  and 'norm' float (square root of the number of tokens)
+\end{DoxyVerb}
+ 
+
+Definition at line 315 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+freqs, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a87f02e724544fa1531486c1f8f0e2f68_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a87f02e724544fa1531486c1f8f0e2f68_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a3701001e1de9bcc2d110a318799101c1}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a3701001e1de9bcc2d110a318799101c1}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!load@{load}}
+\index{load@{load}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{fname }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load internal dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 311 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary.
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a3701001e1de9bcc2d110a318799101c1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ad5edc81f811cfdd89c8518619f5ae15a}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ad5edc81f811cfdd89c8518619f5ae15a}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!observe@{observe}}
+\index{observe@{observe}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Store and remember incoming observation message dict.\end{DoxyVerb}
+ 
+
+Definition at line 259 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+parley(), and parlai.\+core.\+worlds.\+Executable\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ad5edc81f811cfdd89c8518619f5ae15a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_adc3f036e92741d87db95e47dfc5fc0ef}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_adc3f036e92741d87db95e47dfc5fc0ef}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!reset@{reset}}
+\index{reset@{reset}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset agent properties.\end{DoxyVerb}
+ 
+
+Definition at line 253 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+batch\+\_\+act(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_adc3f036e92741d87db95e47dfc5fc0ef_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af0deeaf3d545dac60187f95d30b48171}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af0deeaf3d545dac60187f95d30b48171}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!save@{save}}
+\index{save@{save}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save dictionary tokenizer if available.\end{DoxyVerb}
+ 
+
+Definition at line 299 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+shutdown(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+shutdown().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_af0deeaf3d545dac60187f95d30b48171_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aedad9637cf632a08f3008765d3debcfa}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aedad9637cf632a08f3008765d3debcfa}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!dictionary@{dictionary}}
+\index{dictionary@{dictionary}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{dictionary}{dictionary}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary}
+
+
+
+Definition at line 245 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+build\+\_\+query\+\_\+representation(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+load(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe(), and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+save().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ae7e51422143ac04c563c6af1d777a564}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_ae7e51422143ac04c563c6af1d777a564}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done}
+
+
+
+Definition at line 248 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+act(), parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+\_\+done(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+\_\+done(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+\_\+done(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+episode\+\_\+done(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+episode\+\_\+done(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+parley(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+parley(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+parley(), parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+parley(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+parley(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+parley(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+parley(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+parley(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+parley(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+parley(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a8644e518e11536f13338eafcda213d0c}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a8644e518e11536f13338eafcda213d0c}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!history@{history}}
+\index{history@{history}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{history}{history}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history}
+
+
+
+Definition at line 247 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+getstate\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setstate\+\_\+\+\_\+(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), parlai.\+utils.\+misc.\+Opt.\+display\+\_\+history(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+feedback(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+get\+\_\+dialog\+\_\+history(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+get\+\_\+dialogue\+\_\+history(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+get\+\_\+negs(), kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+response(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observe(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observe(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+reset(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+reset(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_afdd605338d0cea9ff8813474b07c21e0}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_afdd605338d0cea9ff8813474b07c21e0}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!id@{id}}
+\index{id@{id}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+id}
+
+
+
+Definition at line 243 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+act(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+get(), parlai.\+tasks.\+multiwoz.\+agents.\+Multi\+Woz\+Teacher.\+get(), parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+get(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+get\+\_\+update\+\_\+packet(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+get\+I\+D(), parlai.\+core.\+agents.\+Agent.\+get\+I\+D(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+action(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+observe(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+observe\+\_\+typing\+\_\+on(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+set\+\_\+status(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+set\+\_\+stored\+\_\+data(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+share(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion(), and parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aa7619e8bcb4c75322f0ce7ac9a6cb860}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_aa7619e8bcb4c75322f0ce7ac9a6cb860}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!label\+\_\+candidates@{label\+\_\+candidates}}
+\index{label\+\_\+candidates@{label\+\_\+candidates}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{label\+\_\+candidates}{label\_candidates}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+label\+\_\+candidates}
+
+
+
+Definition at line 251 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+act(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+get(), and parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a766788ecf47ab2d015b92dc2c9c191e3}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a766788ecf47ab2d015b92dc2c9c191e3}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!length\+\_\+penalty@{length\+\_\+penalty}}
+\index{length\+\_\+penalty@{length\+\_\+penalty}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{length\+\_\+penalty}{length\_penalty}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+length\+\_\+penalty}
+
+
+
+Definition at line 244 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a5bc444602ee2228fd3340a5c6a5615d8}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a5bc444602ee2228fd3340a5c6a5615d8}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!observation@{observation}}
+\index{observation@{observation}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation}
+
+
+
+Definition at line 255 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+repeat\+\_\+query.\+repeat\+\_\+query.\+Repeat\+Query\+Agent.\+act(), parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+act(), parlai.\+agents.\+repeat\+\_\+label.\+repeat\+\_\+label.\+Repeat\+Label\+Agent.\+act(), parlai.\+core.\+agents.\+Agent.\+act(), parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Data\+Agent\+Base.\+act(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+act(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+act(), transresnet.\+transresnet.\+Transresnet\+Agent.\+act(), parlai.\+core.\+agents.\+Teacher.\+act(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+act(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+act(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+act(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+act(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+act(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+act(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+act(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+act(), kvmemnn.\+Kvmemnn\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+last\+\_\+reply(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+last\+\_\+reply(), eval\+\_\+ppl.\+Language\+Model\+Entry.\+next\+\_\+word\+\_\+probability(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observe(), parlai.\+core.\+agents.\+Agent.\+observe(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+observe(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+reset(), parlai.\+core.\+agents.\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+reset(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+reset(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+reset(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+train\+\_\+act().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a2c83d3c7e15884871dbfabea9f110933}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent_a2c83d3c7e15884871dbfabea9f110933}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}!opt@{opt}}
+\index{opt@{opt}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Ir\+Baseline\+Agent}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt}
+
+
+
+Definition at line 246 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), kvmemnn.\+Kvmemnn\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+act(), parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+act(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+act(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+act(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+act(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+backward(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Data\+Agent\+Base.\+build(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+lr\+\_\+scheduler(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decode(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step(), parlai.\+core.\+worlds.\+World.\+display(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+feedback(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+doc2txt(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+answer(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+extract(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+forward(), agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Data\+Agent.\+get\+\_\+data(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Data\+Agent.\+get\+\_\+data(), parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+get\+\_\+extraction\+\_\+instructions(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+get\+\_\+negs(), kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+get\+\_\+predictions(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+get\+\_\+task\+\_\+candidates\+\_\+path(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+init\+\_\+cuda\+\_\+buffer(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+init\+\_\+optim(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+init\+\_\+optim(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+input\+\_\+dropout(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load\+\_\+personalities(), parlai.\+tasks.\+convai2.\+worlds.\+Interactive\+World.\+load\+\_\+personas(), parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observe(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observe(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+override\+\_\+opt(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+override\+\_\+opt(), kvmemnn.\+Kvmemnn\+Agent.\+override\+\_\+opt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+override\+\_\+opt(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+and\+\_\+process\+\_\+known\+\_\+args(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+predict(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), parlai.\+core.\+params.\+Parlai\+Parser.\+print\+\_\+args(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+receive\+\_\+metrics(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+receive\+\_\+metrics(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+report(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+save(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+save(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+save(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+save(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+save\+\_\+data(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+save\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+save\+\_\+data(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+save\+\_\+data(), worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+save\+\_\+data(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+score\+\_\+candidates(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+set\+\_\+vocab\+\_\+candidates(), dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+setup\+\_\+data(), agents.\+Task\+Teacher.\+setup\+\_\+data(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+setup\+\_\+image\+\_\+features(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+setup\+\_\+optimizer(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), parlai.\+core.\+worlds.\+World.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+share(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+share(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), parlai.\+core.\+worlds.\+Multi\+World.\+share(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+train\+\_\+act(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+vec2txt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+vec2txt(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt(), and parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+vectorize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/ir\+\_\+baseline/\hyperlink{ir__baseline_8py}{ir\+\_\+baseline.\+py}\end{DoxyCompactItemize}

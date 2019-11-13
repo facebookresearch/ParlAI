@@ -1,6 +1,5 @@
 <map id="parlai.mturk.core.dev.worlds.MTurkDataWorld.prep_save_data" name="parlai.mturk.core.dev.worlds.MTurkDataWorld.prep_save_data">
-<area shape="rect" id="node1" title=" " alt="" coords="5,78,223,119"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1local__human_1_1local__human_1_1LocalHumanAgent.html#a5c598c26dfd30db3120dac0cf02daf67" title=" " alt="" coords="283,5,505,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html#aaaef76f5bae4cdbe8f78241f8cd7c3a3" title=" " alt="" coords="271,85,517,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#af01360aeaa7e6ad524049621551683df" title=" " alt="" coords="297,136,491,192"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1local__human_1_1local__human_1_1LocalHumanAgent.html#a5c598c26dfd30db3120dac0cf02daf67" title="parlai.agents.local\l_human.local_human.LocalHuman\lAgent.episode_done" alt="" coords="283,5,505,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html#aaaef76f5bae4cdbe8f78241f8cd7c3a3" title="parlai.core.worlds.World.episode_done" alt="" coords="271,85,517,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#af01360aeaa7e6ad524049621551683df" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld.get_custom\l_task_data" alt="" coords="297,136,491,192"/>
 </map>

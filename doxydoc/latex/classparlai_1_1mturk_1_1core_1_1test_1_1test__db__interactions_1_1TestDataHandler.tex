@@ -1,0 +1,227 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler}{}\section{parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler}\index{parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler@{parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler}}
+
+
+Inheritance diagram for parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=245pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=245pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a9c1badb44d84077d1a5700aa0c51fdb8}{set\+Up} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a577f1f9be58e4a16eb9e6d003613243d}{tear\+Down} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a7afbef0465fe007d9dccaabd8183d56f}{create\+\_\+hit} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_ae22579287c9c54cf6c0a4dd3e87a7ada}{assert\+H\+I\+T\+Equal} (self, mturk\+\_\+hit, db\+\_\+hit, run\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a8fcba0662ee9a0b8d74287e984a86c39}{test\+\_\+init\+\_\+db} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_aa70905c9ae83ded2d610232f3bef87d0}{test\+\_\+create\+\_\+get\+\_\+run} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a908018363b47f8e72677fbd0dc29a600}{test\+\_\+create\+\_\+update\+\_\+hits} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_af40b559a9abdf86a2a62b8cdff096b74}{test\+\_\+worker\+\_\+workflows} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a89040a04e0888485d0ccf4f71a91ea9b}{D\+B\+\_\+\+N\+A\+ME} = \textquotesingle{}test\+\_\+db.\+db\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Various unit tests for the SQLite database\end{DoxyVerb}
+ 
+
+Definition at line 22 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_ae22579287c9c54cf6c0a4dd3e87a7ada}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_ae22579287c9c54cf6c0a4dd3e87a7ada}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!assert\+H\+I\+T\+Equal@{assert\+H\+I\+T\+Equal}}
+\index{assert\+H\+I\+T\+Equal@{assert\+H\+I\+T\+Equal}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{assert\+H\+I\+T\+Equal()}{assertHITEqual()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+assert\+H\+I\+T\+Equal (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{mturk\+\_\+hit,  }\item[{}]{db\+\_\+hit,  }\item[{}]{run\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 47 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+update\+\_\+hits().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_ae22579287c9c54cf6c0a4dd3e87a7ada_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a7afbef0465fe007d9dccaabd8183d56f}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a7afbef0465fe007d9dccaabd8183d56f}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!create\+\_\+hit@{create\+\_\+hit}}
+\index{create\+\_\+hit@{create\+\_\+hit}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{create\+\_\+hit()}{create\_hit()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 35 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+update\+\_\+hits(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+worker\+\_\+workflows().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a7afbef0465fe007d9dccaabd8183d56f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a9c1badb44d84077d1a5700aa0c51fdb8}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a9c1badb44d84077d1a5700aa0c51fdb8}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!set\+Up@{set\+Up}}
+\index{set\+Up@{set\+Up}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{set\+Up()}{setUp()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+set\+Up (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 27 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a577f1f9be58e4a16eb9e6d003613243d}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a577f1f9be58e4a16eb9e6d003613243d}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!tear\+Down@{tear\+Down}}
+\index{tear\+Down@{tear\+Down}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{tear\+Down()}{tearDown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+tear\+Down (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 31 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_aa70905c9ae83ded2d610232f3bef87d0}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_aa70905c9ae83ded2d610232f3bef87d0}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!test\+\_\+create\+\_\+get\+\_\+run@{test\+\_\+create\+\_\+get\+\_\+run}}
+\index{test\+\_\+create\+\_\+get\+\_\+run@{test\+\_\+create\+\_\+get\+\_\+run}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{test\+\_\+create\+\_\+get\+\_\+run()}{test\_create\_get\_run()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+get\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 82 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a908018363b47f8e72677fbd0dc29a600}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a908018363b47f8e72677fbd0dc29a600}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!test\+\_\+create\+\_\+update\+\_\+hits@{test\+\_\+create\+\_\+update\+\_\+hits}}
+\index{test\+\_\+create\+\_\+update\+\_\+hits@{test\+\_\+create\+\_\+update\+\_\+hits}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{test\+\_\+create\+\_\+update\+\_\+hits()}{test\_create\_update\_hits()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+update\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 99 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+assert\+H\+I\+T\+Equal(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+assert\+H\+I\+T\+Equal(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+assert\+H\+I\+T\+Equal(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a908018363b47f8e72677fbd0dc29a600_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a8fcba0662ee9a0b8d74287e984a86c39}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a8fcba0662ee9a0b8d74287e984a86c39}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!test\+\_\+init\+\_\+db@{test\+\_\+init\+\_\+db}}
+\index{test\+\_\+init\+\_\+db@{test\+\_\+init\+\_\+db}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{test\+\_\+init\+\_\+db()}{test\_init\_db()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+init\+\_\+db (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_af40b559a9abdf86a2a62b8cdff096b74}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_af40b559a9abdf86a2a62b8cdff096b74}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!test\+\_\+worker\+\_\+workflows@{test\+\_\+worker\+\_\+workflows}}
+\index{test\+\_\+worker\+\_\+workflows@{test\+\_\+worker\+\_\+workflows}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{test\+\_\+worker\+\_\+workflows()}{test\_worker\_workflows()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+worker\+\_\+workflows (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 156 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_af40b559a9abdf86a2a62b8cdff096b74_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a89040a04e0888485d0ccf4f71a91ea9b}\label{classparlai_1_1mturk_1_1core_1_1test_1_1test__db__interactions_1_1TestDataHandler_a89040a04e0888485d0ccf4f71a91ea9b}} 
+\index{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}!D\+B\+\_\+\+N\+A\+ME@{D\+B\+\_\+\+N\+A\+ME}}
+\index{D\+B\+\_\+\+N\+A\+ME@{D\+B\+\_\+\+N\+A\+ME}!parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler@{parlai\+::mturk\+::core\+::test\+::test\+\_\+db\+\_\+interactions\+::\+Test\+Data\+Handler}}
+\subsubsection{\texorpdfstring{D\+B\+\_\+\+N\+A\+ME}{DB\_NAME}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+D\+B\+\_\+\+N\+A\+ME = \textquotesingle{}test\+\_\+db.\+db\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 25 of file test\+\_\+db\+\_\+interactions.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+set\+Up(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+tear\+Down(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+get\+\_\+run(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+create\+\_\+update\+\_\+hits(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+init\+\_\+db(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+test\+\_\+worker\+\_\+workflows().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/test/\hyperlink{test_2test__db__interactions_8py}{test\+\_\+db\+\_\+interactions.\+py}\end{DoxyCompactItemize}

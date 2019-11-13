@@ -1,0 +1,345 @@
+\hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher}{}\section{parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher}\index{parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher@{parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9de97fc6a23cc7ec25dca19ad381c4b9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a87d200e80614ec6ac4b7611d698f22f5}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a20b0ed1425ed8b1c6bc179220b766b19}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a915e9437d2b0dc50973b3eea1711108b}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa1a512ed945c5fc33a90005b25ef817f}{observe} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Agent_aedbecc4b4aa7af7413882a0429e0f1db}{observation})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a840acd160a3c71edd83a4e6d227dbd1f}{act} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abb043d2caeccc2b8adabbf9430a29358}{datatype}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa0736462c5c1ba8013fc19d4656cd151}{random}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c9c2ced3114e63cbf19b26e786a2b45}{episodes}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a54df418efad7f914dca2e031802bad3f}{step\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a5cf9fc8dd7c770b3950af19471e9a0de}{data\+\_\+offset}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a07619bbd0d5ac0571226db6f9ba83702}{episode\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c1e3ea8f90824a9c5112307fb880de4}{dialogue\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abda5bf75f9e963c653b446360289c36f}{expected\+\_\+reponse}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aea616539cf741e95c6fef4ce29d7e83e}{epoch\+Done}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9d33952ac00bfe1ca5a4b1f8311dc617}{values}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a930d7b075d5d107c8523b4a9da3d9998}{dialogue}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9e470d44d7f7aee98a40f924e8878853}{output}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}End-to-end negotiation teacher that loads the data from
+https://github.com/facebookresearch/end-to-end-negotiator.
+\end{DoxyVerb}
+ 
+
+Definition at line 38 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9de97fc6a23cc7ec25dca19ad381c4b9}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9de97fc6a23cc7ec25dca19ad381c4b9}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 43 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a840acd160a3c71edd83a4e6d227dbd1f}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a840acd160a3c71edd83a4e6d227dbd1f}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!act@{act}}
+\index{act@{act}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 110 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+\_\+continue\+\_\+dialogue(), parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+\_\+start\+\_\+dialogue(), parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+dialogue\+\_\+idx, parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episode\+\_\+idx, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+episode\+\_\+idx, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+episode\+\_\+idx, parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episodes, parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+episodes, parlai.\+core.\+agents.\+Teacher.\+epoch\+Done, parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+random, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+random, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+random, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+random, parlai.\+core.\+worlds.\+Multi\+World.\+random, parlai.\+core.\+worlds.\+Batch\+World.\+random, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+random, and parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+step\+\_\+size.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a840acd160a3c71edd83a4e6d227dbd1f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a87d200e80614ec6ac4b7611d698f22f5}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a87d200e80614ec6ac4b7611d698f22f5}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 73 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+\_\+split\+\_\+dialogue(), parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episodes, parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+episodes, and parlai.\+tasks.\+dealnodeal.\+agents.\+get\+\_\+tag().
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a87d200e80614ec6ac4b7611d698f22f5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a87d200e80614ec6ac4b7611d698f22f5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa1a512ed945c5fc33a90005b25ef817f}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa1a512ed945c5fc33a90005b25ef817f}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!observe@{observe}}
+\index{observe@{observe}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Process observation for metrics.\end{DoxyVerb}
+ 
+
+Definition at line 103 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+expected\+\_\+reponse, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a20b0ed1425ed8b1c6bc179220b766b19}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a20b0ed1425ed8b1c6bc179220b766b19}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!reset@{reset}}
+\index{reset@{reset}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 86 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a915e9437d2b0dc50973b3eea1711108b}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a915e9437d2b0dc50973b3eea1711108b}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 93 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episodes, and parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+episodes.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a5cf9fc8dd7c770b3950af19471e9a0de}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a5cf9fc8dd7c770b3950af19471e9a0de}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!data\+\_\+offset@{data\+\_\+offset}}
+\index{data\+\_\+offset@{data\+\_\+offset}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{data\+\_\+offset}{data\_offset}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+data\+\_\+offset}
+
+
+
+Definition at line 69 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abb043d2caeccc2b8adabbf9430a29358}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abb043d2caeccc2b8adabbf9430a29358}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!datatype@{datatype}}
+\index{datatype@{datatype}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{datatype}{datatype}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+datatype}
+
+
+
+Definition at line 45 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+act(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a930d7b075d5d107c8523b4a9da3d9998}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a930d7b075d5d107c8523b4a9da3d9998}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!dialogue@{dialogue}}
+\index{dialogue@{dialogue}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{dialogue}{dialogue}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+dialogue}
+
+
+
+Definition at line 141 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c1e3ea8f90824a9c5112307fb880de4}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c1e3ea8f90824a9c5112307fb880de4}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!dialogue\+\_\+idx@{dialogue\+\_\+idx}}
+\index{dialogue\+\_\+idx@{dialogue\+\_\+idx}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{dialogue\+\_\+idx}{dialogue\_idx}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+dialogue\+\_\+idx}
+
+
+
+Definition at line 89 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a07619bbd0d5ac0571226db6f9ba83702}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a07619bbd0d5ac0571226db6f9ba83702}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!episode\+\_\+idx@{episode\+\_\+idx}}
+\index{episode\+\_\+idx@{episode\+\_\+idx}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{episode\+\_\+idx}{episode\_idx}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episode\+\_\+idx}
+
+
+
+Definition at line 88 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), and parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c9c2ced3114e63cbf19b26e786a2b45}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a8c9c2ced3114e63cbf19b26e786a2b45}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!episodes@{episodes}}
+\index{episodes@{episodes}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{episodes}{episodes}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+episodes}
+
+
+
+Definition at line 61 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+num\+\_\+examples(), and parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aea616539cf741e95c6fef4ce29d7e83e}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aea616539cf741e95c6fef4ce29d7e83e}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!epoch\+Done@{epoch\+Done}}
+\index{epoch\+Done@{epoch\+Done}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{epoch\+Done}{epochDone}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+epoch\+Done}
+
+
+
+Definition at line 91 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abda5bf75f9e963c653b446360289c36f}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_abda5bf75f9e963c653b446360289c36f}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!expected\+\_\+reponse@{expected\+\_\+reponse}}
+\index{expected\+\_\+reponse@{expected\+\_\+reponse}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{expected\+\_\+reponse}{expected\_reponse}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+expected\+\_\+reponse}
+
+
+
+Definition at line 90 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+observe().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9e470d44d7f7aee98a40f924e8878853}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9e470d44d7f7aee98a40f924e8878853}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!output@{output}}
+\index{output@{output}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+output}
+
+
+
+Definition at line 142 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa0736462c5c1ba8013fc19d4656cd151}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_aa0736462c5c1ba8013fc19d4656cd151}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!random@{random}}
+\index{random@{random}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{random}{random}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+random}
+
+
+
+Definition at line 46 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a54df418efad7f914dca2e031802bad3f}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a54df418efad7f914dca2e031802bad3f}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!step\+\_\+size@{step\+\_\+size}}
+\index{step\+\_\+size@{step\+\_\+size}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{step\+\_\+size}{step\_size}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+step\+\_\+size}
+
+
+
+Definition at line 68 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), and parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9d33952ac00bfe1ca5a4b1f8311dc617}\label{classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher_a9d33952ac00bfe1ca5a4b1f8311dc617}} 
+\index{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}!values@{values}}
+\index{values@{values}!parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher@{parlai\+::tasks\+::dealnodeal\+::agents\+::\+Negotiation\+Teacher}}
+\subsubsection{\texorpdfstring{values}{values}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+values}
+
+
+
+Definition at line 140 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/dealnodeal/\hyperlink{parlai_2tasks_2dealnodeal_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

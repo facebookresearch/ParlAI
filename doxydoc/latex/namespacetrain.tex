@@ -1,0 +1,1058 @@
+\hypertarget{namespacetrain}{}\section{train Namespace Reference}
+\label{namespacetrain}\index{train@{train}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacetrain_a69347e6c50429f5076c376b70b1d8a27}{prepro} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt})
+\item 
+def \hyperlink{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94}{validate} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}, agent)
+\item 
+def \hyperlink{namespacetrain_ad644487baaf3b94d8a6b32b0f6e88e15}{get\+\_\+metrics} (actions, gt\+\_\+actions)
+\item 
+def \hyperlink{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93}{get\+\_\+accuracy} (actions, gt\+\_\+actions, graph)
+\item 
+def \hyperlink{namespacetrain_a9719cda8ba718637950ea11259aa636c}{additional\+\_\+validate} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}, \hyperlink{namespacetrain_a943b3c8a55b8e52ba14f9b59e14840d2}{model}, data\+\_\+agent, valid\+\_\+data\+\_\+file, constrain\+\_\+=True, no\+\_\+hits=False)
+\item 
+def \hyperlink{namespacetrain_a2322df3364c6be0dfcbd3d13d9a4745e}{log\+\_\+print} (s, out\+\_\+file)
+\item 
+def \hyperlink{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b}{main} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}, return\+\_\+full=False, out\+\_\+file=None)
+\item 
+def \hyperlink{namespacetrain_ae2ba29fb97dfcb37d81039ba8e7d8580}{online\+\_\+exp} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}, \hyperlink{namespacetrain_a30cb844466eb30a5ba783789c8c0f43f}{log\+\_\+file}=None)
+\item 
+def \hyperlink{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f}{ablation\+\_\+exp} (\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespacetrain_a242e49c387b90838a9072c79886a10ec}{parser} = setup\+\_\+args()
+\item 
+\hyperlink{namespacetrain_ab147c18a1adffb88116dd83812304ac7}{task}
+\item 
+\hyperlink{namespacetrain_acb7f4a3a66aa0f5aac1fb5bde04c56a7}{evaltask}
+\item 
+\hyperlink{namespacetrain_a943b3c8a55b8e52ba14f9b59e14840d2}{model}
+\item 
+\hyperlink{namespacetrain_a1105bc0f8416050a6e26140c97dfe1bf}{model\+\_\+file}
+\item 
+\hyperlink{namespacetrain_a8f388ab3a8a1091473346480c48acbc3}{dict\+\_\+lower}
+\item 
+\hyperlink{namespacetrain_a551340b6e8d5e71fd5ead93e3a72bf88}{dict\+\_\+include\+\_\+valid}
+\item 
+\hyperlink{namespacetrain_a56484b89af2c1d6e749bd8e696bad1d3}{dict\+\_\+maxexs}
+\item 
+\hyperlink{namespacetrain_ae42fa60655eba8aba94b03539cccf9cb}{datatype}
+\item 
+\hyperlink{namespacetrain_a6778555638afb2529f4818fda80d9fd6}{hops}
+\item 
+\hyperlink{namespacetrain_ae4aaa73ae0ad421183d4ab36f0d8fc8e}{lins}
+\item 
+\hyperlink{namespacetrain_a9f48b0b5e52b38ed4a74e4a7b5a4387a}{embeddingsize}
+\item 
+\hyperlink{namespacetrain_abb1ef436e0c9358251dab8f43b5eaf55}{learningrate}
+\item 
+\hyperlink{namespacetrain_a781c403aaa147370f9f172ce4f85323e}{share\+\_\+embeddings}
+\item 
+\hyperlink{namespacetrain_a543bbe86c3259fb3c872266fd985a87e}{margin}
+\item 
+\hyperlink{namespacetrain_ac53cf81dd9f6ec5ae1b3b18b036c3679}{tfidf}
+\item 
+\hyperlink{namespacetrain_adef31c34753713d14a20eb6f1c478f3d}{max\+\_\+train\+\_\+time}
+\item 
+\hyperlink{namespacetrain_a18ecadee82c97099a6c6e89cc8ba7532}{validation\+\_\+every\+\_\+n\+\_\+secs}
+\item 
+\hyperlink{namespacetrain_ab5566e4b237deb20dd8bcece26329c84}{validation\+\_\+metric}
+\item 
+\hyperlink{namespacetrain_a8bc83172c1326dd7c6bcf581727b31f0}{validation\+\_\+metric\+\_\+mode}
+\item 
+\hyperlink{namespacetrain_ae8b224177bf0bb0a7d2de52e4ac43ab9}{validation\+\_\+patience}
+\item 
+\hyperlink{namespacetrain_a4cd94119882d68e7fc7b12723fd7a6f9}{validation\+\_\+max\+\_\+examples}
+\item 
+\hyperlink{namespacetrain_a57337d73f2578ad533e001720a3f899e}{log\+\_\+every\+\_\+n\+\_\+secs}
+\item 
+\hyperlink{namespacetrain_a2fc0d02c023dcccfff9e4e1dd3e66f56}{numthreads}
+\item 
+\hyperlink{namespacetrain_a5a18b2ee6badb325b4d88682ff5e1161}{dict\+\_\+tokenizer}
+\item 
+\hyperlink{namespacetrain_a73378d30d3edb0d9bf4ce7188c42c086}{batchsize}
+\item 
+\hyperlink{namespacetrain_a32f0e3dc85526e2620466372fe24fec5}{hiddensize}
+\item 
+\hyperlink{namespacetrain_ac0b1ba6aa4860ceedd16f937406545c7}{attention}
+\item 
+\hyperlink{namespacetrain_aff60f16f2f335b777b21dfdb806544b9}{numlayers}
+\item 
+\hyperlink{namespacetrain_a1be63dba1a4c401472a942516cef7810}{rnn\+\_\+class}
+\item 
+\hyperlink{namespacetrain_a5bbd7206662c6095997e002d6acc1c0b}{dropout}
+\item 
+\hyperlink{namespacetrain_ab8abdbc8c407226fd20791e2713ed052}{gradient\+\_\+clip}
+\item 
+\hyperlink{namespacetrain_a15f59652a2a63b1f48e0c6b97e9ef97a}{lookuptable}
+\item 
+\hyperlink{namespacetrain_a776bc60eeb05cde09a691e2daf0da7bd}{optimizer}
+\item 
+\hyperlink{namespacetrain_a2744f49b5a52ff04d0e4092511249a78}{embedding\+\_\+type}
+\item 
+\hyperlink{namespacetrain_a7e8ea1d3e1d259adf896825c8bdd998c}{momentum}
+\item 
+\hyperlink{namespacetrain_a991d5bc473da1d057a2010f35dbd198b}{bidirectional}
+\item 
+\hyperlink{namespacetrain_a8e3df31420b4b77bc79618c899785191}{context\+\_\+length}
+\item 
+\hyperlink{namespacetrain_a058963e0e147d3f21c9f5ee0372cd832}{embedding\+\_\+file}
+\item 
+\hyperlink{namespacetrain_ad178c883b88a19efa8ae8c266db4fac3}{tok}
+\item 
+\hyperlink{namespacetrain_a00dfae526f6aa07d0497b80a4ccd9e7c}{learning\+\_\+rate}
+\item 
+\hyperlink{namespacetrain_a49c9baf0b2032b28aed1f9076b58a13a}{dropout\+\_\+emb}
+\item 
+\hyperlink{namespacetrain_a1093b38b8f4b2f51bb5d9ed733350a74}{dropout\+\_\+rnn}
+\item 
+\hyperlink{namespacetrain_a674f48668d3e343c9b06b0b72ca8c458}{argparser} = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()
+\item 
+\hyperlink{namespacetrain_ad99775ad96e0996a8be4782b30a28c2e}{type}
+\item 
+\hyperlink{namespacetrain_af5de906790efe7cea370f1a69e020d52}{int}
+\item 
+\hyperlink{namespacetrain_abfb9b8d0ebf72bafd04e084791275553}{default}
+\item 
+\hyperlink{namespacetrain_a366f6877ee8e22a2c2aa569859925e34}{bool}
+\item 
+\hyperlink{namespacetrain_af6ce307b1ddd4745a96b7834bc0232dc}{float}
+\item 
+\hyperlink{namespacetrain_aaa59b213583fa39039d4c2a897f9009c}{str}
+\item 
+\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt} = argparser.\+parse\+\_\+args()
+\item 
+\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num} = \hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}\mbox{[}\textquotesingle{}job\+\_\+num\textquotesingle{}\mbox{]}
+\item 
+string \hyperlink{namespacetrain_a647c4fb1786c78fdc94676ae8e99581d}{input\+\_\+file} = \textquotesingle{}job-\/in-\/\{\}.pkl\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})
+\item 
+string \hyperlink{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}{output\+\_\+file} = \textquotesingle{}job-\/out-\/\{\}.txt\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})
+\item 
+string \hyperlink{namespacetrain_a30cb844466eb30a5ba783789c8c0f43f}{log\+\_\+file} = \textquotesingle{}job-\/log-\/\{\}.txt\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})
+\item 
+\hyperlink{namespacetrain_a09cea1b757e4ebbba308040736f37c4f}{job\+\_\+in\+\_\+opt} = pickle.\+load(f\+\_\+in)
+\item 
+\hyperlink{namespacetrain_a251b9c809d918f9575e8fac22c744b56}{new\+\_\+opt} = deepcopy(\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt})
+\item 
+\hyperlink{namespacetrain_a824aa8f7a68ad5e626aed978e756e005}{fout} = open(\hyperlink{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}{output\+\_\+file}, \textquotesingle{}w\textquotesingle{})
+\item 
+\hyperlink{namespacetrain_a3bdee0332f8c1f321ec0cc91cfbae4d7}{dict\+\_\+file}
+\item 
+\hyperlink{namespacetrain_a8f8ae5db269e571fc4532a922fd3afa4}{batch\+\_\+sort}
+\item 
+\hyperlink{namespacetrain_ab8a86e94cd6c6844e5574a7c41953bea}{numsoftmax}
+\item 
+\hyperlink{namespacetrain_aa72e22a516ea2303faba3c129f9ba8dd}{truncate}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f}\label{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f}} 
+\index{train@{train}!ablation\+\_\+exp@{ablation\+\_\+exp}}
+\index{ablation\+\_\+exp@{ablation\+\_\+exp}!train@{train}}
+\subsubsection{\texorpdfstring{ablation\+\_\+exp()}{ablation\_exp()}}
+{\footnotesize\ttfamily def train.\+ablation\+\_\+exp (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 339 of file train.\+py.
+
+
+
+References additional\+\_\+validate(), and main().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+overall\+\_\+ablation().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a9719cda8ba718637950ea11259aa636c}\label{namespacetrain_a9719cda8ba718637950ea11259aa636c}} 
+\index{train@{train}!additional\+\_\+validate@{additional\+\_\+validate}}
+\index{additional\+\_\+validate@{additional\+\_\+validate}!train@{train}}
+\subsubsection{\texorpdfstring{additional\+\_\+validate()}{additional\_validate()}}
+{\footnotesize\ttfamily def train.\+additional\+\_\+validate (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{model,  }\item[{}]{data\+\_\+agent,  }\item[{}]{valid\+\_\+data\+\_\+file,  }\item[{}]{constrain\+\_\+ = {\ttfamily True},  }\item[{}]{no\+\_\+hits = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 102 of file train.\+py.
+
+
+
+References get\+\_\+accuracy(), and get\+\_\+metrics().
+
+
+
+Referenced by ablation\+\_\+exp(), mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+batch\+\_\+valid(), mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+batch\+\_\+valid\+\_\+with\+\_\+data(), and get\+\_\+accuracy().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=332pt]{namespacetrain_a9719cda8ba718637950ea11259aa636c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a9719cda8ba718637950ea11259aa636c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93}\label{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93}} 
+\index{train@{train}!get\+\_\+accuracy@{get\+\_\+accuracy}}
+\index{get\+\_\+accuracy@{get\+\_\+accuracy}!train@{train}}
+\subsubsection{\texorpdfstring{get\+\_\+accuracy()}{get\_accuracy()}}
+{\footnotesize\ttfamily def train.\+get\+\_\+accuracy (\begin{DoxyParamCaption}\item[{}]{actions,  }\item[{}]{gt\+\_\+actions,  }\item[{}]{graph }\end{DoxyParamCaption})}
+
+
+
+Definition at line 93 of file train.\+py.
+
+
+
+References additional\+\_\+validate(), and float.
+
+
+
+Referenced by additional\+\_\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_ad644487baaf3b94d8a6b32b0f6e88e15}\label{namespacetrain_ad644487baaf3b94d8a6b32b0f6e88e15}} 
+\index{train@{train}!get\+\_\+metrics@{get\+\_\+metrics}}
+\index{get\+\_\+metrics@{get\+\_\+metrics}!train@{train}}
+\subsubsection{\texorpdfstring{get\+\_\+metrics()}{get\_metrics()}}
+{\footnotesize\ttfamily def train.\+get\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{actions,  }\item[{}]{gt\+\_\+actions }\end{DoxyParamCaption})}
+
+
+
+Definition at line 76 of file train.\+py.
+
+
+
+Referenced by additional\+\_\+validate().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_ad644487baaf3b94d8a6b32b0f6e88e15_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a2322df3364c6be0dfcbd3d13d9a4745e}\label{namespacetrain_a2322df3364c6be0dfcbd3d13d9a4745e}} 
+\index{train@{train}!log\+\_\+print@{log\+\_\+print}}
+\index{log\+\_\+print@{log\+\_\+print}!train@{train}}
+\subsubsection{\texorpdfstring{log\+\_\+print()}{log\_print()}}
+{\footnotesize\ttfamily def train.\+log\+\_\+print (\begin{DoxyParamCaption}\item[{}]{s,  }\item[{}]{out\+\_\+file }\end{DoxyParamCaption})}
+
+
+
+Definition at line 230 of file train.\+py.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a2322df3364c6be0dfcbd3d13d9a4745e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b}\label{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b}} 
+\index{train@{train}!main@{main}}
+\index{main@{main}!train@{train}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def train.\+main (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{return\+\_\+full = {\ttfamily False},  }\item[{}]{out\+\_\+file = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 239 of file train.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, int, log\+\_\+print(), prepro(), and validate().
+
+
+
+Referenced by ablation\+\_\+exp(), and online\+\_\+exp().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_ae2ba29fb97dfcb37d81039ba8e7d8580}\label{namespacetrain_ae2ba29fb97dfcb37d81039ba8e7d8580}} 
+\index{train@{train}!online\+\_\+exp@{online\+\_\+exp}}
+\index{online\+\_\+exp@{online\+\_\+exp}!train@{train}}
+\subsubsection{\texorpdfstring{online\+\_\+exp()}{online\_exp()}}
+{\footnotesize\ttfamily def train.\+online\+\_\+exp (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{log\+\_\+file = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 300 of file train.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_ae2ba29fb97dfcb37d81039ba8e7d8580_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a69347e6c50429f5076c376b70b1d8a27}\label{namespacetrain_a69347e6c50429f5076c376b70b1d8a27}} 
+\index{train@{train}!prepro@{prepro}}
+\index{prepro@{prepro}!train@{train}}
+\subsubsection{\texorpdfstring{prepro()}{prepro()}}
+{\footnotesize\ttfamily def train.\+prepro (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 36 of file train.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task().
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a69347e6c50429f5076c376b70b1d8a27_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a69347e6c50429f5076c376b70b1d8a27_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94}\label{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94}} 
+\index{train@{train}!validate@{validate}}
+\index{validate@{validate}!train@{train}}
+\subsubsection{\texorpdfstring{validate()}{validate()}}
+{\footnotesize\ttfamily def train.\+validate (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{agent }\end{DoxyParamCaption})}
+
+
+
+Definition at line 54 of file train.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task().
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetrain_a674f48668d3e343c9b06b0b72ca8c458}\label{namespacetrain_a674f48668d3e343c9b06b0b72ca8c458}} 
+\index{train@{train}!argparser@{argparser}}
+\index{argparser@{argparser}!train@{train}}
+\subsubsection{\texorpdfstring{argparser}{argparser}}
+{\footnotesize\ttfamily train.\+argparser = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()}
+
+
+
+Definition at line 357 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ac0b1ba6aa4860ceedd16f937406545c7}\label{namespacetrain_ac0b1ba6aa4860ceedd16f937406545c7}} 
+\index{train@{train}!attention@{attention}}
+\index{attention@{attention}!train@{train}}
+\subsubsection{\texorpdfstring{attention}{attention}}
+{\footnotesize\ttfamily train.\+attention}
+
+
+
+Definition at line 27 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a8f8ae5db269e571fc4532a922fd3afa4}\label{namespacetrain_a8f8ae5db269e571fc4532a922fd3afa4}} 
+\index{train@{train}!batch\+\_\+sort@{batch\+\_\+sort}}
+\index{batch\+\_\+sort@{batch\+\_\+sort}!train@{train}}
+\subsubsection{\texorpdfstring{batch\+\_\+sort}{batch\_sort}}
+{\footnotesize\ttfamily train.\+batch\+\_\+sort}
+
+
+
+Definition at line 38 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a73378d30d3edb0d9bf4ce7188c42c086}\label{namespacetrain_a73378d30d3edb0d9bf4ce7188c42c086}} 
+\index{train@{train}!batchsize@{batchsize}}
+\index{batchsize@{batchsize}!train@{train}}
+\subsubsection{\texorpdfstring{batchsize}{batchsize}}
+{\footnotesize\ttfamily train.\+batchsize}
+
+
+
+Definition at line 24 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a991d5bc473da1d057a2010f35dbd198b}\label{namespacetrain_a991d5bc473da1d057a2010f35dbd198b}} 
+\index{train@{train}!bidirectional@{bidirectional}}
+\index{bidirectional@{bidirectional}!train@{train}}
+\subsubsection{\texorpdfstring{bidirectional}{bidirectional}}
+{\footnotesize\ttfamily train.\+bidirectional}
+
+
+
+Definition at line 37 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a366f6877ee8e22a2c2aa569859925e34}\label{namespacetrain_a366f6877ee8e22a2c2aa569859925e34}} 
+\index{train@{train}!bool@{bool}}
+\index{bool@{bool}!train@{train}}
+\subsubsection{\texorpdfstring{bool}{bool}}
+{\footnotesize\ttfamily train.\+bool}
+
+
+
+Definition at line 359 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a8e3df31420b4b77bc79618c899785191}\label{namespacetrain_a8e3df31420b4b77bc79618c899785191}} 
+\index{train@{train}!context\+\_\+length@{context\+\_\+length}}
+\index{context\+\_\+length@{context\+\_\+length}!train@{train}}
+\subsubsection{\texorpdfstring{context\+\_\+length}{context\_length}}
+{\footnotesize\ttfamily train.\+context\+\_\+length}
+
+
+
+Definition at line 38 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ae42fa60655eba8aba94b03539cccf9cb}\label{namespacetrain_ae42fa60655eba8aba94b03539cccf9cb}} 
+\index{train@{train}!datatype@{datatype}}
+\index{datatype@{datatype}!train@{train}}
+\subsubsection{\texorpdfstring{datatype}{datatype}}
+{\footnotesize\ttfamily train.\+datatype}
+
+
+
+Definition at line 24 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_abfb9b8d0ebf72bafd04e084791275553}\label{namespacetrain_abfb9b8d0ebf72bafd04e084791275553}} 
+\index{train@{train}!default@{default}}
+\index{default@{default}!train@{train}}
+\subsubsection{\texorpdfstring{default}{default}}
+{\footnotesize\ttfamily train.\+default}
+
+
+
+Definition at line 358 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a3bdee0332f8c1f321ec0cc91cfbae4d7}\label{namespacetrain_a3bdee0332f8c1f321ec0cc91cfbae4d7}} 
+\index{train@{train}!dict\+\_\+file@{dict\+\_\+file}}
+\index{dict\+\_\+file@{dict\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{dict\+\_\+file}{dict\_file}}
+{\footnotesize\ttfamily train.\+dict\+\_\+file}
+
+
+
+Definition at line 21 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a551340b6e8d5e71fd5ead93e3a72bf88}\label{namespacetrain_a551340b6e8d5e71fd5ead93e3a72bf88}} 
+\index{train@{train}!dict\+\_\+include\+\_\+valid@{dict\+\_\+include\+\_\+valid}}
+\index{dict\+\_\+include\+\_\+valid@{dict\+\_\+include\+\_\+valid}!train@{train}}
+\subsubsection{\texorpdfstring{dict\+\_\+include\+\_\+valid}{dict\_include\_valid}}
+{\footnotesize\ttfamily train.\+dict\+\_\+include\+\_\+valid}
+
+
+
+Definition at line 22 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a8f388ab3a8a1091473346480c48acbc3}\label{namespacetrain_a8f388ab3a8a1091473346480c48acbc3}} 
+\index{train@{train}!dict\+\_\+lower@{dict\+\_\+lower}}
+\index{dict\+\_\+lower@{dict\+\_\+lower}!train@{train}}
+\subsubsection{\texorpdfstring{dict\+\_\+lower}{dict\_lower}}
+{\footnotesize\ttfamily train.\+dict\+\_\+lower}
+
+
+
+Definition at line 21 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a56484b89af2c1d6e749bd8e696bad1d3}\label{namespacetrain_a56484b89af2c1d6e749bd8e696bad1d3}} 
+\index{train@{train}!dict\+\_\+maxexs@{dict\+\_\+maxexs}}
+\index{dict\+\_\+maxexs@{dict\+\_\+maxexs}!train@{train}}
+\subsubsection{\texorpdfstring{dict\+\_\+maxexs}{dict\_maxexs}}
+{\footnotesize\ttfamily train.\+dict\+\_\+maxexs}
+
+
+
+Definition at line 23 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a5a18b2ee6badb325b4d88682ff5e1161}\label{namespacetrain_a5a18b2ee6badb325b4d88682ff5e1161}} 
+\index{train@{train}!dict\+\_\+tokenizer@{dict\+\_\+tokenizer}}
+\index{dict\+\_\+tokenizer@{dict\+\_\+tokenizer}!train@{train}}
+\subsubsection{\texorpdfstring{dict\+\_\+tokenizer}{dict\_tokenizer}}
+{\footnotesize\ttfamily train.\+dict\+\_\+tokenizer}
+
+
+
+Definition at line 40 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a5bbd7206662c6095997e002d6acc1c0b}\label{namespacetrain_a5bbd7206662c6095997e002d6acc1c0b}} 
+\index{train@{train}!dropout@{dropout}}
+\index{dropout@{dropout}!train@{train}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily train.\+dropout}
+
+
+
+Definition at line 31 of file train.\+py.
+
+
+
+Referenced by parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+input\+\_\+dropout().
+
+\mbox{\Hypertarget{namespacetrain_a49c9baf0b2032b28aed1f9076b58a13a}\label{namespacetrain_a49c9baf0b2032b28aed1f9076b58a13a}} 
+\index{train@{train}!dropout\+\_\+emb@{dropout\+\_\+emb}}
+\index{dropout\+\_\+emb@{dropout\+\_\+emb}!train@{train}}
+\subsubsection{\texorpdfstring{dropout\+\_\+emb}{dropout\_emb}}
+{\footnotesize\ttfamily train.\+dropout\+\_\+emb}
+
+
+
+Definition at line 21 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a1093b38b8f4b2f51bb5d9ed733350a74}\label{namespacetrain_a1093b38b8f4b2f51bb5d9ed733350a74}} 
+\index{train@{train}!dropout\+\_\+rnn@{dropout\+\_\+rnn}}
+\index{dropout\+\_\+rnn@{dropout\+\_\+rnn}!train@{train}}
+\subsubsection{\texorpdfstring{dropout\+\_\+rnn}{dropout\_rnn}}
+{\footnotesize\ttfamily train.\+dropout\+\_\+rnn}
+
+
+
+Definition at line 22 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a058963e0e147d3f21c9f5ee0372cd832}\label{namespacetrain_a058963e0e147d3f21c9f5ee0372cd832}} 
+\index{train@{train}!embedding\+\_\+file@{embedding\+\_\+file}}
+\index{embedding\+\_\+file@{embedding\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{embedding\+\_\+file}{embedding\_file}}
+{\footnotesize\ttfamily train.\+embedding\+\_\+file}
+
+
+
+Definition at line 18 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a2744f49b5a52ff04d0e4092511249a78}\label{namespacetrain_a2744f49b5a52ff04d0e4092511249a78}} 
+\index{train@{train}!embedding\+\_\+type@{embedding\+\_\+type}}
+\index{embedding\+\_\+type@{embedding\+\_\+type}!train@{train}}
+\subsubsection{\texorpdfstring{embedding\+\_\+type}{embedding\_type}}
+{\footnotesize\ttfamily train.\+embedding\+\_\+type}
+
+
+
+Definition at line 35 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a9f48b0b5e52b38ed4a74e4a7b5a4387a}\label{namespacetrain_a9f48b0b5e52b38ed4a74e4a7b5a4387a}} 
+\index{train@{train}!embeddingsize@{embeddingsize}}
+\index{embeddingsize@{embeddingsize}!train@{train}}
+\subsubsection{\texorpdfstring{embeddingsize}{embeddingsize}}
+{\footnotesize\ttfamily train.\+embeddingsize}
+
+
+
+Definition at line 27 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_acb7f4a3a66aa0f5aac1fb5bde04c56a7}\label{namespacetrain_acb7f4a3a66aa0f5aac1fb5bde04c56a7}} 
+\index{train@{train}!evaltask@{evaltask}}
+\index{evaltask@{evaltask}!train@{train}}
+\subsubsection{\texorpdfstring{evaltask}{evaltask}}
+{\footnotesize\ttfamily train.\+evaltask}
+
+
+
+Definition at line 18 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_af6ce307b1ddd4745a96b7834bc0232dc}\label{namespacetrain_af6ce307b1ddd4745a96b7834bc0232dc}} 
+\index{train@{train}!float@{float}}
+\index{float@{float}!train@{train}}
+\subsubsection{\texorpdfstring{float}{float}}
+{\footnotesize\ttfamily train.\+float}
+
+
+
+Definition at line 360 of file train.\+py.
+
+
+
+Referenced by get\+\_\+accuracy().
+
+\mbox{\Hypertarget{namespacetrain_a824aa8f7a68ad5e626aed978e756e005}\label{namespacetrain_a824aa8f7a68ad5e626aed978e756e005}} 
+\index{train@{train}!fout@{fout}}
+\index{fout@{fout}!train@{train}}
+\subsubsection{\texorpdfstring{fout}{fout}}
+{\footnotesize\ttfamily train.\+fout = open(\hyperlink{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}{output\+\_\+file}, \textquotesingle{}w\textquotesingle{})}
+
+
+
+Definition at line 416 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ab8abdbc8c407226fd20791e2713ed052}\label{namespacetrain_ab8abdbc8c407226fd20791e2713ed052}} 
+\index{train@{train}!gradient\+\_\+clip@{gradient\+\_\+clip}}
+\index{gradient\+\_\+clip@{gradient\+\_\+clip}!train@{train}}
+\subsubsection{\texorpdfstring{gradient\+\_\+clip}{gradient\_clip}}
+{\footnotesize\ttfamily train.\+gradient\+\_\+clip}
+
+
+
+Definition at line 32 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a32f0e3dc85526e2620466372fe24fec5}\label{namespacetrain_a32f0e3dc85526e2620466372fe24fec5}} 
+\index{train@{train}!hiddensize@{hiddensize}}
+\index{hiddensize@{hiddensize}!train@{train}}
+\subsubsection{\texorpdfstring{hiddensize}{hiddensize}}
+{\footnotesize\ttfamily train.\+hiddensize}
+
+
+
+Definition at line 25 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a6778555638afb2529f4818fda80d9fd6}\label{namespacetrain_a6778555638afb2529f4818fda80d9fd6}} 
+\index{train@{train}!hops@{hops}}
+\index{hops@{hops}!train@{train}}
+\subsubsection{\texorpdfstring{hops}{hops}}
+{\footnotesize\ttfamily train.\+hops}
+
+
+
+Definition at line 25 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a647c4fb1786c78fdc94676ae8e99581d}\label{namespacetrain_a647c4fb1786c78fdc94676ae8e99581d}} 
+\index{train@{train}!input\+\_\+file@{input\+\_\+file}}
+\index{input\+\_\+file@{input\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{input\+\_\+file}{input\_file}}
+{\footnotesize\ttfamily string train.\+input\+\_\+file = \textquotesingle{}job-\/in-\/\{\}.pkl\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})}
+
+
+
+Definition at line 400 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_af5de906790efe7cea370f1a69e020d52}\label{namespacetrain_af5de906790efe7cea370f1a69e020d52}} 
+\index{train@{train}!int@{int}}
+\index{int@{int}!train@{train}}
+\subsubsection{\texorpdfstring{int}{int}}
+{\footnotesize\ttfamily train.\+int}
+
+
+
+Definition at line 358 of file train.\+py.
+
+
+
+Referenced by main().
+
+\mbox{\Hypertarget{namespacetrain_a09cea1b757e4ebbba308040736f37c4f}\label{namespacetrain_a09cea1b757e4ebbba308040736f37c4f}} 
+\index{train@{train}!job\+\_\+in\+\_\+opt@{job\+\_\+in\+\_\+opt}}
+\index{job\+\_\+in\+\_\+opt@{job\+\_\+in\+\_\+opt}!train@{train}}
+\subsubsection{\texorpdfstring{job\+\_\+in\+\_\+opt}{job\_in\_opt}}
+{\footnotesize\ttfamily train.\+job\+\_\+in\+\_\+opt = pickle.\+load(f\+\_\+in)}
+
+
+
+Definition at line 411 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_aa21180e9a522633e69afac0c0e608b85}\label{namespacetrain_aa21180e9a522633e69afac0c0e608b85}} 
+\index{train@{train}!job\+\_\+num@{job\+\_\+num}}
+\index{job\+\_\+num@{job\+\_\+num}!train@{train}}
+\subsubsection{\texorpdfstring{job\+\_\+num}{job\_num}}
+{\footnotesize\ttfamily train.\+job\+\_\+num = \hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt}\mbox{[}\textquotesingle{}job\+\_\+num\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 399 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a00dfae526f6aa07d0497b80a4ccd9e7c}\label{namespacetrain_a00dfae526f6aa07d0497b80a4ccd9e7c}} 
+\index{train@{train}!learning\+\_\+rate@{learning\+\_\+rate}}
+\index{learning\+\_\+rate@{learning\+\_\+rate}!train@{train}}
+\subsubsection{\texorpdfstring{learning\+\_\+rate}{learning\_rate}}
+{\footnotesize\ttfamily train.\+learning\+\_\+rate}
+
+
+
+Definition at line 20 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_abb1ef436e0c9358251dab8f43b5eaf55}\label{namespacetrain_abb1ef436e0c9358251dab8f43b5eaf55}} 
+\index{train@{train}!learningrate@{learningrate}}
+\index{learningrate@{learningrate}!train@{train}}
+\subsubsection{\texorpdfstring{learningrate}{learningrate}}
+{\footnotesize\ttfamily train.\+learningrate}
+
+
+
+Definition at line 28 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ae4aaa73ae0ad421183d4ab36f0d8fc8e}\label{namespacetrain_ae4aaa73ae0ad421183d4ab36f0d8fc8e}} 
+\index{train@{train}!lins@{lins}}
+\index{lins@{lins}!train@{train}}
+\subsubsection{\texorpdfstring{lins}{lins}}
+{\footnotesize\ttfamily train.\+lins}
+
+
+
+Definition at line 26 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a57337d73f2578ad533e001720a3f899e}\label{namespacetrain_a57337d73f2578ad533e001720a3f899e}} 
+\index{train@{train}!log\+\_\+every\+\_\+n\+\_\+secs@{log\+\_\+every\+\_\+n\+\_\+secs}}
+\index{log\+\_\+every\+\_\+n\+\_\+secs@{log\+\_\+every\+\_\+n\+\_\+secs}!train@{train}}
+\subsubsection{\texorpdfstring{log\+\_\+every\+\_\+n\+\_\+secs}{log\_every\_n\_secs}}
+{\footnotesize\ttfamily train.\+log\+\_\+every\+\_\+n\+\_\+secs}
+
+
+
+Definition at line 38 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a30cb844466eb30a5ba783789c8c0f43f}\label{namespacetrain_a30cb844466eb30a5ba783789c8c0f43f}} 
+\index{train@{train}!log\+\_\+file@{log\+\_\+file}}
+\index{log\+\_\+file@{log\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{log\+\_\+file}{log\_file}}
+{\footnotesize\ttfamily string train.\+log\+\_\+file = \textquotesingle{}job-\/log-\/\{\}.txt\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})}
+
+
+
+Definition at line 402 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a15f59652a2a63b1f48e0c6b97e9ef97a}\label{namespacetrain_a15f59652a2a63b1f48e0c6b97e9ef97a}} 
+\index{train@{train}!lookuptable@{lookuptable}}
+\index{lookuptable@{lookuptable}!train@{train}}
+\subsubsection{\texorpdfstring{lookuptable}{lookuptable}}
+{\footnotesize\ttfamily train.\+lookuptable}
+
+
+
+Definition at line 33 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a543bbe86c3259fb3c872266fd985a87e}\label{namespacetrain_a543bbe86c3259fb3c872266fd985a87e}} 
+\index{train@{train}!margin@{margin}}
+\index{margin@{margin}!train@{train}}
+\subsubsection{\texorpdfstring{margin}{margin}}
+{\footnotesize\ttfamily train.\+margin}
+
+
+
+Definition at line 30 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_adef31c34753713d14a20eb6f1c478f3d}\label{namespacetrain_adef31c34753713d14a20eb6f1c478f3d}} 
+\index{train@{train}!max\+\_\+train\+\_\+time@{max\+\_\+train\+\_\+time}}
+\index{max\+\_\+train\+\_\+time@{max\+\_\+train\+\_\+time}!train@{train}}
+\subsubsection{\texorpdfstring{max\+\_\+train\+\_\+time}{max\_train\_time}}
+{\footnotesize\ttfamily train.\+max\+\_\+train\+\_\+time}
+
+
+
+Definition at line 32 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a943b3c8a55b8e52ba14f9b59e14840d2}\label{namespacetrain_a943b3c8a55b8e52ba14f9b59e14840d2}} 
+\index{train@{train}!model@{model}}
+\index{model@{model}!train@{train}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily train.\+model}
+
+
+
+Definition at line 19 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a1105bc0f8416050a6e26140c97dfe1bf}\label{namespacetrain_a1105bc0f8416050a6e26140c97dfe1bf}} 
+\index{train@{train}!model\+\_\+file@{model\+\_\+file}}
+\index{model\+\_\+file@{model\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{model\+\_\+file}{model\_file}}
+{\footnotesize\ttfamily train.\+model\+\_\+file}
+
+
+
+Definition at line 20 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a7e8ea1d3e1d259adf896825c8bdd998c}\label{namespacetrain_a7e8ea1d3e1d259adf896825c8bdd998c}} 
+\index{train@{train}!momentum@{momentum}}
+\index{momentum@{momentum}!train@{train}}
+\subsubsection{\texorpdfstring{momentum}{momentum}}
+{\footnotesize\ttfamily train.\+momentum}
+
+
+
+Definition at line 36 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a251b9c809d918f9575e8fac22c744b56}\label{namespacetrain_a251b9c809d918f9575e8fac22c744b56}} 
+\index{train@{train}!new\+\_\+opt@{new\+\_\+opt}}
+\index{new\+\_\+opt@{new\+\_\+opt}!train@{train}}
+\subsubsection{\texorpdfstring{new\+\_\+opt}{new\_opt}}
+{\footnotesize\ttfamily train.\+new\+\_\+opt = deepcopy(\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{opt})}
+
+
+
+Definition at line 413 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_aff60f16f2f335b777b21dfdb806544b9}\label{namespacetrain_aff60f16f2f335b777b21dfdb806544b9}} 
+\index{train@{train}!numlayers@{numlayers}}
+\index{numlayers@{numlayers}!train@{train}}
+\subsubsection{\texorpdfstring{numlayers}{numlayers}}
+{\footnotesize\ttfamily train.\+numlayers}
+
+
+
+Definition at line 28 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ab8a86e94cd6c6844e5574a7c41953bea}\label{namespacetrain_ab8a86e94cd6c6844e5574a7c41953bea}} 
+\index{train@{train}!numsoftmax@{numsoftmax}}
+\index{numsoftmax@{numsoftmax}!train@{train}}
+\subsubsection{\texorpdfstring{numsoftmax}{numsoftmax}}
+{\footnotesize\ttfamily train.\+numsoftmax}
+
+
+
+Definition at line 44 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a2fc0d02c023dcccfff9e4e1dd3e66f56}\label{namespacetrain_a2fc0d02c023dcccfff9e4e1dd3e66f56}} 
+\index{train@{train}!numthreads@{numthreads}}
+\index{numthreads@{numthreads}!train@{train}}
+\subsubsection{\texorpdfstring{numthreads}{numthreads}}
+{\footnotesize\ttfamily train.\+numthreads}
+
+
+
+Definition at line 39 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}\label{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}} 
+\index{train@{train}!opt@{opt}}
+\index{opt@{opt}!train@{train}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily train.\+opt = argparser.\+parse\+\_\+args()}
+
+
+
+Definition at line 388 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a776bc60eeb05cde09a691e2daf0da7bd}\label{namespacetrain_a776bc60eeb05cde09a691e2daf0da7bd}} 
+\index{train@{train}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!train@{train}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily train.\+optimizer}
+
+
+
+Definition at line 34 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}\label{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}} 
+\index{train@{train}!output\+\_\+file@{output\+\_\+file}}
+\index{output\+\_\+file@{output\+\_\+file}!train@{train}}
+\subsubsection{\texorpdfstring{output\+\_\+file}{output\_file}}
+{\footnotesize\ttfamily string train.\+output\+\_\+file = \textquotesingle{}job-\/out-\/\{\}.txt\textquotesingle{}.format(\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{job\+\_\+num})}
+
+
+
+Definition at line 401 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a242e49c387b90838a9072c79886a10ec}\label{namespacetrain_a242e49c387b90838a9072c79886a10ec}} 
+\index{train@{train}!parser@{parser}}
+\index{parser@{parser}!train@{train}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily train.\+parser = setup\+\_\+args()}
+
+
+
+Definition at line 15 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a1be63dba1a4c401472a942516cef7810}\label{namespacetrain_a1be63dba1a4c401472a942516cef7810}} 
+\index{train@{train}!rnn\+\_\+class@{rnn\+\_\+class}}
+\index{rnn\+\_\+class@{rnn\+\_\+class}!train@{train}}
+\subsubsection{\texorpdfstring{rnn\+\_\+class}{rnn\_class}}
+{\footnotesize\ttfamily train.\+rnn\+\_\+class}
+
+
+
+Definition at line 29 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a781c403aaa147370f9f172ce4f85323e}\label{namespacetrain_a781c403aaa147370f9f172ce4f85323e}} 
+\index{train@{train}!share\+\_\+embeddings@{share\+\_\+embeddings}}
+\index{share\+\_\+embeddings@{share\+\_\+embeddings}!train@{train}}
+\subsubsection{\texorpdfstring{share\+\_\+embeddings}{share\_embeddings}}
+{\footnotesize\ttfamily train.\+share\+\_\+embeddings}
+
+
+
+Definition at line 29 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_aaa59b213583fa39039d4c2a897f9009c}\label{namespacetrain_aaa59b213583fa39039d4c2a897f9009c}} 
+\index{train@{train}!str@{str}}
+\index{str@{str}!train@{train}}
+\subsubsection{\texorpdfstring{str}{str}}
+{\footnotesize\ttfamily train.\+str}
+
+
+
+Definition at line 373 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ab147c18a1adffb88116dd83812304ac7}\label{namespacetrain_ab147c18a1adffb88116dd83812304ac7}} 
+\index{train@{train}!task@{task}}
+\index{task@{task}!train@{train}}
+\subsubsection{\texorpdfstring{task}{task}}
+{\footnotesize\ttfamily train.\+task}
+
+
+
+Definition at line 17 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ac53cf81dd9f6ec5ae1b3b18b036c3679}\label{namespacetrain_ac53cf81dd9f6ec5ae1b3b18b036c3679}} 
+\index{train@{train}!tfidf@{tfidf}}
+\index{tfidf@{tfidf}!train@{train}}
+\subsubsection{\texorpdfstring{tfidf}{tfidf}}
+{\footnotesize\ttfamily train.\+tfidf}
+
+
+
+Definition at line 31 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ad178c883b88a19efa8ae8c266db4fac3}\label{namespacetrain_ad178c883b88a19efa8ae8c266db4fac3}} 
+\index{train@{train}!tok@{tok}}
+\index{tok@{tok}!train@{train}}
+\subsubsection{\texorpdfstring{tok}{tok}}
+{\footnotesize\ttfamily train.\+tok}
+
+
+
+Definition at line 19 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_aa72e22a516ea2303faba3c129f9ba8dd}\label{namespacetrain_aa72e22a516ea2303faba3c129f9ba8dd}} 
+\index{train@{train}!truncate@{truncate}}
+\index{truncate@{truncate}!train@{train}}
+\subsubsection{\texorpdfstring{truncate}{truncate}}
+{\footnotesize\ttfamily train.\+truncate}
+
+
+
+Definition at line 45 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ad99775ad96e0996a8be4782b30a28c2e}\label{namespacetrain_ad99775ad96e0996a8be4782b30a28c2e}} 
+\index{train@{train}!type@{type}}
+\index{type@{type}!train@{train}}
+\subsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily train.\+type}
+
+
+
+Definition at line 358 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a18ecadee82c97099a6c6e89cc8ba7532}\label{namespacetrain_a18ecadee82c97099a6c6e89cc8ba7532}} 
+\index{train@{train}!validation\+\_\+every\+\_\+n\+\_\+secs@{validation\+\_\+every\+\_\+n\+\_\+secs}}
+\index{validation\+\_\+every\+\_\+n\+\_\+secs@{validation\+\_\+every\+\_\+n\+\_\+secs}!train@{train}}
+\subsubsection{\texorpdfstring{validation\+\_\+every\+\_\+n\+\_\+secs}{validation\_every\_n\_secs}}
+{\footnotesize\ttfamily train.\+validation\+\_\+every\+\_\+n\+\_\+secs}
+
+
+
+Definition at line 33 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a4cd94119882d68e7fc7b12723fd7a6f9}\label{namespacetrain_a4cd94119882d68e7fc7b12723fd7a6f9}} 
+\index{train@{train}!validation\+\_\+max\+\_\+examples@{validation\+\_\+max\+\_\+examples}}
+\index{validation\+\_\+max\+\_\+examples@{validation\+\_\+max\+\_\+examples}!train@{train}}
+\subsubsection{\texorpdfstring{validation\+\_\+max\+\_\+examples}{validation\_max\_examples}}
+{\footnotesize\ttfamily train.\+validation\+\_\+max\+\_\+examples}
+
+
+
+Definition at line 37 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ab5566e4b237deb20dd8bcece26329c84}\label{namespacetrain_ab5566e4b237deb20dd8bcece26329c84}} 
+\index{train@{train}!validation\+\_\+metric@{validation\+\_\+metric}}
+\index{validation\+\_\+metric@{validation\+\_\+metric}!train@{train}}
+\subsubsection{\texorpdfstring{validation\+\_\+metric}{validation\_metric}}
+{\footnotesize\ttfamily train.\+validation\+\_\+metric}
+
+
+
+Definition at line 34 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_a8bc83172c1326dd7c6bcf581727b31f0}\label{namespacetrain_a8bc83172c1326dd7c6bcf581727b31f0}} 
+\index{train@{train}!validation\+\_\+metric\+\_\+mode@{validation\+\_\+metric\+\_\+mode}}
+\index{validation\+\_\+metric\+\_\+mode@{validation\+\_\+metric\+\_\+mode}!train@{train}}
+\subsubsection{\texorpdfstring{validation\+\_\+metric\+\_\+mode}{validation\_metric\_mode}}
+{\footnotesize\ttfamily train.\+validation\+\_\+metric\+\_\+mode}
+
+
+
+Definition at line 35 of file train.\+py.
+
+\mbox{\Hypertarget{namespacetrain_ae8b224177bf0bb0a7d2de52e4ac43ab9}\label{namespacetrain_ae8b224177bf0bb0a7d2de52e4ac43ab9}} 
+\index{train@{train}!validation\+\_\+patience@{validation\+\_\+patience}}
+\index{validation\+\_\+patience@{validation\+\_\+patience}!train@{train}}
+\subsubsection{\texorpdfstring{validation\+\_\+patience}{validation\_patience}}
+{\footnotesize\ttfamily train.\+validation\+\_\+patience}
+
+
+
+Definition at line 36 of file train.\+py.
+

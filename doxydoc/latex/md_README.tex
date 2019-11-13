@@ -1,0 +1,125 @@
+
+
+\href{https://github.com/facebookresearch/ParlAI/blob/master/LICENSE}{\tt } \href{https://circleci.com/gh/facebookresearch/ParlAI/tree/master}{\tt } https\+://github.com/facebookresearch/\+Parl\+A\+I/blob/master/\+C\+O\+N\+T\+R\+I\+B\+U\+T\+I\+N\+G.\+md \char`\"{}!\mbox{[}\+P\+Rs Welcome\mbox{]}(https\+://img.\+shields.\+io/badge/\+P\+Rs-\/welcome-\/brightgreen.\+svg)\char`\"{} \href{https://twitter.com/parlai_parley}{\tt } 
+
+
+
+\href{http://parl.ai}{\tt Parl\+AI} (pronounced “par-\/lay”) is a python framework for sharing, training and testing dialogue models, from open-\/domain chitchat to V\+QA (Visual Question Answering).
+
+Its goal is to provide researchers\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries 70+ popular datasets available all in one place, with the same A\+PI}, among them \href{https://rajpurkar.github.io/SQuAD-explorer/}{\tt S\+Qu\+AD}, \href{http://www.msmarco.org/}{\tt MS M\+A\+R\+CO}, \href{https://www.aclweb.org/anthology/D18-1241}{\tt Qu\+AC}, \href{https://hotpotqa.github.io/}{\tt Hotpot\+QA}, \href{https://arxiv.org/abs/1506.03340}{\tt Q\+A\+C\+NN \& Q\+A\+Daily\+Mail}, \href{https://arxiv.org/abs/1511.02301}{\tt C\+BT}, \href{https://arxiv.org/abs/1610.00956}{\tt Book\+Test}, \href{https://arxiv.org/abs/1605.07683}{\tt b\+AbI Dialogue tasks}, \href{https://arxiv.org/abs/1506.08909}{\tt Ubuntu Dialogue}, \href{https://arxiv.org/abs/1801.07243}{\tt Persona\+Chat}, \href{http://opus.lingfil.uu.se/OpenSubtitles.php}{\tt Open\+Subtitles}, \href{https://openreview.net/forum?id=r1l73iRqKm}{\tt Wizard of Wikipedia}, \href{http://visualqa.org/}{\tt V\+Q\+A-\/\+C\+O\+C\+O2014}, \href{https://arxiv.org/abs/1611.08669}{\tt Vis\+Dial} and \href{http://cs.stanford.edu/people/jcjohns/clevr/}{\tt C\+L\+E\+VR}. See the complete list \href{https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py}{\tt here}
+\item a wide set of {\bfseries reference models} -- from retrieval baselines to transformers.
+\item a large zoo of {\bfseries pretrained models} ready to use off-\/the-\/shelf
+\item seamless {\bfseries integration of \href{https://www.mturk.com/mturk/welcome}{\tt Amazon Mechanical Turk}} for data collection and human evaluation
+\item {\bfseries integration with \href{http://www.parl.ai/docs/tutorial_messenger.html}{\tt Facebook Messenger}} to connect agents with humans in a chat interface
+\item a large range of {\bfseries helpers to create your own agents} and train on several tasks with {\bfseries multitasking}
+\item {\bfseries multimodality}, some tasks use text and images
+\end{DoxyItemize}
+
+Parl\+AI is described in the following paper\+: \href{https://arxiv.org/abs/1705.06476}{\tt “\+Parl\+A\+I\+: A Dialog Research Software Platform", ar\+Xiv\+:1705.\+06476}.
+
+See the https\+://github.com/facebookresearch/\+Parl\+A\+I/blob/master/\+N\+E\+W\+S.\+md \char`\"{}news page\char`\"{} for the latest additions \& updates, and the website \href{http://parl.ai}{\tt http\+://parl.\+ai} for further docs.
+
+\subsection*{Installing Parl\+AI}
+
+Parl\+AI currently requires Python3 and \href{https://pytorch.org}{\tt Pytorch} 1.\+1 or newer. Dependencies of the core modules are listed in {\ttfamily requirement.\+txt}. Some models included (in {\ttfamily parlai/agents}) have additional requirements.
+
+Run the following commands to clone the repository and install Parl\+AI\+:
+
+
+\begin{DoxyCode}
+git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+cd ~/ParlAI; python setup.py develop
+\end{DoxyCode}
+
+
+This will link the cloned directory to your site-\/packages.
+
+This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
+
+All needed data will be downloaded to {\ttfamily $\sim$/\+Parl\+A\+I/data}, and any non-\/data files if requested will be downloaded to {\ttfamily $\sim$/\+Parl\+A\+I/downloads}. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
+
+\subsection*{Documentation}
+
+
+\begin{DoxyItemize}
+\item \href{https://parl.ai/docs/tutorial_quick.html}{\tt Quick Start}
+\item \href{https://parl.ai/docs/tutorial_basic.html}{\tt Basics\+: world, agents, teachers, action and observations}
+\item \href{https://parl.ai/docs/tasks.html}{\tt List of available tasks/datasets}
+\item \href{http://www.parl.ai/docs/tutorial_task.html}{\tt Creating a dataset/task}
+\item \href{./parlai/agents}{\tt List of available agents}
+\item \href{https://parl.ai/docs/tutorial_seq2seq.html#}{\tt Creating a new agent}
+\item \href{https://parl.ai/docs/zoo.html}{\tt Model zoo (pretrained models)}
+\item \href{http://parl.ai/docs/tutorial_mturk.html}{\tt Plug into M\+Turk}
+\item \href{http://parl.ai/docs/tutorial_messenger.html}{\tt Plug into Facebook Messenger}
+\end{DoxyItemize}
+
+\subsection*{Examples}
+
+A large set of examples can be found in \href{./examples}{\tt this directory}. Here are a few of them. Note\+: If any of these examples fail, check the \href{#requirements}{\tt requirements section} to see if you have missed something.
+
+Display 10 random examples from the S\+Qu\+AD task 
+\begin{DoxyCode}
+python examples/display\_data.py -t squad
+\end{DoxyCode}
+
+
+Evaluate an IR baseline model on the validation set of the Personachat task\+: 
+\begin{DoxyCode}
+python examples/eval\_model.py -m ir\_baseline -t personachat -dt valid
+\end{DoxyCode}
+
+
+Train a single layer transformer on personachat (requires pytorch and torchtext). Detail\+: embedding size 300, 4 attention heads, 2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training. 
+\begin{DoxyCode}
+python examples/train\_model.py -t personachat -m transformer/ranker -mf /tmp/model\_tr6 --n-layers 1
+       --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1
+       --embedding-type fasttext\_cc --candidates batch
+\end{DoxyCode}
+
+
+\subsection*{Code Organization}
+
+The code is set up into several main directories\+:
+
+
+\begin{DoxyItemize}
+\item \href{./parlai/core}{\tt {\bfseries core}}\+: contains the primary code for the framework
+\item \href{./parlai/agents}{\tt {\bfseries agents}}\+: contains agents which can interact with the different tasks (e.\+g. machine learning models)
+\item \href{./parlai/examples}{\tt {\bfseries examples}}\+: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
+\item \href{./parlai/tasks}{\tt {\bfseries tasks}}\+: contains code for the different tasks available from within Parl\+AI
+\item \href{./parlai/mturk}{\tt {\bfseries mturk}}\+: contains code for setting up Mechanical Turk, as well as sample M\+Turk tasks
+\item \href{./parlai/messenger}{\tt {\bfseries messenger}}\+: contains code for interfacing with Facebook Messenger
+\item \href{./parlai/zoo}{\tt {\bfseries zoo}}\+: contains code to directly download and use pretrained models from our model zoo
+\end{DoxyItemize}
+
+\subsection*{Support}
+
+If you have any questions, bug reports or feature requests, please don\textquotesingle{}t hesitate to post on our \href{https://github.com/facebookresearch/ParlAI/issues}{\tt Github Issues page}.
+
+\subsection*{The Team}
+
+Parl\+AI is currently maintained by Emily Dinan, Alexander H. Miller, Stephen Roller, Kurt Shuster, Jack Urbanek and Jason Weston. A non-\/exhaustive list of other major contributors includes\+: Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres and Chao Pan.
+
+\subsection*{Citation}
+
+Please cite the \href{https://arxiv.org/abs/1705.06476}{\tt ar\+Xiv paper} if you use Parl\+AI in your work\+:
+
+
+\begin{DoxyCode}
+@article\{miller2017parlai,
+  title=\{ParlAI: A Dialog Research Software Platform\},
+  author=\{\{Miller\}, A.~H. and \{Feng\}, W. and \{Fisch\}, A. and \{Lu\}, J. and \{Batra\}, D. and \{Bordes\}, A. and
+       \{Parikh\}, D. and \{Weston\}, J.\},
+  journal=\{arXiv preprint arXiv:\{1705.06476\}\},
+  year=\{2017\}
+\}
+\end{DoxyCode}
+
+
+\subsection*{License}
+
+Parl\+AI is M\+IT licensed. See the L\+I\+C\+E\+N\+SE file for details. 

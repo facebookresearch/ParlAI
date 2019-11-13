@@ -1,0 +1,8 @@
+<map id="agent.memnn_feedback.MemnnFeedbackAgent.predict" name="agent.memnn_feedback.MemnnFeedbackAgent.predict">
+<area shape="rect" id="node2" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a0988c186c27ab70d318ea30e39a0a5cc" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batch_act" alt="" coords="276,129,484,171"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="261,78,499,105"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="586,5,746,47"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="547,71,785,112"/>
+<area shape="rect" id="node5" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="562,188,770,229"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="567,137,765,163"/>
+</map>

@@ -1,7 +1,5 @@
 <map id="image_chat_collection.worlds.RoleOnboardWorld" name="image_chat_collection.worlds.RoleOnboardWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,203,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="21,244,187,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="21,155,187,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="23,80,185,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="75,5,133,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title="parlai.mturk.core.worlds.\lMTurkOnboardWorld" alt="" coords="21,244,187,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.worlds.\lMTurkDataWorld" alt="" coords="21,155,187,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="23,80,185,107"/>
 </map>

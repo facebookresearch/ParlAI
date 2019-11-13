@@ -1,0 +1,1464 @@
+\hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent}{}\section{parlai.\+core.\+dict.\+Dictionary\+Agent Class Reference}
+\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent}\index{parlai.\+core.\+dict.\+Dictionary\+Agent@{parlai.\+core.\+dict.\+Dictionary\+Agent}}
+
+
+Inheritance diagram for parlai.\+core.\+dict.\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+dict.\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=305pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a324531500b43e0039f2c0087081a8b3d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6c0d7c9c31b38e99b747be88395d689f}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aec44508e4b501214618e24d86a4a51df}{add\+\_\+token} (self, word)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a29f4181dcdd5f53103bc342bf5f3c74a}{\+\_\+\+\_\+contains\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a82a64989f1750412b6ffd9a4270953b3}{\+\_\+\+\_\+getitem\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1c686bb8b03cf09dbd43943d268c2410}{\+\_\+\+\_\+len\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a43dfd6220ded966731b62bca37333dec}{\+\_\+\+\_\+setitem\+\_\+\+\_\+} (self, key, value)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad5abcf174648d88f2383cba7a361dd29}{keys} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84faa359351d8b3edfb333e3b5f5ed71}{copy\+\_\+dict} (self, dictionary)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3c3ef6181e0cea58b2650af763db1d17}{max\+\_\+freq} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a72cfec62b2d5117326f514edfe848a1e}{freqs} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8e818ad5e11ecb08de6c4b858b2e68f1}{spacy\+\_\+tokenize} (self, text, kwargs)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6532e92a69be5a68d04963597cd4ba29}{spacy\+\_\+span\+\_\+tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a73fe72e257ace6e8debf2c41995f8390}{nltk\+\_\+tokenize} (self, text, building=False)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a57685af2fcd0a684b7102c55afe0c8ad}{gpt2\+\_\+tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8fede3cf83af6a47c5dd4bb356de3350}{span\+\_\+tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aca7e5edfd6502701277cb83b75ff4e96}{tokenize} (self, text, building=False)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a520e4bc630cd60f075ad21632ef677a1}{bpe\+\_\+tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_acb28700c8c2725c05a8f3e28f11f8714}{add\+\_\+to\+\_\+dict} (self, tokens)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae828063449b45112d82a97921d35c247}{remove\+\_\+tail} (self, min\+\_\+freq)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1a800c1aecdb97986c59fd26f1b55626}{resize\+\_\+to\+\_\+max} (self, \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abeece13fbdc77b7479d4fb5d02858816}{maxtokens})
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aa4229d1ba17932f588e15067afd9bf42}{load} (self, filename)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0c6a8d8b67fe978549b328e7b7b07450}{save} (self, filename=None, append=False, \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc}{sort}=True)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc}{sort} (self, trim=True)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad34c4135329f6768d22d519c3c483d68}{parse} (self, txt\+\_\+or\+\_\+vec, vec\+\_\+type=list)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abc3baf742422fc7cdaece698224709d4}{txt2vec} (self, text, vec\+\_\+type=list)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2eeb50b2cd6cf3a8ca817b729ec7486}{vec2txt} (self, vector, delimiter=\textquotesingle{} \textquotesingle{})
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af34b92857b41748aafdecee34ebf9345}{act} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3d8996e367685451f7de85e8284243d7}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aea9aca40dd1bb1976f4042565b172d88}{shutdown} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4b822841903bedb2b0f866e7bd17f3fa}{\+\_\+\+\_\+str\+\_\+\+\_\+} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad09f8ecf2b258ecaebce69d9cef9ff3c}{add\+\_\+cmdline\+\_\+args} (argparser)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a78edf54954bf0514e1798ce694a758fe}{re\+\_\+tokenize} (text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a826ba5c6ff36c8ddf5d7723c50e5616d}{split\+\_\+tokenize} (text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a437d3aacc7b55dac587643b271ba5f38}{space\+\_\+tokenize} (text)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6c0d7c9c31b38e99b747be88395d689f}{opt}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a50f58c22b998eb75c24393cbccc759a4}{minfreq}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a9db44f9566d7f7678c5528e7c44d76a8}{null\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a793811f6f290bfcb714fa865745cdcb4}{end\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae741c47302ea1add9cc040d68032c38a}{unk\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5ef1b542b4efa5228e957c1e167195bd}{start\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a834b2cdfb978f230b5131e63cf1e7492}{max\+\_\+ngram\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a77e32c39f829ba158fd8b4ba834f4db3}{tokenizer}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0dc4620f2829a15d822cc29e7fccd677}{lower}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abeece13fbdc77b7479d4fb5d02858816}{maxtokens}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a771c6e70dd433cdc076fd1261f2f3845}{textfields}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0d3436a2a958f18177df71f59f48e72e}{tokenizer\+\_\+fun}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af3e428f4a5d8ef3a2fc02b01a6f659f2}{freq}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5955a6e5b031b8540694b847a9889bcd}{tok2ind}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af425a3810b9c85ac73d9b77a9ee100e6}{ind2tok}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad883df8ef1d397ea93dd9d018822720e}{sent\+\_\+tok}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a025ffc815b72c6d2d34c12249956d4f1}{word\+\_\+tok}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8f4fbeb1e3a220c70e2828e4ce9c3f51}{N\+LP}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2bfd8d00b4733c085a639521e727ceb}{bpehelper}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ac0fbaa96f4b3d1cef6628da8320d4bc2}{gpt2\+\_\+bpe}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a98faac965437d58fd2bf59f9d1438272}{save\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3917720c8b31e5b99698beca63256511}{built}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a7646bb422f0b665953a6542b9e15c1d8}{default\+\_\+lang} = \textquotesingle{}english\textquotesingle{}
+\item 
+int \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4f406b83d630fd7d0457b52d3722e2c6}{default\+\_\+maxngram} = -\/1
+\item 
+int \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad3b95d0ac5f8b213fbed89bc4e2487cb}{default\+\_\+minfreq} = 0
+\item 
+int \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5d96f1650ebea8a11f2c578b1dad257e}{default\+\_\+maxtokens} = -\/1
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1e7c89167a6ff97f4a6bfa1a8634b883}{default\+\_\+null} = \textquotesingle{}\+\_\+\+\_\+null\+\_\+\+\_\+\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1f63ec9644ffede9d3b35daee66f7212}{default\+\_\+start} = \textquotesingle{}\+\_\+\+\_\+start\+\_\+\+\_\+\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae6290695f9d0511853f7c5310ea0dc04}{default\+\_\+end} = \textquotesingle{}\+\_\+\+\_\+end\+\_\+\+\_\+\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae659523f367d3ba29696d2bb59980fdb}{default\+\_\+unk} = \textquotesingle{}\+\_\+\+\_\+unk\+\_\+\+\_\+\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aeb174a076e3febf5b879e109f1c94d2b}{default\+\_\+tok} = \textquotesingle{}re\textquotesingle{}
+\item 
+bool \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a440d3893058a03b84e2aa51f1760e107}{default\+\_\+lower} = False
+\item 
+string \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a091632e3291a206273a90903c42a53d3}{default\+\_\+textfields} = \textquotesingle{}text,labels\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Builds and/or loads a dictionary.
+
+The dictionary provides access to the frequency of each token, functions
+to translate sentences from tokens to their vectors (list of ints, each
+int is the index of a token in the dictionary) and back from vectors to
+tokenized text.
+\end{DoxyVerb}
+ 
+
+Definition at line 94 of file dict.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a324531500b43e0039f2c0087081a8b3d}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a324531500b43e0039f2c0087081a8b3d}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize DictionaryAgent.\end{DoxyVerb}
+ 
+
+Definition at line 219 of file dict.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a29f4181dcdd5f53103bc342bf5f3c74a}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a29f4181dcdd5f53103bc342bf5f3c74a}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+contains\+\_\+\+\_\+()}{\_\_contains\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+contains\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return if the dictionary contains the key.
+
+If key is an int, returns whether the key is in the indices.
+If key is a str, return if the token is in the dict of tokens.
+\end{DoxyVerb}
+ 
+
+Definition at line 361 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a82a64989f1750412b6ffd9a4270953b3}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a82a64989f1750412b6ffd9a4270953b3}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+getitem\+\_\+\+\_\+()}{\_\_getitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+getitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Lookup the word or ID.
+
+If key is an int, returns the corresponding token. If it does not
+exist, return the unknown token.
+If key is a str, return the token's index. If the token is not in the
+dictionary, return the index of the unknown token. If there is no
+unknown token, return ``None``.
+\end{DoxyVerb}
+ 
+
+Definition at line 373 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+unk\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+unk\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+unk\+\_\+token.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1c686bb8b03cf09dbd43943d268c2410}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1c686bb8b03cf09dbd43943d268c2410}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+len\+\_\+\+\_\+()}{\_\_len\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+len\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 390 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a43dfd6220ded966731b62bca37333dec}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a43dfd6220ded966731b62bca37333dec}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+setitem\+\_\+\+\_\+()}{\_\_setitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key,  }\item[{}]{value }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set the frequency for a word to a value.
+
+If the key is not in the dictionary, add it to the dictionary and set
+its frequency to value.
+\end{DoxyVerb}
+ 
+
+Definition at line 393 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, eval\+\_\+ppl.\+int, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+lower, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+lower, parlai.\+core.\+dict.\+Dictionary\+Agent.\+lower, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a43dfd6220ded966731b62bca37333dec_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4b822841903bedb2b0f866e7bd17f3fa}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4b822841903bedb2b0f866e7bd17f3fa}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+str\+\_\+\+\_\+()}{\_\_str\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+str\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return string representation of frequencies in dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 770 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af34b92857b41748aafdecee34ebf9345}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af34b92857b41748aafdecee34ebf9345}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!act@{act}}
+\index{act@{act}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add words in the last observation to the dictionary.
+
+This checks any fields in the message present in the --dict-textfields
+argument (e.g. "text,labels").
+\end{DoxyVerb}
+ 
+
+Definition at line 737 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+textfields, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+textfields, parlai.\+core.\+dict.\+Dictionary\+Agent.\+textfields, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+spacy\+\_\+tokenizer.\+Spacy\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+simple\+\_\+tokenizer.\+Simple\+Tokenizer.\+tokenize(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+regexp\+\_\+tokenizer.\+Regexp\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+corenlp\+\_\+tokenizer.\+Core\+N\+L\+P\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokenizer.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af34b92857b41748aafdecee34ebf9345_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad09f8ecf2b258ecaebce69d9cef9ff3c}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad09f8ecf2b258ecaebce69d9cef9ff3c}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add commandline arguments related to the dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 117 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_acb28700c8c2725c05a8f3e28f11f8714}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_acb28700c8c2725c05a8f3e28f11f8714}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!add\+\_\+to\+\_\+dict@{add\+\_\+to\+\_\+dict}}
+\index{add\+\_\+to\+\_\+dict@{add\+\_\+to\+\_\+dict}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+to\+\_\+dict()}{add\_to\_dict()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tokens }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build dictionary from the list of provided tokens.\end{DoxyVerb}
+ 
+
+Definition at line 541 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_acb28700c8c2725c05a8f3e28f11f8714_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aec44508e4b501214618e24d86a4a51df}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aec44508e4b501214618e24d86a4a51df}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!add\+\_\+token@{add\+\_\+token}}
+\index{add\+\_\+token@{add\+\_\+token}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+token()}{add\_token()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{word }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add a single token to the dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 354 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+load(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aec44508e4b501214618e24d86a4a51df_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a520e4bc630cd60f075ad21632ef677a1}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a520e4bc630cd60f075ad21632ef677a1}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!bpe\+\_\+tokenize@{bpe\+\_\+tokenize}}
+\index{bpe\+\_\+tokenize@{bpe\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{bpe\+\_\+tokenize()}{bpe\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpe\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a sequence of BPE-tokens from the text.\end{DoxyVerb}
+ 
+
+Definition at line 537 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+bpehelper, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+bpehelper, parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpehelper, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a520e4bc630cd60f075ad21632ef677a1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a520e4bc630cd60f075ad21632ef677a1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84faa359351d8b3edfb333e3b5f5ed71}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84faa359351d8b3edfb333e3b5f5ed71}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!copy\+\_\+dict@{copy\+\_\+dict}}
+\index{copy\+\_\+dict@{copy\+\_\+dict}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{copy\+\_\+dict()}{copy\_dict()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+copy\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Overwrite own state with any state in the other dictionary.
+
+This allows loading of the contents of another dictionary while keeping
+the current dictionary version.
+\end{DoxyVerb}
+ 
+
+Definition at line 410 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a72cfec62b2d5117326f514edfe848a1e}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a72cfec62b2d5117326f514edfe848a1e}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!freqs@{freqs}}
+\index{freqs@{freqs}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{freqs()}{freqs()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+freqs (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the frequency dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 429 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a57685af2fcd0a684b7102c55afe0c8ad}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a57685af2fcd0a684b7102c55afe0c8ad}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!gpt2\+\_\+tokenize@{gpt2\+\_\+tokenize}}
+\index{gpt2\+\_\+tokenize@{gpt2\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{gpt2\+\_\+tokenize()}{gpt2\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+gpt2\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize using Gpt2 BPE tokenizer.\end{DoxyVerb}
+ 
+
+Definition at line 465 of file dict.\+py.
+
+
+
+References parlai.\+core.\+dict.\+Dictionary\+Agent.\+gpt2\+\_\+bpe.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad5abcf174648d88f2383cba7a361dd29}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad5abcf174648d88f2383cba7a361dd29}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!keys@{keys}}
+\index{keys@{keys}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{keys()}{keys()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+keys (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return all the words in the dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 406 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), and parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+symbols().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad5abcf174648d88f2383cba7a361dd29_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aa4229d1ba17932f588e15067afd9bf42}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aa4229d1ba17932f588e15067afd9bf42}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!load@{load}}
+\index{load@{load}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load pre-existing dictionary in 'token[<TAB>count]' format.
+
+Initialize counts from other dictionary, or 0 if they aren't included.
+\end{DoxyVerb}
+ 
+
+Definition at line 588 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, eval\+\_\+ppl.\+int, parlai.\+core.\+dict.\+Dictionary\+Agent.\+lower, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+null\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+core.\+dict.\+Dictionary\+Agent.\+null\+\_\+token, and parlai.\+core.\+dict.\+unescape().
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aa4229d1ba17932f588e15067afd9bf42_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aa4229d1ba17932f588e15067afd9bf42_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3c3ef6181e0cea58b2650af763db1d17}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3c3ef6181e0cea58b2650af763db1d17}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!max\+\_\+freq@{max\+\_\+freq}}
+\index{max\+\_\+freq@{max\+\_\+freq}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{max\+\_\+freq()}{max\_freq()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the largest frequency of any nonspecial token.\end{DoxyVerb}
+ 
+
+Definition at line 420 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+end\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+core.\+dict.\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+keys(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+null\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+core.\+dict.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+start\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+core.\+dict.\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+unk\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+unk\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+unk\+\_\+token.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3c3ef6181e0cea58b2650af763db1d17_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a73fe72e257ace6e8debf2c41995f8390}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a73fe72e257ace6e8debf2c41995f8390}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!nltk\+\_\+tokenize@{nltk\+\_\+tokenize}}
+\index{nltk\+\_\+tokenize@{nltk\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{nltk\+\_\+tokenize()}{nltk\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+nltk\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{building = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize using NLTK PunktTokenizer.
+
+Uses nltk-trained PunktTokenizer for sentence tokenization and
+Treebank Word Tokenizer for tokenizing words within sentences.
+\end{DoxyVerb}
+ 
+
+Definition at line 452 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+word\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+word\+\_\+tok, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+word\+\_\+tok.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a73fe72e257ace6e8debf2c41995f8390_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad34c4135329f6768d22d519c3c483d68}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad34c4135329f6768d22d519c3c483d68}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!parse@{parse}}
+\index{parse@{parse}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{txt\+\_\+or\+\_\+vec,  }\item[{}]{vec\+\_\+type = {\ttfamily list} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parse either text or a vector of indices.
+
+Calls `~txt2vec` if `txt_or_vec is a string, or `~vec2txt` otherwise.
+
+:param vec_type:
+    type of the returned vector if the input is a string.
+\end{DoxyVerb}
+ 
+
+Definition at line 684 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+txt2vec(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+txt2vec(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+vec2txt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+vec2txt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+vec2txt(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt().
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset(), and light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad34c4135329f6768d22d519c3c483d68_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad34c4135329f6768d22d519c3c483d68_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a78edf54954bf0514e1798ce694a758fe}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a78edf54954bf0514e1798ce694a758fe}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!re\+\_\+tokenize@{re\+\_\+tokenize}}
+\index{re\+\_\+tokenize@{re\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{re\+\_\+tokenize()}{re\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+re\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Tokenize using a liberal regular expression.
+
+Find boundaries between word characters, newlines, and non-word
+non-whitespace tokens ``(r'[\\w\\n]+ | [^\\w\\s] | \\n')``.
+
+This splits along whitespace and punctuation and keeps the newline as
+a token in the returned list.
+\end{DoxyVerb}
+ 
+
+Definition at line 470 of file dict.\+py.
+
+
+
+Referenced by wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+tokenize().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a78edf54954bf0514e1798ce694a758fe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae828063449b45112d82a97921d35c247}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae828063449b45112d82a97921d35c247}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!remove\+\_\+tail@{remove\+\_\+tail}}
+\index{remove\+\_\+tail@{remove\+\_\+tail}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{remove\+\_\+tail()}{remove\_tail()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{min\+\_\+freq }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Remove elements below the frequency cutoff from the dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 548 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+bpe\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+bpe\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpe\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae828063449b45112d82a97921d35c247_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae828063449b45112d82a97921d35c247_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1a800c1aecdb97986c59fd26f1b55626}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1a800c1aecdb97986c59fd26f1b55626}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!resize\+\_\+to\+\_\+max@{resize\+\_\+to\+\_\+max}}
+\index{resize\+\_\+to\+\_\+max@{resize\+\_\+to\+\_\+max}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{resize\+\_\+to\+\_\+max()}{resize\_to\_max()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{maxtokens }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Trims the dictionary to the maximum number of tokens.\end{DoxyVerb}
+ 
+
+Definition at line 579 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1a800c1aecdb97986c59fd26f1b55626_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0c6a8d8b67fe978549b328e7b7b07450}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0c6a8d8b67fe978549b328e7b7b07450}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!save@{save}}
+\index{save@{save}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{filename = {\ttfamily None},  }\item[{}]{append = {\ttfamily False},  }\item[{}]{sort = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save dictionary to file.
+
+Format is 'token<TAB>count' for every token in the dictionary, sorted
+by count with the most frequent words first.
+
+If ``append`` (default ``False``) is set to ``True``, appends instead of
+overwriting.
+
+If ``sort`` (default ``True``), then first sort the dictionary before saving.
+\end{DoxyVerb}
+ 
+
+Definition at line 609 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+\_\+remove\+\_\+non\+\_\+bpe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+\_\+remove\+\_\+non\+\_\+bpe(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+remove\+\_\+non\+\_\+bpe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+bpehelper, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+bpehelper, parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpehelper, parlai.\+core.\+dict.\+escape(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+keys(), parlai.\+core.\+build\+\_\+data.\+make\+\_\+dir(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+maxtokens, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+maxtokens, parlai.\+core.\+dict.\+Dictionary\+Agent.\+maxtokens, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+minfreq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+minfreq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+minfreq, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sort(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sort(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0c6a8d8b67fe978549b328e7b7b07450_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3d8996e367685451f7de85e8284243d7}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3d8996e367685451f7de85e8284243d7}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!share@{share}}
+\index{share@{share}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share internal dicts.\end{DoxyVerb}
+ 
+
+Definition at line 757 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aea9aca40dd1bb1976f4042565b172d88}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aea9aca40dd1bb1976f4042565b172d88}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save on shutdown if ``save_path`` is set.\end{DoxyVerb}
+ 
+
+Definition at line 765 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+save(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+save(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+save(), parlai.\+core.\+agents.\+Agent.\+save(), parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+save(), parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+save(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+save(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+save(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+save(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+save(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+save\+\_\+path, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+save\+\_\+path, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+save\+\_\+path.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+World.\+\_\+\+\_\+exit\+\_\+\+\_\+(), parlai.\+core.\+worlds.\+Hogwild\+World.\+display(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+episode\+\_\+done().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aea9aca40dd1bb1976f4042565b172d88_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aea9aca40dd1bb1976f4042565b172d88_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!sort@{sort}}
+\index{sort@{sort}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{sort()}{sort()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{trim = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sort the dictionary.
+
+Inline operation. Rearranges the dictionary so that the elements with
+the lowest index have the highest counts. This reindexes the dictionary
+according to the sorted frequencies, breaking ties alphabetically by
+token.
+
+:param bool trim:
+    If True, truncate the dictionary based on minfreq and maxtokens.
+\end{DoxyVerb}
+ 
+
+Definition at line 654 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+maxtokens, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+maxtokens, parlai.\+core.\+dict.\+Dictionary\+Agent.\+maxtokens, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+minfreq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+minfreq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+minfreq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+save().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a84cb4fabf5d0e92e3f80ac16bdfd0ccc_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a437d3aacc7b55dac587643b271ba5f38}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a437d3aacc7b55dac587643b271ba5f38}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!space\+\_\+tokenize@{space\+\_\+tokenize}}
+\index{space\+\_\+tokenize@{space\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{space\+\_\+tokenize()}{space\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+space\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Tokenize exactly on spaces. Useful when text is pre-tokenized.\end{DoxyVerb}
+ 
+
+Definition at line 503 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6532e92a69be5a68d04963597cd4ba29}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6532e92a69be5a68d04963597cd4ba29}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!spacy\+\_\+span\+\_\+tokenize@{spacy\+\_\+span\+\_\+tokenize}}
+\index{spacy\+\_\+span\+\_\+tokenize@{spacy\+\_\+span\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{spacy\+\_\+span\+\_\+tokenize()}{spacy\_span\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return tuple of tokens, spans.\end{DoxyVerb}
+ 
+
+Definition at line 443 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+N\+LP, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+N\+LP, parlai.\+core.\+dict.\+Dictionary\+Agent.\+N\+LP, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6532e92a69be5a68d04963597cd4ba29_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8e818ad5e11ecb08de6c4b858b2e68f1}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8e818ad5e11ecb08de6c4b858b2e68f1}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!spacy\+\_\+tokenize@{spacy\+\_\+tokenize}}
+\index{spacy\+\_\+tokenize@{spacy\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{spacy\+\_\+tokenize()}{spacy\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize using spaCy.
+
+Does whatever spaCy does. See https://spacy.io/.
+\end{DoxyVerb}
+ 
+
+Definition at line 434 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+N\+LP, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+N\+LP, parlai.\+core.\+dict.\+Dictionary\+Agent.\+N\+LP, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8fede3cf83af6a47c5dd4bb356de3350}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8fede3cf83af6a47c5dd4bb356de3350}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!span\+\_\+tokenize@{span\+\_\+tokenize}}
+\index{span\+\_\+tokenize@{span\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{span\+\_\+tokenize()}{span\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize and find  starting index of each token in the original string.\end{DoxyVerb}
+ 
+
+Definition at line 507 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+spacy\+\_\+tokenizer.\+Spacy\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+simple\+\_\+tokenizer.\+Simple\+Tokenizer.\+tokenize(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+regexp\+\_\+tokenizer.\+Regexp\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+corenlp\+\_\+tokenizer.\+Core\+N\+L\+P\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokenizer.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8fede3cf83af6a47c5dd4bb356de3350_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a826ba5c6ff36c8ddf5d7723c50e5616d}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a826ba5c6ff36c8ddf5d7723c50e5616d}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!split\+\_\+tokenize@{split\+\_\+tokenize}}
+\index{split\+\_\+tokenize@{split\+\_\+tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{split\+\_\+tokenize()}{split\_tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+split\+\_\+tokenize (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Tokenize on whitespace and some limited punctuation.
+
+Splits tokens based on whitespace after adding whitespace around
+punctuation.
+
+Use re_tokenize if you want more robust handling of punctuation.
+\end{DoxyVerb}
+ 
+
+Definition at line 483 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aca7e5edfd6502701277cb83b75ff4e96}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aca7e5edfd6502701277cb83b75ff4e96}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!tokenize@{tokenize}}
+\index{tokenize@{tokenize}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{tokenize()}{tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{building = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a sequence of tokens from the iterable.\end{DoxyVerb}
+ 
+
+Definition at line 523 of file dict.\+py.
+
+
+
+References parlai.\+core.\+dict.\+find\+\_\+ngrams(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+lower, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+lower, parlai.\+core.\+dict.\+Dictionary\+Agent.\+lower, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+max\+\_\+ngram\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+max\+\_\+ngram\+\_\+size, parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+ngram\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer\+\_\+fun, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer\+\_\+fun, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer\+\_\+fun.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+act(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpe\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+nltk\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+txt2vec(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=343pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aca7e5edfd6502701277cb83b75ff4e96_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aca7e5edfd6502701277cb83b75ff4e96_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abc3baf742422fc7cdaece698224709d4}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abc3baf742422fc7cdaece698224709d4}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!txt2vec@{txt2vec}}
+\index{txt2vec@{txt2vec}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{txt2vec()}{txt2vec()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{vec\+\_\+type = {\ttfamily list} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert a string to a vector (list of ints).
+
+First runs a sentence tokenizer, then a word tokenizer.
+
+:param type vec_type:
+    The type of the returned vector if the input is a string. Suggested
+    ``list``, ``tuple``, ``set``, or ``np.ndarray``.
+\end{DoxyVerb}
+ 
+
+Definition at line 699 of file dict.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+spacy\+\_\+tokenizer.\+Spacy\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+simple\+\_\+tokenizer.\+Simple\+Tokenizer.\+tokenize(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+regexp\+\_\+tokenizer.\+Regexp\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+corenlp\+\_\+tokenizer.\+Core\+N\+L\+P\+Tokenizer.\+tokenize(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokenizer.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize().
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abc3baf742422fc7cdaece698224709d4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abc3baf742422fc7cdaece698224709d4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2eeb50b2cd6cf3a8ca817b729ec7486}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2eeb50b2cd6cf3a8ca817b729ec7486}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!vec2txt@{vec2txt}}
+\index{vec2txt@{vec2txt}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{vec2txt()}{vec2txt()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{vector,  }\item[{}]{delimiter = {\ttfamily \textquotesingle{}~\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert a vector of IDs to a string.
+
+Converts a vector (iterable of ints) into a string, with each token
+separated by the delimiter (default ``' '``).
+\end{DoxyVerb}
+ 
+
+Definition at line 717 of file dict.\+py.
+
+
+
+References parlai.\+core.\+dict.\+Dictionary\+Agent.\+gpt2\+\_\+bpe, eval\+\_\+ppl.\+int, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2eeb50b2cd6cf3a8ca817b729ec7486_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2bfd8d00b4733c085a639521e727ceb}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af2bfd8d00b4733c085a639521e727ceb}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!bpehelper@{bpehelper}}
+\index{bpehelper@{bpehelper}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{bpehelper}{bpehelper}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpehelper}
+
+
+
+Definition at line 318 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+bpe\+\_\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+save().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3917720c8b31e5b99698beca63256511}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a3917720c8b31e5b99698beca63256511}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!built@{built}}
+\index{built@{built}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{built}{built}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+built}
+
+
+
+Definition at line 543 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae6290695f9d0511853f7c5310ea0dc04}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae6290695f9d0511853f7c5310ea0dc04}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+end@{default\+\_\+end}}
+\index{default\+\_\+end@{default\+\_\+end}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+end}{default\_end}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+end = \textquotesingle{}\+\_\+\+\_\+end\+\_\+\+\_\+\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 110 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a7646bb422f0b665953a6542b9e15c1d8}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a7646bb422f0b665953a6542b9e15c1d8}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+lang@{default\+\_\+lang}}
+\index{default\+\_\+lang@{default\+\_\+lang}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+lang}{default\_lang}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+lang = \textquotesingle{}english\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 104 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a440d3893058a03b84e2aa51f1760e107}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a440d3893058a03b84e2aa51f1760e107}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+lower@{default\+\_\+lower}}
+\index{default\+\_\+lower@{default\+\_\+lower}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+lower}{default\_lower}}
+{\footnotesize\ttfamily bool parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+lower = False\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 113 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4f406b83d630fd7d0457b52d3722e2c6}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a4f406b83d630fd7d0457b52d3722e2c6}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+maxngram@{default\+\_\+maxngram}}
+\index{default\+\_\+maxngram@{default\+\_\+maxngram}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+maxngram}{default\_maxngram}}
+{\footnotesize\ttfamily int parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+maxngram = -\/1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 105 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5d96f1650ebea8a11f2c578b1dad257e}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5d96f1650ebea8a11f2c578b1dad257e}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+maxtokens@{default\+\_\+maxtokens}}
+\index{default\+\_\+maxtokens@{default\+\_\+maxtokens}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+maxtokens}{default\_maxtokens}}
+{\footnotesize\ttfamily int parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+maxtokens = -\/1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 107 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad3b95d0ac5f8b213fbed89bc4e2487cb}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad3b95d0ac5f8b213fbed89bc4e2487cb}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+minfreq@{default\+\_\+minfreq}}
+\index{default\+\_\+minfreq@{default\+\_\+minfreq}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+minfreq}{default\_minfreq}}
+{\footnotesize\ttfamily int parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+minfreq = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 106 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1e7c89167a6ff97f4a6bfa1a8634b883}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1e7c89167a6ff97f4a6bfa1a8634b883}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+null@{default\+\_\+null}}
+\index{default\+\_\+null@{default\+\_\+null}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+null}{default\_null}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+null = \textquotesingle{}\+\_\+\+\_\+null\+\_\+\+\_\+\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 108 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1f63ec9644ffede9d3b35daee66f7212}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a1f63ec9644ffede9d3b35daee66f7212}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+start@{default\+\_\+start}}
+\index{default\+\_\+start@{default\+\_\+start}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+start}{default\_start}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+start = \textquotesingle{}\+\_\+\+\_\+start\+\_\+\+\_\+\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 109 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a091632e3291a206273a90903c42a53d3}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a091632e3291a206273a90903c42a53d3}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+textfields@{default\+\_\+textfields}}
+\index{default\+\_\+textfields@{default\+\_\+textfields}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+textfields}{default\_textfields}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+textfields = \textquotesingle{}text,labels\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 114 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aeb174a076e3febf5b879e109f1c94d2b}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_aeb174a076e3febf5b879e109f1c94d2b}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+tok@{default\+\_\+tok}}
+\index{default\+\_\+tok@{default\+\_\+tok}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+tok}{default\_tok}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+tok = \textquotesingle{}re\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 112 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae659523f367d3ba29696d2bb59980fdb}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae659523f367d3ba29696d2bb59980fdb}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!default\+\_\+unk@{default\+\_\+unk}}
+\index{default\+\_\+unk@{default\+\_\+unk}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{default\+\_\+unk}{default\_unk}}
+{\footnotesize\ttfamily string parlai.\+core.\+dict.\+Dictionary\+Agent.\+default\+\_\+unk = \textquotesingle{}\+\_\+\+\_\+unk\+\_\+\+\_\+\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 111 of file dict.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a793811f6f290bfcb714fa865745cdcb4}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a793811f6f290bfcb714fa865745cdcb4}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!end\+\_\+token@{end\+\_\+token}}
+\index{end\+\_\+token@{end\+\_\+token}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{end\+\_\+token}{end\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+end\+\_\+token}
+
+
+
+Definition at line 224 of file dict.\+py.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos\+\_\+index(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af3e428f4a5d8ef3a2fc02b01a6f659f2}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af3e428f4a5d8ef3a2fc02b01a6f659f2}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!freq@{freq}}
+\index{freq@{freq}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{freq}{freq}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq}
+
+
+
+Definition at line 245 of file dict.\+py.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+add\+\_\+to\+\_\+ques\+\_\+dict(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+freqs(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+share(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ac0fbaa96f4b3d1cef6628da8320d4bc2}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ac0fbaa96f4b3d1cef6628da8320d4bc2}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!gpt2\+\_\+bpe@{gpt2\+\_\+bpe}}
+\index{gpt2\+\_\+bpe@{gpt2\+\_\+bpe}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{gpt2\+\_\+bpe}{gpt2\_bpe}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+gpt2\+\_\+bpe}
+
+
+
+Definition at line 330 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+gpt2\+\_\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af425a3810b9c85ac73d9b77a9ee100e6}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_af425a3810b9c85ac73d9b77a9ee100e6}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!ind2tok@{ind2tok}}
+\index{ind2tok@{ind2tok}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{ind2tok}{ind2tok}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok}
+
+
+
+Definition at line 247 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+contains\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+add\+\_\+to\+\_\+ques\+\_\+dict(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+share(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0dc4620f2829a15d822cc29e7fccd677}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0dc4620f2829a15d822cc29e7fccd677}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!lower@{lower}}
+\index{lower@{lower}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{lower}{lower}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+lower}
+
+
+
+Definition at line 231 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+load(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a834b2cdfb978f230b5131e63cf1e7492}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a834b2cdfb978f230b5131e63cf1e7492}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!max\+\_\+ngram\+\_\+size@{max\+\_\+ngram\+\_\+size}}
+\index{max\+\_\+ngram\+\_\+size@{max\+\_\+ngram\+\_\+size}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{max\+\_\+ngram\+\_\+size}{max\_ngram\_size}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+ngram\+\_\+size}
+
+
+
+Definition at line 227 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abeece13fbdc77b7479d4fb5d02858816}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_abeece13fbdc77b7479d4fb5d02858816}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!maxtokens@{maxtokens}}
+\index{maxtokens@{maxtokens}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{maxtokens}{maxtokens}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+maxtokens}
+
+
+
+Definition at line 232 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a50f58c22b998eb75c24393cbccc759a4}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a50f58c22b998eb75c24393cbccc759a4}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!minfreq@{minfreq}}
+\index{minfreq@{minfreq}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{minfreq}{minfreq}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+minfreq}
+
+
+
+Definition at line 222 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8f4fbeb1e3a220c70e2828e4ce9c3f51}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a8f4fbeb1e3a220c70e2828e4ce9c3f51}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!N\+LP@{N\+LP}}
+\index{N\+LP@{N\+LP}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{N\+LP}{NLP}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+N\+LP}
+
+
+
+Definition at line 314 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a9db44f9566d7f7678c5528e7c44d76a8}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a9db44f9566d7f7678c5528e7c44d76a8}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!null\+\_\+token@{null\+\_\+token}}
+\index{null\+\_\+token@{null\+\_\+token}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{null\+\_\+token}{null\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+null\+\_\+token}
+
+
+
+Definition at line 223 of file dict.\+py.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq(), and parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad\+\_\+index().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6c0d7c9c31b38e99b747be88395d689f}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6c0d7c9c31b38e99b747be88395d689f}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!opt@{opt}}
+\index{opt@{opt}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt}
+
+
+
+Definition at line 221 of file dict.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality(), parlai.\+core.\+worlds.\+World.\+display(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+extract(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+load(), parlai.\+tasks.\+convai2.\+worlds.\+Interactive\+World.\+load\+\_\+personas(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+and\+\_\+process\+\_\+known\+\_\+args(), parlai.\+core.\+params.\+Parlai\+Parser.\+print\+\_\+args(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+save(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+save\+\_\+data(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+save\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+save\+\_\+data(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+save\+\_\+data(), worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+save\+\_\+data(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), parlai.\+core.\+worlds.\+World.\+share(), parlai.\+core.\+worlds.\+Multi\+World.\+share(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a98faac965437d58fd2bf59f9d1438272}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a98faac965437d58fd2bf59f9d1438272}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!save\+\_\+path@{save\+\_\+path}}
+\index{save\+\_\+path@{save\+\_\+path}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{save\+\_\+path}{save\_path}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+save\+\_\+path}
+
+
+
+Definition at line 352 of file dict.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+shutdown(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad883df8ef1d397ea93dd9d018822720e}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ad883df8ef1d397ea93dd9d018822720e}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!sent\+\_\+tok@{sent\+\_\+tok}}
+\index{sent\+\_\+tok@{sent\+\_\+tok}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{sent\+\_\+tok}{sent\_tok}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok}
+
+
+
+Definition at line 298 of file dict.\+py.
+
+
+
+Referenced by interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+format\+\_\+passages(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Edit\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+nltk\+\_\+tokenize(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+share(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5ef1b542b4efa5228e957c1e167195bd}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5ef1b542b4efa5228e957c1e167195bd}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!start\+\_\+token@{start\+\_\+token}}
+\index{start\+\_\+token@{start\+\_\+token}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{start\+\_\+token}{start\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+start\+\_\+token}
+
+
+
+Definition at line 226 of file dict.\+py.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+bos\+\_\+index(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a771c6e70dd433cdc076fd1261f2f3845}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a771c6e70dd433cdc076fd1261f2f3845}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!textfields@{textfields}}
+\index{textfields@{textfields}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{textfields}{textfields}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+textfields}
+
+
+
+Definition at line 233 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5955a6e5b031b8540694b847a9889bcd}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a5955a6e5b031b8540694b847a9889bcd}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!tok2ind@{tok2ind}}
+\index{tok2ind@{tok2ind}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{tok2ind}{tok2ind}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind}
+
+
+
+Definition at line 246 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+contains\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+add\+\_\+to\+\_\+ques\+\_\+dict(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+keys(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+remove\+\_\+tail(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+resize\+\_\+to\+\_\+max(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+share(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+symbols(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a77e32c39f829ba158fd8b4ba834f4db3}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a77e32c39f829ba158fd8b4ba834f4db3}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!tokenizer@{tokenizer}}
+\index{tokenizer@{tokenizer}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{tokenizer}{tokenizer}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer}
+
+
+
+Definition at line 230 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+span\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+spacy\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0d3436a2a958f18177df71f59f48e72e}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a0d3436a2a958f18177df71f59f48e72e}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!tokenizer\+\_\+fun@{tokenizer\+\_\+fun}}
+\index{tokenizer\+\_\+fun@{tokenizer\+\_\+fun}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{tokenizer\+\_\+fun}{tokenizer\_fun}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenizer\+\_\+fun}
+
+
+
+Definition at line 238 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae741c47302ea1add9cc040d68032c38a}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_ae741c47302ea1add9cc040d68032c38a}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!unk\+\_\+token@{unk\+\_\+token}}
+\index{unk\+\_\+token@{unk\+\_\+token}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{unk\+\_\+token}{unk\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+unk\+\_\+token}
+
+
+
+Definition at line 225 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+unk(), and parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+unk\+\_\+index().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a025ffc815b72c6d2d34c12249956d4f1}\label{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a025ffc815b72c6d2d34c12249956d4f1}} 
+\index{parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}!word\+\_\+tok@{word\+\_\+tok}}
+\index{word\+\_\+tok@{word\+\_\+tok}!parlai\+::core\+::dict\+::\+Dictionary\+Agent@{parlai\+::core\+::dict\+::\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{word\+\_\+tok}{word\_tok}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+Dictionary\+Agent.\+word\+\_\+tok}
+
+
+
+Definition at line 302 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+nltk\+\_\+tokenize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{dict_8py}{dict.\+py}\end{DoxyCompactItemize}

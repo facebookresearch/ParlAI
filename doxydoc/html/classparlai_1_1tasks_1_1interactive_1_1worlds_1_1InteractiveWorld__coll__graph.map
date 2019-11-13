@@ -1,6 +1,4 @@
 <map id="parlai.tasks.interactive.worlds.InteractiveWorld" name="parlai.tasks.interactive.worlds.InteractiveWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,244,204,285"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html" title=" " alt="" coords="22,155,187,196"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="23,80,186,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="76,5,133,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html" title="parlai.core.worlds.Dialog\lPartnerWorld" alt="" coords="22,155,187,196"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="23,80,186,107"/>
 </map>

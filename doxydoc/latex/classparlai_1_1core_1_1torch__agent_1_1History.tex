@@ -1,0 +1,489 @@
+\hypertarget{classparlai_1_1core_1_1torch__agent_1_1History}{}\section{parlai.\+core.\+torch\+\_\+agent.\+History Class Reference}
+\label{classparlai_1_1core_1_1torch__agent_1_1History}\index{parlai.\+core.\+torch\+\_\+agent.\+History@{parlai.\+core.\+torch\+\_\+agent.\+History}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+agent.\+History\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=208pt]{classparlai_1_1core_1_1torch__agent_1_1History__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+agent.\+History\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classparlai_1_1core_1_1torch__agent_1_1History__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_af2670eff50563dcee5da6581355e758f}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a3481b17d1cd076c5e3ee82178ea7411a}{field}=\textquotesingle{}text\textquotesingle{}, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7e5b6e0372fa48e0e1ba747b5628bfc7}{vec\+\_\+type}=\textquotesingle{}deque\textquotesingle{}, maxlen=None, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a18b6c863146d30b93d15de840566044b}{size}=-\/1, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7eff0681e0eee4051abb530797f15884}{p1\+\_\+token}=\textquotesingle{}\+\_\+\+\_\+p1\+\_\+\+\_\+\textquotesingle{}, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_ab9f9f10b0dd73d90d3798fb3e1787ee6}{p2\+\_\+token}=\textquotesingle{}\+\_\+\+\_\+p2\+\_\+\+\_\+\textquotesingle{}, dict\+\_\+agent=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7758c7e9d42442ac228b820be4298d84}{parse} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a82e02d0b34707b2e00b95bc659411bae}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_ac7bdfbe78c9f6aed1118161bd24a7c8e}{update\+\_\+history} (self, obs, add\+\_\+next=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a29576ee0dd27b8ee5e651297dada3131}{get\+\_\+history\+\_\+str} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a0d9c7a847af118f77e9986279acf7dea}{get\+\_\+history\+\_\+vec} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a117862fe92da69172cb8e0c494bcd280}{get\+\_\+history\+\_\+vec\+\_\+list} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a3481b17d1cd076c5e3ee82178ea7411a}{field}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_af2dcae73b57a3718cdcb558377a3526b}{dict}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_ae9e14eb1f34edb914930178e0ecfdb01}{delimiter}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a3120b2e6c188316aeffdf1bafbd5baa6}{delimiter\+\_\+tok}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a18b6c863146d30b93d15de840566044b}{size}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a26d15b60abb195247309c4680657a196}{split\+\_\+on\+\_\+newln}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7e5b6e0372fa48e0e1ba747b5628bfc7}{vec\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_acded8e2717f7b9d527076c89a7fbd3f9}{max\+\_\+len}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_ac2aea76f6a052461e74aa050bb69408a}{history\+\_\+strings}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a93643f51a5a2ab0478dff99d571c5f41}{history\+\_\+raw\+\_\+strings}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7d5060a88829f087033ea7ba928ceb1d}{history\+\_\+vecs}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a1ceeb7bf9ff2209a9aafff142e667006}{add\+\_\+person\+\_\+tokens}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_aa0ab2c82ef1ba339dd04eafd57c082e5}{add\+\_\+p1\+\_\+after\+\_\+newln}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a7eff0681e0eee4051abb530797f15884}{p1\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_ab9f9f10b0dd73d90d3798fb3e1787ee6}{p2\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__agent_1_1History_a191e6a7c5f54aab89875b8a9bc2f3cbd}{reset\+\_\+on\+\_\+next\+\_\+update}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}History handles tracking the dialogue state over the course of an episode.
+
+History may also be used to track the history of any field.
+
+:param field:
+    field in the observation to track over the course of the episode
+    (defaults to 'text')
+
+:param vec_type:
+    specify a 'list' or 'deque' to save the history in this object
+
+:param maxlen:
+    if `vec_type` is 'deque', this sets the maximum length of that object
+
+:param p1_token:
+    token indicating 'person 1'; opt must have 'person_tokens' set to True
+    for this to be added
+
+:param p1_token:
+    token indicating 'person 2'; opt must have 'person_tokens' set to True
+    for this to be added
+
+:param dict_agent:
+    DictionaryAgent object for tokenizing the history
+\end{DoxyVerb}
+ 
+
+Definition at line 144 of file torch\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_af2670eff50563dcee5da6581355e758f}\label{classparlai_1_1core_1_1torch__agent_1_1History_af2670eff50563dcee5da6581355e758f}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{field = {\ttfamily \textquotesingle{}text\textquotesingle{}},  }\item[{}]{vec\+\_\+type = {\ttfamily \textquotesingle{}deque\textquotesingle{}},  }\item[{}]{maxlen = {\ttfamily None},  }\item[{}]{size = {\ttfamily -\/1},  }\item[{}]{p1\+\_\+token = {\ttfamily \textquotesingle{}\+\_\+\+\_\+p1\+\_\+\+\_\+\textquotesingle{}},  }\item[{}]{p2\+\_\+token = {\ttfamily \textquotesingle{}\+\_\+\+\_\+p2\+\_\+\+\_\+\textquotesingle{}},  }\item[{}]{dict\+\_\+agent = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 182 of file torch\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a29576ee0dd27b8ee5e651297dada3131}\label{classparlai_1_1core_1_1torch__agent_1_1History_a29576ee0dd27b8ee5e651297dada3131}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!get\+\_\+history\+\_\+str@{get\+\_\+history\+\_\+str}}
+\index{get\+\_\+history\+\_\+str@{get\+\_\+history\+\_\+str}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{get\+\_\+history\+\_\+str()}{get\_history\_str()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+str (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the string version of the history.\end{DoxyVerb}
+ 
+
+Definition at line 280 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+History.\+delimiter, and parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+strings.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a0d9c7a847af118f77e9986279acf7dea}\label{classparlai_1_1core_1_1torch__agent_1_1History_a0d9c7a847af118f77e9986279acf7dea}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!get\+\_\+history\+\_\+vec@{get\+\_\+history\+\_\+vec}}
+\index{get\+\_\+history\+\_\+vec@{get\+\_\+history\+\_\+vec}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{get\+\_\+history\+\_\+vec()}{get\_history\_vec()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a vectorized version of the history.\end{DoxyVerb}
+ 
+
+Definition at line 286 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+History.\+delimiter\+\_\+tok, parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+vecs, parlai.\+core.\+torch\+\_\+agent.\+History.\+max\+\_\+len, and parlai.\+core.\+torch\+\_\+agent.\+History.\+vec\+\_\+type.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a117862fe92da69172cb8e0c494bcd280}\label{classparlai_1_1core_1_1torch__agent_1_1History_a117862fe92da69172cb8e0c494bcd280}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!get\+\_\+history\+\_\+vec\+\_\+list@{get\+\_\+history\+\_\+vec\+\_\+list}}
+\index{get\+\_\+history\+\_\+vec\+\_\+list@{get\+\_\+history\+\_\+vec\+\_\+list}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{get\+\_\+history\+\_\+vec\+\_\+list()}{get\_history\_vec\_list()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec\+\_\+list (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of history vecs.\end{DoxyVerb}
+ 
+
+Definition at line 307 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+vecs.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a7758c7e9d42442ac228b820be4298d84}\label{classparlai_1_1core_1_1torch__agent_1_1History_a7758c7e9d42442ac228b820be4298d84}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!parse@{parse}}
+\index{parse@{parse}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize text with the given dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 209 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset(), and light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__agent_1_1History_a7758c7e9d42442ac228b820be4298d84_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a82e02d0b34707b2e00b95bc659411bae}\label{classparlai_1_1core_1_1torch__agent_1_1History_a82e02d0b34707b2e00b95bc659411bae}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!reset@{reset}}
+\index{reset@{reset}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Clear the history.\end{DoxyVerb}
+ 
+
+Definition at line 213 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+raw\+\_\+strings, parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+strings, parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+vecs, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+size.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__agent_1_1History_a82e02d0b34707b2e00b95bc659411bae_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__agent_1_1History_a82e02d0b34707b2e00b95bc659411bae_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_ac7bdfbe78c9f6aed1118161bd24a7c8e}\label{classparlai_1_1core_1_1torch__agent_1_1History_ac7bdfbe78c9f6aed1118161bd24a7c8e}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!update\+\_\+history@{update\+\_\+history}}
+\index{update\+\_\+history@{update\+\_\+history}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{update\+\_\+history()}{update\_history()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs,  }\item[{}]{add\+\_\+next = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update the history with the given observation.
+
+:param add_next:
+    string to append to history prior to updating it with the
+    observation
+\end{DoxyVerb}
+ 
+
+Definition at line 237 of file torch\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+History.\+\_\+add\+\_\+person\+\_\+tokens(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+\_\+add\+\_\+person\+\_\+tokens(), parlai.\+core.\+torch\+\_\+agent.\+History.\+\_\+update\+\_\+raw\+\_\+strings(), parlai.\+core.\+torch\+\_\+agent.\+History.\+\_\+update\+\_\+strings(), parlai.\+core.\+torch\+\_\+agent.\+History.\+\_\+update\+\_\+vecs(), parlai.\+core.\+torch\+\_\+agent.\+History.\+add\+\_\+p1\+\_\+after\+\_\+newln, parlai.\+core.\+torch\+\_\+agent.\+History.\+add\+\_\+person\+\_\+tokens, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+add\+\_\+person\+\_\+tokens, parlai.\+core.\+torch\+\_\+agent.\+History.\+field, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+p1\+\_\+token, parlai.\+core.\+torch\+\_\+agent.\+History.\+p1\+\_\+token, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+p2\+\_\+token, parlai.\+core.\+torch\+\_\+agent.\+History.\+p2\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+reset(), parlai.\+core.\+agents.\+Agent.\+reset(), parlai.\+agents.\+drqa.\+utils.\+Average\+Meter.\+reset(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+reset(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+reset(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+reset(), parlai.\+core.\+agents.\+Teacher.\+reset(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+reset(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+reset(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+reset(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset(), parlai.\+core.\+teachers.\+Dialog\+Teacher.\+reset(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+reset(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+reset(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+reset(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+reset(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset\+\_\+on\+\_\+next\+\_\+update, and parlai.\+core.\+torch\+\_\+agent.\+History.\+split\+\_\+on\+\_\+newln.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__agent_1_1History_ac7bdfbe78c9f6aed1118161bd24a7c8e_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_aa0ab2c82ef1ba339dd04eafd57c082e5}\label{classparlai_1_1core_1_1torch__agent_1_1History_aa0ab2c82ef1ba339dd04eafd57c082e5}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!add\+\_\+p1\+\_\+after\+\_\+newln@{add\+\_\+p1\+\_\+after\+\_\+newln}}
+\index{add\+\_\+p1\+\_\+after\+\_\+newln@{add\+\_\+p1\+\_\+after\+\_\+newln}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{add\+\_\+p1\+\_\+after\+\_\+newln}{add\_p1\_after\_newln}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+add\+\_\+p1\+\_\+after\+\_\+newln}
+
+
+
+Definition at line 202 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a1ceeb7bf9ff2209a9aafff142e667006}\label{classparlai_1_1core_1_1torch__agent_1_1History_a1ceeb7bf9ff2209a9aafff142e667006}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!add\+\_\+person\+\_\+tokens@{add\+\_\+person\+\_\+tokens}}
+\index{add\+\_\+person\+\_\+tokens@{add\+\_\+person\+\_\+tokens}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{add\+\_\+person\+\_\+tokens}{add\_person\_tokens}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+add\+\_\+person\+\_\+tokens}
+
+
+
+Definition at line 201 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_ae9e14eb1f34edb914930178e0ecfdb01}\label{classparlai_1_1core_1_1torch__agent_1_1History_ae9e14eb1f34edb914930178e0ecfdb01}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!delimiter@{delimiter}}
+\index{delimiter@{delimiter}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{delimiter}{delimiter}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+delimiter}
+
+
+
+Definition at line 185 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+str().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a3120b2e6c188316aeffdf1bafbd5baa6}\label{classparlai_1_1core_1_1torch__agent_1_1History_a3120b2e6c188316aeffdf1bafbd5baa6}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!delimiter\+\_\+tok@{delimiter\+\_\+tok}}
+\index{delimiter\+\_\+tok@{delimiter\+\_\+tok}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{delimiter\+\_\+tok}{delimiter\_tok}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+delimiter\+\_\+tok}
+
+
+
+Definition at line 186 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_af2dcae73b57a3718cdcb558377a3526b}\label{classparlai_1_1core_1_1torch__agent_1_1History_af2dcae73b57a3718cdcb558377a3526b}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!dict@{dict}}
+\index{dict@{dict}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+dict}
+
+
+
+Definition at line 184 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by generator.\+agents.\+Two\+Stage\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse\+\_\+cands(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a3481b17d1cd076c5e3ee82178ea7411a}\label{classparlai_1_1core_1_1torch__agent_1_1History_a3481b17d1cd076c5e3ee82178ea7411a}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!field@{field}}
+\index{field@{field}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{field}{field}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+field}
+
+
+
+Definition at line 183 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a93643f51a5a2ab0478dff99d571c5f41}\label{classparlai_1_1core_1_1torch__agent_1_1History_a93643f51a5a2ab0478dff99d571c5f41}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!history\+\_\+raw\+\_\+strings@{history\+\_\+raw\+\_\+strings}}
+\index{history\+\_\+raw\+\_\+strings@{history\+\_\+raw\+\_\+strings}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{history\+\_\+raw\+\_\+strings}{history\_raw\_strings}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+raw\+\_\+strings}
+
+
+
+Definition at line 197 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_ac2aea76f6a052461e74aa050bb69408a}\label{classparlai_1_1core_1_1torch__agent_1_1History_ac2aea76f6a052461e74aa050bb69408a}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!history\+\_\+strings@{history\+\_\+strings}}
+\index{history\+\_\+strings@{history\+\_\+strings}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{history\+\_\+strings}{history\_strings}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+strings}
+
+
+
+Definition at line 196 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+str(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a7d5060a88829f087033ea7ba928ceb1d}\label{classparlai_1_1core_1_1torch__agent_1_1History_a7d5060a88829f087033ea7ba928ceb1d}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!history\+\_\+vecs@{history\+\_\+vecs}}
+\index{history\+\_\+vecs@{history\+\_\+vecs}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{history\+\_\+vecs}{history\_vecs}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+history\+\_\+vecs}
+
+
+
+Definition at line 198 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec\+\_\+list(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_acded8e2717f7b9d527076c89a7fbd3f9}\label{classparlai_1_1core_1_1torch__agent_1_1History_acded8e2717f7b9d527076c89a7fbd3f9}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!max\+\_\+len@{max\+\_\+len}}
+\index{max\+\_\+len@{max\+\_\+len}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{max\+\_\+len}{max\_len}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+max\+\_\+len}
+
+
+
+Definition at line 194 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+words(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a7eff0681e0eee4051abb530797f15884}\label{classparlai_1_1core_1_1torch__agent_1_1History_a7eff0681e0eee4051abb530797f15884}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!p1\+\_\+token@{p1\+\_\+token}}
+\index{p1\+\_\+token@{p1\+\_\+token}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{p1\+\_\+token}{p1\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+p1\+\_\+token}
+
+
+
+Definition at line 203 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_ab9f9f10b0dd73d90d3798fb3e1787ee6}\label{classparlai_1_1core_1_1torch__agent_1_1History_ab9f9f10b0dd73d90d3798fb3e1787ee6}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!p2\+\_\+token@{p2\+\_\+token}}
+\index{p2\+\_\+token@{p2\+\_\+token}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{p2\+\_\+token}{p2\_token}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+p2\+\_\+token}
+
+
+
+Definition at line 204 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a191e6a7c5f54aab89875b8a9bc2f3cbd}\label{classparlai_1_1core_1_1torch__agent_1_1History_a191e6a7c5f54aab89875b8a9bc2f3cbd}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!reset\+\_\+on\+\_\+next\+\_\+update@{reset\+\_\+on\+\_\+next\+\_\+update}}
+\index{reset\+\_\+on\+\_\+next\+\_\+update@{reset\+\_\+on\+\_\+next\+\_\+update}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{reset\+\_\+on\+\_\+next\+\_\+update}{reset\_on\_next\_update}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+reset\+\_\+on\+\_\+next\+\_\+update}
+
+
+
+Definition at line 207 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a18b6c863146d30b93d15de840566044b}\label{classparlai_1_1core_1_1torch__agent_1_1History_a18b6c863146d30b93d15de840566044b}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!size@{size}}
+\index{size@{size}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+size}
+
+
+
+Definition at line 187 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a26d15b60abb195247309c4680657a196}\label{classparlai_1_1core_1_1torch__agent_1_1History_a26d15b60abb195247309c4680657a196}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!split\+\_\+on\+\_\+newln@{split\+\_\+on\+\_\+newln}}
+\index{split\+\_\+on\+\_\+newln@{split\+\_\+on\+\_\+newln}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{split\+\_\+on\+\_\+newln}{split\_on\_newln}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+split\+\_\+on\+\_\+newln}
+
+
+
+Definition at line 188 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1History_a7e5b6e0372fa48e0e1ba747b5628bfc7}\label{classparlai_1_1core_1_1torch__agent_1_1History_a7e5b6e0372fa48e0e1ba747b5628bfc7}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}!vec\+\_\+type@{vec\+\_\+type}}
+\index{vec\+\_\+type@{vec\+\_\+type}!parlai\+::core\+::torch\+\_\+agent\+::\+History@{parlai\+::core\+::torch\+\_\+agent\+::\+History}}
+\subsubsection{\texorpdfstring{vec\+\_\+type}{vec\_type}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+agent.\+History.\+vec\+\_\+type}
+
+
+
+Definition at line 193 of file torch\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+History.\+get\+\_\+history\+\_\+vec().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__agent_8py}{torch\+\_\+agent.\+py}\end{DoxyCompactItemize}

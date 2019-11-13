@@ -1,0 +1,167 @@
+\hypertarget{namespacecontrollable__seq2seq_1_1nidf}{}\section{controllable\+\_\+seq2seq.\+nidf Namespace Reference}
+\label{namespacecontrollable__seq2seq_1_1nidf}\index{controllable\+\_\+seq2seq.\+nidf@{controllable\+\_\+seq2seq.\+nidf}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1nidf_a37a19098963f0cd702448fb479fbe37d}{get\+\_\+word\+\_\+counts} (\hyperlink{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}{opt}, count\+\_\+inputs)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1nidf_af8dba0db3cab81647b00a17f0a153ad3}{learn\+\_\+nidf} (\hyperlink{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}{opt})
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1nidf_abeea1f9ad5a454af61b4744b6fcc553f}{load\+\_\+word2nidf} (\hyperlink{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespacecontrollable__seq2seq_1_1nidf_a6ed61d865a129090fe559cdfcf6fb6a0}{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR} = \textquotesingle{}controllable\+\_\+dialogue\textquotesingle{}
+\item 
+string \hyperlink{namespacecontrollable__seq2seq_1_1nidf_a8a8d53a423e92dbd9d85a5d827ef6892}{P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR} = \textquotesingle{}controllable\+\_\+dialogue/Conv\+A\+I2\+\_\+parlaiformat\textquotesingle{}
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1nidf_a10a29eb100088c18e46c792f257e5f1c}{parser} = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}{opt} = parser.\+parse\+\_\+args()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_a37a19098963f0cd702448fb479fbe37d}\label{namespacecontrollable__seq2seq_1_1nidf_a37a19098963f0cd702448fb479fbe37d}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!get\+\_\+word\+\_\+counts@{get\+\_\+word\+\_\+counts}}
+\index{get\+\_\+word\+\_\+counts@{get\+\_\+word\+\_\+counts}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{get\+\_\+word\+\_\+counts()}{get\_word\_counts()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+nidf.\+get\+\_\+word\+\_\+counts (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{count\+\_\+inputs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Goes through the dataset specified in opt and gets word counts.
+
+Inputs:
+  count_inputs: If True, include both input and reply when counting words
+    and utterances. Otherwise, only include reply text.
+
+Returns:
+  word_counter_per_sent: a Counter mapping each word to the number of
+    utterances in which it appears.
+  num_sents: int. number of utterances counted
+\end{DoxyVerb}
+ 
+
+Definition at line 25 of file nidf.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+nidf.\+learn\+\_\+nidf().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1nidf_a37a19098963f0cd702448fb479fbe37d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1nidf_a37a19098963f0cd702448fb479fbe37d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_af8dba0db3cab81647b00a17f0a153ad3}\label{namespacecontrollable__seq2seq_1_1nidf_af8dba0db3cab81647b00a17f0a153ad3}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!learn\+\_\+nidf@{learn\+\_\+nidf}}
+\index{learn\+\_\+nidf@{learn\+\_\+nidf}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{learn\+\_\+nidf()}{learn\_nidf()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+nidf.\+learn\+\_\+nidf (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Go through ConvAI2 and Twitter data, and count word frequences.
+Save word2count.pkl, which contains word2count, and total num_sents.
+These are both needed to calculate NIDF later.
+\end{DoxyVerb}
+ 
+
+Definition at line 77 of file nidf.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+nidf.\+get\+\_\+word\+\_\+counts().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1nidf_af8dba0db3cab81647b00a17f0a153ad3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_abeea1f9ad5a454af61b4744b6fcc553f}\label{namespacecontrollable__seq2seq_1_1nidf_abeea1f9ad5a454af61b4744b6fcc553f}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!load\+\_\+word2nidf@{load\+\_\+word2nidf}}
+\index{load\+\_\+word2nidf@{load\+\_\+word2nidf}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{load\+\_\+word2nidf()}{load\_word2nidf()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+nidf.\+load\+\_\+word2nidf (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Loads word count stats from word2count.pkl file in data/controllable_dialogue,
+computes NIDF for all words, and returns the word2nidf dictionary.
+
+Returns:
+  word2nidf: dict mapping words to their NIDF score (float between 0 and 1)
+\end{DoxyVerb}
+ 
+
+Definition at line 128 of file nidf.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1nidf_abeea1f9ad5a454af61b4744b6fcc553f_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_a6ed61d865a129090fe559cdfcf6fb6a0}\label{namespacecontrollable__seq2seq_1_1nidf_a6ed61d865a129090fe559cdfcf6fb6a0}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR@{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}}
+\index{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR@{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}{CONTROLLABLE\_DIR}}
+{\footnotesize\ttfamily string controllable\+\_\+seq2seq.\+nidf.\+C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR = \textquotesingle{}controllable\+\_\+dialogue\textquotesingle{}}
+
+
+
+Definition at line 21 of file nidf.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}\label{namespacecontrollable__seq2seq_1_1nidf_aaadf427a69407624cafea339545a66cb}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!opt@{opt}}
+\index{opt@{opt}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+nidf.\+opt = parser.\+parse\+\_\+args()}
+
+
+
+Definition at line 155 of file nidf.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_a8a8d53a423e92dbd9d85a5d827ef6892}\label{namespacecontrollable__seq2seq_1_1nidf_a8a8d53a423e92dbd9d85a5d827ef6892}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR@{P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR}}
+\index{P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR@{P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR}{PARLAI\_FORMAT\_DIR}}
+{\footnotesize\ttfamily string controllable\+\_\+seq2seq.\+nidf.\+P\+A\+R\+L\+A\+I\+\_\+\+F\+O\+R\+M\+A\+T\+\_\+\+D\+IR = \textquotesingle{}controllable\+\_\+dialogue/Conv\+A\+I2\+\_\+parlaiformat\textquotesingle{}}
+
+
+
+Definition at line 22 of file nidf.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1nidf_a10a29eb100088c18e46c792f257e5f1c}\label{namespacecontrollable__seq2seq_1_1nidf_a10a29eb100088c18e46c792f257e5f1c}} 
+\index{controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}!parser@{parser}}
+\index{parser@{parser}!controllable\+\_\+seq2seq\+::nidf@{controllable\+\_\+seq2seq\+::nidf}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+nidf.\+parser = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()}
+
+
+
+Definition at line 154 of file nidf.\+py.
+

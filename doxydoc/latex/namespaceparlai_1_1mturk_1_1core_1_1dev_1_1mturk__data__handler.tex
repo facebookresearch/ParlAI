@@ -1,0 +1,206 @@
+\hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler}{}\section{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler Namespace Reference}
+\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler}\index{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler@{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler}{M\+Turk\+Data\+Handler}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a91afc0627fc6e88d49e71f4471fb56b8}{force\+\_\+dir} (path)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_ac09f41edba457d8e1fc11da9154958d9}{data\+\_\+dir} = os.\+path.\+join(\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1shared__utils_a1a7ab908ecffbfc1fabb5222625d35a2}{shared\+\_\+utils.\+get\+\_\+mturk\+\_\+dir}(), \textquotesingle{}run\+\_\+data\textquotesingle{})
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a5e74bfcab8936656421142da4213addb}{exist\+\_\+ok}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_abe357c7a65e8a413b229727b750facf3}{C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a00d6b9648875a287e673c3c39f19ba76}{C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a3e4e8efbdbbfbfcf841ffc1cfb5c741a}{C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a2250838eb6ae34a406c24cc68de3db25}{C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a47283f5afce715b73965cdc188fde863}{C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a91afc0627fc6e88d49e71f4471fb56b8}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a91afc0627fc6e88d49e71f4471fb56b8}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!force\+\_\+dir@{force\+\_\+dir}}
+\index{force\+\_\+dir@{force\+\_\+dir}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{force\+\_\+dir()}{force\_dir()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+force\+\_\+dir (\begin{DoxyParamCaption}\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make sure the parent dir exists for path so we can write a file.\end{DoxyVerb}
+ 
+
+Definition at line 19 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a91afc0627fc6e88d49e71f4471fb56b8_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a2250838eb6ae34a406c24cc68de3db25}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a2250838eb6ae34a406c24cc68de3db25}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}}
+\index{C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}{CREATE\_ASSIGN\_DATA\_SQL\_TABLE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+C\+R\+E\+A\+T\+E\+\_\+\+A\+S\+S\+I\+G\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \textcolor{stringliteral}{"""CREATE TABLE IF NOT EXISTS assignments (}
+2 \textcolor{stringliteral}{        assignment\_id string PRIMARY KEY,}
+3 \textcolor{stringliteral}{        status string,}
+4 \textcolor{stringliteral}{        approve\_time int,}
+5 \textcolor{stringliteral}{        worker\_id string,}
+6 \textcolor{stringliteral}{        hit\_id string,}
+7 \textcolor{stringliteral}{        FOREIGN KEY (worker\_id) REFERENCES workers (worker\_id),}
+8 \textcolor{stringliteral}{        FOREIGN KEY (hit\_id) REFERENCES hits (hit\_id)}
+9 \textcolor{stringliteral}{    );}
+10 \textcolor{stringliteral}{    """}
+\end{DoxyCode}
+
+
+Definition at line 66 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a3e4e8efbdbbfbfcf841ffc1cfb5c741a}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a3e4e8efbdbbfbfcf841ffc1cfb5c741a}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}}
+\index{C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}{CREATE\_HIT\_DATA\_SQL\_TABLE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+C\+R\+E\+A\+T\+E\+\_\+\+H\+I\+T\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \textcolor{stringliteral}{"""CREATE TABLE IF NOT EXISTS hits (}
+2 \textcolor{stringliteral}{        hit\_id string PRIMARY KEY,}
+3 \textcolor{stringliteral}{        expiration integer NOT NULL,}
+4 \textcolor{stringliteral}{        hit\_status string,}
+5 \textcolor{stringliteral}{        assignments\_pending int,}
+6 \textcolor{stringliteral}{        assignments\_available int,}
+7 \textcolor{stringliteral}{        assignments\_complete int,}
+8 \textcolor{stringliteral}{        run\_id string,}
+9 \textcolor{stringliteral}{        FOREIGN KEY (run\_id) REFERENCES runs (run\_id)}
+10 \textcolor{stringliteral}{    );}
+11 \textcolor{stringliteral}{    """}
+\end{DoxyCode}
+
+
+Definition at line 53 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a47283f5afce715b73965cdc188fde863}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a47283f5afce715b73965cdc188fde863}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}}
+\index{C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}{CREATE\_PAIRING\_DATA\_SQL\_TABLE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+C\+R\+E\+A\+T\+E\+\_\+\+P\+A\+I\+R\+I\+N\+G\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \textcolor{stringliteral}{"""CREATE TABLE IF NOT EXISTS pairings (}
+2 \textcolor{stringliteral}{        status string,}
+3 \textcolor{stringliteral}{        onboarding\_start int,}
+4 \textcolor{stringliteral}{        onboarding\_end int,}
+5 \textcolor{stringliteral}{        task\_start int,}
+6 \textcolor{stringliteral}{        task\_end int,}
+7 \textcolor{stringliteral}{        conversation\_id string,}
+8 \textcolor{stringliteral}{        bonus\_amount int,}
+9 \textcolor{stringliteral}{        bonus\_text string,}
+10 \textcolor{stringliteral}{        bonus\_paid boolean,}
+11 \textcolor{stringliteral}{        notes string,}
+12 \textcolor{stringliteral}{        worker\_id string,}
+13 \textcolor{stringliteral}{        assignment\_id string,}
+14 \textcolor{stringliteral}{        run\_id string,}
+15 \textcolor{stringliteral}{        onboarding\_id string,}
+16 \textcolor{stringliteral}{        extra\_bonus\_amount int,}
+17 \textcolor{stringliteral}{        extra\_bonus\_text string,}
+18 \textcolor{stringliteral}{        FOREIGN KEY (worker\_id) REFERENCES workers (worker\_id),}
+19 \textcolor{stringliteral}{        FOREIGN KEY (assignment\_id) REFERENCES assignments (assignment\_id),}
+20 \textcolor{stringliteral}{        FOREIGN KEY (run\_id) REFERENCES runs (run\_id)}
+21 \textcolor{stringliteral}{    );}
+22 \textcolor{stringliteral}{    """}
+\end{DoxyCode}
+
+
+Definition at line 78 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_abe357c7a65e8a413b229727b750facf3}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_abe357c7a65e8a413b229727b750facf3}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}}
+\index{C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}{CREATE\_RUN\_DATA\_SQL\_TABLE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+C\+R\+E\+A\+T\+E\+\_\+\+R\+U\+N\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \textcolor{stringliteral}{"""CREATE TABLE IF NOT EXISTS runs (}
+2 \textcolor{stringliteral}{        run\_id string PRIMARY KEY,}
+3 \textcolor{stringliteral}{        created integer NOT NULL,}
+4 \textcolor{stringliteral}{        maximum integer NOT NULL,}
+5 \textcolor{stringliteral}{        completed integer NOT NULL,}
+6 \textcolor{stringliteral}{        failed integer NOT NULL,}
+7 \textcolor{stringliteral}{        taskname string,}
+8 \textcolor{stringliteral}{        launch\_time int}
+9 \textcolor{stringliteral}{    );}
+10 \textcolor{stringliteral}{    """}
+\end{DoxyCode}
+
+
+Definition at line 28 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a00d6b9648875a287e673c3c39f19ba76}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a00d6b9648875a287e673c3c39f19ba76}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}}
+\index{C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE@{C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}{CREATE\_WORKER\_DATA\_SQL\_TABLE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+C\+R\+E\+A\+T\+E\+\_\+\+W\+O\+R\+K\+E\+R\+\_\+\+D\+A\+T\+A\+\_\+\+S\+Q\+L\+\_\+\+T\+A\+B\+LE}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \textcolor{stringliteral}{"""CREATE TABLE IF NOT EXISTS workers (}
+2 \textcolor{stringliteral}{        worker\_id string PRIMARY KEY,}
+3 \textcolor{stringliteral}{        accepted integer NOT NULL,}
+4 \textcolor{stringliteral}{        disconnected integer NOT NULL,}
+5 \textcolor{stringliteral}{        expired integer NOT NULL,}
+6 \textcolor{stringliteral}{        completed integer NOT NULL,}
+7 \textcolor{stringliteral}{        approved integer NOT NULL,}
+8 \textcolor{stringliteral}{        rejected integer NOT NULL}
+9 \textcolor{stringliteral}{    );}
+10 \textcolor{stringliteral}{    """}
+\end{DoxyCode}
+
+
+Definition at line 41 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_ac09f41edba457d8e1fc11da9154958d9}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_ac09f41edba457d8e1fc11da9154958d9}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!data\+\_\+dir@{data\+\_\+dir}}
+\index{data\+\_\+dir@{data\+\_\+dir}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{data\+\_\+dir}{data\_dir}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+data\+\_\+dir = os.\+path.\+join(\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1shared__utils_a1a7ab908ecffbfc1fabb5222625d35a2}{shared\+\_\+utils.\+get\+\_\+mturk\+\_\+dir}(), \textquotesingle{}run\+\_\+data\textquotesingle{})}
+
+
+
+Definition at line 24 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a5e74bfcab8936656421142da4213addb}\label{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_a5e74bfcab8936656421142da4213addb}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}!exist\+\_\+ok@{exist\+\_\+ok}}
+\index{exist\+\_\+ok@{exist\+\_\+ok}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler}}
+\subsubsection{\texorpdfstring{exist\+\_\+ok}{exist\_ok}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+exist\+\_\+ok}
+
+
+
+Definition at line 25 of file mturk\+\_\+data\+\_\+handler.\+py.
+

@@ -1,0 +1,213 @@
+\hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils}{}\section{parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils Namespace Reference}
+\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils}\index{parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils@{parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aad8e1c42802da1765887ff0407bed1b1}{gen\+\_\+ep\+\_\+cheatsheet} (convo)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad0c8c99eb4b5152ca8cec2a8fe7895fd}{update\+\_\+indexes} (conversation)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5d13cd462bd26919f078aa93174e9cd}{join\+\_\+speech} (utt1, utt2)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad9cc917cf497b3cd81ccb76a719cf1b7}{smoothen\+\_\+convo} (conversation, opt)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a3d32eccf30e0e2b6162ebbf874048fa1}{F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX} = 0
+\begin{DoxyCompactList}\small\item\em \begin{DoxyVerb}                                                        #
+\end{DoxyVerb}
+ Constants \# \# \end{DoxyCompactList}\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aca357e25fc9332dfc49ddbdee24ff75b}{L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX} = 1
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a04fbf1f7345d36a9aaec7d12939aaaa2}{F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX} = 2
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5b7d11e81386ebda37fb85e21ae9cdd}{L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX} = 3
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a44bd1a37b8500c21821e726bd473bfc7}{U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX} = 4
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aa371c0c2363b889c2b0fddb418875835}{A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX} = 5
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aad8e1c42802da1765887ff0407bed1b1}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aad8e1c42802da1765887ff0407bed1b1}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!gen\+\_\+ep\+\_\+cheatsheet@{gen\+\_\+ep\+\_\+cheatsheet}}
+\index{gen\+\_\+ep\+\_\+cheatsheet@{gen\+\_\+ep\+\_\+cheatsheet}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{gen\+\_\+ep\+\_\+cheatsheet()}{gen\_ep\_cheatsheet()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+gen\+\_\+ep\+\_\+cheatsheet (\begin{DoxyParamCaption}\item[{}]{convo }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Generates a cheatsheet for a particular conversation (episode).
+The index and it's significance in the cheatsheet is shown below:
+    0: First index of a USER that has an ASSISTANT reply to it
+    1: Last index of a USER that has an ASSISTANT reply to it
+    2: First index of an ASSISTANT that has a USER reply to it
+    3: Last index of an ASSISTANT that has a USER reply to it
+    4: Number of examples for USER speech  as text and ASSISTANT speech as label
+    5: Number of examples for ASSISTANT speech as text and USER speech  as label
+:param convo:
+    The dialogue between USER and ASSISTANT [after smoothening]
+\end{DoxyVerb}
+ 
+
+Definition at line 39 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5d13cd462bd26919f078aa93174e9cd}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5d13cd462bd26919f078aa93174e9cd}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!join\+\_\+speech@{join\+\_\+speech}}
+\index{join\+\_\+speech@{join\+\_\+speech}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{join\+\_\+speech()}{join\_speech()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+join\+\_\+speech (\begin{DoxyParamCaption}\item[{}]{utt1,  }\item[{}]{utt2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Joins two conversations using a '\n'
+Join texts and doesn't care about segments
+Assumption: utt1 is the one being popped off from the stack and the utt2
+            is the one trying to be added. This is so that I check for 'ctr'
+            field only in one of the parameters.
+:param utt1:
+    An utterance (json object) from either USER or ASSISTANT
+:param utt2:
+    Next utterance(json object) from a speaker same as utt1
+\end{DoxyVerb}
+ 
+
+Definition at line 94 of file tm\+\_\+utils.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+smoothen\+\_\+convo().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5d13cd462bd26919f078aa93174e9cd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad9cc917cf497b3cd81ccb76a719cf1b7}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad9cc917cf497b3cd81ccb76a719cf1b7}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!smoothen\+\_\+convo@{smoothen\+\_\+convo}}
+\index{smoothen\+\_\+convo@{smoothen\+\_\+convo}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{smoothen\+\_\+convo()}{smoothen\_convo()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+smoothen\+\_\+convo (\begin{DoxyParamCaption}\item[{}]{conversation,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Aggregates contiguous responses by the same speaker in the data so that data
+eventually contains alternations between USER and ASSISTANT
+:param conversation:
+    The dialogue between USER and ASSISTANT with possible multiple contiguous
+    speeches by the same speaker
+:param opt:
+    options dict, mainly useful for accessing value of exclude_invalid_data
+\end{DoxyVerb}
+ 
+
+Definition at line 117 of file tm\+\_\+utils.\+py.
+
+
+
+References parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+join\+\_\+speech(), and parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+update\+\_\+indexes().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad9cc917cf497b3cd81ccb76a719cf1b7_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad0c8c99eb4b5152ca8cec2a8fe7895fd}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad0c8c99eb4b5152ca8cec2a8fe7895fd}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!update\+\_\+indexes@{update\+\_\+indexes}}
+\index{update\+\_\+indexes@{update\+\_\+indexes}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{update\+\_\+indexes()}{update\_indexes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+update\+\_\+indexes (\begin{DoxyParamCaption}\item[{}]{conversation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Re-assigns indexes after smoothening (mostly for clarity purposes)
+Doesn't really matter since we never index by specifically using the "index"
+field of the json obj
+:param conversation:
+    The dialogue between USER and ASSISTANT with inconsistent indices
+\end{DoxyVerb}
+ 
+
+Definition at line 80 of file tm\+\_\+utils.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+smoothen\+\_\+convo().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad0c8c99eb4b5152ca8cec2a8fe7895fd_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aa371c0c2363b889c2b0fddb418875835}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aa371c0c2363b889c2b0fddb418875835}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX@{A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX}}
+\index{A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX@{A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX}{ASSIS\_NUM\_EX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+A\+S\+S\+I\+S\+\_\+\+N\+U\+M\+\_\+\+EX = 5}
+
+
+
+Definition at line 20 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a04fbf1f7345d36a9aaec7d12939aaaa2}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a04fbf1f7345d36a9aaec7d12939aaaa2}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX@{F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}}
+\index{F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX@{F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}{FIRST\_ASSISTANT\_IDX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+F\+I\+R\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX = 2}
+
+
+
+Definition at line 17 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a3d32eccf30e0e2b6162ebbf874048fa1}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a3d32eccf30e0e2b6162ebbf874048fa1}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX@{F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}}
+\index{F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX@{F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}{FIRST\_USER\_IDX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+F\+I\+R\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX = 0}
+
+
+
+\begin{DoxyVerb}                                                        #
+\end{DoxyVerb}
+ Constants \# \# 
+
+
+
+Definition at line 15 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5b7d11e81386ebda37fb85e21ae9cdd}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_ad5b7d11e81386ebda37fb85e21ae9cdd}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX@{L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}}
+\index{L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX@{L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX}{LAST\_ASSISTANT\_IDX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+L\+A\+S\+T\+\_\+\+A\+S\+S\+I\+S\+T\+A\+N\+T\+\_\+\+I\+DX = 3}
+
+
+
+Definition at line 18 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aca357e25fc9332dfc49ddbdee24ff75b}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_aca357e25fc9332dfc49ddbdee24ff75b}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX@{L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}}
+\index{L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX@{L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX}{LAST\_USER\_IDX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+L\+A\+S\+T\+\_\+\+U\+S\+E\+R\+\_\+\+I\+DX = 1}
+
+
+
+Definition at line 16 of file tm\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a44bd1a37b8500c21821e726bd473bfc7}\label{namespaceparlai_1_1tasks_1_1taskmaster_1_1tm__utils_a44bd1a37b8500c21821e726bd473bfc7}} 
+\index{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}!U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX@{U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX}}
+\index{U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX@{U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX}!parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils@{parlai\+::tasks\+::taskmaster\+::tm\+\_\+utils}}
+\subsubsection{\texorpdfstring{U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX}{USER\_NUM\_EX}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+taskmaster.\+tm\+\_\+utils.\+U\+S\+E\+R\+\_\+\+N\+U\+M\+\_\+\+EX = 4}
+
+
+
+Definition at line 19 of file tm\+\_\+utils.\+py.
+

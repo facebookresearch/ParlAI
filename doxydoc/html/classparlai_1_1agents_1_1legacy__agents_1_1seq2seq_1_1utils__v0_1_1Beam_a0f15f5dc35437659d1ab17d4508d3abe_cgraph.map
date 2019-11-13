@@ -1,7 +1,7 @@
 <map id="parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.get_beam_dot" name="parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.get_beam_dot">
-<area shape="rect" id="node1" title=" " alt="" coords="5,155,172,211"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a2df9b1e26c3f35c7149e4d7ae75c2f03" title=" " alt="" coords="237,5,401,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a5ae82a3d567dd8f282678d0ee40aa41e" title=" " alt="" coords="234,100,405,171"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a3c573eb1104002cb7da1483a6afb3cfe" title=" " alt="" coords="239,195,399,265"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a3dbc095780f560a02bfafc0e0f646ebc" title=" " alt="" coords="220,289,419,360"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a2df9b1e26c3f35c7149e4d7ae75c2f03" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_hyp_from\l_finished" alt="" coords="237,5,401,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a5ae82a3d567dd8f282678d0ee40aa41e" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_hyp\l_from_finished" alt="" coords="234,100,405,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a3c573eb1104002cb7da1483a6afb3cfe" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_rescored\l_finished" alt="" coords="239,195,399,265"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a3dbc095780f560a02bfafc0e0f646ebc" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_rescored\l_finished" alt="" coords="220,289,419,360"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#ac7cb3ffae208474d6e67f37ecfe07f64" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.maintain_dialog_history" alt="" coords="228,385,411,441"/>
 </map>

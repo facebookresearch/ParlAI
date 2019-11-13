@@ -1,0 +1,129 @@
+\hypertarget{namespaceconvert__chatted__to__unfiltered}{}\section{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered Namespace Reference}
+\label{namespaceconvert__chatted__to__unfiltered}\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceconvert__chatted__to__unfiltered_a693c3e8f97d34c4fe03e7694099fe41e}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespaceconvert__chatted__to__unfiltered_a0c087ccff61069c2691de5f9d7d45266}{main} (\hyperlink{namespaceconvert__chatted__to__unfiltered_a13619a4bb81dee363e89567201ca9edd}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__unfiltered_ae7d96b4a4880f2813e42dc58033801d2}{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT} = \char`\"{}start a conversation\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__unfiltered_ae62cf39025a79721b6a97213b0eb75a3}{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST} = \char`\"{}oops! i think i messed up.\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__unfiltered_aa61b01471f45776f90bfdbd472c7767e}{N\+E\+W\+T\+O\+P\+IC} = \char`\"{}thanks! i\textquotesingle{}ll try to remember that.\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__unfiltered_a4b47f379586283d2c2f8ef5ea4411400}{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST} = \char`\"{}just checking\+:\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__unfiltered_a04d4cfd69a3aa56ea10af39fb4bdcaaf}{C\+O\+N\+T\+I\+N\+UE} = \char`\"{}and in response to what you were saying before\char`\"{}
+\item 
+def \hyperlink{namespaceconvert__chatted__to__unfiltered_a13619a4bb81dee363e89567201ca9edd}{opt} = \hyperlink{namespaceconvert__chatted__to__unfiltered_a693c3e8f97d34c4fe03e7694099fe41e}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_a0c087ccff61069c2691de5f9d7d45266}\label{namespaceconvert__chatted__to__unfiltered_a0c087ccff61069c2691de5f9d7d45266}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!main@{main}}
+\index{main@{main}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+main (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extracts training data for the negative response classifier (NRC) from Mturk logs
+
+input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
+    quality ratings 1-5
+output: file of episodes (self-feeding format) w/ +1/-1 ratings indicating
+    positive/negative example
+\end{DoxyVerb}
+ 
+
+Definition at line 70 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+add\+\_\+person\+\_\+tokens(), and self\+\_\+feeding.\+utils.\+extract\+\_\+parlai\+\_\+episodes().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=339pt]{namespaceconvert__chatted__to__unfiltered_a0c087ccff61069c2691de5f9d7d45266_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_a693c3e8f97d34c4fe03e7694099fe41e}\label{namespaceconvert__chatted__to__unfiltered_a693c3e8f97d34c4fe03e7694099fe41e}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 23 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_a04d4cfd69a3aa56ea10af39fb4bdcaaf}\label{namespaceconvert__chatted__to__unfiltered_a04d4cfd69a3aa56ea10af39fb4bdcaaf}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!C\+O\+N\+T\+I\+N\+UE@{C\+O\+N\+T\+I\+N\+UE}}
+\index{C\+O\+N\+T\+I\+N\+UE@{C\+O\+N\+T\+I\+N\+UE}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{C\+O\+N\+T\+I\+N\+UE}{CONTINUE}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+C\+O\+N\+T\+I\+N\+UE = \char`\"{}and in response to what you were saying before\char`\"{}}
+
+
+
+Definition at line 20 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_ae62cf39025a79721b6a97213b0eb75a3}\label{namespaceconvert__chatted__to__unfiltered_ae62cf39025a79721b6a97213b0eb75a3}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST@{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}}
+\index{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST@{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}{EXP\_REQUEST}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST = \char`\"{}oops! i think i messed up.\char`\"{}}
+
+
+
+Definition at line 17 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_ae7d96b4a4880f2813e42dc58033801d2}\label{namespaceconvert__chatted__to__unfiltered_ae7d96b4a4880f2813e42dc58033801d2}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}}
+\index{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}{INITIAL\_PROMPT}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT = \char`\"{}start a conversation\char`\"{}}
+
+
+
+Definition at line 16 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_aa61b01471f45776f90bfdbd472c7767e}\label{namespaceconvert__chatted__to__unfiltered_aa61b01471f45776f90bfdbd472c7767e}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!N\+E\+W\+T\+O\+P\+IC@{N\+E\+W\+T\+O\+P\+IC}}
+\index{N\+E\+W\+T\+O\+P\+IC@{N\+E\+W\+T\+O\+P\+IC}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{N\+E\+W\+T\+O\+P\+IC}{NEWTOPIC}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+N\+E\+W\+T\+O\+P\+IC = \char`\"{}thanks! i\textquotesingle{}ll try to remember that.\char`\"{}}
+
+
+
+Definition at line 18 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_a13619a4bb81dee363e89567201ca9edd}\label{namespaceconvert__chatted__to__unfiltered_a13619a4bb81dee363e89567201ca9edd}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!opt@{opt}}
+\index{opt@{opt}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+opt = \hyperlink{namespaceconvert__chatted__to__unfiltered_a693c3e8f97d34c4fe03e7694099fe41e}{setup\+\_\+args}()}
+
+
+
+Definition at line 169 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__unfiltered_a4b47f379586283d2c2f8ef5ea4411400}\label{namespaceconvert__chatted__to__unfiltered_a4b47f379586283d2c2f8ef5ea4411400}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}!R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}}
+\index{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}!convert\+\_\+chatted\+\_\+to\+\_\+unfiltered@{convert\+\_\+chatted\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}{RAT\_REQUEST}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST = \char`\"{}just checking\+:\char`\"{}}
+
+
+
+Definition at line 19 of file convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+py.
+

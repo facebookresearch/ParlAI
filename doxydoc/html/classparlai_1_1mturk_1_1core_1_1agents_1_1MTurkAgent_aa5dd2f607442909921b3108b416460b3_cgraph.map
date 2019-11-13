@@ -1,4 +1,3 @@
 <map id="parlai.mturk.core.agents.MTurkAgent.reduce_state" name="parlai.mturk.core.agents.MTurkAgent.reduce_state">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,177,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a7e522f68c78685e18b602f7579acce9d" title=" " alt="" coords="225,5,424,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a7e522f68c78685e18b602f7579acce9d" title="parlai.mturk.core.agents.\lMTurkAgent.flush_msg_queue" alt="" coords="225,5,424,47"/>
 </map>

@@ -1,0 +1,324 @@
+\hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState}{}\section{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State Class Reference}
+\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState}\index{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State@{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a059cfffdf61335710a6cfecd2d360971}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a5884d2d96a937f7bebd7211e8156e2ff}{messenger\+\_\+id}, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c52c5785d252ddcbd2c94c51e369318}{overworld\+\_\+agent})
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c664dbebb50b628f31626a8de0c5d7b}{get\+\_\+active\+\_\+agent} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aad23c5c7b3c908f385b93581255662fb}{set\+\_\+active\+\_\+agent} (self, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a1eaece0dcaec5dbb4150e238ea6fd543}{active\+\_\+agent})
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a40c9b4e3bc2873d6754c5bd3dc2fb547}{get\+\_\+overworld\+\_\+agent} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aeb63554d836d69a6f829a67b7103f292}{get\+\_\+id} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af642027e7465f3c99e4000c0eeb9292c}{has\+\_\+task} (self, task\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_ac4c971108af734b4936ebcbc9f56fa34}{get\+\_\+agent\+\_\+for\+\_\+task} (self, task\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af5d5fb350629667f893337d4043143af}{assign\+\_\+agent\+\_\+to\+\_\+task} (self, agent, task\+\_\+id)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a5884d2d96a937f7bebd7211e8156e2ff}{messenger\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c52c5785d252ddcbd2c94c51e369318}{overworld\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a1eaece0dcaec5dbb4150e238ea6fd543}{active\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a287559f680fc55f579b02b738a3051a0}{task\+\_\+id\+\_\+to\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a34e57e62ed2298e004dcd8ef9c443fa4}{onboard\+\_\+data}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a9a3648a299f6cde0529f345837e5ff74}{stored\+\_\+data}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a8aa3cfc2885090eb2a5fe3a610094f58}{time\+\_\+in\+\_\+pool}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Keep track of Agent State.
+
+State includes which is the "active" agent - i.e., which agent in which
+world do we message, etc.
+\end{DoxyVerb}
+ 
+
+Definition at line 31 of file messenger\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a059cfffdf61335710a6cfecd2d360971}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a059cfffdf61335710a6cfecd2d360971}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{messenger\+\_\+id,  }\item[{}]{overworld\+\_\+agent }\end{DoxyParamCaption})}
+
+
+
+Definition at line 38 of file messenger\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af5d5fb350629667f893337d4043143af}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af5d5fb350629667f893337d4043143af}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!assign\+\_\+agent\+\_\+to\+\_\+task@{assign\+\_\+agent\+\_\+to\+\_\+task}}
+\index{assign\+\_\+agent\+\_\+to\+\_\+task@{assign\+\_\+agent\+\_\+to\+\_\+task}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{assign\+\_\+agent\+\_\+to\+\_\+task()}{assign\_agent\_to\_task()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+assign\+\_\+agent\+\_\+to\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{task\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mark agent in task.
+
+:param agent:
+    MessengerAgent object to mark in task
+:param task_id:
+    string task name
+\end{DoxyVerb}
+ 
+
+Definition at line 109 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+task\+\_\+id\+\_\+to\+\_\+agent.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c664dbebb50b628f31626a8de0c5d7b}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c664dbebb50b628f31626a8de0c5d7b}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!get\+\_\+active\+\_\+agent@{get\+\_\+active\+\_\+agent}}
+\index{get\+\_\+active\+\_\+agent@{get\+\_\+active\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+active\+\_\+agent()}{get\_active\_agent()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+active\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return active messenger agent.
+
+:return:
+    a MessengerAgent, which corresponds to the active agent for this
+    agent state.
+\end{DoxyVerb}
+ 
+
+Definition at line 47 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+active\+\_\+agent.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_ac4c971108af734b4936ebcbc9f56fa34}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_ac4c971108af734b4936ebcbc9f56fa34}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!get\+\_\+agent\+\_\+for\+\_\+task@{get\+\_\+agent\+\_\+for\+\_\+task}}
+\index{get\+\_\+agent\+\_\+for\+\_\+task@{get\+\_\+agent\+\_\+for\+\_\+task}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+for\+\_\+task()}{get\_agent\_for\_task()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+agent\+\_\+for\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return MessengerAgent for given task id.
+
+For each "player", a separate agent is created for each task. This
+returns the appropriate MessengerAgent given the task id
+
+:param task_id:
+    string, task id
+
+:return:
+    messenger agent object associated with the given task
+\end{DoxyVerb}
+ 
+
+Definition at line 92 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+has\+\_\+task(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+task\+\_\+id\+\_\+to\+\_\+agent.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_ac4c971108af734b4936ebcbc9f56fa34_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aeb63554d836d69a6f829a67b7103f292}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aeb63554d836d69a6f829a67b7103f292}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!get\+\_\+id@{get\+\_\+id}}
+\index{get\+\_\+id@{get\+\_\+id}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+id()}{get\_id()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+id (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return agent's ID.
+
+:return:
+    int agent ID
+\end{DoxyVerb}
+ 
+
+Definition at line 73 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+messenger\+\_\+id.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a40c9b4e3bc2873d6754c5bd3dc2fb547}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a40c9b4e3bc2873d6754c5bd3dc2fb547}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!get\+\_\+overworld\+\_\+agent@{get\+\_\+overworld\+\_\+agent}}
+\index{get\+\_\+overworld\+\_\+agent@{get\+\_\+overworld\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+overworld\+\_\+agent()}{get\_overworld\_agent()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+overworld\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return overworld messenger agent.
+
+:return:
+    a MessengerAgent, which corresponds agent object in the overworld
+\end{DoxyVerb}
+ 
+
+Definition at line 65 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+overworld\+\_\+agent.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af642027e7465f3c99e4000c0eeb9292c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af642027e7465f3c99e4000c0eeb9292c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!has\+\_\+task@{has\+\_\+task}}
+\index{has\+\_\+task@{has\+\_\+task}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{has\+\_\+task()}{has\_task()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+has\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine if an agent is in a task.
+
+:param task_id:
+    string task id
+
+:return:
+    if agent is in that task.
+\end{DoxyVerb}
+ 
+
+Definition at line 81 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+task\+\_\+id\+\_\+to\+\_\+agent.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+agent\+\_\+for\+\_\+task().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_af642027e7465f3c99e4000c0eeb9292c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aad23c5c7b3c908f385b93581255662fb}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_aad23c5c7b3c908f385b93581255662fb}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!set\+\_\+active\+\_\+agent@{set\+\_\+active\+\_\+agent}}
+\index{set\+\_\+active\+\_\+agent@{set\+\_\+active\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{set\+\_\+active\+\_\+agent()}{set\_active\_agent()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+set\+\_\+active\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{active\+\_\+agent }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set active agent for this agent.
+
+:param active_agent:
+    A MessengerAgent, the new active agent for this given agent state\end{DoxyVerb}
+ 
+
+Definition at line 56 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+active\+\_\+agent.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a1eaece0dcaec5dbb4150e238ea6fd543}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a1eaece0dcaec5dbb4150e238ea6fd543}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!active\+\_\+agent@{active\+\_\+agent}}
+\index{active\+\_\+agent@{active\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{active\+\_\+agent}{active\_agent}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+active\+\_\+agent}
+
+
+
+Definition at line 41 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+active\+\_\+agent(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+set\+\_\+active\+\_\+agent().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a5884d2d96a937f7bebd7211e8156e2ff}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a5884d2d96a937f7bebd7211e8156e2ff}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!messenger\+\_\+id@{messenger\+\_\+id}}
+\index{messenger\+\_\+id@{messenger\+\_\+id}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{messenger\+\_\+id}{messenger\_id}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+messenger\+\_\+id}
+
+
+
+Definition at line 39 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a34e57e62ed2298e004dcd8ef9c443fa4}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a34e57e62ed2298e004dcd8ef9c443fa4}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!onboard\+\_\+data@{onboard\+\_\+data}}
+\index{onboard\+\_\+data@{onboard\+\_\+data}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{onboard\+\_\+data}{onboard\_data}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+onboard\+\_\+data}
+
+
+
+Definition at line 43 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c52c5785d252ddcbd2c94c51e369318}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a0c52c5785d252ddcbd2c94c51e369318}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!overworld\+\_\+agent@{overworld\+\_\+agent}}
+\index{overworld\+\_\+agent@{overworld\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{overworld\+\_\+agent}{overworld\_agent}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+overworld\+\_\+agent}
+
+
+
+Definition at line 40 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+overworld\+\_\+agent().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a9a3648a299f6cde0529f345837e5ff74}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a9a3648a299f6cde0529f345837e5ff74}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!stored\+\_\+data@{stored\+\_\+data}}
+\index{stored\+\_\+data@{stored\+\_\+data}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{stored\+\_\+data}{stored\_data}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+stored\+\_\+data}
+
+
+
+Definition at line 44 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a287559f680fc55f579b02b738a3051a0}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a287559f680fc55f579b02b738a3051a0}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!task\+\_\+id\+\_\+to\+\_\+agent@{task\+\_\+id\+\_\+to\+\_\+agent}}
+\index{task\+\_\+id\+\_\+to\+\_\+agent@{task\+\_\+id\+\_\+to\+\_\+agent}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{task\+\_\+id\+\_\+to\+\_\+agent}{task\_id\_to\_agent}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+task\+\_\+id\+\_\+to\+\_\+agent}
+
+
+
+Definition at line 42 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+assign\+\_\+agent\+\_\+to\+\_\+task(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+get\+\_\+agent\+\_\+for\+\_\+task(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+has\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a8aa3cfc2885090eb2a5fe3a610094f58}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1AgentState_a8aa3cfc2885090eb2a5fe3a610094f58}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}!time\+\_\+in\+\_\+pool@{time\+\_\+in\+\_\+pool}}
+\index{time\+\_\+in\+\_\+pool@{time\+\_\+in\+\_\+pool}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Agent\+State}}
+\subsubsection{\texorpdfstring{time\+\_\+in\+\_\+pool}{time\_in\_pool}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Agent\+State.\+time\+\_\+in\+\_\+pool}
+
+
+
+Definition at line 45 of file messenger\+\_\+manager.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/messenger/core/\hyperlink{messenger__manager_8py}{messenger\+\_\+manager.\+py}\end{DoxyCompactItemize}

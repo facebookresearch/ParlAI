@@ -1,0 +1,124 @@
+\hypertarget{classtaskntalk_1_1modules_1_1PredictNet}{}\section{taskntalk.\+modules.\+Predict\+Net Class Reference}
+\label{classtaskntalk_1_1modules_1_1PredictNet}\index{taskntalk.\+modules.\+Predict\+Net@{taskntalk.\+modules.\+Predict\+Net}}
+
+
+Inheritance diagram for taskntalk.\+modules.\+Predict\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classtaskntalk_1_1modules_1_1PredictNet__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for taskntalk.\+modules.\+Predict\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classtaskntalk_1_1modules_1_1PredictNet__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1PredictNet_ab9af189670626b4121ad1070dc41e04d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, embed\+\_\+size, state\+\_\+size, out\+\_\+size)
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1PredictNet_a4adb776b0030568ee90c3f8938990d27}{forward} (self, task\+\_\+embeds, states)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1PredictNet_af007e09bd94e06d3d34ebfe74b43fac0}{net\+\_\+lstm}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1PredictNet_a095d419f0221e40a3a82c3c68b07ea63}{net\+\_\+mlp}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1PredictNet_ad5625f1758b0a4f7fbc9dd7ce43094b0}{softmax}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Module to make a prediction as per goal. Used by questioner agent. In
+``forward``: Return a probability distribution of utterances of tokens.
+\end{DoxyVerb}
+ 
+
+Definition at line 91 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1PredictNet_ab9af189670626b4121ad1070dc41e04d}\label{classtaskntalk_1_1modules_1_1PredictNet_ab9af189670626b4121ad1070dc41e04d}} 
+\index{taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+Predict\+Net.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{embed\+\_\+size,  }\item[{}]{state\+\_\+size,  }\item[{}]{out\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 96 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1PredictNet_a4adb776b0030568ee90c3f8938990d27}\label{classtaskntalk_1_1modules_1_1PredictNet_a4adb776b0030568ee90c3f8938990d27}} 
+\index{taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}!forward@{forward}}
+\index{forward@{forward}!taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+Predict\+Net.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+embeds,  }\item[{}]{states }\end{DoxyParamCaption})}
+
+
+
+Definition at line 103 of file modules.\+py.
+
+
+
+References taskntalk.\+modules.\+Predict\+Net.\+net\+\_\+lstm, taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict\+\_\+net, modules.\+Kvmemnn.\+softmax, taskntalk.\+modules.\+Speak\+Net.\+softmax, taskntalk.\+modules.\+Predict\+Net.\+softmax, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+softmax, and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+softmax.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1PredictNet_af007e09bd94e06d3d34ebfe74b43fac0}\label{classtaskntalk_1_1modules_1_1PredictNet_af007e09bd94e06d3d34ebfe74b43fac0}} 
+\index{taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}!net\+\_\+lstm@{net\+\_\+lstm}}
+\index{net\+\_\+lstm@{net\+\_\+lstm}!taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}}
+\subsubsection{\texorpdfstring{net\+\_\+lstm}{net\_lstm}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+Predict\+Net.\+net\+\_\+lstm}
+
+
+
+Definition at line 98 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Predict\+Net.\+forward().
+
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1PredictNet_a095d419f0221e40a3a82c3c68b07ea63}\label{classtaskntalk_1_1modules_1_1PredictNet_a095d419f0221e40a3a82c3c68b07ea63}} 
+\index{taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}!net\+\_\+mlp@{net\+\_\+mlp}}
+\index{net\+\_\+mlp@{net\+\_\+mlp}!taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}}
+\subsubsection{\texorpdfstring{net\+\_\+mlp}{net\_mlp}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+Predict\+Net.\+net\+\_\+mlp}
+
+
+
+Definition at line 99 of file modules.\+py.
+
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1PredictNet_ad5625f1758b0a4f7fbc9dd7ce43094b0}\label{classtaskntalk_1_1modules_1_1PredictNet_ad5625f1758b0a4f7fbc9dd7ce43094b0}} 
+\index{taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}!softmax@{softmax}}
+\index{softmax@{softmax}!taskntalk\+::modules\+::\+Predict\+Net@{taskntalk\+::modules\+::\+Predict\+Net}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+Predict\+Net.\+softmax}
+
+
+
+Definition at line 100 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Predict\+Net.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/taskntalk/\hyperlink{projects_2taskntalk_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

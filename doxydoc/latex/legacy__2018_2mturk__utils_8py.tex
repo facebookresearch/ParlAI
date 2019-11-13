@@ -1,0 +1,55 @@
+\hypertarget{legacy__2018_2mturk__utils_8py}{}\section{parlai/mturk/core/legacy\+\_\+2018/mturk\+\_\+utils.py File Reference}
+\label{legacy__2018_2mturk__utils_8py}\index{parlai/mturk/core/legacy\+\_\+2018/mturk\+\_\+utils.\+py@{parlai/mturk/core/legacy\+\_\+2018/mturk\+\_\+utils.\+py}}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a6e138f202e17ae4a1fde82b5581e1822}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+setup\+\_\+aws\+\_\+credentials} ()
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a2c1cd16e531345372d5ec5c858bd74f2}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+calculate\+\_\+mturk\+\_\+cost} (payment\+\_\+opt)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a49df282ab2a8eb03654fdc7817187d6a}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+check\+\_\+mturk\+\_\+balance} (balance\+\_\+needed, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_ae67dcf42ca4a1c4022ddac967265b474}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+config} (opt, task\+\_\+description, unique\+\_\+worker, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a9999d5b551e569fe3ddd368e4e659b65}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client} (is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a5c70873375e623d8d95012fa4cde22d1}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+delete\+\_\+qualification} (qualification\+\_\+id, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_ad152f1d9ea255ea9f365695f56e0cc5f}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+find\+\_\+qualification} (qualification\+\_\+name, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a17d5c7b74fb3c106c48edd07059cca9d}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification} (qualification\+\_\+name, description, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_aaaf07be966ed2720b918f8dd2775e18a}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+give\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, value=None, is\+\_\+sandbox=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_aeb2a9fb74d8d0bbfe744bb6d89bee910}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, is\+\_\+sandbox=True, reason=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a96dff775cc211227da667088e259c279}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type} (hit\+\_\+title, hit\+\_\+description, hit\+\_\+keywords, hit\+\_\+reward, assignment\+\_\+duration\+\_\+in\+\_\+seconds, is\+\_\+sandbox, qualifications=None, auto\+\_\+approve\+\_\+delay=7 $\ast$24 $\ast$3600)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a98f3bb533401557bf8156d1b5b268df3}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type} (opt, page\+\_\+url, hit\+\_\+type\+\_\+id, num\+\_\+assignments, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a0b52e9d0397e0c856e76b3332987b930}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+expire\+\_\+hit} (is\+\_\+sandbox, hit\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_ab542ba532f3609913b9b2ac465bf6e53}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+setup\+\_\+sns\+\_\+topic} (task\+\_\+name, server\+\_\+url, task\+\_\+group\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a157c3612c4df1187d8b8b5cfccbd339c}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+subscribe\+\_\+to\+\_\+hits} (hit\+\_\+type\+\_\+id, is\+\_\+sandbox, sns\+\_\+arn)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a6567af08013cf893310b91b3e1a946e5}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+send\+\_\+test\+\_\+notif} (topic\+\_\+arn, event\+\_\+type)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_ac63e0052296484ca3430408e19327c54}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+delete\+\_\+sns\+\_\+topic} (topic\+\_\+arn)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_ae5c2cdae6d31c71a182db743cd0f20b2}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+region\+\_\+name} = \textquotesingle{}us-\/east-\/1\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a0005975c5569e1cee4b2f4469a7c0577}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+aws\+\_\+profile\+\_\+name} = \textquotesingle{}parlai\+\_\+mturk\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a35eea1b231a5600c0a82176fd2a023a0}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+client} = None
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__utils_a90c8f0752571a5e4decf9077aab60c8b}{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+parent\+\_\+dir} = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\end{DoxyCompactItemize}

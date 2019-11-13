@@ -1,11 +1,10 @@
 <map id="parlai.mturk.tasks.talkthewalk.worlds.TalkTheWalkWorld.parley" name="parlai.mturk.tasks.talkthewalk.worlds.TalkTheWalkWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,100,248,141"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a02bbcb1c7fb2301308620a9844427112" title=" " alt="" coords="611,5,853,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a39aaaabf0760ced0c5d73f80ce196521" title=" " alt="" coords="611,71,853,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a2d73f3c22c536a60d65166b3ebd55e75" title=" " alt="" coords="296,129,539,171"/>
-<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a30adb3fe817fef8f40a6a2f61773972d" title=" " alt="" coords="611,201,853,243"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a563e21fcf5b38acb1db594a578fdf7f1" title=" " alt="" coords="587,136,877,177"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#adcba21d8dd2fd552fc3c7c777e704397" title=" " alt="" coords="925,71,1168,112"/>
-<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a44d5136e6f6808929e818041011d8e71" title=" " alt="" coords="925,136,1168,177"/>
-<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#ae4bf42eec01e7f4d6e37fd2e9c55e4b0" title=" " alt="" coords="925,201,1168,243"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a02bbcb1c7fb2301308620a9844427112" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.evaluate_location" alt="" coords="611,5,853,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a39aaaabf0760ced0c5d73f80ce196521" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.is_action" alt="" coords="611,71,853,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a2d73f3c22c536a60d65166b3ebd55e75" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.replay_actions" alt="" coords="296,129,539,171"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a30adb3fe817fef8f40a6a2f61773972d" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.update_location" alt="" coords="611,201,853,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a563e21fcf5b38acb1db594a578fdf7f1" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.construct_expanded_array" alt="" coords="587,136,877,177"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#adcba21d8dd2fd552fc3c7c777e704397" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.fill_initial" alt="" coords="925,104,1168,145"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a44d5136e6f6808929e818041011d8e71" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.fill_neighbors" alt="" coords="925,169,1168,211"/>
+<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#ae4bf42eec01e7f4d6e37fd2e9c55e4b0" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.neighbor_coords" alt="" coords="1216,169,1459,211"/>
 </map>

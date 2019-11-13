@@ -1,0 +1,73 @@
+\hypertarget{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher}{}\section{parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher}\index{parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher@{parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher_a329e24270a27f4c7d5b56d2b9c2aed8b}{setup\+\_\+data} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This version creates text-label pairs from the perspective of both
+speakers.
+\end{DoxyVerb}
+ 
+
+Definition at line 29 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher_a329e24270a27f4c7d5b56d2b9c2aed8b}\label{classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DoubleTeacher_a329e24270a27f4c7d5b56d2b9c2aed8b}} 
+\index{parlai\+::tasks\+::cornell\+\_\+movie\+::agents\+::\+Double\+Teacher@{parlai\+::tasks\+::cornell\+\_\+movie\+::agents\+::\+Double\+Teacher}!setup\+\_\+data@{setup\+\_\+data}}
+\index{setup\+\_\+data@{setup\+\_\+data}!parlai\+::tasks\+::cornell\+\_\+movie\+::agents\+::\+Double\+Teacher@{parlai\+::tasks\+::cornell\+\_\+movie\+::agents\+::\+Double\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data()}{setup\_data()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+cornell\+\_\+movie.\+agents.\+Double\+Teacher.\+setup\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Adds additional perspectives.
+For example, in the conversation:
+
+x1 y1
+x2 y2
+x3
+
+Creates the additional dialog:
+
+'' x1
+y1 x2
+y2 x3
+
+And if a y3 was available in response to x3, also would have added:
+
+y3
+\end{DoxyVerb}
+ 
+
+Definition at line 34 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/cornell\+\_\+movie/\hyperlink{parlai_2tasks_2cornell__movie_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,122 @@
+\hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq}{}\section{tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq Class Reference}
+\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq}\index{tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq@{tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq}}
+
+
+Inheritance diagram for tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=242pt]{classtests_1_1test__seq2seq_1_1TestSeq2Seq__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=242pt]{classtests_1_1test__seq2seq_1_1TestSeq2Seq__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a967d49fc0e124148c7ac4488dd788bc7}{test\+\_\+ranking} (self)
+\item 
+def \hyperlink{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a203ba54e9671ce31936a202a4e2e6686}{test\+\_\+generation} (self)
+\item 
+def \hyperlink{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a78cb1bf4c31e8cd73d53e48797b9d7d9}{test\+\_\+beamsearch} (self)
+\item 
+def \hyperlink{classtests_1_1test__seq2seq_1_1TestSeq2Seq_ab550295b1910a3576b5b0ed9d426f831}{test\+\_\+badinput} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a5681e61335c043954e727fa9eb4b1eb3}{ntries}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Checks that seq2seq can learn some very basic tasks.\end{DoxyVerb}
+ 
+
+Definition at line 15 of file test\+\_\+seq2seq.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq_ab550295b1910a3576b5b0ed9d426f831}\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq_ab550295b1910a3576b5b0ed9d426f831}} 
+\index{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}!test\+\_\+badinput@{test\+\_\+badinput}}
+\index{test\+\_\+badinput@{test\+\_\+badinput}!tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}}
+\subsubsection{\texorpdfstring{test\+\_\+badinput()}{test\_badinput()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq.\+test\+\_\+badinput (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ensures model doesn't crash on malformed inputs.\end{DoxyVerb}
+ 
+
+Definition at line 111 of file test\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a78cb1bf4c31e8cd73d53e48797b9d7d9}\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a78cb1bf4c31e8cd73d53e48797b9d7d9}} 
+\index{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}!test\+\_\+beamsearch@{test\+\_\+beamsearch}}
+\index{test\+\_\+beamsearch@{test\+\_\+beamsearch}!tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}}
+\subsubsection{\texorpdfstring{test\+\_\+beamsearch()}{test\_beamsearch()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq.\+test\+\_\+beamsearch (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ensures beam search can generate the correct response\end{DoxyVerb}
+ 
+
+Definition at line 74 of file test\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a203ba54e9671ce31936a202a4e2e6686}\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a203ba54e9671ce31936a202a4e2e6686}} 
+\index{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}!test\+\_\+generation@{test\+\_\+generation}}
+\index{test\+\_\+generation@{test\+\_\+generation}!tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}}
+\subsubsection{\texorpdfstring{test\+\_\+generation()}{test\_generation()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq.\+test\+\_\+generation (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This test uses a single-turn sequence repitition task.\end{DoxyVerb}
+ 
+
+Definition at line 45 of file test\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a967d49fc0e124148c7ac4488dd788bc7}\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a967d49fc0e124148c7ac4488dd788bc7}} 
+\index{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}!test\+\_\+ranking@{test\+\_\+ranking}}
+\index{test\+\_\+ranking@{test\+\_\+ranking}!tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}}
+\subsubsection{\texorpdfstring{test\+\_\+ranking()}{test\_ranking()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq.\+test\+\_\+ranking (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 19 of file test\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a5681e61335c043954e727fa9eb4b1eb3}\label{classtests_1_1test__seq2seq_1_1TestSeq2Seq_a5681e61335c043954e727fa9eb4b1eb3}} 
+\index{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}!ntries@{ntries}}
+\index{ntries@{ntries}!tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq@{tests\+::test\+\_\+seq2seq\+::\+Test\+Seq2\+Seq}}
+\subsubsection{\texorpdfstring{ntries}{ntries}}
+{\footnotesize\ttfamily tests.\+test\+\_\+seq2seq.\+Test\+Seq2\+Seq.\+ntries\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 18 of file test\+\_\+seq2seq.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+tests/\hyperlink{test__seq2seq_8py}{test\+\_\+seq2seq.\+py}\end{DoxyCompactItemize}

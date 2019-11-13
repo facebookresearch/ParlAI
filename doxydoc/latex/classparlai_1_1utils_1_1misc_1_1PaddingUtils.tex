@@ -1,0 +1,114 @@
+\hypertarget{classparlai_1_1utils_1_1misc_1_1PaddingUtils}{}\section{parlai.\+utils.\+misc.\+Padding\+Utils Class Reference}
+\label{classparlai_1_1utils_1_1misc_1_1PaddingUtils}\index{parlai.\+utils.\+misc.\+Padding\+Utils@{parlai.\+utils.\+misc.\+Padding\+Utils}}
+
+
+Inheritance diagram for parlai.\+utils.\+misc.\+Padding\+Utils\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classparlai_1_1utils_1_1misc_1_1PaddingUtils__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+misc.\+Padding\+Utils\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classparlai_1_1utils_1_1misc_1_1PaddingUtils__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1PaddingUtils_acd7178452139c55dc56e9889b10347cc}{pad\+\_\+text} (cls, observations, dictionary, end\+\_\+idx=None, null\+\_\+idx=0, dq=False, eval\+\_\+labels=True, truncate=None)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1PaddingUtils_ae862960e8f261ff4088d5dedbe42a25c}{map\+\_\+predictions} (cls, predictions, valid\+\_\+inds, batch\+\_\+reply, observations, dictionary, end\+\_\+idx, report\+\_\+freq=0.\+1, labels=None, answers=None, ys=None)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Helps with padding input and target tensors.
+
+DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
+\end{DoxyVerb}
+ 
+
+Definition at line 445 of file misc.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1PaddingUtils_ae862960e8f261ff4088d5dedbe42a25c}\label{classparlai_1_1utils_1_1misc_1_1PaddingUtils_ae862960e8f261ff4088d5dedbe42a25c}} 
+\index{parlai\+::utils\+::misc\+::\+Padding\+Utils@{parlai\+::utils\+::misc\+::\+Padding\+Utils}!map\+\_\+predictions@{map\+\_\+predictions}}
+\index{map\+\_\+predictions@{map\+\_\+predictions}!parlai\+::utils\+::misc\+::\+Padding\+Utils@{parlai\+::utils\+::misc\+::\+Padding\+Utils}}
+\subsubsection{\texorpdfstring{map\+\_\+predictions()}{map\_predictions()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Padding\+Utils.\+map\+\_\+predictions (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{predictions,  }\item[{}]{valid\+\_\+inds,  }\item[{}]{batch\+\_\+reply,  }\item[{}]{observations,  }\item[{}]{dictionary,  }\item[{}]{end\+\_\+idx,  }\item[{}]{report\+\_\+freq = {\ttfamily 0.1},  }\item[{}]{labels = {\ttfamily None},  }\item[{}]{answers = {\ttfamily None},  }\item[{}]{ys = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Match predictions to original index in the batch.
+
+Predictions are mapped back to appropriate indices in the batch_reply
+using valid_inds.
+
+report_freq -- how often we report predictions
+
+DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
+\end{DoxyVerb}
+ 
+
+Definition at line 591 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Padding\+Utils.\+pad\+\_\+text().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1PaddingUtils_ae862960e8f261ff4088d5dedbe42a25c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1PaddingUtils_acd7178452139c55dc56e9889b10347cc}\label{classparlai_1_1utils_1_1misc_1_1PaddingUtils_acd7178452139c55dc56e9889b10347cc}} 
+\index{parlai\+::utils\+::misc\+::\+Padding\+Utils@{parlai\+::utils\+::misc\+::\+Padding\+Utils}!pad\+\_\+text@{pad\+\_\+text}}
+\index{pad\+\_\+text@{pad\+\_\+text}!parlai\+::utils\+::misc\+::\+Padding\+Utils@{parlai\+::utils\+::misc\+::\+Padding\+Utils}}
+\subsubsection{\texorpdfstring{pad\+\_\+text()}{pad\_text()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Padding\+Utils.\+pad\+\_\+text (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{observations,  }\item[{}]{dictionary,  }\item[{}]{end\+\_\+idx = {\ttfamily None},  }\item[{}]{null\+\_\+idx = {\ttfamily 0},  }\item[{}]{dq = {\ttfamily False},  }\item[{}]{eval\+\_\+labels = {\ttfamily True},  }\item[{}]{truncate = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Pad observations to max width.
+
+We check that examples are valid, pad with zeros, and sort by length
+so that we can use the pack_padded function. The list valid_inds
+keeps track of which indices are valid and the order in which we sort
+the examples.
+
+dq -- whether we should use deque or list
+eval_labels -- whether or not we want to consider eval labels
+truncate -- truncate input and output lengths
+
+DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
+\end{DoxyVerb}
+ 
+
+Definition at line 464 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Padding\+Utils.\+map\+\_\+predictions().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1PaddingUtils_acd7178452139c55dc56e9889b10347cc_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{misc_8py}{misc.\+py}\end{DoxyCompactItemize}

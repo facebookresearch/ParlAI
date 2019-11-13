@@ -1,0 +1,102 @@
+\hypertarget{classserver_1_1TaskRunHandler}{}\section{server.\+Task\+Run\+Handler Class Reference}
+\label{classserver_1_1TaskRunHandler}\index{server.\+Task\+Run\+Handler@{server.\+Task\+Run\+Handler}}
+
+
+Inheritance diagram for server.\+Task\+Run\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classserver_1_1TaskRunHandler__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for server.\+Task\+Run\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classserver_1_1TaskRunHandler__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classserver_1_1TaskRunHandler_a3edc02cbfec1654fa11f74165a9ae2dc}{initialize} (self, \hyperlink{classserver_1_1TaskRunHandler_ab83d3c804b50f8301eefd56eb9be838f}{app})
+\item 
+def \hyperlink{classserver_1_1TaskRunHandler_aafdad98a65fe99f154621ec74b593d78}{post} (self, task\+\_\+target)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classserver_1_1TaskRunHandler_ab83d3c804b50f8301eefd56eb9be838f}{app}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 583 of file server.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classserver_1_1TaskRunHandler_a3edc02cbfec1654fa11f74165a9ae2dc}\label{classserver_1_1TaskRunHandler_a3edc02cbfec1654fa11f74165a9ae2dc}} 
+\index{server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}!initialize@{initialize}}
+\index{initialize@{initialize}!server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}}
+\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily def server.\+Task\+Run\+Handler.\+initialize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{app }\end{DoxyParamCaption})}
+
+
+
+Definition at line 584 of file server.\+py.
+
+\mbox{\Hypertarget{classserver_1_1TaskRunHandler_aafdad98a65fe99f154621ec74b593d78}\label{classserver_1_1TaskRunHandler_aafdad98a65fe99f154621ec74b593d78}} 
+\index{server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}!post@{post}}
+\index{post@{post}!server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}}
+\subsubsection{\texorpdfstring{post()}{post()}}
+{\footnotesize\ttfamily def server.\+Task\+Run\+Handler.\+post (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+target }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Requests to /run_task/{task_id} will launch a task locally
+for the given task. It will die after 20 mins if it doesn't end
+on its own.
+\end{DoxyVerb}
+ 
+
+Definition at line 587 of file server.\+py.
+
+
+
+References server.\+Task\+Socket\+Handler.\+app, server.\+Task\+Run\+Handler.\+app, server.\+get\+\_\+config\+\_\+module(), server.\+get\+\_\+run\+\_\+module(), server.\+start\+\_\+server(), and parlai.\+utils.\+testing.\+Tee\+String\+I\+O.\+write().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classserver_1_1TaskRunHandler_aafdad98a65fe99f154621ec74b593d78_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classserver_1_1TaskRunHandler_ab83d3c804b50f8301eefd56eb9be838f}\label{classserver_1_1TaskRunHandler_ab83d3c804b50f8301eefd56eb9be838f}} 
+\index{server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}!app@{app}}
+\index{app@{app}!server\+::\+Task\+Run\+Handler@{server\+::\+Task\+Run\+Handler}}
+\subsubsection{\texorpdfstring{app}{app}}
+{\footnotesize\ttfamily server.\+Task\+Run\+Handler.\+app}
+
+
+
+Definition at line 585 of file server.\+py.
+
+
+
+Referenced by server.\+Task\+Run\+Handler.\+post().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/webapp/\hyperlink{server_8py}{server.\+py}\end{DoxyCompactItemize}

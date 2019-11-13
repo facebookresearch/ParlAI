@@ -1,10 +1,9 @@
 <map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.reset" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.reset">
-<area shape="rect" id="node1" title=" " alt="" coords="5,196,192,252"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#acbe0accc588c66ea679806cd6450b293" title=" " alt="" coords="264,5,439,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html#aaefcbd7c61d319b368b3ee13997c8c99" title=" " alt="" coords="253,86,449,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#a62896fd9aa38b55c6ea1b8a8770e3261" title=" " alt="" coords="240,152,463,208"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a521db011d2188e8e513976af5737c322" title=" " alt="" coords="264,233,439,303"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#ae76435bf7acee9501188de47c0ba6991" title=" " alt="" coords="264,327,439,398"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a029d7193a532d4cf75433e82817ab414" title=" " alt="" coords="258,422,445,463"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acc5aa3887a6bf3ece28d60a9572fe50e" title=" " alt="" coords="511,422,697,463"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#acbe0accc588c66ea679806cd6450b293" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Agent.reset_metrics" alt="" coords="264,5,439,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html#aaefcbd7c61d319b368b3ee13997c8c99" title="parlai.core.agents.Agent.reset\l_metrics" alt="" coords="253,86,449,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#a62896fd9aa38b55c6ea1b8a8770e3261" title="parlai.agents.language\l_model.language_model.Language\lModelAgent.reset_metrics" alt="" coords="240,152,463,208"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a521db011d2188e8e513976af5737c322" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent.reset\l_metrics" alt="" coords="264,233,439,303"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#ae76435bf7acee9501188de47c0ba6991" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.reset\l_metrics" alt="" coords="264,327,439,398"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a029d7193a532d4cf75433e82817ab414" title="parlai.agents.fairseq.fairseq.\lFairseqAgent.reset_metrics" alt="" coords="258,422,445,463"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acc5aa3887a6bf3ece28d60a9572fe50e" title="parlai.agents.fairseq.fairseq.\lFairseqAgent.reset" alt="" coords="511,422,697,463"/>
 </map>

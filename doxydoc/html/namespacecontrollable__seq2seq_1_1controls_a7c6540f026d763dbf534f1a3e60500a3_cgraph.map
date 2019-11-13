@@ -1,0 +1,7 @@
+<map id="controllable_seq2seq.controls.initialize_control_information" name="controllable_seq2seq.controls.initialize_control_information">
+<area shape="rect" id="node2" href="$namespacecontrollable__seq2seq_1_1arora.html#a576d45e4f9888847ff61af471423f47d" title="controllable_seq2seq.arora.load\l_arora" alt="" coords="299,5,504,47"/>
+<area shape="rect" id="node3" href="$namespacecontrollable__seq2seq_1_1nidf.html#abeea1f9ad5a454af61b4744b6fcc553f" title="controllable_seq2seq.nidf.load\l_word2nidf" alt="" coords="303,71,500,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="327,137,476,193"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="552,151,756,178"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="804,151,985,178"/>
+</map>

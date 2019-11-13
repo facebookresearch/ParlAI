@@ -1,0 +1,11 @@
+Baseline model which predicts the \$n\$ most common unigrams regardless of input.
+
+\subsection*{Basic Examples}
+
+Training the unigram model on \hyperlink{namespaceconvai2}{convai2}\+:
+
+
+\begin{DoxyCode}
+python -m parlai.scripts.train\_model -m unigram -mf unigram.model -t convai2 -eps 1 --num-words 15
+\end{DoxyCode}
+ 

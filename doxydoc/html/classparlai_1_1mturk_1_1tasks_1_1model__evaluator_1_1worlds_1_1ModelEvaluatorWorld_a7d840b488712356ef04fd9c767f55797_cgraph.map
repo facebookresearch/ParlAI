@@ -1,4 +1,4 @@
 <map id="parlai.mturk.tasks.model_evaluator.worlds.ModelEvaluatorWorld.parley" name="parlai.mturk.tasks.model_evaluator.worlds.ModelEvaluatorWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,224,61"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#aa1d3c0cc946f5ade27373f7dc0bd77b5" title=" " alt="" coords="272,20,488,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#aa1d3c0cc946f5ade27373f7dc0bd77b5" title="parlai.core.worlds.World.get_acts" alt="" coords="272,5,488,32"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="293,56,467,83"/>
 </map>

@@ -1,8 +1,6 @@
 <map id="parlai.tasks.hotpotqa.agents.DistractorTeacher" name="parlai.tasks.hotpotqa.agents.DistractorTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,408,196,449"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html" title=" " alt="" coords="19,319,182,360"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="15,229,187,271"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="13,155,189,181"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="19,80,182,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="72,5,129,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html" title="parlai.core.teachers.Parl\lAIDialogTeacher" alt="" coords="19,319,182,360"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="15,229,187,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="13,155,189,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="19,80,182,107"/>
 </map>

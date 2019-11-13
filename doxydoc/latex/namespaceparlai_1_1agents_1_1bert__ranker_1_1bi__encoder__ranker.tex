@@ -1,0 +1,42 @@
+\hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker}\index{parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker@{parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderModule}{Bi\+Encoder\+Module}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent}{Bi\+Encoder\+Ranker\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_afd88e1e1699d975ab19ea38e8ae77e20}{to\+\_\+bert\+\_\+input} (token\+\_\+idx, null\+\_\+idx)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_afd88e1e1699d975ab19ea38e8ae77e20}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_afd88e1e1699d975ab19ea38e8ae77e20}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bi\+\_\+encoder\+\_\+ranker@{parlai\+::agents\+::bert\+\_\+ranker\+::bi\+\_\+encoder\+\_\+ranker}!to\+\_\+bert\+\_\+input@{to\+\_\+bert\+\_\+input}}
+\index{to\+\_\+bert\+\_\+input@{to\+\_\+bert\+\_\+input}!parlai\+::agents\+::bert\+\_\+ranker\+::bi\+\_\+encoder\+\_\+ranker@{parlai\+::agents\+::bert\+\_\+ranker\+::bi\+\_\+encoder\+\_\+ranker}}
+\subsubsection{\texorpdfstring{to\+\_\+bert\+\_\+input()}{to\_bert\_input()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+to\+\_\+bert\+\_\+input (\begin{DoxyParamCaption}\item[{}]{token\+\_\+idx,  }\item[{}]{null\+\_\+idx }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}token_idx is a 2D tensor int.
+    return token_idx, segment_idx and mask
+\end{DoxyVerb}
+ 
+
+Definition at line 267 of file bi\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+encode\+\_\+candidates(), and parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+score\+\_\+candidates().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_afd88e1e1699d975ab19ea38e8ae77e20_icgraph}
+\end{center}
+\end{figure}

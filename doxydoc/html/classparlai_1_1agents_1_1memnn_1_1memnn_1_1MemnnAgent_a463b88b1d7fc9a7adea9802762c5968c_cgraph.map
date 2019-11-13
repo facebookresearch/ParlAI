@@ -1,6 +1,10 @@
 <map id="parlai.agents.memnn.memnn.MemnnAgent.batchify" name="parlai.agents.memnn.memnn.MemnnAgent.batchify">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,200,112"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a6fbfdde4ec69ec4050fa4005c6608f1a" title=" " alt="" coords="248,5,455,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a42b30bed79467abe02d8b7c65ff33b9c" title=" " alt="" coords="258,71,445,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afa491bf2384b017711ad722b5341b405" title=" " alt="" coords="272,136,431,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a07964fbca57736f639fe4e9dd9d1459a" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.\l_check_truncate" alt="" coords="273,5,430,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afb729d5d51ad91d4188fd1486a4a087f" title="parlai.core.torch_agent.\lTorchAgent._check_truncate" alt="" coords="257,100,446,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#a6639dabbc921ce131de09f1228979d2f" title="parlai.agents.memnn.memnn.\lMemnnAgent._time_feature" alt="" coords="254,165,449,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a6fbfdde4ec69ec4050fa4005c6608f1a" title="parlai.agents.seq2seq.seq2seq.\lSeq2seqAgent.is_valid" alt="" coords="248,231,455,272"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a42b30bed79467abe02d8b7c65ff33b9c" title="parlai.agents.fairseq.fairseq.\lFairseqAgent.is_valid" alt="" coords="258,296,445,337"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afa491bf2384b017711ad722b5341b405" title="parlai.core.torch_agent.\lTorchAgent.is_valid" alt="" coords="272,361,431,403"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="503,238,683,265"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="731,231,873,272"/>
 </map>

@@ -1,5 +1,6 @@
 <map id="wizard_transformer_ranker.wizard_transformer_ranker.WizardTransformerRankerAgent.load" name="wizard_transformer_ranker.wizard_transformer_ranker.WizardTransformerRankerAgent.load">
-<area shape="rect" id="node1" title=" " alt="" coords="5,24,228,95"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5dcfca62a677f8de97f09ce993258f84" title=" " alt="" coords="276,5,457,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a9f89e606931a4622a5c6a6f6b832235c" title=" " alt="" coords="287,71,446,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5dcfca62a677f8de97f09ce993258f84" title="parlai.core.torch_agent.\lTorchAgent.load_state_dict" alt="" coords="276,5,457,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a9f89e606931a4622a5c6a6f6b832235c" title="parlai.core.torch_agent.\lTorchAgent.state_dict" alt="" coords="287,71,446,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="505,78,685,105"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="733,71,876,112"/>
 </map>

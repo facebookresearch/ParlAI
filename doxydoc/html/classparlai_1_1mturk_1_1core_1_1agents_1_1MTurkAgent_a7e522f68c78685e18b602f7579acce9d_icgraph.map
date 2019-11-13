@@ -1,9 +1,8 @@
 <map id="parlai.mturk.core.agents.MTurkAgent.flush_msg_queue" name="parlai.mturk.core.agents.MTurkAgent.flush_msg_queue">
-<area shape="rect" id="node1" title=" " alt="" coords="308,169,507,211"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#ade350517a74213389452642c625bc612" title=" " alt="" coords="37,5,228,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#ad6b25298f44461404805c398c3f08ac5" title=" " alt="" coords="5,71,260,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#aa5dd2f607442909921b3108b416460b3" title=" " alt="" coords="47,136,219,177"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a2b0576f33db15042a1520f6c9b4157c2" title=" " alt="" coords="37,201,228,243"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a13d1446c41c7342e3d23719cf190d304" title=" " alt="" coords="15,267,250,308"/>
-<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ad269775afaaa10dba0432080fba99b14" title=" " alt="" coords="49,332,216,373"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#ade350517a74213389452642c625bc612" title="parlai.mturk.core.dev.agents.\lMTurkAgent.reduce_state" alt="" coords="284,5,475,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#ad6b25298f44461404805c398c3f08ac5" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.reduce_state" alt="" coords="252,71,507,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#aa5dd2f607442909921b3108b416460b3" title="parlai.mturk.core.agents.\lMTurkAgent.reduce_state" alt="" coords="293,136,465,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a2b0576f33db15042a1520f6c9b4157c2" title="parlai.mturk.core.dev.agents.\lMTurkAgent.shutdown" alt="" coords="284,201,475,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a13d1446c41c7342e3d23719cf190d304" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.shutdown" alt="" coords="262,267,497,308"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ad269775afaaa10dba0432080fba99b14" title="parlai.mturk.core.agents.\lMTurkAgent.shutdown" alt="" coords="296,332,463,373"/>
 </map>

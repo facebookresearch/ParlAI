@@ -1,0 +1,11 @@
+<map id="parlai.agents.drqa.model.DocReaderModel.save" name="parlai.agents.drqa.model.DocReaderModel.save">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#afcebdb70582204709f5e4365dde00bcb" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent.shutdown" alt="" coords="233,5,432,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acc5f2818eae15ab8ebe81924600bb6fe" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.shutdown" alt="" coords="233,378,433,434"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a7758fcd79e9a391b4f4bd45e030fc59b" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.shutdown" alt="" coords="233,71,433,127"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ab7b37ff49b1ce04ef7ce0e598cf736e3" title="parlai.agents.language\l_model.language_model.Language\lModelAgent.shutdown" alt="" coords="221,151,444,207"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aea9aca40dd1bb1976f4042565b172d88" title="parlai.core.dict.Dictionary\lAgent.shutdown" alt="" coords="247,232,418,273"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a86c41e705170f0b2e56a5bbc378aead9" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.shutdown" alt="" coords="237,298,429,354"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html#ae2b8ea006564cbefbe8520f45fb71040" title="parlai.core.worlds.World.\l__exit__" alt="" coords="496,167,663,208"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a1b7aed0a7b56712f22ee8b04c65d7c00" title="parlai.core.worlds.Hogwild\lWorld.display" alt="" coords="492,232,667,273"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a0425099fbc33cb97d6fbe67dbd2e8a1f" title="parlai.core.worlds.Hogwild\lWorld.episode_done" alt="" coords="492,297,667,339"/>
+</map>

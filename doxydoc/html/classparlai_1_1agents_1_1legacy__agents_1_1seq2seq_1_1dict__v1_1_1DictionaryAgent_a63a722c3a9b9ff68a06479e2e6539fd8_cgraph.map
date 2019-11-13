@@ -1,4 +1,4 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v1.DictionaryAgent.nltk_tokenize" name="parlai.agents.legacy_agents.seq2seq.dict_v1.DictionaryAgent.nltk_tokenize">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,171,76"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#af8cf51195d4443615727cf0bdcdace0f" title=" " alt="" coords="219,13,412,69"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#af8cf51195d4443615727cf0bdcdace0f" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.tokenize" alt="" coords="219,13,412,69"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1.html#ac37e7654855b4cdf9b8a6cb1a2193a17" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.find_ngrams" alt="" coords="460,13,607,69"/>
 </map>

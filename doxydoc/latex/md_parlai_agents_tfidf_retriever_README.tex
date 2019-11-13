@@ -1,0 +1,20 @@
+The {\itshape T\+F\+I\+DF Retriever} is an agent that constructs a \href{https://en.wikipedia.org/wiki/Tf%E2%80%93idf}{\tt T\+F-\/\+I\+DF} matrix for all entries in a given task. It generates responses via returning the highest-\/scoring documents for a query. It uses a S\+Q\+Lite database for storing the sparse tfidf matrix, adapted from \href{http://github.com/facebookresearch/DrQA/}{\tt here}.
+
+\subsection*{Basic Examples}
+
+Construct a T\+F\+I\+DF matrix for use in retrieval for the personachat task 
+\begin{DoxyCode}
+python examples/train\_model.py -m tfidf\_retriever -t personachat -mf /tmp/personachat\_tfidf -dt
+       train:ordered -eps 1
+\end{DoxyCode}
+ After construction, load and evaluate that model on the Persona-\/\+Chat test set. 
+\begin{DoxyCode}
+python examples/eval\_model.py -t personachat -mf /tmp/personachat\_tfidf -dt test
+\end{DoxyCode}
+
+
+Alternatively, interact with a Wikipedia-\/based T\+F\+I\+DF model from the model zoo 
+\begin{DoxyCode}
+python examples/interactive.py -mf zoo:wikipedia\_full/tfidf\_retriever/model
+\end{DoxyCode}
+ 

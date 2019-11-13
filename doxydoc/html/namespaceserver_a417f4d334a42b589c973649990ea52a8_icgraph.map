@@ -1,0 +1,9 @@
+<map id="server.row_to_dict" name="server.row_to_dict">
+<area shape="rect" id="node2" href="$classserver_1_1RunListHandler.html#a1d58f9257d63a959cd70d67aa7422747" title="server.RunListHandler.get" alt="" coords="191,5,366,32"/>
+<area shape="rect" id="node4" href="$classserver_1_1RunHandler.html#a3dd94b1f7d68486782facb8bdbc74957" title="server.RunHandler.get" alt="" coords="445,107,599,133"/>
+<area shape="rect" id="node5" href="$classserver_1_1WorkerListHandler.html#a96fc3c606b269d6f70a0c14b08bb4e0b" title="server.WorkerListHandler.get" alt="" coords="183,56,375,83"/>
+<area shape="rect" id="node6" href="$classserver_1_1WorkerHandler.html#a31d87eeea57f178ecf163cf53a18be93" title="server.WorkerHandler.get" alt="" coords="437,208,607,235"/>
+<area shape="rect" id="node7" href="$namespaceserver.html#a30d7f5eb7c84bbe9bc4c3100bd3be229" title="server.merge_assignments\l_with_pairings" alt="" coords="189,158,368,199"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="669,99,875,141"/>
+<area shape="rect" id="node8" href="$classserver_1_1AssignmentHandler.html#aafff6382132dfeb120d0fd1889ab079c" title="server.AssignmentHandler.get" alt="" coords="423,157,621,184"/>
+</map>

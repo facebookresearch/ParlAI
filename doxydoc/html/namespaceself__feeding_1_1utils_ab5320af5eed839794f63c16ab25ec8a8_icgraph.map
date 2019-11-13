@@ -1,0 +1,10 @@
+<map id="self_feeding.utils.extract_parlai_episodes" name="self_feeding.utils.extract_parlai_episodes">
+<area shape="rect" id="node2" href="$namespaceconvert__sliced__to__identity.html#ace07c7ec4abee6320d35f7aea3c9a293" title="convert_sliced_to_identity.main" alt="" coords="223,5,428,32"/>
+<area shape="rect" id="node3" href="$namespaceconvert__suggested__to__stitched.html#ac3bf979d2e88b310cde10ac1eac0406a" title="convert_suggested_to\l_stitched.main" alt="" coords="250,57,401,98"/>
+<area shape="rect" id="node4" href="$namespaceconvert__sliced__to__unfiltered.html#a90657fd736afc2f0af90b8cbdb3ee2aa" title="convert_sliced_to_unfiltered.main" alt="" coords="217,123,433,149"/>
+<area shape="rect" id="node5" href="$namespaceconvert__rated__to__sliced.html#ad4fd35247a4e417615638391b9db7710" title="convert_rated_to_sliced.main" alt="" coords="229,173,421,200"/>
+<area shape="rect" id="node6" href="$namespaceconvert__chatted__to__polarized.html#aadba9ee59fc962ba83f4c31a22d4c28d" title="convert_chatted_to\l_polarized.main" alt="" coords="259,225,392,266"/>
+<area shape="rect" id="node7" href="$namespaceconvert__chatted__to__identity.html#ab4644532a7d6d29c252859898f3f8feb" title="convert_chatted_to\l_identity.main" alt="" coords="259,290,392,331"/>
+<area shape="rect" id="node8" href="$namespaceconvert__rated__to__polarized.html#a3f349162526c4fd1dae393cc9d9ac2fe" title="convert_rated_to_polarized.main" alt="" coords="220,356,431,383"/>
+<area shape="rect" id="node9" href="$namespaceconvert__chatted__to__unfiltered.html#a0c087ccff61069c2691de5f9d7d45266" title="convert_chatted_to\l_unfiltered.main" alt="" coords="259,407,392,449"/>
+</map>

@@ -1,0 +1,186 @@
+\hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils}{}\section{parlai.\+agents.\+tfidf\+\_\+retriever.\+utils Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils}\index{parlai.\+agents.\+tfidf\+\_\+retriever.\+utils@{parlai.\+agents.\+tfidf\+\_\+retriever.\+utils}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ad884f6e5806325937ff74a63bc7eea82}{save\+\_\+sparse\+\_\+csr} (filename, matrix, metadata=None)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6d1c2b31f2a5d432d7cb677f436e17c0}{save\+\_\+sparse\+\_\+tensor} (filename, matrix, metadata=None)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ac866d85f1378528cb12c8d13b959d279}{load\+\_\+sparse\+\_\+csr} (filename)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a28faf0af977db4915cf5253d69d37c0d}{load\+\_\+sparse\+\_\+tensor} (filename)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6df58709964913e04733db89d6e187db}{hash} (token, num\+\_\+buckets)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ace97d2139f74e163a7ba81fcfb505f1c}{normalize} (text)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a57608b2b9a61223e39e3cb51f5c9f812}{filter\+\_\+word} (text)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a791c829884544e127e480a52d233d521}{filter\+\_\+ngram} (gram, mode=\textquotesingle{}any\textquotesingle{})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_afd1296771f9d4fe64b901825a37b1438}{S\+T\+O\+P\+W\+O\+R\+DS}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a791c829884544e127e480a52d233d521}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a791c829884544e127e480a52d233d521}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!filter\+\_\+ngram@{filter\+\_\+ngram}}
+\index{filter\+\_\+ngram@{filter\+\_\+ngram}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{filter\+\_\+ngram()}{filter\_ngram()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+filter\+\_\+ngram (\begin{DoxyParamCaption}\item[{}]{gram,  }\item[{}]{mode = {\ttfamily \textquotesingle{}any\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decide whether to keep or discard an n-gram.
+
+Args:
+    gram: list of tokens (length N)
+    mode: Option to throw out ngram if
+      'any': any single token passes filter_word
+      'all': all tokens pass filter_word
+      'ends': book-ended by filterable tokens
+\end{DoxyVerb}
+ 
+
+Definition at line 261 of file utils.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+filter\+\_\+word().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a791c829884544e127e480a52d233d521_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a57608b2b9a61223e39e3cb51f5c9f812}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a57608b2b9a61223e39e3cb51f5c9f812}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!filter\+\_\+word@{filter\+\_\+word}}
+\index{filter\+\_\+word@{filter\+\_\+word}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{filter\+\_\+word()}{filter\_word()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+filter\+\_\+word (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Take out english stopwords, punctuation, and compound endings.\end{DoxyVerb}
+ 
+
+Definition at line 251 of file utils.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+normalize().
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+filter\+\_\+ngram().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a57608b2b9a61223e39e3cb51f5c9f812_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a57608b2b9a61223e39e3cb51f5c9f812_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6df58709964913e04733db89d6e187db}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6df58709964913e04733db89d6e187db}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!hash@{hash}}
+\index{hash@{hash}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{hash()}{hash()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+hash (\begin{DoxyParamCaption}\item[{}]{token,  }\item[{}]{num\+\_\+buckets }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unsigned 32 bit murmurhash for feature hashing.\end{DoxyVerb}
+ 
+
+Definition at line 68 of file utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ac866d85f1378528cb12c8d13b959d279}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ac866d85f1378528cb12c8d13b959d279}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!load\+\_\+sparse\+\_\+csr@{load\+\_\+sparse\+\_\+csr}}
+\index{load\+\_\+sparse\+\_\+csr@{load\+\_\+sparse\+\_\+csr}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{load\+\_\+sparse\+\_\+csr()}{load\_sparse\_csr()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+load\+\_\+sparse\+\_\+csr (\begin{DoxyParamCaption}\item[{}]{filename }\end{DoxyParamCaption})}
+
+
+
+Definition at line 47 of file utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a28faf0af977db4915cf5253d69d37c0d}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a28faf0af977db4915cf5253d69d37c0d}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!load\+\_\+sparse\+\_\+tensor@{load\+\_\+sparse\+\_\+tensor}}
+\index{load\+\_\+sparse\+\_\+tensor@{load\+\_\+sparse\+\_\+tensor}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{load\+\_\+sparse\+\_\+tensor()}{load\_sparse\_tensor()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+load\+\_\+sparse\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{filename }\end{DoxyParamCaption})}
+
+
+
+Definition at line 55 of file utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ace97d2139f74e163a7ba81fcfb505f1c}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ace97d2139f74e163a7ba81fcfb505f1c}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!normalize@{normalize}}
+\index{normalize@{normalize}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{normalize()}{normalize()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+normalize (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Resolve different type of unicode encodings.\end{DoxyVerb}
+ 
+
+Definition at line 244 of file utils.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+filter\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ace97d2139f74e163a7ba81fcfb505f1c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ad884f6e5806325937ff74a63bc7eea82}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_ad884f6e5806325937ff74a63bc7eea82}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!save\+\_\+sparse\+\_\+csr@{save\+\_\+sparse\+\_\+csr}}
+\index{save\+\_\+sparse\+\_\+csr@{save\+\_\+sparse\+\_\+csr}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{save\+\_\+sparse\+\_\+csr()}{save\_sparse\_csr()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+save\+\_\+sparse\+\_\+csr (\begin{DoxyParamCaption}\item[{}]{filename,  }\item[{}]{matrix,  }\item[{}]{metadata = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 26 of file utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6d1c2b31f2a5d432d7cb677f436e17c0}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_a6d1c2b31f2a5d432d7cb677f436e17c0}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!save\+\_\+sparse\+\_\+tensor@{save\+\_\+sparse\+\_\+tensor}}
+\index{save\+\_\+sparse\+\_\+tensor@{save\+\_\+sparse\+\_\+tensor}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{save\+\_\+sparse\+\_\+tensor()}{save\_sparse\_tensor()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+save\+\_\+sparse\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{filename,  }\item[{}]{matrix,  }\item[{}]{metadata = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 37 of file utils.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_afd1296771f9d4fe64b901825a37b1438}\label{namespaceparlai_1_1agents_1_1tfidf__retriever_1_1utils_afd1296771f9d4fe64b901825a37b1438}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}!S\+T\+O\+P\+W\+O\+R\+DS@{S\+T\+O\+P\+W\+O\+R\+DS}}
+\index{S\+T\+O\+P\+W\+O\+R\+DS@{S\+T\+O\+P\+W\+O\+R\+DS}!parlai\+::agents\+::tfidf\+\_\+retriever\+::utils@{parlai\+::agents\+::tfidf\+\_\+retriever\+::utils}}
+\subsubsection{\texorpdfstring{S\+T\+O\+P\+W\+O\+R\+DS}{STOPWORDS}}
+{\footnotesize\ttfamily dictionary parlai.\+agents.\+tfidf\+\_\+retriever.\+utils.\+S\+T\+O\+P\+W\+O\+R\+DS}
+
+
+
+Definition at line 78 of file utils.\+py.
+

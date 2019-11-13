@@ -1,0 +1,4 @@
+<map id="parlai.core.pytorch_data_teacher.ep_length" name="parlai.core.pytorch_data_teacher.ep_length">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache.html#ae97120b4fec464f79c7d0d9cd54c101d" title="parlai.core.pytorch\l_data_teacher.BatchSortCache.batch_cache" alt="" coords="217,5,500,47"/>
+<area shape="rect" id="node3" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a1c96927436b550513d6656564ec0c5fe" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pyt_batchsort_field" alt="" coords="253,71,465,127"/>
+</map>

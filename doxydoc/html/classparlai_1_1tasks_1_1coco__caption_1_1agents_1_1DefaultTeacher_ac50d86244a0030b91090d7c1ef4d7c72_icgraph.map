@@ -1,4 +1,4 @@
 <map id="parlai.tasks.coco_caption.agents.DefaultTeacher.get" name="parlai.tasks.coco_caption.agents.DefaultTeacher.get">
-<area shape="rect" id="node1" title=" " alt="" coords="271,5,488,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title=" " alt="" coords="5,5,223,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="277,5,482,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title="parlai.tasks.coco_caption.agents.\lDefaultTeacher.next_example" alt="" coords="271,71,488,112"/>
 </map>

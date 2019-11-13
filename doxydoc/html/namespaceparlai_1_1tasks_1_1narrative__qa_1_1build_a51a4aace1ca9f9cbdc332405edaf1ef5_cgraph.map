@@ -1,0 +1,10 @@
+<map id="parlai.tasks.narrative_qa.build.build" name="parlai.tasks.narrative_qa.build.build">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a104cbf949215e7b505c73b33017b1970" title="parlai.tasks.narrative\l_qa.build.divide_csv_into_sets" alt="" coords="196,123,396,165"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#afd6f28e1efb7e9f3328eef166f8be5cb" title="parlai.tasks.narrative\l_qa.build.download_stories" alt="" coords="207,193,385,234"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a602f90b82e6c6eafbd13647ba7567101" title="parlai.tasks.narrative\l_qa.build.make_folders" alt="" coords="218,258,374,299"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a53e5ef8d085ebdfc1cc6c4918841d097" title="parlai.tasks.narrative\l_qa.build.move_files" alt="" coords="225,323,367,365"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a7fae633ea705d970c2a6d56b7004f6cd" title="parlai.tasks.narrative\l_qa.build.read_csv_to\l_dict_list" alt="" coords="459,5,608,61"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a8d4e1f30e3de3f62c039296cbed12e8d" title="parlai.tasks.narrative\l_qa.build.get_rows_for_set" alt="" coords="444,86,623,127"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#ab49502ac724edd933f89bec8f414b452" title="parlai.tasks.narrative\l_qa.build.write_dict_list\l_to_csv" alt="" coords="454,152,613,208"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a9af345566fd27c286f7fef146b2cf00b" title="parlai.tasks.narrative\l_qa.build.try_downloading" alt="" coords="447,233,619,274"/>
+</map>

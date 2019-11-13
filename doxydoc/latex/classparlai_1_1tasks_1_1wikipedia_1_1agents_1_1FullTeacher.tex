@@ -1,0 +1,141 @@
+\hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher}{}\section{parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher}\index{parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher@{parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a51b594b0d89c482575edc4ada9e1edcb}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_aa4ceed492ea802e93be6cad4f5a7b322}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a969b628c85be8be59009ef29fb0855fc}{setup\+\_\+data} (self, path)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a37c660b0fdaba618690bfde0eb425ccf}{get\+\_\+extraction\+\_\+instructions} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_ad868c50f3a789ce8f091605630b8f715}{key\+\_\+value}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_aa4ceed492ea802e93be6cad4f5a7b322}{opt}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a336be0a2ec18a9d19fd58cc4031c30b6}{id}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Reads Wikipedia pages one at a time
+\end{DoxyVerb}
+ 
+
+Definition at line 24 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a51b594b0d89c482575edc4ada9e1edcb}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a51b594b0d89c482575edc4ada9e1edcb}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a37c660b0fdaba618690bfde0eb425ccf}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a37c660b0fdaba618690bfde0eb425ccf}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!get\+\_\+extraction\+\_\+instructions@{get\+\_\+extraction\+\_\+instructions}}
+\index{get\+\_\+extraction\+\_\+instructions@{get\+\_\+extraction\+\_\+instructions}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{get\+\_\+extraction\+\_\+instructions()}{get\_extraction\_instructions()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+get\+\_\+extraction\+\_\+instructions (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}If one wants to run extraction themselves on a raw wikipedia dump\end{DoxyVerb}
+ 
+
+Definition at line 57 of file agents.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a969b628c85be8be59009ef29fb0855fc}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a969b628c85be8be59009ef29fb0855fc}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!setup\+\_\+data@{setup\+\_\+data}}
+\index{setup\+\_\+data@{setup\+\_\+data}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data()}{setup\_data()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+setup\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+
+
+Definition at line 39 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+key\+\_\+value.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a336be0a2ec18a9d19fd58cc4031c30b6}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_a336be0a2ec18a9d19fd58cc4031c30b6}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+id}
+
+
+
+Definition at line 36 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_ad868c50f3a789ce8f091605630b8f715}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_ad868c50f3a789ce8f091605630b8f715}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!key\+\_\+value@{key\+\_\+value}}
+\index{key\+\_\+value@{key\+\_\+value}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{key\+\_\+value}{key\_value}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+key\+\_\+value}
+
+
+
+Definition at line 29 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+setup\+\_\+data(), and parlai.\+tasks.\+wikipedia.\+agents.\+Summary\+Teacher.\+setup\+\_\+data().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_aa4ceed492ea802e93be6cad4f5a7b322}\label{classparlai_1_1tasks_1_1wikipedia_1_1agents_1_1FullTeacher_aa4ceed492ea802e93be6cad4f5a7b322}} 
+\index{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}!opt@{opt}}
+\index{opt@{opt}!parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher@{parlai\+::tasks\+::wikipedia\+::agents\+::\+Full\+Teacher}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt}
+
+
+
+Definition at line 32 of file agents.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/wikipedia/\hyperlink{parlai_2tasks_2wikipedia_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

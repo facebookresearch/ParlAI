@@ -1,0 +1,105 @@
+\hypertarget{namespaceparlai_1_1agents_1_1transformer_1_1modules}{}\section{parlai.\+agents.\+transformer.\+modules Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1transformer_1_1modules}\index{parlai.\+agents.\+transformer.\+modules@{parlai.\+agents.\+transformer.\+modules}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention}{Basic\+Attention}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1MultiHeadAttention}{Multi\+Head\+Attention}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerDecoder}{Transformer\+Decoder}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerDecoderLayer}{Transformer\+Decoder\+Layer}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder}{Transformer\+Encoder}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer}{Transformer\+Encoder\+Layer}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN}{Transformer\+F\+FN}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel}{Transformer\+Generator\+Model}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerLinearWrapper}{Transformer\+Linear\+Wrapper}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerMemNetModel}{Transformer\+Mem\+Net\+Model}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper}{Transformer\+Response\+Wrapper}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1transformer_1_1modules_ad93916b8d2188c35733089e1581c44f8}{gelu} (tensor)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1transformer_1_1modules_ab67607512c597ddd54f2b60a1a1eaf4c}{get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1transformer_1_1modules_a0b86437e6e9682fa3100e9cadcaae259}{create\+\_\+position\+\_\+codes} (n\+\_\+pos, dim, out)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceparlai_1_1agents_1_1transformer_1_1modules_afb85e0862dd867aee20a92e26aa29f58}{L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS} = 1e-\/5
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1transformer_1_1modules_a0b86437e6e9682fa3100e9cadcaae259}\label{namespaceparlai_1_1agents_1_1transformer_1_1modules_a0b86437e6e9682fa3100e9cadcaae259}} 
+\index{parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}!create\+\_\+position\+\_\+codes@{create\+\_\+position\+\_\+codes}}
+\index{create\+\_\+position\+\_\+codes@{create\+\_\+position\+\_\+codes}!parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}}
+\subsubsection{\texorpdfstring{create\+\_\+position\+\_\+codes()}{create\_position\_codes()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+create\+\_\+position\+\_\+codes (\begin{DoxyParamCaption}\item[{}]{n\+\_\+pos,  }\item[{}]{dim,  }\item[{}]{out }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create positional codes and store them in ``out``.\end{DoxyVerb}
+ 
+
+Definition at line 272 of file modules.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1transformer_1_1modules_ad93916b8d2188c35733089e1581c44f8}\label{namespaceparlai_1_1agents_1_1transformer_1_1modules_ad93916b8d2188c35733089e1581c44f8}} 
+\index{parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}!gelu@{gelu}}
+\index{gelu@{gelu}!parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}}
+\subsubsection{\texorpdfstring{gelu()}{gelu()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+gelu (\begin{DoxyParamCaption}\item[{}]{tensor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute gelu function.
+
+c.f. https://arxiv.org/abs/1606.08415
+\end{DoxyVerb}
+ 
+
+Definition at line 106 of file modules.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1transformer_1_1modules_ab67607512c597ddd54f2b60a1a1eaf4c}\label{namespaceparlai_1_1agents_1_1transformer_1_1modules_ab67607512c597ddd54f2b60a1a1eaf4c}} 
+\index{parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}!get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options@{get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options}}
+\index{get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options@{get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options}!parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}}
+\subsubsection{\texorpdfstring{get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options()}{get\_n\_positions\_from\_options()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine n_positions from options dict.\end{DoxyVerb}
+ 
+
+Definition at line 115 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+\_\+\+\_\+init\+\_\+\+\_\+(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+get\+\_\+encoder().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1transformer_1_1modules_ab67607512c597ddd54f2b60a1a1eaf4c_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1transformer_1_1modules_afb85e0862dd867aee20a92e26aa29f58}\label{namespaceparlai_1_1agents_1_1transformer_1_1modules_afb85e0862dd867aee20a92e26aa29f58}} 
+\index{parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}!L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS@{L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS}}
+\index{L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS@{L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS}!parlai\+::agents\+::transformer\+::modules@{parlai\+::agents\+::transformer\+::modules}}
+\subsubsection{\texorpdfstring{L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS}{LAYER\_NORM\_EPS}}
+{\footnotesize\ttfamily int parlai.\+agents.\+transformer.\+modules.\+L\+A\+Y\+E\+R\+\_\+\+N\+O\+R\+M\+\_\+\+E\+PS = 1e-\/5}
+
+
+
+Definition at line 35 of file modules.\+py.
+

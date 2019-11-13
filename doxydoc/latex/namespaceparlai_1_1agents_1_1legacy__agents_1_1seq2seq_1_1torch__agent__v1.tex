@@ -1,0 +1,77 @@
+\hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1 Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam}{Beam}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent}{Torch\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a74cfde390a2b9861179ac0fcd59da28c}{Batch}
+\item 
+\hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a5d17ee55b86a7e7ee0de4dca59bf3bdc}{default}
+\item 
+\hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a2689006ea97d09413fb242f984bd8016}{Output} = namedtuple(\textquotesingle{}Output\textquotesingle{}, \mbox{[}\textquotesingle{}text\textquotesingle{}, \textquotesingle{}text\+\_\+candidates\textquotesingle{}\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a74cfde390a2b9861179ac0fcd59da28c}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a74cfde390a2b9861179ac0fcd59da28c}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}!Batch@{Batch}}
+\index{Batch@{Batch}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}}
+\subsubsection{\texorpdfstring{Batch}{Batch}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Batch}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  namedtuple(
+2     \textcolor{stringliteral}{'Batch'},
+3     [
+4         \textcolor{stringliteral}{'text\_vec'},
+5         \textcolor{stringliteral}{'text\_lengths'},
+6         \textcolor{stringliteral}{'label\_vec'},
+7         \textcolor{stringliteral}{'label\_lengths'},
+8         \textcolor{stringliteral}{'labels'},
+9         \textcolor{stringliteral}{'valid\_indices'},
+10         \textcolor{stringliteral}{'candidates'},
+11         \textcolor{stringliteral}{'candidate\_vecs'},
+12         \textcolor{stringliteral}{'image'},
+13         \textcolor{stringliteral}{'memory\_vecs'},
+14     ],
+15 )
+\end{DoxyCode}
+
+
+Definition at line 76 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batchify().
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a5d17ee55b86a7e7ee0de4dca59bf3bdc}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a5d17ee55b86a7e7ee0de4dca59bf3bdc}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}!default@{default}}
+\index{default@{default}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}}
+\subsubsection{\texorpdfstring{default}{default}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+default}
+
+
+
+Definition at line 91 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a2689006ea97d09413fb242f984bd8016}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_a2689006ea97d09413fb242f984bd8016}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}!Output@{Output}}
+\index{Output@{Output}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1}}
+\subsubsection{\texorpdfstring{Output}{Output}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Output = namedtuple(\textquotesingle{}Output\textquotesingle{}, \mbox{[}\textquotesingle{}text\textquotesingle{}, \textquotesingle{}text\+\_\+candidates\textquotesingle{}\mbox{]})}
+
+
+
+Definition at line 106 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+eval\+\_\+step().
+

@@ -1,4 +1,4 @@
 <map id="parlai.tasks.flickr30k.agents.DefaultTeacher.get" name="parlai.tasks.flickr30k.agents.DefaultTeacher.get">
-<area shape="rect" id="node1" title=" " alt="" coords="249,5,439,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title=" " alt="" coords="5,5,201,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="243,5,448,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title="parlai.tasks.flickr30k.agents.\lDefaultTeacher.next_example" alt="" coords="247,71,443,112"/>
 </map>

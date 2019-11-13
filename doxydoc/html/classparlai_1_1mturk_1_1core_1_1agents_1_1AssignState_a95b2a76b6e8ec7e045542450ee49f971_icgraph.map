@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.agents.AssignState.is_final" name="parlai.mturk.core.agents.AssignState.is_final">
-<area shape="rect" id="node1" title=" " alt="" coords="256,43,423,84"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#af1a00c6edfe78ac978c5bf97e88bdbe4" title=" " alt="" coords="13,5,200,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a523bffdcd46a437e641b94f5700c0e16" title=" " alt="" coords="5,71,208,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#af1a00c6edfe78ac978c5bf97e88bdbe4" title="parlai.mturk.core.agents.\lMTurkAgent.wait_for_status" alt="" coords="228,5,415,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a523bffdcd46a437e641b94f5700c0e16" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.wait\l_for_status" alt="" coords="220,71,423,127"/>
 </map>

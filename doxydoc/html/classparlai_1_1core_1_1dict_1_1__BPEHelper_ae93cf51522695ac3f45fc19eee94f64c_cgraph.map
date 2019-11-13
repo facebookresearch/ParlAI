@@ -1,6 +1,5 @@
 <map id="parlai.core.dict._BPEHelper.finalize" name="parlai.core.dict._BPEHelper.finalize">
-<area shape="rect" id="node1" title=" " alt="" coords="5,122,233,149"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1__BPEHelper.html#add00536299095bb7d3a0bc29df60569b" title=" " alt="" coords="281,5,468,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper.html#a1c3e021fc2cb9e5bace6c1cadbf17975" title=" " alt="" coords="281,100,468,171"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1__BPEHelper.html#a1d0eeb8a06d4678332ba3cecf1ce72c0" title=" " alt="" coords="281,195,468,236"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1__BPEHelper.html#add00536299095bb7d3a0bc29df60569b" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0._BPEHelper._load_from\l_codecs" alt="" coords="281,5,468,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper.html#a1c3e021fc2cb9e5bace6c1cadbf17975" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1._BPEHelper._load_from\l_codecs" alt="" coords="281,100,468,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1__BPEHelper.html#a1d0eeb8a06d4678332ba3cecf1ce72c0" title="parlai.core.dict._BPEHelper.\l_load_from_codecs" alt="" coords="281,195,468,236"/>
 </map>

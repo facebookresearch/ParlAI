@@ -1,0 +1,328 @@
+\hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent}\index{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent@{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=276pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ab7f5e55dec9f12dc4e4dccc48c682e63}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0754f7cf281a0223667ffb82c846a843}{build\+\_\+model} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aedbc5976f08f86c9587c0b7486879846}{init\+\_\+optim} (self, params, optim\+\_\+states=None, saved\+\_\+optim\+\_\+type=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a8d75c4d4bddd44381b232a974469c432}{score\+\_\+candidates} (self, batch, cand\+\_\+vecs, cand\+\_\+encs=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a15c4f37715a216f5a4f37f5dbcb446f5}{add\+\_\+cmdline\+\_\+args} (parser)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0518d01be6a05fc2bc117f2c55cb6328}{dictionary\+\_\+class} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0e3cab83007745383449162abf3e68d4}{pretrained\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a073fbd49c70b53a4a152a204fc5b4240}{data\+\_\+parallel}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aa61dee97328ecd3c43cc8f1d6d472c6f}{model}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a07990f2aca9e4da9d38ab8b70830a48f}{clip}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_afa32c6bdd2b271f3f3d0b823e65397c2}{N\+U\+L\+L\+\_\+\+I\+DX}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a1cf7d4af340ca8e9d2cf90b59e9e5db0}{S\+T\+A\+R\+T\+\_\+\+I\+DX}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ae432d83f3269252d6d58dafd3531b14b}{E\+N\+D\+\_\+\+I\+DX}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a3b29d2ab93c866246f0d53298d3fd0fb}{optimizer}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}TorchRankerAgent implementation of the crossencoder.
+    It is a standalone Agent. It might be called by the Both Encoder.
+\end{DoxyVerb}
+ 
+
+Definition at line 53 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ab7f5e55dec9f12dc4e4dccc48c682e63}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ab7f5e55dec9f12dc4e4dccc48c682e63}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ab7f5e55dec9f12dc4e4dccc48c682e63_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a15c4f37715a216f5a4f37f5dbcb446f5}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a15c4f37715a216f5a4f37f5dbcb446f5}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 59 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+add\+\_\+common\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a15c4f37715a216f5a4f37f5dbcb446f5_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0754f7cf281a0223667ffb82c846a843}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0754f7cf281a0223667ffb82c846a843}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 82 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+pretrained\+\_\+path, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+pretrained\+\_\+path, and parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+pretrained\+\_\+path.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0518d01be6a05fc2bc117f2c55cb6328}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0518d01be6a05fc2bc117f2c55cb6328}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 126 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, and parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+surround().
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0518d01be6a05fc2bc117f2c55cb6328_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0518d01be6a05fc2bc117f2c55cb6328_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aedbc5976f08f86c9587c0b7486879846}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aedbc5976f08f86c9587c0b7486879846}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!init\+\_\+optim@{init\+\_\+optim}}
+\index{init\+\_\+optim@{init\+\_\+optim}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{init\+\_\+optim()}{init\_optim()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+init\+\_\+optim (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{params,  }\item[{}]{optim\+\_\+states = {\ttfamily None},  }\item[{}]{saved\+\_\+optim\+\_\+type = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 91 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a8d75c4d4bddd44381b232a974469c432}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a8d75c4d4bddd44381b232a974469c432}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!score\+\_\+candidates@{score\+\_\+candidates}}
+\index{score\+\_\+candidates@{score\+\_\+candidates}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{score\+\_\+candidates()}{score\_candidates()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+score\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch,  }\item[{}]{cand\+\_\+vecs,  }\item[{}]{cand\+\_\+encs = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 99 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+concat\+\_\+without\+\_\+padding(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+step(), and parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a8d75c4d4bddd44381b232a974469c432_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a8d75c4d4bddd44381b232a974469c432_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a07990f2aca9e4da9d38ab8b70830a48f}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a07990f2aca9e4da9d38ab8b70830a48f}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!clip@{clip}}
+\index{clip@{clip}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{clip}{clip}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+clip}
+
+
+
+Definition at line 77 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a073fbd49c70b53a4a152a204fc5b4240}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a073fbd49c70b53a4a152a204fc5b4240}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!data\+\_\+parallel@{data\+\_\+parallel}}
+\index{data\+\_\+parallel@{data\+\_\+parallel}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{data\+\_\+parallel}{data\_parallel}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+data\+\_\+parallel}
+
+
+
+Definition at line 72 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ae432d83f3269252d6d58dafd3531b14b}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_ae432d83f3269252d6d58dafd3531b14b}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!E\+N\+D\+\_\+\+I\+DX@{E\+N\+D\+\_\+\+I\+DX}}
+\index{E\+N\+D\+\_\+\+I\+DX@{E\+N\+D\+\_\+\+I\+DX}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{E\+N\+D\+\_\+\+I\+DX}{END\_IDX}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX}
+
+
+
+Definition at line 80 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+batch\+\_\+act(), generator.\+agents.\+End\+To\+End\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+forward(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+get\+\_\+predictions(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observe(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+v2t(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+vectorize(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+vectorize().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aa61dee97328ecd3c43cc8f1d6d472c6f}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_aa61dee97328ecd3c43cc8f1d6d472c6f}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!model@{model}}
+\index{model@{model}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model}
+
+
+
+Definition at line 74 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+act(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+backward(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+compute\+\_\+loss(), parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decode(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict\+\_\+neighbors(), kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+encode\+\_\+candidates(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+encode\+\_\+candidates(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+encode\+\_\+candidates(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+encode\+\_\+candidates(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+encode\+\_\+candidates(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+eval\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+get\+\_\+predictions(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+get\+\_\+target\+\_\+loss(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+greedy\+\_\+search(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+greedy\+\_\+search(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+init\+\_\+cuda\+\_\+buffer(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+load(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+load(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+load(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+load\+\_\+state\+\_\+dict(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load\+\_\+state\+\_\+dict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+parley(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+predict(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+predict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+predict(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+score(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+score(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+score\+\_\+candidates(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+share(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+share(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+state\+\_\+dict(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+train\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+train\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_afa32c6bdd2b271f3f3d0b823e65397c2}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_afa32c6bdd2b271f3f3d0b823e65397c2}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}}
+\index{N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{N\+U\+L\+L\+\_\+\+I\+DX}{NULL\_IDX}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX}
+
+
+
+Definition at line 78 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), generator.\+agents.\+End\+To\+End\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), generator.\+agents.\+End\+To\+End\+Agent.\+compute\+\_\+loss(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+compute\+\_\+loss(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+predict(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+predict(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+score\+\_\+candidates(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+train\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+vectorize(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+vectorize(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+vectorize().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a3b29d2ab93c866246f0d53298d3fd0fb}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a3b29d2ab93c866246f0d53298d3fd0fb}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer}
+
+
+
+Definition at line 92 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+backward(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+lr\+\_\+scheduler(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+load(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+predict(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+share(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step(), parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+update(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), kvmemnn.\+Kvmemnn\+Agent.\+update\+\_\+params(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+zero\+\_\+grad(), kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+zero\+\_\+grad(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0e3cab83007745383449162abf3e68d4}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a0e3cab83007745383449162abf3e68d4}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!pretrained\+\_\+path@{pretrained\+\_\+path}}
+\index{pretrained\+\_\+path@{pretrained\+\_\+path}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{pretrained\+\_\+path}{pretrained\_path}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+pretrained\+\_\+path}
+
+
+
+Definition at line 66 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+build\+\_\+model().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a1cf7d4af340ca8e9d2cf90b59e9e5db0}\label{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent_a1cf7d4af340ca8e9d2cf90b59e9e5db0}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}!S\+T\+A\+R\+T\+\_\+\+I\+DX@{S\+T\+A\+R\+T\+\_\+\+I\+DX}}
+\index{S\+T\+A\+R\+T\+\_\+\+I\+DX@{S\+T\+A\+R\+T\+\_\+\+I\+DX}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker\+::\+Cross\+Encoder\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{S\+T\+A\+R\+T\+\_\+\+I\+DX}{START\_IDX}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX}
+
+
+
+Definition at line 79 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+share(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+v2t().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/bert\+\_\+ranker/\hyperlink{cross__encoder__ranker_8py}{cross\+\_\+encoder\+\_\+ranker.\+py}\end{DoxyCompactItemize}

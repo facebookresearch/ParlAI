@@ -1,4 +1,3 @@
 <map id="parlai.agents.local_human.local_human.LocalHumanAgent.act" name="parlai.agents.local_human.local_human.LocalHumanAgent.act">
-<area shape="rect" id="node1" title=" " alt="" coords="251,5,473,61"/>
-<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title=" " alt="" coords="5,13,203,54"/>
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title="parlai.messenger.core.agents.\lMessengerAgent.act_blocking" alt="" coords="276,13,473,54"/>
 </map>

@@ -1,0 +1,10 @@
+This agent contains a simple implementation of the {\itshape starspace} algorithm, slightly adapted for dialogue. To learn more about the starspace algorithm, see \href{https://arxiv.org/abs/1709.03856}{\tt this} paper.
+
+\subsection*{Basic Examples}
+
+Train a starspace model on the \char`\"{}sentence S\+Qu\+A\+D\char`\"{} \href{https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/squad/agents.py}{\tt task}. 
+\begin{DoxyCode}
+python examples/train\_model.py --task squad:sentence --model starspace -lr 0.01 -esz 512 -k 10 -mf
+       /tmp/starspacesquad
+\end{DoxyCode}
+ 

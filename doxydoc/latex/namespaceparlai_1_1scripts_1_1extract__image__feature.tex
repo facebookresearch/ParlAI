@@ -1,0 +1,88 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1extract__image__feature}{}\section{parlai.\+scripts.\+extract\+\_\+image\+\_\+feature Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1extract__image__feature}\index{parlai.\+scripts.\+extract\+\_\+image\+\_\+feature@{parlai.\+scripts.\+extract\+\_\+image\+\_\+feature}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1extract__image__feature_ab634fcc65758e30deaf92980edcc20bd}{setup\+\_\+args} (parser=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1extract__image__feature_a4fa5d8aef45056034f4898531a0f9967}{get\+\_\+dataset\+\_\+class} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1extract__image__feature_a6e3b12d361756ec79fbd44abd185387b}{extract\+\_\+feats} (opt)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1extract__image__feature_a6e3b12d361756ec79fbd44abd185387b}\label{namespaceparlai_1_1scripts_1_1extract__image__feature_a6e3b12d361756ec79fbd44abd185387b}} 
+\index{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}!extract\+\_\+feats@{extract\+\_\+feats}}
+\index{extract\+\_\+feats@{extract\+\_\+feats}!parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}}
+\subsubsection{\texorpdfstring{extract\+\_\+feats()}{extract\_feats()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+extract\+\_\+feats (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 85 of file extract\+\_\+image\+\_\+feature.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+get\+\_\+dataset\+\_\+class(), parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+setup\+\_\+args(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1extract__image__feature_a6e3b12d361756ec79fbd44abd185387b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1extract__image__feature_a4fa5d8aef45056034f4898531a0f9967}\label{namespaceparlai_1_1scripts_1_1extract__image__feature_a4fa5d8aef45056034f4898531a0f9967}} 
+\index{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}!get\+\_\+dataset\+\_\+class@{get\+\_\+dataset\+\_\+class}}
+\index{get\+\_\+dataset\+\_\+class@{get\+\_\+dataset\+\_\+class}!parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}}
+\subsubsection{\texorpdfstring{get\+\_\+dataset\+\_\+class()}{get\_dataset\_class()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+get\+\_\+dataset\+\_\+class (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}To use a custom Pytorch Dataset, specify it on the command line:
+    ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
+
+    Note that if the dataset is named ``DefaultDataset``, then you do
+    not need to specify its name following the colon; e.g., it
+    would just be:
+    ``--dataset parlai.tasks.vqa_v1.agents``
+\end{DoxyVerb}
+ 
+
+Definition at line 65 of file extract\+\_\+image\+\_\+feature.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+extract\+\_\+feats().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1extract__image__feature_a4fa5d8aef45056034f4898531a0f9967_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1extract__image__feature_ab634fcc65758e30deaf92980edcc20bd}\label{namespaceparlai_1_1scripts_1_1extract__image__feature_ab634fcc65758e30deaf92980edcc20bd}} 
+\index{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::extract\+\_\+image\+\_\+feature@{parlai\+::scripts\+::extract\+\_\+image\+\_\+feature}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 35 of file extract\+\_\+image\+\_\+feature.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+extract\+\_\+feats().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1extract__image__feature_ab634fcc65758e30deaf92980edcc20bd_icgraph}
+\end{center}
+\end{figure}

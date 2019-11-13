@@ -1,0 +1,90 @@
+\hypertarget{namespaceparlai_1_1core_1_1gpt2__helper}{}\section{parlai.\+core.\+gpt2\+\_\+helper Namespace Reference}
+\label{namespaceparlai_1_1core_1_1gpt2__helper}\index{parlai.\+core.\+gpt2\+\_\+helper@{parlai.\+core.\+gpt2\+\_\+helper}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper}{Gpt2\+Bpe\+Helper}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1gpt2__helper_ae992d8ce81708900b1b1bb81bc7a816d}{bytes\+\_\+to\+\_\+unicode} ()
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1gpt2__helper_ac5bffa2aece99e43444185ba85dff425}{get\+\_\+pairs} (word)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1core_1_1gpt2__helper_aeb53e5722eee3791e6921df0a571263c}{D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON} = \textquotesingle{}https\+://dl.\+fbaipublicfiles.\+com/fairseq/gpt2\+\_\+bpe/encoder.\+json\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1core_1_1gpt2__helper_a45a1fe95a0d4df46ca148fef2a20ebd1}{D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE} = \textquotesingle{}https\+://dl.\+fbaipublicfiles.\+com/fairseq/gpt2\+\_\+bpe/vocab.\+bpe\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1gpt2__helper_ae992d8ce81708900b1b1bb81bc7a816d}\label{namespaceparlai_1_1core_1_1gpt2__helper_ae992d8ce81708900b1b1bb81bc7a816d}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}!bytes\+\_\+to\+\_\+unicode@{bytes\+\_\+to\+\_\+unicode}}
+\index{bytes\+\_\+to\+\_\+unicode@{bytes\+\_\+to\+\_\+unicode}!parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}}
+\subsubsection{\texorpdfstring{bytes\+\_\+to\+\_\+unicode()}{bytes\_to\_unicode()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+bytes\+\_\+to\+\_\+unicode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns list of utf-8 byte and a corresponding list of unicode strings.
+The reversible bpe codes work on unicode strings.
+This means you need a large # of unicode characters in your vocab if you want to avoid UNKs.
+When you're at something like a 10B token dataset you end up needing around 5K for decent coverage.
+This is a signficant percentage of your normal, say, 32K bpe vocab.
+To avoid that, we want lookup tables between utf-8 bytes and unicode strings.
+And avoids mapping to whitespace/control characters the bpe code barfs on.
+\end{DoxyVerb}
+ 
+
+Definition at line 24 of file gpt2\+\_\+helper.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1gpt2__helper_ac5bffa2aece99e43444185ba85dff425}\label{namespaceparlai_1_1core_1_1gpt2__helper_ac5bffa2aece99e43444185ba85dff425}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}!get\+\_\+pairs@{get\+\_\+pairs}}
+\index{get\+\_\+pairs@{get\+\_\+pairs}!parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}}
+\subsubsection{\texorpdfstring{get\+\_\+pairs()}{get\_pairs()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+get\+\_\+pairs (\begin{DoxyParamCaption}\item[{}]{word }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return set of symbol pairs in a word.
+Word is represented as tuple of symbols (symbols being variable-length strings).
+\end{DoxyVerb}
+ 
+
+Definition at line 50 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1gpt2__helper_ac5bffa2aece99e43444185ba85dff425_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1gpt2__helper_aeb53e5722eee3791e6921df0a571263c}\label{namespaceparlai_1_1core_1_1gpt2__helper_aeb53e5722eee3791e6921df0a571263c}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}!D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON@{D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON@{D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON}!parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON}{DEFAULT\_ENCODER\_JSON}}
+{\footnotesize\ttfamily string parlai.\+core.\+gpt2\+\_\+helper.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+J\+S\+ON = \textquotesingle{}https\+://dl.\+fbaipublicfiles.\+com/fairseq/gpt2\+\_\+bpe/encoder.\+json\textquotesingle{}}
+
+
+
+Definition at line 19 of file gpt2\+\_\+helper.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1gpt2__helper_a45a1fe95a0d4df46ca148fef2a20ebd1}\label{namespaceparlai_1_1core_1_1gpt2__helper_a45a1fe95a0d4df46ca148fef2a20ebd1}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}!D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE}!parlai\+::core\+::gpt2\+\_\+helper@{parlai\+::core\+::gpt2\+\_\+helper}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE}{DEFAULT\_VOCAB\_BPE}}
+{\footnotesize\ttfamily string parlai.\+core.\+gpt2\+\_\+helper.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+V\+O\+C\+A\+B\+\_\+\+B\+PE = \textquotesingle{}https\+://dl.\+fbaipublicfiles.\+com/fairseq/gpt2\+\_\+bpe/vocab.\+bpe\textquotesingle{}}
+
+
+
+Definition at line 20 of file gpt2\+\_\+helper.\+py.
+

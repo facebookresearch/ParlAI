@@ -1,0 +1,289 @@
+\hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher}{}\section{parlai.\+utils.\+safety.\+Offensive\+String\+Matcher Class Reference}
+\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher}\index{parlai.\+utils.\+safety.\+Offensive\+String\+Matcher@{parlai.\+utils.\+safety.\+Offensive\+String\+Matcher}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9e850e121799468d26c5720be21bf72c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9272830360cad4f382c2350dd39b3e6e}{add\+\_\+phrase} (self, phrase)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_ab5ca96a02141190f747b03b761f18f98}{add\+\_\+words} (self, phrase\+\_\+list)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a926609d00716d64848b3b98079bd1d30}{contains\+\_\+offensive\+\_\+language} (self, text)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a89e75aea403630f53f41502fead9708e}{\+\_\+\+\_\+contains\+\_\+\+\_\+} (self, key)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a6c9ecda500832f159ede21f3a73ee56b}{tokenize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a8c7a5276c0d2ed281a19bbcbcee3b8af}{datapath}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a47317e09499753db2a16fc36fd39de90}{datafile}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a50a8ff283ddb837060366bba52d8136c}{E\+ND}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a3be92b9eb75dc4e4939010af668e724f}{max\+\_\+len}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a4fe018f2abe2a73114d783645c006c1b}{offensive\+\_\+trie}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_aa880cf00a0354c45f576c3d933a1435e}{word\+\_\+prefixes}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_af474171a03d288a3d8adaa2287eedc8c}{word\+\_\+suffixes}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a65169673f0ff35c5e1f0258585540389}{white\+\_\+list}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Detects offensive language using a list of offensive language and phrases
+from https://github.com/LDNOOBW.
+\end{DoxyVerb}
+ 
+
+Definition at line 62 of file safety.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9e850e121799468d26c5720be21bf72c}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9e850e121799468d26c5720be21bf72c}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get data from external sources and build data representation.\end{DoxyVerb}
+ 
+
+Definition at line 68 of file safety.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a89e75aea403630f53f41502fead9708e}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a89e75aea403630f53f41502fead9708e}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+contains\+\_\+\+\_\+()}{\_\_contains\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+\_\+\+\_\+contains\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine if text contains any offensive words in the filter.\end{DoxyVerb}
+ 
+
+Definition at line 221 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language(), and parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+contains\+\_\+offensive\+\_\+language().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a89e75aea403630f53f41502fead9708e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9272830360cad4f382c2350dd39b3e6e}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9272830360cad4f382c2350dd39b3e6e}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!add\+\_\+phrase@{add\+\_\+phrase}}
+\index{add\+\_\+phrase@{add\+\_\+phrase}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{add\+\_\+phrase()}{add\_phrase()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{phrase }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add a single phrase to the filter.\end{DoxyVerb}
+ 
+
+Definition at line 174 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+E\+ND, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+E\+ND, parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+max\+\_\+len, parlai.\+core.\+torch\+\_\+agent.\+History.\+max\+\_\+len, parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+offensive\+\_\+trie, and parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+words().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a9272830360cad4f382c2350dd39b3e6e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_ab5ca96a02141190f747b03b761f18f98}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_ab5ca96a02141190f747b03b761f18f98}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!add\+\_\+words@{add\+\_\+words}}
+\index{add\+\_\+words@{add\+\_\+words}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{add\+\_\+words()}{add\_words()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+words (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{phrase\+\_\+list }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add list of custom phrases to the filter.\end{DoxyVerb}
+ 
+
+Definition at line 185 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+E\+ND, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+E\+ND, parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+max\+\_\+len, and parlai.\+core.\+torch\+\_\+agent.\+History.\+max\+\_\+len.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_ab5ca96a02141190f747b03b761f18f98_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a926609d00716d64848b3b98079bd1d30}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a926609d00716d64848b3b98079bd1d30}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!contains\+\_\+offensive\+\_\+language@{contains\+\_\+offensive\+\_\+language}}
+\index{contains\+\_\+offensive\+\_\+language@{contains\+\_\+offensive\+\_\+language}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{contains\+\_\+offensive\+\_\+language()}{contains\_offensive\_language()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+contains\+\_\+offensive\+\_\+language (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine if text contains any offensive words in the filter.\end{DoxyVerb}
+ 
+
+Definition at line 207 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+\_\+check\+\_\+sequence(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+offensive\+\_\+trie, parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+\_\+\+\_\+contains\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a926609d00716d64848b3b98079bd1d30_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a926609d00716d64848b3b98079bd1d30_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a47317e09499753db2a16fc36fd39de90}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a47317e09499753db2a16fc36fd39de90}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!datafile@{datafile}}
+\index{datafile@{datafile}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{datafile}{datafile}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+datafile}
+
+
+
+Definition at line 104 of file safety.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a8c7a5276c0d2ed281a19bbcbcee3b8af}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a8c7a5276c0d2ed281a19bbcbcee3b8af}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!datapath@{datapath}}
+\index{datapath@{datapath}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{datapath}{datapath}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+datapath}
+
+
+
+Definition at line 103 of file safety.\+py.
+
+
+
+Referenced by tests.\+test\+\_\+build\+\_\+data.\+Test\+Build\+Data.\+test\+\_\+download\+\_\+multiprocess(), and tests.\+test\+\_\+build\+\_\+data.\+Test\+Build\+Data.\+test\+\_\+download\+\_\+multiprocess\+\_\+chunks().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a50a8ff283ddb837060366bba52d8136c}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a50a8ff283ddb837060366bba52d8136c}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!E\+ND@{E\+ND}}
+\index{E\+ND@{E\+ND}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{E\+ND}{END}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+E\+ND}
+
+
+
+Definition at line 108 of file safety.\+py.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+words(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a3be92b9eb75dc4e4939010af668e724f}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a3be92b9eb75dc4e4939010af668e724f}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!max\+\_\+len@{max\+\_\+len}}
+\index{max\+\_\+len@{max\+\_\+len}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{max\+\_\+len}{max\_len}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+max\+\_\+len}
+
+
+
+Definition at line 109 of file safety.\+py.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), and parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+words().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a4fe018f2abe2a73114d783645c006c1b}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a4fe018f2abe2a73114d783645c006c1b}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!offensive\+\_\+trie@{offensive\+\_\+trie}}
+\index{offensive\+\_\+trie@{offensive\+\_\+trie}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{offensive\+\_\+trie}{offensive\_trie}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+offensive\+\_\+trie}
+
+
+
+Definition at line 110 of file safety.\+py.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), and parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+contains\+\_\+offensive\+\_\+language().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a6c9ecda500832f159ede21f3a73ee56b}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a6c9ecda500832f159ede21f3a73ee56b}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!tokenize@{tokenize}}
+\index{tokenize@{tokenize}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{tokenize}{tokenize}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+tokenize}
+
+
+
+Definition at line 74 of file safety.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+act(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+act(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+add\+\_\+phrase(), parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+contains\+\_\+offensive\+\_\+language(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+txt2vec(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a65169673f0ff35c5e1f0258585540389}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_a65169673f0ff35c5e1f0258585540389}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!white\+\_\+list@{white\+\_\+list}}
+\index{white\+\_\+list@{white\+\_\+list}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{white\+\_\+list}{white\_list}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+white\+\_\+list}
+
+
+
+Definition at line 154 of file safety.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_aa880cf00a0354c45f576c3d933a1435e}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_aa880cf00a0354c45f576c3d933a1435e}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!word\+\_\+prefixes@{word\+\_\+prefixes}}
+\index{word\+\_\+prefixes@{word\+\_\+prefixes}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{word\+\_\+prefixes}{word\_prefixes}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+word\+\_\+prefixes}
+
+
+
+Definition at line 111 of file safety.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_af474171a03d288a3d8adaa2287eedc8c}\label{classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher_af474171a03d288a3d8adaa2287eedc8c}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}!word\+\_\+suffixes@{word\+\_\+suffixes}}
+\index{word\+\_\+suffixes@{word\+\_\+suffixes}!parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher@{parlai\+::utils\+::safety\+::\+Offensive\+String\+Matcher}}
+\subsubsection{\texorpdfstring{word\+\_\+suffixes}{word\_suffixes}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+word\+\_\+suffixes}
+
+
+
+Definition at line 131 of file safety.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{safety_8py}{safety.\+py}\end{DoxyCompactItemize}

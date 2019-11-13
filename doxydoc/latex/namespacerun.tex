@@ -1,0 +1,149 @@
+\hypertarget{namespacerun}{}\section{run Namespace Reference}
+\label{namespacerun}\index{run@{run}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacerun_af213d4a09b8048dcf1e76b0cb75dcace}{setup\+\_\+retriever} (opt)
+\item 
+def \hyperlink{namespacerun_a8c0e38f5a5957dd35a11cc5d806887fd}{setup\+\_\+title\+\_\+to\+\_\+passage} (opt)
+\item 
+def \hyperlink{namespacerun_a4f4e30a0127c995cc883fd747c4eea15}{setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links} (opt)
+\item 
+def \hyperlink{namespacerun_aa82b870a20fb0f19feebf9c895b0cfd9}{main} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacerun_aa82b870a20fb0f19feebf9c895b0cfd9}\label{namespacerun_aa82b870a20fb0f19feebf9c895b0cfd9}} 
+\index{run@{run}!main@{main}}
+\index{main@{main}!run@{run}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def run.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}    Wizard of Wikipedia Data Collection Task.
+
+    The task involves two people holding a conversation. One dialog partner
+    chooses a topic to discuss, and then dialog proceeds.
+
+    One partner is the Wizard, who has access to retrieved external
+    information conditioned on the last two utterances, as well as
+    information regarding the chosen topic.
+
+    The other partner is the Apprentice, who assumes the role of someone
+    eager to learn about the chosen topic.
+\end{DoxyVerb}
+
+
+\begin{DoxyVerb}This task consists of one agent, model or MTurk worker, talking to an
+MTurk worker to negotiate a deal.
+\end{DoxyVerb}
+ 
+
+Definition at line 90 of file run.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links(), setup\+\_\+retriever(), and setup\+\_\+title\+\_\+to\+\_\+passage().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacerun_aa82b870a20fb0f19feebf9c895b0cfd9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacerun_a4f4e30a0127c995cc883fd747c4eea15}\label{namespacerun_a4f4e30a0127c995cc883fd747c4eea15}} 
+\index{run@{run}!setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links@{setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links}}
+\index{setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links@{setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links}!run@{run}}
+\subsubsection{\texorpdfstring{setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links()}{setup\_personas\_with\_wiki\_links()}}
+{\footnotesize\ttfamily def run.\+setup\+\_\+personas\+\_\+with\+\_\+wiki\+\_\+links (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 82 of file run.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{namespacerun_a4f4e30a0127c995cc883fd747c4eea15_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacerun_af213d4a09b8048dcf1e76b0cb75dcace}\label{namespacerun_af213d4a09b8048dcf1e76b0cb75dcace}} 
+\index{run@{run}!setup\+\_\+retriever@{setup\+\_\+retriever}}
+\index{setup\+\_\+retriever@{setup\+\_\+retriever}!run@{run}}
+\subsubsection{\texorpdfstring{setup\+\_\+retriever()}{setup\_retriever()}}
+{\footnotesize\ttfamily def run.\+setup\+\_\+retriever (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file run.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent().
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacerun_af213d4a09b8048dcf1e76b0cb75dcace_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=268pt]{namespacerun_af213d4a09b8048dcf1e76b0cb75dcace_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacerun_a8c0e38f5a5957dd35a11cc5d806887fd}\label{namespacerun_a8c0e38f5a5957dd35a11cc5d806887fd}} 
+\index{run@{run}!setup\+\_\+title\+\_\+to\+\_\+passage@{setup\+\_\+title\+\_\+to\+\_\+passage}}
+\index{setup\+\_\+title\+\_\+to\+\_\+passage@{setup\+\_\+title\+\_\+to\+\_\+passage}!run@{run}}
+\subsubsection{\texorpdfstring{setup\+\_\+title\+\_\+to\+\_\+passage()}{setup\_title\_to\_passage()}}
+{\footnotesize\ttfamily def run.\+setup\+\_\+title\+\_\+to\+\_\+passage (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 37 of file run.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacerun_a8c0e38f5a5957dd35a11cc5d806887fd_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{namespacerun_a8c0e38f5a5957dd35a11cc5d806887fd_icgraph}
+\end{center}
+\end{figure}

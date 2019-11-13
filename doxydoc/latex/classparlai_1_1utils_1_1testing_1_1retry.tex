@@ -1,0 +1,103 @@
+\hypertarget{classparlai_1_1utils_1_1testing_1_1retry}{}\section{parlai.\+utils.\+testing.\+retry Class Reference}
+\label{classparlai_1_1utils_1_1testing_1_1retry}\index{parlai.\+utils.\+testing.\+retry@{parlai.\+utils.\+testing.\+retry}}
+
+
+Inheritance diagram for parlai.\+utils.\+testing.\+retry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classparlai_1_1utils_1_1testing_1_1retry__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+testing.\+retry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classparlai_1_1utils_1_1testing_1_1retry__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1testing_1_1retry_a35e3eafac8f9ba72092a2a4d1b4c0545}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1utils_1_1testing_1_1retry_abd5233dc28b07a53cd11347e5e44c44f}{ntries}=3)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1testing_1_1retry_ac034808bb9ab13c8f8314d7069c6325e}{\+\_\+\+\_\+call\+\_\+\+\_\+} (self, testfn)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1testing_1_1retry_abd5233dc28b07a53cd11347e5e44c44f}{ntries}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Decorator for flaky tests. Test is run up to ntries times, retrying on failure.
+
+On the last time, the test will simply fail.
+
+>>> @retry(ntries=10)
+... def test_flaky(self):
+...     import random
+...     self.assertLess(0.5, random.random())
+\end{DoxyVerb}
+ 
+
+Definition at line 82 of file testing.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1testing_1_1retry_a35e3eafac8f9ba72092a2a4d1b4c0545}\label{classparlai_1_1utils_1_1testing_1_1retry_a35e3eafac8f9ba72092a2a4d1b4c0545}} 
+\index{parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+retry.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ntries = {\ttfamily 3} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 94 of file testing.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1testing_1_1retry_ac034808bb9ab13c8f8314d7069c6325e}\label{classparlai_1_1utils_1_1testing_1_1retry_ac034808bb9ab13c8f8314d7069c6325e}} 
+\index{parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}!\+\_\+\+\_\+call\+\_\+\+\_\+@{\+\_\+\+\_\+call\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+call\+\_\+\+\_\+@{\+\_\+\+\_\+call\+\_\+\+\_\+}!parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+call\+\_\+\+\_\+()}{\_\_call\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+retry.\+\_\+\+\_\+call\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{testfn }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Call testfn(), possibly multiple times on failureException.\end{DoxyVerb}
+ 
+
+Definition at line 97 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+retry.\+ntries.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1testing_1_1retry_abd5233dc28b07a53cd11347e5e44c44f}\label{classparlai_1_1utils_1_1testing_1_1retry_abd5233dc28b07a53cd11347e5e44c44f}} 
+\index{parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}!ntries@{ntries}}
+\index{ntries@{ntries}!parlai\+::utils\+::testing\+::retry@{parlai\+::utils\+::testing\+::retry}}
+\subsubsection{\texorpdfstring{ntries}{ntries}}
+{\footnotesize\ttfamily parlai.\+utils.\+testing.\+retry.\+ntries}
+
+
+
+Definition at line 95 of file testing.\+py.
+
+
+
+Referenced by parlai.\+utils.\+testing.\+retry.\+\_\+\+\_\+call\+\_\+\+\_\+().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{testing_8py}{testing.\+py}\end{DoxyCompactItemize}

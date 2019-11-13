@@ -1,0 +1,15 @@
+This agent is a simple information retrieval baseline. If {\ttfamily label\+\_\+candidates} are provided in the task, it simply ranks them according to their similarity to the input message. To use T\+F-\/\+I\+DF similarity, you must build a dictionary and \char`\"{}train\char`\"{} on the train set first. See the examples below for clarification.
+
+\subsection*{Basic Examples}
+
+Evaluate the IR baseline model (without using T\+F-\/\+I\+DF) on the Persona-\/\+Chat task. 
+\begin{DoxyCode}
+python examples/eval\_model.py -m ir\_baseline -t personachat
+\end{DoxyCode}
+
+
+Build a dictionary on the Persona-\/\+Chat task, and then evaluate the model using T\+F-\/\+I\+DF. 
+\begin{DoxyCode}
+python examples/train\_model.py -m ir\_baseline -t personachat --dict-file /tmp/personachat.dict -ttim 5
+\end{DoxyCode}
+ 

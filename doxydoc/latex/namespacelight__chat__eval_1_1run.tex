@@ -1,0 +1,43 @@
+\hypertarget{namespacelight__chat__eval_1_1run}{}\section{light\+\_\+chat\+\_\+eval.\+run Namespace Reference}
+\label{namespacelight__chat__eval_1_1run}\index{light\+\_\+chat\+\_\+eval.\+run@{light\+\_\+chat\+\_\+eval.\+run}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacelight__chat__eval_1_1run_a6f95134244efdc98f98e673ae68c8037}{main} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacelight__chat__eval_1_1run_a6f95134244efdc98f98e673ae68c8037}\label{namespacelight__chat__eval_1_1run_a6f95134244efdc98f98e673ae68c8037}} 
+\index{light\+\_\+chat\+\_\+eval\+::run@{light\+\_\+chat\+\_\+eval\+::run}!main@{main}}
+\index{main@{main}!light\+\_\+chat\+\_\+eval\+::run@{light\+\_\+chat\+\_\+eval\+::run}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def light\+\_\+chat\+\_\+eval.\+run.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Main script for running an eval task against the LIGHT dataset.
+
+special CLI arguments are
+  --light-eval-task-type [speech, emote, action]
+  --light-eval-unseen [False, True]
+
+This launches a task that, on a workers first attempt pairs with an entry
+from the training set. Then based on if the worker performs above a
+specified benchmark, they will either be soft blocked from evaluating or
+allowed to try against the test set.
+\end{DoxyVerb}
+ 
+
+Definition at line 20 of file run.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacelight__chat__eval_1_1run_a6f95134244efdc98f98e673ae68c8037_cgraph}
+\end{center}
+\end{figure}

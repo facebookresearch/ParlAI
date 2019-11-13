@@ -1,8 +1,6 @@
 <map id="light_chats.graph.Graph.move_object" name="light_chats.graph.Graph.move_object">
-<area shape="rect" id="node1" title=" " alt="" coords="5,117,201,159"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a764ec9d5d95e071d857644b1947a2385" title=" " alt="" coords="264,5,449,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="249,95,464,122"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a6afbdb89ba9db7f792506d9171f9e287" title=" " alt="" coords="261,147,453,188"/>
-<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#ae2c69adb1ea1477aaa6d9af693b30fa1" title=" " alt="" coords="249,213,464,239"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="512,88,716,129"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a764ec9d5d95e071d857644b1947a2385" title="light_chats.graph.Graph.add\l_contained_in" alt="" coords="264,5,449,47"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="249,71,464,98"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a6afbdb89ba9db7f792506d9171f9e287" title="light_chats.graph.Graph.node\l_contained_in" alt="" coords="261,123,453,164"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#ae2c69adb1ea1477aaa6d9af693b30fa1" title="light_chats.graph.Graph.set_prop" alt="" coords="249,189,464,215"/>
 </map>

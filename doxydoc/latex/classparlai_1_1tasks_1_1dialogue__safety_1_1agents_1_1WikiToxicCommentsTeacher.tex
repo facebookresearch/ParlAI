@@ -1,0 +1,339 @@
+\hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher}{}\section{parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher}\index{parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher@{parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ac9189c0fbd25d24bf036aadee0fa3aaf}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ab05b135cb36558dab5a04b4b00167159}{data\+\_\+to\+\_\+json} (self, pd, file\+\_\+name)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acbc5c579a2791af831f6e4f72dc8560c}{build} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a91737afc71227b1eb490648106b2a73c}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a144791f29981c18666fa8725cc424ba8}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a036126fb8ba0cb0dcd665a5b6bd4966f}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0d73b4cda0c165161393500459440b94}{share} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ae852dbc08e3e60342ba52a89a6b4423c}{add\+\_\+cmdline\+\_\+args} (parser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0a82908d2bd950c6bc497f6e095b06b7}{fixed\+\_\+random}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ad43ba64edd570e5fb5e4a4a0a68865cf}{use\+\_\+test\+\_\+set}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a9eeb881196ce42d8994dc4884fd9113a}{balance\+\_\+data}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a004f00e27fe4d6f437edab31e99018f5}{data\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acfbf40cbf6be048c6667f4712e1db5c3}{data}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a81bfea7e10ad4273964a26599dcce45d}{label\+\_\+candidates}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a027ef2d3141fc6e055b17f3ce7a3c7c5}{total\+\_\+data}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Dataset of comments from Wikipedia's Talk page edits. Taken from
+the Toxic Comments Classification Challenge on Kaggle.
+<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>
+
+We convert this data to a binary classification task.
+\end{DoxyVerb}
+ 
+
+Definition at line 137 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ac9189c0fbd25d24bf036aadee0fa3aaf}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ac9189c0fbd25d24bf036aadee0fa3aaf}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 166 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ae852dbc08e3e60342ba52a89a6b4423c}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ae852dbc08e3e60342ba52a89a6b4423c}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 147 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acbc5c579a2791af831f6e4f72dc8560c}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acbc5c579a2791af831f6e4f72dc8560c}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!build@{build}}
+\index{build@{build}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+build (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 228 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+\_\+get\+\_\+data(), parlai.\+tasks.\+dialogue\+\_\+qe.\+agents.\+Default\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+convai\+\_\+chitchat.\+agents.\+Default\+Teacher.\+data\+\_\+path, personality\+\_\+captions.\+worlds.\+Personality\+And\+Image\+Generator.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+path, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+to\+\_\+json(), and eval\+\_\+ppl.\+int.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acbc5c579a2791af831f6e4f72dc8560c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ab05b135cb36558dab5a04b4b00167159}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ab05b135cb36558dab5a04b4b00167159}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!data\+\_\+to\+\_\+json@{data\+\_\+to\+\_\+json}}
+\index{data\+\_\+to\+\_\+json@{data\+\_\+to\+\_\+json}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{data\+\_\+to\+\_\+json()}{data\_to\_json()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+to\+\_\+json (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{pd,  }\item[{}]{file\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 223 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+dialogue\+\_\+qe.\+agents.\+Default\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+convai\+\_\+chitchat.\+agents.\+Default\+Teacher.\+data\+\_\+path, personality\+\_\+captions.\+worlds.\+Personality\+And\+Image\+Generator.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+path, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data\+\_\+path.
+
+
+
+Referenced by parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+build().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ab05b135cb36558dab5a04b4b00167159_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a036126fb8ba0cb0dcd665a5b6bd4966f}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a036126fb8ba0cb0dcd665a5b6bd4966f}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx }\end{DoxyParamCaption})}
+
+
+
+Definition at line 365 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, eval\+\_\+ppl.\+int, parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+label\+\_\+candidates, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+label\+\_\+candidates, and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+label\+\_\+candidates.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a036126fb8ba0cb0dcd665a5b6bd4966f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a91737afc71227b1eb490648106b2a73c}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a91737afc71227b1eb490648106b2a73c}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 323 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a91737afc71227b1eb490648106b2a73c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a144791f29981c18666fa8725cc424ba8}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a144791f29981c18666fa8725cc424ba8}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 326 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+qe.\+agents.\+Default\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+convai\+\_\+chitchat.\+agents.\+Default\+Teacher.\+data\+\_\+path, personality\+\_\+captions.\+worlds.\+Personality\+And\+Image\+Generator.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+path, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data\+\_\+path, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+fixed\+\_\+random, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+fixed\+\_\+random, and parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+use\+\_\+test\+\_\+set.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a144791f29981c18666fa8725cc424ba8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0d73b4cda0c165161393500459440b94}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0d73b4cda0c165161393500459440b94}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 372 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a9eeb881196ce42d8994dc4884fd9113a}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a9eeb881196ce42d8994dc4884fd9113a}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!balance\+\_\+data@{balance\+\_\+data}}
+\index{balance\+\_\+data@{balance\+\_\+data}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{balance\+\_\+data}{balance\_data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+balance\+\_\+data}
+
+
+
+Definition at line 170 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acfbf40cbf6be048c6667f4712e1db5c3}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_acfbf40cbf6be048c6667f4712e1db5c3}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!data@{data}}
+\index{data@{data}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data}
+
+
+
+Definition at line 177 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+add\+\_\+cmdline\+\_\+args(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+add\+\_\+cmdline\+\_\+args(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+get(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+get(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+get(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+get(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+get(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+get(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+get(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+episodes(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+share(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+share(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+share(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+share(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+share(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+share(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+share(), and parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a004f00e27fe4d6f437edab31e99018f5}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a004f00e27fe4d6f437edab31e99018f5}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!data\+\_\+path@{data\+\_\+path}}
+\index{data\+\_\+path@{data\+\_\+path}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{data\+\_\+path}{data\_path}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+path}
+
+
+
+Definition at line 172 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+build(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data\+\_\+to\+\_\+json(), and parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0a82908d2bd950c6bc497f6e095b06b7}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a0a82908d2bd950c6bc497f6e095b06b7}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!fixed\+\_\+random@{fixed\+\_\+random}}
+\index{fixed\+\_\+random@{fixed\+\_\+random}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{fixed\+\_\+random}{fixed\_random}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+fixed\+\_\+random}
+
+
+
+Definition at line 167 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a81bfea7e10ad4273964a26599dcce45d}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a81bfea7e10ad4273964a26599dcce45d}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!label\+\_\+candidates@{label\+\_\+candidates}}
+\index{label\+\_\+candidates@{label\+\_\+candidates}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{label\+\_\+candidates}{label\_candidates}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+label\+\_\+candidates}
+
+
+
+Definition at line 182 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+get(), and parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a027ef2d3141fc6e055b17f3ce7a3c7c5}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_a027ef2d3141fc6e055b17f3ce7a3c7c5}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!total\+\_\+data@{total\+\_\+data}}
+\index{total\+\_\+data@{total\+\_\+data}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{total\+\_\+data}{total\_data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+total\+\_\+data}
+
+
+
+Definition at line 354 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ad43ba64edd570e5fb5e4a4a0a68865cf}\label{classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher_ad43ba64edd570e5fb5e4a4a0a68865cf}} 
+\index{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}!use\+\_\+test\+\_\+set@{use\+\_\+test\+\_\+set}}
+\index{use\+\_\+test\+\_\+set@{use\+\_\+test\+\_\+set}!parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher@{parlai\+::tasks\+::dialogue\+\_\+safety\+::agents\+::\+Wiki\+Toxic\+Comments\+Teacher}}
+\subsubsection{\texorpdfstring{use\+\_\+test\+\_\+set}{use\_test\_set}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+use\+\_\+test\+\_\+set}
+
+
+
+Definition at line 169 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/dialogue\+\_\+safety/\hyperlink{parlai_2tasks_2dialogue__safety_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

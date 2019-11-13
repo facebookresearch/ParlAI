@@ -1,0 +1,14 @@
+<map id="parlai.utils.distributed.is_distributed" name="parlai.utils.distributed.is_distributed">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1distributed.html#a9ef5bf0debf512ddbeb045327bfd87ef" title="parlai.utils.distributed.all\l_gather_list" alt="" coords="218,153,381,194"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1distributed.html#afc64140f9a6437dc1a2b2bd4294ba8ef" title="parlai.utils.distributed.check\l_synced_parameters" alt="" coords="442,43,626,85"/>
+<area shape="rect" id="node4" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a707bb03792ef7427f5ddbb66184a9756" title="parlai.scripts.train\l_model.TrainLoop.validate" alt="" coords="681,327,856,369"/>
+<area shape="rect" id="node5" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8c15c0d4490891fd3e61e57501474e40" title="parlai.scripts.train\l_model.TrainLoop.train" alt="" coords="904,295,1059,337"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1scripts_1_1build__dict.html#a3a0381817d7188331ee38b4a4627dbe0" title="parlai.scripts.build\l_dict.build_dict" alt="" coords="236,309,363,350"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1utils_1_1distributed.html#a9bb1dac198180590ef8c6b6c6f9fc2c4" title="parlai.utils.distributed.is\l_primary_worker" alt="" coords="220,243,379,285"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1utils_1_1distributed.html#a269d3c7284127d9b287b9b61e9161de6" title="parlai.utils.distributed.sync\l_object" alt="" coords="445,363,623,405"/>
+<area shape="rect" id="node13" href="$namespaceparlai_1_1utils_1_1distributed.html#a99b61b4756577c6542039c238d670dba" title="parlai.utils.distributed.num\l_workers" alt="" coords="212,481,387,522"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1107,295,1320,337"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1scripts_1_1train__model.html#a5130cce2fb2a33694a2537d800ad9e9e" title="parlai.scripts.train\l_model.setup_args" alt="" coords="703,262,835,303"/>
+<area shape="rect" id="node10" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a352f759a644e87251c37931bf276309a" title="parlai.scripts.train\l_model.TrainLoop.save_model" alt="" coords="435,481,633,522"/>
+<area shape="rect" id="node11" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8ef64c11f101d087ceb83d21621b9665" title="parlai.scripts.train\l_model.TrainLoop.log" alt="" coords="695,123,842,165"/>
+</map>

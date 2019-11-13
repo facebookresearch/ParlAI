@@ -1,0 +1,10 @@
+<map id="parlai.agents.tfidf_retriever.tfidf_retriever.TfidfRetrieverAgent.eval" name="parlai.agents.tfidf_retriever.tfidf_retriever.TfidfRetrieverAgent.eval">
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1067,46,1280,88"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1328,76,1541,117"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="216,100,451,156"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a2cce905d8e06109ae23cf4910386526d" title="transresnet.modules.Transresnet\lModel.evaluate_one_batch" alt="" coords="510,218,723,260"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="499,101,735,142"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="783,105,1019,146"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1067,164,1280,205"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a1cd91f1cd051b1545683b465f7a74e12" title="transresnet.modules.Transresnet\lModel.eval_batch_of_100" alt="" coords="794,222,1007,264"/>
+</map>

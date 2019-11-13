@@ -1,0 +1,187 @@
+\hypertarget{namespacegenerate__task__list}{}\section{generate\+\_\+task\+\_\+list Namespace Reference}
+\label{namespacegenerate__task__list}\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespacegenerate__task__list_a7697d682f472185323fda0300e278233}{category\+\_\+order} = \mbox{[}\textquotesingle{}QA\textquotesingle{}, \textquotesingle{}Cloze\textquotesingle{}, \textquotesingle{}Goal\textquotesingle{}, \textquotesingle{}Chit\+Chat\textquotesingle{}, \textquotesingle{}Negotiation\textquotesingle{}, \textquotesingle{}Visual\textquotesingle{}, \textquotesingle{}decanlp\textquotesingle{}\mbox{]}
+\item 
+dictionary \hyperlink{namespacegenerate__task__list_a7cc034df06c75ab55d875c56f83a725b}{category\+\_\+task\+\_\+list} = \{x\+: \mbox{[}$\,$\mbox{]} for x in \hyperlink{namespacegenerate__task__list_a7697d682f472185323fda0300e278233}{category\+\_\+order}\}
+\item 
+\hyperlink{namespacegenerate__task__list_afa79ea1388d80fcb06dfa3aedfe47795}{fout} = open(\textquotesingle{}task\+\_\+list.\+inc\textquotesingle{}, \textquotesingle{}w\textquotesingle{})
+\item 
+string \hyperlink{namespacegenerate__task__list_a2ac36da11f580a75fb01969d4f8dd449}{s} = \char`\"{}They consist of\+: \char`\"{}
+\item 
+int \hyperlink{namespacegenerate__task__list_ae18a2eff051bd4be84f3f37eb80342fb}{cnt} = 0
+\item 
+\hyperlink{namespacegenerate__task__list_ad95d77ecc0bed7196aa01e9576c8ecc1}{tags} = task\+\_\+dict.\+get(\textquotesingle{}tags\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_a78e725c3dd7e8fbdb5c3044ec1bc3a81}{id} = task\+\_\+dict.\+get(\textquotesingle{}id\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_a5262358ec6592b8c13b3c7b7bf862865}{display\+\_\+name} = task\+\_\+dict.\+get(\textquotesingle{}display\+\_\+name\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}{task} = task\+\_\+dict.\+get(\textquotesingle{}task\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_af4d07327ee07ddc711991e687bfe3a0a}{description} = task\+\_\+dict.\+get(\textquotesingle{}description\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_a1feaa5a8d61ba81c4e59ce336b9e1a95}{notes} = task\+\_\+dict.\+get(\textquotesingle{}notes\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__list_a32a1426d61e9e5475d58bdb9db0d22ab}{urlend} = \hyperlink{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}{task}\mbox{[}\+: max(task.\+find(\textquotesingle{}\+:\textquotesingle{}), len(\hyperlink{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}{task}))\mbox{]}
+\item 
+tuple \hyperlink{namespacegenerate__task__list_a44c805c529a26ee211795d8c7064facb}{url}
+\item 
+string \hyperlink{namespacegenerate__task__list_a82101fcc5cd14207589b27749bf3bac2}{tag\+\_\+list\+\_\+string} = \textquotesingle{}\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacegenerate__task__list_a7697d682f472185323fda0300e278233}\label{namespacegenerate__task__list_a7697d682f472185323fda0300e278233}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!category\+\_\+order@{category\+\_\+order}}
+\index{category\+\_\+order@{category\+\_\+order}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{category\+\_\+order}{category\_order}}
+{\footnotesize\ttfamily list generate\+\_\+task\+\_\+list.\+category\+\_\+order = \mbox{[}\textquotesingle{}QA\textquotesingle{}, \textquotesingle{}Cloze\textquotesingle{}, \textquotesingle{}Goal\textquotesingle{}, \textquotesingle{}Chit\+Chat\textquotesingle{}, \textquotesingle{}Negotiation\textquotesingle{}, \textquotesingle{}Visual\textquotesingle{}, \textquotesingle{}decanlp\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 6 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a7cc034df06c75ab55d875c56f83a725b}\label{namespacegenerate__task__list_a7cc034df06c75ab55d875c56f83a725b}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!category\+\_\+task\+\_\+list@{category\+\_\+task\+\_\+list}}
+\index{category\+\_\+task\+\_\+list@{category\+\_\+task\+\_\+list}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{category\+\_\+task\+\_\+list}{category\_task\_list}}
+{\footnotesize\ttfamily dictionary generate\+\_\+task\+\_\+list.\+category\+\_\+task\+\_\+list = \{x\+: \mbox{[}$\,$\mbox{]} for x in \hyperlink{namespacegenerate__task__list_a7697d682f472185323fda0300e278233}{category\+\_\+order}\}}
+
+
+
+Definition at line 7 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_ae18a2eff051bd4be84f3f37eb80342fb}\label{namespacegenerate__task__list_ae18a2eff051bd4be84f3f37eb80342fb}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!cnt@{cnt}}
+\index{cnt@{cnt}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{cnt}{cnt}}
+{\footnotesize\ttfamily int generate\+\_\+task\+\_\+list.\+cnt = 0}
+
+
+
+Definition at line 12 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_af4d07327ee07ddc711991e687bfe3a0a}\label{namespacegenerate__task__list_af4d07327ee07ddc711991e687bfe3a0a}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!description@{description}}
+\index{description@{description}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+description = task\+\_\+dict.\+get(\textquotesingle{}description\textquotesingle{}, None)}
+
+
+
+Definition at line 36 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a5262358ec6592b8c13b3c7b7bf862865}\label{namespacegenerate__task__list_a5262358ec6592b8c13b3c7b7bf862865}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!display\+\_\+name@{display\+\_\+name}}
+\index{display\+\_\+name@{display\+\_\+name}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{display\+\_\+name}{display\_name}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+display\+\_\+name = task\+\_\+dict.\+get(\textquotesingle{}display\+\_\+name\textquotesingle{}, None)}
+
+
+
+Definition at line 33 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_afa79ea1388d80fcb06dfa3aedfe47795}\label{namespacegenerate__task__list_afa79ea1388d80fcb06dfa3aedfe47795}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!fout@{fout}}
+\index{fout@{fout}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{fout}{fout}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+fout = open(\textquotesingle{}task\+\_\+list.\+inc\textquotesingle{}, \textquotesingle{}w\textquotesingle{})}
+
+
+
+Definition at line 9 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a78e725c3dd7e8fbdb5c3044ec1bc3a81}\label{namespacegenerate__task__list_a78e725c3dd7e8fbdb5c3044ec1bc3a81}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!id@{id}}
+\index{id@{id}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+id = task\+\_\+dict.\+get(\textquotesingle{}id\textquotesingle{}, None)}
+
+
+
+Definition at line 32 of file generate\+\_\+task\+\_\+list.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a1feaa5a8d61ba81c4e59ce336b9e1a95}\label{namespacegenerate__task__list_a1feaa5a8d61ba81c4e59ce336b9e1a95}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!notes@{notes}}
+\index{notes@{notes}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{notes}{notes}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+notes = task\+\_\+dict.\+get(\textquotesingle{}notes\textquotesingle{}, None)}
+
+
+
+Definition at line 37 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a2ac36da11f580a75fb01969d4f8dd449}\label{namespacegenerate__task__list_a2ac36da11f580a75fb01969d4f8dd449}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!s@{s}}
+\index{s@{s}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{s}{s}}
+{\footnotesize\ttfamily string generate\+\_\+task\+\_\+list.\+s = \char`\"{}They consist of\+: \char`\"{}}
+
+
+
+Definition at line 11 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a82101fcc5cd14207589b27749bf3bac2}\label{namespacegenerate__task__list_a82101fcc5cd14207589b27749bf3bac2}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!tag\+\_\+list\+\_\+string@{tag\+\_\+list\+\_\+string}}
+\index{tag\+\_\+list\+\_\+string@{tag\+\_\+list\+\_\+string}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{tag\+\_\+list\+\_\+string}{tag\_list\_string}}
+{\footnotesize\ttfamily string generate\+\_\+task\+\_\+list.\+tag\+\_\+list\+\_\+string = \textquotesingle{}\textquotesingle{}}
+
+
+
+Definition at line 49 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_ad95d77ecc0bed7196aa01e9576c8ecc1}\label{namespacegenerate__task__list_ad95d77ecc0bed7196aa01e9576c8ecc1}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!tags@{tags}}
+\index{tags@{tags}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{tags}{tags}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+tags = task\+\_\+dict.\+get(\textquotesingle{}tags\textquotesingle{}, None)}
+
+
+
+Definition at line 21 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}\label{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!task@{task}}
+\index{task@{task}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{task}{task}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+task = task\+\_\+dict.\+get(\textquotesingle{}task\textquotesingle{}, None)}
+
+
+
+Definition at line 34 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a44c805c529a26ee211795d8c7064facb}\label{namespacegenerate__task__list_a44c805c529a26ee211795d8c7064facb}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!url@{url}}
+\index{url@{url}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{url}{url}}
+{\footnotesize\ttfamily tuple generate\+\_\+task\+\_\+list.\+url}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  (
+2             \textcolor{stringliteral}{"https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/"}
+3             + urlend
+4         )
+\end{DoxyCode}
+
+
+Definition at line 43 of file generate\+\_\+task\+\_\+list.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__list_a32a1426d61e9e5475d58bdb9db0d22ab}\label{namespacegenerate__task__list_a32a1426d61e9e5475d58bdb9db0d22ab}} 
+\index{generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}!urlend@{urlend}}
+\index{urlend@{urlend}!generate\+\_\+task\+\_\+list@{generate\+\_\+task\+\_\+list}}
+\subsubsection{\texorpdfstring{urlend}{urlend}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+list.\+urlend = \hyperlink{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}{task}\mbox{[}\+: max(task.\+find(\textquotesingle{}\+:\textquotesingle{}), len(\hyperlink{namespacegenerate__task__list_a6a85e730374a68f9195f2e0e4fc09a9a}{task}))\mbox{]}}
+
+
+
+Definition at line 42 of file generate\+\_\+task\+\_\+list.\+py.
+

@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.legacy_2018.worlds.StaticMTurkTaskWorld.prep_save_data" name="parlai.mturk.core.legacy_2018.worlds.StaticMTurkTaskWorld.prep_save_data">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,272,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkDataWorld.html#a834f25dbb19035fa683d78980e9493c4" title=" " alt="" coords="320,5,544,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#af01360aeaa7e6ad524049621551683df" title=" " alt="" coords="335,85,529,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkDataWorld.html#a834f25dbb19035fa683d78980e9493c4" title="parlai.mturk.core.legacy\l_2018.worlds.MTurkDataWorld.get\l_custom_task_data" alt="" coords="320,5,544,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#af01360aeaa7e6ad524049621551683df" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld.get_custom\l_task_data" alt="" coords="335,85,529,141"/>
 </map>

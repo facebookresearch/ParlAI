@@ -1,0 +1,245 @@
+\hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary}{}\section{parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary Class Reference}
+\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary}\index{parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary@{parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary}}
+
+
+Inheritance diagram for parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=305pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac92ccf75b3d43ba887fa828935f30fd4}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a8687767f003b2a054d32690d820d2702}{pad} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ab2d56873ca754183f48c20989267c2c4}{eos} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac19b90d1ca9ce19375611e8762d99ca0}{unk} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a9712a14ee88222b6e8f97c14326f1082}{pad\+\_\+index} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_acc903d30c550b92cf81527cac655af0f}{eos\+\_\+index} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_af654971968b2015535d863a82552f3bb}{bos\+\_\+index} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a88951657d4bafce880b591db77e65606}{unk\+\_\+index} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a6e46136d9d2c65d628d8692b941d48bf}{add\+\_\+symbol} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a0e88f40d62d0d5de92deb78b7e5597ba}{symbols} (self)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Skeleton dictionary class needed for interaction with fairseq-py.
+
+This class mostly just adds some basic API behavior that Fairseq internally
+expects from dictionaries.
+
+It also inserts a fake token at the 0th index of the dictionary, as
+fairseq-py maintains backwards compatibility with fairseq-lua, which uses
+1 indexing.
+\end{DoxyVerb}
+ 
+
+Definition at line 138 of file fairseq.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac92ccf75b3d43ba887fa828935f30fd4}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac92ccf75b3d43ba887fa828935f30fd4}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 153 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+add\+\_\+token(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+null\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+core.\+dict.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sort(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sort(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac92ccf75b3d43ba887fa828935f30fd4_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a6e46136d9d2c65d628d8692b941d48bf}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a6e46136d9d2c65d628d8692b941d48bf}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!add\+\_\+symbol@{add\+\_\+symbol}}
+\index{add\+\_\+symbol@{add\+\_\+symbol}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{add\+\_\+symbol()}{add\_symbol()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+add\+\_\+symbol (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 196 of file fairseq.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_af654971968b2015535d863a82552f3bb}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_af654971968b2015535d863a82552f3bb}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!bos\+\_\+index@{bos\+\_\+index}}
+\index{bos\+\_\+index@{bos\+\_\+index}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{bos\+\_\+index()}{bos\_index()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+bos\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 189 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+start\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+start\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+start\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+start\+\_\+token.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ab2d56873ca754183f48c20989267c2c4}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ab2d56873ca754183f48c20989267c2c4}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!eos@{eos}}
+\index{eos@{eos}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{eos()}{eos()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 174 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+end\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+end\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+end\+\_\+token.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_acc903d30c550b92cf81527cac655af0f}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_acc903d30c550b92cf81527cac655af0f}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!eos\+\_\+index@{eos\+\_\+index}}
+\index{eos\+\_\+index@{eos\+\_\+index}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{eos\+\_\+index()}{eos\_index()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 185 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+end\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+end\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+end\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+end\+\_\+token.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a8687767f003b2a054d32690d820d2702}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a8687767f003b2a054d32690d820d2702}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!pad@{pad}}
+\index{pad@{pad}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{pad()}{pad()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 171 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad\+\_\+index().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a8687767f003b2a054d32690d820d2702_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a9712a14ee88222b6e8f97c14326f1082}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a9712a14ee88222b6e8f97c14326f1082}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!pad\+\_\+index@{pad\+\_\+index}}
+\index{pad\+\_\+index@{pad\+\_\+index}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{pad\+\_\+index()}{pad\_index()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 181 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+null\+\_\+token, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+null\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+null\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+null\+\_\+token.
+
+
+
+Referenced by parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a9712a14ee88222b6e8f97c14326f1082_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a0e88f40d62d0d5de92deb78b7e5597ba}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a0e88f40d62d0d5de92deb78b7e5597ba}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!symbols@{symbols}}
+\index{symbols@{symbols}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{symbols()}{symbols()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+symbols (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 200 of file fairseq.\+py.
+
+
+
+References parlai.\+core.\+dict.\+Dictionary\+Agent.\+keys(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a0e88f40d62d0d5de92deb78b7e5597ba_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac19b90d1ca9ce19375611e8762d99ca0}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_ac19b90d1ca9ce19375611e8762d99ca0}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!unk@{unk}}
+\index{unk@{unk}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{unk()}{unk()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+unk (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 177 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+unk\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+unk\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+unk\+\_\+token.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a88951657d4bafce880b591db77e65606}\label{classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary_a88951657d4bafce880b591db77e65606}} 
+\index{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}!unk\+\_\+index@{unk\+\_\+index}}
+\index{unk\+\_\+index@{unk\+\_\+index}!parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary@{parlai\+::agents\+::fairseq\+::fairseq\+::\+\_\+\+Fairseq\+Dictionary}}
+\subsubsection{\texorpdfstring{unk\+\_\+index()}{unk\_index()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+unk\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 193 of file fairseq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+unk\+\_\+token, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+unk\+\_\+token, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+unk\+\_\+token.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/fairseq/\hyperlink{fairseq_8py}{fairseq.\+py}\end{DoxyCompactItemize}

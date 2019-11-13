@@ -1,0 +1,167 @@
+\hypertarget{classagent_1_1modules_1_1Embed}{}\section{agent.\+modules.\+Embed Class Reference}
+\label{classagent_1_1modules_1_1Embed}\index{agent.\+modules.\+Embed@{agent.\+modules.\+Embed}}
+
+
+Inheritance diagram for agent.\+modules.\+Embed\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classagent_1_1modules_1_1Embed__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for agent.\+modules.\+Embed\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classagent_1_1modules_1_1Embed__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagent_1_1modules_1_1Embed_aeb8a118bbca535fb35d6b5a45c2603c2}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, \hyperlink{classagent_1_1modules_1_1Embed_a482a481bdc736280d0af174a15f6e8ee}{position\+\_\+encoding}=False, kwargs)
+\item 
+def \hyperlink{classagent_1_1modules_1_1Embed_aecd5510c339a8fd238d56226863dcb81}{forward} (self, lengths, indices)
+\item 
+def \hyperlink{classagent_1_1modules_1_1Embed_a5efae3b0a1994436b49124274cfc089f}{position\+\_\+matrix} (J, d)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagent_1_1modules_1_1Embed_a4a33beb3367c08f94bac7b5076cbf96d}{position\+\_\+tensor} (sentence\+\_\+lengths, embeddings)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classagent_1_1modules_1_1Embed_a482a481bdc736280d0af174a15f6e8ee}{position\+\_\+encoding}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classagent_1_1modules_1_1Embed_ae5f6b225f9a03fbac3ff2fb91b88ca91}{maxsize}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 168 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_aeb8a118bbca535fb35d6b5a45c2603c2}\label{classagent_1_1modules_1_1Embed_aeb8a118bbca535fb35d6b5a45c2603c2}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Embed.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{position\+\_\+encoding = {\ttfamily False},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_aecd5510c339a8fd238d56226863dcb81}\label{classagent_1_1modules_1_1Embed_aecd5510c339a8fd238d56226863dcb81}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!forward@{forward}}
+\index{forward@{forward}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Embed.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{lengths,  }\item[{}]{indices }\end{DoxyParamCaption})}
+
+
+
+Definition at line 173 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+padding\+\_\+idx, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+padding\+\_\+idx, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+position\+\_\+encoding, parlai.\+agents.\+memnn.\+modules.\+Embed.\+position\+\_\+encoding, agent.\+modules.\+Embed.\+position\+\_\+encoding, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+position\+\_\+tensor(), and agent.\+modules.\+Embed.\+position\+\_\+tensor().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Embed_aecd5510c339a8fd238d56226863dcb81_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Embed_aecd5510c339a8fd238d56226863dcb81_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_a5efae3b0a1994436b49124274cfc089f}\label{classagent_1_1modules_1_1Embed_a5efae3b0a1994436b49124274cfc089f}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!position\+\_\+matrix@{position\+\_\+matrix}}
+\index{position\+\_\+matrix@{position\+\_\+matrix}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{position\+\_\+matrix()}{position\_matrix()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Embed.\+position\+\_\+matrix (\begin{DoxyParamCaption}\item[{}]{J,  }\item[{}]{d }\end{DoxyParamCaption})}
+
+
+
+Definition at line 212 of file modules.\+py.
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_a4a33beb3367c08f94bac7b5076cbf96d}\label{classagent_1_1modules_1_1Embed_a4a33beb3367c08f94bac7b5076cbf96d}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!position\+\_\+tensor@{position\+\_\+tensor}}
+\index{position\+\_\+tensor@{position\+\_\+tensor}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{position\+\_\+tensor()}{position\_tensor()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Embed.\+position\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{sentence\+\_\+lengths,  }\item[{}]{embeddings }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 220 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Embed.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Embed_a4a33beb3367c08f94bac7b5076cbf96d_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_ae5f6b225f9a03fbac3ff2fb91b88ca91}\label{classagent_1_1modules_1_1Embed_ae5f6b225f9a03fbac3ff2fb91b88ca91}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!maxsize@{maxsize}}
+\index{maxsize@{maxsize}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{maxsize}{maxsize}}
+{\footnotesize\ttfamily agent.\+modules.\+Embed.\+maxsize\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 211 of file modules.\+py.
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Embed_a482a481bdc736280d0af174a15f6e8ee}\label{classagent_1_1modules_1_1Embed_a482a481bdc736280d0af174a15f6e8ee}} 
+\index{agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}!position\+\_\+encoding@{position\+\_\+encoding}}
+\index{position\+\_\+encoding@{position\+\_\+encoding}!agent\+::modules\+::\+Embed@{agent\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{position\+\_\+encoding}{position\_encoding}}
+{\footnotesize\ttfamily agent.\+modules.\+Embed.\+position\+\_\+encoding}
+
+
+
+Definition at line 170 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Embed.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/memnn\+\_\+feedback/agent/\hyperlink{projects_2memnn__feedback_2agent_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

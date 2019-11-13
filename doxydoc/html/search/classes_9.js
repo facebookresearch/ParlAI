@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['identity',['Identity',['../classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Identity.html',1,'parlai.agents.seq2seq.modules.Identity'],['../classself__feeding_1_1modules_1_1Identity.html',1,'self_feeding.modules.Identity']]],
+  ['igcexamplegenerator',['IGCExampleGenerator',['../classigc__evals_1_1worlds_1_1IGCExampleGenerator.html',1,'igc_evals::worlds']]],
+  ['imagechatteacher',['ImageChatTeacher',['../classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html',1,'parlai::tasks::image_chat::agents']]],
+  ['imagechattestteacher',['ImageChatTestTeacher',['../classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTestTeacher.html',1,'parlai::tasks::image_chat::agents']]],
+  ['imagegenerator',['ImageGenerator',['../classpersonality__captions_1_1worlds_1_1ImageGenerator.html',1,'personality_captions::worlds']]],
+  ['imageloader',['ImageLoader',['../classparlai_1_1core_1_1image__featurizers_1_1ImageLoader.html',1,'parlai::core::image_featurizers']]],
+  ['imageteacher',['ImageTeacher',['../classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html',1,'parlai::tasks::integration_tests::agents']]],
+  ['imgnet',['ImgNet',['../classtaskntalk_1_1modules_1_1ImgNet.html',1,'taskntalk::modules']]],
+  ['indexteacher',['IndexTeacher',['../classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher.html',1,'parlai.tasks.squad.agents.IndexTeacher'],['../classparlai_1_1tasks_1_1squad2_1_1agents_1_1IndexTeacher.html',1,'parlai.tasks.squad2.agents.IndexTeacher']]],
+  ['ingestfunction',['IngestFunction',['../classlight__chats_1_1graph_1_1IngestFunction.html',1,'light_chats::graph']]],
+  ['inittestmturkmanager',['InitTestMTurkManager',['../classparlai_1_1mturk_1_1core_1_1test_1_1test__mturk__manager_1_1InitTestMTurkManager.html',1,'parlai.mturk.core.test.test_mturk_manager.InitTestMTurkManager'],['../classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__mturk__manager_1_1InitTestMTurkManager.html',1,'parlai.mturk.core.dev.test.test_mturk_manager.InitTestMTurkManager'],['../classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__mturk__manager_1_1InitTestMTurkManager.html',1,'parlai.mturk.core.legacy_2018.test.test_mturk_manager.InitTestMTurkManager']]],
+  ['instructionworld',['InstructionWorld',['../classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1InstructionWorld.html',1,'parlai::mturk::tasks::talkthewalk::worlds']]],
+  ['interactiveend2endagent',['InteractiveEnd2endAgent',['../classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html',1,'interactive_end2end::interactive_end2end']]],
+  ['interactiveretrievalagent',['InteractiveRetrievalAgent',['../classinteractive__retrieval_1_1InteractiveRetrievalAgent.html',1,'interactive_retrieval']]],
+  ['interactiveteacher',['InteractiveTeacher',['../classparlai_1_1tasks_1_1interactive_1_1agents_1_1InteractiveTeacher.html',1,'parlai.tasks.interactive.agents.InteractiveTeacher'],['../classparlai_1_1tasks_1_1convai2_1_1agents_1_1InteractiveTeacher.html',1,'parlai.tasks.convai2.agents.InteractiveTeacher']]],
+  ['interactiveworld',['InteractiveWorld',['../classparlai_1_1tasks_1_1interactive_1_1worlds_1_1InteractiveWorld.html',1,'parlai.tasks.interactive.worlds.InteractiveWorld'],['../classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld.html',1,'parlai.tasks.wizard_of_wikipedia.worlds.InteractiveWorld'],['../classparlai_1_1tasks_1_1convai2_1_1worlds_1_1InteractiveWorld.html',1,'parlai.tasks.convai2.worlds.InteractiveWorld']]],
+  ['inventoryfunction',['InventoryFunction',['../classlight__chats_1_1graph_1_1InventoryFunction.html',1,'light_chats::graph']]],
+  ['irbaselineagent',['IrBaselineAgent',['../classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html',1,'parlai::agents::ir_baseline::ir_baseline']]],
+  ['istypeconstraint',['IsTypeConstraint',['../classlight__chats_1_1graph_1_1IsTypeConstraint.html',1,'light_chats::graph']]],
+  ['iwslt14teacher',['Iwslt14Teacher',['../classparlai_1_1tasks_1_1decanlp_1_1agents_1_1Iwslt14Teacher.html',1,'parlai::tasks::decanlp::agents']]]
+];

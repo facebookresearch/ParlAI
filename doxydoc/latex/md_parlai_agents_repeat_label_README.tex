@@ -1,0 +1,9 @@
+This is an agent which simply repeats the label for debugging purposes or as a baseline.
+
+\subsection*{Basic Examples}
+
+Evaluate on b\+Abi, returning the answer \char`\"{}\+I don\textquotesingle{}t know\char`\"{} roughly 20\% of the time. 
+\begin{DoxyCode}
+python examples/eval\_model.py -m repeat\_label -t babi --cant\_answer\_percent 0.2
+\end{DoxyCode}
+ 

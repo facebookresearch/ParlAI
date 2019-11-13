@@ -1,12 +1,16 @@
 <map id="self_feeding.self_feeding_agent.SelfFeedingAgent.train_step" name="self_feeding.self_feeding_agent.SelfFeedingAgent.train_step">
-<area shape="rect" id="node1" title=" " alt="" coords="5,249,235,291"/>
-<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a761c50309d11237b261a3600923964c9" title=" " alt="" coords="299,5,537,47"/>
-<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7a3807c6692b7a628fa1477d99b73e0b" title=" " alt="" coords="289,71,547,112"/>
-<area shape="rect" id="node4" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a6bda38afad8e51159c7af9288098cab1" title=" " alt="" coords="283,136,553,177"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#af474c46339e2e0c881f8b8b81f5f9b7f" title=" " alt="" coords="307,202,529,258"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a3fabaacec11534b452a1786d3dd5a6c8" title=" " alt="" coords="305,282,531,338"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a3933d4fdc5e603b1a168d92e7da77151" title=" " alt="" coords="305,362,531,418"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a7e2c9e180887397daa6229a0f9700b1c" title=" " alt="" coords="327,443,509,484"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a91c163f3e2d39b380095b7083f673b6e" title=" " alt="" coords="339,508,497,549"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5ce58a7b3ce88ac87cc1b7f7316ae9c4" title=" " alt="" coords="601,443,803,484"/>
+<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a761c50309d11237b261a3600923964c9" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.dialog_step" alt="" coords="299,19,537,61"/>
+<area shape="rect" id="node4" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7a3807c6692b7a628fa1477d99b73e0b" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.feedback_step" alt="" coords="289,93,547,134"/>
+<area shape="rect" id="node8" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a6bda38afad8e51159c7af9288098cab1" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.satisfaction_step" alt="" coords="283,158,553,199"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#af474c46339e2e0c881f8b8b81f5f9b7f" title="parlai.agents.language\l_model.language_model.Language\lModelAgent.update_params" alt="" coords="307,224,529,280"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a3fabaacec11534b452a1786d3dd5a6c8" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent.update_params" alt="" coords="305,304,531,360"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a3933d4fdc5e603b1a168d92e7da77151" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.update_params" alt="" coords="305,384,531,440"/>
+<area shape="rect" id="node13" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a7e2c9e180887397daa6229a0f9700b1c" title="parlai.core.torch_agent.\lTorchAgent.update_params" alt="" coords="327,465,509,506"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a91c163f3e2d39b380095b7083f673b6e" title="parlai.core.torch_agent.\lTorchAgent.zero_grad" alt="" coords="339,530,497,571"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#ac09793435e7b982a8b658411ca0b4502" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.\l_build_candidates" alt="" coords="617,5,796,61"/>
+<area shape="rect" id="node5" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a4a3059142c34335e709642a333cfd0a2" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.update\l_fee_metrics" alt="" coords="601,85,812,141"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="617,165,797,192"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="860,158,1003,199"/>
+<area shape="rect" id="node9" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a01851e94cd789600609c8aa3c3696241" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.update\l_sat_metrics" alt="" coords="601,216,812,272"/>
+<area shape="rect" id="node14" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5ce58a7b3ce88ac87cc1b7f7316ae9c4" title="parlai.core.torch_agent.\lTorchAgent._is_lr_warming_up" alt="" coords="606,465,807,506"/>
 </map>

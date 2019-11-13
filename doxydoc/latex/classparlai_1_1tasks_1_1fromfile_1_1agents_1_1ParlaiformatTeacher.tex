@@ -1,0 +1,104 @@
+\hypertarget{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher}{}\section{parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher}\index{parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher@{parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_a8d12f43b6359996764d176ba9a21189c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_ac1bd0a850a44dc2a2961aa04096d77bf}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_af21d1457ab02cd0d2d0583d1c543004f}{id}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This module provides access to data in the ParlAI Text Dialog format.
+See core/teachers.py for more info about the format.
+\end{DoxyVerb}
+ 
+
+Definition at line 51 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_a8d12f43b6359996764d176ba9a21189c}\label{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_a8d12f43b6359996764d176ba9a21189c}} 
+\index{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 68 of file agents.\+py.
+
+
+
+References parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+\_\+setup\+\_\+data(), parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+\_\+setup\+\_\+data(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_a8d12f43b6359996764d176ba9a21189c_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_ac1bd0a850a44dc2a2961aa04096d77bf}\label{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_ac1bd0a850a44dc2a2961aa04096d77bf}} 
+\index{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 57 of file agents.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_af21d1457ab02cd0d2d0583d1c543004f}\label{classparlai_1_1tasks_1_1fromfile_1_1agents_1_1ParlaiformatTeacher_af21d1457ab02cd0d2d0583d1c543004f}} 
+\index{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher@{parlai\+::tasks\+::fromfile\+::agents\+::\+Parlaiformat\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher.\+id}
+
+
+
+Definition at line 78 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/fromfile/\hyperlink{parlai_2tasks_2fromfile_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

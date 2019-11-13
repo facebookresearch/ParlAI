@@ -1,9 +1,5 @@
 <map id="parlai.core.teachers.FixedDialogTeacher.submit_load_request" name="parlai.core.teachers.FixedDialogTeacher.submit_load_request">
-<area shape="rect" id="node1" title=" " alt="" coords="296,177,476,233"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1OeTeacher.html#aa1bd8754bec6bafbc67231d5fecb14b6" title=" " alt="" coords="35,5,218,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title=" " alt="" coords="29,71,225,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a2b795770610618bf94e76705cb90611a" title=" " alt="" coords="6,137,247,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTeacher.html#ace67289d386996e9dab37cc9fcca55b4" title=" " alt="" coords="5,217,248,273"/>
-<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title=" " alt="" coords="18,297,235,339"/>
-<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a42df8da64edbf22fcc976b1cd02ef252" title=" " alt="" coords="35,363,218,404"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title="parlai.tasks.flickr30k.agents.\lDefaultTeacher.next_example" alt="" coords="244,5,440,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title="parlai.tasks.coco_caption.agents.\lDefaultTeacher.next_example" alt="" coords="233,71,451,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a42df8da64edbf22fcc976b1cd02ef252" title="parlai.tasks.vqa_v1.agents.\lOeTeacher.next_example" alt="" coords="251,136,433,177"/>
 </map>

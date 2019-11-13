@@ -1,0 +1,258 @@
+\hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB}{}\section{parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+DB Class Reference}
+\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB}\index{parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+DB@{parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+DB}}
+
+
+Inheritance diagram for parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+DB\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+DB\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adfe0fe6cbf4503d95c40a0f5e61a623c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, db\+\_\+path=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a3fee5c8e1137575634540602d259c5b8}{\+\_\+\+\_\+enter\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_af49bf8bf55469fe2dbd2d4d5f3e48ba9}{\+\_\+\+\_\+exit\+\_\+\+\_\+} (self, args)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae3e27c7f804ec3216553b963a0c4e570}{path} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a080619f722b8a5c83ec934d3d1391a01}{close} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adc970ff10e2070e93cc22f95ad03f8f1}{get\+\_\+doc\+\_\+ids} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a47aa0c10aa3f9693b2aa460953344d7e}{get\+\_\+doc\+\_\+text} (self, doc\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae329b599aa42f545dc6108a4acdd266f}{get\+\_\+doc\+\_\+value} (self, doc\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a1396ab4ee21042e24c3b0ed022258071}{add} (self, triples)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a9c5c8366fec3e2a732ae544fa29a70a6}{path}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_aa4fdf07d873ad8779b1b8374adf74a26}{connection}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Sqlite backed document storage.
+
+Implements get_doc_text(doc_id).
+\end{DoxyVerb}
+ 
+
+Definition at line 15 of file doc\+\_\+db.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adfe0fe6cbf4503d95c40a0f5e61a623c}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adfe0fe6cbf4503d95c40a0f5e61a623c}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{db\+\_\+path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 21 of file doc\+\_\+db.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a3fee5c8e1137575634540602d259c5b8}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a3fee5c8e1137575634540602d259c5b8}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!\+\_\+\+\_\+enter\+\_\+\+\_\+@{\+\_\+\+\_\+enter\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+enter\+\_\+\+\_\+@{\+\_\+\+\_\+enter\+\_\+\+\_\+}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+enter\+\_\+\+\_\+()}{\_\_enter\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+\_\+\+\_\+enter\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file doc\+\_\+db.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_af49bf8bf55469fe2dbd2d4d5f3e48ba9}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_af49bf8bf55469fe2dbd2d4d5f3e48ba9}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!\+\_\+\+\_\+exit\+\_\+\+\_\+@{\+\_\+\+\_\+exit\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+exit\+\_\+\+\_\+@{\+\_\+\+\_\+exit\+\_\+\+\_\+}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+exit\+\_\+\+\_\+()}{\_\_exit\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+\_\+\+\_\+exit\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+close().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_af49bf8bf55469fe2dbd2d4d5f3e48ba9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a1396ab4ee21042e24c3b0ed022258071}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a1396ab4ee21042e24c3b0ed022258071}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!add@{add}}
+\index{add@{add}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{add()}{add()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+add (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{triples }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a080619f722b8a5c83ec934d3d1391a01}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a080619f722b8a5c83ec934d3d1391a01}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!close@{close}}
+\index{close@{close}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+close (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Close the connection to the database.\end{DoxyVerb}
+ 
+
+Definition at line 35 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+\_\+\+\_\+exit\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a080619f722b8a5c83ec934d3d1391a01_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adc970ff10e2070e93cc22f95ad03f8f1}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_adc970ff10e2070e93cc22f95ad03f8f1}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!get\+\_\+doc\+\_\+ids@{get\+\_\+doc\+\_\+ids}}
+\index{get\+\_\+doc\+\_\+ids@{get\+\_\+doc\+\_\+ids}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{get\+\_\+doc\+\_\+ids()}{get\_doc\_ids()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+ids (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Fetch all ids of docs stored in the db.\end{DoxyVerb}
+ 
+
+Definition at line 39 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a47aa0c10aa3f9693b2aa460953344d7e}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a47aa0c10aa3f9693b2aa460953344d7e}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!get\+\_\+doc\+\_\+text@{get\+\_\+doc\+\_\+text}}
+\index{get\+\_\+doc\+\_\+text@{get\+\_\+doc\+\_\+text}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{get\+\_\+doc\+\_\+text()}{get\_doc\_text()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{doc\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Fetch the raw text of the doc for 'doc_id'.\end{DoxyVerb}
+ 
+
+Definition at line 47 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae329b599aa42f545dc6108a4acdd266f}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae329b599aa42f545dc6108a4acdd266f}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!get\+\_\+doc\+\_\+value@{get\+\_\+doc\+\_\+value}}
+\index{get\+\_\+doc\+\_\+value@{get\+\_\+doc\+\_\+value}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{get\+\_\+doc\+\_\+value()}{get\_doc\_value()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+value (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{doc\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Fetch the raw text of the doc for 'doc_id'.\end{DoxyVerb}
+ 
+
+Definition at line 57 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae3e27c7f804ec3216553b963a0c4e570}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae3e27c7f804ec3216553b963a0c4e570}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!path@{path}}
+\index{path@{path}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{path()}{path()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+path (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the path to the file that backs this database.\end{DoxyVerb}
+ 
+
+Definition at line 31 of file doc\+\_\+db.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+path.
+
+
+
+Referenced by interactive.\+My\+Handler.\+do\+\_\+\+G\+E\+T(), interactive.\+My\+Handler.\+do\+\_\+\+P\+O\+S\+T(), and interactive.\+My\+Handler.\+respond().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_ae3e27c7f804ec3216553b963a0c4e570_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_aa4fdf07d873ad8779b1b8374adf74a26}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_aa4fdf07d873ad8779b1b8374adf74a26}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!connection@{connection}}
+\index{connection@{connection}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{connection}{connection}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+connection}
+
+
+
+Definition at line 23 of file doc\+\_\+db.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+add(), parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+close(), parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+ids(), parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+text(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+get\+\_\+doc\+\_\+value().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a9c5c8366fec3e2a732ae544fa29a70a6}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1doc__db_1_1DocDB_a9c5c8366fec3e2a732ae544fa29a70a6}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}!path@{path}}
+\index{path@{path}!parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB@{parlai\+::agents\+::tfidf\+\_\+retriever\+::doc\+\_\+db\+::\+Doc\+DB}}
+\subsubsection{\texorpdfstring{path}{path}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+path}
+
+
+
+Definition at line 22 of file doc\+\_\+db.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+interactive\+\_\+web.\+My\+Handler.\+do\+\_\+\+G\+E\+T(), interactive.\+My\+Handler.\+do\+\_\+\+G\+E\+T(), interactive.\+My\+Handler.\+do\+\_\+\+P\+O\+S\+T(), parlai.\+agents.\+tfidf\+\_\+retriever.\+doc\+\_\+db.\+Doc\+D\+B.\+path(), and interactive.\+My\+Handler.\+respond().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/tfidf\+\_\+retriever/\hyperlink{doc__db_8py}{doc\+\_\+db.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,210 @@
+\hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher}{}\section{parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher}\index{parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher@{parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_ad198efa0868254d0ec2f45582e601849}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aab4a3c33e57bbf8e642668d7cd864eeb}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aeab5882318ba27f0ff15a0bc649fff0b}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a44b2ee4a74283e8fe0a5b92749ed93d8}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx}=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a5642534b352e57c59dec249f9305d80d}{data}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a7c35d02788f1d513a7b815083cfecbf8}{id}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a419cb93430d8865d83f4968daf3b77d1}{squad}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a2ab5fd73dc8ce2b290aebd13f40540b5}{examples}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Hand-written SQuAD teacher, which loads the json squad data and
+implements its own `act()` method for interacting with student agent,
+rather than inheriting from the core Dialog Teacher. This code is here as
+an example of rolling your own without inheritance.
+
+This teacher also provides access to the "answer_start" indices that
+specify the location of the answer in the context.
+\end{DoxyVerb}
+ 
+
+Definition at line 33 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_ad198efa0868254d0ec2f45582e601849}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_ad198efa0868254d0ec2f45582e601849}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 43 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a44b2ee4a74283e8fe0a5b92749ed93d8}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a44b2ee4a74283e8fe0a5b92749ed93d8}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+examples, and parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+squad.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a44b2ee4a74283e8fe0a5b92749ed93d8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aeab5882318ba27f0ff15a0bc649fff0b}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aeab5882318ba27f0ff15a0bc649fff0b}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Teacher.\+num\+\_\+examples().
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aeab5882318ba27f0ff15a0bc649fff0b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aeab5882318ba27f0ff15a0bc649fff0b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aab4a3c33e57bbf8e642668d7cd864eeb}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_aab4a3c33e57bbf8e642668d7cd864eeb}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 57 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+examples.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a5642534b352e57c59dec249f9305d80d}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a5642534b352e57c59dec249f9305d80d}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!data@{data}}
+\index{data@{data}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data}
+
+
+
+Definition at line 52 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+episodes(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+share(), and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a2ab5fd73dc8ce2b290aebd13f40540b5}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a2ab5fd73dc8ce2b290aebd13f40540b5}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!examples@{examples}}
+\index{examples@{examples}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{examples}{examples}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+examples}
+
+
+
+Definition at line 88 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a7c35d02788f1d513a7b815083cfecbf8}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a7c35d02788f1d513a7b815083cfecbf8}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+id}
+
+
+
+Definition at line 54 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a419cb93430d8865d83f4968daf3b77d1}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1IndexTeacher_a419cb93430d8865d83f4968daf3b77d1}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}!squad@{squad}}
+\index{squad@{squad}!parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Index\+Teacher}}
+\subsubsection{\texorpdfstring{squad}{squad}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+squad}
+
+
+
+Definition at line 87 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Edit\+Teacher.\+get(), and parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+get().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/squad/\hyperlink{parlai_2tasks_2squad_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

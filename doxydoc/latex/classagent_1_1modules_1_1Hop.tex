@@ -1,0 +1,117 @@
+\hypertarget{classagent_1_1modules_1_1Hop}{}\section{agent.\+modules.\+Hop Class Reference}
+\label{classagent_1_1modules_1_1Hop}\index{agent.\+modules.\+Hop@{agent.\+modules.\+Hop}}
+
+
+Inheritance diagram for agent.\+modules.\+Hop\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=181pt]{classagent_1_1modules_1_1Hop__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for agent.\+modules.\+Hop\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=181pt]{classagent_1_1modules_1_1Hop__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagent_1_1modules_1_1Hop_a3fcdab7229869eed8a4c831c55da4cfe}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classagent_1_1modules_1_1Hop_a9e81d98ac7db15a8fa8f03cfe85111cb}{embedding\+\_\+size})
+\item 
+def \hyperlink{classagent_1_1modules_1_1Hop_a9b266c14ffbc2ae89147a1ade0b12897}{forward} (self, query\+\_\+embeddings, in\+\_\+memory\+\_\+embeddings, out\+\_\+memory\+\_\+embeddings, attention\+\_\+mask=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classagent_1_1modules_1_1Hop_a9e81d98ac7db15a8fa8f03cfe85111cb}{embedding\+\_\+size}
+\item 
+\hyperlink{classagent_1_1modules_1_1Hop_a85391af3c7d5b4784a4b83129e854c36}{linear}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 229 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Hop_a3fcdab7229869eed8a4c831c55da4cfe}\label{classagent_1_1modules_1_1Hop_a3fcdab7229869eed8a4c831c55da4cfe}} 
+\index{agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Hop.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{embedding\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 230 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Hop_a9b266c14ffbc2ae89147a1ade0b12897}\label{classagent_1_1modules_1_1Hop_a9b266c14ffbc2ae89147a1ade0b12897}} 
+\index{agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}!forward@{forward}}
+\index{forward@{forward}!agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Hop.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query\+\_\+embeddings,  }\item[{}]{in\+\_\+memory\+\_\+embeddings,  }\item[{}]{out\+\_\+memory\+\_\+embeddings,  }\item[{}]{attention\+\_\+mask = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 241 of file modules.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+linear, parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+linear, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+linear, parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+linear, agent.\+modules.\+Hop.\+linear, and parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+linear.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Hop_a9b266c14ffbc2ae89147a1ade0b12897_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Hop_a9e81d98ac7db15a8fa8f03cfe85111cb}\label{classagent_1_1modules_1_1Hop_a9e81d98ac7db15a8fa8f03cfe85111cb}} 
+\index{agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}!embedding\+\_\+size@{embedding\+\_\+size}}
+\index{embedding\+\_\+size@{embedding\+\_\+size}!agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{embedding\+\_\+size}{embedding\_size}}
+{\footnotesize\ttfamily agent.\+modules.\+Hop.\+embedding\+\_\+size}
+
+
+
+Definition at line 232 of file modules.\+py.
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Hop_a85391af3c7d5b4784a4b83129e854c36}\label{classagent_1_1modules_1_1Hop_a85391af3c7d5b4784a4b83129e854c36}} 
+\index{agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}!linear@{linear}}
+\index{linear@{linear}!agent\+::modules\+::\+Hop@{agent\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{linear}{linear}}
+{\footnotesize\ttfamily agent.\+modules.\+Hop.\+linear}
+
+
+
+Definition at line 233 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Hop.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/memnn\+\_\+feedback/agent/\hyperlink{projects_2memnn__feedback_2agent_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

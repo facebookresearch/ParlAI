@@ -1,0 +1,129 @@
+\hypertarget{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent}{}\section{parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent}\index{parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent@{parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=208pt]{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=305pt]{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_ae21eeff2d5a918998ca8ea90279c9b07}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a5ccaf2bd28a50af2062ad2efd6a36e0e}{add\+\_\+to\+\_\+dict} (self, tokens)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a43e40daa2e8260d919347a8e40ae3ced}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a26ce0c0cc3362b43219d488826c3550a}{embedding\+\_\+words}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Override DictionaryAgent to use spaCy tokenizer.\end{DoxyVerb}
+ 
+
+Definition at line 45 of file drqa.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_ae21eeff2d5a918998ca8ea90279c9b07}\label{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_ae21eeff2d5a918998ca8ea90279c9b07}} 
+\index{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 59 of file drqa.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a43e40daa2e8260d919347a8e40ae3ced}\label{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a43e40daa2e8260d919347a8e40ae3ced}} 
+\index{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 49 of file drqa.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a5ccaf2bd28a50af2062ad2efd6a36e0e}\label{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a5ccaf2bd28a50af2062ad2efd6a36e0e}} 
+\index{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}!add\+\_\+to\+\_\+dict@{add\+\_\+to\+\_\+dict}}
+\index{add\+\_\+to\+\_\+dict@{add\+\_\+to\+\_\+dict}!parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+to\+\_\+dict()}{add\_to\_dict()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tokens }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Builds dictionary from the list of provided tokens.
+Only adds words contained in self.embedding_words, if not None.
+\end{DoxyVerb}
+ 
+
+Definition at line 81 of file drqa.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+embedding\+\_\+words, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+freq, parlai.\+core.\+dict.\+Dictionary\+Agent.\+freq, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+ind2tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+ind2tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tok2ind, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tok2ind, and parlai.\+core.\+dict.\+Dictionary\+Agent.\+tok2ind.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+act(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a5ccaf2bd28a50af2062ad2efd6a36e0e_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a26ce0c0cc3362b43219d488826c3550a}\label{classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent_a26ce0c0cc3362b43219d488826c3550a}} 
+\index{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}!embedding\+\_\+words@{embedding\+\_\+words}}
+\index{embedding\+\_\+words@{embedding\+\_\+words}!parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent@{parlai\+::agents\+::drqa\+::drqa\+::\+Simple\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{embedding\+\_\+words}{embedding\_words}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+embedding\+\_\+words}
+
+
+
+Definition at line 69 of file drqa.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+add\+\_\+to\+\_\+dict().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/drqa/\hyperlink{drqa_8py}{drqa.\+py}\end{DoxyCompactItemize}

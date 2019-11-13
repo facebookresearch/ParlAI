@@ -1,0 +1,375 @@
+\hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker}{}\section{parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker Class Reference}
+\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker}\index{parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker@{parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker}}
+
+
+Inheritance diagram for parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8bd42fd68fe2d18965bc4ad3b8940ba8}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, tfidf\+\_\+path=None, \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8c3f9e75f2a3b3ae127e87f25600c7fb}{strict}=True)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4992c638010961247510dcb2ab96bd8e}{get\+\_\+doc\+\_\+index} (self, doc\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4ef2a607fd94e1ad9cf44239c8910378}{get\+\_\+doc\+\_\+id} (self, doc\+\_\+index)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a0573e296758121d2c40563e93acdf366}{closest\+\_\+docs} (self, query, k=1, matrix=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a3ed4fd5025cc8b1996efc9354ccc8e54}{batch\+\_\+closest\+\_\+docs} (self, queries, k=1, num\+\_\+workers=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a44274f0f828a51c50c641317663e56eb}{parse} (self, query)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ac6d8b86317616a64f5bc7f8f607dd997}{text2spvec} (self, query)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ad36148d59e1bce7e5904899316317c61}{doc\+\_\+mat}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ab3d7c309a8de8cc664192169d95d9c87}{ngrams}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_add0942063ebbb05487feadbe9b421d56}{hash\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ae125548ea43894545541ae71fdc35ff7}{tokenizer}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a11677b2692fb3311eef1458762265ae9}{doc\+\_\+freqs}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_af9cda5d944e01e08c45d0b3bbe6cb1ac}{doc\+\_\+dict}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a5fe0df360e9868ba2ce073ffc49a7d1b}{num\+\_\+docs}
+\item 
+\hyperlink{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8c3f9e75f2a3b3ae127e87f25600c7fb}{strict}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Loads a pre-weighted inverted index of token/document terms.
+Scores new queries by taking sparse dot products.
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8bd42fd68fe2d18965bc4ad3b8940ba8}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8bd42fd68fe2d18965bc4ad3b8940ba8}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tfidf\+\_\+path = {\ttfamily None},  }\item[{}]{strict = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Args:
+    tfidf_path: path to saved model file
+    strict: fail on empty queries or continue (and return empty result)
+\end{DoxyVerb}
+ 
+
+Definition at line 27 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a3ed4fd5025cc8b1996efc9354ccc8e54}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a3ed4fd5025cc8b1996efc9354ccc8e54}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!batch\+\_\+closest\+\_\+docs@{batch\+\_\+closest\+\_\+docs}}
+\index{batch\+\_\+closest\+\_\+docs@{batch\+\_\+closest\+\_\+docs}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{batch\+\_\+closest\+\_\+docs()}{batch\_closest\_docs()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+batch\+\_\+closest\+\_\+docs (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{queries,  }\item[{}]{k = {\ttfamily 1},  }\item[{}]{num\+\_\+workers = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Process a batch of closest_docs requests multithreaded.
+Note: we can use plain threads here as scipy is outside of the GIL.
+\end{DoxyVerb}
+ 
+
+Definition at line 72 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+closest\+\_\+docs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a3ed4fd5025cc8b1996efc9354ccc8e54_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a0573e296758121d2c40563e93acdf366}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a0573e296758121d2c40563e93acdf366}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!closest\+\_\+docs@{closest\+\_\+docs}}
+\index{closest\+\_\+docs@{closest\+\_\+docs}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{closest\+\_\+docs()}{closest\_docs()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+closest\+\_\+docs (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query,  }\item[{}]{k = {\ttfamily 1},  }\item[{}]{matrix = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Closest docs by dot product between query and documents
+in tfidf weighted word vector space.
+
+matrix arg can be provided to be used instead of internal doc matrix.
+\end{DoxyVerb}
+ 
+
+Definition at line 53 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+mat, and parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec().
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+batch\+\_\+closest\+\_\+docs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a0573e296758121d2c40563e93acdf366_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a0573e296758121d2c40563e93acdf366_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4ef2a607fd94e1ad9cf44239c8910378}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4ef2a607fd94e1ad9cf44239c8910378}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!get\+\_\+doc\+\_\+id@{get\+\_\+doc\+\_\+id}}
+\index{get\+\_\+doc\+\_\+id@{get\+\_\+doc\+\_\+id}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{get\+\_\+doc\+\_\+id()}{get\_doc\_id()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+get\+\_\+doc\+\_\+id (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{doc\+\_\+index }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert doc_index --> doc_id\end{DoxyVerb}
+ 
+
+Definition at line 49 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+dict.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4992c638010961247510dcb2ab96bd8e}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a4992c638010961247510dcb2ab96bd8e}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!get\+\_\+doc\+\_\+index@{get\+\_\+doc\+\_\+index}}
+\index{get\+\_\+doc\+\_\+index@{get\+\_\+doc\+\_\+index}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{get\+\_\+doc\+\_\+index()}{get\_doc\_index()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+get\+\_\+doc\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{doc\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert doc_id --> doc_index\end{DoxyVerb}
+ 
+
+Definition at line 45 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+dict.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a44274f0f828a51c50c641317663e56eb}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a44274f0f828a51c50c641317663e56eb}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!parse@{parse}}
+\index{parse@{parse}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parse the query into tokens (either ngrams or tokens).\end{DoxyVerb}
+ 
+
+Definition at line 81 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+ngrams, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+tokenizer, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec(), and light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a44274f0f828a51c50c641317663e56eb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a44274f0f828a51c50c641317663e56eb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ac6d8b86317616a64f5bc7f8f607dd997}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ac6d8b86317616a64f5bc7f8f607dd997}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!text2spvec@{text2spvec}}
+\index{text2spvec@{text2spvec}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{text2spvec()}{text2spvec()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a sparse tfidf-weighted word vector from query.
+
+tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
+\end{DoxyVerb}
+ 
+
+Definition at line 86 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+freqs, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+hash\+\_\+size, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+num\+\_\+docs, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+strict.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+closest\+\_\+docs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ac6d8b86317616a64f5bc7f8f607dd997_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ac6d8b86317616a64f5bc7f8f607dd997_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_af9cda5d944e01e08c45d0b3bbe6cb1ac}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_af9cda5d944e01e08c45d0b3bbe6cb1ac}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!doc\+\_\+dict@{doc\+\_\+dict}}
+\index{doc\+\_\+dict@{doc\+\_\+dict}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{doc\+\_\+dict}{doc\_dict}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+dict}
+
+
+
+Definition at line 41 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+get\+\_\+doc\+\_\+id(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+get\+\_\+doc\+\_\+index().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a11677b2692fb3311eef1458762265ae9}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a11677b2692fb3311eef1458762265ae9}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!doc\+\_\+freqs@{doc\+\_\+freqs}}
+\index{doc\+\_\+freqs@{doc\+\_\+freqs}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{doc\+\_\+freqs}{doc\_freqs}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+freqs}
+
+
+
+Definition at line 40 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ad36148d59e1bce7e5904899316317c61}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ad36148d59e1bce7e5904899316317c61}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!doc\+\_\+mat@{doc\+\_\+mat}}
+\index{doc\+\_\+mat@{doc\+\_\+mat}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{doc\+\_\+mat}{doc\_mat}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+doc\+\_\+mat}
+
+
+
+Definition at line 36 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+closest\+\_\+docs().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_add0942063ebbb05487feadbe9b421d56}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_add0942063ebbb05487feadbe9b421d56}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!hash\+\_\+size@{hash\+\_\+size}}
+\index{hash\+\_\+size@{hash\+\_\+size}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{hash\+\_\+size}{hash\_size}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+hash\+\_\+size}
+
+
+
+Definition at line 38 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ab3d7c309a8de8cc664192169d95d9c87}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ab3d7c309a8de8cc664192169d95d9c87}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!ngrams@{ngrams}}
+\index{ngrams@{ngrams}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{ngrams}{ngrams}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+ngrams}
+
+
+
+Definition at line 37 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a5fe0df360e9868ba2ce073ffc49a7d1b}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a5fe0df360e9868ba2ce073ffc49a7d1b}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!num\+\_\+docs@{num\+\_\+docs}}
+\index{num\+\_\+docs@{num\+\_\+docs}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{num\+\_\+docs}{num\_docs}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+num\+\_\+docs}
+
+
+
+Definition at line 42 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8c3f9e75f2a3b3ae127e87f25600c7fb}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_a8c3f9e75f2a3b3ae127e87f25600c7fb}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!strict@{strict}}
+\index{strict@{strict}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{strict}{strict}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+strict}
+
+
+
+Definition at line 43 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ae125548ea43894545541ae71fdc35ff7}\label{classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker_ae125548ea43894545541ae71fdc35ff7}} 
+\index{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}!tokenizer@{tokenizer}}
+\index{tokenizer@{tokenizer}!parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker@{parlai\+::agents\+::tfidf\+\_\+retriever\+::tfidf\+\_\+doc\+\_\+ranker\+::\+Tfidf\+Doc\+Ranker}}
+\subsubsection{\texorpdfstring{tokenizer}{tokenizer}}
+{\footnotesize\ttfamily parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+tokenizer}
+
+
+
+Definition at line 39 of file tfidf\+\_\+doc\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/tfidf\+\_\+retriever/\hyperlink{tfidf__doc__ranker_8py}{tfidf\+\_\+doc\+\_\+ranker.\+py}\end{DoxyCompactItemize}

@@ -1,7 +1,11 @@
 <map id="light_chats.graph.Graph.delete_node" name="light_chats.graph.Graph.delete_node">
-<area shape="rect" id="node1" title=" " alt="" coords="737,71,972,98"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#aa28ea4b9a270d74783f277f04170d669" title=" " alt="" coords="495,5,689,47"/>
-<area shape="rect" id="node3" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3c6ce42eda8759a82bba26bd2f4d1822" title=" " alt="" coords="215,64,447,105"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a74bc5374a9c9f411008e726fac4cd7f1" title=" " alt="" coords="501,122,683,149"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1IngestFunction.html#acf3afc20e4e55a9bd2783d2bad592a88" title=" " alt="" coords="5,93,167,135"/>
+<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#af543d6256a0001e8c7d13285bdff2c1a" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.create" alt="" coords="568,66,800,107"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#acc495d94797d39558b1711d0bbf6346d" title="light_chats.graph.Graph.create" alt="" coords="304,5,504,32"/>
+<area shape="rect" id="node6" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a23edd3bef3ed5565ef4708f4a7ea1d38" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.delete_node" alt="" coords="288,131,520,173"/>
+<area shape="rect" id="node7" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#ae7815030738f1dab61ff8f47de78442d" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.ingest" alt="" coords="568,131,800,173"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#a74bc5374a9c9f411008e726fac4cd7f1" title="light_chats.graph.Graph.die" alt="" coords="313,248,495,275"/>
+<area shape="rect" id="node3" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="848,99,1080,141"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="1128,99,1360,141"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1IngestFunction.html#acf3afc20e4e55a9bd2783d2bad592a88" title="light_chats.graph.Ingest\lFunction.func" alt="" coords="603,262,765,303"/>
+<area shape="rect" id="node10" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a044b163ff53309b39883977585ae7434" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.hit_agent" alt="" coords="568,197,800,238"/>
 </map>

@@ -1,8 +1,6 @@
 <map id="parlai.tasks.empathetic_dialogues.agents.DefaultTeacher" name="parlai.tasks.empathetic_dialogues.agents.DefaultTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,423,225,464"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1empathetic__dialogues_1_1agents_1_1EmpatheticDialogueTeacher.html" title=" " alt="" coords="17,319,214,375"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="29,229,201,271"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="27,155,203,181"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="34,80,197,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="87,5,144,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1empathetic__dialogues_1_1agents_1_1EmpatheticDialogueTeacher.html" title="parlai.tasks.empathetic\l_dialogues.agents.Empathetic\lDialogueTeacher" alt="" coords="17,319,214,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="29,229,201,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="27,155,203,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="34,80,197,107"/>
 </map>

@@ -1,13 +1,11 @@
 <map id="light_chats.graph.GraphConstraint" name="light_chats.graph.GraphConstraint">
-<area shape="rect" id="node1" title=" " alt="" coords="111,260,331,287"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1FitsConstraint.html" title=" " alt="" coords="379,5,585,32"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1HasPropConstraint.html" title=" " alt="" coords="394,57,570,98"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1IsTypeConstraint.html" title=" " alt="" coords="399,122,565,163"/>
-<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1LockableConstraint.html" title=" " alt="" coords="393,187,571,229"/>
-<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1LockedConstraint.html" title=" " alt="" coords="399,253,565,294"/>
-<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1LockedWithConstraint.html" title=" " alt="" coords="399,318,565,359"/>
-<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1NoPropConstraint.html" title=" " alt="" coords="397,383,567,425"/>
-<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1NotLocationOfConstraint.html" title=" " alt="" coords="385,449,579,490"/>
-<area shape="rect" id="node11" href="$classlight__chats_1_1graph_1_1NotTypeConstraint.html" title=" " alt="" coords="395,514,569,555"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,260,63,287"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1FitsConstraint.html" title="light_chats.graph.FitsConstraint" alt="" coords="379,5,585,32"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1HasPropConstraint.html" title="light_chats.graph.HasProp\lConstraint" alt="" coords="394,57,570,98"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1IsTypeConstraint.html" title="light_chats.graph.IsType\lConstraint" alt="" coords="399,122,565,163"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1LockableConstraint.html" title="light_chats.graph.Lockable\lConstraint" alt="" coords="393,187,571,229"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1LockedConstraint.html" title="light_chats.graph.Locked\lConstraint" alt="" coords="399,253,565,294"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1LockedWithConstraint.html" title="light_chats.graph.Locked\lWithConstraint" alt="" coords="399,318,565,359"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1NoPropConstraint.html" title="light_chats.graph.NoProp\lConstraint" alt="" coords="397,383,567,425"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1NotLocationOfConstraint.html" title="light_chats.graph.NotLocation\lOfConstraint" alt="" coords="385,449,579,490"/>
+<area shape="rect" id="node11" href="$classlight__chats_1_1graph_1_1NotTypeConstraint.html" title="light_chats.graph.NotType\lConstraint" alt="" coords="395,514,569,555"/>
 </map>

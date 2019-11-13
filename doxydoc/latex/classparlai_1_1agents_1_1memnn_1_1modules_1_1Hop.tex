@@ -1,0 +1,156 @@
+\hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop}{}\section{parlai.\+agents.\+memnn.\+modules.\+Hop Class Reference}
+\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop}\index{parlai.\+agents.\+memnn.\+modules.\+Hop@{parlai.\+agents.\+memnn.\+modules.\+Hop}}
+
+
+Inheritance diagram for parlai.\+agents.\+memnn.\+modules.\+Hop\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+memnn.\+modules.\+Hop\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_aa38fc63425e2968ae2530edd6b37ad1a}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, embedding\+\_\+size, \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a88857c10815bc48ef24c78ecf367935d}{rotate}=True)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_ad4e6c91364efc31ac3f0239d7a7c1376}{forward} (self, query\+\_\+embs, in\+\_\+mem\+\_\+embs, out\+\_\+mem\+\_\+embs, pad\+\_\+mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a88857c10815bc48ef24c78ecf367935d}{rotate}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a50d4a5a4bd188efc2944d68c0761cc0a}{softmax}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Memory Network hop outputs attention-weighted sum of memory embeddings.
+
+0) rotate the query embeddings
+1) compute the dot product between the input vector and each memory vector
+2) compute a softmax over the memory scores
+3) compute the weighted sum of the memory embeddings using the probabilities
+4) add the query embedding to the memory output and return the result
+\end{DoxyVerb}
+ 
+
+Definition at line 195 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_aa38fc63425e2968ae2530edd6b37ad1a}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_aa38fc63425e2968ae2530edd6b37ad1a}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Hop.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{embedding\+\_\+size,  }\item[{}]{rotate = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize linear rotation.\end{DoxyVerb}
+ 
+
+Definition at line 205 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_ad4e6c91364efc31ac3f0239d7a7c1376}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_ad4e6c91364efc31ac3f0239d7a7c1376}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{query\+\_\+embs,  }\item[{}]{in\+\_\+mem\+\_\+embs,  }\item[{}]{out\+\_\+mem\+\_\+embs,  }\item[{}]{pad\+\_\+mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute MemNN Hop step.
+
+:param query_embs:
+    (bsz x esz) embedding of queries
+
+:param in_mem_embs:
+    bsz list of (num_mems x esz) embedding of memories for activation
+
+:param out_mem_embs:
+    bsz list of (num_mems x esz) embedding of memories for outputs
+
+:param pad_mask
+    (bsz x num_mems) optional mask indicating which tokens correspond to
+    padding
+
+:returns:
+    (bsz x esz) output state
+\end{DoxyVerb}
+ 
+
+Definition at line 214 of file modules.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+neginf(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+rotate, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_ad4e6c91364efc31ac3f0239d7a7c1376_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_ad4e6c91364efc31ac3f0239d7a7c1376_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a88857c10815bc48ef24c78ecf367935d}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a88857c10815bc48ef24c78ecf367935d}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}!rotate@{rotate}}
+\index{rotate@{rotate}!parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{rotate}{rotate}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Hop.\+rotate}
+
+
+
+Definition at line 209 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a50d4a5a4bd188efc2944d68c0761cc0a}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop_a50d4a5a4bd188efc2944d68c0761cc0a}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}!softmax@{softmax}}
+\index{softmax@{softmax}!parlai\+::agents\+::memnn\+::modules\+::\+Hop@{parlai\+::agents\+::memnn\+::modules\+::\+Hop}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax}
+
+
+
+Definition at line 212 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), taskntalk.\+modules.\+Predict\+Net.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/memnn/\hyperlink{parlai_2agents_2memnn_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

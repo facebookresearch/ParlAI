@@ -1,0 +1,8 @@
+<map id="parlai.messenger.core.message_sender.MessageSender.send_fb_payload" name="parlai.messenger.core.message_sender.MessageSender.send_fb_payload">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#ae26a16d26bdd28795220ad9ef76c96fd" title="parlai.messenger.core.message\l_sender.create_attachment" alt="" coords="260,5,467,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a4359c421913c537e0003032b1d1b79b5" title="parlai.messenger.core.message\l_sender.create_compact_list\l_message" alt="" coords="260,71,467,127"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#ad1b8681b56d567251598624cf3efa587" title="parlai.messenger.core.message\l_sender.create_reply_option" alt="" coords="515,144,721,185"/>
+<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#ac323160e9bbb201ed0c64b819f1c78ca" title="parlai.messenger.core.message\l_sender.MessageSender.send\l_fb_message" alt="" coords="260,202,467,258"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a0fb8b2849a9c5d3e0db470a399358b5b" title="parlai.messenger.core.message\l_sender.create_list_element" alt="" coords="515,79,721,120"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a5476d988fc16eb2cf726dc63e72fb0f5" title="parlai.messenger.core.message\l_sender.create_text_message" alt="" coords="515,209,721,251"/>
+</map>

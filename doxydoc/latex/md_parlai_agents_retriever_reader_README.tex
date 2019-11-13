@@ -1,0 +1,11 @@
+This Retriever Reader is an agent which first retrieves from a database and then reads the dialogue + knowledge from the database to answer.
+
+N\+O\+TE\+: this model only works for evaluation; it assumes all training is already done.
+
+\subsection*{Basic Examples}
+
+Evaluate a pre-\/trained model on Open S\+Qu\+AD. This model uses a T\+F-\/\+I\+DF retriever and the Dr\+QA model as the document reader. 
+\begin{DoxyCode}
+python projects/drqa/eval\_opensquad.py
+\end{DoxyCode}
+ 

@@ -1,4 +1,4 @@
 <map id="parlai.tasks.dealnodeal.agents.NegotiationTeacher.num_examples" name="parlai.tasks.dealnodeal.agents.NegotiationTeacher.num_examples">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,232,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a26645911633f652f063e1f12f4e00bb9" title=" " alt="" coords="280,5,483,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a26645911633f652f063e1f12f4e00bb9" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher._split\l_dialogue" alt="" coords="301,5,504,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1dealnodeal_1_1agents.html#a7a1e5d8435af234bbf07491e866bb1fd" title="parlai.tasks.dealnodeal.agents.get_tag" alt="" coords="280,85,525,112"/>
 </map>

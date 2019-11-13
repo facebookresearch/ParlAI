@@ -1,33 +1,36 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v0._BPEHelper.tokenize" name="parlai.agents.legacy_agents.seq2seq.dict_v0._BPEHelper.tokenize">
-<area shape="rect" id="node1" title=" " alt="" coords="1359,652,1531,708"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a46c77fca1e6062b363ed8ee402d46986" title=" " alt="" coords="839,188,1001,244"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#af34b92857b41748aafdecee34ebf9345" title=" " alt="" coords="1098,660,1269,701"/>
-<area shape="rect" id="node5" href="$classtaskntalk_1_1coopgame__agent_1_1CooperativeGameAgent.html#aa3bad16932f23c0f55370d01000474ee" title=" " alt="" coords="1056,725,1311,766"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a0927c0c01fe0abd28964a992e42c0548" title=" " alt="" coords="1097,790,1269,861"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a8fede3cf83af6a47c5dd4bb356de3350" title=" " alt="" coords="1098,885,1269,926"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a8419b546a12830d98e1eb14615744294" title=" " alt="" coords="1090,514,1277,570"/>
-<area shape="rect" id="node31" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#abc3baf742422fc7cdaece698224709d4" title=" " alt="" coords="1098,594,1269,636"/>
-<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title=" " alt="" coords="281,26,479,68"/>
-<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#acae89a6d1049de6fd2cab06c7804dcdd" title=" " alt="" coords="832,470,1008,526"/>
-<area shape="rect" id="node30" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#ad34c4135329f6768d22d519c3c483d68" title=" " alt="" coords="835,608,1005,649"/>
-<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a6bdc1142c021946ee6cb409d4f9dc3c9" title=" " alt="" coords="555,132,778,173"/>
-<area shape="rect" id="node11" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="577,637,757,678"/>
-<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent.html#a7eb6a8cdcffb425506e085c4bef07a85" title=" " alt="" coords="549,51,784,107"/>
-<area shape="rect" id="node13" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="563,726,771,768"/>
-<area shape="rect" id="node14" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="267,672,493,699"/>
-<area shape="rect" id="node15" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title=" " alt="" coords="575,792,758,833"/>
-<area shape="rect" id="node16" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title=" " alt="" coords="264,522,496,564"/>
-<area shape="rect" id="node17" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title=" " alt="" coords="551,434,782,460"/>
-<area shape="rect" id="node19" href="$classkvmemnn_1_1KvmemnnAgent.html#ac2b07b1455920e6a343271997b9c6207" title=" " alt="" coords="557,586,776,612"/>
-<area shape="rect" id="node20" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title=" " alt="" coords="587,368,746,409"/>
-<area shape="rect" id="node22" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#ac6d8b86317616a64f5bc7f8f607dd997" title=" " alt="" coords="552,198,781,254"/>
-<area shape="rect" id="node25" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title=" " alt="" coords="555,302,778,344"/>
-<area shape="rect" id="node18" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title=" " alt="" coords="279,433,481,474"/>
-<area shape="rect" id="node21" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title=" " alt="" coords="301,368,459,409"/>
-<area shape="rect" id="node23" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#a0573e296758121d2c40563e93acdf366" title=" " alt="" coords="259,156,501,212"/>
-<area shape="rect" id="node24" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#a3ed4fd5025cc8b1996efc9354ccc8e54" title=" " alt="" coords="9,149,207,220"/>
-<area shape="rect" id="node26" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7e76b6e8f11577a56a9c000cb360a44e" title=" " alt="" coords="271,237,489,278"/>
-<area shape="rect" id="node27" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a87b18f0d6ab11be3c49375af072d0d33" title=" " alt="" coords="301,302,459,344"/>
-<area shape="rect" id="node28" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,273,211,314"/>
-<area shape="rect" id="node29" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,338,205,380"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a46c77fca1e6062b363ed8ee402d46986" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.act" alt="" coords="467,120,629,176"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#af34b92857b41748aafdecee34ebf9345" title="parlai.core.dict.Dictionary\lAgent.act" alt="" coords="233,489,404,530"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a0927c0c01fe0abd28964a992e42c0548" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.span\l_tokenize" alt="" coords="233,554,405,625"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a8fede3cf83af6a47c5dd4bb356de3350" title="parlai.core.dict.Dictionary\lAgent.span_tokenize" alt="" coords="233,649,404,690"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a8419b546a12830d98e1eb14615744294" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.txt2vec" alt="" coords="225,343,412,399"/>
+<area shape="rect" id="node35" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#abc3baf742422fc7cdaece698224709d4" title="parlai.core.dict.Dictionary\lAgent.txt2vec" alt="" coords="233,423,404,465"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title="parlai.messenger.core.agents.\lMessengerAgent.act_blocking" alt="" coords="1541,34,1739,75"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#acae89a6d1049de6fd2cab06c7804dcdd" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.parse" alt="" coords="460,343,636,399"/>
+<area shape="rect" id="node34" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#ad34c4135329f6768d22d519c3c483d68" title="parlai.core.dict.Dictionary\lAgent.parse" alt="" coords="463,423,633,465"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent.html#a7eb6a8cdcffb425506e085c4bef07a85" title="parlai.agents.remote\l_agent.remote_agent.ParsedRemote\lAgent.act" alt="" coords="968,44,1203,100"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title="parlai.agents.starspace.starspace.\lStarspaceAgent.vectorize" alt="" coords="689,215,911,257"/>
+<area shape="rect" id="node19" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#ac6d8b86317616a64f5bc7f8f607dd997" title="parlai.agents.tfidf\l_retriever.tfidf_doc\l_ranker.TfidfDocRanker.text2spvec" alt="" coords="685,132,915,188"/>
+<area shape="rect" id="node22" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title="parlai.core.torch_agent.\lHistory.reset" alt="" coords="721,449,879,490"/>
+<area shape="rect" id="node24" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title="light_chats.graph.Graph.get\l_reverse_action" alt="" coords="709,631,891,673"/>
+<area shape="rect" id="node25" href="$classlight__chats_1_1graph_1_1Graph.html#accd7dfd84e4f2bee3fc3fbac8d8577cd" title="light_chats.graph.Graph.valid_exec" alt="" coords="687,281,913,308"/>
+<area shape="rect" id="node26" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title="light_chats.graph.Graph.parse_exec" alt="" coords="685,332,915,359"/>
+<area shape="rect" id="node29" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="684,383,916,425"/>
+<area shape="rect" id="node30" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title="kvmemnn.KvmemnnAgent.batchify" alt="" coords="687,580,913,607"/>
+<area shape="rect" id="node32" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batchify" alt="" coords="696,514,904,555"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a426f2fb245c6a0a409365c4662aec2d2" title="parlai.agents.starspace.starspace.\lStarspaceAgent.batch_act" alt="" coords="974,253,1197,294"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#aff87fb1b28e798a9ca28a0dc3fbb2f22" title="parlai.agents.starspace.starspace.\lStarspaceAgent.act" alt="" coords="1263,318,1485,359"/>
+<area shape="rect" id="node13" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="1255,514,1493,555"/>
+<area shape="rect" id="node14" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title="parlai.core.torch_agent.\lTorchAgent.act" alt="" coords="1295,253,1453,294"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title="parlai.core.worlds.Batch\lWorld.parley" alt="" coords="1293,187,1455,229"/>
+<area shape="rect" id="node16" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="1275,580,1473,607"/>
+<area shape="rect" id="node17" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="1294,449,1454,490"/>
+<area shape="rect" id="node18" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="1270,383,1478,425"/>
+<area shape="rect" id="node20" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#a0573e296758121d2c40563e93acdf366" title="parlai.agents.tfidf\l_retriever.tfidf_doc\l_ranker.TfidfDocRanker.closest_docs" alt="" coords="964,131,1207,187"/>
+<area shape="rect" id="node21" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#a3ed4fd5025cc8b1996efc9354ccc8e54" title="parlai.agents.tfidf\l_retriever.tfidf_doc\l_ranker.TfidfDocRanker.batch\l_closest_docs" alt="" coords="1275,93,1473,163"/>
+<area shape="rect" id="node23" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title="parlai.core.torch_agent.\lHistory.update_history" alt="" coords="1006,449,1165,490"/>
+<area shape="rect" id="node27" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="969,383,1201,425"/>
+<area shape="rect" id="node28" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title="light_chats.graph.Graph.update\l_world" alt="" coords="984,318,1187,359"/>
+<area shape="rect" id="node31" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="967,580,1204,607"/>
+<area shape="rect" id="node33" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a0988c186c27ab70d318ea30e39a0a5cc" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batch_act" alt="" coords="981,514,1189,555"/>
 </map>

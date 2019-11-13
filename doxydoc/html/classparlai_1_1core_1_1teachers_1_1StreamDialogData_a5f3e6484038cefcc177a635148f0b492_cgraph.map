@@ -1,5 +1,4 @@
 <map id="parlai.core.teachers.StreamDialogData.load_length" name="parlai.core.teachers.StreamDialogData.load_length">
-<area shape="rect" id="node1" title=" " alt="" coords="5,50,188,91"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1StreamDataset.html#ab01d577b3aadf82fcf5cd15c3a69b6f2" title=" " alt="" coords="236,5,436,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogData.html#abd563ce3d2e4c105b06a30ef9895c51b" title=" " alt="" coords="247,86,425,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1StreamDataset.html#ab01d577b3aadf82fcf5cd15c3a69b6f2" title="parlai.core.pytorch\l_data_teacher.StreamDataset.\l_read_episode" alt="" coords="236,5,436,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogData.html#abd563ce3d2e4c105b06a30ef9895c51b" title="parlai.core.teachers.Dialog\lData._read_episode" alt="" coords="247,86,425,127"/>
 </map>

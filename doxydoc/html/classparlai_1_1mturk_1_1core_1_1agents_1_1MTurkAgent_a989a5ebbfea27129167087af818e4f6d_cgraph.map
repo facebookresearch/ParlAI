@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.agents.MTurkAgent.log_reconnect" name="parlai.mturk.core.agents.MTurkAgent.log_reconnect">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,184,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title=" " alt="" coords="447,5,613,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title=" " alt="" coords="232,47,399,88"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title="parlai.mturk.core.agents.\lAssignState.get_status" alt="" coords="232,5,399,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title="parlai.mturk.core.agents.\lMTurkAgent.get_status" alt="" coords="232,71,399,112"/>
 </map>

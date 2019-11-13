@@ -1,0 +1,5 @@
+<map id="tests.test_dict.TestDictionary.test_set_model_file_without_dict_file" name="tests.test_dict.TestDictionary.test_set_model_file_without_dict_file">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="273,5,423,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="471,20,675,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="723,20,904,47"/>
+</map>

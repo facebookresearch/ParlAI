@@ -1,18 +1,9 @@
 <map id="parlai.core.dict.DictionaryAgent.add_token" name="parlai.core.dict.DictionaryAgent.add_token">
-<area shape="rect" id="node1" title=" " alt="" coords="559,323,729,365"/>
-<area shape="rect" id="node2" href="$classwizard__transformer__ranker_1_1wizard__dict_1_1WizardDictAgent.html#adb8a1ecd2f5090bee76d334513dd7665" title=" " alt="" coords="59,5,239,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a324531500b43e0039f2c0087081a8b3d" title=" " alt="" coords="63,86,234,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a43dfd6220ded966731b62bca37333dec" title=" " alt="" coords="340,355,511,397"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#acfbb3312794968c0097cfe4343a717d6" title=" " alt="" coords="340,483,511,525"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#acb28700c8c2725c05a8f3e28f11f8714" title=" " alt="" coords="340,673,511,714"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aa4229d1ba17932f588e15067afd9bf42" title=" " alt="" coords="340,290,511,331"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a0c6a8d8b67fe978549b328e7b7b07450" title=" " alt="" coords="63,670,234,711"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#af34b92857b41748aafdecee34ebf9345" title=" " alt="" coords="63,735,234,777"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,509,244,565"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,589,238,645"/>
-<area shape="rect" id="node12" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="6,151,291,193"/>
-<area shape="rect" id="node13" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="59,217,239,258"/>
-<area shape="rect" id="node14" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="52,283,245,339"/>
-<area shape="rect" id="node15" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#ae30fd68376b12a3264e95c8e607df102" title="Initialization and argument parsers." alt="" coords="5,363,292,419"/>
-<area shape="rect" id="node16" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title=" " alt="" coords="68,443,229,485"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary.html#ac92ccf75b3d43ba887fa828935f30fd4" title="parlai.agents.fairseq.fairseq.\l_FairseqDictionary.__init__" alt="" coords="661,39,848,81"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a43dfd6220ded966731b62bca37333dec" title="parlai.core.dict.Dictionary\lAgent.__setitem__" alt="" coords="224,35,395,77"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aa4229d1ba17932f588e15067afd9bf42" title="parlai.core.dict.Dictionary\lAgent.load" alt="" coords="224,101,395,142"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#ae828063449b45112d82a97921d35c247" title="parlai.core.dict.Dictionary\lAgent.remove_tail" alt="" coords="224,166,395,207"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title="transresnet.transresnet.\lTransresnetAgent.share" alt="" coords="447,101,609,142"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a84cb4fabf5d0e92e3f80ac16bdfd0ccc" title="parlai.core.dict.Dictionary\lAgent.sort" alt="" coords="443,166,613,207"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a0c6a8d8b67fe978549b328e7b7b07450" title="parlai.core.dict.Dictionary\lAgent.save" alt="" coords="669,166,840,207"/>
 </map>

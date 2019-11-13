@@ -1,0 +1,249 @@
+\hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner}{}\section{parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner Class Reference}
+\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner}\index{parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner@{parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8923a9fe89c2f84c80c968a3d356b1ea}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a5c024dadc50e64dca53b77118b644695}{opt}, world\+\_\+path, max\+\_\+workers, \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8b845c1bfc69c5026752634ab3df84e2}{manager}, is\+\_\+debug=False)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_af16885a47e8d5cab2b6bdcc8af55c241}{shutdown} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a4fc3aded0f50104a425b65def4738607}{launch\+\_\+task\+\_\+world} (self, task\+\_\+name, world\+\_\+name, agents)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a9e8caf7821b9d5bd3fedf09ef1a1b027}{launch\+\_\+overworld} (self, task\+\_\+name, overworld\+\_\+name, onboard\+\_\+map, overworld\+\_\+agent)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a05e0d84b563a68e0e8f8e7db515f5a49}{executor}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_aa4c332359ed929318360fad48127974a}{debug}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8b845c1bfc69c5026752634ab3df84e2}{manager}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a3bd04ed0186a27e1a6233ba827ce1196}{system\+\_\+done}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a5c024dadc50e64dca53b77118b644695}{opt}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a55237e6f296b0fddb24782427351f2cb}{tasks}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}World Runner.
+
+Launches worlds, overworlds, etc. Helper for MessengerManager
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file world\+\_\+runner.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8923a9fe89c2f84c80c968a3d356b1ea}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8923a9fe89c2f84c80c968a3d356b1ea}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{world\+\_\+path,  }\item[{}]{max\+\_\+workers,  }\item[{}]{manager,  }\item[{}]{is\+\_\+debug = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file world\+\_\+runner.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+world\+\_\+module.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a9e8caf7821b9d5bd3fedf09ef1a1b027}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a9e8caf7821b9d5bd3fedf09ef1a1b027}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!launch\+\_\+overworld@{launch\+\_\+overworld}}
+\index{launch\+\_\+overworld@{launch\+\_\+overworld}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{launch\+\_\+overworld()}{launch\_overworld()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+name,  }\item[{}]{overworld\+\_\+name,  }\item[{}]{onboard\+\_\+map,  }\item[{}]{overworld\+\_\+agent }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Launch an overworld and a subsequent onboarding world.
+
+Return the job's future
+
+:param task_name:
+    string. the name of the job thread
+:param overworld_name:
+    string. the name of the overworld in the module file
+:param onboard_map:
+    map. a mapping of overworld return values to the names
+    of onboarding worlds in the module file.
+:param overworld_agent:
+    The agent to run the overworld with
+
+:return:
+    the Futures object corresponding to running the overworld
+\end{DoxyVerb}
+ 
+
+Definition at line 109 of file world\+\_\+runner.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+run\+\_\+world(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+world\+\_\+module, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+executor, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+manager, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+manager, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+system\+\_\+done, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+tasks, and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a9e8caf7821b9d5bd3fedf09ef1a1b027_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a4fc3aded0f50104a425b65def4738607}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a4fc3aded0f50104a425b65def4738607}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!launch\+\_\+task\+\_\+world@{launch\+\_\+task\+\_\+world}}
+\index{launch\+\_\+task\+\_\+world@{launch\+\_\+task\+\_\+world}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{launch\+\_\+task\+\_\+world()}{launch\_task\_world()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+task\+\_\+world (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+name,  }\item[{}]{world\+\_\+name,  }\item[{}]{agents }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Launch a task world.
+
+Return the job's future.
+
+:param task_name:
+    string. the name of the job thread
+:param world_name:
+    string. the name of the task world in the module file
+:param agents:
+    list. the list of agents to install in the world
+
+:return:
+    the Futures object corresponding to this launched task
+\end{DoxyVerb}
+ 
+
+Definition at line 83 of file world\+\_\+runner.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+run\+\_\+world(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+executor, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+tasks, and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a4fc3aded0f50104a425b65def4738607_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_af16885a47e8d5cab2b6bdcc8af55c241}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_af16885a47e8d5cab2b6bdcc8af55c241}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shutdown the world runner.\end{DoxyVerb}
+ 
+
+Definition at line 44 of file world\+\_\+runner.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+log(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+\_\+world\+\_\+module, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+executor, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+system\+\_\+done, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+tasks, and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_af16885a47e8d5cab2b6bdcc8af55c241_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_aa4c332359ed929318360fad48127974a}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_aa4c332359ed929318360fad48127974a}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!debug@{debug}}
+\index{debug@{debug}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{debug}{debug}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+debug}
+
+
+
+Definition at line 31 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+act(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+observe(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a05e0d84b563a68e0e8f8e7db515f5a49}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a05e0d84b563a68e0e8f8e7db515f5a49}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!executor@{executor}}
+\index{executor@{executor}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{executor}{executor}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+executor}
+
+
+
+Definition at line 30 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+task\+\_\+world(), and parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8b845c1bfc69c5026752634ab3df84e2}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a8b845c1bfc69c5026752634ab3df84e2}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!manager@{manager}}
+\index{manager@{manager}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{manager}{manager}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+manager}
+
+
+
+Definition at line 34 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a5c024dadc50e64dca53b77118b644695}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a5c024dadc50e64dca53b77118b644695}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!opt@{opt}}
+\index{opt@{opt}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt}
+
+
+
+Definition at line 36 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a3bd04ed0186a27e1a6233ba827ce1196}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a3bd04ed0186a27e1a6233ba827ce1196}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!system\+\_\+done@{system\+\_\+done}}
+\index{system\+\_\+done@{system\+\_\+done}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{system\+\_\+done}{system\_done}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+system\+\_\+done}
+
+
+
+Definition at line 35 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), and parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a55237e6f296b0fddb24782427351f2cb}\label{classparlai_1_1messenger_1_1core_1_1world__runner_1_1MessengerWorldRunner_a55237e6f296b0fddb24782427351f2cb}} 
+\index{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}!tasks@{tasks}}
+\index{tasks@{tasks}!parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner@{parlai\+::messenger\+::core\+::world\+\_\+runner\+::\+Messenger\+World\+Runner}}
+\subsubsection{\texorpdfstring{tasks}{tasks}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+tasks}
+
+
+
+Definition at line 37 of file world\+\_\+runner.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+batch\+\_\+act(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+task\+\_\+world(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+observe(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+report(), and parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/messenger/core/\hyperlink{world__runner_8py}{world\+\_\+runner.\+py}\end{DoxyCompactItemize}

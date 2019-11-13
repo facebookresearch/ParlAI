@@ -1,0 +1,72 @@
+\hypertarget{misc_8py}{}\section{parlai/utils/misc.py File Reference}
+\label{misc_8py}\index{parlai/utils/misc.\+py@{parlai/utils/misc.\+py}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt}{parlai.\+utils.\+misc.\+Opt}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor}{parlai.\+utils.\+misc.\+Predictor}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Timer}{parlai.\+utils.\+misc.\+Timer}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger}{parlai.\+utils.\+misc.\+Time\+Logger}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1AttrDict}{parlai.\+utils.\+misc.\+Attr\+Dict}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1NoLock}{parlai.\+utils.\+misc.\+No\+Lock}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1PaddingUtils}{parlai.\+utils.\+misc.\+Padding\+Utils}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceparlai_1_1utils_1_1misc}{parlai.\+utils.\+misc}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330}{parlai.\+utils.\+misc.\+neginf} (dtype)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ac8ca45e62ca906d9b6e5026588a5d2a2}{parlai.\+utils.\+misc.\+maintain\+\_\+dialog\+\_\+history} (history, observation, reply=\textquotesingle{}\textquotesingle{}, history\+Length=1, use\+Replies=\textquotesingle{}label\+\_\+else\+\_\+model\textquotesingle{}, dict=None, use\+Start\+End\+Indices=True, split\+Sentences=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad935ab0a9d49b897c5e3efdbe1c46c4d}{parlai.\+utils.\+misc.\+load\+\_\+cands} (path, lines\+\_\+have\+\_\+ids=False, cands\+\_\+are\+\_\+replies=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a7c97ef3250327bc549ac652a481be0cf}{parlai.\+utils.\+misc.\+load\+\_\+opt\+\_\+file} (optfile)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_af245c261b10f36175f6d88fce852c552}{parlai.\+utils.\+misc.\+round\+\_\+sigfigs} (x, sigfigs=4)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a38a23cfa0fc3dbed42846787d1c04b57}{parlai.\+utils.\+misc.\+no\+\_\+lock} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a219b248f4399036a381ca859aa97433e}{parlai.\+utils.\+misc.\+clip\+\_\+text} (text, max\+\_\+len)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f}{parlai.\+utils.\+misc.\+display\+\_\+messages} (msgs, prettify=False, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{}, max\+\_\+len=1000)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a1b053cd9c56e6fa79b058fff587b3a48}{parlai.\+utils.\+misc.\+str\+\_\+to\+\_\+msg} (txt, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ae5db473b41d3b49814e2566e866282b6}{parlai.\+utils.\+misc.\+msg\+\_\+to\+\_\+str} (msg, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a8781cc03272b3a118fcd9e5a9f4ca1dd}{parlai.\+utils.\+misc.\+set\+\_\+namedtuple\+\_\+defaults} (namedtuple, default=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad3f3c350e8b394482f73a240e19ec3ac}{parlai.\+utils.\+misc.\+padded\+\_\+tensor} (items, pad\+\_\+idx=0, use\+\_\+cuda=False, left\+\_\+padded=False, max\+\_\+len=None, fp16friendly=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad96b0c9ef6237d9ca051251089faf2c7}{parlai.\+utils.\+misc.\+padded\+\_\+3d} (tensors, pad\+\_\+idx=0, use\+\_\+cuda=0, dtype=T\+O\+R\+C\+H\+\_\+\+L\+O\+NG, fp16friendly=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a9e330c9119522333c738a3175e0b4396}{parlai.\+utils.\+misc.\+argsort} (keys, lists, descending=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b}{parlai.\+utils.\+misc.\+warn\+\_\+once} (msg, warningtype=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a7836ac7469dc5744e0ad9e5e54da2396}{parlai.\+utils.\+misc.\+fp16\+\_\+optimizer\+\_\+wrapper} (optimizer, verbose=False, dynamic\+\_\+loss\+\_\+scale=True, loss\+\_\+initial\+\_\+scale=2.\+0 $\ast$$\ast$17)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}{parlai.\+utils.\+misc.\+T\+O\+R\+C\+H\+\_\+\+L\+O\+NG} = torch.\+long
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1misc_a7f43cea0de3a37889ef23f275831ff92}{parlai.\+utils.\+misc.\+N\+E\+A\+R\+\_\+\+I\+NF} = 1e20
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1misc_a8f8b31dbd6331077648288e004f45ff9}{parlai.\+utils.\+misc.\+N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16} = 65504
+\item 
+dictionary \hyperlink{namespaceparlai_1_1utils_1_1misc_a3817c467f1d894060a5f5b3954d99598}{parlai.\+utils.\+misc.\+D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1misc_a5d6ad7f3aef96f16bb9060f5a41fc39b}{parlai.\+utils.\+misc.\+single\+\_\+nolock} = No\+Lock()
+\end{DoxyCompactItemize}

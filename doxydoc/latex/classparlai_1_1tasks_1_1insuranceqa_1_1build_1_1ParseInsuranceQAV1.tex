@@ -1,0 +1,118 @@
+\hypertarget{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1}{}\section{parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1 Class Reference}
+\label{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1}\index{parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1@{parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1}}
+
+
+Inheritance diagram for parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=229pt]{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=339pt]{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_aec860cdc7404febddbbc3434828c74e3}{write\+\_\+data\+\_\+files} (cls, dpext, out\+\_\+path, d\+\_\+vocab, d\+\_\+label\+\_\+answer)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a67191000b24f2d3f3be641c5221b9a30}{create\+\_\+fb\+\_\+format} (cls, out\+\_\+path, dtype, inpath, d\+\_\+vocab, d\+\_\+label\+\_\+answer)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a2c80c19256c2c59a2c29ffc88e125165}{version} = \char`\"{}V1\char`\"{}
+\item 
+string \hyperlink{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a6d912e89848985844b85a5c6f2943f5e}{label2answer\+\_\+fname} = \char`\"{}answers.\+label.\+token\+\_\+idx\char`\"{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 100 of file build.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a67191000b24f2d3f3be641c5221b9a30}\label{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a67191000b24f2d3f3be641c5221b9a30}} 
+\index{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}!create\+\_\+fb\+\_\+format@{create\+\_\+fb\+\_\+format}}
+\index{create\+\_\+fb\+\_\+format@{create\+\_\+fb\+\_\+format}!parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}}
+\subsubsection{\texorpdfstring{create\+\_\+fb\+\_\+format()}{create\_fb\_format()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1.\+create\+\_\+fb\+\_\+format (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{out\+\_\+path,  }\item[{}]{dtype,  }\item[{}]{inpath,  }\item[{}]{d\+\_\+vocab,  }\item[{}]{d\+\_\+label\+\_\+answer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 117 of file build.\+py.
+
+
+
+References parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A.\+readlines(), and parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A.\+wids2sent().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a67191000b24f2d3f3be641c5221b9a30_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_aec860cdc7404febddbbc3434828c74e3}\label{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_aec860cdc7404febddbbc3434828c74e3}} 
+\index{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}!write\+\_\+data\+\_\+files@{write\+\_\+data\+\_\+files}}
+\index{write\+\_\+data\+\_\+files@{write\+\_\+data\+\_\+files}!parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}}
+\subsubsection{\texorpdfstring{write\+\_\+data\+\_\+files()}{write\_data\_files()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1.\+write\+\_\+data\+\_\+files (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{dpext,  }\item[{}]{out\+\_\+path,  }\item[{}]{d\+\_\+vocab,  }\item[{}]{d\+\_\+label\+\_\+answer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 105 of file build.\+py.
+
+
+
+References parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A.\+create\+\_\+fb\+\_\+format().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_aec860cdc7404febddbbc3434828c74e3_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a6d912e89848985844b85a5c6f2943f5e}\label{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a6d912e89848985844b85a5c6f2943f5e}} 
+\index{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}!label2answer\+\_\+fname@{label2answer\+\_\+fname}}
+\index{label2answer\+\_\+fname@{label2answer\+\_\+fname}!parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}}
+\subsubsection{\texorpdfstring{label2answer\+\_\+fname}{label2answer\_fname}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1.\+label2answer\+\_\+fname = \char`\"{}answers.\+label.\+token\+\_\+idx\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 102 of file build.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a2c80c19256c2c59a2c29ffc88e125165}\label{classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1_a2c80c19256c2c59a2c29ffc88e125165}} 
+\index{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}!version@{version}}
+\index{version@{version}!parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1@{parlai\+::tasks\+::insuranceqa\+::build\+::\+Parse\+Insurance\+Q\+A\+V1}}
+\subsubsection{\texorpdfstring{version}{version}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+insuranceqa.\+build.\+Parse\+Insurance\+Q\+A\+V1.\+version = \char`\"{}V1\char`\"{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 101 of file build.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/insuranceqa/\hyperlink{parlai_2tasks_2insuranceqa_2build_8py}{build.\+py}\end{DoxyCompactItemize}

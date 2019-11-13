@@ -1,0 +1,127 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention}{}\section{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention}\index{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention@{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a421bbb5dad363d0d16be9ab49b13a4e3}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_aa82d4585cb9a4f671353565fcc0785ab}{poly\+\_\+type}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a45603a52525744549d48b10e0bd1b63c}{n\+\_\+codes}, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a6927374c5336d0111ab936c1fd2b62ff}{forward} (self, args, kwargs)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_aa82d4585cb9a4f671353565fcc0785ab}{poly\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a45603a52525744549d48b10e0bd1b63c}{n\+\_\+codes}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Override basic attention to account for edge case for polyencoder.\end{DoxyVerb}
+ 
+
+Definition at line 440 of file polyencoder.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a421bbb5dad363d0d16be9ab49b13a4e3}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a421bbb5dad363d0d16be9ab49b13a4e3}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{poly\+\_\+type,  }\item[{}]{n\+\_\+codes,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 443 of file polyencoder.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a6927374c5336d0111ab936c1fd2b62ff}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a6927374c5336d0111ab936c1fd2b62ff}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.
+
+Account for accidental dimensionality reduction when num_codes is 1
+and the polyencoder type is 'codes'
+\end{DoxyVerb}
+ 
+
+Definition at line 448 of file polyencoder.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+dim, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+dim, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+n\+\_\+codes, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+n\+\_\+codes, and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+poly\+\_\+type.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a6927374c5336d0111ab936c1fd2b62ff_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a45603a52525744549d48b10e0bd1b63c}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_a45603a52525744549d48b10e0bd1b63c}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}!n\+\_\+codes@{n\+\_\+codes}}
+\index{n\+\_\+codes@{n\+\_\+codes}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{n\+\_\+codes}{n\_codes}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+n\+\_\+codes}
+
+
+
+Definition at line 446 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_aa82d4585cb9a4f671353565fcc0785ab}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyBasicAttention_aa82d4585cb9a4f671353565fcc0785ab}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}!poly\+\_\+type@{poly\+\_\+type}}
+\index{poly\+\_\+type@{poly\+\_\+type}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{poly\+\_\+type}{poly\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+poly\+\_\+type}
+
+
+
+Definition at line 445 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{polyencoder_8py}{polyencoder.\+py}\end{DoxyCompactItemize}

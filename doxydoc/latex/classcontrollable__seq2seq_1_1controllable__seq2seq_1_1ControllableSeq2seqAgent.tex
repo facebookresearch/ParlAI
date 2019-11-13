@@ -1,0 +1,845 @@
+\hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent}{}\section{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent Class Reference}
+\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent}\index{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=279pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aa1c9c9bd972290f2e0aacb2efcc5fd1e}{add\+\_\+cmdline\+\_\+args} (cls, argparser)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a2cbe8ed3b2b6b82be90db6b45331800b}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a7341b7dedc7150c4dfa27254188360c1}{build\+\_\+model} (self, states=None)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aef0ce4355736782b861b06407d5de115}{zero\+\_\+grad} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a22b034e548a14336673b88c665bd2bcf}{update\+\_\+params} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aca4a0f3e0d8da6f75070febb92498e8c}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0e4d244d148a011ab541b204518e227a}{report} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a153984d9d4758330a17f59ff6df1ac7c}{share} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc61b7cba7923306a813a8b2f71c3895}{vectorize} (self, args, kwargs)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5c1519c979bef4908400d72e4ea001fc}{batchify} (self, args, kwargs)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a88e4d25c8f2eccaf1c7595d40c4f607b}{train\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5cbdb2b3630855612a695f82880b763b}{greedy\+\_\+search} (self, batch)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ade83148e3cf61ac4c5149206000584c5}{extend\+\_\+input} (self, batch)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_affad89ae4f723a3127e1a2f282f4565f}{truncate\+\_\+input} (self, batch)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9f1de6132ddaf0b2c9a197617e08eac6}{truncate\+\_\+output} (self, out)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a600aa2aca5941966727a8e02bb0430a3}{eval\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc818803e27d99525704db33cd4dd928}{save} (self, path=None)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a86c91e473f1a1d2345aa70658f0acbeb}{load} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8995fe4b50a61a5b6c139d26dbb57ca2}{model\+\_\+version} ()
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9de6e4414354c8e879ea51231e44242e}{beam\+\_\+search} (\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac0b211cd03b70ac7fc886d7a7f9c21ef}{model}, batch, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a96273b52624567e93472a4843628824e}{beam\+\_\+size}, dictionary, start=1, end=2, pad=0, min\+\_\+length=3, min\+\_\+n\+\_\+best=5, max\+\_\+ts=40, block\+\_\+ngram=0, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac61834ee9c45f969e72587fbdb25b94b}{wd\+\_\+features}=None, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ad71d774c8cadd949e016a647356a8b02}{wd\+\_\+wts}=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a61bf2975a7abaf3edda802fd4631424b}{id}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a60838aecd16ef85d34519f6a744b1c5a}{multigpu}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0234f9b0414579b006d12f1d7f0efc81}{beam\+\_\+dot\+\_\+log}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a96273b52624567e93472a4843628824e}{beam\+\_\+size}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0eefb795ae3b543d762b5ac5e5cc631a}{beam\+\_\+min\+\_\+n\+\_\+best}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1d440237d8aace3f4da44e20724ba4ce}{beam\+\_\+min\+\_\+length}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8b11887c42ebcbe81c7d05bce71887b3}{beam\+\_\+block\+\_\+ngram}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac0b211cd03b70ac7fc886d7a7f9c21ef}{model}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a64451c34499fb39f246ee6a0e6f1412d}{metrics}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a6f636055027e683489e1fac8f81bf4da}{beam\+\_\+dot\+\_\+dir}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1aece11dbfc1839dee03eb6f9f6b10dd}{criterion}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_adeadea5498eedc024d19d37ba857aa18}{control\+\_\+vars}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8c8f945ca96681e0e8026f6daad8d6a3}{control\+\_\+settings}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac61834ee9c45f969e72587fbdb25b94b}{wd\+\_\+features}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ad71d774c8cadd949e016a647356a8b02}{wd\+\_\+wts}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a004ba0ec2699a8735740b26adc596a79}{buffer\+\_\+initialized}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Seq2Seq withattribute control via Conditional Training and/or Weighted Decoding.
+
+See the paper:
+"What makes a good conversation? How controllable attributes affect human judgments"
+https://arxiv.org/pdf/1902.08654.pdf
+\end{DoxyVerb}
+ 
+
+Definition at line 49 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a2cbe8ed3b2b6b82be90db6b45331800b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a2cbe8ed3b2b6b82be90db6b45331800b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set up model.\end{DoxyVerb}
+ 
+
+Definition at line 271 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a2cbe8ed3b2b6b82be90db6b45331800b_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aa1c9c9bd972290f2e0aacb2efcc5fd1e}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aa1c9c9bd972290f2e0aacb2efcc5fd1e}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{argparser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 59 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5c1519c979bef4908400d72e4ea001fc}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5c1519c979bef4908400d72e4ea001fc}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!batchify@{batchify}}
+\index{batchify@{batchify}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{batchify()}{batchify()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Override batchify options for seq2seq.\end{DoxyVerb}
+ 
+
+Definition at line 634 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+argsort(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+control\+\_\+settings, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+E\+M\+P\+TY, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+E\+M\+P\+TY, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+is\+\_\+valid(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batch\+\_\+act(), and kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5c1519c979bef4908400d72e4ea001fc_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5c1519c979bef4908400d72e4ea001fc_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9de6e4414354c8e879ea51231e44242e}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9de6e4414354c8e879ea51231e44242e}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+search@{beam\+\_\+search}}
+\index{beam\+\_\+search@{beam\+\_\+search}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+search()}{beam\_search()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+search (\begin{DoxyParamCaption}\item[{}]{model,  }\item[{}]{batch,  }\item[{}]{beam\+\_\+size,  }\item[{}]{dictionary,  }\item[{}]{start = {\ttfamily 1},  }\item[{}]{end = {\ttfamily 2},  }\item[{}]{pad = {\ttfamily 0},  }\item[{}]{min\+\_\+length = {\ttfamily 3},  }\item[{}]{min\+\_\+n\+\_\+best = {\ttfamily 5},  }\item[{}]{max\+\_\+ts = {\ttfamily 40},  }\item[{}]{block\+\_\+ngram = {\ttfamily 0},  }\item[{}]{wd\+\_\+features = {\ttfamily None},  }\item[{}]{wd\+\_\+wts = {\ttfamily None} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Beam search given the model and Batch.
+
+This function uses model with the following reqs:
+
+- model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
+- model.decoder takes decoder params and returns decoder outputs after attn
+- model.output takes decoder outputs and returns distr over dictionary
+
+:param model: nn.Module, here defined in modules.py
+:param batch: Batch structure with input and labels
+:param beam_size: Size of each beam during the search
+:param start: start of sequence token
+:param end: end of sequence token
+:param pad: padding token
+:param min_length: minimum length of the decoded sequence
+:param min_n_best: minimum number of completed hypothesis generated
+    from each beam
+:param max_ts: the maximum length of the decoded sequence
+:param wd_features: list of strings, the WD features to use
+:param wd_weights: list of floats, the WD weights to use
+
+:return:
+    - beam_preds_scores : list of tuples (prediction, score) for each
+      sample in Batch
+    - n_best_preds_scores : list of n_best list of tuples (prediction,
+      score) for each sample from Batch
+    - beams : list of Beam instances defined in Beam class, can be used
+      for any following postprocessing, e.g. dot logging.
+\end{DoxyVerb}
+ 
+
+Definition at line 813 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+greedy\+\_\+search().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9de6e4414354c8e879ea51231e44242e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a7341b7dedc7150c4dfa27254188360c1}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a7341b7dedc7150c4dfa27254188360c1}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{states = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize model, override to change model setup.\end{DoxyVerb}
+ 
+
+Definition at line 394 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+add\+\_\+control(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+\_\+copy\+\_\+embeddings(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+copy\+\_\+embeddings(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+control\+\_\+settings, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+opt\+\_\+to\+\_\+kwargs(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a7341b7dedc7150c4dfa27254188360c1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a600aa2aca5941966727a8e02bb0430a3}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a600aa2aca5941966727a8e02bb0430a3}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!eval\+\_\+step@{eval\+\_\+step}}
+\index{eval\+\_\+step@{eval\+\_\+step}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{eval\+\_\+step()}{eval\_step()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluate a single batch of examples.\end{DoxyVerb}
+ 
+
+Definition at line 1045 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+\_\+pick\+\_\+cands(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+pick\+\_\+cands(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+\_\+v2t(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+\_\+v2t(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+v2t(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+block\+\_\+ngram, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+block\+\_\+ngram, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+dir, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+dir, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+log, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+log, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+length, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+beam\+\_\+min\+\_\+length, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+n\+\_\+best, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+n\+\_\+best, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+beam\+\_\+size, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+criterion, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+criterion, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+criterion, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+extend\+\_\+input(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+extend\+\_\+input(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+greedy\+\_\+search(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+greedy\+\_\+search(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+multigpu, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+multigpu, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, controllable\+\_\+seq2seq.\+util.\+reorder\+\_\+extrep2gram\+\_\+qn(), controllable\+\_\+seq2seq.\+util.\+show\+\_\+beam\+\_\+cands(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+S\+T\+A\+R\+T\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+truncate\+\_\+output(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+truncate\+\_\+output(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+wd\+\_\+features, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+wd\+\_\+wts.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a600aa2aca5941966727a8e02bb0430a3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a600aa2aca5941966727a8e02bb0430a3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ade83148e3cf61ac4c5149206000584c5}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ade83148e3cf61ac4c5149206000584c5}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!extend\+\_\+input@{extend\+\_\+input}}
+\index{extend\+\_\+input@{extend\+\_\+input}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{extend\+\_\+input()}{extend\_input()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+extend\+\_\+input (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extend the input.\end{DoxyVerb}
+ 
+
+Definition at line 1006 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ade83148e3cf61ac4c5149206000584c5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5cbdb2b3630855612a695f82880b763b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5cbdb2b3630855612a695f82880b763b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!greedy\+\_\+search@{greedy\+\_\+search}}
+\index{greedy\+\_\+search@{greedy\+\_\+search}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{greedy\+\_\+search()}{greedy\_search()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+greedy\+\_\+search (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform greedy search.\end{DoxyVerb}
+ 
+
+Definition at line 785 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+\_\+build\+\_\+cands(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+build\+\_\+cands(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+search(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+multigpu, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+multigpu.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5cbdb2b3630855612a695f82880b763b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a5cbdb2b3630855612a695f82880b763b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a86c91e473f1a1d2345aa70658f0acbeb}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a86c91e473f1a1d2345aa70658f0acbeb}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!load@{load}}
+\index{load@{load}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return opt and model states.\end{DoxyVerb}
+ 
+
+Definition at line 1164 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a86c91e473f1a1d2345aa70658f0acbeb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8995fe4b50a61a5b6c139d26dbb57ca2}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8995fe4b50a61a5b6c139d26dbb57ca2}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!model\+\_\+version@{model\+\_\+version}}
+\index{model\+\_\+version@{model\+\_\+version}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{model\+\_\+version()}{model\_version()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model\+\_\+version (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Return current version of this model, counting up from 0.
+
+Models may not be backwards-compatible with older versions.
+Version 1 split from version 0 on Aug 29, 2018.
+To use version 0, use --model legacy:seq2seq:0
+(legacy agent code is located in parlai/agents/legacy_agents).
+\end{DoxyVerb}
+ 
+
+Definition at line 261 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8995fe4b50a61a5b6c139d26dbb57ca2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0e4d244d148a011ab541b204518e227a}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0e4d244d148a011ab541b204518e227a}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!report@{report}}
+\index{report@{report}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report loss and perplexity from model's perspective.
+
+Note that this includes predicting __END__ and __UNK__ tokens and may
+differ from a truly independent measurement.
+\end{DoxyVerb}
+ 
+
+Definition at line 587 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0e4d244d148a011ab541b204518e227a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aca4a0f3e0d8da6f75070febb92498e8c}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aca4a0f3e0d8da6f75070febb92498e8c}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics for reporting loss and perplexity.\end{DoxyVerb}
+ 
+
+Definition at line 580 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc818803e27d99525704db33cd4dd928}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc818803e27d99525704db33cd4dd928}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!save@{save}}
+\index{save@{save}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save model parameters if model_file is set.\end{DoxyVerb}
+ 
+
+Definition at line 1144 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+model\+\_\+version(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+model\+\_\+version(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model\+\_\+version(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model\+\_\+version(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc818803e27d99525704db33cd4dd928_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a153984d9d4758330a17f59ff6df1ac7c}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a153984d9d4758330a17f59ff6df1ac7c}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!share@{share}}
+\index{share@{share}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share internal states between parent and child instances.\end{DoxyVerb}
+ 
+
+Definition at line 610 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+dir, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+dir, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+log, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+log, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a88e4d25c8f2eccaf1c7595d40c4f607b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a88e4d25c8f2eccaf1c7595d40c4f607b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!train\+\_\+step@{train\+\_\+step}}
+\index{train\+\_\+step@{train\+\_\+step}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{train\+\_\+step()}{train\_step()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Train on a single batch of examples.\end{DoxyVerb}
+ 
+
+Definition at line 716 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+\_\+init\+\_\+cuda\+\_\+buffer(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+\_\+init\+\_\+cuda\+\_\+buffer(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+init\+\_\+cuda\+\_\+buffer(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+criterion, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+criterion, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+multigpu, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+multigpu, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+truncate, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+truncate, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+truncate, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+truncate, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+truncate\+\_\+input(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+truncate\+\_\+input(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+zero\+\_\+grad(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a88e4d25c8f2eccaf1c7595d40c4f607b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a88e4d25c8f2eccaf1c7595d40c4f607b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_affad89ae4f723a3127e1a2f282f4565f}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_affad89ae4f723a3127e1a2f282f4565f}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!truncate\+\_\+input@{truncate\+\_\+input}}
+\index{truncate\+\_\+input@{truncate\+\_\+input}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{truncate\+\_\+input()}{truncate\_input()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+truncate\+\_\+input (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Truncate the input.\end{DoxyVerb}
+ 
+
+Definition at line 1028 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_affad89ae4f723a3127e1a2f282f4565f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9f1de6132ddaf0b2c9a197617e08eac6}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9f1de6132ddaf0b2c9a197617e08eac6}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!truncate\+\_\+output@{truncate\+\_\+output}}
+\index{truncate\+\_\+output@{truncate\+\_\+output}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{truncate\+\_\+output()}{truncate\_output()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+truncate\+\_\+output (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{out }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Truncate the output.\end{DoxyVerb}
+ 
+
+Definition at line 1038 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a9f1de6132ddaf0b2c9a197617e08eac6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a22b034e548a14336673b88c665bd2bcf}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a22b034e548a14336673b88c665bd2bcf}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!update\+\_\+params@{update\+\_\+params}}
+\index{update\+\_\+params@{update\+\_\+params}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{update\+\_\+params()}{update\_params()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Do one optimization step.\end{DoxyVerb}
+ 
+
+Definition at line 572 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc61b7cba7923306a813a8b2f71c3895}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_abc61b7cba7923306a813a8b2f71c3895}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!vectorize@{vectorize}}
+\index{vectorize@{vectorize}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{vectorize()}{vectorize()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+vectorize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Override vectorize for seq2seq.\end{DoxyVerb}
+ 
+
+Definition at line 628 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aef0ce4355736782b861b06407d5de115}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aef0ce4355736782b861b06407d5de115}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!zero\+\_\+grad@{zero\+\_\+grad}}
+\index{zero\+\_\+grad@{zero\+\_\+grad}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{zero\+\_\+grad()}{zero\_grad()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+zero\+\_\+grad (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Zero out optimizer.\end{DoxyVerb}
+ 
+
+Definition at line 568 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_aef0ce4355736782b861b06407d5de115_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8b11887c42ebcbe81c7d05bce71887b3}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8b11887c42ebcbe81c7d05bce71887b3}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+block\+\_\+ngram@{beam\+\_\+block\+\_\+ngram}}
+\index{beam\+\_\+block\+\_\+ngram@{beam\+\_\+block\+\_\+ngram}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+block\+\_\+ngram}{beam\_block\_ngram}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+block\+\_\+ngram}
+
+
+
+Definition at line 304 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a6f636055027e683489e1fac8f81bf4da}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a6f636055027e683489e1fac8f81bf4da}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+dot\+\_\+dir@{beam\+\_\+dot\+\_\+dir}}
+\index{beam\+\_\+dot\+\_\+dir@{beam\+\_\+dot\+\_\+dir}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+dot\+\_\+dir}{beam\_dot\_dir}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+dir}
+
+
+
+Definition at line 322 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0234f9b0414579b006d12f1d7f0efc81}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0234f9b0414579b006d12f1d7f0efc81}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+dot\+\_\+log@{beam\+\_\+dot\+\_\+log}}
+\index{beam\+\_\+dot\+\_\+log@{beam\+\_\+dot\+\_\+log}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+dot\+\_\+log}{beam\_dot\_log}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+dot\+\_\+log}
+
+
+
+Definition at line 300 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1d440237d8aace3f4da44e20724ba4ce}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1d440237d8aace3f4da44e20724ba4ce}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+min\+\_\+length@{beam\+\_\+min\+\_\+length}}
+\index{beam\+\_\+min\+\_\+length@{beam\+\_\+min\+\_\+length}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+min\+\_\+length}{beam\_min\_length}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+length}
+
+
+
+Definition at line 303 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0eefb795ae3b543d762b5ac5e5cc631a}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a0eefb795ae3b543d762b5ac5e5cc631a}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+min\+\_\+n\+\_\+best@{beam\+\_\+min\+\_\+n\+\_\+best}}
+\index{beam\+\_\+min\+\_\+n\+\_\+best@{beam\+\_\+min\+\_\+n\+\_\+best}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+min\+\_\+n\+\_\+best}{beam\_min\_n\_best}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+min\+\_\+n\+\_\+best}
+
+
+
+Definition at line 302 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a96273b52624567e93472a4843628824e}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a96273b52624567e93472a4843628824e}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!beam\+\_\+size@{beam\+\_\+size}}
+\index{beam\+\_\+size@{beam\+\_\+size}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{beam\+\_\+size}{beam\_size}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+size}
+
+
+
+Definition at line 301 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a004ba0ec2699a8735740b26adc596a79}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a004ba0ec2699a8735740b26adc596a79}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!buffer\+\_\+initialized@{buffer\+\_\+initialized}}
+\index{buffer\+\_\+initialized@{buffer\+\_\+initialized}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{buffer\+\_\+initialized}{buffer\_initialized}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+buffer\+\_\+initialized}
+
+
+
+Definition at line 704 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8c8f945ca96681e0e8026f6daad8d6a3}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a8c8f945ca96681e0e8026f6daad8d6a3}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!control\+\_\+settings@{control\+\_\+settings}}
+\index{control\+\_\+settings@{control\+\_\+settings}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{control\+\_\+settings}{control\_settings}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+control\+\_\+settings}
+
+
+
+Definition at line 505 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), and controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_adeadea5498eedc024d19d37ba857aa18}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_adeadea5498eedc024d19d37ba857aa18}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!control\+\_\+vars@{control\+\_\+vars}}
+\index{control\+\_\+vars@{control\+\_\+vars}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{control\+\_\+vars}{control\_vars}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+control\+\_\+vars}
+
+
+
+Definition at line 459 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1aece11dbfc1839dee03eb6f9f6b10dd}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a1aece11dbfc1839dee03eb6f9f6b10dd}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!criterion@{criterion}}
+\index{criterion@{criterion}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{criterion}{criterion}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+criterion}
+
+
+
+Definition at line 345 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a61bf2975a7abaf3edda802fd4631424b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a61bf2975a7abaf3edda802fd4631424b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!id@{id}}
+\index{id@{id}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+id}
+
+
+
+Definition at line 294 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a64451c34499fb39f246ee6a0e6f1412d}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a64451c34499fb39f246ee6a0e6f1412d}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!metrics@{metrics}}
+\index{metrics@{metrics}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{metrics}{metrics}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+metrics}
+
+
+
+Definition at line 311 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+report(), transresnet.\+transresnet.\+Transresnet\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+reset\+\_\+metrics(), transresnet.\+transresnet.\+Transresnet\+Agent.\+reset\+\_\+metrics(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+update\+\_\+metrics(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac0b211cd03b70ac7fc886d7a7f9c21ef}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac0b211cd03b70ac7fc886d7a7f9c21ef}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!model@{model}}
+\index{model@{model}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model}
+
+
+
+Definition at line 310 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+backward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+eval\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+train\+\_\+step(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a60838aecd16ef85d34519f6a744b1c5a}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_a60838aecd16ef85d34519f6a744b1c5a}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!multigpu@{multigpu}}
+\index{multigpu@{multigpu}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{multigpu}{multigpu}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+multigpu}
+
+
+
+Definition at line 295 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+greedy\+\_\+search(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac61834ee9c45f969e72587fbdb25b94b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ac61834ee9c45f969e72587fbdb25b94b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!wd\+\_\+features@{wd\+\_\+features}}
+\index{wd\+\_\+features@{wd\+\_\+features}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{wd\+\_\+features}{wd\_features}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+wd\+\_\+features}
+
+
+
+Definition at line 545 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ad71d774c8cadd949e016a647356a8b02}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent_ad71d774c8cadd949e016a647356a8b02}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}!wd\+\_\+wts@{wd\+\_\+wts}}
+\index{wd\+\_\+wts@{wd\+\_\+wts}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Controllable\+Seq2seq\+Agent}}
+\subsubsection{\texorpdfstring{wd\+\_\+wts}{wd\_wts}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+wd\+\_\+wts}
+
+
+
+Definition at line 552 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{controllable__seq2seq_8py}{controllable\+\_\+seq2seq.\+py}\end{DoxyCompactItemize}

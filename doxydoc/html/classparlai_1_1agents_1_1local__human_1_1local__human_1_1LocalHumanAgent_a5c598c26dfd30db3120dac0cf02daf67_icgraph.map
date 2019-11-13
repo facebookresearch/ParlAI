@@ -1,0 +1,4 @@
+<map id="parlai.agents.local_human.local_human.LocalHumanAgent.episode_done" name="parlai.agents.local_human.local_human.LocalHumanAgent.episode_done">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#ab37222b5a1e607c5f8f301de880241f2" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld.prep_save_data" alt="" coords="276,5,493,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html#a5eb7b6e957de17b89a2e24c3d6fef751" title="parlai.mturk.core.dev.worlds.\lStaticMTurkTaskWorld.prep\l_save_data" alt="" coords="289,71,480,127"/>
+</map>

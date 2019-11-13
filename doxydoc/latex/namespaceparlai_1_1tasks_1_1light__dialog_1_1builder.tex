@@ -1,0 +1,334 @@
+\hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder}{}\section{parlai.\+tasks.\+light\+\_\+dialog.\+builder Namespace Reference}
+\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder}\index{parlai.\+tasks.\+light\+\_\+dialog.\+builder@{parlai.\+tasks.\+light\+\_\+dialog.\+builder}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_ad9de2827ebcf8386662e48c7fe011e43}{use\+\_\+feat} (opt, field, ttype)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aafb760ba2e05ffe5cad429327d0dd347}{fix\+\_\+labels} (act, opt)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a51921236462b49d240bfde4a648c3ec3}{get\+\_\+no\+\_\+affordance\+\_\+actions} (in\+\_\+room, carrying, other\+\_\+carrying, other\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a537e075c89058b67eb0db786f98491de}{gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue} (d)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a233ecce0ba4b1a0c023e855629986d69}{write\+\_\+dialog} (opt, fw, d, label\+\_\+type, split)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aeb144d0ebd2fd1727f73677e36f2c8b5}{write\+\_\+alldata} (opt, db, dpath, ltype, split)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a2f5cb4927740a90c9fba84df5e8e16b5}{add\+\_\+negs} (msg, d, ind, label\+\_\+type, split, num\+\_\+cands, use\+\_\+affordances)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a25aca9f28e4406290624e1d0c5cce0d6}{write\+\_\+out\+\_\+candidates} (db, dpath, dtype)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a6a049254e487c29d008f875476ffd76f}{build\+\_\+from\+\_\+db} (opt, db\+\_\+path, data\+\_\+path, fname, fname2)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a1a5f7c29e2ac62fb237eef07ae9815c1}{rand} = random.\+Random(42)
+\item 
+int \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a3f89be6fdf88112fe7c566d593b3932c}{mx} = 0
+\item 
+dictionary \hyperlink{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aaa9fd3ac19ed33a3e37093ffe025bbc0}{cands} = \{\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a2f5cb4927740a90c9fba84df5e8e16b5}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a2f5cb4927740a90c9fba84df5e8e16b5}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!add\+\_\+negs@{add\+\_\+negs}}
+\index{add\+\_\+negs@{add\+\_\+negs}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{add\+\_\+negs()}{add\_negs()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+add\+\_\+negs (\begin{DoxyParamCaption}\item[{}]{msg,  }\item[{}]{d,  }\item[{}]{ind,  }\item[{}]{label\+\_\+type,  }\item[{}]{split,  }\item[{}]{num\+\_\+cands,  }\item[{}]{use\+\_\+affordances }\end{DoxyParamCaption})}
+
+
+
+Definition at line 257 of file builder.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a2f5cb4927740a90c9fba84df5e8e16b5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a6a049254e487c29d008f875476ffd76f}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a6a049254e487c29d008f875476ffd76f}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!build\+\_\+from\+\_\+db@{build\+\_\+from\+\_\+db}}
+\index{build\+\_\+from\+\_\+db@{build\+\_\+from\+\_\+db}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{build\+\_\+from\+\_\+db()}{build\_from\_db()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+build\+\_\+from\+\_\+db (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{db\+\_\+path,  }\item[{}]{data\+\_\+path,  }\item[{}]{fname,  }\item[{}]{fname2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 317 of file builder.\+py.
+
+
+
+References parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+alldata(), and parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+out\+\_\+candidates().
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+build.\+build().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a6a049254e487c29d008f875476ffd76f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=312pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a6a049254e487c29d008f875476ffd76f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aafb760ba2e05ffe5cad429327d0dd347}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aafb760ba2e05ffe5cad429327d0dd347}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!fix\+\_\+labels@{fix\+\_\+labels}}
+\index{fix\+\_\+labels@{fix\+\_\+labels}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{fix\+\_\+labels()}{fix\_labels()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+fix\+\_\+labels (\begin{DoxyParamCaption}\item[{}]{act,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 26 of file builder.\+py.
+
+
+
+References eval\+\_\+ppl.\+int.
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aafb760ba2e05ffe5cad429327d0dd347_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a537e075c89058b67eb0db786f98491de}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a537e075c89058b67eb0db786f98491de}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue@{gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue}}
+\index{gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue@{gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue()}{gen\_no\_affordance\_actions\_for\_dialogue()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue (\begin{DoxyParamCaption}\item[{}]{d }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file builder.\+py.
+
+
+
+References parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+get\+\_\+no\+\_\+affordance\+\_\+actions().
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+out\+\_\+candidates().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a537e075c89058b67eb0db786f98491de_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a537e075c89058b67eb0db786f98491de_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a51921236462b49d240bfde4a648c3ec3}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a51921236462b49d240bfde4a648c3ec3}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!get\+\_\+no\+\_\+affordance\+\_\+actions@{get\+\_\+no\+\_\+affordance\+\_\+actions}}
+\index{get\+\_\+no\+\_\+affordance\+\_\+actions@{get\+\_\+no\+\_\+affordance\+\_\+actions}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{get\+\_\+no\+\_\+affordance\+\_\+actions()}{get\_no\_affordance\_actions()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+get\+\_\+no\+\_\+affordance\+\_\+actions (\begin{DoxyParamCaption}\item[{}]{in\+\_\+room,  }\item[{}]{carrying,  }\item[{}]{other\+\_\+carrying,  }\item[{}]{other\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file builder.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a51921236462b49d240bfde4a648c3ec3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_ad9de2827ebcf8386662e48c7fe011e43}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_ad9de2827ebcf8386662e48c7fe011e43}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!use\+\_\+feat@{use\+\_\+feat}}
+\index{use\+\_\+feat@{use\+\_\+feat}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{use\+\_\+feat()}{use\_feat()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+use\+\_\+feat (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{field,  }\item[{}]{ttype }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file builder.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_ad9de2827ebcf8386662e48c7fe011e43_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aeb144d0ebd2fd1727f73677e36f2c8b5}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aeb144d0ebd2fd1727f73677e36f2c8b5}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!write\+\_\+alldata@{write\+\_\+alldata}}
+\index{write\+\_\+alldata@{write\+\_\+alldata}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{write\+\_\+alldata()}{write\_alldata()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+alldata (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{db,  }\item[{}]{dpath,  }\item[{}]{ltype,  }\item[{}]{split }\end{DoxyParamCaption})}
+
+
+
+Definition at line 227 of file builder.\+py.
+
+
+
+References parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+build\+\_\+from\+\_\+db().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aeb144d0ebd2fd1727f73677e36f2c8b5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aeb144d0ebd2fd1727f73677e36f2c8b5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a233ecce0ba4b1a0c023e855629986d69}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a233ecce0ba4b1a0c023e855629986d69}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!write\+\_\+dialog@{write\+\_\+dialog}}
+\index{write\+\_\+dialog@{write\+\_\+dialog}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{write\+\_\+dialog()}{write\_dialog()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{fw,  }\item[{}]{d,  }\item[{}]{label\+\_\+type,  }\item[{}]{split }\end{DoxyParamCaption})}
+
+
+
+Definition at line 83 of file builder.\+py.
+
+
+
+References parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+add\+\_\+negs(), parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+fix\+\_\+labels(), eval\+\_\+ppl.\+int, parlai.\+utils.\+misc.\+msg\+\_\+to\+\_\+str(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+use\+\_\+feat().
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+alldata().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=343pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a233ecce0ba4b1a0c023e855629986d69_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a233ecce0ba4b1a0c023e855629986d69_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a25aca9f28e4406290624e1d0c5cce0d6}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a25aca9f28e4406290624e1d0c5cce0d6}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!write\+\_\+out\+\_\+candidates@{write\+\_\+out\+\_\+candidates}}
+\index{write\+\_\+out\+\_\+candidates@{write\+\_\+out\+\_\+candidates}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{write\+\_\+out\+\_\+candidates()}{write\_out\_candidates()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+out\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{db,  }\item[{}]{dpath,  }\item[{}]{dtype }\end{DoxyParamCaption})}
+
+
+
+Definition at line 289 of file builder.\+py.
+
+
+
+References parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+gen\+\_\+no\+\_\+affordance\+\_\+actions\+\_\+for\+\_\+dialogue().
+
+
+
+Referenced by parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+build\+\_\+from\+\_\+db().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a25aca9f28e4406290624e1d0c5cce0d6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a25aca9f28e4406290624e1d0c5cce0d6_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aaa9fd3ac19ed33a3e37093ffe025bbc0}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_aaa9fd3ac19ed33a3e37093ffe025bbc0}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!cands@{cands}}
+\index{cands@{cands}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{cands}{cands}}
+{\footnotesize\ttfamily dictionary parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+cands = \{\}}
+
+
+
+Definition at line 286 of file builder.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a3f89be6fdf88112fe7c566d593b3932c}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a3f89be6fdf88112fe7c566d593b3932c}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!mx@{mx}}
+\index{mx@{mx}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{mx}{mx}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+mx = 0}
+
+
+
+Definition at line 23 of file builder.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a1a5f7c29e2ac62fb237eef07ae9815c1}\label{namespaceparlai_1_1tasks_1_1light__dialog_1_1builder_a1a5f7c29e2ac62fb237eef07ae9815c1}} 
+\index{parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}!rand@{rand}}
+\index{rand@{rand}!parlai\+::tasks\+::light\+\_\+dialog\+::builder@{parlai\+::tasks\+::light\+\_\+dialog\+::builder}}
+\subsubsection{\texorpdfstring{rand}{rand}}
+{\footnotesize\ttfamily parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+rand = random.\+Random(42)}
+
+
+
+Definition at line 13 of file builder.\+py.
+

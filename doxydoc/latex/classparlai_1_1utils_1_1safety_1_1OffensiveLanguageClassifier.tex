@@ -1,0 +1,136 @@
+\hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier}{}\section{parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier Class Reference}
+\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier}\index{parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier@{parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a93630f9592ceded8584a09a0b9553ab5}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a7f4e833bea93ab9f920f2dd2a4b6e586}{contains\+\_\+offensive\+\_\+language} (self, text)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a86de8f64f68732b91d4cdfdf65dd841c}{\+\_\+\+\_\+contains\+\_\+\+\_\+} (self, key)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a917240edc6718f3b7f3560214780ac9d}{model}
+\item 
+\hyperlink{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a4230d2f45693c00e565fa90d7bae2d2a}{classes}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Load model trained to detect offensive language in the context of single-
+turn dialogue utterances. This model was trained to be robust to adversarial
+examples created by humans. See <http://parl.ai/projects/dialogue_safety/>
+for more information.
+\end{DoxyVerb}
+ 
+
+Definition at line 17 of file safety.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a93630f9592ceded8584a09a0b9553ab5}\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a93630f9592ceded8584a09a0b9553ab5}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file safety.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a86de8f64f68732b91d4cdfdf65dd841c}\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a86de8f64f68732b91d4cdfdf65dd841c}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}!\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+contains\+\_\+\+\_\+@{\+\_\+\+\_\+contains\+\_\+\+\_\+}!parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+contains\+\_\+\+\_\+()}{\_\_contains\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+\_\+\+\_\+contains\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}A simple way of checking whether the model classifies an utterance as
+offensive. Returns True if the input phrase is offensive.
+\end{DoxyVerb}
+ 
+
+Definition at line 53 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a86de8f64f68732b91d4cdfdf65dd841c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a7f4e833bea93ab9f920f2dd2a4b6e586}\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a7f4e833bea93ab9f920f2dd2a4b6e586}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}!contains\+\_\+offensive\+\_\+language@{contains\+\_\+offensive\+\_\+language}}
+\index{contains\+\_\+offensive\+\_\+language@{contains\+\_\+offensive\+\_\+language}!parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}}
+\subsubsection{\texorpdfstring{contains\+\_\+offensive\+\_\+language()}{contains\_offensive\_language()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the probability that a message is safe according to the
+classifier.
+\end{DoxyVerb}
+ 
+
+Definition at line 40 of file safety.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+classes, make\+\_\+control\+\_\+dataset.\+float, parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+\_\+\+\_\+contains\+\_\+\+\_\+(), and parlai.\+utils.\+safety.\+Offensive\+String\+Matcher.\+\_\+\+\_\+contains\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a7f4e833bea93ab9f920f2dd2a4b6e586_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a4230d2f45693c00e565fa90d7bae2d2a}\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a4230d2f45693c00e565fa90d7bae2d2a}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}!classes@{classes}}
+\index{classes@{classes}!parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}}
+\subsubsection{\texorpdfstring{classes}{classes}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+classes}
+
+
+
+Definition at line 27 of file safety.\+py.
+
+
+
+Referenced by parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a917240edc6718f3b7f3560214780ac9d}\label{classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier_a917240edc6718f3b7f3560214780ac9d}} 
+\index{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}!model@{model}}
+\index{model@{model}!parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier@{parlai\+::utils\+::safety\+::\+Offensive\+Language\+Classifier}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model}
+
+
+
+Definition at line 26 of file safety.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+backward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+eval\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+train\+\_\+step(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+train\+\_\+step().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{safety_8py}{safety.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,168 @@
+\hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent}{}\section{wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent Class Reference}
+\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent}\index{wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent}}
+
+
+Inheritance diagram for wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=286pt]{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_aa85f7625d15a4839dd4c887985f54ca1}{add\+\_\+cmdline\+\_\+args} (cls, argparser)
+\item 
+def \hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_af70ab88a1dd902b8bd2578e8314f64f8}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a0dc84b46e7df927db8235f2f2a48f5b0}{load} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_ab871cd99b32921aa5aa96306ad0818a6}{dictionary\+\_\+class} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_abc63c5b7c845a649dddfcd299e6eee9d}{use\+\_\+knowledge}
+\item 
+\hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_acc557e4adccf7091b3fb2fa5590767bd}{chosen\+\_\+sentence}
+\item 
+\hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a6892f7cd65221d96a84df9e21d69016f}{knowledge\+\_\+dropout}
+\item 
+\hyperlink{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a42a95bfa4e6c44c2dbab8f07586b3e1a}{knowledge\+\_\+truncate}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 15 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_af70ab88a1dd902b8bd2578e8314f64f8}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_af70ab88a1dd902b8bd2578e8314f64f8}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set up model.\end{DoxyVerb}
+ 
+
+Definition at line 62 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_aa85f7625d15a4839dd4c887985f54ca1}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_aa85f7625d15a4839dd4c887985f54ca1}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{argparser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 21 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_ab871cd99b32921aa5aa96306ad0818a6}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_ab871cd99b32921aa5aa96306ad0818a6}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 17 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a0dc84b46e7df927db8235f2f2a48f5b0}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a0dc84b46e7df927db8235f2f2a48f5b0}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!load@{load}}
+\index{load@{load}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return opt and model states.
+
+Override this method from TorchAgent to allow us to load partial
+weights from pre-trained models.
+\end{DoxyVerb}
+ 
+
+Definition at line 129 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load\+\_\+state\+\_\+dict(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a0dc84b46e7df927db8235f2f2a48f5b0_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_acc557e4adccf7091b3fb2fa5590767bd}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_acc557e4adccf7091b3fb2fa5590767bd}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!chosen\+\_\+sentence@{chosen\+\_\+sentence}}
+\index{chosen\+\_\+sentence@{chosen\+\_\+sentence}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{chosen\+\_\+sentence}{chosen\_sentence}}
+{\footnotesize\ttfamily wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+chosen\+\_\+sentence}
+
+
+
+Definition at line 69 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a6892f7cd65221d96a84df9e21d69016f}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a6892f7cd65221d96a84df9e21d69016f}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!knowledge\+\_\+dropout@{knowledge\+\_\+dropout}}
+\index{knowledge\+\_\+dropout@{knowledge\+\_\+dropout}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{knowledge\+\_\+dropout}{knowledge\_dropout}}
+{\footnotesize\ttfamily wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+knowledge\+\_\+dropout}
+
+
+
+Definition at line 70 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a42a95bfa4e6c44c2dbab8f07586b3e1a}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_a42a95bfa4e6c44c2dbab8f07586b3e1a}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!knowledge\+\_\+truncate@{knowledge\+\_\+truncate}}
+\index{knowledge\+\_\+truncate@{knowledge\+\_\+truncate}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{knowledge\+\_\+truncate}{knowledge\_truncate}}
+{\footnotesize\ttfamily wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+knowledge\+\_\+truncate}
+
+
+
+Definition at line 71 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+\mbox{\Hypertarget{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_abc63c5b7c845a649dddfcd299e6eee9d}\label{classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent_abc63c5b7c845a649dddfcd299e6eee9d}} 
+\index{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}!use\+\_\+knowledge@{use\+\_\+knowledge}}
+\index{use\+\_\+knowledge@{use\+\_\+knowledge}!wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent@{wizard\+\_\+transformer\+\_\+ranker\+::wizard\+\_\+transformer\+\_\+ranker\+::\+Wizard\+Transformer\+Ranker\+Agent}}
+\subsubsection{\texorpdfstring{use\+\_\+knowledge}{use\_knowledge}}
+{\footnotesize\ttfamily wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+use\+\_\+knowledge}
+
+
+
+Definition at line 66 of file wizard\+\_\+transformer\+\_\+ranker.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/wizard\+\_\+of\+\_\+wikipedia/wizard\+\_\+transformer\+\_\+ranker/\hyperlink{wizard__transformer__ranker_8py}{wizard\+\_\+transformer\+\_\+ranker.\+py}\end{DoxyCompactItemize}

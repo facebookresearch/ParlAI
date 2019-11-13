@@ -1,6 +1,6 @@
 <map id="light_chats.graph.Graph.get_possible_actions" name="light_chats.graph.Graph.get_possible_actions">
-<area shape="rect" id="node1" title=" " alt="" coords="564,55,747,96"/>
-<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title=" " alt="" coords="5,29,237,71"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title=" " alt="" coords="285,87,516,114"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title=" " alt="" coords="20,95,223,136"/>
+<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="236,5,468,47"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title="light_chats.graph.Graph.parse_exec" alt="" coords="237,71,467,98"/>
+<area shape="rect" id="node3" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="516,5,748,47"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title="light_chats.graph.Graph.update\l_world" alt="" coords="531,71,733,112"/>
 </map>

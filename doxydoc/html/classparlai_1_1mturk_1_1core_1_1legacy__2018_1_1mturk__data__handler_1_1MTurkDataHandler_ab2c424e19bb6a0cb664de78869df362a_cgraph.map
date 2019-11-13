@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.legacy_2018.mturk_data_handler.MTurkDataHandler.create_default_tables" name="parlai.mturk.core.legacy_2018.mturk_data_handler.MTurkDataHandler.create_default_tables">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,228,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title=" " alt="" coords="276,5,497,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title=" " alt="" coords="279,85,495,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="276,5,497,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title="parlai.mturk.core.legacy\l_2018.mturk_data_handler.MTurk\lDataHandler._get_connection" alt="" coords="279,85,495,141"/>
 </map>

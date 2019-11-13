@@ -1,0 +1,203 @@
+\hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent}{}\section{parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent}\index{parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent@{parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a0bb2c02bb6c928455c2ee24117797e19}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent_a7b880694aee36d8e2cafb3e53a705a82}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a7eb6a8cdcffb425506e085c4bef07a85}{act} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_af4dd0281fd7d6ceb4936f27eaab13f06}{parse} (self, s, split\+\_\+lines=False)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a6e65666f3754929df13beb82824d4a20}{share} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ae364a1860ec6ff9f32dabc42b96004d0}{add\+\_\+cmdline\+\_\+args} (argparser)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a5759817c6b1d248a0b64861222745f62}{dictionary\+\_\+class} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ac38a24353bb2fd988c9330c5c9e1434f}{dict}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Same as the regular remote agent, except that this agent converts all
+text into vectors using its dictionary before sending them.
+\end{DoxyVerb}
+ 
+
+Definition at line 145 of file remote\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a0bb2c02bb6c928455c2ee24117797e19}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a0bb2c02bb6c928455c2ee24117797e19}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 163 of file remote\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a7eb6a8cdcffb425506e085c4bef07a85}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a7eb6a8cdcffb425506e085c4bef07a85}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!act@{act}}
+\index{act@{act}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 168 of file remote\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observe(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+act\+\_\+blocking().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a7eb6a8cdcffb425506e085c4bef07a85_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a7eb6a8cdcffb425506e085c4bef07a85_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ae364a1860ec6ff9f32dabc42b96004d0}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ae364a1860ec6ff9f32dabc42b96004d0}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 151 of file remote\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a5759817c6b1d248a0b64861222745f62}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a5759817c6b1d248a0b64861222745f62}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 160 of file remote\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a5759817c6b1d248a0b64861222745f62_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_af4dd0281fd7d6ceb4936f27eaab13f06}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_af4dd0281fd7d6ceb4936f27eaab13f06}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!parse@{parse}}
+\index{parse@{parse}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{s,  }\item[{}]{split\+\_\+lines = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns a parsed (list of indices) version of a string s.
+Optionally return list of vectors for each line in the string in case
+you need to know where those are.
+\end{DoxyVerb}
+ 
+
+Definition at line 194 of file remote\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict.
+
+
+
+Referenced by parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+act(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), parlai.\+core.\+torch\+\_\+agent.\+History.\+reset(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+text2spvec(), light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec(), and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+vectorize().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_af4dd0281fd7d6ceb4936f27eaab13f06_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a6e65666f3754929df13beb82824d4a20}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_a6e65666f3754929df13beb82824d4a20}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!share@{share}}
+\index{share@{share}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 204 of file remote\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ac38a24353bb2fd988c9330c5c9e1434f}\label{classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent_ac38a24353bb2fd988c9330c5c9e1434f}} 
+\index{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}!dict@{dict}}
+\index{dict@{dict}!parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent@{parlai\+::agents\+::remote\+\_\+agent\+::remote\+\_\+agent\+::\+Parsed\+Remote\+Agent}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict}
+
+
+
+Definition at line 165 of file remote\+\_\+agent.\+py.
+
+
+
+Referenced by generator.\+agents.\+Two\+Stage\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse\+\_\+cands(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+share(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+share(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+t2v(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+v2t(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/remote\+\_\+agent/\hyperlink{remote__agent_8py}{remote\+\_\+agent.\+py}\end{DoxyCompactItemize}

@@ -1,7 +1,6 @@
 <map id="parlai.mturk.core.legacy_2018.worker_manager.WorkerManager.shutdown" name="parlai.mturk.core.legacy_2018.worker_manager.WorkerManager.shutdown">
-<area shape="rect" id="node1" title=" " alt="" coords="5,133,319,174"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#ae37565b2ca25dfa147f7c535551d9b88" title=" " alt="" coords="367,5,652,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a4ef70d1871be031e2260ac6948fd3dba" title=" " alt="" coords="406,85,613,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#a0a2d5c732277ccc7fa9a774aa0137aaa" title=" " alt="" coords="374,165,645,221"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a0cd13932ce8ffc3d6d794b4149ff5a42" title=" " alt="" coords="413,245,606,301"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#ae37565b2ca25dfa147f7c535551d9b88" title="parlai.mturk.core.legacy\l_2018.worker_manager.WorkerManager.save\l_disconnects" alt="" coords="367,5,652,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a4ef70d1871be031e2260ac6948fd3dba" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager.save\l_disconnects" alt="" coords="406,85,613,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#a0a2d5c732277ccc7fa9a774aa0137aaa" title="parlai.mturk.core.legacy\l_2018.worker_manager.WorkerManager.un\l_time_block_workers" alt="" coords="374,165,645,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a0cd13932ce8ffc3d6d794b4149ff5a42" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager.un\l_time_block_workers" alt="" coords="413,245,606,301"/>
 </map>

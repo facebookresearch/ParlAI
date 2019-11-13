@@ -1,0 +1,301 @@
+\hypertarget{classmodules_1_1Kvmemnn}{}\section{modules.\+Kvmemnn Class Reference}
+\label{classmodules_1_1Kvmemnn}\index{modules.\+Kvmemnn@{modules.\+Kvmemnn}}
+
+
+Inheritance diagram for modules.\+Kvmemnn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=181pt]{classmodules_1_1Kvmemnn__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for modules.\+Kvmemnn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=181pt]{classmodules_1_1Kvmemnn__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classmodules_1_1Kvmemnn_ae8fc66293ceb70c96f17600dc367b19c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classmodules_1_1Kvmemnn_a2877519275db7685b91aa9eb52fc2215}{opt}, num\+\_\+features, dict)
+\item 
+def \hyperlink{classmodules_1_1Kvmemnn_a85a9be2539bc746cfb162d450067c551}{forward} (self, xs, mems, ys=None, cands=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_aa4c97cdfa243072fcc5f466187911bbf}{lt}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a766a4d6a5bf185e11c69a4e160ca6e78}{encoder}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a61ec6a6dbebbdfd42ca0d2515b9b5009}{lt2}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a7a2287b58c302c3ede21015331b79762}{encoder2}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a2877519275db7685b91aa9eb52fc2215}{opt}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a0e6f77ae3ba405fa58d6515f48324395}{softmax}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a0506fd88e99167de46b9282f24fc0d80}{cosine}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a10f27d4682393615a3a077a908eafb1a}{lin1}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_afc462bec9809678b6003e5a371845a76}{lin2}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_ab5ea36950bcf5806c29c01aa05d4acea}{hops}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_afec135c6e3c8e3d0c0fa0824b2401f10}{lins}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a412408a69168046b63dc50ea791f9eb7}{cosine\+Embedding}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a9956f20f0ba7f6e7b5d2080c74e52f0f}{layer\+\_\+mems}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a11f58c577dda0e3e00c6a47304ab0843}{layer2}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_aabe656056e2178c2660a78d783504002}{layer3}
+\item 
+\hyperlink{classmodules_1_1Kvmemnn_a63b866fd4178a849ba879885a844c262}{layer5}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 13 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_ae8fc66293ceb70c96f17600dc367b19c}\label{classmodules_1_1Kvmemnn_ae8fc66293ceb70c96f17600dc367b19c}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def modules.\+Kvmemnn.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{num\+\_\+features,  }\item[{}]{dict }\end{DoxyParamCaption})}
+
+
+
+Definition at line 14 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a85a9be2539bc746cfb162d450067c551}\label{classmodules_1_1Kvmemnn_a85a9be2539bc746cfb162d450067c551}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!forward@{forward}}
+\index{forward@{forward}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def modules.\+Kvmemnn.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{mems,  }\item[{}]{ys = {\ttfamily None},  }\item[{}]{cands = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 53 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+starspace.\+modules.\+Starspace.\+encoder, modules.\+Kvmemnn.\+encoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+encoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+encoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder, modules.\+Kvmemnn.\+hops, and parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+hops.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmodules_1_1Kvmemnn_a85a9be2539bc746cfb162d450067c551_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a0506fd88e99167de46b9282f24fc0d80}\label{classmodules_1_1Kvmemnn_a0506fd88e99167de46b9282f24fc0d80}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!cosine@{cosine}}
+\index{cosine@{cosine}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{cosine}{cosine}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+cosine}
+
+
+
+Definition at line 39 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a412408a69168046b63dc50ea791f9eb7}\label{classmodules_1_1Kvmemnn_a412408a69168046b63dc50ea791f9eb7}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!cosine\+Embedding@{cosine\+Embedding}}
+\index{cosine\+Embedding@{cosine\+Embedding}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{cosine\+Embedding}{cosineEmbedding}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+cosine\+Embedding}
+
+
+
+Definition at line 49 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a766a4d6a5bf185e11c69a4e160ca6e78}\label{classmodules_1_1Kvmemnn_a766a4d6a5bf185e11c69a4e160ca6e78}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!encoder@{encoder}}
+\index{encoder@{encoder}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+encoder}
+
+
+
+Definition at line 25 of file modules.\+py.
+
+
+
+Referenced by modules.\+Kvmemnn.\+forward().
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a7a2287b58c302c3ede21015331b79762}\label{classmodules_1_1Kvmemnn_a7a2287b58c302c3ede21015331b79762}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!encoder2@{encoder2}}
+\index{encoder2@{encoder2}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{encoder2}{encoder2}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+encoder2}
+
+
+
+Definition at line 34 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_ab5ea36950bcf5806c29c01aa05d4acea}\label{classmodules_1_1Kvmemnn_ab5ea36950bcf5806c29c01aa05d4acea}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!hops@{hops}}
+\index{hops@{hops}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{hops}{hops}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+hops}
+
+
+
+Definition at line 43 of file modules.\+py.
+
+
+
+Referenced by modules.\+Kvmemnn.\+forward().
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a11f58c577dda0e3e00c6a47304ab0843}\label{classmodules_1_1Kvmemnn_a11f58c577dda0e3e00c6a47304ab0843}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!layer2@{layer2}}
+\index{layer2@{layer2}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{layer2}{layer2}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+layer2}
+
+
+
+Definition at line 65 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_aabe656056e2178c2660a78d783504002}\label{classmodules_1_1Kvmemnn_aabe656056e2178c2660a78d783504002}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!layer3@{layer3}}
+\index{layer3@{layer3}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{layer3}{layer3}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+layer3}
+
+
+
+Definition at line 67 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a63b866fd4178a849ba879885a844c262}\label{classmodules_1_1Kvmemnn_a63b866fd4178a849ba879885a844c262}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!layer5@{layer5}}
+\index{layer5@{layer5}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{layer5}{layer5}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+layer5}
+
+
+
+Definition at line 75 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a9956f20f0ba7f6e7b5d2080c74e52f0f}\label{classmodules_1_1Kvmemnn_a9956f20f0ba7f6e7b5d2080c74e52f0f}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!layer\+\_\+mems@{layer\+\_\+mems}}
+\index{layer\+\_\+mems@{layer\+\_\+mems}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{layer\+\_\+mems}{layer\_mems}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+layer\+\_\+mems}
+
+
+
+Definition at line 63 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a10f27d4682393615a3a077a908eafb1a}\label{classmodules_1_1Kvmemnn_a10f27d4682393615a3a077a908eafb1a}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!lin1@{lin1}}
+\index{lin1@{lin1}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{lin1}{lin1}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+lin1}
+
+
+
+Definition at line 41 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_afc462bec9809678b6003e5a371845a76}\label{classmodules_1_1Kvmemnn_afc462bec9809678b6003e5a371845a76}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!lin2@{lin2}}
+\index{lin2@{lin2}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{lin2}{lin2}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+lin2}
+
+
+
+Definition at line 42 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_afec135c6e3c8e3d0c0fa0824b2401f10}\label{classmodules_1_1Kvmemnn_afec135c6e3c8e3d0c0fa0824b2401f10}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!lins@{lins}}
+\index{lins@{lins}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{lins}{lins}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+lins}
+
+
+
+Definition at line 44 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_aa4c97cdfa243072fcc5f466187911bbf}\label{classmodules_1_1Kvmemnn_aa4c97cdfa243072fcc5f466187911bbf}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!lt@{lt}}
+\index{lt@{lt}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{lt}{lt}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+lt}
+
+
+
+Definition at line 16 of file modules.\+py.
+
+
+
+Referenced by modules.\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a61ec6a6dbebbdfd42ca0d2515b9b5009}\label{classmodules_1_1Kvmemnn_a61ec6a6dbebbdfd42ca0d2515b9b5009}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!lt2@{lt2}}
+\index{lt2@{lt2}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{lt2}{lt2}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+lt2}
+
+
+
+Definition at line 27 of file modules.\+py.
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a2877519275db7685b91aa9eb52fc2215}\label{classmodules_1_1Kvmemnn_a2877519275db7685b91aa9eb52fc2215}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!opt@{opt}}
+\index{opt@{opt}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+opt}
+
+
+
+Definition at line 37 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity().
+
+\mbox{\Hypertarget{classmodules_1_1Kvmemnn_a0e6f77ae3ba405fa58d6515f48324395}\label{classmodules_1_1Kvmemnn_a0e6f77ae3ba405fa58d6515f48324395}} 
+\index{modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}!softmax@{softmax}}
+\index{softmax@{softmax}!modules\+::\+Kvmemnn@{modules\+::\+Kvmemnn}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily modules.\+Kvmemnn.\+softmax}
+
+
+
+Definition at line 38 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), and taskntalk.\+modules.\+Predict\+Net.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/personachat/kvmemnn/\hyperlink{projects_2personachat_2kvmemnn_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

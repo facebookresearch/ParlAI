@@ -1,0 +1,641 @@
+\hypertarget{namespaceparlai_1_1utils_1_1misc}{}\section{parlai.\+utils.\+misc Namespace Reference}
+\label{namespaceparlai_1_1utils_1_1misc}\index{parlai.\+utils.\+misc@{parlai.\+utils.\+misc}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1AttrDict}{Attr\+Dict}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1NoLock}{No\+Lock}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt}{Opt}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1PaddingUtils}{Padding\+Utils}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor}{Predictor}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger}{Time\+Logger}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1misc_1_1Timer}{Timer}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330}{neginf} (dtype)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ac8ca45e62ca906d9b6e5026588a5d2a2}{maintain\+\_\+dialog\+\_\+history} (history, observation, reply=\textquotesingle{}\textquotesingle{}, history\+Length=1, use\+Replies=\textquotesingle{}label\+\_\+else\+\_\+model\textquotesingle{}, dict=None, use\+Start\+End\+Indices=True, split\+Sentences=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad935ab0a9d49b897c5e3efdbe1c46c4d}{load\+\_\+cands} (path, lines\+\_\+have\+\_\+ids=False, cands\+\_\+are\+\_\+replies=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a7c97ef3250327bc549ac652a481be0cf}{load\+\_\+opt\+\_\+file} (optfile)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_af245c261b10f36175f6d88fce852c552}{round\+\_\+sigfigs} (x, sigfigs=4)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a38a23cfa0fc3dbed42846787d1c04b57}{no\+\_\+lock} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a219b248f4399036a381ca859aa97433e}{clip\+\_\+text} (text, max\+\_\+len)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f}{display\+\_\+messages} (msgs, prettify=False, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{}, max\+\_\+len=1000)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a1b053cd9c56e6fa79b058fff587b3a48}{str\+\_\+to\+\_\+msg} (txt, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ae5db473b41d3b49814e2566e866282b6}{msg\+\_\+to\+\_\+str} (msg, ignore\+\_\+fields=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a8781cc03272b3a118fcd9e5a9f4ca1dd}{set\+\_\+namedtuple\+\_\+defaults} (namedtuple, default=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad3f3c350e8b394482f73a240e19ec3ac}{padded\+\_\+tensor} (items, pad\+\_\+idx=0, use\+\_\+cuda=False, left\+\_\+padded=False, max\+\_\+len=None, fp16friendly=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_ad96b0c9ef6237d9ca051251089faf2c7}{padded\+\_\+3d} (tensors, pad\+\_\+idx=0, use\+\_\+cuda=0, dtype=\hyperlink{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG}, fp16friendly=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a9e330c9119522333c738a3175e0b4396}{argsort} (keys, lists, descending=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b}{warn\+\_\+once} (msg, warningtype=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1misc_a7836ac7469dc5744e0ad9e5e54da2396}{fp16\+\_\+optimizer\+\_\+wrapper} (optimizer, verbose=False, dynamic\+\_\+loss\+\_\+scale=True, loss\+\_\+initial\+\_\+scale=2.\+0 $\ast$$\ast$17)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG} = torch.\+long
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1misc_a7f43cea0de3a37889ef23f275831ff92}{N\+E\+A\+R\+\_\+\+I\+NF} = 1e20
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1misc_a8f8b31dbd6331077648288e004f45ff9}{N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16} = 65504
+\item 
+dictionary \hyperlink{namespaceparlai_1_1utils_1_1misc_a3817c467f1d894060a5f5b3954d99598}{D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1misc_a5d6ad7f3aef96f16bb9060f5a41fc39b}{single\+\_\+nolock} = \hyperlink{classparlai_1_1utils_1_1misc_1_1NoLock}{No\+Lock}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a9e330c9119522333c738a3175e0b4396}\label{namespaceparlai_1_1utils_1_1misc_a9e330c9119522333c738a3175e0b4396}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!argsort@{argsort}}
+\index{argsort@{argsort}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{argsort()}{argsort()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+argsort (\begin{DoxyParamCaption}\item[{}]{keys,  }\item[{}]{lists,  }\item[{}]{descending = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder each list in lists by the (descending) sorted order of keys.
+
+:param iter keys:
+    Keys to order by.
+:param list[list] lists:
+    Lists to reordered by keys's order.  Correctly handles lists and 1-D
+    tensors.
+:param bool descending:
+    Use descending order if true.
+
+:returns:
+    The reordered items.
+\end{DoxyVerb}
+ 
+
+Definition at line 961 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a219b248f4399036a381ca859aa97433e}\label{namespaceparlai_1_1utils_1_1misc_a219b248f4399036a381ca859aa97433e}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!clip\+\_\+text@{clip\+\_\+text}}
+\index{clip\+\_\+text@{clip\+\_\+text}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{clip\+\_\+text()}{clip\_text()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+clip\+\_\+text (\begin{DoxyParamCaption}\item[{}]{text,  }\item[{}]{max\+\_\+len }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Clip text to max length, adding ellipses.\end{DoxyVerb}
+ 
+
+Definition at line 635 of file misc.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+display\+\_\+messages().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a219b248f4399036a381ca859aa97433e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f}\label{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!display\+\_\+messages@{display\+\_\+messages}}
+\index{display\+\_\+messages@{display\+\_\+messages}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{display\+\_\+messages()}{display\_messages()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+display\+\_\+messages (\begin{DoxyParamCaption}\item[{}]{msgs,  }\item[{}]{prettify = {\ttfamily False},  }\item[{}]{ignore\+\_\+fields = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{max\+\_\+len = {\ttfamily 1000} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a string describing the set of messages provided.
+
+If prettify is true, candidates are displayed using prettytable.
+ignore_fields provides a list of fields in the msgs which should not be
+displayed.
+\end{DoxyVerb}
+ 
+
+Definition at line 667 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+clip\+\_\+text(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by convai.\+convai\+\_\+bot.\+Conv\+A\+I\+Sample\+Agent.\+act(), parlai.\+core.\+worlds.\+World.\+display(), convai.\+convai\+\_\+world.\+Conv\+A\+I\+World.\+display(), convai.\+convai\+\_\+bot.\+Conv\+A\+I\+Sample\+Agent.\+observe(), and parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+observe().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a146f303a4c4b34993458968c74b55d2f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a7836ac7469dc5744e0ad9e5e54da2396}\label{namespaceparlai_1_1utils_1_1misc_a7836ac7469dc5744e0ad9e5e54da2396}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!fp16\+\_\+optimizer\+\_\+wrapper@{fp16\+\_\+optimizer\+\_\+wrapper}}
+\index{fp16\+\_\+optimizer\+\_\+wrapper@{fp16\+\_\+optimizer\+\_\+wrapper}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{fp16\+\_\+optimizer\+\_\+wrapper()}{fp16\_optimizer\_wrapper()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+fp16\+\_\+optimizer\+\_\+wrapper (\begin{DoxyParamCaption}\item[{}]{optimizer,  }\item[{}]{verbose = {\ttfamily False},  }\item[{}]{dynamic\+\_\+loss\+\_\+scale = {\ttfamily True},  }\item[{}]{loss\+\_\+initial\+\_\+scale = {\ttfamily 2.0~$\ast$$\ast$~17} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Wrap the an optimizer with FP16 loss scaling protection.
+
+Requires apex to be installed. Will throw an ImportError if it is not.
+
+:param optimizer:
+    Any torch optimizer
+:param bool verbose:
+    Enables verbose output in the FP16 optimizer. Turning this on can help
+    debug when FP16 is underperforming.
+:param bool dynamic_loss_scaling:
+    FP16 requires loss scaling to avoid underflows. It is recommended this
+    stays on, but advanced users may want it off.
+:param float loss_initial_scale:
+    Initial loss scaling. Default chosen empirically, but models with very low
+    or high loss values may need this adjusted. Stick with powers of 2.
+
+:returns:
+    An APEX FP16 optimizer. Please note this has different requirements on
+    how backward() and step() are called.
+\end{DoxyVerb}
+ 
+
+Definition at line 1007 of file misc.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+get\+\_\+bert\+\_\+optimizer(), and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a7836ac7469dc5744e0ad9e5e54da2396_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ad935ab0a9d49b897c5e3efdbe1c46c4d}\label{namespaceparlai_1_1utils_1_1misc_ad935ab0a9d49b897c5e3efdbe1c46c4d}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!load\+\_\+cands@{load\+\_\+cands}}
+\index{load\+\_\+cands@{load\+\_\+cands}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{load\+\_\+cands()}{load\_cands()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+load\+\_\+cands (\begin{DoxyParamCaption}\item[{}]{path,  }\item[{}]{lines\+\_\+have\+\_\+ids = {\ttfamily False},  }\item[{}]{cands\+\_\+are\+\_\+replies = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load global fixed set of candidate labels that the teacher provides.
+
+Every example will include these as candidates. The true labels for a
+specific example are also added to this set, so that it's possible to get
+the right answer.
+\end{DoxyVerb}
+ 
+
+Definition at line 132 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a7c97ef3250327bc549ac652a481be0cf}\label{namespaceparlai_1_1utils_1_1misc_a7c97ef3250327bc549ac652a481be0cf}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!load\+\_\+opt\+\_\+file@{load\+\_\+opt\+\_\+file}}
+\index{load\+\_\+opt\+\_\+file@{load\+\_\+opt\+\_\+file}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{load\+\_\+opt\+\_\+file()}{load\_opt\_file()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+load\+\_\+opt\+\_\+file (\begin{DoxyParamCaption}\item[{}]{optfile }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load an Opt from disk.\end{DoxyVerb}
+ 
+
+Definition at line 170 of file misc.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts(), parlai.\+core.\+params.\+get\+\_\+model\+\_\+name(), parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module(), and parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+known\+\_\+args().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a7c97ef3250327bc549ac652a481be0cf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ac8ca45e62ca906d9b6e5026588a5d2a2}\label{namespaceparlai_1_1utils_1_1misc_ac8ca45e62ca906d9b6e5026588a5d2a2}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}}
+\index{maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{maintain\+\_\+dialog\+\_\+history()}{maintain\_dialog\_history()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+maintain\+\_\+dialog\+\_\+history (\begin{DoxyParamCaption}\item[{}]{history,  }\item[{}]{observation,  }\item[{}]{reply = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{history\+Length = {\ttfamily 1},  }\item[{}]{use\+Replies = {\ttfamily \textquotesingle{}label\+\_\+else\+\_\+model\textquotesingle{}},  }\item[{}]{dict = {\ttfamily None},  }\item[{}]{use\+Start\+End\+Indices = {\ttfamily True},  }\item[{}]{split\+Sentences = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Keep track of dialog history, up to a truncation length.
+
+Either includes replies from the labels, model, or not all using param
+'replies'.
+
+DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
+\end{DoxyVerb}
+ 
+
+Definition at line 71 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+neginf().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_ac8ca45e62ca906d9b6e5026588a5d2a2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ae5db473b41d3b49814e2566e866282b6}\label{namespaceparlai_1_1utils_1_1misc_ae5db473b41d3b49814e2566e866282b6}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!msg\+\_\+to\+\_\+str@{msg\+\_\+to\+\_\+str}}
+\index{msg\+\_\+to\+\_\+str@{msg\+\_\+to\+\_\+str}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{msg\+\_\+to\+\_\+str()}{msg\_to\_str()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+msg\+\_\+to\+\_\+str (\begin{DoxyParamCaption}\item[{}]{msg,  }\item[{}]{ignore\+\_\+fields = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert ParlAI message dict to string.
+
+:param msg:
+    dict to convert into a string.
+:param ignore_fields:
+    (default '') comma-separated field names to not include in the string
+    even if they're in the msg dict.
+\end{DoxyVerb}
+ 
+
+Definition at line 769 of file misc.\+py.
+
+
+
+References generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+scripts.\+convert\+\_\+data\+\_\+to\+\_\+parlai\+\_\+format.\+dump\+\_\+data(), make\+\_\+control\+\_\+dataset.\+make\+\_\+dataset(), and parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_ae5db473b41d3b49814e2566e866282b6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330}\label{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!neginf@{neginf}}
+\index{neginf@{neginf}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{neginf()}{neginf()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+neginf (\begin{DoxyParamCaption}\item[{}]{dtype }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a representable finite number near -inf for a dtype.\end{DoxyVerb}
+ 
+
+Definition at line 54 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+maintain\+\_\+dialog\+\_\+history().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Bert\+Wrapper.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a68c44ca571de7149b683539db659c330_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a38a23cfa0fc3dbed42846787d1c04b57}\label{namespaceparlai_1_1utils_1_1misc_a38a23cfa0fc3dbed42846787d1c04b57}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!no\+\_\+lock@{no\+\_\+lock}}
+\index{no\+\_\+lock@{no\+\_\+lock}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{no\+\_\+lock()}{no\_lock()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+no\+\_\+lock (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build a nolock for other classes to use for no-op locking.\end{DoxyVerb}
+ 
+
+Definition at line 440 of file misc.\+py.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a38a23cfa0fc3dbed42846787d1c04b57_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ad96b0c9ef6237d9ca051251089faf2c7}\label{namespaceparlai_1_1utils_1_1misc_ad96b0c9ef6237d9ca051251089faf2c7}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!padded\+\_\+3d@{padded\+\_\+3d}}
+\index{padded\+\_\+3d@{padded\+\_\+3d}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{padded\+\_\+3d()}{padded\_3d()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+padded\+\_\+3d (\begin{DoxyParamCaption}\item[{}]{tensors,  }\item[{}]{pad\+\_\+idx = {\ttfamily 0},  }\item[{}]{use\+\_\+cuda = {\ttfamily 0},  }\item[{}]{dtype = {\ttfamily \hyperlink{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG}},  }\item[{}]{fp16friendly = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make 3D padded tensor for list of lists of 1D tensors or lists.
+
+:param tensors:
+    list of lists of 1D tensors (or lists)
+:param pad_idx:
+    padding to fill tensor with
+:param use_cuda:
+    whether to call cuda() before returning
+:param bool fp16friendly:
+    if True, pads the final dimension to be a multiple of 8.
+
+:returns:
+    3D tensor with the maximum dimensions of the inputs
+\end{DoxyVerb}
+ 
+
+Definition at line 920 of file misc.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+load\+\_\+candidates(), and parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+score\+\_\+candidates().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_ad96b0c9ef6237d9ca051251089faf2c7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ad3f3c350e8b394482f73a240e19ec3ac}\label{namespaceparlai_1_1utils_1_1misc_ad3f3c350e8b394482f73a240e19ec3ac}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!padded\+\_\+tensor@{padded\+\_\+tensor}}
+\index{padded\+\_\+tensor@{padded\+\_\+tensor}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{padded\+\_\+tensor()}{padded\_tensor()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+padded\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{items,  }\item[{}]{pad\+\_\+idx = {\ttfamily 0},  }\item[{}]{use\+\_\+cuda = {\ttfamily False},  }\item[{}]{left\+\_\+padded = {\ttfamily False},  }\item[{}]{max\+\_\+len = {\ttfamily None},  }\item[{}]{fp16friendly = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a right-padded matrix from an uneven list of lists.
+
+Returns (padded, lengths), where padded is the padded matrix, and lengths
+is a list containing the lengths of each row.
+
+Matrix is right-padded (filled to the right) by default, but can be
+left padded if the flag is set to True.
+
+Matrix can also be placed on cuda automatically.
+
+:param list[iter[int]] items: List of items
+:param bool sort: If True, orders by the length
+:param int pad_idx: the value to use for padding
+:param bool use_cuda: if true, places `padded` on GPU
+:param bool left_padded:
+:param int max_len: if None, the max length is the maximum item length
+:param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
+
+:returns: (padded, lengths) tuple
+:rtype: (Tensor[int64], list[int])
+\end{DoxyVerb}
+ 
+
+Definition at line 851 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+set\+\_\+namedtuple\+\_\+defaults().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=347pt]{namespaceparlai_1_1utils_1_1misc_ad3f3c350e8b394482f73a240e19ec3ac_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_af245c261b10f36175f6d88fce852c552}\label{namespaceparlai_1_1utils_1_1misc_af245c261b10f36175f6d88fce852c552}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!round\+\_\+sigfigs@{round\+\_\+sigfigs}}
+\index{round\+\_\+sigfigs@{round\+\_\+sigfigs}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{round\+\_\+sigfigs()}{round\_sigfigs()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+round\+\_\+sigfigs (\begin{DoxyParamCaption}\item[{}]{x,  }\item[{}]{sigfigs = {\ttfamily 4} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Round value to specified significant figures.
+
+:param x: input number
+:param sigfigs: number of significant figures to return
+
+:returns: float number rounded to specified sigfigs
+\end{DoxyVerb}
+ 
+
+Definition at line 398 of file misc.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a8781cc03272b3a118fcd9e5a9f4ca1dd}\label{namespaceparlai_1_1utils_1_1misc_a8781cc03272b3a118fcd9e5a9f4ca1dd}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!set\+\_\+namedtuple\+\_\+defaults@{set\+\_\+namedtuple\+\_\+defaults}}
+\index{set\+\_\+namedtuple\+\_\+defaults@{set\+\_\+namedtuple\+\_\+defaults}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{set\+\_\+namedtuple\+\_\+defaults()}{set\_namedtuple\_defaults()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+set\+\_\+namedtuple\+\_\+defaults (\begin{DoxyParamCaption}\item[{}]{namedtuple,  }\item[{}]{default = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set *all* of the fields for a given nametuple to a singular value.
+
+Additionally removes the default docstring for each field.
+Modifies the tuple in place, but returns it anyway.
+
+More info:
+https://stackoverflow.com/a/18348004
+
+:param namedtuple: A constructed collections.namedtuple
+:param default: The default value to set.
+
+:returns: the modified namedtuple
+\end{DoxyVerb}
+ 
+
+Definition at line 823 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+padded\+\_\+tensor().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=347pt]{namespaceparlai_1_1utils_1_1misc_a8781cc03272b3a118fcd9e5a9f4ca1dd_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a1b053cd9c56e6fa79b058fff587b3a48}\label{namespaceparlai_1_1utils_1_1misc_a1b053cd9c56e6fa79b058fff587b3a48}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!str\+\_\+to\+\_\+msg@{str\+\_\+to\+\_\+msg}}
+\index{str\+\_\+to\+\_\+msg@{str\+\_\+to\+\_\+msg}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{str\+\_\+to\+\_\+msg()}{str\_to\_msg()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+str\+\_\+to\+\_\+msg (\begin{DoxyParamCaption}\item[{}]{txt,  }\item[{}]{ignore\+\_\+fields = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert formatted string to ParlAI message dict.
+
+:param txt:
+    formatted string to convert. String format is tab-separated fields,
+    with colon separating field name and contents.
+:param ignore_fields:
+    (default '') comma-separated field names to not
+    include in the msg dict even if they're in the string.
+\end{DoxyVerb}
+ 
+
+Definition at line 715 of file misc.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+bool, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+get().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_a1b053cd9c56e6fa79b058fff587b3a48_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b}\label{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!warn\+\_\+once@{warn\+\_\+once}}
+\index{warn\+\_\+once@{warn\+\_\+once}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{warn\+\_\+once()}{warn\_once()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+warn\+\_\+once (\begin{DoxyParamCaption}\item[{}]{msg,  }\item[{}]{warningtype = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Raise a warning, but only once.
+
+:param str msg: Message to display
+:param Warning warningtype: Type of warning, e.g. DeprecationWarning
+\end{DoxyVerb}
+ 
+
+Definition at line 992 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+fp16\+\_\+optimizer\+\_\+wrapper().
+
+
+
+Referenced by parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+is\+\_\+valid(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+is\+\_\+valid(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+receive\+\_\+metrics(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+upgrade\+\_\+opt(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+upgrade\+\_\+opt(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+upgrade\+\_\+opt(), and parlai.\+scripts.\+verify\+\_\+data.\+warn().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1misc_acf146e70ea7f6867969a7c2b545d4b4b_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a3817c467f1d894060a5f5b3954d99598}\label{namespaceparlai_1_1utils_1_1misc_a3817c467f1d894060a5f5b3954d99598}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS@{D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}}
+\index{D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS@{D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}{DISPLAY\_MESSAGE\_DEFAULT\_FIELDS}}
+{\footnotesize\ttfamily dictionary parlai.\+utils.\+misc.\+D\+I\+S\+P\+L\+A\+Y\+\_\+\+M\+E\+S\+S\+A\+G\+E\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+F\+I\+E\+L\+DS}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \{
+2     \textcolor{stringliteral}{'episode\_done'},
+3     \textcolor{stringliteral}{'id'},
+4     \textcolor{stringliteral}{'image'},
+5     \textcolor{stringliteral}{'text'},
+6     \textcolor{stringliteral}{'labels'},
+7     \textcolor{stringliteral}{'eval\_labels'},
+8     \textcolor{stringliteral}{'label\_candidates'},
+9     \textcolor{stringliteral}{'text\_candidates'},
+10     \textcolor{stringliteral}{'reward'},
+11     \textcolor{stringliteral}{'eval\_labels\_vec'},
+12     \textcolor{stringliteral}{'text\_vec'},
+13     \textcolor{stringliteral}{'label\_candidates\_vecs'},
+14 \}
+\end{DoxyCode}
+
+
+Definition at line 38 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a7f43cea0de3a37889ef23f275831ff92}\label{namespaceparlai_1_1utils_1_1misc_a7f43cea0de3a37889ef23f275831ff92}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!N\+E\+A\+R\+\_\+\+I\+NF@{N\+E\+A\+R\+\_\+\+I\+NF}}
+\index{N\+E\+A\+R\+\_\+\+I\+NF@{N\+E\+A\+R\+\_\+\+I\+NF}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{N\+E\+A\+R\+\_\+\+I\+NF}{NEAR\_INF}}
+{\footnotesize\ttfamily int parlai.\+utils.\+misc.\+N\+E\+A\+R\+\_\+\+I\+NF = 1e20}
+
+
+
+Definition at line 34 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a8f8b31dbd6331077648288e004f45ff9}\label{namespaceparlai_1_1utils_1_1misc_a8f8b31dbd6331077648288e004f45ff9}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16@{N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16}}
+\index{N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16@{N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16}{NEAR\_INF\_FP16}}
+{\footnotesize\ttfamily int parlai.\+utils.\+misc.\+N\+E\+A\+R\+\_\+\+I\+N\+F\+\_\+\+F\+P16 = 65504}
+
+
+
+Definition at line 35 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_a5d6ad7f3aef96f16bb9060f5a41fc39b}\label{namespaceparlai_1_1utils_1_1misc_a5d6ad7f3aef96f16bb9060f5a41fc39b}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!single\+\_\+nolock@{single\+\_\+nolock}}
+\index{single\+\_\+nolock@{single\+\_\+nolock}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{single\+\_\+nolock}{single\_nolock}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+single\+\_\+nolock = \hyperlink{classparlai_1_1utils_1_1misc_1_1NoLock}{No\+Lock}()}
+
+
+
+Definition at line 437 of file misc.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}\label{namespaceparlai_1_1utils_1_1misc_ac49ec9bcd5fe586085eb9fab8f40fdb5}} 
+\index{parlai\+::utils\+::misc@{parlai\+::utils\+::misc}!T\+O\+R\+C\+H\+\_\+\+L\+O\+NG@{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG}}
+\index{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG@{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG}!parlai\+::utils\+::misc@{parlai\+::utils\+::misc}}
+\subsubsection{\texorpdfstring{T\+O\+R\+C\+H\+\_\+\+L\+O\+NG}{TORCH\_LONG}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+T\+O\+R\+C\+H\+\_\+\+L\+O\+NG = torch.\+long}
+
+
+
+Definition at line 26 of file misc.\+py.
+

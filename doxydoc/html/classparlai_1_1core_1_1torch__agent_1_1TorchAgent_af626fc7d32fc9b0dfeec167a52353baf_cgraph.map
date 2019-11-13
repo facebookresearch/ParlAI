@@ -1,6 +1,5 @@
 <map id="parlai.core.torch_agent.TorchAgent.load" name="parlai.core.torch_agent.TorchAgent.load">
-<area shape="rect" id="node1" title=" " alt="" coords="5,100,164,141"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent.html#a2799356b935d49c3fa522f07428ff1c3" title=" " alt="" coords="229,5,439,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#a4b6301664c0a7e98e9c688cc75ca79dc" title=" " alt="" coords="212,100,456,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5dcfca62a677f8de97f09ce993258f84" title=" " alt="" coords="243,165,425,207"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent.html#a2799356b935d49c3fa522f07428ff1c3" title="parlai.agents.transformer\l_classifier.transformer\l_classifier.TransformerClassifier\lAgent.load_state_dict" alt="" coords="229,5,439,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#a4b6301664c0a7e98e9c688cc75ca79dc" title="parlai.agents.transformer.polyencoder.\lPolyencoderAgent.load_state_dict" alt="" coords="212,100,456,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a5dcfca62a677f8de97f09ce993258f84" title="parlai.core.torch_agent.\lTorchAgent.load_state_dict" alt="" coords="243,165,425,207"/>
 </map>

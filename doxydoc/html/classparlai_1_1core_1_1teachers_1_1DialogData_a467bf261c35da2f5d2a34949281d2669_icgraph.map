@@ -1,5 +1,4 @@
 <map id="parlai.core.teachers.DialogData.build_table" name="parlai.core.teachers.DialogData.build_table">
-<area shape="rect" id="node1" title=" " alt="" coords="236,39,413,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogData.html#a1e037df2f18a67503db657ae4cc27ab4" title=" " alt="" coords="8,5,185,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#a34ba92f60661471fee4eedb5ee2b9eda" title=" " alt="" coords="5,71,188,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogData.html#a1e037df2f18a67503db657ae4cc27ab4" title="parlai.core.teachers.Dialog\lData.get" alt="" coords="231,5,408,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="456,5,661,47"/>
 </map>

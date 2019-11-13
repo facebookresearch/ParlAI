@@ -1,0 +1,4 @@
+<map id="parlai.core.gpt2_helper.get_pairs" name="parlai.core.gpt2_helper.get_pairs">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper.html#ac2bbb343b37bc277bf717b87ed675ff9" title="parlai.core.gpt2_helper.\lGpt2BpeHelper.bpe" alt="" coords="228,5,385,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper.html#a7c5c94aa8d5acd15215cf3e45fc9f2c3" title="parlai.core.gpt2_helper.\lGpt2BpeHelper.encode" alt="" coords="433,5,591,47"/>
+</map>

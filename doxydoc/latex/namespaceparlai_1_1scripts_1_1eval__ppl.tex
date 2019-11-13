@@ -1,0 +1,108 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl}{}\section{parlai.\+scripts.\+eval\+\_\+ppl Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1eval__ppl}\index{parlai.\+scripts.\+eval\+\_\+ppl@{parlai.\+scripts.\+eval\+\_\+ppl}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld}{Perplexity\+World}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a4ae22cc04e19c46ed621afeba6e85d67}{setup\+\_\+args} (\hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a01904cd2f6723523a01b996b43aa9fea}{parser}=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_ad1a8a8891f276136e82edc906ea58340}{eval\+\_\+ppl} (\hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a0e79f76660ddfdf2c00a552f50edaec6}{opt}, build\+\_\+dict=None, \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a9f9177d01476851d8e9923f2c624fd4e}{dict\+\_\+file}=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a01904cd2f6723523a01b996b43aa9fea}{parser} = \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a4ae22cc04e19c46ed621afeba6e85d67}{setup\+\_\+args}()
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a0e79f76660ddfdf2c00a552f50edaec6}{opt} = parser.\+parse\+\_\+args()
+\item 
+\hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a9f9177d01476851d8e9923f2c624fd4e}{dict\+\_\+file}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl_ad1a8a8891f276136e82edc906ea58340}\label{namespaceparlai_1_1scripts_1_1eval__ppl_ad1a8a8891f276136e82edc906ea58340}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}!eval\+\_\+ppl@{eval\+\_\+ppl}}
+\index{eval\+\_\+ppl@{eval\+\_\+ppl}!parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}}
+\subsubsection{\texorpdfstring{eval\+\_\+ppl()}{eval\_ppl()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+eval\+\_\+ppl (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{build\+\_\+dict = {\ttfamily None},  }\item[{}]{dict\+\_\+file = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluates the the perplexity of a model.
+
+This uses a dictionary which implements the following functions:
+- tokenize(text): splits string up into list of tokens
+- __in__(text): checks whether dictionary contains a token
+- keys(): returns an iterator over all tokens in the dictionary
+
+:param opt: option dict
+:param build_dict: function which returns a dictionary class implementing
+    the functions above.
+:param dict_file: file used when loading the dictionary class set via the
+    "dictionary_class" argument (defaults to
+    parlai.core.dict:DictionaryAgent).
+
+Either build_dict or dict_file must be set (both default to None) to
+determine the dictionary used for the evaluation.
+\end{DoxyVerb}
+ 
+
+Definition at line 180 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+core.\+worlds.\+create\+\_\+task(), make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, eval\+\_\+ppl.\+int, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1eval__ppl_ad1a8a8891f276136e82edc906ea58340_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl_a4ae22cc04e19c46ed621afeba6e85d67}\label{namespaceparlai_1_1scripts_1_1eval__ppl_a4ae22cc04e19c46ed621afeba6e85d67}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 46 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl_a9f9177d01476851d8e9923f2c624fd4e}\label{namespaceparlai_1_1scripts_1_1eval__ppl_a9f9177d01476851d8e9923f2c624fd4e}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}!dict\+\_\+file@{dict\+\_\+file}}
+\index{dict\+\_\+file@{dict\+\_\+file}!parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}}
+\subsubsection{\texorpdfstring{dict\+\_\+file}{dict\_file}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+dict\+\_\+file}
+
+
+
+Definition at line 257 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl_a0e79f76660ddfdf2c00a552f50edaec6}\label{namespaceparlai_1_1scripts_1_1eval__ppl_a0e79f76660ddfdf2c00a552f50edaec6}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}!opt@{opt}}
+\index{opt@{opt}!parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+opt = parser.\+parse\+\_\+args()}
+
+
+
+Definition at line 256 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__ppl_a01904cd2f6723523a01b996b43aa9fea}\label{namespaceparlai_1_1scripts_1_1eval__ppl_a01904cd2f6723523a01b996b43aa9fea}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}!parser@{parser}}
+\index{parser@{parser}!parlai\+::scripts\+::eval\+\_\+ppl@{parlai\+::scripts\+::eval\+\_\+ppl}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+parser = \hyperlink{namespaceparlai_1_1scripts_1_1eval__ppl_a4ae22cc04e19c46ed621afeba6e85d67}{setup\+\_\+args}()}
+
+
+
+Definition at line 254 of file eval\+\_\+ppl.\+py.
+

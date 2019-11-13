@@ -1,0 +1,5 @@
+<map id="self_feeding.self_feeding_agent.SelfFeedingAgent.update_fee_metrics" name="self_feeding.self_feeding_agent.SelfFeedingAgent.update_fee_metrics">
+<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7a3807c6692b7a628fa1477d99b73e0b" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.feedback_step" alt="" coords="264,39,521,80"/>
+<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a9f6ed50b9db65bede09f19810e05abc4" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.eval_step" alt="" coords="570,5,798,47"/>
+<area shape="rect" id="node4" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a4f04842d386c1747eefba384966687de" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.train_step" alt="" coords="569,71,799,112"/>
+</map>

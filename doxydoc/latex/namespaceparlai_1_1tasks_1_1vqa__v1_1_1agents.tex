@@ -1,0 +1,79 @@
+\hypertarget{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents}{}\section{parlai.\+tasks.\+vqa\+\_\+v1.\+agents Namespace Reference}
+\label{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents}\index{parlai.\+tasks.\+vqa\+\_\+v1.\+agents@{parlai.\+tasks.\+vqa\+\_\+v1.\+agents}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1AllTeacher}{All\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1DefaultDataset}{Default\+Dataset}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1DefaultTeacher}{Default\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1McTeacher}{Mc\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher}{Oe\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset}{V\+Q\+A\+Dataset}
+\item 
+class \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent}{Vqa\+Dictionary\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_a09703660c96aab40da3aa7f2386486cb}{escape} (s)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_ab44e9835e0cedea3719e3baebfe0e94b}{unescape} (s)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_a09703660c96aab40da3aa7f2386486cb}\label{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_a09703660c96aab40da3aa7f2386486cb}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents}!escape@{escape}}
+\index{escape@{escape}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents}}
+\subsubsection{\texorpdfstring{escape()}{escape()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+escape (\begin{DoxyParamCaption}\item[{}]{s }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Replace potential special characters with escaped version.
+For example, newline => \\n and tab => \\t
+\end{DoxyVerb}
+ 
+
+Definition at line 66 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+save().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_a09703660c96aab40da3aa7f2386486cb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_ab44e9835e0cedea3719e3baebfe0e94b}\label{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_ab44e9835e0cedea3719e3baebfe0e94b}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents}!unescape@{unescape}}
+\index{unescape@{unescape}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents}}
+\subsubsection{\texorpdfstring{unescape()}{unescape()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+unescape (\begin{DoxyParamCaption}\item[{}]{s }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Revert escaped characters back to their special version.
+For example, \\n => newline and \\t => tab
+\end{DoxyVerb}
+ 
+
+Definition at line 73 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+load().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1vqa__v1_1_1agents_ab44e9835e0cedea3719e3baebfe0e94b_icgraph}
+\end{center}
+\end{figure}

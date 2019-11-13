@@ -1,0 +1,10 @@
+<map id="controllable_seq2seq.arora.learn_arora" name="controllable_seq2seq.arora.learn_arora">
+<area shape="rect" id="node2" href="$namespacecontrollable__seq2seq_1_1arora.html#aa75b304fb4087b1a9134d05f4bb6b3a7" title="controllable_seq2seq.arora.get\l_word_counts" alt="" coords="275,64,474,105"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="300,130,449,186"/>
+<area shape="rect" id="node9" href="$namespacecontrollable__seq2seq_1_1arora.html#a8bbb1ed9f1b86ebe8378d07931f3040d" title="controllable_seq2seq.arora.remove\l_first_sv" alt="" coords="263,211,487,252"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="539,71,735,98"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="804,5,951,47"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="795,71,959,112"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="535,145,739,171"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="787,145,968,171"/>
+</map>

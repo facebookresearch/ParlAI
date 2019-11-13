@@ -1,0 +1,63 @@
+\hypertarget{namespaceparlai_1_1mturk_1_1core_1_1worker__manager}{}\section{parlai.\+mturk.\+core.\+worker\+\_\+manager Namespace Reference}
+\label{namespaceparlai_1_1mturk_1_1core_1_1worker__manager}\index{parlai.\+mturk.\+core.\+worker\+\_\+manager@{parlai.\+mturk.\+core.\+worker\+\_\+manager}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager}{Worker\+Manager}
+\item 
+class \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerState}{Worker\+State}
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_aea08a2153a6e9b343c3819f8437f4253}{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH} = 60 $\ast$ 60 $\ast$ 24
+\item 
+int \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_a97194652899b067648832eaaf8eda838}{M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS} = 5
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_affe4aec534b42d99a874f863d7d85e62}{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME} = \textquotesingle{}disconnects.\+pickle\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_ad55d781239dedaf5a8409f99a5b181ed}{parent\+\_\+dir} = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_affe4aec534b42d99a874f863d7d85e62}\label{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_affe4aec534b42d99a874f863d7d85e62}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}!D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME@{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME}}
+\index{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME@{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME}!parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}}
+\subsubsection{\texorpdfstring{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME}{DISCONNECT\_FILE\_NAME}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+worker\+\_\+manager.\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+F\+I\+L\+E\+\_\+\+N\+A\+ME = \textquotesingle{}disconnects.\+pickle\textquotesingle{}}
+
+
+
+Definition at line 27 of file worker\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_aea08a2153a6e9b343c3819f8437f4253}\label{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_aea08a2153a6e9b343c3819f8437f4253}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}!D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH@{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH}}
+\index{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH@{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH}!parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}}
+\subsubsection{\texorpdfstring{D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH}{DISCONNECT\_PERSIST\_LENGTH}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+core.\+worker\+\_\+manager.\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+P\+E\+R\+S\+I\+S\+T\+\_\+\+L\+E\+N\+G\+TH = 60 $\ast$ 60 $\ast$ 24}
+
+
+
+Definition at line 22 of file worker\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_a97194652899b067648832eaaf8eda838}\label{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_a97194652899b067648832eaaf8eda838}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}!M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS@{M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS}}
+\index{M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS@{M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS}!parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS}{MAX\_DISCONNECTS}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+core.\+worker\+\_\+manager.\+M\+A\+X\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+TS = 5}
+
+
+
+Definition at line 25 of file worker\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_ad55d781239dedaf5a8409f99a5b181ed}\label{namespaceparlai_1_1mturk_1_1core_1_1worker__manager_ad55d781239dedaf5a8409f99a5b181ed}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}!parent\+\_\+dir@{parent\+\_\+dir}}
+\index{parent\+\_\+dir@{parent\+\_\+dir}!parlai\+::mturk\+::core\+::worker\+\_\+manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager}}
+\subsubsection{\texorpdfstring{parent\+\_\+dir}{parent\_dir}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+parent\+\_\+dir = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))}
+
+
+
+Definition at line 29 of file worker\+\_\+manager.\+py.
+

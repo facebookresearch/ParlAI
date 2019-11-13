@@ -1,0 +1,5 @@
+<map id="parlai.core.params.print_announcements" name="parlai.core.params.print_announcements">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1eval__model.html#ade1dfda1be70776553a1fbd6a3450c40" title="parlai.scripts.eval\l_model.eval_model" alt="" coords="222,5,357,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8c15c0d4490891fd3e61e57501474e40" title="parlai.scripts.train\l_model.TrainLoop.train" alt="" coords="212,71,367,112"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="415,71,628,112"/>
+</map>

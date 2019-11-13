@@ -1,0 +1,503 @@
+\hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel}{}\section{self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model Class Reference}
+\label{classself__feeding_1_1modules_1_1SelfFeedingModel}\index{self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model@{self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model}}
+
+
+Inheritance diagram for self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{classself__feeding_1_1modules_1_1SelfFeedingModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{classself__feeding_1_1modules_1_1SelfFeedingModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a91bbd7facdeff922d3e7ae97b58e3415}{add\+\_\+cmdline\+\_\+args} (cls, argparser)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a9180e0572d08648c219a57b9008b2e5d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}{opt}, dictionary)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a5cf9512d33efb28bbe68a9072f15bd64}{forward} (self)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a48355f310914844e39040c4c67156c09}{score\+\_\+dialog} (self, x\+\_\+vecs, y\+\_\+vecs)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a1197eb318b6aeff97f44d89dc397dc1c}{encode\+\_\+dia\+\_\+y} (self, y\+\_\+vecs)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a0cd21631fce3dbc552b7006bd25c7edb}{score\+\_\+feedback} (self, x\+\_\+vecs, y\+\_\+vecs)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a76344121fae2bc3a313339b1674da2c5}{score\+\_\+satisfaction} (self, x\+\_\+vecs)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ac08bbd26538c62f743664bf537ff438d}{score\+\_\+similarity} (self, context\+\_\+h, cand\+\_\+h)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a7f8b99a9c823753ddf1d94d6660a7f6d}{init\+\_\+embeddings} (self)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a895c868ad8a892d71cfc13849e48ad87}{build\+\_\+encoder} (self, \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}{opt}, embeddings)
+\item 
+def \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a2326cdf2ff11cdf50102684875e31238}{build\+\_\+head} (self, \hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}{opt}, outdim=1, num\+\_\+layers=1)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}{opt}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_aa6989e0f40e11a126e49e34eb9eaf238}{pad\+\_\+idx}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a2d5b31bb1e75b23afb3d9d2ecf4fc436}{vocab\+\_\+size}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a92f3058f48c0d51bbd553651442bd073}{dia\+\_\+embeddings}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_adf25e0bce4a71b69ade9dbc212784fa7}{x\+\_\+dia\+\_\+encoder}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_afd72526459e6d3ea01c31aa2ceb57292}{x\+\_\+dia\+\_\+head}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ac8ce734fde9fb3ec280aad69eb07cdca}{y\+\_\+dia\+\_\+encoder}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ad0774b17a58fd486b89d107d09eb96cc}{y\+\_\+dia\+\_\+head}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a15b26965579be3d43221da139f273cdc}{fee\+\_\+embeddings}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a93e6c8769d16de594fe973ad7960dc98}{x\+\_\+fee\+\_\+encoder}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a41612d52bdf95036036964e262acfcd6}{x\+\_\+fee\+\_\+head}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a6b5fddf8b9c535961a9164727203d33d}{y\+\_\+fee\+\_\+encoder}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a020de90b88c77e3fb2cfe1fd3d5930f8}{y\+\_\+fee\+\_\+head}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a75d7ed45fc02845cb1eb5c062c51f181}{sat\+\_\+embeddings}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_a82fc3d50ccbfa3f763a1871902f46580}{x\+\_\+sat\+\_\+encoder}
+\item 
+\hyperlink{classself__feeding_1_1modules_1_1SelfFeedingModel_ab88c40865d17ecfed84573453bd2eb53}{x\+\_\+sat\+\_\+head}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 14 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a9180e0572d08648c219a57b9008b2e5d}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a9180e0572d08648c219a57b9008b2e5d}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 62 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a91bbd7facdeff922d3e7ae97b58e3415}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a91bbd7facdeff922d3e7ae97b58e3415}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{argparser }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file modules.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a895c868ad8a892d71cfc13849e48ad87}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a895c868ad8a892d71cfc13849e48ad87}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!build\+\_\+encoder@{build\+\_\+encoder}}
+\index{build\+\_\+encoder@{build\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{build\+\_\+encoder()}{build\_encoder()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+encoder (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{embeddings }\end{DoxyParamCaption})}
+
+
+
+Definition at line 179 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+pad\+\_\+idx, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+pad\+\_\+idx, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+pad\+\_\+idx, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+pad\+\_\+idx, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+vocab\+\_\+size, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+vocab\+\_\+size, and parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+vocab\+\_\+size.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a2326cdf2ff11cdf50102684875e31238}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a2326cdf2ff11cdf50102684875e31238}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!build\+\_\+head@{build\+\_\+head}}
+\index{build\+\_\+head@{build\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{build\+\_\+head()}{build\_head()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{outdim = {\ttfamily 1},  }\item[{}]{num\+\_\+layers = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 194 of file modules.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, modules.\+Kvmemnn.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, transresnet.\+transresnet.\+Transresnet\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, kvmemnn.\+Kvmemnn\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a1197eb318b6aeff97f44d89dc397dc1c}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a1197eb318b6aeff97f44d89dc397dc1c}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!encode\+\_\+dia\+\_\+y@{encode\+\_\+dia\+\_\+y}}
+\index{encode\+\_\+dia\+\_\+y@{encode\+\_\+dia\+\_\+y}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{encode\+\_\+dia\+\_\+y()}{encode\_dia\_y()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+encode\+\_\+dia\+\_\+y (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{y\+\_\+vecs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encodes a tensor of vectorized candidates
+
+:param y_vecs: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
+    candidates
+\end{DoxyVerb}
+ 
+
+Definition at line 127 of file modules.\+py.
+
+
+
+References self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+dia\+\_\+encoder, and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+dia\+\_\+head.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+dialog().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1modules_1_1SelfFeedingModel_a1197eb318b6aeff97f44d89dc397dc1c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a5cf9512d33efb28bbe68a9072f15bd64}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a5cf9512d33efb28bbe68a9072f15bd64}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!forward@{forward}}
+\index{forward@{forward}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+forward (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 110 of file modules.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a7f8b99a9c823753ddf1d94d6660a7f6d}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a7f8b99a9c823753ddf1d94d6660a7f6d}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!init\+\_\+embeddings@{init\+\_\+embeddings}}
+\index{init\+\_\+embeddings@{init\+\_\+embeddings}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{init\+\_\+embeddings()}{init\_embeddings()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file modules.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, modules.\+Kvmemnn.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, transresnet.\+transresnet.\+Transresnet\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, kvmemnn.\+Kvmemnn\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+pad\+\_\+idx, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+pad\+\_\+idx, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+pad\+\_\+idx, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+pad\+\_\+idx, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+vocab\+\_\+size, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+vocab\+\_\+size, and parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+vocab\+\_\+size.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a48355f310914844e39040c4c67156c09}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a48355f310914844e39040c4c67156c09}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!score\+\_\+dialog@{score\+\_\+dialog}}
+\index{score\+\_\+dialog@{score\+\_\+dialog}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{score\+\_\+dialog()}{score\_dialog()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+dialog (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x\+\_\+vecs,  }\item[{}]{y\+\_\+vecs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 113 of file modules.\+py.
+
+
+
+References self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+encode\+\_\+dia\+\_\+y(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+dia\+\_\+encoder, and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+dia\+\_\+head.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1modules_1_1SelfFeedingModel_a48355f310914844e39040c4c67156c09_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a0cd21631fce3dbc552b7006bd25c7edb}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a0cd21631fce3dbc552b7006bd25c7edb}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!score\+\_\+feedback@{score\+\_\+feedback}}
+\index{score\+\_\+feedback@{score\+\_\+feedback}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{score\+\_\+feedback()}{score\_feedback()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x\+\_\+vecs,  }\item[{}]{y\+\_\+vecs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 142 of file modules.\+py.
+
+
+
+References self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+fee\+\_\+encoder, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+fee\+\_\+head, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+fee\+\_\+encoder, and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+fee\+\_\+head.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1modules_1_1SelfFeedingModel_a0cd21631fce3dbc552b7006bd25c7edb_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a76344121fae2bc3a313339b1674da2c5}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a76344121fae2bc3a313339b1674da2c5}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!score\+\_\+satisfaction@{score\+\_\+satisfaction}}
+\index{score\+\_\+satisfaction@{score\+\_\+satisfaction}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{score\+\_\+satisfaction()}{score\_satisfaction()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+satisfaction (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x\+\_\+vecs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 147 of file modules.\+py.
+
+
+
+References self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+sat\+\_\+encoder, and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+sat\+\_\+head.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_ac08bbd26538c62f743664bf537ff438d}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_ac08bbd26538c62f743664bf537ff438d}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!score\+\_\+similarity@{score\+\_\+similarity}}
+\index{score\+\_\+similarity@{score\+\_\+similarity}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{score\+\_\+similarity()}{score\_similarity()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{context\+\_\+h,  }\item[{}]{cand\+\_\+h }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the dot product of encoded contexts and encoded candidates\end{DoxyVerb}
+ 
+
+Definition at line 150 of file modules.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, modules.\+Kvmemnn.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, transresnet.\+transresnet.\+Transresnet\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, kvmemnn.\+Kvmemnn\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+dialog(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1modules_1_1SelfFeedingModel_ac08bbd26538c62f743664bf537ff438d_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a92f3058f48c0d51bbd553651442bd073}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a92f3058f48c0d51bbd553651442bd073}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!dia\+\_\+embeddings@{dia\+\_\+embeddings}}
+\index{dia\+\_\+embeddings@{dia\+\_\+embeddings}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{dia\+\_\+embeddings}{dia\_embeddings}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+dia\+\_\+embeddings}
+
+
+
+Definition at line 69 of file modules.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a15b26965579be3d43221da139f273cdc}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a15b26965579be3d43221da139f273cdc}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!fee\+\_\+embeddings@{fee\+\_\+embeddings}}
+\index{fee\+\_\+embeddings@{fee\+\_\+embeddings}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{fee\+\_\+embeddings}{fee\_embeddings}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+fee\+\_\+embeddings}
+
+
+
+Definition at line 81 of file modules.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_ad755fa0599d25f8b953de711995116ef}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!opt@{opt}}
+\index{opt@{opt}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+opt}
+
+
+
+Definition at line 64 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_aa6989e0f40e11a126e49e34eb9eaf238}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_aa6989e0f40e11a126e49e34eb9eaf238}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!pad\+\_\+idx@{pad\+\_\+idx}}
+\index{pad\+\_\+idx@{pad\+\_\+idx}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{pad\+\_\+idx}{pad\_idx}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+pad\+\_\+idx}
+
+
+
+Definition at line 65 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+encoder(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a75d7ed45fc02845cb1eb5c062c51f181}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a75d7ed45fc02845cb1eb5c062c51f181}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!sat\+\_\+embeddings@{sat\+\_\+embeddings}}
+\index{sat\+\_\+embeddings@{sat\+\_\+embeddings}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{sat\+\_\+embeddings}{sat\_embeddings}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+sat\+\_\+embeddings}
+
+
+
+Definition at line 99 of file modules.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a2d5b31bb1e75b23afb3d9d2ecf4fc436}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a2d5b31bb1e75b23afb3d9d2ecf4fc436}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!vocab\+\_\+size@{vocab\+\_\+size}}
+\index{vocab\+\_\+size@{vocab\+\_\+size}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{vocab\+\_\+size}{vocab\_size}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+vocab\+\_\+size}
+
+
+
+Definition at line 66 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+encoder(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_adf25e0bce4a71b69ade9dbc212784fa7}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_adf25e0bce4a71b69ade9dbc212784fa7}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+dia\+\_\+encoder@{x\+\_\+dia\+\_\+encoder}}
+\index{x\+\_\+dia\+\_\+encoder@{x\+\_\+dia\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+dia\+\_\+encoder}{x\_dia\_encoder}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+dia\+\_\+encoder}
+
+
+
+Definition at line 70 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+dialog().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_afd72526459e6d3ea01c31aa2ceb57292}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_afd72526459e6d3ea01c31aa2ceb57292}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+dia\+\_\+head@{x\+\_\+dia\+\_\+head}}
+\index{x\+\_\+dia\+\_\+head@{x\+\_\+dia\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+dia\+\_\+head}{x\_dia\_head}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+dia\+\_\+head}
+
+
+
+Definition at line 71 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+dialog().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a93e6c8769d16de594fe973ad7960dc98}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a93e6c8769d16de594fe973ad7960dc98}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+fee\+\_\+encoder@{x\+\_\+fee\+\_\+encoder}}
+\index{x\+\_\+fee\+\_\+encoder@{x\+\_\+fee\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+fee\+\_\+encoder}{x\_fee\_encoder}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+fee\+\_\+encoder}
+
+
+
+Definition at line 85 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a41612d52bdf95036036964e262acfcd6}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a41612d52bdf95036036964e262acfcd6}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+fee\+\_\+head@{x\+\_\+fee\+\_\+head}}
+\index{x\+\_\+fee\+\_\+head@{x\+\_\+fee\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+fee\+\_\+head}{x\_fee\_head}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+fee\+\_\+head}
+
+
+
+Definition at line 88 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a82fc3d50ccbfa3f763a1871902f46580}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a82fc3d50ccbfa3f763a1871902f46580}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+sat\+\_\+encoder@{x\+\_\+sat\+\_\+encoder}}
+\index{x\+\_\+sat\+\_\+encoder@{x\+\_\+sat\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+sat\+\_\+encoder}{x\_sat\_encoder}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+sat\+\_\+encoder}
+
+
+
+Definition at line 103 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+satisfaction().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_ab88c40865d17ecfed84573453bd2eb53}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_ab88c40865d17ecfed84573453bd2eb53}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!x\+\_\+sat\+\_\+head@{x\+\_\+sat\+\_\+head}}
+\index{x\+\_\+sat\+\_\+head@{x\+\_\+sat\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{x\+\_\+sat\+\_\+head}{x\_sat\_head}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+x\+\_\+sat\+\_\+head}
+
+
+
+Definition at line 106 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+satisfaction().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_ac8ce734fde9fb3ec280aad69eb07cdca}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_ac8ce734fde9fb3ec280aad69eb07cdca}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!y\+\_\+dia\+\_\+encoder@{y\+\_\+dia\+\_\+encoder}}
+\index{y\+\_\+dia\+\_\+encoder@{y\+\_\+dia\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{y\+\_\+dia\+\_\+encoder}{y\_dia\_encoder}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+dia\+\_\+encoder}
+
+
+
+Definition at line 73 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+encode\+\_\+dia\+\_\+y().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_ad0774b17a58fd486b89d107d09eb96cc}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_ad0774b17a58fd486b89d107d09eb96cc}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!y\+\_\+dia\+\_\+head@{y\+\_\+dia\+\_\+head}}
+\index{y\+\_\+dia\+\_\+head@{y\+\_\+dia\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{y\+\_\+dia\+\_\+head}{y\_dia\_head}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+dia\+\_\+head}
+
+
+
+Definition at line 74 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+encode\+\_\+dia\+\_\+y().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a6b5fddf8b9c535961a9164727203d33d}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a6b5fddf8b9c535961a9164727203d33d}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!y\+\_\+fee\+\_\+encoder@{y\+\_\+fee\+\_\+encoder}}
+\index{y\+\_\+fee\+\_\+encoder@{y\+\_\+fee\+\_\+encoder}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{y\+\_\+fee\+\_\+encoder}{y\_fee\_encoder}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+fee\+\_\+encoder}
+
+
+
+Definition at line 91 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback().
+
+\mbox{\Hypertarget{classself__feeding_1_1modules_1_1SelfFeedingModel_a020de90b88c77e3fb2cfe1fd3d5930f8}\label{classself__feeding_1_1modules_1_1SelfFeedingModel_a020de90b88c77e3fb2cfe1fd3d5930f8}} 
+\index{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}!y\+\_\+fee\+\_\+head@{y\+\_\+fee\+\_\+head}}
+\index{y\+\_\+fee\+\_\+head@{y\+\_\+fee\+\_\+head}!self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model@{self\+\_\+feeding\+::modules\+::\+Self\+Feeding\+Model}}
+\subsubsection{\texorpdfstring{y\+\_\+fee\+\_\+head}{y\_fee\_head}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+y\+\_\+fee\+\_\+head}
+
+
+
+Definition at line 94 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+feedback().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/self\+\_\+feeding/\hyperlink{projects_2self__feeding_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

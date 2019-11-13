@@ -1,5 +1,3 @@
 <map id="mturk_evaluation_task.worlds.WizardEval.shutdown" name="mturk_evaluation_task.worlds.WizardEval.shutdown">
-<area shape="rect" id="node1" title=" " alt="" coords="504,5,703,47"/>
-<area shape="rect" id="node2" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a63d88c9aa26eb8886eb2928d920017cb" title=" " alt="" coords="252,5,456,47"/>
-<area shape="rect" id="node3" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8c2713a39b3a8e89bec417c2b6c0c1eb" title=" " alt="" coords="5,5,204,47"/>
+<area shape="rect" id="node2" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a63d88c9aa26eb8886eb2928d920017cb" title="mturk_evaluation_task.worlds.\lWizardEval.parallel_eval_mode" alt="" coords="252,5,456,47"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="parlai.tasks.personality_captions.agents.DefaultDataset.get_image" name="parlai.tasks.personality_captions.agents.DefaultDataset.get_image">
-<area shape="rect" id="node1" title=" " alt="" coords="292,13,569,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#ae81ce7e05c42b214d42a5a4a5c471c8e" title=" " alt="" coords="5,5,244,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#a76d202d337e31250a02f7decdf886b7a" title="parlai.tasks.personality\l_captions.agents.DefaultDataset.\l__getitem__" alt="" coords="331,5,548,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#a2212cb2961827b893bc0d3354c305f66" title="parlai.tasks.vqa_v1.agents.\lVQADataset.__getitem__" alt="" coords="348,86,531,127"/>
 </map>

@@ -1,0 +1,111 @@
+\hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher}{}\section{parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher}\index{parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher@{parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=213pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=213pt]{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a3d00faef86db6eb5b783b4aba4216daa}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_af60b7813cbea1681237c9290a64489ef}{setup\+\_\+data} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_afc29efc5cf9c9800f0cb5d9346b48f61}{id}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a416d2c1d7eb4e93ba1dc213cba6d2d26}{squad}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This version of SquAD inherits from the Default Teacher. The only
+difference is that the 'text' field of an observation will contain
+the title of the article separated by a newline from the paragraph and the
+query.
+Note: The title will contain underscores, as it is the part of the link for
+the Wikipedia page; i.e., the article is at the site:
+https://en.wikipedia.org/wiki/{TITLE}
+Depending on your task, you may wish to remove underscores.
+\end{DoxyVerb}
+ 
+
+Definition at line 164 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a3d00faef86db6eb5b783b4aba4216daa}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a3d00faef86db6eb5b783b4aba4216daa}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 175 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_af60b7813cbea1681237c9290a64489ef}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_af60b7813cbea1681237c9290a64489ef}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}!setup\+\_\+data@{setup\+\_\+data}}
+\index{setup\+\_\+data@{setup\+\_\+data}!parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data()}{setup\_data()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher.\+setup\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+
+
+Definition at line 180 of file agents.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_afc29efc5cf9c9800f0cb5d9346b48f61}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_afc29efc5cf9c9800f0cb5d9346b48f61}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher.\+id}
+
+
+
+Definition at line 176 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a416d2c1d7eb4e93ba1dc213cba6d2d26}\label{classparlai_1_1tasks_1_1squad_1_1agents_1_1TitleTeacher_a416d2c1d7eb4e93ba1dc213cba6d2d26}} 
+\index{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}!squad@{squad}}
+\index{squad@{squad}!parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher@{parlai\+::tasks\+::squad\+::agents\+::\+Title\+Teacher}}
+\subsubsection{\texorpdfstring{squad}{squad}}
+{\footnotesize\ttfamily parlai.\+tasks.\+squad.\+agents.\+Title\+Teacher.\+squad}
+
+
+
+Definition at line 183 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Edit\+Teacher.\+get(), and parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+get().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/squad/\hyperlink{parlai_2tasks_2squad_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

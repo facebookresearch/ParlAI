@@ -1,0 +1,500 @@
+\hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld}{}\section{parlai.\+core.\+worlds.\+Hogwild\+World Class Reference}
+\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld}\index{parlai.\+core.\+worlds.\+Hogwild\+World@{parlai.\+core.\+worlds.\+Hogwild\+World}}
+
+
+Inheritance diagram for parlai.\+core.\+worlds.\+Hogwild\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+worlds.\+Hogwild\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a99acf6286bf07b0967979dd134768cd8}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, world)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1b7aed0a7b56712f22ee8b04c65d7c00}{display} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0425099fbc33cb97d6fbe67dbd2e8a1f}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae80d3f592818ac39b9cf8802270d8d8a}{epoch\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a9853e25a58444d4516c3f6da8c44d9c2}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a67379773119cebd6ac70fce2abcb19a9}{get\+ID} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae488971481ec6c8ba803b2404ad70e56}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae0b4dc3d2bb4d1dbda7970da03da1a6e}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a7dfc60f5229da37574c31479a0b2ce3a}{get\+\_\+task\+\_\+agent} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0e26cfad1c63628cb43f554c470426b9}{get\+\_\+total\+\_\+exs} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a6bc364b91906b14d792957c8eeed5206}{get\+\_\+total\+\_\+epochs} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a11c6831feb2a54a0d9513b4a514d4097}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1f7e4c566078aebdb5e837c6fed62b17}{save\+\_\+agents} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae72983e6af34391880979491ced1dde6}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae57e2b90771c0feaa0496cb2885eae6d}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a3960deb08a179884b1eea2e423437db2}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a4138f2e9cd59f349ac7b737256faf383}{inner\+\_\+world}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_adce46f602b3dbfb1b2aaaf2abfd502d6}{numthreads}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_abe0b40ea70c93221f9f2541cb6089c60}{sync}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a16d58ef1f8d81bae98e7f99e268ef9b4}{threads}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0224a6c9e173d699a7da6ebe1451f3a6}{max\+\_\+exs}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a5465066ad260dd6f8aeb648bb3088cd5}{maxsize}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Creates a separate world for each thread (process).
+
+Maintains a few shared objects to keep track of state:
+
+- A Semaphore which represents queued examples to be processed. Every call
+  of parley increments this counter; every time a Process claims an
+  example, it decrements this counter.
+
+- A Condition variable which notifies when there are no more queued
+  examples.
+
+- A boolean Value which represents whether the inner worlds should shutdown.
+
+- An integer Value which contains the number of unprocessed examples queued
+  (acquiring the semaphore only claims them--this counter is decremented
+  once the processing is complete).
+\end{DoxyVerb}
+ 
+
+Definition at line 919 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a99acf6286bf07b0967979dd134768cd8}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a99acf6286bf07b0967979dd134768cd8}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{world }\end{DoxyParamCaption})}
+
+
+
+Definition at line 939 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1b7aed0a7b56712f22ee8b04c65d7c00}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1b7aed0a7b56712f22ee8b04c65d7c00}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!display@{display}}
+\index{display@{display}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+display (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unsupported operation. Raises a `NotImplementedError`.\end{DoxyVerb}
+ 
+
+Definition at line 972 of file worlds.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+shutdown(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+shutdown(), parlai.\+core.\+agents.\+Agent.\+shutdown(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokenizer.\+shutdown(), parlai.\+core.\+worlds.\+World.\+shutdown(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+shutdown(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+shutdown(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+shutdown(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+shutdown(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+shutdown().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1b7aed0a7b56712f22ee8b04c65d7c00_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0425099fbc33cb97d6fbe67dbd2e8a1f}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0425099fbc33cb97d6fbe67dbd2e8a1f}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unsupported operation. Raises a `RuntimeError`.\end{DoxyVerb}
+ 
+
+Definition at line 980 of file worlds.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+shutdown(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+shutdown(), parlai.\+core.\+agents.\+Agent.\+shutdown(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokenizer.\+shutdown(), parlai.\+core.\+worlds.\+World.\+shutdown(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+shutdown(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+shutdown(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+shutdown(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+shutdown(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+shutdown(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+shutdown().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0425099fbc33cb97d6fbe67dbd2e8a1f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae80d3f592818ac39b9cf8802270d8d8a}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae80d3f592818ac39b9cf8802270d8d8a}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!epoch\+\_\+done@{epoch\+\_\+done}}
+\index{epoch\+\_\+done@{epoch\+\_\+done}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{epoch\+\_\+done()}{epoch\_done()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+epoch\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return whether the epoch is finished.\end{DoxyVerb}
+ 
+
+Definition at line 985 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+Process.\+numthreads, parlai.\+core.\+worlds.\+Hogwild\+World.\+numthreads, parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync, and parlai.\+core.\+worlds.\+Hogwild\+World.\+sync.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a7dfc60f5229da37574c31479a0b2ce3a}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a7dfc60f5229da37574c31479a0b2ce3a}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!get\+\_\+task\+\_\+agent@{get\+\_\+task\+\_\+agent}}
+\index{get\+\_\+task\+\_\+agent@{get\+\_\+task\+\_\+agent}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+task\+\_\+agent()}{get\_task\_agent()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+task\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return task agent of inner world.\end{DoxyVerb}
+ 
+
+Definition at line 1011 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a6bc364b91906b14d792957c8eeed5206}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a6bc364b91906b14d792957c8eeed5206}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!get\+\_\+total\+\_\+epochs@{get\+\_\+total\+\_\+epochs}}
+\index{get\+\_\+total\+\_\+epochs@{get\+\_\+total\+\_\+epochs}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+total\+\_\+epochs()}{get\_total\_epochs()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return total amount of epochs on which the world has trained.\end{DoxyVerb}
+ 
+
+Definition at line 1019 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+max\+\_\+exs, parlai.\+core.\+worlds.\+World.\+num\+\_\+examples(), parlai.\+core.\+agents.\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Dialog\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Concat\+Dataset.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Dialog\+Data.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+num\+\_\+examples(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a6bc364b91906b14d792957c8eeed5206_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0e26cfad1c63628cb43f554c470426b9}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0e26cfad1c63628cb43f554c470426b9}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!get\+\_\+total\+\_\+exs@{get\+\_\+total\+\_\+exs}}
+\index{get\+\_\+total\+\_\+exs@{get\+\_\+total\+\_\+exs}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+total\+\_\+exs()}{get\_total\_exs()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+exs (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of processed examples.\end{DoxyVerb}
+ 
+
+Definition at line 1015 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a67379773119cebd6ac70fce2abcb19a9}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a67379773119cebd6ac70fce2abcb19a9}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!get\+ID@{get\+ID}}
+\index{get\+ID@{get\+ID}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{get\+I\+D()}{getID()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+ID (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the inner world's ID.\end{DoxyVerb}
+ 
+
+Definition at line 998 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a67379773119cebd6ac70fce2abcb19a9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae0b4dc3d2bb4d1dbda7970da03da1a6e}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae0b4dc3d2bb4d1dbda7970da03da1a6e}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of episodes.\end{DoxyVerb}
+ 
+
+Definition at line 1007 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae0b4dc3d2bb4d1dbda7970da03da1a6e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae488971481ec6c8ba803b2404ad70e56}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae488971481ec6c8ba803b2404ad70e56}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of examples.\end{DoxyVerb}
+ 
+
+Definition at line 1003 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), and parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae488971481ec6c8ba803b2404ad70e56_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a9853e25a58444d4516c3f6da8c44d9c2}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a9853e25a58444d4516c3f6da8c44d9c2}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Queue one item to be processed.\end{DoxyVerb}
+ 
+
+Definition at line 989 of file worlds.\+py.
+
+
+
+References conf.\+release, parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync, parlai.\+core.\+worlds.\+Hogwild\+World.\+sync, and parlai.\+core.\+worlds.\+World.\+update\+\_\+counters().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a9853e25a58444d4516c3f6da8c44d9c2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a11c6831feb2a54a0d9513b4a514d4097}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a11c6831feb2a54a0d9513b4a514d4097}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!report@{report}}
+\index{report@{report}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report the inner world's metrics.\end{DoxyVerb}
+ 
+
+Definition at line 1038 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae72983e6af34391880979491ced1dde6}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae72983e6af34391880979491ced1dde6}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!reset@{reset}}
+\index{reset@{reset}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset the inner world.\end{DoxyVerb}
+ 
+
+Definition at line 1046 of file worlds.\+py.
+
+
+
+References conf.\+release, parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync, parlai.\+core.\+worlds.\+Hogwild\+World.\+sync, and parlai.\+core.\+worlds.\+Hogwild\+World.\+threads.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae57e2b90771c0feaa0496cb2885eae6d}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_ae57e2b90771c0feaa0496cb2885eae6d}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics for the inner world.\end{DoxyVerb}
+ 
+
+Definition at line 1057 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1f7e4c566078aebdb5e837c6fed62b17}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a1f7e4c566078aebdb5e837c6fed62b17}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!save\+\_\+agents@{save\+\_\+agents}}
+\index{save\+\_\+agents@{save\+\_\+agents}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{save\+\_\+agents()}{save\_agents()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+save\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save the inner world's agents.\end{DoxyVerb}
+ 
+
+Definition at line 1042 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a3960deb08a179884b1eea2e423437db2}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a3960deb08a179884b1eea2e423437db2}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set shutdown flag and wake threads up to close themselves.\end{DoxyVerb}
+ 
+
+Definition at line 1061 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname(), parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world, conf.\+release, parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync, parlai.\+core.\+worlds.\+Hogwild\+World.\+sync, parlai.\+core.\+worlds.\+Hogwild\+World.\+threads, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a3960deb08a179884b1eea2e423437db2_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a4138f2e9cd59f349ac7b737256faf383}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a4138f2e9cd59f349ac7b737256faf383}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!inner\+\_\+world@{inner\+\_\+world}}
+\index{inner\+\_\+world@{inner\+\_\+world}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{inner\+\_\+world}{inner\_world}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+inner\+\_\+world}
+
+
+
+Definition at line 941 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+task\+\_\+agent(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+exs(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+I\+D(), parlai.\+core.\+worlds.\+Hogwild\+World.\+num\+\_\+episodes(), parlai.\+core.\+worlds.\+Hogwild\+World.\+num\+\_\+examples(), parlai.\+core.\+worlds.\+Hogwild\+World.\+report(), parlai.\+core.\+worlds.\+Hogwild\+World.\+reset\+\_\+metrics(), parlai.\+core.\+worlds.\+Hogwild\+World.\+save\+\_\+agents(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0224a6c9e173d699a7da6ebe1451f3a6}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a0224a6c9e173d699a7da6ebe1451f3a6}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!max\+\_\+exs@{max\+\_\+exs}}
+\index{max\+\_\+exs@{max\+\_\+exs}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+exs}{max\_exs}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+max\+\_\+exs}
+
+
+
+Definition at line 1024 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a5465066ad260dd6f8aeb648bb3088cd5}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a5465066ad260dd6f8aeb648bb3088cd5}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!maxsize@{maxsize}}
+\index{maxsize@{maxsize}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{maxsize}{maxsize}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+maxsize\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 1002 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_adce46f602b3dbfb1b2aaaf2abfd502d6}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_adce46f602b3dbfb1b2aaaf2abfd502d6}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!numthreads@{numthreads}}
+\index{numthreads@{numthreads}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{numthreads}{numthreads}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+numthreads}
+
+
+
+Definition at line 942 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+World.\+epoch\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_abe0b40ea70c93221f9f2541cb6089c60}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_abe0b40ea70c93221f9f2541cb6089c60}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!sync@{sync}}
+\index{sync@{sync}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{sync}{sync}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+sync}
+
+
+
+Definition at line 944 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+World.\+epoch\+\_\+done(), parlai.\+core.\+worlds.\+Hogwild\+World.\+parley(), parlai.\+core.\+worlds.\+Hogwild\+World.\+reset(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a16d58ef1f8d81bae98e7f99e268ef9b4}\label{classparlai_1_1core_1_1worlds_1_1HogwildWorld_a16d58ef1f8d81bae98e7f99e268ef9b4}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}!threads@{threads}}
+\index{threads@{threads}!parlai\+::core\+::worlds\+::\+Hogwild\+World@{parlai\+::core\+::worlds\+::\+Hogwild\+World}}
+\subsubsection{\texorpdfstring{threads}{threads}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+World.\+threads}
+
+
+
+Definition at line 957 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+core.\+worlds.\+Hogwild\+World.\+reset(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{parlai_2core_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

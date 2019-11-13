@@ -1,0 +1,202 @@
+\hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed}{}\section{parlai.\+agents.\+memnn.\+modules.\+Embed Class Reference}
+\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed}\index{parlai.\+agents.\+memnn.\+modules.\+Embed@{parlai.\+agents.\+memnn.\+modules.\+Embed}}
+
+
+Inheritance diagram for parlai.\+agents.\+memnn.\+modules.\+Embed\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+memnn.\+modules.\+Embed\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a3d901aa67e52a3ea160b5f41acecd2c6}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_af0373995dcb0351175527b06b1db8874}{position\+\_\+encoding}=False, \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a93010185a49bafacc478d85856d1c95d}{reduction}=\textquotesingle{}mean\textquotesingle{}, kwargs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a03a7701e101296fbbf28dcc05039c248}{forward} (self, input)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa6a44a42ac7d06f0f0598b7291d1dc58}{position\+\_\+matrix} (J, d, use\+\_\+cuda)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_af0373995dcb0351175527b06b1db8874}{position\+\_\+encoding}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a93010185a49bafacc478d85856d1c95d}{reduction}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa77cd4b6d146e1981b96b911e6eb62c1}{maxsize}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Embed sequences for MemNN model.
+
+Applies Position Encoding if enabled and currently applies BOW sum.
+\end{DoxyVerb}
+ 
+
+Definition at line 107 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a3d901aa67e52a3ea160b5f41acecd2c6}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a3d901aa67e52a3ea160b5f41acecd2c6}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Embed.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{position\+\_\+encoding = {\ttfamily False},  }\item[{}]{reduction = {\ttfamily \textquotesingle{}mean\textquotesingle{}},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize custom Embedding layer.
+
+:param position_encoding:
+    apply positional encoding transformation on input sequences
+
+:param reduction:
+    reduction strategy to sequences, default 'mean'
+\end{DoxyVerb}
+ 
+
+Definition at line 114 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a03a7701e101296fbbf28dcc05039c248}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a03a7701e101296fbbf28dcc05039c248}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return BOW embedding with PE reweighting if enabled.
+
+:param input:
+    (bsz x seqlen) LongTensor
+
+:returns:
+    (bsz x esz) FloatTensor
+\end{DoxyVerb}
+ 
+
+Definition at line 144 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+memnn.\+modules.\+Embed.\+\_\+reduce(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+position\+\_\+encoding, parlai.\+agents.\+memnn.\+modules.\+Embed.\+position\+\_\+encoding, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+position\+\_\+matrix(), and parlai.\+agents.\+memnn.\+modules.\+Embed.\+position\+\_\+matrix().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a03a7701e101296fbbf28dcc05039c248_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a03a7701e101296fbbf28dcc05039c248_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa6a44a42ac7d06f0f0598b7291d1dc58}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa6a44a42ac7d06f0f0598b7291d1dc58}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!position\+\_\+matrix@{position\+\_\+matrix}}
+\index{position\+\_\+matrix@{position\+\_\+matrix}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{position\+\_\+matrix()}{position\_matrix()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Embed.\+position\+\_\+matrix (\begin{DoxyParamCaption}\item[{}]{J,  }\item[{}]{d,  }\item[{}]{use\+\_\+cuda }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build matrix of position encoding coeffiencents.
+
+See https://papers.nips.cc/paper/5846-end-to-end-memory-networks,
+section 4.1 Model Details: Sentence Representation.
+
+:param J:
+    number of words in the sequence
+
+:param d:
+    dimension of the embedding
+
+:returns:
+    Position Encoding matrix
+\end{DoxyVerb}
+ 
+
+Definition at line 170 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa6a44a42ac7d06f0f0598b7291d1dc58_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa77cd4b6d146e1981b96b911e6eb62c1}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_aa77cd4b6d146e1981b96b911e6eb62c1}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!maxsize@{maxsize}}
+\index{maxsize@{maxsize}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{maxsize}{maxsize}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Embed.\+maxsize\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 169 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_af0373995dcb0351175527b06b1db8874}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_af0373995dcb0351175527b06b1db8874}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!position\+\_\+encoding@{position\+\_\+encoding}}
+\index{position\+\_\+encoding@{position\+\_\+encoding}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{position\+\_\+encoding}{position\_encoding}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Embed.\+position\+\_\+encoding}
+
+
+
+Definition at line 124 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward(), and agent.\+modules.\+Embed.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a93010185a49bafacc478d85856d1c95d}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed_a93010185a49bafacc478d85856d1c95d}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}!reduction@{reduction}}
+\index{reduction@{reduction}!parlai\+::agents\+::memnn\+::modules\+::\+Embed@{parlai\+::agents\+::memnn\+::modules\+::\+Embed}}
+\subsubsection{\texorpdfstring{reduction}{reduction}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Embed.\+reduction}
+
+
+
+Definition at line 125 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/memnn/\hyperlink{parlai_2agents_2memnn_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

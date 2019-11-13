@@ -1,0 +1,822 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager}{}\section{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager}\index{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager@{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager}}
+
+
+Inheritance diagram for parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad366f39cbef4d0d8307cf350cd088ff9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abd4c4eb9e82e9b83858fb98882b0aa61}{server\+\_\+url}, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a727a2f8cf4ec178505b0c3969dbfdbd9}{port}, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a0e6c8fe0d13788925cab5301d0abbab0}{alive\+\_\+callback}, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a109a500b9c4b30e5b20294cfb7890c28}{message\+\_\+callback}, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae081c99d290781a34bc5821b549c45f3}{socket\+\_\+dead\+\_\+callback}, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7fd872477871c32fb7b4f2f0c51f4e88}{task\+\_\+group\+\_\+id}, socket\+\_\+dead\+\_\+timeout=None, \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a13f30c6756085524cdde9706aedd2d2d}{server\+\_\+death\+\_\+callback}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a17a6ebab4a3c0e2882ba01398f2e9df1}{get\+\_\+my\+\_\+sender\+\_\+id} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7b41199438da8694cc9c8d9b3e58da85}{packet\+\_\+should\+\_\+block} (self, packet\+\_\+item)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a1518f69049fee8c6afb27120cdd6b1f3}{channel\+\_\+thread} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa970567ac565617328cd1a07548b1427}{open\+\_\+channel} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae079bc95ebedcab4e52325253db490cf}{close\+\_\+channel} (self, connection\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9a2c04d9512e6866dfda33397d8f363c}{close\+\_\+all\+\_\+channels} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a895934ce725c0770e94ff6ba0842078e}{socket\+\_\+is\+\_\+open} (self, connection\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a91c7216d011823f1c6c4963d863638c8}{queue\+\_\+packet} (self, packet)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad14d75f5b3a3e41a9133de9cd1611b8b}{get\+\_\+status} (self, packet\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ac98d9330dbc0bcfad53a7a66c09fb56a}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abd4c4eb9e82e9b83858fb98882b0aa61}{server\+\_\+url}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a727a2f8cf4ec178505b0c3969dbfdbd9}{port}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a0e6c8fe0d13788925cab5301d0abbab0}{alive\+\_\+callback}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a109a500b9c4b30e5b20294cfb7890c28}{message\+\_\+callback}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae081c99d290781a34bc5821b549c45f3}{socket\+\_\+dead\+\_\+callback}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a13f30c6756085524cdde9706aedd2d2d}{server\+\_\+death\+\_\+callback}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a8a5da45e8861ff72c788b70f1b028cf8}{missed\+\_\+pongs}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7fd872477871c32fb7b4f2f0c51f4e88}{task\+\_\+group\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a84a1087ac11d617a7bc77abb8c6bee7c}{ws}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_afb7d10a292fc0a11924361fa850d58a1}{keep\+\_\+running}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa0236524dd00906097bc2f3a1a654730}{listen\+\_\+thread}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec9735766096eb9f29fe42434d613ffc}{send\+\_\+thread}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aaef7ce806e2ae16234293d4c1ba99346}{queues}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9d7c09f922986128738354d826f13c18}{blocking\+\_\+packets}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a531a94b9188c150a1c0fb486acdb88d0}{threads}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aba446fa424239c0b11d19718294e2218}{run}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a993653c6e53133cda52848cba98ea8d3}{last\+\_\+sent\+\_\+heartbeat\+\_\+time}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa94b912fc3574d0db1396b67a922bf27}{last\+\_\+received\+\_\+heartbeat}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa65b3174e24e25817c450e4ca6ff65a4}{pongs\+\_\+without\+\_\+heartbeat}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5caa5c5113d477505f82ff3d970e8f57}{processed\+\_\+packets}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_af1d018bc78e0f48223e0c24a3e143646}{packet\+\_\+map}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7d2578a166632f5e3f9a5902ad312342}{alive}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abdac51ea8ab1c574d08a8c193f95a87f}{is\+\_\+shutdown}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5a6978486abd2356bc7992f5b02deaca}{send\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad791aec46cde432a30cedaaa66df0bd9}{packet\+\_\+map\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec23bfb776374f11222f0a3b0fc19879}{thread\+\_\+shutdown\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a12d9338e0893b0941d81365cf2a5cf1b}{worker\+\_\+assign\+\_\+ids}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a73c0ecae39b965eb20d44b8e66bd6947}{use\+\_\+socket}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a797b45ad87ca205c4e15ec3f76fdef46}{A\+C\+K\+\_\+\+T\+I\+ME} = \{Packet.\+T\+Y\+P\+E\+\_\+\+A\+L\+I\+V\+E\+: 4, Packet.\+T\+Y\+P\+E\+\_\+\+M\+E\+S\+S\+A\+G\+E\+: 4\}
+\item 
+int \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aad7999f752467c1102a6a527888cab3f}{D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS} = 20
+\item 
+int \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa1fe9e255d2abe5eebb5584ba74d4fdb}{H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE} = 4
+\item 
+int \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a605181eb90b57d3cc5a0bc75e788c4fc}{D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME} = 30
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}SocketManager is a wrapper around websocket to stabilize its packet
+passing. The manager handles resending packet, as well as maintaining
+alive status for all the connections it forms
+\end{DoxyVerb}
+ 
+
+Definition at line 182 of file socket\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad366f39cbef4d0d8307cf350cd088ff9}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad366f39cbef4d0d8307cf350cd088ff9}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{server\+\_\+url,  }\item[{}]{port,  }\item[{}]{alive\+\_\+callback,  }\item[{}]{message\+\_\+callback,  }\item[{}]{socket\+\_\+dead\+\_\+callback,  }\item[{}]{task\+\_\+group\+\_\+id,  }\item[{}]{socket\+\_\+dead\+\_\+timeout = {\ttfamily None},  }\item[{}]{server\+\_\+death\+\_\+callback = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}server_url:           url at which the server is to be run
+port:                 port for the socket to operate on
+alive_callback:       function to be called on alive Packets, defined
+               alive_callback(self, pkt)
+message_callback:     function to be called on message Packets, defined
+               message_callback(self, pkt)
+socket_dead_callback: function to be called when a socket dies, should
+              return false if the socket_manager should ignore
+              the death and treat the socket as alive defined
+               on_socket_dead(self, worker_id, assignment_id)
+socket_dead_timeout:  time to wait between heartbeats before dying
+\end{DoxyVerb}
+ 
+
+Definition at line 206 of file socket\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a1518f69049fee8c6afb27120cdd6b1f3}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a1518f69049fee8c6afb27120cdd6b1f3}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!channel\+\_\+thread@{channel\+\_\+thread}}
+\index{channel\+\_\+thread@{channel\+\_\+thread}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{channel\+\_\+thread()}{channel\_thread()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handler thread for monitoring all channels\end{DoxyVerb}
+ 
+
+Definition at line 577 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+needed\+\_\+heartbeat(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+needed\+\_\+heartbeat(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+missed\+\_\+pongs, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+missed\+\_\+pongs, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+missed\+\_\+pongs, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+should\+\_\+block(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+should\+\_\+block(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+pongs\+\_\+without\+\_\+heartbeat, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+pongs\+\_\+without\+\_\+heartbeat, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+dead\+\_\+callback, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+dead\+\_\+callback, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+dead\+\_\+callback, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+threads, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+threads, parlai.\+core.\+worlds.\+Hogwild\+World.\+threads, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a1518f69049fee8c6afb27120cdd6b1f3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9a2c04d9512e6866dfda33397d8f363c}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9a2c04d9512e6866dfda33397d8f363c}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!close\+\_\+all\+\_\+channels@{close\+\_\+all\+\_\+channels}}
+\index{close\+\_\+all\+\_\+channels@{close\+\_\+all\+\_\+channels}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{close\+\_\+all\+\_\+channels()}{close\_all\_channels()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Closes all channels by clearing the list of channels\end{DoxyVerb}
+ 
+
+Definition at line 690 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9a2c04d9512e6866dfda33397d8f363c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9a2c04d9512e6866dfda33397d8f363c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae079bc95ebedcab4e52325253db490cf}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae079bc95ebedcab4e52325253db490cf}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!close\+\_\+channel@{close\+\_\+channel}}
+\index{close\+\_\+channel@{close\+\_\+channel}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{close\+\_\+channel()}{close\_channel()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{connection\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Closes a channel by connection_id\end{DoxyVerb}
+ 
+
+Definition at line 658 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+thread\+\_\+shutdown\+\_\+lock, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+thread\+\_\+shutdown\+\_\+lock.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae079bc95ebedcab4e52325253db490cf_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae079bc95ebedcab4e52325253db490cf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a17a6ebab4a3c0e2882ba01398f2e9df1}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a17a6ebab4a3c0e2882ba01398f2e9df1}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!get\+\_\+my\+\_\+sender\+\_\+id@{get\+\_\+my\+\_\+sender\+\_\+id}}
+\index{get\+\_\+my\+\_\+sender\+\_\+id@{get\+\_\+my\+\_\+sender\+\_\+id}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+my\+\_\+sender\+\_\+id()}{get\_my\_sender\_id()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Gives the name that this socket manager should use for its world\end{DoxyVerb}
+ 
+
+Definition at line 261 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+\_\+safe\+\_\+send(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+send(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+send(), parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+\_\+send\+\_\+world\+\_\+alive(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+world\+\_\+alive(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+world\+\_\+alive(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+world\+\_\+alive(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+A\+C\+K\+\_\+\+T\+I\+ME, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+A\+C\+K\+\_\+\+T\+I\+ME, parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+alive, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+alive, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+alive, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+alive, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+received\+\_\+heartbeat, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+received\+\_\+heartbeat, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+sent\+\_\+heartbeat\+\_\+time, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+sent\+\_\+heartbeat\+\_\+time, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+send\+\_\+lock, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+send\+\_\+lock, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+send\+\_\+lock, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+server\+\_\+death\+\_\+callback, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+server\+\_\+death\+\_\+callback, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+server\+\_\+death\+\_\+callback, parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+group\+\_\+id, parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+ws, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+ws, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+ws, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+ws.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a17a6ebab4a3c0e2882ba01398f2e9df1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=227pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a17a6ebab4a3c0e2882ba01398f2e9df1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad14d75f5b3a3e41a9133de9cd1611b8b}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad14d75f5b3a3e41a9133de9cd1611b8b}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!get\+\_\+status@{get\+\_\+status}}
+\index{get\+\_\+status@{get\+\_\+status}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+status()}{get\_status()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{packet\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the status of a particular packet by id\end{DoxyVerb}
+ 
+
+Definition at line 724 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa970567ac565617328cd1a07548b1427}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa970567ac565617328cd1a07548b1427}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!open\+\_\+channel@{open\+\_\+channel}}
+\index{open\+\_\+channel@{open\+\_\+channel}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{open\+\_\+channel()}{open\_channel()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Opens a channel for a worker on a given assignment, doesn't re-open
+if the channel is already open.\end{DoxyVerb}
+ 
+
+Definition at line 642 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+received\+\_\+heartbeat, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+received\+\_\+heartbeat, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+sent\+\_\+heartbeat\+\_\+time, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+sent\+\_\+heartbeat\+\_\+time, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+pongs\+\_\+without\+\_\+heartbeat, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+pongs\+\_\+without\+\_\+heartbeat, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7b41199438da8694cc9c8d9b3e58da85}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7b41199438da8694cc9c8d9b3e58da85}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!packet\+\_\+should\+\_\+block@{packet\+\_\+should\+\_\+block}}
+\index{packet\+\_\+should\+\_\+block@{packet\+\_\+should\+\_\+block}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{packet\+\_\+should\+\_\+block()}{packet\_should\_block()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+should\+\_\+block (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{packet\+\_\+item }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Helper function to determine if a packet is still blocking\end{DoxyVerb}
+ 
+
+Definition at line 568 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7b41199438da8694cc9c8d9b3e58da85_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a91c7216d011823f1c6c4963d863638c8}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a91c7216d011823f1c6c4963d863638c8}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!queue\+\_\+packet@{queue\+\_\+packet}}
+\index{queue\+\_\+packet@{queue\+\_\+packet}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{queue\+\_\+packet()}{queue\_packet()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queue\+\_\+packet (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{packet }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Queues sending a packet to its intended owner, returns True if
+queued successfully and False if there is no such worker (anymore)
+\end{DoxyVerb}
+ 
+
+Definition at line 700 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+is\+\_\+open(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+is\+\_\+open(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+is\+\_\+open().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a91c7216d011823f1c6c4963d863638c8_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ac98d9330dbc0bcfad53a7a66c09fb56a}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ac98d9330dbc0bcfad53a7a66c09fb56a}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}marks the socket manager as closing, shuts down all channels\end{DoxyVerb}
+ 
+
+Definition at line 744 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+\_\+ensure\+\_\+closed(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+ensure\+\_\+closed(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+ensure\+\_\+closed(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+ensure\+\_\+closed(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+keep\+\_\+running, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+keep\+\_\+running, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+keep\+\_\+running, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+keep\+\_\+running.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ac98d9330dbc0bcfad53a7a66c09fb56a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a895934ce725c0770e94ff6ba0842078e}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a895934ce725c0770e94ff6ba0842078e}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!socket\+\_\+is\+\_\+open@{socket\+\_\+is\+\_\+open}}
+\index{socket\+\_\+is\+\_\+open@{socket\+\_\+is\+\_\+open}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{socket\+\_\+is\+\_\+open()}{socket\_is\_open()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+is\+\_\+open (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{connection\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 697 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queue\+\_\+packet().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a895934ce725c0770e94ff6ba0842078e_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a797b45ad87ca205c4e15ec3f76fdef46}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a797b45ad87ca205c4e15ec3f76fdef46}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!A\+C\+K\+\_\+\+T\+I\+ME@{A\+C\+K\+\_\+\+T\+I\+ME}}
+\index{A\+C\+K\+\_\+\+T\+I\+ME@{A\+C\+K\+\_\+\+T\+I\+ME}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{A\+C\+K\+\_\+\+T\+I\+ME}{ACK\_TIME}}
+{\footnotesize\ttfamily dictionary parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+A\+C\+K\+\_\+\+T\+I\+ME = \{Packet.\+T\+Y\+P\+E\+\_\+\+A\+L\+I\+V\+E\+: 4, Packet.\+T\+Y\+P\+E\+\_\+\+M\+E\+S\+S\+A\+G\+E\+: 4\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 189 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7d2578a166632f5e3f9a5902ad312342}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7d2578a166632f5e3f9a5902ad312342}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!alive@{alive}}
+\index{alive@{alive}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{alive}{alive}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+alive}
+
+
+
+Definition at line 251 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by server.\+Task\+Socket\+Handler.\+check\+\_\+origin(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), and server.\+Task\+Socket\+Handler.\+on\+\_\+close().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a0e6c8fe0d13788925cab5301d0abbab0}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a0e6c8fe0d13788925cab5301d0abbab0}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!alive\+\_\+callback@{alive\+\_\+callback}}
+\index{alive\+\_\+callback@{alive\+\_\+callback}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{alive\+\_\+callback}{alive\_callback}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+alive\+\_\+callback}
+
+
+
+Definition at line 222 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9d7c09f922986128738354d826f13c18}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a9d7c09f922986128738354d826f13c18}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!blocking\+\_\+packets@{blocking\+\_\+packets}}
+\index{blocking\+\_\+packets@{blocking\+\_\+packets}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{blocking\+\_\+packets}{blocking\_packets}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets}
+
+
+
+Definition at line 239 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a605181eb90b57d3cc5a0bc75e788c4fc}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a605181eb90b57d3cc5a0bc75e788c4fc}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME@{D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME}}
+\index{D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME@{D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME}{DEF\_DEAD\_TIME}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+D\+E\+F\+\_\+\+D\+E\+A\+D\+\_\+\+T\+I\+ME = 30\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 194 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aad7999f752467c1102a6a527888cab3f}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aad7999f752467c1102a6a527888cab3f}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS@{D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS}}
+\index{D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS@{D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS}{DEF\_MISSED\_PONGS}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+D\+E\+F\+\_\+\+M\+I\+S\+S\+E\+D\+\_\+\+P\+O\+N\+GS = 20\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 192 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa1fe9e255d2abe5eebb5584ba74d4fdb}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa1fe9e255d2abe5eebb5584ba74d4fdb}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE@{H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE}}
+\index{H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE@{H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE}{HEARTBEAT\_RATE}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+H\+E\+A\+R\+T\+B\+E\+A\+T\+\_\+\+R\+A\+TE = 4\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 193 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abdac51ea8ab1c574d08a8c193f95a87f}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abdac51ea8ab1c574d08a8c193f95a87f}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!is\+\_\+shutdown@{is\+\_\+shutdown}}
+\index{is\+\_\+shutdown@{is\+\_\+shutdown}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{is\+\_\+shutdown}{is\_shutdown}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown}
+
+
+
+Definition at line 252 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_afb7d10a292fc0a11924361fa850d58a1}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_afb7d10a292fc0a11924361fa850d58a1}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!keep\+\_\+running@{keep\+\_\+running}}
+\index{keep\+\_\+running@{keep\+\_\+running}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{keep\+\_\+running}{keep\_running}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+keep\+\_\+running}
+
+
+
+Definition at line 233 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa94b912fc3574d0db1396b67a922bf27}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa94b912fc3574d0db1396b67a922bf27}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!last\+\_\+received\+\_\+heartbeat@{last\+\_\+received\+\_\+heartbeat}}
+\index{last\+\_\+received\+\_\+heartbeat@{last\+\_\+received\+\_\+heartbeat}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{last\+\_\+received\+\_\+heartbeat}{last\_received\_heartbeat}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+received\+\_\+heartbeat}
+
+
+
+Definition at line 243 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a993653c6e53133cda52848cba98ea8d3}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a993653c6e53133cda52848cba98ea8d3}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!last\+\_\+sent\+\_\+heartbeat\+\_\+time@{last\+\_\+sent\+\_\+heartbeat\+\_\+time}}
+\index{last\+\_\+sent\+\_\+heartbeat\+\_\+time@{last\+\_\+sent\+\_\+heartbeat\+\_\+time}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{last\+\_\+sent\+\_\+heartbeat\+\_\+time}{last\_sent\_heartbeat\_time}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+last\+\_\+sent\+\_\+heartbeat\+\_\+time}
+
+
+
+Definition at line 242 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa0236524dd00906097bc2f3a1a654730}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa0236524dd00906097bc2f3a1a654730}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!listen\+\_\+thread@{listen\+\_\+thread}}
+\index{listen\+\_\+thread@{listen\+\_\+thread}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{listen\+\_\+thread}{listen\_thread}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+listen\+\_\+thread}
+
+
+
+Definition at line 236 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a109a500b9c4b30e5b20294cfb7890c28}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a109a500b9c4b30e5b20294cfb7890c28}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!message\+\_\+callback@{message\+\_\+callback}}
+\index{message\+\_\+callback@{message\+\_\+callback}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{message\+\_\+callback}{message\_callback}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+message\+\_\+callback}
+
+
+
+Definition at line 223 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a8a5da45e8861ff72c788b70f1b028cf8}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a8a5da45e8861ff72c788b70f1b028cf8}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!missed\+\_\+pongs@{missed\+\_\+pongs}}
+\index{missed\+\_\+pongs@{missed\+\_\+pongs}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{missed\+\_\+pongs}{missed\_pongs}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+missed\+\_\+pongs}
+
+
+
+Definition at line 227 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_af1d018bc78e0f48223e0c24a3e143646}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_af1d018bc78e0f48223e0c24a3e143646}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!packet\+\_\+map@{packet\+\_\+map}}
+\index{packet\+\_\+map@{packet\+\_\+map}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{packet\+\_\+map}{packet\_map}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map}
+
+
+
+Definition at line 250 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+status(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queue\+\_\+packet().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad791aec46cde432a30cedaaa66df0bd9}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ad791aec46cde432a30cedaaa66df0bd9}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!packet\+\_\+map\+\_\+lock@{packet\+\_\+map\+\_\+lock}}
+\index{packet\+\_\+map\+\_\+lock@{packet\+\_\+map\+\_\+lock}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{packet\+\_\+map\+\_\+lock}{packet\_map\_lock}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+map\+\_\+lock}
+
+
+
+Definition at line 254 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+status(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queue\+\_\+packet().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa65b3174e24e25817c450e4ca6ff65a4}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aa65b3174e24e25817c450e4ca6ff65a4}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!pongs\+\_\+without\+\_\+heartbeat@{pongs\+\_\+without\+\_\+heartbeat}}
+\index{pongs\+\_\+without\+\_\+heartbeat@{pongs\+\_\+without\+\_\+heartbeat}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{pongs\+\_\+without\+\_\+heartbeat}{pongs\_without\_heartbeat}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+pongs\+\_\+without\+\_\+heartbeat}
+
+
+
+Definition at line 244 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a727a2f8cf4ec178505b0c3969dbfdbd9}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a727a2f8cf4ec178505b0c3969dbfdbd9}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!port@{port}}
+\index{port@{port}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+port}
+
+
+
+Definition at line 221 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5caa5c5113d477505f82ff3d970e8f57}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5caa5c5113d477505f82ff3d970e8f57}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!processed\+\_\+packets@{processed\+\_\+packets}}
+\index{processed\+\_\+packets@{processed\+\_\+packets}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{processed\+\_\+packets}{processed\_packets}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+processed\+\_\+packets}
+
+
+
+Definition at line 249 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aaef7ce806e2ae16234293d4c1ba99346}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aaef7ce806e2ae16234293d4c1ba99346}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!queues@{queues}}
+\index{queues@{queues}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{queues}{queues}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues}
+
+
+
+Definition at line 238 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+all\+\_\+channels(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+status(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+open\+\_\+channel(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+is\+\_\+open().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aba446fa424239c0b11d19718294e2218}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aba446fa424239c0b11d19718294e2218}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!run@{run}}
+\index{run@{run}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{run}{run}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run}
+
+
+
+Definition at line 241 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+open\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5a6978486abd2356bc7992f5b02deaca}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a5a6978486abd2356bc7992f5b02deaca}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!send\+\_\+lock@{send\+\_\+lock}}
+\index{send\+\_\+lock@{send\+\_\+lock}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{send\+\_\+lock}{send\_lock}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+send\+\_\+lock}
+
+
+
+Definition at line 253 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec9735766096eb9f29fe42434d613ffc}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec9735766096eb9f29fe42434d613ffc}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!send\+\_\+thread@{send\+\_\+thread}}
+\index{send\+\_\+thread@{send\+\_\+thread}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{send\+\_\+thread}{send\_thread}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+send\+\_\+thread}
+
+
+
+Definition at line 237 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a13f30c6756085524cdde9706aedd2d2d}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a13f30c6756085524cdde9706aedd2d2d}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!server\+\_\+death\+\_\+callback@{server\+\_\+death\+\_\+callback}}
+\index{server\+\_\+death\+\_\+callback@{server\+\_\+death\+\_\+callback}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{server\+\_\+death\+\_\+callback}{server\_death\_callback}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+server\+\_\+death\+\_\+callback}
+
+
+
+Definition at line 225 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abd4c4eb9e82e9b83858fb98882b0aa61}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_abd4c4eb9e82e9b83858fb98882b0aa61}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!server\+\_\+url@{server\+\_\+url}}
+\index{server\+\_\+url@{server\+\_\+url}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{server\+\_\+url}{server\_url}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+server\+\_\+url}
+
+
+
+Definition at line 220 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae081c99d290781a34bc5821b549c45f3}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_ae081c99d290781a34bc5821b549c45f3}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!socket\+\_\+dead\+\_\+callback@{socket\+\_\+dead\+\_\+callback}}
+\index{socket\+\_\+dead\+\_\+callback@{socket\+\_\+dead\+\_\+callback}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{socket\+\_\+dead\+\_\+callback}{socket\_dead\_callback}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+socket\+\_\+dead\+\_\+callback}
+
+
+
+Definition at line 224 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7fd872477871c32fb7b4f2f0c51f4e88}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a7fd872477871c32fb7b4f2f0c51f4e88}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}}
+\index{task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{task\+\_\+group\+\_\+id}{task\_group\_id}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+task\+\_\+group\+\_\+id}
+
+
+
+Definition at line 230 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec23bfb776374f11222f0a3b0fc19879}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_aec23bfb776374f11222f0a3b0fc19879}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!thread\+\_\+shutdown\+\_\+lock@{thread\+\_\+shutdown\+\_\+lock}}
+\index{thread\+\_\+shutdown\+\_\+lock@{thread\+\_\+shutdown\+\_\+lock}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{thread\+\_\+shutdown\+\_\+lock}{thread\_shutdown\_lock}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+thread\+\_\+shutdown\+\_\+lock}
+
+
+
+Definition at line 255 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+close\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a531a94b9188c150a1c0fb486acdb88d0}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a531a94b9188c150a1c0fb486acdb88d0}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!threads@{threads}}
+\index{threads@{threads}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{threads}{threads}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+threads}
+
+
+
+Definition at line 240 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a73c0ecae39b965eb20d44b8e66bd6947}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a73c0ecae39b965eb20d44b8e66bd6947}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!use\+\_\+socket@{use\+\_\+socket}}
+\index{use\+\_\+socket@{use\+\_\+socket}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{use\+\_\+socket}{use\_socket}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+use\+\_\+socket}
+
+
+
+Definition at line 420 of file socket\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a12d9338e0893b0941d81365cf2a5cf1b}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a12d9338e0893b0941d81365cf2a5cf1b}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!worker\+\_\+assign\+\_\+ids@{worker\+\_\+assign\+\_\+ids}}
+\index{worker\+\_\+assign\+\_\+ids@{worker\+\_\+assign\+\_\+ids}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{worker\+\_\+assign\+\_\+ids}{worker\_assign\_ids}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids}
+
+
+
+Definition at line 256 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+open\+\_\+channel(), and parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+open\+\_\+channel().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a84a1087ac11d617a7bc77abb8c6bee7c}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager_a84a1087ac11d617a7bc77abb8c6bee7c}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}!ws@{ws}}
+\index{ws@{ws}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{ws}{ws}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+ws}
+
+
+
+Definition at line 232 of file socket\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/\hyperlink{socket__manager_8py}{socket\+\_\+manager.\+py}\end{DoxyCompactItemize}

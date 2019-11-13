@@ -1,8 +1,7 @@
 <map id="parlai.agents.fairseq.fairseq.FairseqAgent.eval_step" name="parlai.agents.fairseq.fairseq.FairseqAgent.eval_step">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,192,112"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acfaca66bf4dd1d86e2d3a9d4a26a1717" title=" " alt="" coords="246,5,433,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a5074ffa21fb6d970195ebd61a5d1777e" title=" " alt="" coords="244,71,435,112"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ad544aa89e71cb430cb044039c5a6edc3" title=" " alt="" coords="240,136,439,177"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ac221841fbf251bf1e89c9c08b0ce3239" title=" " alt="" coords="487,39,689,80"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#aaabc57b4b15f6dc34996c72cf3210510" title=" " alt="" coords="495,104,681,145"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acfaca66bf4dd1d86e2d3a9d4a26a1717" title="parlai.agents.fairseq.fairseq.\lFairseqAgent._generate" alt="" coords="246,5,433,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a5074ffa21fb6d970195ebd61a5d1777e" title="parlai.agents.fairseq.fairseq.\lFairseqAgent._make_sample" alt="" coords="244,71,435,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ad544aa89e71cb430cb044039c5a6edc3" title="parlai.agents.fairseq.fairseq.\lFairseqAgent._update_metrics" alt="" coords="240,136,439,177"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1.html#a1521e559b740f741ebb47b8755202bb2" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v1.argsort" alt="" coords="265,202,414,258"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1.html#adb5a414ae439f14c54e8c760b91cc4c8" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v1.padded_tensor" alt="" coords="265,282,414,338"/>
 </map>

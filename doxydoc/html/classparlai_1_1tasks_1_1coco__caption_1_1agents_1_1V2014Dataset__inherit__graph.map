@@ -1,5 +1,3 @@
 <map id="parlai.tasks.coco_caption.agents.V2014Dataset" name="parlai.tasks.coco_caption.agents.V2014Dataset">
-<area shape="rect" id="node1" title=" " alt="" coords="5,169,223,211"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultDataset.html" title=" " alt="" coords="5,80,223,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="80,5,148,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultDataset.html" title="parlai.tasks.coco_caption.agents.\lDefaultDataset" alt="" coords="5,80,223,121"/>
 </map>

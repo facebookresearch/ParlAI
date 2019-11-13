@@ -1,0 +1,633 @@
+\hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel}{}\section{transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model Class Reference}
+\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel}\index{transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model}}
+
+
+Inheritance diagram for transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_acaca0bb6a00469c4c2b74b1dfa9b8285}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, personalities\+\_\+list, dictionary)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af21e163c4c9d044d575d3bdb02410d9e}{forward} (self, image\+\_\+features, personalities, dialogue\+\_\+histories, labels, batchsize=None, personalities\+\_\+tensor=None)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a50a29d40246542bad1cf6fc380d66327}{forward\+\_\+personality} (self, personalities, personalities\+\_\+tensor)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a0891aec01eb1a1bafb5b291296581e25}{forward\+\_\+text\+\_\+encoder} (self, texts, dialogue\+\_\+history=False, batchsize=None)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_aec98b66974021d37e0e256be86aa16f2}{forward\+\_\+image} (self, image\+\_\+features)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a9c07e36d8eb4e3321a61783e7b0931bd}{get\+\_\+rep} (self, encodings, batchsize=None)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad1ba23a860f8af75c97510ae52622748}{choose\+\_\+best\+\_\+response} (self, image\+\_\+features, personalities, dialogue\+\_\+histories, candidates, candidates\+\_\+encoded=None, k=1, batchsize=None)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a8d2154a0d338144c48e049ebe76b9727}{choose\+\_\+topk} (self, idx, encoded, candidates, candidates\+\_\+encoded, one\+\_\+cand\+\_\+set, k)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_affb7977abac6a4671c8d31456345fb58}{get\+\_\+loss} (self, total\+\_\+encoded, labels\+\_\+encoded)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ae3bbb2a16a997364f8a097459a8e8562}{cat\+\_\+encodings} (self, tensors)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad7697f18fff90dcbfad0f1f53b5e15ef}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad2698fb30d8d35e94887affba0850f05}{hidden\+\_\+dim}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a64fa905fd4b3a8a8024190c496cb3b78}{share\+\_\+encoder}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af9cd236b06c97dff73d8636e9ce4c4cd}{blank\+\_\+encoding}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a918e176190eb3aa3d1b4a07f3fc9ed38}{encode\+\_\+image}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a2d2c3250bf7d3552592da75813fa370c}{encode\+\_\+personality}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a40882a05a319d9ad76b9ed310785056a}{encode\+\_\+dialogue\+\_\+history}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a4362c115b423401d6a4a7f0becd101ff}{label\+\_\+encoder}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a91db0743a901b988b167dc903da9da5a}{multimodal}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a781d514d0149942dce4c7a4e2e14a3b4}{multimodal\+\_\+combo}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad62ff64bec37d5017de0304a906b574c}{multimodal\+\_\+encoder}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a3437ef876c639900ff3adda99ec20f0e}{context\+\_\+encoder}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Extension of Transresnet to incorporate dialogue history and multimodality.\end{DoxyVerb}
+ 
+
+Definition at line 21 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_acaca0bb6a00469c4c2b74b1dfa9b8285}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_acaca0bb6a00469c4c2b74b1dfa9b8285}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{personalities\+\_\+list,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 87 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad7697f18fff90dcbfad0f1f53b5e15ef}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad7697f18fff90dcbfad0f1f53b5e15ef}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Override to include model-specific args.\end{DoxyVerb}
+ 
+
+Definition at line 25 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ae3bbb2a16a997364f8a097459a8e8562}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ae3bbb2a16a997364f8a097459a8e8562}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!cat\+\_\+encodings@{cat\+\_\+encodings}}
+\index{cat\+\_\+encodings@{cat\+\_\+encodings}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{cat\+\_\+encodings()}{cat\_encodings()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tensors }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Concatenate non-`None` encodings.
+
+:param tensors:
+    list tensors to concatenate
+
+:return:
+    concatenated tensors
+\end{DoxyVerb}
+ 
+
+Definition at line 449 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+context\+\_\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+context\+\_\+encoder, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+context\+\_\+encoder, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, modules.\+Kvmemnn.\+opt, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, transresnet.\+transresnet.\+Transresnet\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, kvmemnn.\+Kvmemnn\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, and transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ae3bbb2a16a997364f8a097459a8e8562_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad1ba23a860f8af75c97510ae52622748}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad1ba23a860f8af75c97510ae52622748}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!choose\+\_\+best\+\_\+response@{choose\+\_\+best\+\_\+response}}
+\index{choose\+\_\+best\+\_\+response@{choose\+\_\+best\+\_\+response}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{choose\+\_\+best\+\_\+response()}{choose\_best\_response()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{dialogue\+\_\+histories,  }\item[{}]{candidates,  }\item[{}]{candidates\+\_\+encoded = {\ttfamily None},  }\item[{}]{k = {\ttfamily 1},  }\item[{}]{batchsize = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Choose the best response for each example.
+
+:param image_features:
+    list of tensors of image features
+:param personalities:
+    list of personalities
+:param dialogue_histories:
+    list of dialogue histories, one per example
+:param candidates:
+    list of candidates, one set per example
+:param candidates_encoded:
+    optional; if specified, a fixed set of encoded candidates that is
+    used for each example
+:param k:
+    number of ranked candidates to return. if < 1, we return the ranks
+    of all candidates in the set.
+
+:return:
+    a set of ranked candidates for each example
+\end{DoxyVerb}
+ 
+
+Definition at line 341 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+topk(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+eval(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+eval, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+forward(), parlai.\+agents.\+starspace.\+modules.\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Bert\+Wrapper.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Identity.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad1ba23a860f8af75c97510ae52622748_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a8d2154a0d338144c48e049ebe76b9727}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a8d2154a0d338144c48e049ebe76b9727}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!choose\+\_\+topk@{choose\+\_\+topk}}
+\index{choose\+\_\+topk@{choose\+\_\+topk}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{choose\+\_\+topk()}{choose\_topk()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+topk (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{idx,  }\item[{}]{encoded,  }\item[{}]{candidates,  }\item[{}]{candidates\+\_\+encoded,  }\item[{}]{one\+\_\+cand\+\_\+set,  }\item[{}]{k }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Choose top k best responses for a single example.
+
+:param idx:
+    idx of example in encoded
+:param encoded:
+    full matrix of encoded representations (for the whole batch)
+:param candidates:
+    list of candidates
+:param candidates_encoded:
+    encoding of the candidates
+:param one_cand_set:
+    true if there is one set of candidates for each example
+:param k:
+    how many ranked responses to return
+
+:return:
+    ranked list of k responses
+\end{DoxyVerb}
+ 
+
+Definition at line 389 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a8d2154a0d338144c48e049ebe76b9727_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af21e163c4c9d044d575d3bdb02410d9e}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af21e163c4c9d044d575d3bdb02410d9e}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!forward@{forward}}
+\index{forward@{forward}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{dialogue\+\_\+histories,  }\item[{}]{labels,  }\item[{}]{batchsize = {\ttfamily None},  }\item[{}]{personalities\+\_\+tensor = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Model forward pass.
+
+:param image_features:
+    list of tensors of image features, one per example
+:param personalities:
+    list of personalities, one per example
+:param dialogue_histories:
+    list of dialogue histories, one per example
+:param labels:
+    list of response labels, one per example
+:param personalities_tensor:
+    (optional) list of personality representations, usually a one-hot
+    vector if specified
+
+:return:
+    the encoded context and the encoded captions.
+\end{DoxyVerb}
+ 
+
+Definition at line 192 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+loss(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af21e163c4c9d044d575d3bdb02410d9e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af21e163c4c9d044d575d3bdb02410d9e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_aec98b66974021d37e0e256be86aa16f2}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_aec98b66974021d37e0e256be86aa16f2}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!forward\+\_\+image@{forward\+\_\+image}}
+\index{forward\+\_\+image@{forward\+\_\+image}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+image()}{forward\_image()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encode image features.
+
+:param image_features:
+    list of image features
+
+:return:
+    encoded representation of the image features
+\end{DoxyVerb}
+ 
+
+Definition at line 286 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+blank\+\_\+encoding, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+image, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal, and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+combo.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), and transresnet.\+modules.\+Transresnet\+Model.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_aec98b66974021d37e0e256be86aa16f2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a50a29d40246542bad1cf6fc380d66327}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a50a29d40246542bad1cf6fc380d66327}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!forward\+\_\+personality@{forward\+\_\+personality}}
+\index{forward\+\_\+personality@{forward\+\_\+personality}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+personality()}{forward\_personality()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{personalities,  }\item[{}]{personalities\+\_\+tensor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encode personalities.
+
+:param personalities:
+    list of personalities, one per example
+:param personalities_tensor:
+    (optional) list of personality representations, usually a one-hot
+    vector if specified
+
+:return:
+    encoded representation of the personalities
+\end{DoxyVerb}
+ 
+
+Definition at line 228 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+blank\+\_\+encoding, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+personality, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal, and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+combo.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), and transresnet.\+modules.\+Transresnet\+Model.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a50a29d40246542bad1cf6fc380d66327_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a0891aec01eb1a1bafb5b291296581e25}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a0891aec01eb1a1bafb5b291296581e25}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!forward\+\_\+text\+\_\+encoder@{forward\+\_\+text\+\_\+encoder}}
+\index{forward\+\_\+text\+\_\+encoder@{forward\+\_\+text\+\_\+encoder}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+text\+\_\+encoder()}{forward\_text\_encoder()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{texts,  }\item[{}]{dialogue\+\_\+history = {\ttfamily False},  }\item[{}]{batchsize = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass for a text encoder.
+
+:param texts:
+    text to encode
+:param dialogue_history:
+    flag that indicates whether the text is dialogue history; if False,
+    text is a response candidate
+:param batchsize:
+    size of the batch
+
+:return:
+    encoded representation of the `texts`
+\end{DoxyVerb}
+ 
+
+Definition at line 251 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+additional\+\_\+layer, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+blank\+\_\+encoding, transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+context\+\_\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+context\+\_\+encoder, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+context\+\_\+encoder, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+dialogue\+\_\+history, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+label\+\_\+encoder, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+combo, and transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder\+\_\+frozen.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a0891aec01eb1a1bafb5b291296581e25_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a0891aec01eb1a1bafb5b291296581e25_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_affb7977abac6a4671c8d31456345fb58}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_affb7977abac6a4671c8d31456345fb58}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!get\+\_\+loss@{get\+\_\+loss}}
+\index{get\+\_\+loss@{get\+\_\+loss}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{get\+\_\+loss()}{get\_loss()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+loss (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{total\+\_\+encoded,  }\item[{}]{labels\+\_\+encoded }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute loss over batch.
+
+:param total_encoded:
+    encoding of the examples
+:param labels_encoded:
+    encoding of the labels
+
+:return:
+    total batch loss, and number of correct examples
+\end{DoxyVerb}
+ 
+
+Definition at line 423 of file modules.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, transresnet.\+transresnet.\+Transresnet\+Agent.\+use\+\_\+cuda, taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_affb7977abac6a4671c8d31456345fb58_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a9c07e36d8eb4e3321a61783e7b0931bd}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a9c07e36d8eb4e3321a61783e7b0931bd}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!get\+\_\+rep@{get\+\_\+rep}}
+\index{get\+\_\+rep@{get\+\_\+rep}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{get\+\_\+rep()}{get\_rep()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{encodings,  }\item[{}]{batchsize = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the multimodal representation of the encodings.
+
+:param encodings:
+    list of encodings
+:param batchsize:
+    size of batch
+
+:return:
+    final multimodal representations
+\end{DoxyVerb}
+ 
+
+Definition at line 305 of file modules.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+blank\+\_\+encoding, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+combo, transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+encoder, transresnet.\+modules.\+Transresnet\+Model.\+sum\+\_\+encodings(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, transresnet.\+transresnet.\+Transresnet\+Agent.\+use\+\_\+cuda, taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a9c07e36d8eb4e3321a61783e7b0931bd_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a9c07e36d8eb4e3321a61783e7b0931bd_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af9cd236b06c97dff73d8636e9ce4c4cd}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_af9cd236b06c97dff73d8636e9ce4c4cd}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!blank\+\_\+encoding@{blank\+\_\+encoding}}
+\index{blank\+\_\+encoding@{blank\+\_\+encoding}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{blank\+\_\+encoding}{blank\_encoding}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+blank\+\_\+encoding}
+
+
+
+Definition at line 98 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a3437ef876c639900ff3adda99ec20f0e}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a3437ef876c639900ff3adda99ec20f0e}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!context\+\_\+encoder@{context\+\_\+encoder}}
+\index{context\+\_\+encoder@{context\+\_\+encoder}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{context\+\_\+encoder}{context\_encoder}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+context\+\_\+encoder}
+
+
+
+Definition at line 150 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a40882a05a319d9ad76b9ed310785056a}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a40882a05a319d9ad76b9ed310785056a}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!encode\+\_\+dialogue\+\_\+history@{encode\+\_\+dialogue\+\_\+history}}
+\index{encode\+\_\+dialogue\+\_\+history@{encode\+\_\+dialogue\+\_\+history}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{encode\+\_\+dialogue\+\_\+history}{encode\_dialogue\_history}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+dialogue\+\_\+history}
+
+
+
+Definition at line 105 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a918e176190eb3aa3d1b4a07f3fc9ed38}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a918e176190eb3aa3d1b4a07f3fc9ed38}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!encode\+\_\+image@{encode\+\_\+image}}
+\index{encode\+\_\+image@{encode\+\_\+image}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{encode\+\_\+image}{encode\_image}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+image}
+
+
+
+Definition at line 103 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a2d2c3250bf7d3552592da75813fa370c}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a2d2c3250bf7d3552592da75813fa370c}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!encode\+\_\+personality@{encode\+\_\+personality}}
+\index{encode\+\_\+personality@{encode\+\_\+personality}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{encode\+\_\+personality}{encode\_personality}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+encode\+\_\+personality}
+
+
+
+Definition at line 104 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad2698fb30d8d35e94887affba0850f05}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad2698fb30d8d35e94887affba0850f05}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!hidden\+\_\+dim@{hidden\+\_\+dim}}
+\index{hidden\+\_\+dim@{hidden\+\_\+dim}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{hidden\+\_\+dim}{hidden\_dim}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+hidden\+\_\+dim}
+
+
+
+Definition at line 89 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a4362c115b423401d6a4a7f0becd101ff}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a4362c115b423401d6a4a7f0becd101ff}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!label\+\_\+encoder@{label\+\_\+encoder}}
+\index{label\+\_\+encoder@{label\+\_\+encoder}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{label\+\_\+encoder}{label\_encoder}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+label\+\_\+encoder}
+
+
+
+Definition at line 114 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a91db0743a901b988b167dc903da9da5a}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a91db0743a901b988b167dc903da9da5a}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!multimodal@{multimodal}}
+\index{multimodal@{multimodal}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{multimodal}{multimodal}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal}
+
+
+
+Definition at line 126 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a781d514d0149942dce4c7a4e2e14a3b4}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a781d514d0149942dce4c7a4e2e14a3b4}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!multimodal\+\_\+combo@{multimodal\+\_\+combo}}
+\index{multimodal\+\_\+combo@{multimodal\+\_\+combo}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{multimodal\+\_\+combo}{multimodal\_combo}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+combo}
+
+
+
+Definition at line 128 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad62ff64bec37d5017de0304a906b574c}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_ad62ff64bec37d5017de0304a906b574c}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!multimodal\+\_\+encoder@{multimodal\+\_\+encoder}}
+\index{multimodal\+\_\+encoder@{multimodal\+\_\+encoder}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{multimodal\+\_\+encoder}{multimodal\_encoder}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+multimodal\+\_\+encoder}
+
+
+
+Definition at line 134 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a64fa905fd4b3a8a8024190c496cb3b78}\label{classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel_a64fa905fd4b3a8a8024190c496cb3b78}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}!share\+\_\+encoder@{share\+\_\+encoder}}
+\index{share\+\_\+encoder@{share\+\_\+encoder}!transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model@{transresnet\+\_\+multimodal\+::modules\+::\+Transresnet\+Multimodal\+Model}}
+\subsubsection{\texorpdfstring{share\+\_\+encoder}{share\_encoder}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+share\+\_\+encoder}
+
+
+
+Definition at line 90 of file modules.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/image\+\_\+chat/transresnet\+\_\+multimodal/\hyperlink{projects_2image__chat_2transresnet__multimodal_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

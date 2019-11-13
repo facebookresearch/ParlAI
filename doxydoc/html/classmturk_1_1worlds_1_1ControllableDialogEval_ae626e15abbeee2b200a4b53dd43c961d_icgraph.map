@@ -1,0 +1,12 @@
+<map id="mturk.worlds.ControllableDialogEval.get_control_msg" name="mturk.worlds.ControllableDialogEval.get_control_msg">
+<area shape="rect" id="node2" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#ac91833b4ab4b602e102cef3d7a605536" title="mturk.worlds.Controllable\lDialogEval.evaluate_consistency" alt="" coords="245,5,459,47"/>
+<area shape="rect" id="node3" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06c86b010d4db36333eb3f520dfc926b" title="mturk.worlds.Controllable\lDialogEval.parallel_eval_mode" alt="" coords="533,156,733,197"/>
+<area shape="rect" id="node4" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a0cf75a08d4164e2b351a4ebf11e3bb53" title="mturk.worlds.Controllable\lDialogEval.evaluate_engagingness" alt="" coords="239,123,465,164"/>
+<area shape="rect" id="node5" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a6208c058cb87f311f1362f597af72130" title="mturk.worlds.Controllable\lDialogEval.evaluate_fluency" alt="" coords="259,188,445,229"/>
+<area shape="rect" id="node6" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#aced8844b17899e1cc4c920a72cb490a4" title="mturk.worlds.Controllable\lDialogEval.evaluate_persona" alt="" coords="257,253,447,295"/>
+<area shape="rect" id="node7" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06569ce7ce50e5bc930bf699c4a70167" title="mturk.worlds.Controllable\lDialogEval.evaluate_repetitiveness" alt="" coords="239,319,465,360"/>
+<area shape="rect" id="node8" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a549992c78140c745d43874d073eb90c1" title="mturk.worlds.Controllable\lDialogEval.is_msg_tooshortlong" alt="" coords="247,384,457,425"/>
+<area shape="rect" id="node9" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#af81be6365b8b4be98cb300aa51f1de9c" title="mturk.worlds.Controllable\lDialogEval.get_human_agent_act" alt="" coords="524,325,741,367"/>
+<area shape="rect" id="node10" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="513,391,752,418"/>
+<area shape="rect" id="node11" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8d951acf0577bb2cfbfe77f49c9147da" title="mturk_evaluation_task.worlds.\lWizardEval.get_human_agent_act" alt="" coords="522,443,743,484"/>
+</map>

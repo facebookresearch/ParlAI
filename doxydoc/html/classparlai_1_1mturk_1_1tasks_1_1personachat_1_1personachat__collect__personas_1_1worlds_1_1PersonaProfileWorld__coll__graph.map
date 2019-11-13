@@ -1,7 +1,5 @@
 <map id="parlai.mturk.tasks.personachat.personachat_collect_personas.worlds.PersonaProfileWorld" name="parlai.mturk.tasks.personachat.personachat_collect_personas.worlds.PersonaProfileWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,297,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="69,244,234,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="69,155,234,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="70,80,233,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="123,5,180,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title="parlai.mturk.core.worlds.\lMTurkOnboardWorld" alt="" coords="69,244,234,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.worlds.\lMTurkDataWorld" alt="" coords="69,155,234,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="70,80,233,107"/>
 </map>

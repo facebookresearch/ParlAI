@@ -1,0 +1,122 @@
+\hypertarget{classcontrollable__seq2seq_1_1util_1_1ConvAI2History}{}\section{controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History Class Reference}
+\label{classcontrollable__seq2seq_1_1util_1_1ConvAI2History}\index{controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classcontrollable__seq2seq_1_1util_1_1ConvAI2History__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classcontrollable__seq2seq_1_1util_1_1ConvAI2History__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af36e292c392c06ca0d61c29450f09dc0}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, text, assume\+\_\+persontokens=True, dictionary=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_a2a5b63d3b0762fe38e6353a26c430998}{persona\+\_\+lines}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af5523b045a96f91e7dafc5d9088e4993}{partner\+\_\+utts}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af8973aa261b7a1bac44f999993f8376a}{own\+\_\+utts}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}An object to store the history of a ConvAI2 conversation in a convenient format.
+\end{DoxyVerb}
+ 
+
+Definition at line 16 of file util.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af36e292c392c06ca0d61c29450f09dc0}\label{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af36e292c392c06ca0d61c29450f09dc0}} 
+\index{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{assume\+\_\+persontokens = {\ttfamily True},  }\item[{}]{dictionary = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Separates text (the dialogue context) into:
+  self.persona_lines: list of strings; the persona lines with "your persona:"
+    removed.
+  self.partner_utts: list of strings; the partner's utterances.
+  self.own_utts: list of strings; the bot's own utterances.
+All of the above are lowercase and tokenized.
+
+Inputs:
+  text: string. Contains several lines separated by \n. The first few lines are
+    persona lines beginning "your persona: ", then the next lines are dialogue.
+  assume_persontokens: If True, assert that the dialogue lines start with
+    __p1__ and __p2__ respectively, and then remove them.
+  dictionary: parlai DictionaryAgent.
+\end{DoxyVerb}
+ 
+
+Definition at line 21 of file util.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+util.\+fix\+\_\+personaline\+\_\+period(), and controllable\+\_\+seq2seq.\+util.\+remove\+\_\+prefix().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af36e292c392c06ca0d61c29450f09dc0_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af8973aa261b7a1bac44f999993f8376a}\label{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af8973aa261b7a1bac44f999993f8376a}} 
+\index{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}!own\+\_\+utts@{own\+\_\+utts}}
+\index{own\+\_\+utts@{own\+\_\+utts}!controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}}
+\subsubsection{\texorpdfstring{own\+\_\+utts}{own\_utts}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+own\+\_\+utts}
+
+
+
+Definition at line 66 of file util.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af5523b045a96f91e7dafc5d9088e4993}\label{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_af5523b045a96f91e7dafc5d9088e4993}} 
+\index{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}!partner\+\_\+utts@{partner\+\_\+utts}}
+\index{partner\+\_\+utts@{partner\+\_\+utts}!controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}}
+\subsubsection{\texorpdfstring{partner\+\_\+utts}{partner\_utts}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+partner\+\_\+utts}
+
+
+
+Definition at line 65 of file util.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_a2a5b63d3b0762fe38e6353a26c430998}\label{classcontrollable__seq2seq_1_1util_1_1ConvAI2History_a2a5b63d3b0762fe38e6353a26c430998}} 
+\index{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}!persona\+\_\+lines@{persona\+\_\+lines}}
+\index{persona\+\_\+lines@{persona\+\_\+lines}!controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History@{controllable\+\_\+seq2seq\+::util\+::\+Conv\+A\+I2\+History}}
+\subsubsection{\texorpdfstring{persona\+\_\+lines}{persona\_lines}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+persona\+\_\+lines}
+
+
+
+Definition at line 64 of file util.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{util_8py}{util.\+py}\end{DoxyCompactItemize}

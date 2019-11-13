@@ -1,5 +1,5 @@
 <map id="parlai.core.teachers.AbstractImageTeacher.get_image_features" name="parlai.core.teachers.AbstractImageTeacher.get_image_features">
-<area shape="rect" id="node1" title=" " alt="" coords="481,5,704,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae2f395708462355b28888be7a434ebf4" title=" " alt="" coords="244,5,433,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae519608a207d86bd7801f3043ff0ebf5" title=" " alt="" coords="5,5,196,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae2f395708462355b28888be7a434ebf4" title="parlai.core.teachers.Abstract\lImageTeacher.get" alt="" coords="276,39,465,80"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="513,5,719,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae519608a207d86bd7801f3043ff0ebf5" title="parlai.core.teachers.Abstract\lImageTeacher.next_example" alt="" coords="521,71,711,112"/>
 </map>

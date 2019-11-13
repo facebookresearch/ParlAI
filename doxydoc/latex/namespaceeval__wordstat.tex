@@ -1,0 +1,283 @@
+\hypertarget{namespaceeval__wordstat}{}\section{eval\+\_\+wordstat Namespace Reference}
+\label{namespaceeval__wordstat}\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceeval__wordstat_a3872be823cf90eb2beb19e7aeb94a898}{setup\+\_\+args} (\hyperlink{namespaceeval__wordstat_a46e86ff5435363475d0171c9bde00fc8}{parser}=None)
+\item 
+def \hyperlink{namespaceeval__wordstat_a2290cb39c5797675ac4020f96447c1ff}{get\+\_\+word\+\_\+stats} (text, agent\+\_\+dict, bins=\mbox{[}0)
+\item 
+def \hyperlink{namespaceeval__wordstat_a27c623656f9e3e3f0b0bb6ef04781d9c}{update\+\_\+sent\+\_\+attr\+\_\+stats} (sent\+\_\+attrs, history, prediction)
+\item 
+def \hyperlink{namespaceeval__wordstat_aeb6ae646e7e2bede292baff78ca1bd83}{eval\+\_\+wordstat} (\hyperlink{namespaceeval__wordstat_a47d20263ebe9cfadbc2d479ba8ac1e25}{opt}, \hyperlink{namespaceeval__wordstat_a1eeded546d4fba5edcd7531fe75b95eb}{print\+\_\+parser}=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceeval__wordstat_a46e86ff5435363475d0171c9bde00fc8}{parser} = \hyperlink{namespaceeval__wordstat_a3872be823cf90eb2beb19e7aeb94a898}{setup\+\_\+args}()
+\item 
+\hyperlink{namespaceeval__wordstat_a1eeded546d4fba5edcd7531fe75b95eb}{print\+\_\+parser}
+\item 
+\hyperlink{namespaceeval__wordstat_aae7b83a7fa256a49dcc6978b83f55ded}{model}
+\item 
+\hyperlink{namespaceeval__wordstat_a151bdc0806a8f6bc026424f2dbb1555e}{task}
+\item 
+\hyperlink{namespaceeval__wordstat_a0187c7471425ec9b859405c1e1fa5b6f}{external\+\_\+dict}
+\item 
+\hyperlink{namespaceeval__wordstat_af9acf373a29cffbdc88bf271775d49c3}{model\+\_\+file}
+\item 
+\hyperlink{namespaceeval__wordstat_a4410f5b30aee351d3d4d38491779d637}{dict\+\_\+file}
+\item 
+\hyperlink{namespaceeval__wordstat_a2e55b1d954bcca3f7c68733dedbe20e0}{dict\+\_\+lower}
+\item 
+\hyperlink{namespaceeval__wordstat_a1857aba571e92b0bd99ba8bee5194921}{batchsize}
+\item 
+\hyperlink{namespaceeval__wordstat_ad91a8093b019c0b0088d47b27816373d}{numthreads}
+\item 
+\hyperlink{namespaceeval__wordstat_a47d20263ebe9cfadbc2d479ba8ac1e25}{opt} = parser.\+parse\+\_\+args(print\+\_\+args=False)
+\item 
+list \hyperlink{namespaceeval__wordstat_a9b6a657068e17305f2ecfaabb2e1f4e1}{fnames}
+\item 
+\hyperlink{namespaceeval__wordstat_af74ced6a7df00b343701ec4ee7279996}{version}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceeval__wordstat_aeb6ae646e7e2bede292baff78ca1bd83}\label{namespaceeval__wordstat_aeb6ae646e7e2bede292baff78ca1bd83}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{eval\+\_\+wordstat()}{eval\_wordstat()}}
+{\footnotesize\ttfamily def eval\+\_\+wordstat.\+eval\+\_\+wordstat (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{print\+\_\+parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluates a model.
+
+:param opt: tells the evaluation function how to run
+:param print_parser: if provided, prints the options that are set within the
+    model after loading the model
+\end{DoxyVerb}
+ 
+
+Definition at line 119 of file eval\+\_\+wordstat.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+core.\+worlds.\+create\+\_\+task(), make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, get\+\_\+word\+\_\+stats(), controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information(), eval\+\_\+ppl.\+int, parlai.\+core.\+metrics.\+normalize\+\_\+answer(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and update\+\_\+sent\+\_\+attr\+\_\+stats().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceeval__wordstat_aeb6ae646e7e2bede292baff78ca1bd83_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceeval__wordstat_a2290cb39c5797675ac4020f96447c1ff}\label{namespaceeval__wordstat_a2290cb39c5797675ac4020f96447c1ff}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!get\+\_\+word\+\_\+stats@{get\+\_\+word\+\_\+stats}}
+\index{get\+\_\+word\+\_\+stats@{get\+\_\+word\+\_\+stats}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{get\+\_\+word\+\_\+stats()}{get\_word\_stats()}}
+{\footnotesize\ttfamily def eval\+\_\+wordstat.\+get\+\_\+word\+\_\+stats (\begin{DoxyParamCaption}\item[{}]{text,  }\item[{}]{agent\+\_\+dict,  }\item[{}]{bins = {\ttfamily \mbox{[}0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Function which takes text sequence and dict, returns word freq and length statistics
+
+:param sequence: text sequence
+:param agent_dict: can be external dict or dict from the model
+:param bins: list with range boundaries
+:return: freqs dictionary, num words, avg word length, avg char length
+\end{DoxyVerb}
+ 
+
+Definition at line 80 of file eval\+\_\+wordstat.\+py.
+
+
+
+Referenced by eval\+\_\+wordstat().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{namespaceeval__wordstat_a2290cb39c5797675ac4020f96447c1ff_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceeval__wordstat_a3872be823cf90eb2beb19e7aeb94a898}\label{namespaceeval__wordstat_a3872be823cf90eb2beb19e7aeb94a898}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def eval\+\_\+wordstat.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 36 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a27c623656f9e3e3f0b0bb6ef04781d9c}\label{namespaceeval__wordstat_a27c623656f9e3e3f0b0bb6ef04781d9c}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!update\+\_\+sent\+\_\+attr\+\_\+stats@{update\+\_\+sent\+\_\+attr\+\_\+stats}}
+\index{update\+\_\+sent\+\_\+attr\+\_\+stats@{update\+\_\+sent\+\_\+attr\+\_\+stats}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{update\+\_\+sent\+\_\+attr\+\_\+stats()}{update\_sent\_attr\_stats()}}
+{\footnotesize\ttfamily def eval\+\_\+wordstat.\+update\+\_\+sent\+\_\+attr\+\_\+stats (\begin{DoxyParamCaption}\item[{}]{sent\+\_\+attrs,  }\item[{}]{history,  }\item[{}]{prediction }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update the sent_attrs dict with the attributes of a prediction with given history.
+
+Inputs:
+  sent_attrs: dictionary mapping each attr (a string) to a list of floats
+    (the scores).
+  history: a ConvAI2History
+  prediction: string. the response text for which we measure sent attributes
+\end{DoxyVerb}
+ 
+
+Definition at line 103 of file eval\+\_\+wordstat.\+py.
+
+
+
+Referenced by eval\+\_\+wordstat().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=324pt]{namespaceeval__wordstat_a27c623656f9e3e3f0b0bb6ef04781d9c_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceeval__wordstat_a1857aba571e92b0bd99ba8bee5194921}\label{namespaceeval__wordstat_a1857aba571e92b0bd99ba8bee5194921}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!batchsize@{batchsize}}
+\index{batchsize@{batchsize}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{batchsize}{batchsize}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+batchsize}
+
+
+
+Definition at line 24 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a4410f5b30aee351d3d4d38491779d637}\label{namespaceeval__wordstat_a4410f5b30aee351d3d4d38491779d637}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!dict\+\_\+file@{dict\+\_\+file}}
+\index{dict\+\_\+file@{dict\+\_\+file}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{dict\+\_\+file}{dict\_file}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+dict\+\_\+file}
+
+
+
+Definition at line 22 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a2e55b1d954bcca3f7c68733dedbe20e0}\label{namespaceeval__wordstat_a2e55b1d954bcca3f7c68733dedbe20e0}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!dict\+\_\+lower@{dict\+\_\+lower}}
+\index{dict\+\_\+lower@{dict\+\_\+lower}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{dict\+\_\+lower}{dict\_lower}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+dict\+\_\+lower}
+
+
+
+Definition at line 23 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a0187c7471425ec9b859405c1e1fa5b6f}\label{namespaceeval__wordstat_a0187c7471425ec9b859405c1e1fa5b6f}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!external\+\_\+dict@{external\+\_\+dict}}
+\index{external\+\_\+dict@{external\+\_\+dict}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{external\+\_\+dict}{external\_dict}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+external\+\_\+dict}
+
+
+
+Definition at line 20 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a9b6a657068e17305f2ecfaabb2e1f4e1}\label{namespaceeval__wordstat_a9b6a657068e17305f2ecfaabb2e1f4e1}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!fnames@{fnames}}
+\index{fnames@{fnames}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{fnames}{fnames}}
+{\footnotesize\ttfamily list eval\+\_\+wordstat.\+fnames}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  [
+2             \textcolor{stringliteral}{'convai2\_self\_seq2seq\_model.tgz'},
+3             \textcolor{stringliteral}{'convai2\_self\_seq2seq\_model.dict'},
+4             \textcolor{stringliteral}{'convai2\_self\_seq2seq\_model.opt'},
+5         ]
+\end{DoxyCode}
+
+
+Definition at line 33 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_aae7b83a7fa256a49dcc6978b83f55ded}\label{namespaceeval__wordstat_aae7b83a7fa256a49dcc6978b83f55ded}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!model@{model}}
+\index{model@{model}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+model}
+
+
+
+Definition at line 18 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_af9acf373a29cffbdc88bf271775d49c3}\label{namespaceeval__wordstat_af9acf373a29cffbdc88bf271775d49c3}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!model\+\_\+file@{model\+\_\+file}}
+\index{model\+\_\+file@{model\+\_\+file}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{model\+\_\+file}{model\_file}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+model\+\_\+file}
+
+
+
+Definition at line 21 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_ad91a8093b019c0b0088d47b27816373d}\label{namespaceeval__wordstat_ad91a8093b019c0b0088d47b27816373d}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!numthreads@{numthreads}}
+\index{numthreads@{numthreads}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{numthreads}{numthreads}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+numthreads}
+
+
+
+Definition at line 25 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a47d20263ebe9cfadbc2d479ba8ac1e25}\label{namespaceeval__wordstat_a47d20263ebe9cfadbc2d479ba8ac1e25}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!opt@{opt}}
+\index{opt@{opt}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+opt = parser.\+parse\+\_\+args(print\+\_\+args=False)}
+
+
+
+Definition at line 27 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a46e86ff5435363475d0171c9bde00fc8}\label{namespaceeval__wordstat_a46e86ff5435363475d0171c9bde00fc8}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!parser@{parser}}
+\index{parser@{parser}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+parser = \hyperlink{namespaceeval__wordstat_a3872be823cf90eb2beb19e7aeb94a898}{setup\+\_\+args}()}
+
+
+
+Definition at line 298 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a1eeded546d4fba5edcd7531fe75b95eb}\label{namespaceeval__wordstat_a1eeded546d4fba5edcd7531fe75b95eb}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!print\+\_\+parser@{print\+\_\+parser}}
+\index{print\+\_\+parser@{print\+\_\+parser}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{print\+\_\+parser}{print\_parser}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+print\+\_\+parser}
+
+
+
+Definition at line 299 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_a151bdc0806a8f6bc026424f2dbb1555e}\label{namespaceeval__wordstat_a151bdc0806a8f6bc026424f2dbb1555e}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!task@{task}}
+\index{task@{task}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{task}{task}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+task}
+
+
+
+Definition at line 19 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceeval__wordstat_af74ced6a7df00b343701ec4ee7279996}\label{namespaceeval__wordstat_af74ced6a7df00b343701ec4ee7279996}} 
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!version@{version}}
+\index{version@{version}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{version}{version}}
+{\footnotesize\ttfamily eval\+\_\+wordstat.\+version}
+
+
+
+Definition at line 38 of file eval\+\_\+wordstat.\+py.
+

@@ -1,0 +1,138 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1data__stats}{}\section{parlai.\+scripts.\+data\+\_\+stats Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1data__stats}\index{parlai.\+scripts.\+data\+\_\+stats@{parlai.\+scripts.\+data\+\_\+stats}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_add47fb96d75895f4c21d9e310cb1df40}{setup\+\_\+args} (\hyperlink{namespaceparlai_1_1scripts_1_1data__stats_af1cc1fdf5289b1dfc8277f9de43ff109}{parser}=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a8cc2308cc735ce6cf029d4c02fea5a21}{report} (world, counts, log\+\_\+time)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a3bf0a490abe0b6ea608d1f9ece194c79}{verify} (opt, printargs=None, \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a89286b21a94125aadf5cc8571abe3f7f}{print\+\_\+parser}=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_af1cc1fdf5289b1dfc8277f9de43ff109}{parser} = \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_add47fb96d75895f4c21d9e310cb1df40}{setup\+\_\+args}()
+\item 
+\hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a63e65c276e15211e573af8db9cfb9dbf}{report\+\_\+text}
+\item 
+\hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a08ce833d7c44ab350dfd93f9ae09b614}{report\+\_\+log}
+\item 
+\hyperlink{namespaceparlai_1_1scripts_1_1data__stats_a89286b21a94125aadf5cc8571abe3f7f}{print\+\_\+parser}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_a8cc2308cc735ce6cf029d4c02fea5a21}\label{namespaceparlai_1_1scripts_1_1data__stats_a8cc2308cc735ce6cf029d4c02fea5a21}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!report@{report}}
+\index{report@{report}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+data\+\_\+stats.\+report (\begin{DoxyParamCaption}\item[{}]{world,  }\item[{}]{counts,  }\item[{}]{log\+\_\+time }\end{DoxyParamCaption})}
+
+
+
+Definition at line 52 of file data\+\_\+stats.\+py.
+
+
+
+References generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+scripts.\+data\+\_\+stats.\+verify().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1data__stats_a8cc2308cc735ce6cf029d4c02fea5a21_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_add47fb96d75895f4c21d9e310cb1df40}\label{namespaceparlai_1_1scripts_1_1data__stats_add47fb96d75895f4c21d9e310cb1df40}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+data\+\_\+stats.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 22 of file data\+\_\+stats.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_a3bf0a490abe0b6ea608d1f9ece194c79}\label{namespaceparlai_1_1scripts_1_1data__stats_a3bf0a490abe0b6ea608d1f9ece194c79}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!verify@{verify}}
+\index{verify@{verify}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{verify()}{verify()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+data\+\_\+stats.\+verify (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{printargs = {\ttfamily None},  }\item[{}]{print\+\_\+parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 72 of file data\+\_\+stats.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task(), make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+scripts.\+data\+\_\+stats.\+report(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+
+
+Referenced by test\+\_\+new\+\_\+tasks.\+Test\+New\+Tasks.\+test\+\_\+verify\+\_\+data().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1data__stats_a3bf0a490abe0b6ea608d1f9ece194c79_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1data__stats_a3bf0a490abe0b6ea608d1f9ece194c79_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_af1cc1fdf5289b1dfc8277f9de43ff109}\label{namespaceparlai_1_1scripts_1_1data__stats_af1cc1fdf5289b1dfc8277f9de43ff109}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!parser@{parser}}
+\index{parser@{parser}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+data\+\_\+stats.\+parser = \hyperlink{namespaceparlai_1_1scripts_1_1data__stats_add47fb96d75895f4c21d9e310cb1df40}{setup\+\_\+args}()}
+
+
+
+Definition at line 171 of file data\+\_\+stats.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_a89286b21a94125aadf5cc8571abe3f7f}\label{namespaceparlai_1_1scripts_1_1data__stats_a89286b21a94125aadf5cc8571abe3f7f}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!print\+\_\+parser@{print\+\_\+parser}}
+\index{print\+\_\+parser@{print\+\_\+parser}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{print\+\_\+parser}{print\_parser}}
+{\footnotesize\ttfamily parlai.\+scripts.\+data\+\_\+stats.\+print\+\_\+parser}
+
+
+
+Definition at line 173 of file data\+\_\+stats.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_a08ce833d7c44ab350dfd93f9ae09b614}\label{namespaceparlai_1_1scripts_1_1data__stats_a08ce833d7c44ab350dfd93f9ae09b614}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!report\+\_\+log@{report\+\_\+log}}
+\index{report\+\_\+log@{report\+\_\+log}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{report\+\_\+log}{report\_log}}
+{\footnotesize\ttfamily parlai.\+scripts.\+data\+\_\+stats.\+report\+\_\+log}
+
+
+
+Definition at line 172 of file data\+\_\+stats.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1data__stats_a63e65c276e15211e573af8db9cfb9dbf}\label{namespaceparlai_1_1scripts_1_1data__stats_a63e65c276e15211e573af8db9cfb9dbf}} 
+\index{parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}!report\+\_\+text@{report\+\_\+text}}
+\index{report\+\_\+text@{report\+\_\+text}!parlai\+::scripts\+::data\+\_\+stats@{parlai\+::scripts\+::data\+\_\+stats}}
+\subsubsection{\texorpdfstring{report\+\_\+text}{report\_text}}
+{\footnotesize\ttfamily parlai.\+scripts.\+data\+\_\+stats.\+report\+\_\+text}
+
+
+
+Definition at line 172 of file data\+\_\+stats.\+py.
+

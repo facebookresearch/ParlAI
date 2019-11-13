@@ -1,0 +1,425 @@
+\hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent}{}\section{parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent}\index{parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent@{parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a975b292cb31540e198a220d3c9bd7ea5}{add\+\_\+cmdline\+\_\+args} (cls, parser)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a832c1e669ba04ca3c6258216cc82bdca}{dictionary\+\_\+class} (cls)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a8e406a0b849d5f823b66329c5285c29c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_abfbd6ca4f56545ac9c4514f38e65d1a2}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a92213f8bec03859a310d5535a077e999}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a2c0cb628c4cc600b0968e6161d7a139a}{observe} (self, obs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae00fc04461f0ff1442bd894a5b574a3e}{is\+\_\+valid\+\_\+word} (self, word)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a0688b7cf7ef26834f8ff11f0893fa45b}{get\+\_\+prediction} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a525621d38b382d27fad882ca4a8c682a}{act} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae0178adc22b61bc37632eed426f853df}{save} (self, path=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a01fa26682df757201166d6f18be60da8}{load} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a574f4bdfd253231cd3ae54d9b9d3a6c3}{id}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a18103467daa976a54a84feb931cdf2be}{unigram\+\_\+cache}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_abfbd6ca4f56545ac9c4514f38e65d1a2}{opt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a115f363de67abb097c3abf3ffe99a1da}{num\+\_\+words}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a26ced196313bd88939a230881b857ff7}{dict}
+\item 
+\hyperlink{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a590ee9adde9db2a7f65b28455e966a1b}{observation}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 25 of file unigram.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a8e406a0b849d5f823b66329c5285c29c}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a8e406a0b849d5f823b66329c5285c29c}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Construct a UnigramAgent.
+
+:param opt: parlai options
+:param shared: Used to duplicate the model for batching/hogwild.
+\end{DoxyVerb}
+ 
+
+Definition at line 43 of file unigram.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a525621d38b382d27fad882ca4a8c682a}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a525621d38b382d27fad882ca4a8c682a}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!act@{act}}
+\index{act@{act}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stub act, which always makes the same prediction.
+\end{DoxyVerb}
+ 
+
+Definition at line 92 of file unigram.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+get\+I\+D(), and parlai.\+core.\+agents.\+Agent.\+get\+I\+D().
+
+
+
+Referenced by parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+act\+\_\+blocking().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a525621d38b382d27fad882ca4a8c682a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a525621d38b382d27fad882ca4a8c682a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a975b292cb31540e198a220d3c9bd7ea5}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a975b292cb31540e198a220d3c9bd7ea5}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{parser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Adds command line arguments
+\end{DoxyVerb}
+ 
+
+Definition at line 27 of file unigram.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dictionary\+\_\+class(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dictionary\+\_\+class(), and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dictionary\+\_\+class().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a975b292cb31540e198a220d3c9bd7ea5_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a832c1e669ba04ca3c6258216cc82bdca}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a832c1e669ba04ca3c6258216cc82bdca}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}\item[{}]{cls }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the DictionaryAgent used for tokenization.
+\end{DoxyVerb}
+ 
+
+Definition at line 37 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a832c1e669ba04ca3c6258216cc82bdca_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a0688b7cf7ef26834f8ff11f0893fa45b}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a0688b7cf7ef26834f8ff11f0893fa45b}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!get\+\_\+prediction@{get\+\_\+prediction}}
+\index{get\+\_\+prediction@{get\+\_\+prediction}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+prediction()}{get\_prediction()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Core algorithm, which gathers the most common unigrams into a string.
+\end{DoxyVerb}
+ 
+
+Definition at line 77 of file unigram.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+is\+\_\+valid\+\_\+word(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+num\+\_\+words, and parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+unigram\+\_\+cache.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+act(), and parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+save().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a0688b7cf7ef26834f8ff11f0893fa45b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a0688b7cf7ef26834f8ff11f0893fa45b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae00fc04461f0ff1442bd894a5b574a3e}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae00fc04461f0ff1442bd894a5b574a3e}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!is\+\_\+valid\+\_\+word@{is\+\_\+valid\+\_\+word}}
+\index{is\+\_\+valid\+\_\+word@{is\+\_\+valid\+\_\+word}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{is\+\_\+valid\+\_\+word()}{is\_valid\_word()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+is\+\_\+valid\+\_\+word (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{word }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Marks whether a string may be included in the unigram list. Used to
+filter punctuation and special tokens.
+\end{DoxyVerb}
+ 
+
+Definition at line 68 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae00fc04461f0ff1442bd894a5b574a3e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a01fa26682df757201166d6f18be60da8}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a01fa26682df757201166d6f18be60da8}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!load@{load}}
+\index{load@{load}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stub load which ignores the model on disk, as UnigramAgent depends
+on the dictionary, which is saved elsewhere.
+\end{DoxyVerb}
+ 
+
+Definition at line 112 of file unigram.\+py.
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a01fa26682df757201166d6f18be60da8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a2c0cb628c4cc600b0968e6161d7a139a}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a2c0cb628c4cc600b0968e6161d7a139a}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!observe@{observe}}
+\index{observe@{observe}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stub observe method.\end{DoxyVerb}
+ 
+
+Definition at line 64 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+parley(), and parlai.\+core.\+worlds.\+Executable\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a2c0cb628c4cc600b0968e6161d7a139a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae0178adc22b61bc37632eed426f853df}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae0178adc22b61bc37632eed426f853df}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!save@{save}}
+\index{save@{save}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stub save which dumps options. Necessary for evaluation scripts to
+load the model.
+\end{DoxyVerb}
+ 
+
+Definition at line 98 of file unigram.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+shutdown(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+shutdown().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae0178adc22b61bc37632eed426f853df_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_ae0178adc22b61bc37632eed426f853df_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a92213f8bec03859a310d5535a077e999}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a92213f8bec03859a310d5535a077e999}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!share@{share}}
+\index{share@{share}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Basic sharing function.\end{DoxyVerb}
+ 
+
+Definition at line 60 of file unigram.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a26ced196313bd88939a230881b857ff7}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a26ced196313bd88939a230881b857ff7}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!dict@{dict}}
+\index{dict@{dict}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict}
+
+
+
+Definition at line 56 of file unigram.\+py.
+
+
+
+Referenced by generator.\+agents.\+Two\+Stage\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+get\+\_\+history\+\_\+vec(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse\+\_\+cands(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+share(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a574f4bdfd253231cd3ae54d9b9d3a6c3}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a574f4bdfd253231cd3ae54d9b9d3a6c3}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!id@{id}}
+\index{id@{id}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+id}
+
+
+
+Definition at line 50 of file unigram.\+py.
+
+
+
+Referenced by taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+act(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+approve\+\_\+work(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+episode\+\_\+done(), parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+get(), parlai.\+tasks.\+multiwoz.\+agents.\+Multi\+Woz\+Teacher.\+get(), parlai.\+tasks.\+taskmaster.\+agents.\+Woz\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+taskmaster.\+agents.\+Self\+Dialogue\+Segment\+Teacher.\+get(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+get\+\_\+new\+\_\+act\+\_\+message(), mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+get\+\_\+update\+\_\+packet(), parlai.\+core.\+agents.\+Agent.\+get\+I\+D(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+action(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+observe(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+observe\+\_\+typing\+\_\+on(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+prepare\+\_\+timeout(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+reject\+\_\+work(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+set\+\_\+status(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+set\+\_\+stored\+\_\+data(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+share(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+hit\+\_\+completion().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a115f363de67abb097c3abf3ffe99a1da}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a115f363de67abb097c3abf3ffe99a1da}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!num\+\_\+words@{num\+\_\+words}}
+\index{num\+\_\+words@{num\+\_\+words}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{num\+\_\+words}{num\_words}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+num\+\_\+words}
+
+
+
+Definition at line 53 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a590ee9adde9db2a7f65b28455e966a1b}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a590ee9adde9db2a7f65b28455e966a1b}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!observation@{observation}}
+\index{observation@{observation}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation}
+
+
+
+Definition at line 66 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+agents.\+repeat\+\_\+query.\+repeat\+\_\+query.\+Repeat\+Query\+Agent.\+act(), parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+act(), parlai.\+agents.\+repeat\+\_\+label.\+repeat\+\_\+label.\+Repeat\+Label\+Agent.\+act(), parlai.\+core.\+agents.\+Agent.\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Data\+Agent\+Base.\+act(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+act(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+act(), transresnet.\+transresnet.\+Transresnet\+Agent.\+act(), parlai.\+core.\+agents.\+Teacher.\+act(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+act(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+act(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+act(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+act(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+act(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+act(), kvmemnn.\+Kvmemnn\+Agent.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+last\+\_\+reply(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), parlai.\+core.\+agents.\+Agent.\+observe(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+core.\+agents.\+Agent.\+reset(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+reset(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+reset(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+train\+\_\+act().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_abfbd6ca4f56545ac9c4514f38e65d1a2}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_abfbd6ca4f56545ac9c4514f38e65d1a2}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!opt@{opt}}
+\index{opt@{opt}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt}
+
+
+
+Definition at line 52 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+drqa.\+drqa.\+Simple\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+fromfile.\+agents.\+Parlaiformat\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), kvmemnn.\+Kvmemnn\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+act(), parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+act(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+act(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+act(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+act(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+backward(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Data\+Agent\+Base.\+build(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+criterion(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+lr\+\_\+scheduler(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+build\+\_\+model(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+build\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+build\+\_\+model(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+build\+\_\+model(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step(), parlai.\+core.\+worlds.\+World.\+display(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+feedback(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+doc2txt(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+answer(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+extract(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Data\+Agent.\+get\+\_\+data(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Data\+Agent.\+get\+\_\+data(), parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+get\+\_\+extraction\+\_\+instructions(), kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+get\+\_\+task\+\_\+candidates\+\_\+path(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+init\+\_\+optim(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load\+\_\+personalities(), parlai.\+tasks.\+convai2.\+worlds.\+Interactive\+World.\+load\+\_\+personas(), parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+observe(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+override\+\_\+opt(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+and\+\_\+process\+\_\+known\+\_\+args(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), parlai.\+core.\+params.\+Parlai\+Parser.\+print\+\_\+args(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+receive\+\_\+metrics(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+report(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+save(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+save(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+save(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+save(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+save\+\_\+data(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+save\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+save\+\_\+data(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+save\+\_\+data(), worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+save\+\_\+data(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+score\+\_\+candidates(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+set\+\_\+vocab\+\_\+candidates(), dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+setup\+\_\+data(), agents.\+Task\+Teacher.\+setup\+\_\+data(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+setup\+\_\+image\+\_\+features(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+setup\+\_\+optimizer(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), parlai.\+core.\+worlds.\+World.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+share(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+share(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+share(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), parlai.\+core.\+worlds.\+Multi\+World.\+share(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+train\+\_\+act(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt(), and parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+vectorize().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a18103467daa976a54a84feb931cdf2be}\label{classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent_a18103467daa976a54a84feb931cdf2be}} 
+\index{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}!unigram\+\_\+cache@{unigram\+\_\+cache}}
+\index{unigram\+\_\+cache@{unigram\+\_\+cache}!parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent@{parlai\+::agents\+::unigram\+::unigram\+::\+Unigram\+Agent}}
+\subsubsection{\texorpdfstring{unigram\+\_\+cache}{unigram\_cache}}
+{\footnotesize\ttfamily parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+unigram\+\_\+cache}
+
+
+
+Definition at line 51 of file unigram.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+get\+\_\+prediction().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/unigram/\hyperlink{unigram_8py}{unigram.\+py}\end{DoxyCompactItemize}

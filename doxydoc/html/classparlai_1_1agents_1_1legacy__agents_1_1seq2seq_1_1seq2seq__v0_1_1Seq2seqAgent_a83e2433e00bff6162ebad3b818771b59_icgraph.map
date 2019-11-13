@@ -1,10 +1,15 @@
 <map id="parlai.agents.legacy_agents.seq2seq.seq2seq_v0.Seq2seqAgent.vectorize" name="parlai.agents.legacy_agents.seq2seq.seq2seq_v0.Seq2seqAgent.vectorize">
-<area shape="rect" id="node1" title=" " alt="" coords="796,169,985,225"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent.html#ab6f67e52990f7cafdb7fbd2f6215e968" title=" " alt="" coords="525,5,748,76"/>
-<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7e76b6e8f11577a56a9c000cb360a44e" title=" " alt="" coords="259,120,477,161"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a0eb23a78aea413ae4f90ce0628179920" title=" " alt="" coords="267,278,469,334"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a87b18f0d6ab11be3c49375af072d0d33" title=" " alt="" coords="289,212,447,253"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title=" " alt="" coords="525,176,748,217"/>
-<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,215,211,256"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,281,205,323"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a426f2fb245c6a0a409365c4662aec2d2" title="parlai.agents.starspace.starspace.\lStarspaceAgent.batch_act" alt="" coords="243,357,465,398"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a4ae534e440fd57603bc9b6e7c08b1c57" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.batch_act" alt="" coords="257,276,451,332"/>
+<area shape="rect" id="node14" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent.html#ab6f67e52990f7cafdb7fbd2f6215e968" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.PerplexityEvaluatorAgent.next\l_word_probability" alt="" coords="243,422,465,493"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#aff87fb1b28e798a9ca28a0dc3fbb2f22" title="parlai.agents.starspace.starspace.\lStarspaceAgent.act" alt="" coords="521,479,744,521"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="513,545,752,586"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title="parlai.core.torch_agent.\lTorchAgent.act" alt="" coords="553,166,712,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title="parlai.core.worlds.Batch\lWorld.parley" alt="" coords="551,231,714,273"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="533,297,732,324"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="553,349,713,390"/>
+<area shape="rect" id="node10" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="529,414,737,455"/>
+<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title="parlai.messenger.core.agents.\lMessengerAgent.act_blocking" alt="" coords="800,93,997,134"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#ae66e8065addb136eb82828ccbe56c5ca" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.act" alt="" coords="545,85,720,141"/>
+<area shape="rect" id="node13" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a3ab251071823f34358a569c1c2a11bf9" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.act" alt="" coords="545,5,720,61"/>
 </map>

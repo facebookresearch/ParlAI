@@ -1,0 +1,7 @@
+<map id="parlai.agents.tfidf_retriever.build_tfidf.truncate" name="parlai.agents.tfidf_retriever.build_tfidf.truncate">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a0d95180be94e232e3ebc748c8aa7b9a0" title="parlai.agents.tfidf\l_retriever.build_tfidf.get\l_count_matrix" alt="" coords="241,5,399,61"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#af51dc8629608fd04435739ba76b1e8f2" title="parlai.agents.tfidf\l_retriever.build_tfidf.live\l_count_matrix" alt="" coords="240,85,400,141"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a0d8cca9dbdf0fa23d25e81ec2a96b347" title="parlai.agents.tfidf\l_retriever.build_tfidf.run" alt="" coords="449,13,607,54"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a6113bcdd2792d70156ca64cc57187692" title="parlai.agents.tfidf\l_retriever.tfidf_retriever.\lTfidfRetrieverAgent.act" alt="" coords="448,85,608,141"/>
+<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title="parlai.messenger.core.agents.\lMessengerAgent.act_blocking" alt="" coords="656,93,853,134"/>
+</map>

@@ -1,7 +1,12 @@
 <map id="light_chats.graph.GraphFunction.evaluate_constraint_set" name="light_chats.graph.GraphFunction.evaluate_constraint_set">
-<area shape="rect" id="node1" title=" " alt="" coords="597,71,860,112"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#afcb6dd9e771c4db34f5af22588e6190e" title=" " alt="" coords="317,5,532,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1GraphFunction.html#af627ff84086a094b84da04e30a97779e" title=" " alt="" coords="300,71,549,112"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1TellFunction.html#ab4c8496d4fa9e03040b6090eaa65528a" title=" " alt="" coords="306,136,543,177"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a3b6764b365baf7471e53651adf83706b" title=" " alt="" coords="5,71,252,112"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#af627ff84086a094b84da04e30a97779e" title="light_chats.graph.GraphFunction.check\l_possibilites_vs_constraints" alt="" coords="317,111,567,153"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a8ac297dcadb1e5ec360f55f293dcbfcb" title="light_chats.graph.GraphFunction.valid_args" alt="" coords="1205,5,1479,32"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1TellFunction.html#a86e8534217b3d10cb4daf5cc080d624e" title="light_chats.graph.TellFunction.valid_args" alt="" coords="1213,188,1471,215"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a21e2dd1c8eb431b3ee22cce4853e3c15" title="light_chats.graph.GraphFunction.handle" alt="" coords="316,228,568,255"/>
+<area shape="rect" id="node11" href="$classlight__chats_1_1graph_1_1HitFunction.html#afcc616271cdc3acede3dcabdfe516598" title="light_chats.graph.HitFunction.handle" alt="" coords="325,279,559,305"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a33a25a071385ffbd0a222cab65c543d4" title="light_chats.graph.GraphFunction.parse\l_descs_to_args_helper" alt="" coords="616,111,863,153"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a8b76e8a8bb07f75abd081e220683dbd4" title="light_chats.graph.GraphFunction.parse\l_descs_to_args" alt="" coords="911,111,1157,153"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a3b6764b365baf7471e53651adf83706b" title="light_chats.graph.GraphFunction.parse\l_text_to_args" alt="" coords="1219,57,1465,98"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1TellFunction.html#a88ac4115a6cca664cd220fb0b8852629" title="light_chats.graph.TellFunction.parse\l_text_to_args" alt="" coords="1226,122,1458,163"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1FollowFunction.html#a6d1937938725b143930c10260adae130" title="light_chats.graph.Follow\lFunction.func" alt="" coords="658,229,821,270"/>
 </map>

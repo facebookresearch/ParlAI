@@ -1,0 +1,209 @@
+\hypertarget{namespaceparlai_1_1core_1_1metrics}{}\section{parlai.\+core.\+metrics Namespace Reference}
+\label{namespaceparlai_1_1core_1_1metrics}\index{parlai.\+core.\+metrics@{parlai.\+core.\+metrics}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1metrics_1_1Metrics}{Metrics}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1metrics_ae7769a6b628f41081e0f43043d52031a}{normalize\+\_\+answer} (s)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1metrics_ae323045c05ed03d93c260521ebb8bf71}{aggregate\+\_\+task\+\_\+reports} (reports, tasks, micro=False)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1metrics_aa4ed5491962e06684b235fffe1b20fec}{aggregate\+\_\+metrics} (reporters)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1core_1_1metrics_a5cd26a43d8156c993f30c5a707021562}{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS} = \{\textquotesingle{}correct\textquotesingle{}, \textquotesingle{}bleu\textquotesingle{}, \textquotesingle{}accuracy\textquotesingle{}, \textquotesingle{}f1\textquotesingle{}\}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1core_1_1metrics_ac01c4a05e91baee81e771e8f7ae9e7e4}{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS} = \{\textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/1\textquotesingle{}, \textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/2\textquotesingle{}, \textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/L\textquotesingle{}\}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1core_1_1metrics_add79f9806fe8f3343a620c790eb98be7}{A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS} = \hyperlink{namespaceparlai_1_1core_1_1metrics_a5cd26a43d8156c993f30c5a707021562}{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS} $\vert$ \hyperlink{namespaceparlai_1_1core_1_1metrics_ac01c4a05e91baee81e771e8f7ae9e7e4}{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS}
+\item 
+\hyperlink{namespaceparlai_1_1core_1_1metrics_aae1295106c31b93af8fbe0da66ebe000}{nltkbleu} = None
+\item 
+\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge} = None
+\item 
+\hyperlink{namespaceparlai_1_1core_1_1metrics_a037f8e3330e87d9de75fac930eac7fc2}{re\+\_\+art} = re.\+compile(r\textquotesingle{}\textbackslash{}b(a$\vert$an$\vert$the)\textbackslash{}b\textquotesingle{})
+\item 
+\hyperlink{namespaceparlai_1_1core_1_1metrics_a334cb58cda231eb62dea1fd375f8d687}{re\+\_\+punc} = re.\+compile(r\textquotesingle{}\mbox{[}!\char`\"{}\#\$\%\&()$\ast$+,-\/./\+:;$<$=$>$?@\textbackslash{}\mbox{[}\textbackslash{}\mbox{]}\textbackslash{}\textbackslash{}$^\wedge$`\{$\vert$\}$\sim$\+\_\+\textbackslash{}\textquotesingle{}\mbox{]}\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_aa4ed5491962e06684b235fffe1b20fec}\label{namespaceparlai_1_1core_1_1metrics_aa4ed5491962e06684b235fffe1b20fec}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!aggregate\+\_\+metrics@{aggregate\+\_\+metrics}}
+\index{aggregate\+\_\+metrics@{aggregate\+\_\+metrics}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{aggregate\+\_\+metrics()}{aggregate\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+aggregate\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{reporters }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Aggregate metrics from multiple reports.\end{DoxyVerb}
+ 
+
+Definition at line 191 of file metrics.\+py.
+
+
+
+References convai2.\+eval\+\_\+f1.\+report, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+report(), and parlai.\+core.\+worlds.\+Multi\+World.\+report().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1metrics_aa4ed5491962e06684b235fffe1b20fec_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1metrics_aa4ed5491962e06684b235fffe1b20fec_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_ae323045c05ed03d93c260521ebb8bf71}\label{namespaceparlai_1_1core_1_1metrics_ae323045c05ed03d93c260521ebb8bf71}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!aggregate\+\_\+task\+\_\+reports@{aggregate\+\_\+task\+\_\+reports}}
+\index{aggregate\+\_\+task\+\_\+reports@{aggregate\+\_\+task\+\_\+reports}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{aggregate\+\_\+task\+\_\+reports()}{aggregate\_task\_reports()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports (\begin{DoxyParamCaption}\item[{}]{reports,  }\item[{}]{tasks,  }\item[{}]{micro = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Aggregate separate task reports into a single report.
+
+:param reports: list of report dicts from separate tasks
+:param tasks: list of tasks
+:param micro: average per example if True, else average over t
+
+:return: aggregated report dicts
+\end{DoxyVerb}
+ 
+
+Definition at line 62 of file metrics.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+normalize\+\_\+answer(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs(), and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+
+
+Referenced by parlai.\+scripts.\+eval\+\_\+model.\+eval\+\_\+model(), and parlai.\+scripts.\+train\+\_\+model.\+run\+\_\+eval().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1metrics_ae323045c05ed03d93c260521ebb8bf71_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1metrics_ae323045c05ed03d93c260521ebb8bf71_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_ae7769a6b628f41081e0f43043d52031a}\label{namespaceparlai_1_1core_1_1metrics_ae7769a6b628f41081e0f43043d52031a}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!normalize\+\_\+answer@{normalize\+\_\+answer}}
+\index{normalize\+\_\+answer@{normalize\+\_\+answer}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{normalize\+\_\+answer()}{normalize\_answer()}}
+{\footnotesize\ttfamily def parlai.\+core.\+metrics.\+normalize\+\_\+answer (\begin{DoxyParamCaption}\item[{}]{s }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Lower text and remove punctuation, articles and extra whitespace.\end{DoxyVerb}
+ 
+
+Definition at line 44 of file metrics.\+py.
+
+
+
+Referenced by parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports(), parlai.\+scripts.\+eval\+\_\+wordstat.\+eval\+\_\+wordstat(), and eval\+\_\+wordstat.\+eval\+\_\+wordstat().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1metrics_ae7769a6b628f41081e0f43043d52031a_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_add79f9806fe8f3343a620c790eb98be7}\label{namespaceparlai_1_1core_1_1metrics_add79f9806fe8f3343a620c790eb98be7}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS@{A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS}}
+\index{A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS@{A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS}{ALL\_METRICS}}
+{\footnotesize\ttfamily dictionary parlai.\+core.\+metrics.\+A\+L\+L\+\_\+\+M\+E\+T\+R\+I\+CS = \hyperlink{namespaceparlai_1_1core_1_1metrics_a5cd26a43d8156c993f30c5a707021562}{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS} $\vert$ \hyperlink{namespaceparlai_1_1core_1_1metrics_ac01c4a05e91baee81e771e8f7ae9e7e4}{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS}}
+
+
+
+Definition at line 23 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_a5cd26a43d8156c993f30c5a707021562}\label{namespaceparlai_1_1core_1_1metrics_a5cd26a43d8156c993f30c5a707021562}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS@{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS@{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS}{DEFAULT\_METRICS}}
+{\footnotesize\ttfamily dictionary parlai.\+core.\+metrics.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+M\+E\+T\+R\+I\+CS = \{\textquotesingle{}correct\textquotesingle{}, \textquotesingle{}bleu\textquotesingle{}, \textquotesingle{}accuracy\textquotesingle{}, \textquotesingle{}f1\textquotesingle{}\}}
+
+
+
+Definition at line 21 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_aae1295106c31b93af8fbe0da66ebe000}\label{namespaceparlai_1_1core_1_1metrics_aae1295106c31b93af8fbe0da66ebe000}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!nltkbleu@{nltkbleu}}
+\index{nltkbleu@{nltkbleu}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{nltkbleu}{nltkbleu}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+nltkbleu = None}
+
+
+
+Definition at line 31 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_a037f8e3330e87d9de75fac930eac7fc2}\label{namespaceparlai_1_1core_1_1metrics_a037f8e3330e87d9de75fac930eac7fc2}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!re\+\_\+art@{re\+\_\+art}}
+\index{re\+\_\+art@{re\+\_\+art}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{re\+\_\+art}{re\_art}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+re\+\_\+art = re.\+compile(r\textquotesingle{}\textbackslash{}b(a$\vert$an$\vert$the)\textbackslash{}b\textquotesingle{})}
+
+
+
+Definition at line 40 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_a334cb58cda231eb62dea1fd375f8d687}\label{namespaceparlai_1_1core_1_1metrics_a334cb58cda231eb62dea1fd375f8d687}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!re\+\_\+punc@{re\+\_\+punc}}
+\index{re\+\_\+punc@{re\+\_\+punc}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{re\+\_\+punc}{re\_punc}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+re\+\_\+punc = re.\+compile(r\textquotesingle{}\mbox{[}!\char`\"{}\#\$\%\&()$\ast$+,-\/./\+:;$<$=$>$?@\textbackslash{}\mbox{[}\textbackslash{}\mbox{]}\textbackslash{}\textbackslash{}$^\wedge$`\{$\vert$\}$\sim$\+\_\+\textbackslash{}\textquotesingle{}\mbox{]}\textquotesingle{})}
+
+
+
+Definition at line 41 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}\label{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!rouge@{rouge}}
+\index{rouge@{rouge}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{rouge}{rouge}}
+{\footnotesize\ttfamily parlai.\+core.\+metrics.\+rouge = None}
+
+
+
+Definition at line 38 of file metrics.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1metrics_ac01c4a05e91baee81e771e8f7ae9e7e4}\label{namespaceparlai_1_1core_1_1metrics_ac01c4a05e91baee81e771e8f7ae9e7e4}} 
+\index{parlai\+::core\+::metrics@{parlai\+::core\+::metrics}!R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS@{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS}}
+\index{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS@{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS}!parlai\+::core\+::metrics@{parlai\+::core\+::metrics}}
+\subsubsection{\texorpdfstring{R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS}{ROUGE\_METRICS}}
+{\footnotesize\ttfamily dictionary parlai.\+core.\+metrics.\+R\+O\+U\+G\+E\+\_\+\+M\+E\+T\+R\+I\+CS = \{\textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/1\textquotesingle{}, \textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/2\textquotesingle{}, \textquotesingle{}\hyperlink{namespaceparlai_1_1core_1_1metrics_ae0fddd2325f5dc52b2a367e52056242a}{rouge}-\/L\textquotesingle{}\}}
+
+
+
+Definition at line 22 of file metrics.\+py.
+

@@ -1,0 +1,228 @@
+\hypertarget{classself__feeding_1_1utils_1_1Parley}{}\section{self\+\_\+feeding.\+utils.\+Parley Class Reference}
+\label{classself__feeding_1_1utils_1_1Parley}\index{self\+\_\+feeding.\+utils.\+Parley@{self\+\_\+feeding.\+utils.\+Parley}}
+
+
+Inheritance diagram for self\+\_\+feeding.\+utils.\+Parley\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classself__feeding_1_1utils_1_1Parley__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for self\+\_\+feeding.\+utils.\+Parley\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classself__feeding_1_1utils_1_1Parley__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classself__feeding_1_1utils_1_1Parley_aeda0932760261f607b8725914e37a75c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classself__feeding_1_1utils_1_1Parley_af9775ca31a96e392ff557c9ae59fe473}{context}, \hyperlink{classself__feeding_1_1utils_1_1Parley_aa1f1d6581b6aa107659005af86b69dad}{response}=\textquotesingle{}\textquotesingle{}, \hyperlink{classself__feeding_1_1utils_1_1Parley_a039021fbe9ced8e0053966cf48f1a32e}{reward}=0, \hyperlink{classself__feeding_1_1utils_1_1Parley_a5c197e261eeb326bd8f38afa228aafa8}{candidates}=\mbox{[}$\,$\mbox{]}, \hyperlink{classself__feeding_1_1utils_1_1Parley_ab9f2039de89de42c9e63bb5bfd119581}{memories}=\mbox{[}$\,$\mbox{]}, \hyperlink{classself__feeding_1_1utils_1_1Parley_a414815c0cc1270c732461edacbb5e000}{episode\+\_\+done}=False, kwargs)
+\item 
+def \hyperlink{classself__feeding_1_1utils_1_1Parley_ac5399cb4416ce38da77f36c54896dbde}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classself__feeding_1_1utils_1_1Parley_a7b58d117171ba87eabd5e7d6e3a02517}{to\+\_\+dict} (self, include\+\_\+empty=False)
+\item 
+def \hyperlink{classself__feeding_1_1utils_1_1Parley_a84e024a69f13007c1ba1ba1b93497ab5}{to\+\_\+parlai} (self)
+\item 
+def \hyperlink{classself__feeding_1_1utils_1_1Parley_a1d651fb1702af3ec617c362e4bda625f}{to\+\_\+fb} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_af9775ca31a96e392ff557c9ae59fe473}{context}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_aa1f1d6581b6aa107659005af86b69dad}{response}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_a039021fbe9ced8e0053966cf48f1a32e}{reward}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_a5c197e261eeb326bd8f38afa228aafa8}{candidates}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_ab9f2039de89de42c9e63bb5bfd119581}{memories}
+\item 
+\hyperlink{classself__feeding_1_1utils_1_1Parley_a414815c0cc1270c732461edacbb5e000}{episode\+\_\+done}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}A single example for training
+Args:
+    context: (str) the dialog context in which the response was given;
+        - at minimum, this is the immediately previous utterance
+        - at maximum, this is the entire conversation up to that point
+        - external knowledge/memories should be in memories
+    response: (str) response
+    reward: (int) reward
+    candidates: (list) of strings
+    memories: (list) of strings in order (if it matters)
+\end{DoxyVerb}
+ 
+
+Definition at line 11 of file utils.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_aeda0932760261f607b8725914e37a75c}\label{classself__feeding_1_1utils_1_1Parley_aeda0932760261f607b8725914e37a75c}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+Parley.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{context,  }\item[{}]{response = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{reward = {\ttfamily 0},  }\item[{}]{candidates = {\ttfamily \mbox{[}\mbox{]}},  }\item[{}]{memories = {\ttfamily \mbox{[}\mbox{]}},  }\item[{}]{episode\+\_\+done = {\ttfamily False},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file utils.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_ac5399cb4416ce38da77f36c54896dbde}\label{classself__feeding_1_1utils_1_1Parley_ac5399cb4416ce38da77f36c54896dbde}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+Parley.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file utils.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a7b58d117171ba87eabd5e7d6e3a02517}\label{classself__feeding_1_1utils_1_1Parley_a7b58d117171ba87eabd5e7d6e3a02517}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!to\+\_\+dict@{to\+\_\+dict}}
+\index{to\+\_\+dict@{to\+\_\+dict}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{to\+\_\+dict()}{to\_dict()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{include\+\_\+empty = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 45 of file utils.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+Parley.\+candidates, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+candidates, self\+\_\+feeding.\+utils.\+Parley.\+context, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+context, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+context, convai.\+convai\+\_\+bot.\+Conv\+A\+I\+Sample\+Agent.\+episode\+\_\+done, self\+\_\+feeding.\+utils.\+Parley.\+episode\+\_\+done, transresnet.\+transresnet.\+Transresnet\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+World.\+episode\+\_\+done, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+episode\+\_\+done, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+episode\+\_\+done, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+episode\+\_\+done, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+episode\+\_\+done, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+episode\+\_\+done, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+episode\+\_\+done, kvmemnn.\+Kvmemnn\+Agent.\+episode\+\_\+done, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+episode\+\_\+done, self\+\_\+feeding.\+utils.\+Parley.\+memories, self\+\_\+feeding.\+utils.\+Parley.\+response, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, and self\+\_\+feeding.\+utils.\+Parley.\+reward.
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a1d651fb1702af3ec617c362e4bda625f}\label{classself__feeding_1_1utils_1_1Parley_a1d651fb1702af3ec617c362e4bda625f}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!to\+\_\+fb@{to\+\_\+fb}}
+\index{to\+\_\+fb@{to\+\_\+fb}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{to\+\_\+fb()}{to\_fb()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 76 of file utils.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+Parley.\+candidates, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+candidates, self\+\_\+feeding.\+utils.\+Parley.\+context, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+context, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+context, self\+\_\+feeding.\+utils.\+Parley.\+memories, self\+\_\+feeding.\+utils.\+Parley.\+response, parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, self\+\_\+feeding.\+utils.\+Parley.\+reward, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a84e024a69f13007c1ba1ba1b93497ab5}\label{classself__feeding_1_1utils_1_1Parley_a84e024a69f13007c1ba1ba1b93497ab5}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!to\+\_\+parlai@{to\+\_\+parlai}}
+\index{to\+\_\+parlai@{to\+\_\+parlai}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{to\+\_\+parlai()}{to\_parlai()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file utils.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+Parley.\+candidates, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+candidates, convai.\+convai\+\_\+bot.\+Conv\+A\+I\+Sample\+Agent.\+episode\+\_\+done, self\+\_\+feeding.\+utils.\+Parley.\+episode\+\_\+done, transresnet.\+transresnet.\+Transresnet\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+World.\+episode\+\_\+done, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+episode\+\_\+done, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+episode\+\_\+done, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+episode\+\_\+done, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+episode\+\_\+done, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+episode\+\_\+done, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+episode\+\_\+done, kvmemnn.\+Kvmemnn\+Agent.\+episode\+\_\+done, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+episode\+\_\+done, self\+\_\+feeding.\+utils.\+Parley.\+response, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, and self\+\_\+feeding.\+utils.\+Parley.\+reward.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a5c197e261eeb326bd8f38afa228aafa8}\label{classself__feeding_1_1utils_1_1Parley_a5c197e261eeb326bd8f38afa228aafa8}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!candidates@{candidates}}
+\index{candidates@{candidates}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{candidates}{candidates}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+candidates}
+
+
+
+Definition at line 37 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_af9775ca31a96e392ff557c9ae59fe473}\label{classself__feeding_1_1utils_1_1Parley_af9775ca31a96e392ff557c9ae59fe473}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!context@{context}}
+\index{context@{context}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{context}{context}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+context}
+
+
+
+Definition at line 34 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb().
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a414815c0cc1270c732461edacbb5e000}\label{classself__feeding_1_1utils_1_1Parley_a414815c0cc1270c732461edacbb5e000}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{episode\+\_\+done}{episode\_done}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+episode\+\_\+done}
+
+
+
+Definition at line 39 of file utils.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Data\+World.\+prep\+\_\+save\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_ab9f2039de89de42c9e63bb5bfd119581}\label{classself__feeding_1_1utils_1_1Parley_ab9f2039de89de42c9e63bb5bfd119581}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!memories@{memories}}
+\index{memories@{memories}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{memories}{memories}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+memories}
+
+
+
+Definition at line 38 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb().
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_aa1f1d6581b6aa107659005af86b69dad}\label{classself__feeding_1_1utils_1_1Parley_aa1f1d6581b6aa107659005af86b69dad}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!response@{response}}
+\index{response@{response}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{response}{response}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+response}
+
+
+
+Definition at line 35 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+\mbox{\Hypertarget{classself__feeding_1_1utils_1_1Parley_a039021fbe9ced8e0053966cf48f1a32e}\label{classself__feeding_1_1utils_1_1Parley_a039021fbe9ced8e0053966cf48f1a32e}} 
+\index{self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}!reward@{reward}}
+\index{reward@{reward}!self\+\_\+feeding\+::utils\+::\+Parley@{self\+\_\+feeding\+::utils\+::\+Parley}}
+\subsubsection{\texorpdfstring{reward}{reward}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+utils.\+Parley.\+reward}
+
+
+
+Definition at line 36 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/self\+\_\+feeding/\hyperlink{projects_2self__feeding_2utils_8py}{utils.\+py}\end{DoxyCompactItemize}

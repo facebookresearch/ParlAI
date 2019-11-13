@@ -1,0 +1,112 @@
+\hypertarget{classtaskntalk_1_1modules_1_1SpeakNet}{}\section{taskntalk.\+modules.\+Speak\+Net Class Reference}
+\label{classtaskntalk_1_1modules_1_1SpeakNet}\index{taskntalk.\+modules.\+Speak\+Net@{taskntalk.\+modules.\+Speak\+Net}}
+
+
+Inheritance diagram for taskntalk.\+modules.\+Speak\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=223pt]{classtaskntalk_1_1modules_1_1SpeakNet__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for taskntalk.\+modules.\+Speak\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=223pt]{classtaskntalk_1_1modules_1_1SpeakNet__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1SpeakNet_a480014fc4ece3fb538e2f5fc502dc463}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, state\+\_\+size, out\+\_\+size)
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1SpeakNet_aebb6c91bc72ac69d30628f92c5e0232d}{forward} (self, state)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1SpeakNet_a54ceaef3494cf865cb201d08554eb1e2}{net}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1SpeakNet_aaad557b1a44eca11d0d8d3c5022edb0a}{softmax}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Module for speaking a token based on current state. In ``forward``:
+Return a probability distribution of utterances of tokens.
+\end{DoxyVerb}
+ 
+
+Definition at line 75 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1SpeakNet_a480014fc4ece3fb538e2f5fc502dc463}\label{classtaskntalk_1_1modules_1_1SpeakNet_a480014fc4ece3fb538e2f5fc502dc463}} 
+\index{taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+Speak\+Net.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state\+\_\+size,  }\item[{}]{out\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 80 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1SpeakNet_aebb6c91bc72ac69d30628f92c5e0232d}\label{classtaskntalk_1_1modules_1_1SpeakNet_aebb6c91bc72ac69d30628f92c5e0232d}} 
+\index{taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}!forward@{forward}}
+\index{forward@{forward}!taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+Speak\+Net.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state }\end{DoxyParamCaption})}
+
+
+
+Definition at line 86 of file modules.\+py.
+
+
+
+References taskntalk.\+modules.\+Img\+Net.\+net, taskntalk.\+modules.\+Listen\+Net.\+net, taskntalk.\+modules.\+State\+Net.\+net, taskntalk.\+modules.\+Speak\+Net.\+net, modules.\+Kvmemnn.\+softmax, taskntalk.\+modules.\+Speak\+Net.\+softmax, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+softmax, and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+softmax.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1SpeakNet_a54ceaef3494cf865cb201d08554eb1e2}\label{classtaskntalk_1_1modules_1_1SpeakNet_a54ceaef3494cf865cb201d08554eb1e2}} 
+\index{taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}!net@{net}}
+\index{net@{net}!taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}}
+\subsubsection{\texorpdfstring{net}{net}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+Speak\+Net.\+net}
+
+
+
+Definition at line 82 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward().
+
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1SpeakNet_aaad557b1a44eca11d0d8d3c5022edb0a}\label{classtaskntalk_1_1modules_1_1SpeakNet_aaad557b1a44eca11d0d8d3c5022edb0a}} 
+\index{taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}!softmax@{softmax}}
+\index{softmax@{softmax}!taskntalk\+::modules\+::\+Speak\+Net@{taskntalk\+::modules\+::\+Speak\+Net}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+Speak\+Net.\+softmax}
+
+
+
+Definition at line 83 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), and taskntalk.\+modules.\+Predict\+Net.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/taskntalk/\hyperlink{projects_2taskntalk_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

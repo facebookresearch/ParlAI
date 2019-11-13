@@ -1,7 +1,11 @@
 <map id="light_chats.graph.Graph.get_inventory_text_for" name="light_chats.graph.Graph.get_inventory_text_for">
-<area shape="rect" id="node1" title=" " alt="" coords="5,88,188,129"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a9c3ce0d845610e465f9a5d9bee1cbd23" title=" " alt="" coords="241,5,446,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="236,95,451,122"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#aaf9882eb0e887eadf75e4f2460732c05" title=" " alt="" coords="247,147,439,188"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="499,88,703,129"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a9c3ce0d845610e465f9a5d9bee1cbd23" title="light_chats.graph.Graph.display\l_node_list" alt="" coords="236,141,441,182"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="1008,173,1223,200"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1Graph.html#aaf9882eb0e887eadf75e4f2460732c05" title="light_chats.graph.Graph.node\l_contains" alt="" coords="243,342,435,383"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a32111f6e4bae319c37f6d8de8dd2bbbe" title="light_chats.graph.Graph.display\l_desc_list" alt="" coords="489,25,695,66"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#a9ed5168f4d2a93b6a9f3f3ddd07660d4" title="light_chats.graph.Graph.node\l_to_desc" alt="" coords="496,141,688,182"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#ae416efe86bf6117aec6dc1de481d0ec1" title="light_chats.graph.Graph.cnt_obj" alt="" coords="748,5,955,32"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1Graph.html#afd47e9b4f058dc2cbb520164db920664" title="light_chats.graph.Graph.path\l_to_desc" alt="" coords="757,107,946,149"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#aa8a44c495d154f033ea3ced4d6f2e85d" title="light_chats.graph.Graph.has_prop" alt="" coords="743,173,960,200"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1Graph.html#a2da14e9a8a4c547fea59eee63dd9f70c" title="light_chats.graph.Graph.name\l_prefix" alt="" coords="753,225,949,266"/>
 </map>

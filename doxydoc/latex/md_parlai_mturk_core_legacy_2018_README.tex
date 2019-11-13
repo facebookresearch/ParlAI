@@ -1,0 +1,47 @@
+{\ttfamily parlai/mturk/core} contains several files and folders that are needed for proper M\+Turk integration\+:
+
+\subsubsection*{Folders}
+
+
+\begin{DoxyItemize}
+\item {\bfseries react\+\_\+server/}\+: contains the build files for running a task that uses a react frontend. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).
+\item {\bfseries scripts/}\+: contains various helpful review and cleanup scripts to manage tasks from the command line (especially after mistakes or major failures).
+\item {\bfseries server\+\_\+legacy/}\+: contains the build files for running a task that uses the old templated H\+T\+ML frontend, and is no longer maintained. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).
+\item {\bfseries tests/}\+: contains all of the tests for the M\+Turk functionality, split up by the various stages that they touch.
+\end{DoxyItemize}
+
+\subsubsection*{Files}
+
+
+\begin{DoxyItemize}
+\item {\bfseries agents.\+py}\+: contains the {\ttfamily M\+Turk\+Agent} class, which is responsible for both acting as a proper agent in a regular Parl\+AI world while also keeping the relevant M\+Turk H\+IT assignment state.
+\item {\bfseries data\+\_\+model.\+py}\+: contains a few constants generally shared between the python backend and the javascript client that workers see.
+\item {\bfseries mturk\+\_\+data\+\_\+handler.\+py}\+: class that manages a sqlite database that stores state and assignment data during and between runs. It also handles the local saving and loading of data for a task when handled using the use\+\_\+db flag in {\ttfamily M\+Turk\+Manager}.
+\item {\bfseries mturk\+\_\+manager.\+py}\+: contains the {\ttfamily M\+Turk\+Manager} class, which is responsible for the lifecycle of an M\+Turk task as well as coordinating H\+I\+Ts and assignments to worlds and workers.
+\item {\bfseries mturk\+\_\+utils.\+py}\+: helper functions that directly interface with the M\+Turk A\+PI.
+\item {\bfseries server\+\_\+utils.\+py}\+: helper functions that are used to set up and take down the passthrough server that directly serves workers a task
+\item {\bfseries shared\+\_\+utils.\+py}\+: helper functions that are shared between multiple classes but don\textquotesingle{}t actually relate enough to any of them to be a member of another file
+\item {\bfseries socket\+\_\+manager.\+py}\+: class that handles incoming and outgoing messages to workers as well as maintaining active connections with workers via websocket protocols
+\item {\bfseries worker\+\_\+manager.\+py}\+: class that is responsible for maintaining and acting directly on the state of workers as they complete tasks, disconnect, change worlds, and more.
+\item {\bfseries worlds.\+py}\+: contains the basic onboarding and task worlds that should be used for M\+Turk tasks, as well as a description of how the underlying {\ttfamily M\+Turk\+Data\+World} handles saving data for a task.
+\end{DoxyItemize}
+
+\subsection*{Created}
+
+parlai/mturk/core on your local machine may also create a few folders and files depending on your usage\+:
+
+\subsubsection*{Folders}
+
+
+\begin{DoxyItemize}
+\item {\bfseries heroku\+\_\+server\+\_\+.../}\+: contains the build files for a server that was started using Parl\+AI. If this remains after no servers are running, it exists because a server failed to cleanup the local files, and the folder can be deleted freely.
+\item {\bfseries heroku-\/cli-\/v.../}\+: contains the bin files required to run heroku. These are stored here where we know where they are so that the server setup scripts don\textquotesingle{}t need to search for existing heroku installations elsewhere.
+\end{DoxyItemize}
+
+\subsubsection*{Files}
+
+
+\begin{DoxyItemize}
+\item {\bfseries disconnects.\+pickle}\+: a pickle file containing current outstanding disconnects. Used to track bad behavior from agents who have disconnected on multiple tasks. In the process of being deprecated in favor of storage in the state database ({\ttfamily pmt\+\_\+data.\+db}) using the {\ttfamily use\+\_\+db} flag.
+\item {\bfseries working\+\_\+time.\+pickle}\+: a pickle file containing the workers who have exceeded the max daily time across all of your tasks per day. In the process of being deprecated in favor of storage in the state database ({\ttfamily pmt\+\_\+data.\+db}) using the {\ttfamily use\+\_\+db} flag. 
+\end{DoxyItemize}

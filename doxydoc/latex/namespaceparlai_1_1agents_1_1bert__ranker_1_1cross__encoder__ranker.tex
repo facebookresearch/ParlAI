@@ -1,0 +1,42 @@
+\hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker}\index{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker@{parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent}{Cross\+Encoder\+Ranker\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_a3914765cd62574f6f077c6e2e0070ab4}{concat\+\_\+without\+\_\+padding} (text\+\_\+idx, cand\+\_\+idx, use\+\_\+cuda, null\+\_\+idx=0)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_a3914765cd62574f6f077c6e2e0070ab4}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_a3914765cd62574f6f077c6e2e0070ab4}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker}!concat\+\_\+without\+\_\+padding@{concat\+\_\+without\+\_\+padding}}
+\index{concat\+\_\+without\+\_\+padding@{concat\+\_\+without\+\_\+padding}!parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker@{parlai\+::agents\+::bert\+\_\+ranker\+::cross\+\_\+encoder\+\_\+ranker}}
+\subsubsection{\texorpdfstring{concat\+\_\+without\+\_\+padding()}{concat\_without\_padding()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+concat\+\_\+without\+\_\+padding (\begin{DoxyParamCaption}\item[{}]{text\+\_\+idx,  }\item[{}]{cand\+\_\+idx,  }\item[{}]{use\+\_\+cuda,  }\item[{}]{null\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}if text_idx = [[1, 2, 3, 4, 0, 0  ]]
+        and cand_idx = [[5, 6, 7, 8, 0, 0 ]]
+        then result = (tokens, segments) where
+        tokens = [[1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0]]
+        segments = [[0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0]]\end{DoxyVerb}
+ 
+
+Definition at line 24 of file cross\+\_\+encoder\+\_\+ranker.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+score\+\_\+candidates(), and parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+score\+\_\+candidates().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_a3914765cd62574f6f077c6e2e0070ab4_icgraph}
+\end{center}
+\end{figure}

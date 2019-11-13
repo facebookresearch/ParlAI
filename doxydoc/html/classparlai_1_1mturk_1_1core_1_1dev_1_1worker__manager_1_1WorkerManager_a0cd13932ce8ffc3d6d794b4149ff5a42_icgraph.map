@@ -1,0 +1,5 @@
+<map id="parlai.mturk.core.dev.worker_manager.WorkerManager.un_time_block_workers" name="parlai.mturk.core.dev.worker_manager.WorkerManager.un_time_block_workers">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#af1fe1df324e27042479dbc71d6565e57" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager.shutdown" alt="" coords="286,5,521,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager.html#a814ac330b709eeef4abf4e4a73d71447" title="parlai.mturk.core.worker\l_manager.WorkerManager.shutdown" alt="" coords="286,71,521,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#a49e820a0aa2eb8a320f32126b279ca10" title="parlai.mturk.core.legacy\l_2018.worker_manager.WorkerManager.shutdown" alt="" coords="247,136,560,177"/>
+</map>

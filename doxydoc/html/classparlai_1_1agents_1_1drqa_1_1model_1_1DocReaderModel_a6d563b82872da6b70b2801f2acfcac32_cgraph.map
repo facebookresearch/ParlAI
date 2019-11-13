@@ -1,0 +1,7 @@
+<map id="parlai.agents.drqa.model.DocReaderModel.set_embeddings" name="parlai.agents.drqa.model.DocReaderModel.set_embeddings">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1agents_1_1drqa_1_1utils.html#aa92d9906125210574825a20c75c199c8" title="parlai.agents.drqa.utils.load\l_embeddings" alt="" coords="276,46,457,87"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="552,5,701,61"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1drqa_1_1utils.html#a125ab4e64306060e9ecaa3999f7be6b6" title="parlai.agents.drqa.utils.normalize_text" alt="" coords="505,85,748,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="796,20,1000,47"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="1048,20,1229,47"/>
+</map>

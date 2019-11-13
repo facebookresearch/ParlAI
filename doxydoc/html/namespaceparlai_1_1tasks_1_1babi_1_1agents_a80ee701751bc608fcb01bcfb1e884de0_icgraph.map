@@ -1,0 +1,6 @@
+<map id="parlai.tasks.babi.agents.mod_labels" name="parlai.tasks.babi.agents.mod_labels">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1babi_1_1agents_1_1Task1kTeacher.html#a23edda520c74d1b34de50e3c8994c2f1" title="parlai.tasks.babi.agents.\lTask1kTeacher.load_cands" alt="" coords="246,5,429,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1babi_1_1agents_1_1Task10kTeacher.html#af80438ce3c1fa375e4dbed775afb9ed2" title="parlai.tasks.babi.agents.\lTask10kTeacher.load_cands" alt="" coords="243,71,432,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1babi_1_1agents_1_1Task1kTeacher.html#a191f80b829fd3103238317eed2cad03e" title="parlai.tasks.babi.agents.\lTask1kTeacher.setup_data" alt="" coords="247,136,427,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1babi_1_1agents_1_1Task10kTeacher.html#a658de67a884d117c04f54e3f9d4bec4a" title="parlai.tasks.babi.agents.\lTask10kTeacher.setup_data" alt="" coords="244,201,431,243"/>
+</map>

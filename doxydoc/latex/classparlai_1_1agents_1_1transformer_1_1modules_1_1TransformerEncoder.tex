@@ -1,0 +1,432 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder}{}\section{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder}\index{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder@{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a362f8b951877f3712ca59f0fb6a0ae9c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab6830a5aa0850e50549c159586c17515}{n\+\_\+heads}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a1fac9c2d34c4d2268f50fc90b1e74e04}{n\+\_\+layers}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a57f137ae98789edeae26de90118efdd6}{embedding\+\_\+size}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afadc86cb37af464565167dc169447057}{ffn\+\_\+size}, vocabulary\+\_\+size, embedding=None, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_af28dbf5c6c0f70c1a032a3bbb5359661}{dropout}=0.\+0, attention\+\_\+dropout=0.\+0, relu\+\_\+dropout=0.\+0, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a74702a13d7e41afc3e77c94bb60bd119}{padding\+\_\+idx}=0, learn\+\_\+positional\+\_\+embeddings=False, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a80122462ebd32da923d7b4479053ab01}{embeddings\+\_\+scale}=False, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a2703f337fd44344ccd93743e57be554e}{reduction\+\_\+type}=\textquotesingle{}mean\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab885dd6b80284dbd2837ecaf75f96cb0}{n\+\_\+positions}=1024, activation=\textquotesingle{}relu\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a6ea46aeb8ca865c97ec8e99746bedd7b}{variant}=\textquotesingle{}aiayn\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab5ec60adca3ce418f73e409187a82625}{n\+\_\+segments}=0, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad904c0d06a4f6851b38fbbc0cab224f9}{output\+\_\+scaling}=1.\+0)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a23005871ba6683940f63511ed463266f}{forward} (self, input, positions=None, segments=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a57f137ae98789edeae26de90118efdd6}{embedding\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afadc86cb37af464565167dc169447057}{ffn\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a1fac9c2d34c4d2268f50fc90b1e74e04}{n\+\_\+layers}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab6830a5aa0850e50549c159586c17515}{n\+\_\+heads}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab56fa99f887753677dc7f4d435595114}{dim}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a80122462ebd32da923d7b4479053ab01}{embeddings\+\_\+scale}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a2703f337fd44344ccd93743e57be554e}{reduction\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a74702a13d7e41afc3e77c94bb60bd119}{padding\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_af28dbf5c6c0f70c1a032a3bbb5359661}{dropout}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a6ea46aeb8ca865c97ec8e99746bedd7b}{variant}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab5ec60adca3ce418f73e409187a82625}{n\+\_\+segments}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab885dd6b80284dbd2837ecaf75f96cb0}{n\+\_\+positions}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afd4ec22c3a8b8611a4a1caa85225b426}{out\+\_\+dim}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a179492c3f7ebaf6ba8fb3a7f912e93ce}{embeddings}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad2dd819e6d66d17f69e8bfa5026d192a}{position\+\_\+embeddings}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ae8676d5d506949c00d35c34ac41b9fff}{norm\+\_\+embeddings}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbc50af3764335ae22ef2ba06a65c4a7}{segment\+\_\+embeddings}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbeff4ac94daff4e1627b6d93cd37424}{layers}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad904c0d06a4f6851b38fbbc0cab224f9}{output\+\_\+scaling}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Transformer encoder module.
+
+:param int n_heads: the number of multihead attention heads.
+:param int n_layers: number of transformer layers.
+:param int embedding_size: the embedding sizes. Must be a multiple of n_heads.
+:param int ffn_size: the size of the hidden layer in the FFN
+:param embedding: an embedding matrix for the bottom layer of the transformer.
+    If none, one is created for this encoder.
+:param float dropout: Dropout used around embeddings and before layer
+    layer normalizations. This is used in Vaswani 2017 and works well on
+    large datasets.
+:param float attention_dropout: Dropout performed after the multhead attention
+    softmax. This is not used in Vaswani 2017.
+:param float relu_attention: Dropout used after the ReLU in the FFN. Not used
+    in Vaswani 2017, but used in Tensor2Tensor.
+:param int padding_idx: Reserved padding index in the embeddings matrix.
+:param bool learn_positional_embeddings: If off, sinusoidal embeddings are
+    used. If on, position embeddings are learned from scratch.
+:param bool embeddings_scale: Scale embeddings relative to their dimensionality.
+    Found useful in fairseq.
+:param bool reduction: If true, returns the mean vector for the entire encoding
+    sequence.
+:param int n_positions:
+    Size of the position embeddings matrix.
+:param int n_segments:
+    Number of segments/lang/sentence embeddings.
+:param activation:
+    Type of nonlinear activation. Can be relu or gelu.
+:param variant:
+    Which transformer architecture to use. Could be AIAYN or XLM.
+    Future versions may support things like GPT-2, ...
+:param output_scaling:
+    Scale the outputs by a given scalar
+\end{DoxyVerb}
+ 
+
+Definition at line 327 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a362f8b951877f3712ca59f0fb6a0ae9c}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a362f8b951877f3712ca59f0fb6a0ae9c}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+heads,  }\item[{}]{n\+\_\+layers,  }\item[{}]{embedding\+\_\+size,  }\item[{}]{ffn\+\_\+size,  }\item[{}]{vocabulary\+\_\+size,  }\item[{}]{embedding = {\ttfamily None},  }\item[{}]{dropout = {\ttfamily 0.0},  }\item[{}]{attention\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{relu\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{padding\+\_\+idx = {\ttfamily 0},  }\item[{}]{learn\+\_\+positional\+\_\+embeddings = {\ttfamily False},  }\item[{}]{embeddings\+\_\+scale = {\ttfamily False},  }\item[{}]{reduction\+\_\+type = {\ttfamily \textquotesingle{}mean\textquotesingle{}},  }\item[{}]{n\+\_\+positions = {\ttfamily 1024},  }\item[{}]{activation = {\ttfamily \textquotesingle{}relu\textquotesingle{}},  }\item[{}]{variant = {\ttfamily \textquotesingle{}aiayn\textquotesingle{}},  }\item[{}]{n\+\_\+segments = {\ttfamily 0},  }\item[{}]{output\+\_\+scaling = {\ttfamily 1.0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 384 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a23005871ba6683940f63511ed463266f}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a23005871ba6683940f63511ed463266f}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input,  }\item[{}]{positions = {\ttfamily None},  }\item[{}]{segments = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.
+
+:param LongTensor[batch,seqlen] input:
+    The input IDs
+:param BoolTensor[batch,seqlen] mask:
+    The attention mask; 1 means attend, 0 means ignore.
+:param LongTensor[batch,seqlen]:
+    If provided, additionally adds ``segments`` as extra embedding features.
+\end{DoxyVerb}
+ 
+
+Definition at line 461 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dim, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embeddings\+\_\+scale, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+layers, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+positions, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+n\+\_\+segments, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+segments, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+norm\+\_\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+output\+\_\+scaling, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+padding\+\_\+idx, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+position\+\_\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+reduction\+\_\+type, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+reduction\+\_\+type, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+segment\+\_\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+variant, and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a23005871ba6683940f63511ed463266f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a23005871ba6683940f63511ed463266f_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab56fa99f887753677dc7f4d435595114}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab56fa99f887753677dc7f4d435595114}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!dim@{dim}}
+\index{dim@{dim}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{dim}{dim}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dim}
+
+
+
+Definition at line 391 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_af28dbf5c6c0f70c1a032a3bbb5359661}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_af28dbf5c6c0f70c1a032a3bbb5359661}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!dropout@{dropout}}
+\index{dropout@{dropout}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dropout}
+
+
+
+Definition at line 396 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+get(), and agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a57f137ae98789edeae26de90118efdd6}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a57f137ae98789edeae26de90118efdd6}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!embedding\+\_\+size@{embedding\+\_\+size}}
+\index{embedding\+\_\+size@{embedding\+\_\+size}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{embedding\+\_\+size}{embedding\_size}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embedding\+\_\+size}
+
+
+
+Definition at line 387 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a179492c3f7ebaf6ba8fb3a7f912e93ce}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a179492c3f7ebaf6ba8fb3a7f912e93ce}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!embeddings@{embeddings}}
+\index{embeddings@{embeddings}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{embeddings}{embeddings}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embeddings}
+
+
+
+Definition at line 413 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+output().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a80122462ebd32da923d7b4479053ab01}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a80122462ebd32da923d7b4479053ab01}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!embeddings\+\_\+scale@{embeddings\+\_\+scale}}
+\index{embeddings\+\_\+scale@{embeddings\+\_\+scale}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{embeddings\+\_\+scale}{embeddings\_scale}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embeddings\+\_\+scale}
+
+
+
+Definition at line 392 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afadc86cb37af464565167dc169447057}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afadc86cb37af464565167dc169447057}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!ffn\+\_\+size@{ffn\+\_\+size}}
+\index{ffn\+\_\+size@{ffn\+\_\+size}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{ffn\+\_\+size}{ffn\_size}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+ffn\+\_\+size}
+
+
+
+Definition at line 388 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbeff4ac94daff4e1627b6d93cd37424}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbeff4ac94daff4e1627b6d93cd37424}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!layers@{layers}}
+\index{layers@{layers}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{layers}{layers}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+layers}
+
+
+
+Definition at line 445 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab6830a5aa0850e50549c159586c17515}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab6830a5aa0850e50549c159586c17515}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!n\+\_\+heads@{n\+\_\+heads}}
+\index{n\+\_\+heads@{n\+\_\+heads}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{n\+\_\+heads}{n\_heads}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+heads}
+
+
+
+Definition at line 390 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a1fac9c2d34c4d2268f50fc90b1e74e04}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a1fac9c2d34c4d2268f50fc90b1e74e04}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!n\+\_\+layers@{n\+\_\+layers}}
+\index{n\+\_\+layers@{n\+\_\+layers}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{n\+\_\+layers}{n\_layers}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+layers}
+
+
+
+Definition at line 389 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab885dd6b80284dbd2837ecaf75f96cb0}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab885dd6b80284dbd2837ecaf75f96cb0}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!n\+\_\+positions@{n\+\_\+positions}}
+\index{n\+\_\+positions@{n\+\_\+positions}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{n\+\_\+positions}{n\_positions}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+positions}
+
+
+
+Definition at line 400 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab5ec60adca3ce418f73e409187a82625}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ab5ec60adca3ce418f73e409187a82625}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!n\+\_\+segments@{n\+\_\+segments}}
+\index{n\+\_\+segments@{n\+\_\+segments}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{n\+\_\+segments}{n\_segments}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+segments}
+
+
+
+Definition at line 398 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ae8676d5d506949c00d35c34ac41b9fff}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ae8676d5d506949c00d35c34ac41b9fff}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!norm\+\_\+embeddings@{norm\+\_\+embeddings}}
+\index{norm\+\_\+embeddings@{norm\+\_\+embeddings}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{norm\+\_\+embeddings}{norm\_embeddings}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+norm\+\_\+embeddings}
+
+
+
+Definition at line 435 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afd4ec22c3a8b8611a4a1caa85225b426}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_afd4ec22c3a8b8611a4a1caa85225b426}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!out\+\_\+dim@{out\+\_\+dim}}
+\index{out\+\_\+dim@{out\+\_\+dim}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{out\+\_\+dim}{out\_dim}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+out\+\_\+dim}
+
+
+
+Definition at line 401 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad904c0d06a4f6851b38fbbc0cab224f9}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad904c0d06a4f6851b38fbbc0cab224f9}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!output\+\_\+scaling@{output\+\_\+scaling}}
+\index{output\+\_\+scaling@{output\+\_\+scaling}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{output\+\_\+scaling}{output\_scaling}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+output\+\_\+scaling}
+
+
+
+Definition at line 459 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a74702a13d7e41afc3e77c94bb60bd119}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a74702a13d7e41afc3e77c94bb60bd119}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!padding\+\_\+idx@{padding\+\_\+idx}}
+\index{padding\+\_\+idx@{padding\+\_\+idx}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{padding\+\_\+idx}{padding\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+padding\+\_\+idx}
+
+
+
+Definition at line 394 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), agent.\+modules.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad2dd819e6d66d17f69e8bfa5026d192a}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_ad2dd819e6d66d17f69e8bfa5026d192a}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!position\+\_\+embeddings@{position\+\_\+embeddings}}
+\index{position\+\_\+embeddings@{position\+\_\+embeddings}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{position\+\_\+embeddings}{position\_embeddings}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+position\+\_\+embeddings}
+
+
+
+Definition at line 425 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a2703f337fd44344ccd93743e57be554e}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a2703f337fd44344ccd93743e57be554e}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!reduction\+\_\+type@{reduction\+\_\+type}}
+\index{reduction\+\_\+type@{reduction\+\_\+type}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{reduction\+\_\+type}{reduction\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+reduction\+\_\+type}
+
+
+
+Definition at line 393 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbc50af3764335ae22ef2ba06a65c4a7}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_acbc50af3764335ae22ef2ba06a65c4a7}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!segment\+\_\+embeddings@{segment\+\_\+embeddings}}
+\index{segment\+\_\+embeddings@{segment\+\_\+embeddings}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{segment\+\_\+embeddings}{segment\_embeddings}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+segment\+\_\+embeddings}
+
+
+
+Definition at line 442 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a6ea46aeb8ca865c97ec8e99746bedd7b}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoder_a6ea46aeb8ca865c97ec8e99746bedd7b}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}!variant@{variant}}
+\index{variant@{variant}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder}}
+\subsubsection{\texorpdfstring{variant}{variant}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+variant}
+
+
+
+Definition at line 397 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

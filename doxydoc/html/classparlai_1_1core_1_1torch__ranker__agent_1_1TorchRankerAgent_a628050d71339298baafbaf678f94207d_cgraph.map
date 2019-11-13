@@ -1,0 +1,7 @@
+<map id="parlai.core.torch_ranker_agent.TorchRankerAgent.block_repeats" name="parlai.core.torch_ranker_agent.TorchRankerAgent.block_repeats">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a42cd79a3d59c402422eca36285b2cd05" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.\l_find_match" alt="" coords="263,5,442,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1misc.html#ad96b0c9ef6237d9ca051251089faf2c7" title="parlai.utils.misc.padded_3d" alt="" coords="263,85,443,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1.html#adb5a414ae439f14c54e8c760b91cc4c8" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v1.padded_tensor" alt="" coords="278,136,427,192"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="263,216,443,243"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="491,209,633,250"/>
+</map>

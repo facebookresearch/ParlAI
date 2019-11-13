@@ -1,6 +1,4 @@
 <map id="parlai.mturk.core.agents.MTurkAgent" name="parlai.mturk.core.agents.MTurkAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="14,155,181,196"/>
-<area shape="rect" id="node4" href="$classmock__turk__agent_1_1MockTurkAgent.html" title=" " alt="" coords="5,244,189,285"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="16,80,179,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="69,5,126,32"/>
+<area shape="rect" id="node4" href="$classmock__turk__agent_1_1MockTurkAgent.html" title="mock_turk_agent.MockTurk\lAgent" alt="" coords="5,244,189,285"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="16,80,179,107"/>
 </map>

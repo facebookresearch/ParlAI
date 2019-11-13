@@ -1,0 +1,81 @@
+\hypertarget{namespaceconvert__rated__to__sliced}{}\section{convert\+\_\+rated\+\_\+to\+\_\+sliced Namespace Reference}
+\label{namespaceconvert__rated__to__sliced}\index{convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceconvert__rated__to__sliced_a23f7c33059f21fbae93c8c8d71e3a4b5}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespaceconvert__rated__to__sliced_ad4fd35247a4e417615638391b9db7710}{main} (\hyperlink{namespaceconvert__rated__to__sliced_ab6239e6254abfbdd7cc29d0d45cfe739}{config})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceconvert__rated__to__sliced_a4469c47037c02ecb8c7899cd5803b508}{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT} = \char`\"{}start a conversation\char`\"{}
+\item 
+def \hyperlink{namespaceconvert__rated__to__sliced_ab6239e6254abfbdd7cc29d0d45cfe739}{config} = \hyperlink{namespaceconvert__rated__to__sliced_a23f7c33059f21fbae93c8c8d71e3a4b5}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceconvert__rated__to__sliced_ad4fd35247a4e417615638391b9db7710}\label{namespaceconvert__rated__to__sliced_ad4fd35247a4e417615638391b9db7710}} 
+\index{convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}!main@{main}}
+\index{main@{main}!convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def convert\+\_\+rated\+\_\+to\+\_\+sliced.\+main (\begin{DoxyParamCaption}\item[{}]{config }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates input files for y_exp mturk task from conversation/rating mturk task
+
+input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
+    quality ratings 1-5
+output: file of logs (in ParlaiDialog format) sliced up to begin at the start of
+    an episode or following a new topic request, and ending with a y_exp
+\end{DoxyVerb}
+ 
+
+Definition at line 27 of file convert\+\_\+rated\+\_\+to\+\_\+sliced.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+extract\+\_\+parlai\+\_\+episodes().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceconvert__rated__to__sliced_ad4fd35247a4e417615638391b9db7710_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceconvert__rated__to__sliced_a23f7c33059f21fbae93c8c8d71e3a4b5}\label{namespaceconvert__rated__to__sliced_a23f7c33059f21fbae93c8c8d71e3a4b5}} 
+\index{convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def convert\+\_\+rated\+\_\+to\+\_\+sliced.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 18 of file convert\+\_\+rated\+\_\+to\+\_\+sliced.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceconvert__rated__to__sliced_ab6239e6254abfbdd7cc29d0d45cfe739}\label{namespaceconvert__rated__to__sliced_ab6239e6254abfbdd7cc29d0d45cfe739}} 
+\index{convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}!config@{config}}
+\index{config@{config}!convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}}
+\subsubsection{\texorpdfstring{config}{config}}
+{\footnotesize\ttfamily def convert\+\_\+rated\+\_\+to\+\_\+sliced.\+config = \hyperlink{namespaceconvert__rated__to__sliced_a23f7c33059f21fbae93c8c8d71e3a4b5}{setup\+\_\+args}()}
+
+
+
+Definition at line 63 of file convert\+\_\+rated\+\_\+to\+\_\+sliced.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__rated__to__sliced_a4469c47037c02ecb8c7899cd5803b508}\label{namespaceconvert__rated__to__sliced_a4469c47037c02ecb8c7899cd5803b508}} 
+\index{convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}!I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}}
+\index{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}!convert\+\_\+rated\+\_\+to\+\_\+sliced@{convert\+\_\+rated\+\_\+to\+\_\+sliced}}
+\subsubsection{\texorpdfstring{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}{INITIAL\_PROMPT}}
+{\footnotesize\ttfamily string convert\+\_\+rated\+\_\+to\+\_\+sliced.\+I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT = \char`\"{}start a conversation\char`\"{}}
+
+
+
+Definition at line 15 of file convert\+\_\+rated\+\_\+to\+\_\+sliced.\+py.
+

@@ -1,4 +1,3 @@
 <map id="parlai.utils.safety.OffensiveStringMatcher.contains_offensive_language" name="parlai.utils.safety.OffensiveStringMatcher.contains_offensive_language">
-<area shape="rect" id="node1" title=" " alt="" coords="237,5,453,61"/>
-<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a89e75aea403630f53f41502fead9708e" title=" " alt="" coords="5,13,189,54"/>
+<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a89e75aea403630f53f41502fead9708e" title="parlai.utils.safety.Offensive\lStringMatcher.__contains__" alt="" coords="269,13,453,54"/>
 </map>

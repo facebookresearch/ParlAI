@@ -1,0 +1,7 @@
+<map id="parlai.scripts.convert_data_to_parlai_format.main" name="parlai.scripts.convert_data_to_parlai_format.main">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1convert__data__to__parlai__format.html#a4ed2278a6a86b341d814edbef295124c" title="parlai.scripts.convert\l_data_to_parlai_format.dump_data" alt="" coords="240,68,463,109"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="511,46,707,73"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1misc.html#ae5db473b41d3b49814e2566e866282b6" title="parlai.utils.misc.msg\l_to_str" alt="" coords="537,97,680,139"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="755,5,919,47"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="763,71,910,112"/>
+</map>

@@ -1,7 +1,7 @@
 <map id="parlai.mturk.core.legacy_2018.mturk_data_handler.MTurkDataHandler.log_complete_assignment" name="parlai.mturk.core.legacy_2018.mturk_data_handler.MTurkDataHandler.log_complete_assignment">
-<area shape="rect" id="node1" title=" " alt="" coords="5,125,256,181"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title=" " alt="" coords="305,5,526,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#ae78862bdf7ecda1d9ed340aa8fbdc09a" title=" " alt="" coords="304,85,527,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title=" " alt="" coords="307,165,523,221"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title=" " alt="" coords="305,245,526,301"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_force_task_group_id" alt="" coords="569,5,790,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#ae78862bdf7ecda1d9ed340aa8fbdc09a" title="parlai.mturk.core.legacy\l_2018.mturk_data_handler.MTurk\lDataHandler._force_task_group_id" alt="" coords="568,85,791,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="569,167,790,223"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title="parlai.mturk.core.legacy\l_2018.mturk_data_handler.MTurk\lDataHandler._get_connection" alt="" coords="571,248,787,304"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a79e0ff8d37c8df05b532a38f6eddb1e5" title="parlai.mturk.core.legacy\l_2018.mturk_data_handler.MTurk\lDataHandler.log_disconnect\l_assignment" alt="" coords="304,121,520,191"/>
 </map>

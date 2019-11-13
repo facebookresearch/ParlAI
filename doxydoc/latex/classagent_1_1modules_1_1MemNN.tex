@@ -1,0 +1,405 @@
+\hypertarget{classagent_1_1modules_1_1MemNN}{}\section{agent.\+modules.\+Mem\+NN Class Reference}
+\label{classagent_1_1modules_1_1MemNN}\index{agent.\+modules.\+Mem\+NN@{agent.\+modules.\+Mem\+NN}}
+
+
+Inheritance diagram for agent.\+modules.\+Mem\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classagent_1_1modules_1_1MemNN__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for agent.\+modules.\+Mem\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classagent_1_1modules_1_1MemNN__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagent_1_1modules_1_1MemNN_afa7eea8fb77c75602a7b58afce74f31c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classagent_1_1modules_1_1MemNN_acade9312ce9292bf44d4e1b70c8f9b73}{opt}, dictionary)
+\item 
+def \hyperlink{classagent_1_1modules_1_1MemNN_a1464c9a427996709f4a910a7b2d2487d}{time\+\_\+feature} (self, t)
+\item 
+def \hyperlink{classagent_1_1modules_1_1MemNN_a7f640b99845db4db6508e12e139e3b22}{update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+} (self, memory\+\_\+lengths, memories)
+\item 
+def \hyperlink{classagent_1_1modules_1_1MemNN_a830d84e09fae11dac5df4cbf8225bd26}{get\+\_\+score} (self, cands, output\+\_\+embeddings, forward\+\_\+predict=False)
+\item 
+def \hyperlink{classagent_1_1modules_1_1MemNN_aa4fbd692135afd7ec2fa94afafe34b73}{forward} (self, memories, queries, memory\+\_\+lengths, query\+\_\+lengths, cand\+\_\+answers=None, cands\+\_\+embeddings\+\_\+with\+\_\+beta=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_acade9312ce9292bf44d4e1b70c8f9b73}{opt}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a141cdf0a3d28af1cfc47b9990abc74c6}{dict}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a8a0039c69aeff10be21612d967459c32}{num\+\_\+time\+\_\+features}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a3fe1dbdb20b36d425585aa5ede13acf9}{extra\+\_\+features\+\_\+slots}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a9fb8309c555b3c48d1c9f3a711efd8c3}{time\+\_\+features}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a74a3f3cf77641fd404808cc8820e4ae6}{answer\+\_\+embedder}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_ac0718034c9a8f595e0f138fc73c20a80}{query\+\_\+embedder}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_aca43b3c9bf63ef6680b6f6c19d0e90eb}{in\+\_\+memory\+\_\+embedder}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a439ffece4195cb7ca400c19f79db7f92}{out\+\_\+memory\+\_\+embedder}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a4ae16569ac7ba30d2e3838f5431c0e28}{feedback\+\_\+embedder}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a27157e41457032bacb043bcaf9640c73}{memory\+\_\+hop}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a3fcb2d3675f76c96af9962b08193c6ec}{score}
+\item 
+\hyperlink{classagent_1_1modules_1_1MemNN_a63e1eea8835a674f6df4a0f86ac71647}{linear}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 15 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_afa7eea8fb77c75602a7b58afce74f31c}\label{classagent_1_1modules_1_1MemNN_afa7eea8fb77c75602a7b58afce74f31c}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Mem\+N\+N.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_aa4fbd692135afd7ec2fa94afafe34b73}\label{classagent_1_1modules_1_1MemNN_aa4fbd692135afd7ec2fa94afafe34b73}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!forward@{forward}}
+\index{forward@{forward}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Mem\+N\+N.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{memories,  }\item[{}]{queries,  }\item[{}]{memory\+\_\+lengths,  }\item[{}]{query\+\_\+lengths,  }\item[{}]{cand\+\_\+answers = {\ttfamily None},  }\item[{}]{cands\+\_\+embeddings\+\_\+with\+\_\+beta = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 124 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+answer\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+in\+\_\+memory\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+in\+\_\+memory\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+linear, parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+linear, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+linear, parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+linear, parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+linear, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+memory\+\_\+hop, agent.\+modules.\+Mem\+N\+N.\+memory\+\_\+hop, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+memory\+\_\+hop, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+out\+\_\+memory\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+out\+\_\+memory\+\_\+embedder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+query\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+query\+\_\+embedder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_aa4fbd692135afd7ec2fa94afafe34b73_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_aa4fbd692135afd7ec2fa94afafe34b73_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a830d84e09fae11dac5df4cbf8225bd26}\label{classagent_1_1modules_1_1MemNN_a830d84e09fae11dac5df4cbf8225bd26}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!get\+\_\+score@{get\+\_\+score}}
+\index{get\+\_\+score@{get\+\_\+score}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{get\+\_\+score()}{get\_score()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{cands,  }\item[{}]{output\+\_\+embeddings,  }\item[{}]{forward\+\_\+predict = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 88 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+answer\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, agent.\+modules.\+Mem\+N\+N.\+feedback\+\_\+embedder, agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+score, agent.\+modules.\+Mem\+N\+N.\+score, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+\_\+\+Hypothesis\+Tail.\+score, and agent.\+modules.\+to\+\_\+tensors().
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_a830d84e09fae11dac5df4cbf8225bd26_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_a830d84e09fae11dac5df4cbf8225bd26_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a1464c9a427996709f4a910a7b2d2487d}\label{classagent_1_1modules_1_1MemNN_a1464c9a427996709f4a910a7b2d2487d}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!time\+\_\+feature@{time\+\_\+feature}}
+\index{time\+\_\+feature@{time\+\_\+feature}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{time\+\_\+feature()}{time\_feature()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Mem\+N\+N.\+time\+\_\+feature (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{t }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+num\+\_\+time\+\_\+features, agent.\+modules.\+Mem\+N\+N.\+num\+\_\+time\+\_\+features, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+time\+\_\+features, and agent.\+modules.\+Mem\+N\+N.\+time\+\_\+features.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_a1464c9a427996709f4a910a7b2d2487d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a7f640b99845db4db6508e12e139e3b22}\label{classagent_1_1modules_1_1MemNN_a7f640b99845db4db6508e12e139e3b22}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+@{update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+}}
+\index{update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+@{update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+()}{update\_memories\_with\_extra\_features\_()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{memory\+\_\+lengths,  }\item[{}]{memories }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+extra\+\_\+features\+\_\+slots, agent.\+modules.\+Mem\+N\+N.\+extra\+\_\+features\+\_\+slots, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+time\+\_\+feature(), and agent.\+modules.\+Mem\+N\+N.\+time\+\_\+feature().
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_a7f640b99845db4db6508e12e139e3b22_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1MemNN_a7f640b99845db4db6508e12e139e3b22_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a74a3f3cf77641fd404808cc8820e4ae6}\label{classagent_1_1modules_1_1MemNN_a74a3f3cf77641fd404808cc8820e4ae6}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!answer\+\_\+embedder@{answer\+\_\+embedder}}
+\index{answer\+\_\+embedder@{answer\+\_\+embedder}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{answer\+\_\+embedder}{answer\_embedder}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder}
+
+
+
+Definition at line 40 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward(), and agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a141cdf0a3d28af1cfc47b9990abc74c6}\label{classagent_1_1modules_1_1MemNN_a141cdf0a3d28af1cfc47b9990abc74c6}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!dict@{dict}}
+\index{dict@{dict}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+dict}
+
+
+
+Definition at line 19 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a3fe1dbdb20b36d425585aa5ede13acf9}\label{classagent_1_1modules_1_1MemNN_a3fe1dbdb20b36d425585aa5ede13acf9}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!extra\+\_\+features\+\_\+slots@{extra\+\_\+features\+\_\+slots}}
+\index{extra\+\_\+features\+\_\+slots@{extra\+\_\+features\+\_\+slots}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{extra\+\_\+features\+\_\+slots}{extra\_features\_slots}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+extra\+\_\+features\+\_\+slots}
+
+
+
+Definition at line 24 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a4ae16569ac7ba30d2e3838f5431c0e28}\label{classagent_1_1modules_1_1MemNN_a4ae16569ac7ba30d2e3838f5431c0e28}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!feedback\+\_\+embedder@{feedback\+\_\+embedder}}
+\index{feedback\+\_\+embedder@{feedback\+\_\+embedder}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{feedback\+\_\+embedder}{feedback\_embedder}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+feedback\+\_\+embedder}
+
+
+
+Definition at line 46 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_aca43b3c9bf63ef6680b6f6c19d0e90eb}\label{classagent_1_1modules_1_1MemNN_aca43b3c9bf63ef6680b6f6c19d0e90eb}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!in\+\_\+memory\+\_\+embedder@{in\+\_\+memory\+\_\+embedder}}
+\index{in\+\_\+memory\+\_\+embedder@{in\+\_\+memory\+\_\+embedder}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{in\+\_\+memory\+\_\+embedder}{in\_memory\_embedder}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+in\+\_\+memory\+\_\+embedder}
+
+
+
+Definition at line 44 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a63e1eea8835a674f6df4a0f86ac71647}\label{classagent_1_1modules_1_1MemNN_a63e1eea8835a674f6df4a0f86ac71647}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!linear@{linear}}
+\index{linear@{linear}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{linear}{linear}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+linear}
+
+
+
+Definition at line 51 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward(), and agent.\+modules.\+Hop.\+forward().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a27157e41457032bacb043bcaf9640c73}\label{classagent_1_1modules_1_1MemNN_a27157e41457032bacb043bcaf9640c73}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!memory\+\_\+hop@{memory\+\_\+hop}}
+\index{memory\+\_\+hop@{memory\+\_\+hop}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{memory\+\_\+hop}{memory\_hop}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+memory\+\_\+hop}
+
+
+
+Definition at line 48 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a8a0039c69aeff10be21612d967459c32}\label{classagent_1_1modules_1_1MemNN_a8a0039c69aeff10be21612d967459c32}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!num\+\_\+time\+\_\+features@{num\+\_\+time\+\_\+features}}
+\index{num\+\_\+time\+\_\+features@{num\+\_\+time\+\_\+features}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{num\+\_\+time\+\_\+features}{num\_time\_features}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+num\+\_\+time\+\_\+features}
+
+
+
+Definition at line 22 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+time\+\_\+feature().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_acade9312ce9292bf44d4e1b70c8f9b73}\label{classagent_1_1modules_1_1MemNN_acade9312ce9292bf44d4e1b70c8f9b73}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!opt@{opt}}
+\index{opt@{opt}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+opt}
+
+
+
+Definition at line 18 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a439ffece4195cb7ca400c19f79db7f92}\label{classagent_1_1modules_1_1MemNN_a439ffece4195cb7ca400c19f79db7f92}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!out\+\_\+memory\+\_\+embedder@{out\+\_\+memory\+\_\+embedder}}
+\index{out\+\_\+memory\+\_\+embedder@{out\+\_\+memory\+\_\+embedder}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{out\+\_\+memory\+\_\+embedder}{out\_memory\_embedder}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+out\+\_\+memory\+\_\+embedder}
+
+
+
+Definition at line 45 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_ac0718034c9a8f595e0f138fc73c20a80}\label{classagent_1_1modules_1_1MemNN_ac0718034c9a8f595e0f138fc73c20a80}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!query\+\_\+embedder@{query\+\_\+embedder}}
+\index{query\+\_\+embedder@{query\+\_\+embedder}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{query\+\_\+embedder}{query\_embedder}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+query\+\_\+embedder}
+
+
+
+Definition at line 43 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a3fcb2d3675f76c96af9962b08193c6ec}\label{classagent_1_1modules_1_1MemNN_a3fcb2d3675f76c96af9962b08193c6ec}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!score@{score}}
+\index{score@{score}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{score}{score}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+score}
+
+
+
+Definition at line 50 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+predict(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1MemNN_a9fb8309c555b3c48d1c9f3a711efd8c3}\label{classagent_1_1modules_1_1MemNN_a9fb8309c555b3c48d1c9f3a711efd8c3}} 
+\index{agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}!time\+\_\+features@{time\+\_\+features}}
+\index{time\+\_\+features@{time\+\_\+features}!agent\+::modules\+::\+Mem\+NN@{agent\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{time\+\_\+features}{time\_features}}
+{\footnotesize\ttfamily agent.\+modules.\+Mem\+N\+N.\+time\+\_\+features}
+
+
+
+Definition at line 26 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+time\+\_\+feature().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/memnn\+\_\+feedback/agent/\hyperlink{projects_2memnn__feedback_2agent_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

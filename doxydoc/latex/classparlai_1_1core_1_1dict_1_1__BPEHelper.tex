@@ -1,0 +1,201 @@
+\hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper}{}\section{parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper Class Reference}
+\label{classparlai_1_1core_1_1dict_1_1__BPEHelper}\index{parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper@{parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper}}
+
+
+Inheritance diagram for parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1core_1_1dict_1_1__BPEHelper__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1core_1_1dict_1_1__BPEHelper__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_a449da91d98a6bb75bc374782cf9f7016}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, codecs\+\_\+filename)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_a1492c4bca01a00536eef0e3cc15f134b}{tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_ae93cf51522695ac3f45fc19eee94f64c}{finalize} (self, frequencies, num\+\_\+symbols=30000, minfreq=2)
+\item 
+def \hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_a712c4482ea0dc907543effce64bd8145}{copy\+\_\+codecs\+\_\+file} (self, target\+\_\+file)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_a4982da2af63c5f2e4ca0e17b1693659c}{splitter}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_a03ab8d245394a2916d8d73cfe521aebe}{codecs}
+\item 
+\hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper_af99fd825694f985095fd9ac55fcd2ba3}{bpe}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Helper class for performing BPE subword tokenization.
+
+For technical details, please refer to https://arxiv.org/abs/1508.07909.
+This class just wraps around the official subword-nmt repository.
+
+This API expects the user to call tokenize() onto the training data,
+then call finalize() to learn the encodings, and then iterate over the data
+in a second pass, calling tokenize() again to get processed output.
+\end{DoxyVerb}
+ 
+
+Definition at line 775 of file dict.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_a449da91d98a6bb75bc374782cf9f7016}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_a449da91d98a6bb75bc374782cf9f7016}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{codecs\+\_\+filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the BPE module.
+
+If `codecs_filename` already exists, loads the pretrained codecs.
+If it does not, codecs will be saved there after a call to `finalize()`.
+
+:param codecs_filename:
+    place to save/load codecs.
+\end{DoxyVerb}
+ 
+
+Definition at line 787 of file dict.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_a712c4482ea0dc907543effce64bd8145}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_a712c4482ea0dc907543effce64bd8145}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!copy\+\_\+codecs\+\_\+file@{copy\+\_\+codecs\+\_\+file}}
+\index{copy\+\_\+codecs\+\_\+file@{copy\+\_\+codecs\+\_\+file}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{copy\+\_\+codecs\+\_\+file()}{copy\_codecs\_file()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+copy\+\_\+codecs\+\_\+file (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{target\+\_\+file }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Copy the codecs file to a new location.\end{DoxyVerb}
+ 
+
+Definition at line 870 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+codecs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+codecs, and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+codecs.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_ae93cf51522695ac3f45fc19eee94f64c}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_ae93cf51522695ac3f45fc19eee94f64c}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!finalize@{finalize}}
+\index{finalize@{finalize}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{finalize()}{finalize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+finalize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{frequencies,  }\item[{}]{num\+\_\+symbols = {\ttfamily 30000},  }\item[{}]{minfreq = {\ttfamily 2} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the codecs.
+
+:param frequencies:
+    dictionary of (token: frequency) pairs
+:param num_symbols:
+    Number of BPE symbols. Recommend 30000-40000.  If <= 0, default
+    30000 will be used.
+:param minfreq:
+    Minimum frequency of a token before forced BPE decomposition. If <=
+    0 will use subword-nmt default of 2.
+\end{DoxyVerb}
+ 
+
+Definition at line 830 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+\_\+load\+\_\+from\+\_\+codecs(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+\_\+load\+\_\+from\+\_\+codecs(), parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+\_\+load\+\_\+from\+\_\+codecs(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+codecs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+codecs, parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+codecs, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1dict_1_1__BPEHelper_ae93cf51522695ac3f45fc19eee94f64c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_a1492c4bca01a00536eef0e3cc15f134b}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_a1492c4bca01a00536eef0e3cc15f134b}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!tokenize@{tokenize}}
+\index{tokenize@{tokenize}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{tokenize()}{tokenize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize the text with bpe if codecs are already finalized.
+
+Otherwise, returns the regularly split tokens that will train the bpe.
+
+:param text: str. Raw text to tokenize.
+:return: a list of tokens. Will use BPE once finalized.
+\end{DoxyVerb}
+ 
+
+Definition at line 813 of file dict.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+splitter, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+splitter, and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+splitter.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_af99fd825694f985095fd9ac55fcd2ba3}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_af99fd825694f985095fd9ac55fcd2ba3}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!bpe@{bpe}}
+\index{bpe@{bpe}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{bpe}{bpe}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+bpe}
+
+
+
+Definition at line 811 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode(), and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_a03ab8d245394a2916d8d73cfe521aebe}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_a03ab8d245394a2916d8d73cfe521aebe}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!codecs@{codecs}}
+\index{codecs@{codecs}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{codecs}{codecs}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+codecs}
+
+
+
+Definition at line 805 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+copy\+\_\+codecs\+\_\+file(), and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+finalize().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1dict_1_1__BPEHelper_a4982da2af63c5f2e4ca0e17b1693659c}\label{classparlai_1_1core_1_1dict_1_1__BPEHelper_a4982da2af63c5f2e4ca0e17b1693659c}} 
+\index{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}!splitter@{splitter}}
+\index{splitter@{splitter}!parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::core\+::dict\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{splitter}{splitter}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+splitter}
+
+
+
+Definition at line 803 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+tokenize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{dict_8py}{dict.\+py}\end{DoxyCompactItemize}

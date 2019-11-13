@@ -1,0 +1,337 @@
+\hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher}{}\section{parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher}\index{parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher@{parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a508a90334629ef603b9520a98b5200a0}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5541625a47721863f58db94177ce1114}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_acc1841e8be4613043d9674d014e06f70}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aa932b35d88d65d7f5d61b271bbee71ac}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aed7f88bcef1e901e87d0a947d180586f}{submit\+\_\+load\+\_\+request} (self, image\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a932ca5499779ef050d1fdb605c9e7f67}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx}=0)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a42df8da64edbf22fcc976b1cd02ef252}{next\+\_\+example} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae61f906342533a155cfbcad318657ce9}{share} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a93136db89c9b7943ff6aaeb28157d12e}{image\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a12671717135e971a2ec374079432b670}{datafile}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae600010b7db2aaf523db54fb0ef28906}{image\+\_\+mode}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a180c1596f72999be0858a5c9c651c93a}{ques}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae7832c20e91858e3bbea62e333d585e5}{annotation}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a658acd2bdd2d7c4fdd93fd0518423441}{image\+\_\+loader}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae9a071fc33afe67bfeae01dbd2857608}{example}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5db996acbd73e3fc6f45d69dd61fcefd}{image\+Epoch\+Done}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}VQA Open-Ended teacher, which loads the json vqa data and implements its
+own `act` method for interacting with student agent.
+\end{DoxyVerb}
+ 
+
+Definition at line 460 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a508a90334629ef603b9520a98b5200a0}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a508a90334629ef603b9520a98b5200a0}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 466 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a932ca5499779ef050d1fdb605c9e7f67}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a932ca5499779ef050d1fdb605c9e7f67}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 501 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+annotation, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+annotation, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+annotation, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+annotation, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype, parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+ques, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+ques, and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+ques.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a932ca5499779ef050d1fdb605c9e7f67_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a42df8da64edbf22fcc976b1cd02ef252}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a42df8da64edbf22fcc976b1cd02ef252}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!next\+\_\+example@{next\+\_\+example}}
+\index{next\+\_\+example@{next\+\_\+example}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{next\+\_\+example()}{next\_example()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the next example from this dataset after starting to queue
+up the next example.
+\end{DoxyVerb}
+ 
+
+Definition at line 514 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+data\+\_\+queue, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+example, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+example, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+example, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+example, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+example, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+example, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+example, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+example, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+get(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+image\+\_\+mode, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+image\+\_\+mode, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+image\+\_\+mode, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+image\+\_\+mode, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+image\+\_\+mode, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+image\+\_\+mode, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+image\+\_\+mode, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+mode, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+image\+\_\+mode, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+image\+Epoch\+Done, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+image\+Epoch\+Done, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+image\+Epoch\+Done, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+image\+Epoch\+Done, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+Epoch\+Done, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+image\+Epoch\+Done, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+next\+\_\+example(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+next\+\_\+example(), and parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+submit\+\_\+load\+\_\+request().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a42df8da64edbf22fcc976b1cd02ef252_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aa932b35d88d65d7f5d61b271bbee71ac}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aa932b35d88d65d7f5d61b271bbee71ac}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 491 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Teacher.\+num\+\_\+examples().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aa932b35d88d65d7f5d61b271bbee71ac_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_acc1841e8be4613043d9674d014e06f70}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_acc1841e8be4613043d9674d014e06f70}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Number of examples in VQA-v1.\end{DoxyVerb}
+ 
+
+Definition at line 487 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+ques, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+ques, and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+ques.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5541625a47721863f58db94177ce1114}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5541625a47721863f58db94177ce1114}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!reset@{reset}}
+\index{reset@{reset}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 482 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae61f906342533a155cfbcad318657ce9}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae61f906342533a155cfbcad318657ce9}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 538 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+annotation, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+annotation, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+annotation, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+annotation, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+image\+\_\+loader, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+image\+\_\+loader, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+loader, parlai.\+core.\+teachers.\+Dialog\+Data.\+image\+\_\+loader, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+ques, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+ques, and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+ques.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aed7f88bcef1e901e87d0a947d180586f}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aed7f88bcef1e901e87d0a947d180586f}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!submit\+\_\+load\+\_\+request@{submit\+\_\+load\+\_\+request}}
+\index{submit\+\_\+load\+\_\+request@{submit\+\_\+load\+\_\+request}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{submit\+\_\+load\+\_\+request()}{submit\_load\_request()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 495 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+data\+\_\+loader, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+image\+\_\+loader, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+image\+\_\+loader, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+image\+\_\+loader, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+loader, parlai.\+core.\+teachers.\+Dialog\+Data.\+image\+\_\+loader, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+image\+\_\+loader, parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+image\+\_\+path, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+image\+\_\+path, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+image\+\_\+path, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+image\+\_\+path, parlai.\+tasks.\+visdial.\+agents.\+Default\+Teacher.\+image\+\_\+path, parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+image\+\_\+path, personality\+\_\+captions.\+worlds.\+Personality\+And\+Image\+Generator.\+image\+\_\+path, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+image\+\_\+path, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+image\+\_\+path, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+image\+\_\+path, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+image\+\_\+path, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+image\+\_\+path, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+image\+\_\+path, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+image\+\_\+path, personality\+\_\+captions.\+worlds.\+Image\+Generator.\+image\+\_\+path, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+image\+\_\+path, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Teacher.\+image\+\_\+path, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+image\+\_\+path, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+path, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+image\+\_\+path, and parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+receive\+\_\+data().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_aed7f88bcef1e901e87d0a947d180586f_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae7832c20e91858e3bbea62e333d585e5}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae7832c20e91858e3bbea62e333d585e5}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!annotation@{annotation}}
+\index{annotation@{annotation}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{annotation}{annotation}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+annotation}
+
+
+
+Definition at line 475 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+All\+Teacher.\+act(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+All\+Teacher.\+act(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Mc\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+share(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a12671717135e971a2ec374079432b670}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a12671717135e971a2ec374079432b670}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!datafile@{datafile}}
+\index{datafile@{datafile}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{datafile}{datafile}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+datafile}
+
+
+
+Definition at line 469 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae9a071fc33afe67bfeae01dbd2857608}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae9a071fc33afe67bfeae01dbd2857608}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!example@{example}}
+\index{example@{example}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{example}{example}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+example}
+
+
+
+Definition at line 484 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+next\+\_\+example(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a658acd2bdd2d7c4fdd93fd0518423441}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a658acd2bdd2d7c4fdd93fd0518423441}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!image\+\_\+loader@{image\+\_\+loader}}
+\index{image\+\_\+loader@{image\+\_\+loader}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{image\+\_\+loader}{image\_loader}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+loader}
+
+
+
+Definition at line 476 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+share(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+share(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae600010b7db2aaf523db54fb0ef28906}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_ae600010b7db2aaf523db54fb0ef28906}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!image\+\_\+mode@{image\+\_\+mode}}
+\index{image\+\_\+mode@{image\+\_\+mode}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{image\+\_\+mode}{image\_mode}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+mode}
+
+
+
+Definition at line 470 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+next\+\_\+example(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a93136db89c9b7943ff6aaeb28157d12e}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a93136db89c9b7943ff6aaeb28157d12e}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!image\+\_\+path@{image\+\_\+path}}
+\index{image\+\_\+path@{image\+\_\+path}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{image\+\_\+path}{image\_path}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+\_\+path}
+
+
+
+Definition at line 468 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5db996acbd73e3fc6f45d69dd61fcefd}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a5db996acbd73e3fc6f45d69dd61fcefd}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!image\+Epoch\+Done@{image\+Epoch\+Done}}
+\index{image\+Epoch\+Done@{image\+Epoch\+Done}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{image\+Epoch\+Done}{imageEpochDone}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+image\+Epoch\+Done}
+
+
+
+Definition at line 485 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a180c1596f72999be0858a5c9c651c93a}\label{classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher_a180c1596f72999be0858a5c9c651c93a}} 
+\index{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}!ques@{ques}}
+\index{ques@{ques}!parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher@{parlai\+::tasks\+::vqa\+\_\+v1\+::agents\+::\+Oe\+Teacher}}
+\subsubsection{\texorpdfstring{ques}{ques}}
+{\footnotesize\ttfamily parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+ques}
+
+
+
+Definition at line 473 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+All\+Teacher.\+act(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Mc\+Teacher.\+get(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+share(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+share().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/vqa\+\_\+v1/\hyperlink{parlai_2tasks_2vqa__v1_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

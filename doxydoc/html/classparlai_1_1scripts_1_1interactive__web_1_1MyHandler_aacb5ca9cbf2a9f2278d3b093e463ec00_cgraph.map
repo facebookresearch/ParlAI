@@ -1,5 +1,4 @@
 <map id="parlai.scripts.interactive_web.MyHandler.do_GET" name="parlai.scripts.interactive_web.MyHandler.do_GET">
-<area shape="rect" id="node1" title=" " alt="" coords="5,39,177,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1interactive__web_1_1MyHandler.html#ac8530c37007eb0c8a832f3b9b47e8c13" title=" " alt="" coords="225,5,424,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1interactive__web_1_1MyHandler.html#ad6d0520c7378c38a76e3656e440d8605" title=" " alt="" coords="236,71,413,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1interactive__web_1_1MyHandler.html#ac8530c37007eb0c8a832f3b9b47e8c13" title="parlai.scripts.interactive\l_web.MyHandler._handle_http" alt="" coords="225,5,424,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1interactive__web_1_1MyHandler.html#ad6d0520c7378c38a76e3656e440d8605" title="parlai.scripts.interactive\l_web.MyHandler._respond" alt="" coords="236,71,413,112"/>
 </map>

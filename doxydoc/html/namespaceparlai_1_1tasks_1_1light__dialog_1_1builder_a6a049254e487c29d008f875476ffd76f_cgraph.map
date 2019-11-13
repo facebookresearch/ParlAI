@@ -1,0 +1,11 @@
+<map id="parlai.tasks.light_dialog.builder.build_from_db" name="parlai.tasks.light_dialog.builder.build_from_db">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#aeb144d0ebd2fd1727f73677e36f2c8b5" title="parlai.tasks.light\l_dialog.builder.write\l_alldata" alt="" coords="189,169,327,225"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a25aca9f28e4406290624e1d0c5cce0d6" title="parlai.tasks.light\l_dialog.builder.write\l_out_candidates" alt="" coords="189,250,327,306"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a233ecce0ba4b1a0c023e855629986d69" title="parlai.tasks.light\l_dialog.builder.write\l_dialog" alt="" coords="386,137,523,193"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#ad9de2827ebcf8386662e48c7fe011e43" title="parlai.tasks.light\l_dialog.builder.use_feat" alt="" coords="586,5,745,47"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a2f5cb4927740a90c9fba84df5e8e16b5" title="parlai.tasks.light\l_dialog.builder.add_negs" alt="" coords="583,71,748,112"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#aafb760ba2e05ffe5cad429327d0dd347" title="parlai.tasks.light\l_dialog.builder.fix\l_labels" alt="" coords="604,137,727,193"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1utils_1_1misc.html#ae5db473b41d3b49814e2566e866282b6" title="parlai.utils.misc.msg\l_to_str" alt="" coords="594,217,737,259"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a537e075c89058b67eb0db786f98491de" title="parlai.tasks.light\l_dialog.builder.gen\l_no_affordance_actions\l_for_dialogue" alt="" coords="375,247,535,317"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a51921236462b49d240bfde4a648c3ec3" title="parlai.tasks.light\l_dialog.builder.get\l_no_affordance_actions" alt="" coords="585,283,745,339"/>
+</map>

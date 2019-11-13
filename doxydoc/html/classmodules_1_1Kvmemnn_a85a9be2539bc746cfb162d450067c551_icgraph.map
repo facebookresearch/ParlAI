@@ -1,0 +1,5 @@
+<map id="modules.Kvmemnn.forward" name="modules.Kvmemnn.forward">
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="235,5,448,47"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="496,35,709,76"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="235,123,448,164"/>
+</map>

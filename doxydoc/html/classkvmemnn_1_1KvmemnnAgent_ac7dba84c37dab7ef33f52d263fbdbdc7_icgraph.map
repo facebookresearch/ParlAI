@@ -1,3 +1,6 @@
 <map id="kvmemnn.KvmemnnAgent.batchify" name="kvmemnn.KvmemnnAgent.batchify">
-<area shape="rect" id="node1" title=" " alt="" coords="5,29,232,56"/>
+<area shape="rect" id="node2" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="280,78,517,105"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="605,5,765,47"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="565,71,804,112"/>
+<area shape="rect" id="node5" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="585,137,784,163"/>
 </map>

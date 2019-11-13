@@ -1,6 +1,4 @@
 <map id="parlai.tasks.integration_tests.agents.CandidateTeacherDataset" name="parlai.tasks.integration_tests.agents.CandidateTeacherDataset">
-<area shape="rect" id="node1" title=" " alt="" coords="121,35,332,91"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1DefaultDataset.html" title=" " alt="" coords="397,5,591,47"/>
-<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1NoCandidateTeacherDataset.html" title=" " alt="" coords="380,71,608,127"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,50,73,77"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1DefaultDataset.html" title="parlai.tasks.integration\l_tests.agents.DefaultDataset" alt="" coords="397,5,591,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1NoCandidateTeacherDataset.html" title="parlai.tasks.integration\l_tests.agents.NoCandidateTeacher\lDataset" alt="" coords="380,71,608,127"/>
 </map>

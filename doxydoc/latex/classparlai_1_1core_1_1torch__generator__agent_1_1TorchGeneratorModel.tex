@@ -1,0 +1,316 @@
+\hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel}{}\section{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model Class Reference}
+\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel}\index{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model@{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=223pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_aaec943d5add4e6d90fdd451f740be6af}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, padding\+\_\+idx=0, start\+\_\+idx=1, end\+\_\+idx=2, unknown\+\_\+idx=3, input\+\_\+dropout=0, \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a14dcf5ba14c4438bb4919565ebd30fa8}{longest\+\_\+label}=1)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_abfc801c11be6fc49dfbc4e70dc6b8ed9}{decode\+\_\+forced} (self, encoder\+\_\+states, ys)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a9ed5aecabe977856b4c385ba74fa6107}{reorder\+\_\+encoder\+\_\+states} (self, encoder\+\_\+states, indices)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a828d2881fb73ead7d27691c73d1f6f36}{reorder\+\_\+decoder\+\_\+incremental\+\_\+state} (self, incremental\+\_\+state, inds)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a5f1915200b6a8c6518fe17889d2b7cdc}{forward} (self, xs, ys=None, prev\+\_\+enc=None, maxlen=None, bsz=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a686d4c12ada077cbf2b9c57544cbbe20}{N\+U\+L\+L\+\_\+\+I\+DX}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a1d9cfef6046368b5e7b77bc44b13473e}{E\+N\+D\+\_\+\+I\+DX}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a14dcf5ba14c4438bb4919565ebd30fa8}{longest\+\_\+label}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Abstract TorchGeneratorModel.
+
+This interface expects you to implement model with the following reqs:
+
+:attribute model.encoder:
+    takes input returns tuple (enc_out, enc_hidden, attn_mask)
+
+:attribute model.decoder:
+    takes decoder params and returns decoder outputs after attn
+
+:attribute model.output:
+    takes decoder outputs and returns distr over dictionary
+\end{DoxyVerb}
+ 
+
+Definition at line 33 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_aaec943d5add4e6d90fdd451f740be6af}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_aaec943d5add4e6d90fdd451f740be6af}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{padding\+\_\+idx = {\ttfamily 0},  }\item[{}]{start\+\_\+idx = {\ttfamily 1},  }\item[{}]{end\+\_\+idx = {\ttfamily 2},  }\item[{}]{unknown\+\_\+idx = {\ttfamily 3},  }\item[{}]{input\+\_\+dropout = {\ttfamily 0},  }\item[{}]{longest\+\_\+label = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 57 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_abfc801c11be6fc49dfbc4e70dc6b8ed9}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_abfc801c11be6fc49dfbc4e70dc6b8ed9}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!decode\+\_\+forced@{decode\+\_\+forced}}
+\index{decode\+\_\+forced@{decode\+\_\+forced}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{decode\+\_\+forced()}{decode\_forced()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{encoder\+\_\+states,  }\item[{}]{ys }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decode with a fixed, true sequence, computing loss.
+
+Useful for training, or ranking fixed candidates.
+
+:param ys:
+    the prediction targets. Contains both the start and end tokens.
+
+:type ys:
+    LongTensor[bsz, time]
+
+:param encoder_states:
+    Output of the encoder. Model specific types.
+
+:type encoder_states:
+    model specific
+
+:return:
+    pair (logits, choices) containing the logits and MLE predictions
+
+:rtype:
+    (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
+\end{DoxyVerb}
+ 
+
+Definition at line 64 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+decoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+decoder, generator.\+modules.\+End\+To\+End\+Model.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+decoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+decoder, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+decoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+decoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+output, parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+output, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+output, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+output, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+output(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+S\+T\+A\+RT, and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+S\+T\+A\+RT.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_abfc801c11be6fc49dfbc4e70dc6b8ed9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a5f1915200b6a8c6518fe17889d2b7cdc}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a5f1915200b6a8c6518fe17889d2b7cdc}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!forward@{forward}}
+\index{forward@{forward}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{ys = {\ttfamily None},  }\item[{}]{prev\+\_\+enc = {\ttfamily None},  }\item[{}]{maxlen = {\ttfamily None},  }\item[{}]{bsz = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get output predictions from the model.
+
+:param xs:
+    input to the encoder
+:type xs:
+    LongTensor[bsz, seqlen]
+:param ys:
+    Expected output from the decoder. Used
+    for teacher forcing to calculate loss.
+:type ys:
+    LongTensor[bsz, outlen]
+:param prev_enc:
+    if you know you'll pass in the same xs multiple times, you can pass
+    in the encoder output from the last forward pass to skip
+    recalcuating the same encoder output.
+:param maxlen:
+    max number of tokens to decode. if not set, will use the length of
+    the longest label this model has seen. ignored when ys is not None.
+:param bsz:
+    if ys is not provided, then you must specify the bsz for greedy
+    decoding.
+
+:return:
+    (scores, candidate_scores, encoder_states) tuple
+
+    - scores contains the model's predicted token scores.
+      (FloatTensor[bsz, seqlen, num_features])
+    - candidate_scores are the score the model assigned to each candidate.
+      (FloatTensor[bsz, num_cands])
+    - encoder_states are the output of model.encoder. Model specific types.
+      Feed this back in to skip encoding on the next call.
+\end{DoxyVerb}
+ 
+
+Definition at line 179 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a5f1915200b6a8c6518fe17889d2b7cdc_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a828d2881fb73ead7d27691c73d1f6f36}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a828d2881fb73ead7d27691c73d1f6f36}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}}
+\index{reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{reorder\+\_\+decoder\+\_\+incremental\+\_\+state()}{reorder\_decoder\_incremental\_state()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+reorder\+\_\+decoder\+\_\+incremental\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{incremental\+\_\+state,  }\item[{}]{inds }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder incremental state for the decoder.
+
+Used to expand selected beams in beam search. Unlike reorder_encoder_states,
+implementing this method is optional. However, without incremental decoding,
+decoding a single beam becomes O(n^2) instead of O(n), which can make
+beam search impractically slow.
+
+In order to fall back to non-incremental decoding, just return None from this
+method.
+
+:param incremental_state:
+    second output of model.decoder
+:type incremental_state:
+    model specific
+:param inds:
+    indices to select and reorder over.
+:type inds:
+    LongTensor[n]
+
+:return:
+    The re-ordered decoder incremental states. It should be the same
+    type as incremental_state, and usable as an input to the decoder.
+    This method should return None if the model does not support
+    incremental decoding.
+
+:rtype:
+    model specific
+\end{DoxyVerb}
+ 
+
+Definition at line 147 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a9ed5aecabe977856b4c385ba74fa6107}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a9ed5aecabe977856b4c385ba74fa6107}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}}
+\index{reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{reorder\+\_\+encoder\+\_\+states()}{reorder\_encoder\_states()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+reorder\+\_\+encoder\+\_\+states (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{encoder\+\_\+states,  }\item[{}]{indices }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder encoder states according to a new set of indices.
+
+This is an abstract method, and *must* be implemented by the user.
+
+Its purpose is to provide beam search with a model-agnostic interface for
+beam search. For example, this method is used to sort hypotheses,
+expand beams, etc.
+
+For example, assume that encoder_states is an bsz x 1 tensor of values
+
+.. code-block:: python
+
+    indices = [0, 2, 2]
+    encoder_states = [[0.1]
+              [0.2]
+              [0.3]]
+
+then the output will be
+
+.. code-block:: python
+
+    output = [[0.1]
+      [0.3]
+      [0.3]]
+
+:param encoder_states:
+    output from encoder. type is model specific.
+
+:type encoder_states:
+    model specific
+
+:param indices:
+    the indices to select over. The user must support non-tensor
+    inputs.
+
+:type indices: list[int]
+
+:return:
+    The re-ordered encoder states. It should be of the same type as
+    encoder states, and it must be a valid input to the decoder.
+
+:rtype:
+    model specific
+\end{DoxyVerb}
+ 
+
+Definition at line 98 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a1d9cfef6046368b5e7b77bc44b13473e}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a1d9cfef6046368b5e7b77bc44b13473e}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!E\+N\+D\+\_\+\+I\+DX@{E\+N\+D\+\_\+\+I\+DX}}
+\index{E\+N\+D\+\_\+\+I\+DX@{E\+N\+D\+\_\+\+I\+DX}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{E\+N\+D\+\_\+\+I\+DX}{END\_IDX}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+E\+N\+D\+\_\+\+I\+DX}
+
+
+
+Definition at line 60 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a14dcf5ba14c4438bb4919565ebd30fa8}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a14dcf5ba14c4438bb4919565ebd30fa8}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!longest\+\_\+label@{longest\+\_\+label}}
+\index{longest\+\_\+label@{longest\+\_\+label}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{longest\+\_\+label}{longest\_label}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+longest\+\_\+label}
+
+
+
+Definition at line 62 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a686d4c12ada077cbf2b9c57544cbbe20}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a686d4c12ada077cbf2b9c57544cbbe20}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}!N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}}
+\index{N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Torch\+Generator\+Model}}
+\subsubsection{\texorpdfstring{N\+U\+L\+L\+\_\+\+I\+DX}{NULL\_IDX}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+N\+U\+L\+L\+\_\+\+I\+DX}
+
+
+
+Definition at line 59 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batchify().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__generator__agent_8py}{torch\+\_\+generator\+\_\+agent.\+py}\end{DoxyCompactItemize}

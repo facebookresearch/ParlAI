@@ -1,0 +1,8 @@
+<map id="server.get_mturk_task_module" name="server.get_mturk_task_module">
+<area shape="rect" id="node2" href="$namespaceserver.html#a2467b58afe94f16856770faf20184b7b" title="server.get_config_module" alt="" coords="205,56,376,83"/>
+<area shape="rect" id="node7" href="$namespaceserver.html#a19d9a32c8654358136f27ac2f710208d" title="server.get_run_module" alt="" coords="213,107,368,133"/>
+<area shape="rect" id="node3" href="$classserver_1_1TaskListHandler.html#a137d4866bf8522230742085684e903c5" title="server.TaskListHandler.get" alt="" coords="434,5,613,32"/>
+<area shape="rect" id="node5" href="$classserver_1_1AssignmentHandler.html#aafff6382132dfeb120d0fd1889ab079c" title="server.AssignmentHandler.get" alt="" coords="424,56,623,83"/>
+<area shape="rect" id="node6" href="$classserver_1_1TaskRunHandler.html#aafdad98a65fe99f154621ec74b593d78" title="server.TaskRunHandler.post" alt="" coords="429,107,618,133"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="671,23,876,65"/>
+</map>

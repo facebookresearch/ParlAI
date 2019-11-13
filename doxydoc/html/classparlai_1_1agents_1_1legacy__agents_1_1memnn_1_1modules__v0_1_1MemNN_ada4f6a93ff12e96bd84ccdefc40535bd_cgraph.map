@@ -1,0 +1,4 @@
+<map id="parlai.agents.legacy_agents.memnn.modules_v0.MemNN.forward" name="parlai.agents.legacy_agents.memnn.modules_v0.MemNN.forward">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1MemNN.html#a9da6ab125898ee1ab3744ee5d260b6dd" title="parlai.agents.legacy\l_agents.memnn.modules\l_v0.MemNN.update_memories\l_with_extra_features_" alt="" coords="221,5,424,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1MemNN.html#ab1188b15b34f67153ac59258d646397b" title="parlai.agents.legacy\l_agents.memnn.modules\l_v0.MemNN.time_feature" alt="" coords="472,13,644,69"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="parlai.tasks.insuranceqa.build.ParseInsuranceQA.readlines" name="parlai.tasks.insuranceqa.build.ParseInsuranceQA.readlines">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1.html#a67191000b24f2d3f3be641c5221b9a30" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQAV1.create\l_fb_format" alt="" coords="275,5,473,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV2.html#abaa749229881633590c411cdaf79c6ff" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQAV2.create\l_fb_format" alt="" coords="275,85,473,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#a24c20a520141dbc602a242780281ee6d" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.read_label2answer" alt="" coords="252,166,496,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#a94f69218557d222da922e0de7f41f75a" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.build" alt="" coords="544,166,743,207"/>
+</map>

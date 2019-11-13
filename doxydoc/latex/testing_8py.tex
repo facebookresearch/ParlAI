@@ -1,0 +1,68 @@
+\hypertarget{testing_8py}{}\section{parlai/utils/testing.py File Reference}
+\label{testing_8py}\index{parlai/utils/testing.\+py@{parlai/utils/testing.\+py}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1testing_1_1retry}{parlai.\+utils.\+testing.\+retry}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1testing_1_1TeeStringIO}{parlai.\+utils.\+testing.\+Tee\+String\+IO}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceparlai_1_1utils_1_1testing}{parlai.\+utils.\+testing}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2b1aba8cb2afc498691840f4b8999420}{parlai.\+utils.\+testing.\+is\+\_\+this\+\_\+circleci} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a7b182622aebc6cdc41ee3b99ebe47432}{parlai.\+utils.\+testing.\+skip\+Unless\+Torch} (testfn, reason=\textquotesingle{}pytorch is not installed\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2d3bb5013e210bf866032aedc812859b}{parlai.\+utils.\+testing.\+skip\+If\+G\+PU} (testfn, reason=\textquotesingle{}Test is C\+PU-\/only\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2773d8b6d4631fa1f639dde415eb3e2b}{parlai.\+utils.\+testing.\+skip\+Unless\+G\+PU} (testfn, reason=\textquotesingle{}Test requires a G\+PU\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ab04af7a525a569f29b936b54b32899b7}{parlai.\+utils.\+testing.\+skip\+Unless\+B\+PE} (testfn, reason=\textquotesingle{}Test requires a G\+PU\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a056ab7a9ad687500924a29001a7d9264}{parlai.\+utils.\+testing.\+skip\+If\+Circle\+CI} (testfn, reason=\textquotesingle{}Test disabled in Circle\+CI\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a50b91b6f209eeedd93ae7ec0e790b121}{parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+files} (root=None, skip\+\_\+nonexisting=True)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a767a8ac6ea27697e6f782d7375d94933}{parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+dirs} (root=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2e61f8f35b8ccf518e3561a224781ced}{parlai.\+utils.\+testing.\+git\+\_\+changed\+\_\+files} (skip\+\_\+nonexisting=True)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_aa9971204bea89f174596698b2e736214}{parlai.\+utils.\+testing.\+git\+\_\+commit\+\_\+messages} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a18092382f94848a52ef19248aa39f7ca}{parlai.\+utils.\+testing.\+is\+\_\+new\+\_\+task\+\_\+filename} (filename)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ab00d4d693202afab92c06387aa50699b}{parlai.\+utils.\+testing.\+capture\+\_\+output} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a0945b769a10c0c844b29c02ff26445a5}{parlai.\+utils.\+testing.\+tempdir} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a005734981469efed8a992bf5edc3ca8a}{parlai.\+utils.\+testing.\+train\+\_\+model} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a6fb595d4398ee27f4d183911419a222a}{parlai.\+utils.\+testing.\+eval\+\_\+model} (opt, skip\+\_\+valid=False, skip\+\_\+test=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a30c532f112f9beddd873382e649b3ecd}{parlai.\+utils.\+testing.\+display\+\_\+data} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a1b41200277931b2e4e684dc9452889a9}{parlai.\+utils.\+testing.\+display\+\_\+model} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ae0c93fc8f4c3e079333dba0065fa4dd2}{parlai.\+utils.\+testing.\+download\+\_\+unittest\+\_\+models} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a0f879f699b5616ca0bd1360324ac3d77}{parlai.\+utils.\+testing.\+T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = True
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1testing_acb64cdbe57c68a7d568900062681e0c5}{parlai.\+utils.\+testing.\+G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = torch.\+cuda.\+device\+\_\+count() $>$ 0
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1testing_aee12f734544cd8a3dcb1c823aa51b2f0}{parlai.\+utils.\+testing.\+git\+\_\+} = git.\+Git()
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a7084c71931b4958c640b38285e89cd87}{parlai.\+utils.\+testing.\+G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = True
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a54ab3fcb6f56b6b83d27ed5aa62148da}{parlai.\+utils.\+testing.\+B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED} = True
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_aca36857f73d37ca56704f812c05a3b13}{parlai.\+utils.\+testing.\+D\+E\+B\+UG} = False
+\end{DoxyCompactItemize}

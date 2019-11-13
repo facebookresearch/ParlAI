@@ -1,0 +1,9 @@
+<map id="train.online_exp" name="train.online_exp">
+<area shape="rect" id="node2" href="$namespacetrain.html#a6e1c17af3a14f1cd1b54ee54ccf5a77b" title="train.main" alt="" coords="167,51,245,78"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="441,76,637,103"/>
+<area shape="rect" id="node6" href="$namespacetrain.html#a2322df3364c6be0dfcbd3d13d9a4745e" title="train.log_print" alt="" coords="293,26,393,52"/>
+<area shape="rect" id="node7" href="$namespacetrain.html#a69347e6c50429f5076c376b70b1d8a27" title="train.prepro" alt="" coords="300,76,387,103"/>
+<area shape="rect" id="node8" href="$namespacetrain.html#a339ec8fa7ecbd096bb08716bd0b2aa94" title="train.validate" alt="" coords="295,127,391,154"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="685,36,849,77"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="694,101,841,142"/>
+</map>

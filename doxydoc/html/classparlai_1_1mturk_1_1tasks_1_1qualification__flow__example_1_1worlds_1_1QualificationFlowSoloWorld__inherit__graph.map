@@ -1,7 +1,5 @@
 <map id="parlai.mturk.tasks.qualification_flow_example.worlds.QualificationFlowSoloWorld" name="parlai.mturk.tasks.qualification_flow_example.worlds.QualificationFlowSoloWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,260,389"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="50,244,215,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="50,155,215,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="51,80,214,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="104,5,161,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title="parlai.mturk.core.worlds.\lMTurkTaskWorld" alt="" coords="50,244,215,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.worlds.\lMTurkDataWorld" alt="" coords="50,155,215,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="51,80,214,107"/>
 </map>

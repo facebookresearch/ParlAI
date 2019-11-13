@@ -1,9 +1,6 @@
 <map id="tests.test_ta_inheritence.SubClassB" name="tests.test_ta_inheritence.SubClassB">
-<area shape="rect" id="node1" title=" " alt="" coords="15,423,185,464"/>
-<area shape="rect" id="node2" href="$classtests_1_1test__ta__inheritence_1_1SubClassA.html" title=" " alt="" coords="15,333,185,375"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title=" " alt="" coords="5,244,195,285"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="21,155,179,196"/>
-<area shape="rect" id="node5" title=" " alt="" coords="9,80,60,107"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="84,80,247,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="137,5,194,32"/>
+<area shape="rect" id="node2" href="$classtests_1_1test__ta__inheritence_1_1SubClassA.html" title="tests.test_ta_inheritence.\lSubClassA" alt="" coords="15,333,185,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent" alt="" coords="5,244,195,285"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="21,155,179,196"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="84,80,247,107"/>
 </map>

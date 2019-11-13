@@ -1,0 +1,231 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer}{}\section{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer}\index{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer@{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a68caa3f119bfb946e34b7cf3c8bd9e48}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, n\+\_\+heads, embedding\+\_\+size, ffn\+\_\+size, attention\+\_\+dropout=0.\+0, relu\+\_\+dropout=0.\+0, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a3bcd00a8073a48b6a1626fccb87be143}{dropout}=0.\+0, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2986c3841832cc56d76908347f22a0a3}{activation}=\textquotesingle{}relu\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a33ff5864b155499ecf8d31383b33e8d8}{variant}=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_aba0474eb3a08b6c482648adc0804776e}{forward} (self, tensor, mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ae0f31a52dac8d678fdf6ba573201e7d7}{dim}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_abcdb8b9abb049afacdd132d2a811faff}{ffn\+\_\+dim}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2986c3841832cc56d76908347f22a0a3}{activation}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a33ff5864b155499ecf8d31383b33e8d8}{variant}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ad8b0a3b903ca2595e72dd54f82f4dd9f}{attention}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a74730602aaea5afd4564d0f35c84af15}{norm1}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2f40ac67a332293a3f51eb11647e2ec1}{ffn}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_acc0beb3a5c95f3ab45b13dff322e4225}{norm2}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a3bcd00a8073a48b6a1626fccb87be143}{dropout}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Implements a single Transformer encoder layer.\end{DoxyVerb}
+ 
+
+Definition at line 525 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a68caa3f119bfb946e34b7cf3c8bd9e48}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a68caa3f119bfb946e34b7cf3c8bd9e48}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+heads,  }\item[{}]{embedding\+\_\+size,  }\item[{}]{ffn\+\_\+size,  }\item[{}]{attention\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{relu\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{dropout = {\ttfamily 0.0},  }\item[{}]{activation = {\ttfamily \textquotesingle{}relu\textquotesingle{}},  }\item[{}]{variant = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 538 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_aba0474eb3a08b6c482648adc0804776e}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_aba0474eb3a08b6c482648adc0804776e}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tensor,  }\item[{}]{mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.\end{DoxyVerb}
+ 
+
+Definition at line 557 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+ffn, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+norm1, and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+norm2.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_aba0474eb3a08b6c482648adc0804776e_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2986c3841832cc56d76908347f22a0a3}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2986c3841832cc56d76908347f22a0a3}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!activation@{activation}}
+\index{activation@{activation}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{activation}{activation}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+activation}
+
+
+
+Definition at line 542 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ad8b0a3b903ca2595e72dd54f82f4dd9f}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ad8b0a3b903ca2595e72dd54f82f4dd9f}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!attention@{attention}}
+\index{attention@{attention}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{attention}{attention}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+attention}
+
+
+
+Definition at line 544 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ae0f31a52dac8d678fdf6ba573201e7d7}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_ae0f31a52dac8d678fdf6ba573201e7d7}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!dim@{dim}}
+\index{dim@{dim}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{dim}{dim}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dim}
+
+
+
+Definition at line 540 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a3bcd00a8073a48b6a1626fccb87be143}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a3bcd00a8073a48b6a1626fccb87be143}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!dropout@{dropout}}
+\index{dropout@{dropout}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dropout}
+
+
+
+Definition at line 555 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+get(), and agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2f40ac67a332293a3f51eb11647e2ec1}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a2f40ac67a332293a3f51eb11647e2ec1}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!ffn@{ffn}}
+\index{ffn@{ffn}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{ffn}{ffn}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+ffn}
+
+
+
+Definition at line 548 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_abcdb8b9abb049afacdd132d2a811faff}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_abcdb8b9abb049afacdd132d2a811faff}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!ffn\+\_\+dim@{ffn\+\_\+dim}}
+\index{ffn\+\_\+dim@{ffn\+\_\+dim}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{ffn\+\_\+dim}{ffn\_dim}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+ffn\+\_\+dim}
+
+
+
+Definition at line 541 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a74730602aaea5afd4564d0f35c84af15}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a74730602aaea5afd4564d0f35c84af15}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!norm1@{norm1}}
+\index{norm1@{norm1}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{norm1}{norm1}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+norm1}
+
+
+
+Definition at line 547 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_acc0beb3a5c95f3ab45b13dff322e4225}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_acc0beb3a5c95f3ab45b13dff322e4225}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!norm2@{norm2}}
+\index{norm2@{norm2}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{norm2}{norm2}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+norm2}
+
+
+
+Definition at line 554 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a33ff5864b155499ecf8d31383b33e8d8}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerEncoderLayer_a33ff5864b155499ecf8d31383b33e8d8}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}!variant@{variant}}
+\index{variant@{variant}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Encoder\+Layer}}
+\subsubsection{\texorpdfstring{variant}{variant}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+variant}
+
+
+
+Definition at line 543 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

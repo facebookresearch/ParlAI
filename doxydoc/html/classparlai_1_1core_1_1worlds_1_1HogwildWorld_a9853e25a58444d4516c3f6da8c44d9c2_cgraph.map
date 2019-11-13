@@ -1,4 +1,3 @@
 <map id="parlai.core.worlds.HogwildWorld.parley" name="parlai.core.worlds.HogwildWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,180,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a77730e92a331274ab7b6ea3e7b99d1a4" title=" " alt="" coords="228,5,433,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a77730e92a331274ab7b6ea3e7b99d1a4" title="parlai.core.worlds.World.update\l_counters" alt="" coords="228,5,433,47"/>
 </map>

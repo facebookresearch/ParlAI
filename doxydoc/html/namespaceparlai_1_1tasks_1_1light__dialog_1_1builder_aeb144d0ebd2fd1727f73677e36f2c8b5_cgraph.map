@@ -1,0 +1,7 @@
+<map id="parlai.tasks.light_dialog.builder.write_alldata" name="parlai.tasks.light_dialog.builder.write_alldata">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a233ecce0ba4b1a0c023e855629986d69" title="parlai.tasks.light\l_dialog.builder.write\l_dialog" alt="" coords="191,101,328,157"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#ad9de2827ebcf8386662e48c7fe011e43" title="parlai.tasks.light\l_dialog.builder.use_feat" alt="" coords="379,5,538,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a2f5cb4927740a90c9fba84df5e8e16b5" title="parlai.tasks.light\l_dialog.builder.add_negs" alt="" coords="376,71,541,112"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#aafb760ba2e05ffe5cad429327d0dd347" title="parlai.tasks.light\l_dialog.builder.fix\l_labels" alt="" coords="397,137,520,193"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1misc.html#ae5db473b41d3b49814e2566e866282b6" title="parlai.utils.misc.msg\l_to_str" alt="" coords="387,217,530,259"/>
+</map>

@@ -1,0 +1,146 @@
+\hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent}{}\section{taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent Class Reference}
+\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent}\index{taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent@{taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent}}
+
+
+Inheritance diagram for taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=233pt]{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=233pt]{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a8b466649607d4913b7b5fa08742f4337}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Agent_ab3b45d2754244608c75d4068b90cd051}{opt}, shared=None)
+\item 
+def \hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a94ebb3a2a2faadf94a5b89612d104d8a}{modules} (self)
+\item 
+def \hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a46ac14fab9bc4a6b6eeb24f4fe013927}{predict} (self, tasks, num\+\_\+tokens)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a4f6b01d401778df8b6196432b1851515}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a6ee5fbf93467c4069cadb42626de6c5d}{predict\+\_\+net}
+\item 
+\hyperlink{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_abc7eacb9c5c02bb00c838d72aef7cf54}{id}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Base class for questioner agent. It is blindfolded, and has an extra
+``predict`` method, which performs action at the end of dialog episode
+to accomplish the goal.
+\end{DoxyVerb}
+ 
+
+Definition at line 196 of file coopgame\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a8b466649607d4913b7b5fa08742f4337}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a8b466649607d4913b7b5fa08742f4337}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 243 of file coopgame\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a4f6b01d401778df8b6196432b1851515}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a4f6b01d401778df8b6196432b1851515}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent. Default
+values at according to (Kottur et al. 2017).\end{DoxyVerb}
+ 
+
+Definition at line 203 of file coopgame\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a94ebb3a2a2faadf94a5b89612d104d8a}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a94ebb3a2a2faadf94a5b89612d104d8a}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!modules@{modules}}
+\index{modules@{modules}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{modules()}{modules()}}
+{\footnotesize\ttfamily def taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+modules (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 258 of file coopgame\+\_\+agent.\+py.
+
+
+
+References taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+listen\+\_\+net, taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict\+\_\+net, taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+speak\+\_\+net, and taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+state\+\_\+net.
+
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a46ac14fab9bc4a6b6eeb24f4fe013927}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a46ac14fab9bc4a6b6eeb24f4fe013927}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!predict@{predict}}
+\index{predict@{predict}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{predict()}{predict()}}
+{\footnotesize\ttfamily def taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tasks,  }\item[{}]{num\+\_\+tokens }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extra method to be executed at the end of episode to carry out goal
+and decide reward on the basis of prediction.
+\end{DoxyVerb}
+ 
+
+Definition at line 262 of file coopgame\+\_\+agent.\+py.
+
+
+
+References taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+c\+\_\+state, taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+h\+\_\+state, taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+listen\+\_\+net, and taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict\+\_\+net.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_abc7eacb9c5c02bb00c838d72aef7cf54}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_abc7eacb9c5c02bb00c838d72aef7cf54}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!id@{id}}
+\index{id@{id}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+id}
+
+
+
+Definition at line 255 of file coopgame\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a6ee5fbf93467c4069cadb42626de6c5d}\label{classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent_a6ee5fbf93467c4069cadb42626de6c5d}} 
+\index{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}!predict\+\_\+net@{predict\+\_\+net}}
+\index{predict\+\_\+net@{predict\+\_\+net}!taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent@{taskntalk\+::coopgame\+\_\+agent\+::\+Questioner\+Agent}}
+\subsubsection{\texorpdfstring{predict\+\_\+net}{predict\_net}}
+{\footnotesize\ttfamily taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict\+\_\+net}
+
+
+
+Definition at line 251 of file coopgame\+\_\+agent.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Predict\+Net.\+forward(), taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+modules(), and taskntalk.\+coopgame\+\_\+agent.\+Questioner\+Agent.\+predict().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/taskntalk/\hyperlink{coopgame__agent_8py}{coopgame\+\_\+agent.\+py}\end{DoxyCompactItemize}

@@ -1,7 +1,5 @@
 <map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="25,155,180,211"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html" title=" " alt="" coords="15,259,190,315"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="21,80,184,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="74,5,131,32"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1PerplexityEvaluatorAgent.html" title=" " alt="" coords="5,363,200,419"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent" alt="" coords="15,259,190,315"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="21,80,184,107"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1PerplexityEvaluatorAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.PerplexityEvaluatorAgent" alt="" coords="5,363,200,419"/>
 </map>

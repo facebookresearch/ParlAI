@@ -1,0 +1,515 @@
+\hypertarget{namespaceserver}{}\section{server Namespace Reference}
+\label{namespaceserver}\index{server@{server}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classserver_1_1AppHandler}{App\+Handler}
+\item 
+class \hyperlink{classserver_1_1Application}{Application}
+\item 
+class \hyperlink{classserver_1_1ApprovalHandler}{Approval\+Handler}
+\item 
+class \hyperlink{classserver_1_1AssignmentHandler}{Assignment\+Handler}
+\item 
+class \hyperlink{classserver_1_1BaseHandler}{Base\+Handler}
+\item 
+class \hyperlink{classserver_1_1BlockHandler}{Block\+Handler}
+\item 
+class \hyperlink{classserver_1_1BonusHandler}{Bonus\+Handler}
+\item 
+class \hyperlink{classserver_1_1ErrorHandler}{Error\+Handler}
+\item 
+class \hyperlink{classserver_1_1PacketWrap}{Packet\+Wrap}
+\item 
+class \hyperlink{classserver_1_1RedirectHandler}{Redirect\+Handler}
+\item 
+class \hyperlink{classserver_1_1RejectionHandler}{Rejection\+Handler}
+\item 
+class \hyperlink{classserver_1_1ReverseHandler}{Reverse\+Handler}
+\item 
+class \hyperlink{classserver_1_1RunHandler}{Run\+Handler}
+\item 
+class \hyperlink{classserver_1_1RunListHandler}{Run\+List\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskListHandler}{Task\+List\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskRunHandler}{Task\+Run\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskSocketHandler}{Task\+Socket\+Handler}
+\item 
+class \hyperlink{classserver_1_1WorkerHandler}{Worker\+Handler}
+\item 
+class \hyperlink{classserver_1_1WorkerListHandler}{Worker\+List\+Handler}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceserver_a417f4d334a42b589c973649990ea52a8}{row\+\_\+to\+\_\+dict} (row)
+\item 
+def \hyperlink{namespaceserver_a2cde4e039120e25dbaa04e72af4683a3}{get\+\_\+rand\+\_\+id} ()
+\item 
+def \hyperlink{namespaceserver_a9ddf2e515b916af96b6e9e79894482ed}{force\+\_\+dir} (path)
+\item 
+def \hyperlink{namespaceserver_aa8c035a44061d07462939492cd21b0b8}{get\+\_\+path} (filename)
+\item 
+def \hyperlink{namespaceserver_a20f5670b2d0cc9c06be867b56798550d}{get\+\_\+mturk\+\_\+task\+\_\+module} (task\+\_\+name, target\+\_\+module)
+\item 
+def \hyperlink{namespaceserver_a19d9a32c8654358136f27ac2f710208d}{get\+\_\+run\+\_\+module} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceserver_a2467b58afe94f16856770faf20184b7b}{get\+\_\+config\+\_\+module} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceserver_adf70e1f9b13f82a360769a9ce6e3333c}{broadcast\+\_\+msg} (handler, msg, target\+\_\+subs=None)
+\item 
+def \hyperlink{namespaceserver_a66add92486d2392c31b001d57d1e6b3e}{send\+\_\+to\+\_\+sources} (handler, msg)
+\item 
+def \hyperlink{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229}{merge\+\_\+assignments\+\_\+with\+\_\+pairings} (assignments, pairings, log\+\_\+id)
+\item 
+def \hyperlink{namespaceserver_a16739378649273e6ea462b460262a854}{start\+\_\+server} (port=\hyperlink{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT}, hostname=\hyperlink{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME}, db\+\_\+file=\hyperlink{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE}, is\+\_\+sandbox=False)
+\item 
+def \hyperlink{namespaceserver_ac31b8422e56c4f0bf9a35c5cc2234a42}{crawl\+\_\+dir\+\_\+for\+\_\+tasks} (search\+\_\+dir)
+\item 
+def \hyperlink{namespaceserver_a802e832a8f540e02174b559972488adb}{rebuild\+\_\+source} ()
+\item 
+def \hyperlink{namespaceserver_a6d1c10ed8aa5d27e61ed9db6b4274261}{main} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceserver_abd4781cfa228e5322b9a3dad522e4b17}{parlai\+\_\+path} = parlai\+\_\+path\mbox{[}0\mbox{]}
+\item 
+\hyperlink{namespaceserver_a74bacf9786854a2e0d38291f46a4f0a5}{parlai\+\_\+int\+\_\+path} = parlai\+\_\+int\+\_\+path\mbox{[}0\mbox{]}
+\item 
+int \hyperlink{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT} = 8095
+\item 
+string \hyperlink{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME} = \char`\"{}localhost\char`\"{}
+\item 
+string \hyperlink{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE} = \textquotesingle{}pmt\+\_\+data.\+db\textquotesingle{}
+\item 
+string \hyperlink{namespaceserver_a0353dec6c16b5c818b9250723ced65b9}{D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE} = \textquotesingle{}pmt\+\_\+sbdata.\+db\textquotesingle{}
+\item 
+bool \hyperlink{namespaceserver_a4da0f891642a0631c5baf8dec244ef4a}{I\+S\+\_\+\+D\+E\+B\+UG} = True
+\item 
+\hyperlink{namespaceserver_a3ed884cbe61302d8889e5f7495bb60e4}{here} = os.\+path.\+abspath(os.\+path.\+dirname(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\item 
+dictionary \hyperlink{namespaceserver_a847ccf0f415507e9b016ec8b9239669c}{tasks} = \{\}
+\item 
+dictionary \hyperlink{namespaceserver_a3c637d57121d469c84c0f13a6fe3722b}{tornado\+\_\+settings}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceserver_adf70e1f9b13f82a360769a9ce6e3333c}\label{namespaceserver_adf70e1f9b13f82a360769a9ce6e3333c}} 
+\index{server@{server}!broadcast\+\_\+msg@{broadcast\+\_\+msg}}
+\index{broadcast\+\_\+msg@{broadcast\+\_\+msg}!server@{server}}
+\subsubsection{\texorpdfstring{broadcast\+\_\+msg()}{broadcast\_msg()}}
+{\footnotesize\ttfamily def server.\+broadcast\+\_\+msg (\begin{DoxyParamCaption}\item[{}]{handler,  }\item[{}]{msg,  }\item[{}]{target\+\_\+subs = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 149 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_ac31b8422e56c4f0bf9a35c5cc2234a42}\label{namespaceserver_ac31b8422e56c4f0bf9a35c5cc2234a42}} 
+\index{server@{server}!crawl\+\_\+dir\+\_\+for\+\_\+tasks@{crawl\+\_\+dir\+\_\+for\+\_\+tasks}}
+\index{crawl\+\_\+dir\+\_\+for\+\_\+tasks@{crawl\+\_\+dir\+\_\+for\+\_\+tasks}!server@{server}}
+\subsubsection{\texorpdfstring{crawl\+\_\+dir\+\_\+for\+\_\+tasks()}{crawl\_dir\_for\_tasks()}}
+{\footnotesize\ttfamily def server.\+crawl\+\_\+dir\+\_\+for\+\_\+tasks (\begin{DoxyParamCaption}\item[{}]{search\+\_\+dir }\end{DoxyParamCaption})}
+
+
+
+Definition at line 646 of file server.\+py.
+
+
+
+Referenced by rebuild\+\_\+source().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_ac31b8422e56c4f0bf9a35c5cc2234a42_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a9ddf2e515b916af96b6e9e79894482ed}\label{namespaceserver_a9ddf2e515b916af96b6e9e79894482ed}} 
+\index{server@{server}!force\+\_\+dir@{force\+\_\+dir}}
+\index{force\+\_\+dir@{force\+\_\+dir}!server@{server}}
+\subsubsection{\texorpdfstring{force\+\_\+dir()}{force\_dir()}}
+{\footnotesize\ttfamily def server.\+force\+\_\+dir (\begin{DoxyParamCaption}\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make sure the parent dir exists for path so we can write a file.\end{DoxyVerb}
+ 
+
+Definition at line 67 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a2467b58afe94f16856770faf20184b7b}\label{namespaceserver_a2467b58afe94f16856770faf20184b7b}} 
+\index{server@{server}!get\+\_\+config\+\_\+module@{get\+\_\+config\+\_\+module}}
+\index{get\+\_\+config\+\_\+module@{get\+\_\+config\+\_\+module}!server@{server}}
+\subsubsection{\texorpdfstring{get\+\_\+config\+\_\+module()}{get\_config\_module()}}
+{\footnotesize\ttfamily def server.\+get\+\_\+config\+\_\+module (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 95 of file server.\+py.
+
+
+
+References get\+\_\+mturk\+\_\+task\+\_\+module().
+
+
+
+Referenced by server.\+Task\+List\+Handler.\+get(), server.\+Assignment\+Handler.\+get(), and server.\+Task\+Run\+Handler.\+post().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a2467b58afe94f16856770faf20184b7b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a2467b58afe94f16856770faf20184b7b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a20f5670b2d0cc9c06be867b56798550d}\label{namespaceserver_a20f5670b2d0cc9c06be867b56798550d}} 
+\index{server@{server}!get\+\_\+mturk\+\_\+task\+\_\+module@{get\+\_\+mturk\+\_\+task\+\_\+module}}
+\index{get\+\_\+mturk\+\_\+task\+\_\+module@{get\+\_\+mturk\+\_\+task\+\_\+module}!server@{server}}
+\subsubsection{\texorpdfstring{get\+\_\+mturk\+\_\+task\+\_\+module()}{get\_mturk\_task\_module()}}
+{\footnotesize\ttfamily def server.\+get\+\_\+mturk\+\_\+task\+\_\+module (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{target\+\_\+module }\end{DoxyParamCaption})}
+
+
+
+Definition at line 78 of file server.\+py.
+
+
+
+Referenced by get\+\_\+config\+\_\+module(), and get\+\_\+run\+\_\+module().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a20f5670b2d0cc9c06be867b56798550d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_aa8c035a44061d07462939492cd21b0b8}\label{namespaceserver_aa8c035a44061d07462939492cd21b0b8}} 
+\index{server@{server}!get\+\_\+path@{get\+\_\+path}}
+\index{get\+\_\+path@{get\+\_\+path}!server@{server}}
+\subsubsection{\texorpdfstring{get\+\_\+path()}{get\_path()}}
+{\footnotesize\ttfamily def server.\+get\+\_\+path (\begin{DoxyParamCaption}\item[{}]{filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the path to an asset.\end{DoxyVerb}
+ 
+
+Definition at line 72 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a2cde4e039120e25dbaa04e72af4683a3}\label{namespaceserver_a2cde4e039120e25dbaa04e72af4683a3}} 
+\index{server@{server}!get\+\_\+rand\+\_\+id@{get\+\_\+rand\+\_\+id}}
+\index{get\+\_\+rand\+\_\+id@{get\+\_\+rand\+\_\+id}!server@{server}}
+\subsubsection{\texorpdfstring{get\+\_\+rand\+\_\+id()}{get\_rand\_id()}}
+{\footnotesize\ttfamily def server.\+get\+\_\+rand\+\_\+id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file server.\+py.
+
+
+
+References eval\+\_\+ppl.\+int, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{namespaceserver_a19d9a32c8654358136f27ac2f710208d}\label{namespaceserver_a19d9a32c8654358136f27ac2f710208d}} 
+\index{server@{server}!get\+\_\+run\+\_\+module@{get\+\_\+run\+\_\+module}}
+\index{get\+\_\+run\+\_\+module@{get\+\_\+run\+\_\+module}!server@{server}}
+\subsubsection{\texorpdfstring{get\+\_\+run\+\_\+module()}{get\_run\_module()}}
+{\footnotesize\ttfamily def server.\+get\+\_\+run\+\_\+module (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 91 of file server.\+py.
+
+
+
+References get\+\_\+mturk\+\_\+task\+\_\+module().
+
+
+
+Referenced by server.\+Task\+Run\+Handler.\+post().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{namespaceserver_a19d9a32c8654358136f27ac2f710208d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a19d9a32c8654358136f27ac2f710208d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a6d1c10ed8aa5d27e61ed9db6b4274261}\label{namespaceserver_a6d1c10ed8aa5d27e61ed9db6b4274261}} 
+\index{server@{server}!main@{main}}
+\index{main@{main}!server@{server}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def server.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 753 of file server.\+py.
+
+
+
+References rebuild\+\_\+source(), and start\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a6d1c10ed8aa5d27e61ed9db6b4274261_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229}\label{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229}} 
+\index{server@{server}!merge\+\_\+assignments\+\_\+with\+\_\+pairings@{merge\+\_\+assignments\+\_\+with\+\_\+pairings}}
+\index{merge\+\_\+assignments\+\_\+with\+\_\+pairings@{merge\+\_\+assignments\+\_\+with\+\_\+pairings}!server@{server}}
+\subsubsection{\texorpdfstring{merge\+\_\+assignments\+\_\+with\+\_\+pairings()}{merge\_assignments\_with\_pairings()}}
+{\footnotesize\ttfamily def server.\+merge\+\_\+assignments\+\_\+with\+\_\+pairings (\begin{DoxyParamCaption}\item[{}]{assignments,  }\item[{}]{pairings,  }\item[{}]{log\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 271 of file server.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and row\+\_\+to\+\_\+dict().
+
+
+
+Referenced by server.\+Run\+Handler.\+get(), server.\+Worker\+Handler.\+get(), and server.\+Assignment\+Handler.\+get().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=347pt]{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a802e832a8f540e02174b559972488adb}\label{namespaceserver_a802e832a8f540e02174b559972488adb}} 
+\index{server@{server}!rebuild\+\_\+source@{rebuild\+\_\+source}}
+\index{rebuild\+\_\+source@{rebuild\+\_\+source}!server@{server}}
+\subsubsection{\texorpdfstring{rebuild\+\_\+source()}{rebuild\_source()}}
+{\footnotesize\ttfamily def server.\+rebuild\+\_\+source (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 659 of file server.\+py.
+
+
+
+References crawl\+\_\+dir\+\_\+for\+\_\+tasks(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=328pt]{namespaceserver_a802e832a8f540e02174b559972488adb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=294pt]{namespaceserver_a802e832a8f540e02174b559972488adb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a417f4d334a42b589c973649990ea52a8}\label{namespaceserver_a417f4d334a42b589c973649990ea52a8}} 
+\index{server@{server}!row\+\_\+to\+\_\+dict@{row\+\_\+to\+\_\+dict}}
+\index{row\+\_\+to\+\_\+dict@{row\+\_\+to\+\_\+dict}!server@{server}}
+\subsubsection{\texorpdfstring{row\+\_\+to\+\_\+dict()}{row\_to\_dict()}}
+{\footnotesize\ttfamily def server.\+row\+\_\+to\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{row }\end{DoxyParamCaption})}
+
+
+
+Definition at line 59 of file server.\+py.
+
+
+
+Referenced by server.\+Run\+List\+Handler.\+get(), server.\+Run\+Handler.\+get(), server.\+Worker\+List\+Handler.\+get(), server.\+Worker\+Handler.\+get(), and merge\+\_\+assignments\+\_\+with\+\_\+pairings().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a417f4d334a42b589c973649990ea52a8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceserver_a66add92486d2392c31b001d57d1e6b3e}\label{namespaceserver_a66add92486d2392c31b001d57d1e6b3e}} 
+\index{server@{server}!send\+\_\+to\+\_\+sources@{send\+\_\+to\+\_\+sources}}
+\index{send\+\_\+to\+\_\+sources@{send\+\_\+to\+\_\+sources}!server@{server}}
+\subsubsection{\texorpdfstring{send\+\_\+to\+\_\+sources()}{send\_to\_sources()}}
+{\footnotesize\ttfamily def server.\+send\+\_\+to\+\_\+sources (\begin{DoxyParamCaption}\item[{}]{handler,  }\item[{}]{msg }\end{DoxyParamCaption})}
+
+
+
+Definition at line 156 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a16739378649273e6ea462b460262a854}\label{namespaceserver_a16739378649273e6ea462b460262a854}} 
+\index{server@{server}!start\+\_\+server@{start\+\_\+server}}
+\index{start\+\_\+server@{start\+\_\+server}!server@{server}}
+\subsubsection{\texorpdfstring{start\+\_\+server()}{start\_server()}}
+{\footnotesize\ttfamily def server.\+start\+\_\+server (\begin{DoxyParamCaption}\item[{}]{port = {\ttfamily \hyperlink{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT}},  }\item[{}]{hostname = {\ttfamily \hyperlink{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME}},  }\item[{}]{db\+\_\+file = {\ttfamily \hyperlink{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE}},  }\item[{}]{is\+\_\+sandbox = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 632 of file server.\+py.
+
+
+
+Referenced by main(), and server.\+Task\+Run\+Handler.\+post().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceserver_a16739378649273e6ea462b460262a854_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}\label{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}} 
+\index{server@{server}!D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE}!server@{server}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE}{DEFAULT\_DB\_FILE}}
+{\footnotesize\ttfamily string server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE = \textquotesingle{}pmt\+\_\+data.\+db\textquotesingle{}}
+
+
+
+Definition at line 50 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}\label{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}} 
+\index{server@{server}!D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME@{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME@{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME}!server@{server}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME}{DEFAULT\_HOSTNAME}}
+{\footnotesize\ttfamily string server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME = \char`\"{}localhost\char`\"{}}
+
+
+
+Definition at line 49 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}\label{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}} 
+\index{server@{server}!D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT@{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT@{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT}!server@{server}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT}{DEFAULT\_PORT}}
+{\footnotesize\ttfamily int server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT = 8095}
+
+
+
+Definition at line 48 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a0353dec6c16b5c818b9250723ced65b9}\label{namespaceserver_a0353dec6c16b5c818b9250723ced65b9}} 
+\index{server@{server}!D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE}}
+\index{D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE@{D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE}!server@{server}}
+\subsubsection{\texorpdfstring{D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE}{DEFAULT\_SB\_DB\_FILE}}
+{\footnotesize\ttfamily string server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE = \textquotesingle{}pmt\+\_\+sbdata.\+db\textquotesingle{}}
+
+
+
+Definition at line 51 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a3ed884cbe61302d8889e5f7495bb60e4}\label{namespaceserver_a3ed884cbe61302d8889e5f7495bb60e4}} 
+\index{server@{server}!here@{here}}
+\index{here@{here}!server@{server}}
+\subsubsection{\texorpdfstring{here}{here}}
+{\footnotesize\ttfamily server.\+here = os.\+path.\+abspath(os.\+path.\+dirname(\+\_\+\+\_\+file\+\_\+\+\_\+))}
+
+
+
+Definition at line 54 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a4da0f891642a0631c5baf8dec244ef4a}\label{namespaceserver_a4da0f891642a0631c5baf8dec244ef4a}} 
+\index{server@{server}!I\+S\+\_\+\+D\+E\+B\+UG@{I\+S\+\_\+\+D\+E\+B\+UG}}
+\index{I\+S\+\_\+\+D\+E\+B\+UG@{I\+S\+\_\+\+D\+E\+B\+UG}!server@{server}}
+\subsubsection{\texorpdfstring{I\+S\+\_\+\+D\+E\+B\+UG}{IS\_DEBUG}}
+{\footnotesize\ttfamily bool server.\+I\+S\+\_\+\+D\+E\+B\+UG = True}
+
+
+
+Definition at line 52 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a74bacf9786854a2e0d38291f46a4f0a5}\label{namespaceserver_a74bacf9786854a2e0d38291f46a4f0a5}} 
+\index{server@{server}!parlai\+\_\+int\+\_\+path@{parlai\+\_\+int\+\_\+path}}
+\index{parlai\+\_\+int\+\_\+path@{parlai\+\_\+int\+\_\+path}!server@{server}}
+\subsubsection{\texorpdfstring{parlai\+\_\+int\+\_\+path}{parlai\_int\_path}}
+{\footnotesize\ttfamily server.\+parlai\+\_\+int\+\_\+path = parlai\+\_\+int\+\_\+path\mbox{[}0\mbox{]}}
+
+
+
+Definition at line 43 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_abd4781cfa228e5322b9a3dad522e4b17}\label{namespaceserver_abd4781cfa228e5322b9a3dad522e4b17}} 
+\index{server@{server}!parlai\+\_\+path@{parlai\+\_\+path}}
+\index{parlai\+\_\+path@{parlai\+\_\+path}!server@{server}}
+\subsubsection{\texorpdfstring{parlai\+\_\+path}{parlai\_path}}
+{\footnotesize\ttfamily server.\+parlai\+\_\+path = parlai\+\_\+path\mbox{[}0\mbox{]}}
+
+
+
+Definition at line 38 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a847ccf0f415507e9b016ec8b9239669c}\label{namespaceserver_a847ccf0f415507e9b016ec8b9239669c}} 
+\index{server@{server}!tasks@{tasks}}
+\index{tasks@{tasks}!server@{server}}
+\subsubsection{\texorpdfstring{tasks}{tasks}}
+{\footnotesize\ttfamily dictionary server.\+tasks = \{\}}
+
+
+
+Definition at line 56 of file server.\+py.
+
+\mbox{\Hypertarget{namespaceserver_a3c637d57121d469c84c0f13a6fe3722b}\label{namespaceserver_a3c637d57121d469c84c0f13a6fe3722b}} 
+\index{server@{server}!tornado\+\_\+settings@{tornado\+\_\+settings}}
+\index{tornado\+\_\+settings@{tornado\+\_\+settings}!server@{server}}
+\subsubsection{\texorpdfstring{tornado\+\_\+settings}{tornado\_settings}}
+{\footnotesize\ttfamily dictionary server.\+tornado\+\_\+settings}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \{
+2     \textcolor{stringliteral}{"autoescape"}: \textcolor{keywordtype}{None},
+3     \textcolor{stringliteral}{"debug"}: IS\_DEBUG,
+4     \textcolor{stringliteral}{"static\_path"}: \hyperlink{namespaceserver_aa8c035a44061d07462939492cd21b0b8}{get\_path}(\textcolor{stringliteral}{'static'}),
+5     \textcolor{stringliteral}{"template\_path"}: \hyperlink{namespaceserver_aa8c035a44061d07462939492cd21b0b8}{get\_path}(\textcolor{stringliteral}{'static'}),
+6     \textcolor{stringliteral}{"compiled\_template\_cache"}: \textcolor{keyword}{False},
+7 \}
+\end{DoxyCode}
+
+
+Definition at line 99 of file server.\+py.
+

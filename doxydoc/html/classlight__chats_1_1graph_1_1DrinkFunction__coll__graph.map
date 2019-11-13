@@ -1,6 +1,4 @@
 <map id="light_chats.graph.DrinkFunction" name="light_chats.graph.DrinkFunction">
-<area shape="rect" id="node1" title=" " alt="" coords="7,244,214,271"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1IngestFunction.html" title=" " alt="" coords="30,155,191,196"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1GraphFunction.html" title=" " alt="" coords="5,80,216,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="82,5,139,32"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1IngestFunction.html" title="light_chats.graph.Ingest\lFunction" alt="" coords="30,155,191,196"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1GraphFunction.html" title="light_chats.graph.GraphFunction" alt="" coords="5,80,216,107"/>
 </map>

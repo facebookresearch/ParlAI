@@ -1,0 +1,549 @@
+\hypertarget{classworlds_1_1PersonaChatEvalWorld}{}\section{worlds.\+Persona\+Chat\+Eval\+World Class Reference}
+\label{classworlds_1_1PersonaChatEvalWorld}\index{worlds.\+Persona\+Chat\+Eval\+World@{worlds.\+Persona\+Chat\+Eval\+World}}
+
+
+Inheritance diagram for worlds.\+Persona\+Chat\+Eval\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classworlds_1_1PersonaChatEvalWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for worlds.\+Persona\+Chat\+Eval\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classworlds_1_1PersonaChatEvalWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_ace0551d69c1746044a8de84a6fdd071e}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld_a05fc93525cb86edef121980fc55f9926}{agents}=None, shared=None, \hyperlink{classworlds_1_1PersonaChatEvalWorld_a665a0c88898bbe31d1a1a8ba461c9429}{range\+\_\+turn}=(4, 7), \hyperlink{classworlds_1_1PersonaChatEvalWorld_a2b2a7c4efd28d2fd2efd663bc3fcef1e}{max\+\_\+turn}=10, \hyperlink{classworlds_1_1PersonaChatEvalWorld_a4a9cb91f5422986e69790c7302c952bf}{max\+\_\+resp\+\_\+time}=120, model\+\_\+agent\+\_\+opt=None, \hyperlink{classworlds_1_1PersonaChatEvalWorld_ae597e51544be2476539c075e6ea0bcad}{world\+\_\+tag}=\textquotesingle{}N\+O\+NE\textquotesingle{}, \hyperlink{classworlds_1_1PersonaChatEvalWorld_aee0fa9efee57a370499a0691950b548b}{agent\+\_\+timeout\+\_\+shutdown}=120)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_ac72940bb2474528d1cc51661d4db3b85}{parley} (self)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a70142e8e89b6d07916c7e5d7428f9d0c}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_ab3dd599a36597f672da5d54654a0266e}{get\+\_\+instruction} (self, agent\+\_\+id=None, tag=\textquotesingle{}first\textquotesingle{})
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a854ebcf8c0781f58a296fde2c7db80c9}{save\+\_\+data} (self)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a89e55508c048d8da3aba513b94b9a684}{is\+\_\+exact\+\_\+match} (self, act, ag, tolerance=0)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a3968b6677767a53dab21e828a8b575a6}{is\+\_\+msg\+\_\+tooshortlong} (self, act, ag, th\+\_\+min=5, th\+\_\+max=17)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a74d31d5c4581214ceebabfaf7d48f793}{reset\+\_\+random} (self)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_a8c2ba6e0dc082cf9e53cfd70e2d71e4b}{check\+\_\+timeout} (self, act)
+\item 
+def \hyperlink{classworlds_1_1PersonaChatEvalWorld_aaba9e31d1918785215499ddaadf8a91d}{review\+\_\+work} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_acba8e89cca190d9a53656d10087e818a}{turn\+\_\+idx}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a665a0c88898bbe31d1a1a8ba461c9429}{range\+\_\+turn}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a2b2a7c4efd28d2fd2efd663bc3fcef1e}{max\+\_\+turn}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_aaa99f726cdbcdd81a6bcaa0eaebac726}{n\+\_\+turn}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a3a839359e827a16d25daf577234cc35b}{dialog}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_ae6ff8356980eeee972a844a5bdc2b08b}{task\+\_\+type}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a3b39b5c509f4ce9d47dab0789ca9abe5}{chat\+\_\+done}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a459152c14865510575d033179a785954}{n\+\_\+personas}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a898fad169c49e71ae86d33e1f94f78bb}{fluency\+\_\+score}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_afc7bdee49cb547cae906e7c8ce1e6dba}{eng\+\_\+score}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a2826d2e51ec376fb8e1a90810f32f67d}{consistent\+\_\+score}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a136ed79f31d4a47bb8ce15f43f6c2564}{persona\+\_\+picked}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_ae597e51544be2476539c075e6ea0bcad}{world\+\_\+tag}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_af0520dd6c78c88f79fdd70be7bd7778c}{model\+\_\+agent}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a4a9cb91f5422986e69790c7302c952bf}{max\+\_\+resp\+\_\+time}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_aee0fa9efee57a370499a0691950b548b}{agent\+\_\+timeout\+\_\+shutdown}
+\item 
+\hyperlink{classworlds_1_1PersonaChatEvalWorld_a4bcc9e1ece3eec3b2fdb39fa3e58be92}{personas}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 154 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_ace0551d69c1746044a8de84a6fdd071e}\label{classworlds_1_1PersonaChatEvalWorld_ace0551d69c1746044a8de84a6fdd071e}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None},  }\item[{}]{range\+\_\+turn = {\ttfamily (4,~7)},  }\item[{}]{max\+\_\+turn = {\ttfamily 10},  }\item[{}]{max\+\_\+resp\+\_\+time = {\ttfamily 120},  }\item[{}]{model\+\_\+agent\+\_\+opt = {\ttfamily None},  }\item[{}]{world\+\_\+tag = {\ttfamily \textquotesingle{}NONE\textquotesingle{}},  }\item[{}]{agent\+\_\+timeout\+\_\+shutdown = {\ttfamily 120} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 166 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a8c2ba6e0dc082cf9e53cfd70e2d71e4b}\label{classworlds_1_1PersonaChatEvalWorld_a8c2ba6e0dc082cf9e53cfd70e2d71e4b}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!check\+\_\+timeout@{check\+\_\+timeout}}
+\index{check\+\_\+timeout@{check\+\_\+timeout}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{check\+\_\+timeout()}{check\_timeout()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+
+
+Definition at line 593 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+Persona\+Chat\+Eval\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+get\+\_\+instruction(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+get\+\_\+instruction(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+get\+\_\+instruction(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+get\+\_\+instruction(), and parlai.\+core.\+worlds.\+validate().
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topic\+Choose\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a8c2ba6e0dc082cf9e53cfd70e2d71e4b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a8c2ba6e0dc082cf9e53cfd70e2d71e4b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a70142e8e89b6d07916c7e5d7428f9d0c}\label{classworlds_1_1PersonaChatEvalWorld_a70142e8e89b6d07916c7e5d7428f9d0c}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 432 of file worlds.\+py.
+
+
+
+References stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+Persona\+Chat\+Eval\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done, and mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+chat\+\_\+done.
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_ab3dd599a36597f672da5d54654a0266e}\label{classworlds_1_1PersonaChatEvalWorld_ab3dd599a36597f672da5d54654a0266e}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!get\+\_\+instruction@{get\+\_\+instruction}}
+\index{get\+\_\+instruction@{get\+\_\+instruction}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+instruction()}{get\_instruction()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id = {\ttfamily None},  }\item[{}]{tag = {\ttfamily \textquotesingle{}first\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 435 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+n\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+turn, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+n\+\_\+turn, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+n\+\_\+turn, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+turn\+\_\+idx, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+turn\+\_\+idx, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+turn\+\_\+idx, worlds.\+Persona\+Chat\+Eval\+World.\+turn\+\_\+idx, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+turn\+\_\+idx, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+turn\+\_\+idx, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+turn\+\_\+idx, and mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+turn\+\_\+idx.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_ab3dd599a36597f672da5d54654a0266e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a89e55508c048d8da3aba513b94b9a684}\label{classworlds_1_1PersonaChatEvalWorld_a89e55508c048d8da3aba513b94b9a684}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!is\+\_\+exact\+\_\+match@{is\+\_\+exact\+\_\+match}}
+\index{is\+\_\+exact\+\_\+match@{is\+\_\+exact\+\_\+match}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{is\+\_\+exact\+\_\+match()}{is\_exact\_match()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+exact\+\_\+match (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act,  }\item[{}]{ag,  }\item[{}]{tolerance = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 535 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+validate().
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a89e55508c048d8da3aba513b94b9a684_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a89e55508c048d8da3aba513b94b9a684_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a3968b6677767a53dab21e828a8b575a6}\label{classworlds_1_1PersonaChatEvalWorld_a3968b6677767a53dab21e828a8b575a6}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!is\+\_\+msg\+\_\+tooshortlong@{is\+\_\+msg\+\_\+tooshortlong}}
+\index{is\+\_\+msg\+\_\+tooshortlong@{is\+\_\+msg\+\_\+tooshortlong}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{is\+\_\+msg\+\_\+tooshortlong()}{is\_msg\_tooshortlong()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+msg\+\_\+tooshortlong (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act,  }\item[{}]{ag,  }\item[{}]{th\+\_\+min = {\ttfamily 5},  }\item[{}]{th\+\_\+max = {\ttfamily 17} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 568 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+validate().
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+human\+\_\+agent\+\_\+act(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a3968b6677767a53dab21e828a8b575a6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1PersonaChatEvalWorld_a3968b6677767a53dab21e828a8b575a6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_ac72940bb2474528d1cc51661d4db3b85}\label{classworlds_1_1PersonaChatEvalWorld_ac72940bb2474528d1cc51661d4db3b85}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!parley@{parley}}
+\index{parley@{parley}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 193 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+Persona\+Chat\+Eval\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+check\+\_\+timeout(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+check\+\_\+timeout(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+check\+\_\+timeout(), mturk.\+worlds.\+Persona\+Assign\+World.\+check\+\_\+timeout(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+check\+\_\+timeout(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+check\+\_\+timeout(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+consistent\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+consistent\+\_\+score, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+dialog, worlds.\+Persona\+Chat\+Eval\+World.\+dialog, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+dialog, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+dialog, worlds.\+Persona\+Chat\+Eval\+World.\+eng\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+eng\+\_\+score, worlds.\+Persona\+Chat\+Eval\+World.\+fluency\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+fluency\+\_\+score, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+get\+\_\+instruction(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+get\+\_\+instruction(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+get\+\_\+instruction(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+get\+\_\+instruction(), eval\+\_\+ppl.\+int, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+is\+\_\+exact\+\_\+match(), worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+is\+\_\+msg\+\_\+tooshortlong(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+is\+\_\+msg\+\_\+tooshortlong(), worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+msg\+\_\+tooshortlong(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+is\+\_\+msg\+\_\+tooshortlong(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+is\+\_\+msg\+\_\+tooshortlong(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+max\+\_\+resp\+\_\+time, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+max\+\_\+resp\+\_\+time, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+max\+\_\+resp\+\_\+time, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+max\+\_\+resp\+\_\+time, worlds.\+Persona\+Chat\+Eval\+World.\+max\+\_\+resp\+\_\+time, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+max\+\_\+resp\+\_\+time, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+max\+\_\+resp\+\_\+time, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+max\+\_\+resp\+\_\+time, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+max\+\_\+resp\+\_\+time, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+max\+\_\+resp\+\_\+time, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+model\+\_\+agent, worlds.\+Persona\+Chat\+Eval\+World.\+model\+\_\+agent, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+model\+\_\+agent, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+model\+\_\+agent, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+n\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+turn, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+n\+\_\+turn, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+n\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+persona\+\_\+picked, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+persona\+\_\+picked, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+personas, mturk.\+worlds.\+Personas\+Generator.\+personas, worlds.\+Persona\+Chat\+Eval\+World.\+personas, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+personas, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+personas, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+turn\+\_\+idx, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+turn\+\_\+idx, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+turn\+\_\+idx, worlds.\+Persona\+Chat\+Eval\+World.\+turn\+\_\+idx, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+turn\+\_\+idx, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+turn\+\_\+idx, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+turn\+\_\+idx, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+turn\+\_\+idx, parlai.\+core.\+worlds.\+validate(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+world\+\_\+tag, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+world\+\_\+tag, worlds.\+Persona\+Chat\+Eval\+World.\+world\+\_\+tag, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+world\+\_\+tag, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+world\+\_\+tag, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+world\+\_\+tag, and mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+world\+\_\+tag.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classworlds_1_1PersonaChatEvalWorld_ac72940bb2474528d1cc51661d4db3b85_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a74d31d5c4581214ceebabfaf7d48f793}\label{classworlds_1_1PersonaChatEvalWorld_a74d31d5c4581214ceebabfaf7d48f793}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!reset\+\_\+random@{reset\+\_\+random}}
+\index{reset\+\_\+random@{reset\+\_\+random}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{reset\+\_\+random()}{reset\_random()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+reset\+\_\+random (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 590 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+n\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+turn, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+n\+\_\+turn, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+n\+\_\+turn, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+range\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+range\+\_\+turn, and parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+range\+\_\+turn.
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_aaba9e31d1918785215499ddaadf8a91d}\label{classworlds_1_1PersonaChatEvalWorld_aaba9e31d1918785215499ddaadf8a91d}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!review\+\_\+work@{review\+\_\+work}}
+\index{review\+\_\+work@{review\+\_\+work}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{review\+\_\+work()}{review\_work()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+review\+\_\+work (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 608 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents.
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a854ebcf8c0781f58a296fde2c7db80c9}\label{classworlds_1_1PersonaChatEvalWorld_a854ebcf8c0781f58a296fde2c7db80c9}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!save\+\_\+data@{save\+\_\+data}}
+\index{save\+\_\+data@{save\+\_\+data}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{save\+\_\+data()}{save\_data()}}
+{\footnotesize\ttfamily def worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 467 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, worlds.\+Persona\+Chat\+Eval\+World.\+consistent\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+consistent\+\_\+score, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+dialog, worlds.\+Persona\+Chat\+Eval\+World.\+dialog, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+dialog, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+dialog, worlds.\+Persona\+Chat\+Eval\+World.\+eng\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+eng\+\_\+score, worlds.\+Persona\+Chat\+Eval\+World.\+fluency\+\_\+score, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+fluency\+\_\+score, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+personas, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+n\+\_\+personas, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+n\+\_\+turn, worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+turn, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+n\+\_\+turn, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+n\+\_\+turn, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, worlds.\+Persona\+Chat\+Eval\+World.\+persona\+\_\+picked, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+persona\+\_\+picked, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+personas, mturk.\+worlds.\+Personas\+Generator.\+personas, worlds.\+Persona\+Chat\+Eval\+World.\+personas, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+personas, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+personas, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Profile\+World.\+task\+\_\+type, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+task\+\_\+type, igc\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+task\+\_\+type, worlds.\+Persona\+Profile\+World.\+task\+\_\+type, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+task\+\_\+type, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+task\+\_\+type, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+task\+\_\+type, worlds.\+Role\+Onboard\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Persona\+Profile\+World.\+task\+\_\+type, image\+\_\+chat\+\_\+collection.\+worlds.\+Role\+Onboard\+World.\+task\+\_\+type, worlds.\+Persona\+Chat\+Eval\+World.\+task\+\_\+type, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+task\+\_\+type, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+task\+\_\+type, personality\+\_\+captions.\+worlds.\+Role\+Onboard\+World.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+task\+\_\+type, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+task\+\_\+type, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+task\+\_\+type, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+world\+\_\+tag, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+world\+\_\+tag, worlds.\+Persona\+Chat\+Eval\+World.\+world\+\_\+tag, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+world\+\_\+tag, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+world\+\_\+tag, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+world\+\_\+tag, and mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+world\+\_\+tag.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_aee0fa9efee57a370499a0691950b548b}\label{classworlds_1_1PersonaChatEvalWorld_aee0fa9efee57a370499a0691950b548b}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!agent\+\_\+timeout\+\_\+shutdown@{agent\+\_\+timeout\+\_\+shutdown}}
+\index{agent\+\_\+timeout\+\_\+shutdown@{agent\+\_\+timeout\+\_\+shutdown}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{agent\+\_\+timeout\+\_\+shutdown}{agent\_timeout\_shutdown}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+agent\+\_\+timeout\+\_\+shutdown}
+
+
+
+Definition at line 186 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a3b39b5c509f4ce9d47dab0789ca9abe5}\label{classworlds_1_1PersonaChatEvalWorld_a3b39b5c509f4ce9d47dab0789ca9abe5}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!chat\+\_\+done@{chat\+\_\+done}}
+\index{chat\+\_\+done@{chat\+\_\+done}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{chat\+\_\+done}{chat\_done}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+chat\+\_\+done}
+
+
+
+Definition at line 173 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+episode\+\_\+done(), worlds.\+Persona\+Chat\+Eval\+World.\+episode\+\_\+done(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a2826d2e51ec376fb8e1a90810f32f67d}\label{classworlds_1_1PersonaChatEvalWorld_a2826d2e51ec376fb8e1a90810f32f67d}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!consistent\+\_\+score@{consistent\+\_\+score}}
+\index{consistent\+\_\+score@{consistent\+\_\+score}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{consistent\+\_\+score}{consistent\_score}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+consistent\+\_\+score}
+
+
+
+Definition at line 177 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a3a839359e827a16d25daf577234cc35b}\label{classworlds_1_1PersonaChatEvalWorld_a3a839359e827a16d25daf577234cc35b}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!dialog@{dialog}}
+\index{dialog@{dialog}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{dialog}{dialog}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+dialog}
+
+
+
+Definition at line 171 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_afc7bdee49cb547cae906e7c8ce1e6dba}\label{classworlds_1_1PersonaChatEvalWorld_afc7bdee49cb547cae906e7c8ce1e6dba}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!eng\+\_\+score@{eng\+\_\+score}}
+\index{eng\+\_\+score@{eng\+\_\+score}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{eng\+\_\+score}{eng\_score}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+eng\+\_\+score}
+
+
+
+Definition at line 176 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a898fad169c49e71ae86d33e1f94f78bb}\label{classworlds_1_1PersonaChatEvalWorld_a898fad169c49e71ae86d33e1f94f78bb}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!fluency\+\_\+score@{fluency\+\_\+score}}
+\index{fluency\+\_\+score@{fluency\+\_\+score}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{fluency\+\_\+score}{fluency\_score}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+fluency\+\_\+score}
+
+
+
+Definition at line 175 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a4a9cb91f5422986e69790c7302c952bf}\label{classworlds_1_1PersonaChatEvalWorld_a4a9cb91f5422986e69790c7302c952bf}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!max\+\_\+resp\+\_\+time@{max\+\_\+resp\+\_\+time}}
+\index{max\+\_\+resp\+\_\+time@{max\+\_\+resp\+\_\+time}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+resp\+\_\+time}{max\_resp\_time}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+max\+\_\+resp\+\_\+time}
+
+
+
+Definition at line 185 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+human\+\_\+agent\+\_\+act(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a2b2a7c4efd28d2fd2efd663bc3fcef1e}\label{classworlds_1_1PersonaChatEvalWorld_a2b2a7c4efd28d2fd2efd663bc3fcef1e}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!max\+\_\+turn@{max\+\_\+turn}}
+\index{max\+\_\+turn@{max\+\_\+turn}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+turn}{max\_turn}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+max\+\_\+turn}
+
+
+
+Definition at line 169 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_af0520dd6c78c88f79fdd70be7bd7778c}\label{classworlds_1_1PersonaChatEvalWorld_af0520dd6c78c88f79fdd70be7bd7778c}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!model\+\_\+agent@{model\+\_\+agent}}
+\index{model\+\_\+agent@{model\+\_\+agent}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{model\+\_\+agent}{model\_agent}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+model\+\_\+agent}
+
+
+
+Definition at line 182 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+model\+\_\+observes\+\_\+itself(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a459152c14865510575d033179a785954}\label{classworlds_1_1PersonaChatEvalWorld_a459152c14865510575d033179a785954}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!n\+\_\+personas@{n\+\_\+personas}}
+\index{n\+\_\+personas@{n\+\_\+personas}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{n\+\_\+personas}{n\_personas}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+personas}
+
+
+
+Definition at line 174 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_aaa99f726cdbcdd81a6bcaa0eaebac726}\label{classworlds_1_1PersonaChatEvalWorld_aaa99f726cdbcdd81a6bcaa0eaebac726}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!n\+\_\+turn@{n\+\_\+turn}}
+\index{n\+\_\+turn@{n\+\_\+turn}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{n\+\_\+turn}{n\_turn}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+n\+\_\+turn}
+
+
+
+Definition at line 170 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), worlds.\+Persona\+Chat\+Eval\+World.\+reset\+\_\+random(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a136ed79f31d4a47bb8ce15f43f6c2564}\label{classworlds_1_1PersonaChatEvalWorld_a136ed79f31d4a47bb8ce15f43f6c2564}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!persona\+\_\+picked@{persona\+\_\+picked}}
+\index{persona\+\_\+picked@{persona\+\_\+picked}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{persona\+\_\+picked}{persona\_picked}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+persona\+\_\+picked}
+
+
+
+Definition at line 178 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a4bcc9e1ece3eec3b2fdb39fa3e58be92}\label{classworlds_1_1PersonaChatEvalWorld_a4bcc9e1ece3eec3b2fdb39fa3e58be92}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!personas@{personas}}
+\index{personas@{personas}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{personas}{personas}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+personas}
+
+
+
+Definition at line 188 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_a665a0c88898bbe31d1a1a8ba461c9429}\label{classworlds_1_1PersonaChatEvalWorld_a665a0c88898bbe31d1a1a8ba461c9429}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!range\+\_\+turn@{range\+\_\+turn}}
+\index{range\+\_\+turn@{range\+\_\+turn}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{range\+\_\+turn}{range\_turn}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+range\+\_\+turn}
+
+
+
+Definition at line 168 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+reset\+\_\+random().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_ae6ff8356980eeee972a844a5bdc2b08b}\label{classworlds_1_1PersonaChatEvalWorld_ae6ff8356980eeee972a844a5bdc2b08b}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!task\+\_\+type@{task\+\_\+type}}
+\index{task\+\_\+type@{task\+\_\+type}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{task\+\_\+type}{task\_type}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+task\+\_\+type}
+
+
+
+Definition at line 172 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_acba8e89cca190d9a53656d10087e818a}\label{classworlds_1_1PersonaChatEvalWorld_acba8e89cca190d9a53656d10087e818a}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!turn\+\_\+idx@{turn\+\_\+idx}}
+\index{turn\+\_\+idx@{turn\+\_\+idx}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{turn\+\_\+idx}{turn\_idx}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+turn\+\_\+idx}
+
+
+
+Definition at line 167 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1PersonaChatEvalWorld_ae597e51544be2476539c075e6ea0bcad}\label{classworlds_1_1PersonaChatEvalWorld_ae597e51544be2476539c075e6ea0bcad}} 
+\index{worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}!world\+\_\+tag@{world\+\_\+tag}}
+\index{world\+\_\+tag@{world\+\_\+tag}!worlds\+::\+Persona\+Chat\+Eval\+World@{worlds\+::\+Persona\+Chat\+Eval\+World}}
+\subsubsection{\texorpdfstring{world\+\_\+tag}{world\_tag}}
+{\footnotesize\ttfamily worlds.\+Persona\+Chat\+Eval\+World.\+world\+\_\+tag}
+
+
+
+Definition at line 179 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/personachat/mturk/personachat\+\_\+eval/\hyperlink{projects_2personachat_2mturk_2personachat__eval_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

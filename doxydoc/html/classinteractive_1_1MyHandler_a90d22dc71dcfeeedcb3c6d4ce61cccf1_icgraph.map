@@ -1,5 +1,4 @@
 <map id="interactive.MyHandler.respond" name="interactive.MyHandler.respond">
-<area shape="rect" id="node1" title=" " alt="" coords="264,67,463,93"/>
-<area shape="rect" id="node2" href="$classinteractive_1_1MyHandler.html#a718f9206286bfce516ecbc3cd33bb960" title=" " alt="" coords="10,29,211,56"/>
-<area shape="rect" id="node3" href="$classinteractive_1_1MyHandler.html#a59070990ac52dada4b7c532f76af749f" title=" " alt="" coords="5,104,216,131"/>
+<area shape="rect" id="node2" href="$classinteractive_1_1MyHandler.html#a718f9206286bfce516ecbc3cd33bb960" title="interactive.MyHandler.do_GET" alt="" coords="257,29,458,56"/>
+<area shape="rect" id="node3" href="$classinteractive_1_1MyHandler.html#a59070990ac52dada4b7c532f76af749f" title="interactive.MyHandler.do_POST" alt="" coords="252,104,463,131"/>
 </map>

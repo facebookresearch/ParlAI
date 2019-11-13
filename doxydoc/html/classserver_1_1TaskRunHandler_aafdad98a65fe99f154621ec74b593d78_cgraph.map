@@ -1,4 +1,7 @@
 <map id="server.TaskRunHandler.post" name="server.TaskRunHandler.post">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,195,39"/>
-<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1testing_1_1TeeStringIO.html#af8c256be884cbcb0081768bc04738015" title=" " alt="" coords="243,5,393,47"/>
+<area shape="rect" id="node2" href="$namespaceserver.html#a2467b58afe94f16856770faf20184b7b" title="server.get_config_module" alt="" coords="243,5,413,32"/>
+<area shape="rect" id="node4" href="$namespaceserver.html#a19d9a32c8654358136f27ac2f710208d" title="server.get_run_module" alt="" coords="251,56,405,83"/>
+<area shape="rect" id="node5" href="$namespaceserver.html#a16739378649273e6ea462b460262a854" title="server.start_server" alt="" coords="263,107,393,133"/>
+<area shape="rect" id="node6" href="$classparlai_1_1utils_1_1testing_1_1TeeStringIO.html#af8c256be884cbcb0081768bc04738015" title="parlai.utils.testing.Tee\lStringIO.write" alt="" coords="253,158,403,199"/>
+<area shape="rect" id="node3" href="$namespaceserver.html#a20f5670b2d0cc9c06be867b56798550d" title="server.get_mturk_task\l_module" alt="" coords="461,23,613,65"/>
 </map>

@@ -1,0 +1,4 @@
+<map id="parlai.agents.transformer.modules.MultiHeadAttention.forward" name="parlai.agents.transformer.modules.MultiHeadAttention.forward">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1misc.html#a68c44ca571de7149b683539db659c330" title="parlai.utils.misc.neginf" alt="" coords="276,13,428,39"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1misc.html#ac8ca45e62ca906d9b6e5026588a5d2a2" title="parlai.utils.misc.maintain\l_dialog_history" alt="" coords="476,5,643,47"/>
+</map>

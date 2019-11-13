@@ -1,0 +1,230 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld}{}\section{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld}\index{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World@{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World}}
+
+
+Inheritance diagram for parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_afca35f07eb86bac34180c21cca0741c2}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af4bdeb4a05489c01d98ca8251cc2ad97}{mturk\+\_\+agent}, \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_acc5db69ea637dc47c40833268ce933e9}{task\+\_\+data})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af07d98eed07ddf1be2fa16310b4bf405}{did\+\_\+complete} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a02a802c1de6d6acd815ae83cbfd82eeb}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ac9cfc1ec78d286d1a4da6b21455b7358}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a7f263553ea616c3ae36124e5fcab4dc2}{prep\+\_\+save\+\_\+data} (self, workers)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a9613b5a6a25c4e6f60bd1da6057cb575}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af4bdeb4a05489c01d98ca8251cc2ad97}{mturk\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a2b173491e6af4ec163df49695ad438b7}{episode\+Done}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_acc5db69ea637dc47c40833268ce933e9}{task\+\_\+data}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ad58aef0c2b48ff7a682082b81d4f25ae}{response}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}World for handling generic tasks that aim to use ParlAI as an MTurk
+interface, but don't need the server to be in the loop.
+\end{DoxyVerb}
+ 
+
+Definition at line 131 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_afca35f07eb86bac34180c21cca0741c2}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_afca35f07eb86bac34180c21cca0741c2}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{mturk\+\_\+agent,  }\item[{}]{task\+\_\+data }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Init should be provided with the task_data that the worker needs
+to complete the task on the frontend.
+\end{DoxyVerb}
+ 
+
+Definition at line 136 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af07d98eed07ddf1be2fa16310b4bf405}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af07d98eed07ddf1be2fa16310b4bf405}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!did\+\_\+complete@{did\+\_\+complete}}
+\index{did\+\_\+complete@{did\+\_\+complete}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{did\+\_\+complete()}{did\_complete()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+did\+\_\+complete (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determines whether or not this world was completed, or if the agent
+didn't complete the task\end{DoxyVerb}
+ 
+
+Definition at line 144 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a02a802c1de6d6acd815ae83cbfd82eeb}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a02a802c1de6d6acd815ae83cbfd82eeb}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}A ParlAI-MTurk task ends and allows workers to be marked complete
+when the world is finished.
+\end{DoxyVerb}
+ 
+
+Definition at line 150 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, and parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ac9cfc1ec78d286d1a4da6b21455b7358}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ac9cfc1ec78d286d1a4da6b21455b7358}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}A static task parley is simply sending the task data and waiting
+for the response
+\end{DoxyVerb}
+ 
+
+Definition at line 156 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+task\+\_\+data, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+task\+\_\+data.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a7f263553ea616c3ae36124e5fcab4dc2}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a7f263553ea616c3ae36124e5fcab4dc2}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!prep\+\_\+save\+\_\+data@{prep\+\_\+save\+\_\+data}}
+\index{prep\+\_\+save\+\_\+data@{prep\+\_\+save\+\_\+data}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{prep\+\_\+save\+\_\+data()}{prep\_save\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{workers }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This prepares data to be saved for later review, including
+chats from individual worker perspectives.\end{DoxyVerb}
+ 
+
+Definition at line 166 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Data\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Data\+World.\+get\+\_\+custom\+\_\+task\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+task\+\_\+data, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+task\+\_\+data.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a7f263553ea616c3ae36124e5fcab4dc2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a9613b5a6a25c4e6f60bd1da6057cb575}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a9613b5a6a25c4e6f60bd1da6057cb575}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shutdown tracking for the agent\end{DoxyVerb}
+ 
+
+Definition at line 183 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a2b173491e6af4ec163df49695ad438b7}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_a2b173491e6af4ec163df49695ad438b7}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done}
+
+
+
+Definition at line 141 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+episode\+\_\+done(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+parley(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+parley(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+parley(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+parley(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+parley(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af4bdeb4a05489c01d98ca8251cc2ad97}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_af4bdeb4a05489c01d98ca8251cc2ad97}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!mturk\+\_\+agent@{mturk\+\_\+agent}}
+\index{mturk\+\_\+agent@{mturk\+\_\+agent}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{mturk\+\_\+agent}{mturk\_agent}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent}
+
+
+
+Definition at line 140 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+block\+\_\+loop(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+block\+\_\+loop(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+did\+\_\+complete(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+did\+\_\+complete(), parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Onboard\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Asker\+Onboarding\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Asker\+Onboarding\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Answerer\+Onboarding\+World.\+parley(), parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Answerer\+Onboarding\+World.\+parley(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Evaluator\+Onboarding\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Evaluator\+Onboarding\+World.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+parley(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Profile\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topic\+Choose\+World.\+parley(), igc\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), worlds.\+Persona\+Profile\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+parley(), worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Persona\+Profile\+World.\+parley(), image\+\_\+chat\+\_\+collection.\+worlds.\+Role\+Onboard\+World.\+parley(), mturk.\+worlds.\+Persona\+Assign\+World.\+parley(), personality\+\_\+captions.\+worlds.\+Role\+Onboard\+World.\+parley(), light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Instruction\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+review\+\_\+work(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+review\+\_\+work(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+shutdown(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+shutdown(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+shutdown(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+shutdown(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+shutdown(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+shutdown(), and light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Task\+World.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ad58aef0c2b48ff7a682082b81d4f25ae}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_ad58aef0c2b48ff7a682082b81d4f25ae}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!response@{response}}
+\index{response@{response}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{response}{response}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+response}
+
+
+
+Definition at line 163 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_acc5db69ea637dc47c40833268ce933e9}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld_acc5db69ea637dc47c40833268ce933e9}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}!task\+\_\+data@{task\+\_\+data}}
+\index{task\+\_\+data@{task\+\_\+data}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worlds\+::\+Static\+M\+Turk\+Task\+World}}
+\subsubsection{\texorpdfstring{task\+\_\+data}{task\_data}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+task\+\_\+data}
+
+
+
+Definition at line 142 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+parley(), parlai.\+mturk.\+core.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/legacy\+\_\+2018/\hyperlink{parlai_2mturk_2core_2legacy__2018_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

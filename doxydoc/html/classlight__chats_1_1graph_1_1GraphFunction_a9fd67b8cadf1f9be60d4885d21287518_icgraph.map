@@ -1,4 +1,5 @@
 <map id="light_chats.graph.GraphFunction.func" name="light_chats.graph.GraphFunction.func">
-<area shape="rect" id="node1" title=" " alt="" coords="268,13,507,39"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#afcb6dd9e771c4db34f5af22588e6190e" title=" " alt="" coords="5,5,220,47"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a21e2dd1c8eb431b3ee22cce4853e3c15" title="light_chats.graph.GraphFunction.handle" alt="" coords="292,13,544,39"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1HitFunction.html#afcc616271cdc3acede3dcabdfe516598" title="light_chats.graph.HitFunction.handle" alt="" coords="301,63,535,90"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1FollowFunction.html#a6d1937938725b143930c10260adae130" title="light_chats.graph.Follow\lFunction.func" alt="" coords="592,5,755,47"/>
 </map>

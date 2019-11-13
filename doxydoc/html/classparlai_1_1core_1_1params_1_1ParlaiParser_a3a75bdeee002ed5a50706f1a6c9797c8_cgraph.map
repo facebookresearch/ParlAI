@@ -1,4 +1,5 @@
 <map id="parlai.core.params.ParlaiParser.show_advanced_args" name="parlai.core.params.ParlaiParser.show_advanced_args">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,196,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title=" " alt="" coords="244,5,417,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title="parlai.core.params.Parlai\lParser.parse_known_args" alt="" coords="244,39,417,80"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1params.html#afe2837a1dc21017be30cc7e3cb3696b8" title="parlai.core.params.fix\l_underscores" alt="" coords="465,5,612,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#a7c97ef3250327bc549ac652a481be0cf" title="parlai.utils.misc.load\l_opt_file" alt="" coords="468,71,609,112"/>
 </map>

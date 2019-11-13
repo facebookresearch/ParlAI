@@ -1,0 +1,934 @@
+\hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager}{}\section{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager Class Reference}
+\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager}\index{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager@{parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae6df147d84dc7760affada88f393d0cd}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a26a3006d2fadd195105078dd49101cae}{opt})
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac2b682c0085e42b1e14db6e973a5913d}{add\+\_\+agent\+\_\+to\+\_\+pool} (self, agent, world\+\_\+type=\textquotesingle{}default\textquotesingle{})
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acb4020e6765d2ab6ad722681b724826c}{mark\+\_\+removed} (self, agent\+\_\+id, pageid)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a39c02eecd48359b564bddc86897cae4c}{remove\+\_\+agent\+\_\+from\+\_\+pool} (self, agent, world\+\_\+type=\textquotesingle{}default\textquotesingle{}, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acb4020e6765d2ab6ad722681b724826c}{mark\+\_\+removed}=True)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a238fe5e22bbe928848709edade7ba06c}{after\+\_\+agent\+\_\+removed} (self, agent\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aad51f1633f4d56d2a8812562f0608e03}{get\+\_\+agent\+\_\+state} (self, agent\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95f5de1ee4123af1ed3617ea6ac5ff13}{setup\+\_\+server} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a40189b28ba847731c4749cc6de05252c}{get\+\_\+app\+\_\+token} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a03a9a5d1adb91dae9e5ed1c4d5b70a5c}{setup\+\_\+socket} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3222c094024dad56e029b584062bc5f6}{init\+\_\+new\+\_\+state} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae5c31aa6bdd84bf70adabc204915cc3f}{start\+\_\+new\+\_\+run} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac1f17ccc47844361a32ca3da63ae1c3e}{check\+\_\+timeout\+\_\+in\+\_\+pool} (self, world\+\_\+type, \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8913036d1cbffd57543a63b0f48c9c0e}{agent\+\_\+pool}, max\+\_\+time\+\_\+in\+\_\+pool)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8bf1afcc5ef1546f32a7ad0d390d0fe1}{start\+\_\+task} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a0f7434630ba27fbcc4e35650ec472099}{shutdown} (self)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a71506a682b9284d8ae4121576e6140db}{observe\+\_\+message} (self, receiver\+\_\+id, text, quick\+\_\+replies=None, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6fd0d7046fe2c86064cc8abdd0d45077}{observe\+\_\+payload} (self, receiver\+\_\+id, data, quick\+\_\+replies=None, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ab98d837cddfda4903d5670e06be5a743}{upload\+\_\+attachment} (self, payload)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a26a3006d2fadd195105078dd49101cae}{opt}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac939fada97b8f5246779c39af76322cb}{server\+\_\+url}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae384430643dba2c22560df88f3a342cb}{port}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a43ae5d0a78d2fad235ff04159ba058df}{agent\+\_\+pool\+\_\+change\+\_\+condition}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_affb28cb477b3c347369553e2cac8e293}{active\+\_\+worlds}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a36b51e8ab8f2f2f86abb173f61ca39f0}{message\+\_\+socket}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a13cc2f030399233896653f798bb2c51c}{message\+\_\+sender}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a5ef4e056a714771d461063a8d23bae88}{running}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aa926756a975db5267d4ffa4b4475e8f4}{conversation\+\_\+index}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a73542ce0f4cca3b8ad455efe3bd8b8e2}{shutting\+\_\+down}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a14c4193c1ab878d5bbfd0d27b4e2ed3a}{bypass\+\_\+server\+\_\+setup}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac8ae96a64fc0d4a4c59199a0843070b8}{confirm\+\_\+message\+\_\+delivery}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aea62217a2900ff5379d1aad7925db2bd}{handle\+\_\+message\+\_\+read}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a7ee806d10312361d2a065bc9c4a4cde1}{handle\+\_\+bot\+\_\+read}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6dc54a2b8edb83ab46b056f8b8cffd03}{config}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a1136fd856da2014953c613c9fd47c940}{overworld}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a47fd7b6103c0f5dcfcb070c97a6f72aa}{world\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3b7cd98453991de2e2ebcb6b235422ca}{world\+\_\+module}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a2b5be2bae1166fba82a6881f8c13c5db}{page\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afe880707f85fe8fca3a0adbbc912e0f3}{task\+\_\+configs}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aae47b9ffe4109faa957e374f0b61b0eb}{max\+\_\+workers}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6c552159a92a9e18b2dd517b6f31e73e}{world\+\_\+runner}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a35f0cada9c255120fff87f7acc48532b}{max\+\_\+agents\+\_\+for}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acacba56e55bace4db7e8326508c6760d}{onboard\+\_\+map}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aafc5ac83b208a44273d14685ed5b04d1}{taskworld\+\_\+map}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a063f7cbcfb447071cdb09c6411f95a5a}{server\+\_\+task\+\_\+name}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95422862f09dd95d5b3dc32a3d03c37e}{app\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8913036d1cbffd57543a63b0f48c9c0e}{agent\+\_\+pool}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae4bbc2d71e28d3be4fa29bb745d29f1b}{messenger\+\_\+agent\+\_\+states}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6a69872a10837de73c265c18374d53d3}{task\+\_\+to\+\_\+agent\+\_\+ids}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a829598d33bc7fd9bb846d15d37a5c198}{agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afcdbc65efd85d23cb5630f92d2319611}{run\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a061555265cacbc4032e0400dc59561fe}{task\+\_\+group\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a4c496e469b356d2f13f7c6bc5fc42d37}{is\+\_\+running}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Manages interactions between agents on messenger as well as direct
+interactions between agents and the messenger overworld
+\end{DoxyVerb}
+ 
+
+Definition at line 120 of file messenger\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae6df147d84dc7760affada88f393d0cd}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae6df147d84dc7760affada88f393d0cd}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create an MessengerManager using the given setup options
+\end{DoxyVerb}
+ 
+
+Definition at line 125 of file messenger\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac2b682c0085e42b1e14db6e973a5913d}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac2b682c0085e42b1e14db6e973a5913d}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!add\+\_\+agent\+\_\+to\+\_\+pool@{add\+\_\+agent\+\_\+to\+\_\+pool}}
+\index{add\+\_\+agent\+\_\+to\+\_\+pool@{add\+\_\+agent\+\_\+to\+\_\+pool}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{add\+\_\+agent\+\_\+to\+\_\+pool()}{add\_agent\_to\_pool()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+add\+\_\+agent\+\_\+to\+\_\+pool (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{world\+\_\+type = {\ttfamily \textquotesingle{}default\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add the agent to pool.
+
+:param agent:
+    MessengerAgent object
+:param world_type:
+    Name of world whose pool should now contain agent
+\end{DoxyVerb}
+ 
+
+Definition at line 206 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+log\+\_\+debug(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+pool, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+pool\+\_\+change\+\_\+condition, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac2b682c0085e42b1e14db6e973a5913d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a238fe5e22bbe928848709edade7ba06c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a238fe5e22bbe928848709edade7ba06c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!after\+\_\+agent\+\_\+removed@{after\+\_\+agent\+\_\+removed}}
+\index{after\+\_\+agent\+\_\+removed@{after\+\_\+agent\+\_\+removed}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{after\+\_\+agent\+\_\+removed()}{after\_agent\_removed()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+after\+\_\+agent\+\_\+removed (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform any changes to metadata on agent removal.
+
+override if extra bookkeeping must be done when removing agent
+\end{DoxyVerb}
+ 
+
+Definition at line 387 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a238fe5e22bbe928848709edade7ba06c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac1f17ccc47844361a32ca3da63ae1c3e}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac1f17ccc47844361a32ca3da63ae1c3e}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!check\+\_\+timeout\+\_\+in\+\_\+pool@{check\+\_\+timeout\+\_\+in\+\_\+pool}}
+\index{check\+\_\+timeout\+\_\+in\+\_\+pool@{check\+\_\+timeout\+\_\+in\+\_\+pool}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{check\+\_\+timeout\+\_\+in\+\_\+pool()}{check\_timeout\_in\_pool()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{world\+\_\+type,  }\item[{}]{agent\+\_\+pool,  }\item[{}]{max\+\_\+time\+\_\+in\+\_\+pool }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check for timed-out agents in pool.
+
+:param world_type:
+    string world type
+:param agent_pool:
+    list of ``AgentState``s
+:param max_time_in_pool:
+    int maximum time allowed for agent to be in pool
+\end{DoxyVerb}
+ 
+
+Definition at line 597 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+after\+\_\+agent\+\_\+removed(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+sender, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+message(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+remove\+\_\+agent\+\_\+from\+\_\+pool().
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac1f17ccc47844361a32ca3da63ae1c3e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac1f17ccc47844361a32ca3da63ae1c3e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aad51f1633f4d56d2a8812562f0608e03}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aad51f1633f4d56d2a8812562f0608e03}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!get\+\_\+agent\+\_\+state@{get\+\_\+agent\+\_\+state}}
+\index{get\+\_\+agent\+\_\+state@{get\+\_\+agent\+\_\+state}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+state()}{get\_agent\_state()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+agent\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return agent state.
+
+:param agent_id:
+    int agent identifier
+
+:return:
+    AgentState object if agent_id is being tracked, else None
+\end{DoxyVerb}
+ 
+
+Definition at line 449 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+agent\+\_\+state(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+messenger\+\_\+agent\+\_\+states.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+agent\+\_\+state(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aad51f1633f4d56d2a8812562f0608e03_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aad51f1633f4d56d2a8812562f0608e03_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a40189b28ba847731c4749cc6de05252c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a40189b28ba847731c4749cc6de05252c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!get\+\_\+app\+\_\+token@{get\+\_\+app\+\_\+token}}
+\index{get\+\_\+app\+\_\+token@{get\+\_\+app\+\_\+token}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+app\+\_\+token()}{get\_app\_token()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Find and return an app access token.\end{DoxyVerb}
+ 
+
+Definition at line 538 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3222c094024dad56e029b584062bc5f6}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3222c094024dad56e029b584062bc5f6}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!init\+\_\+new\+\_\+state@{init\+\_\+new\+\_\+state}}
+\index{init\+\_\+new\+\_\+state@{init\+\_\+new\+\_\+state}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{init\+\_\+new\+\_\+state()}{init\_new\_state()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+init\+\_\+new\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Prepare for new run.
+
+Initialize everything in the agent, task, and thread states
+\end{DoxyVerb}
+ 
+
+Definition at line 582 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acb4020e6765d2ab6ad722681b724826c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acb4020e6765d2ab6ad722681b724826c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!mark\+\_\+removed@{mark\+\_\+removed}}
+\index{mark\+\_\+removed@{mark\+\_\+removed}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{mark\+\_\+removed()}{mark\_removed()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+mark\+\_\+removed (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id,  }\item[{}]{pageid }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mark the agent as removed from the pool.
+
+Can be overriden to change other metadata linked to agent removal.
+
+:param agent_id:
+    int agent psid
+:param pageid:
+    int page id
+\end{DoxyVerb}
+ 
+
+Definition at line 221 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a71506a682b9284d8ae4121576e6140db}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a71506a682b9284d8ae4121576e6140db}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!observe\+\_\+message@{observe\+\_\+message}}
+\index{observe\+\_\+message@{observe\+\_\+message}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{observe\+\_\+message()}{observe\_message()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{text,  }\item[{}]{quick\+\_\+replies = {\ttfamily None},  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Send a message through the message manager.
+
+:param receiver_id:
+    int identifier for agent to send message to
+:param text:
+    string text to send
+:param quick_replies:
+    list of quick replies
+:param persona_id:
+    identifier of persona
+\end{DoxyVerb}
+ 
+
+Definition at line 753 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+sender.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a71506a682b9284d8ae4121576e6140db_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6fd0d7046fe2c86064cc8abdd0d45077}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6fd0d7046fe2c86064cc8abdd0d45077}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!observe\+\_\+payload@{observe\+\_\+payload}}
+\index{observe\+\_\+payload@{observe\+\_\+payload}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{observe\+\_\+payload()}{observe\_payload()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+payload (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{data,  }\item[{}]{quick\+\_\+replies = {\ttfamily None},  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Send a payload through the message manager.
+
+:param receiver_id:
+    int identifier for agent to send message to
+:param data:
+    object data to send
+:param quick_replies:
+    list of quick replies
+:param persona_id:
+    identifier of persona
+\end{DoxyVerb}
+ 
+
+Definition at line 769 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+sender.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a39c02eecd48359b564bddc86897cae4c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a39c02eecd48359b564bddc86897cae4c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!remove\+\_\+agent\+\_\+from\+\_\+pool@{remove\+\_\+agent\+\_\+from\+\_\+pool}}
+\index{remove\+\_\+agent\+\_\+from\+\_\+pool@{remove\+\_\+agent\+\_\+from\+\_\+pool}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{remove\+\_\+agent\+\_\+from\+\_\+pool()}{remove\_agent\_from\_pool()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+remove\+\_\+agent\+\_\+from\+\_\+pool (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{world\+\_\+type = {\ttfamily \textquotesingle{}default\textquotesingle{}},  }\item[{}]{mark\+\_\+removed = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Remove agent from the pool.
+
+:param agent:
+    MessengerAgent object
+:param world_type:
+    string, world name
+:param mark_removed:
+    bool, whether to mark an agent as removed from the pool
+\end{DoxyVerb}
+ 
+
+Definition at line 233 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a39c02eecd48359b564bddc86897cae4c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95f5de1ee4123af1ed3617ea6ac5ff13}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95f5de1ee4123af1ed3617ea6ac5ff13}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!setup\+\_\+server@{setup\+\_\+server}}
+\index{setup\+\_\+server@{setup\+\_\+server}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{setup\+\_\+server()}{setup\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Prepare the Messenger server for handling messages.\end{DoxyVerb}
+ 
+
+Definition at line 490 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+bypass\+\_\+server\+\_\+setup, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a03a9a5d1adb91dae9e5ed1c4d5b70a5c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a03a9a5d1adb91dae9e5ed1c4d5b70a5c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!setup\+\_\+socket@{setup\+\_\+socket}}
+\index{setup\+\_\+socket@{setup\+\_\+socket}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{setup\+\_\+socket()}{setup\_socket()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+socket (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set up socket to start communicating to workers.\end{DoxyVerb}
+ 
+
+Definition at line 560 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+bypass\+\_\+server\+\_\+setup.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a0f7434630ba27fbcc4e35650ec472099}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a0f7434630ba27fbcc4e35650ec472099}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handle any client shutdown cleanup.\end{DoxyVerb}
+ 
+
+Definition at line 735 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae5c31aa6bdd84bf70adabc204915cc3f}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae5c31aa6bdd84bf70adabc204915cc3f}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!start\+\_\+new\+\_\+run@{start\+\_\+new\+\_\+run}}
+\index{start\+\_\+new\+\_\+run@{start\+\_\+new\+\_\+run}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{start\+\_\+new\+\_\+run()}{start\_new\_run()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+new\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Begin new run.\end{DoxyVerb}
+ 
+
+Definition at line 592 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8bf1afcc5ef1546f32a7ad0d390d0fe1}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8bf1afcc5ef1546f32a7ad0d390d0fe1}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!start\+\_\+task@{start\+\_\+task}}
+\index{start\+\_\+task@{start\+\_\+task}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{start\+\_\+task()}{start\_task()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Begin handling task.
+
+Periodically check to see when enough agents are in the agent pool
+to start an instance of the task. Continue doing this until the desired
+number of conversations is had.
+\end{DoxyVerb}
+ 
+
+Definition at line 636 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+create\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+get\+\_\+unique\+\_\+pool(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+active\+\_\+worlds, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+after\+\_\+agent\+\_\+removed(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+pool\+\_\+change\+\_\+condition, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+conversation\+\_\+index, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+agent\+\_\+state(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+max\+\_\+agents\+\_\+for, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+remove\+\_\+agent\+\_\+from\+\_\+pool(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+running, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+configs, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+taskworld\+\_\+map, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+world\+\_\+module, and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+world\+\_\+runner.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8bf1afcc5ef1546f32a7ad0d390d0fe1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ab98d837cddfda4903d5670e06be5a743}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ab98d837cddfda4903d5670e06be5a743}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!upload\+\_\+attachment@{upload\+\_\+attachment}}
+\index{upload\+\_\+attachment@{upload\+\_\+attachment}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{upload\+\_\+attachment()}{upload\_attachment()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+upload\+\_\+attachment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{payload }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Upload an attachment and return an attachment ID.
+
+:param payload:
+    dict with the following format:
+{'type': <TYPE>, 'url': <URL>} or
+{'type': <TYPE>, 'filename': <FILENAME>, 'format': <FILEFORMAT>}.
+For example,
+{'type': 'image', 'filename': 'test.png', 'format': 'png'}
+\end{DoxyVerb}
+ 
+
+Definition at line 785 of file messenger\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+sender.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_affb28cb477b3c347369553e2cac8e293}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_affb28cb477b3c347369553e2cac8e293}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!active\+\_\+worlds@{active\+\_\+worlds}}
+\index{active\+\_\+worlds@{active\+\_\+worlds}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{active\+\_\+worlds}{active\_worlds}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+active\+\_\+worlds}
+
+
+
+Definition at line 133 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a829598d33bc7fd9bb846d15d37a5c198}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a829598d33bc7fd9bb846d15d37a5c198}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future@{agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future}}
+\index{agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future@{agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future}{agent\_id\_to\_overworld\_future}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+id\+\_\+to\+\_\+overworld\+\_\+future}
+
+
+
+Definition at line 590 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8913036d1cbffd57543a63b0f48c9c0e}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a8913036d1cbffd57543a63b0f48c9c0e}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!agent\+\_\+pool@{agent\+\_\+pool}}
+\index{agent\+\_\+pool@{agent\+\_\+pool}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{agent\+\_\+pool}{agent\_pool}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+pool}
+
+
+
+Definition at line 587 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+add\+\_\+agent\+\_\+to\+\_\+pool().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a43ae5d0a78d2fad235ff04159ba058df}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a43ae5d0a78d2fad235ff04159ba058df}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!agent\+\_\+pool\+\_\+change\+\_\+condition@{agent\+\_\+pool\+\_\+change\+\_\+condition}}
+\index{agent\+\_\+pool\+\_\+change\+\_\+condition@{agent\+\_\+pool\+\_\+change\+\_\+condition}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{agent\+\_\+pool\+\_\+change\+\_\+condition}{agent\_pool\_change\_condition}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+agent\+\_\+pool\+\_\+change\+\_\+condition}
+
+
+
+Definition at line 132 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+add\+\_\+agent\+\_\+to\+\_\+pool(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95422862f09dd95d5b3dc32a3d03c37e}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a95422862f09dd95d5b3dc32a3d03c37e}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!app\+\_\+token@{app\+\_\+token}}
+\index{app\+\_\+token@{app\+\_\+token}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{app\+\_\+token}{app\_token}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+app\+\_\+token}
+
+
+
+Definition at line 567 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a14c4193c1ab878d5bbfd0d27b4e2ed3a}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a14c4193c1ab878d5bbfd0d27b4e2ed3a}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!bypass\+\_\+server\+\_\+setup@{bypass\+\_\+server\+\_\+setup}}
+\index{bypass\+\_\+server\+\_\+setup@{bypass\+\_\+server\+\_\+setup}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{bypass\+\_\+server\+\_\+setup}{bypass\_server\_setup}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+bypass\+\_\+server\+\_\+setup}
+
+
+
+Definition at line 140 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+socket().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6dc54a2b8edb83ab46b056f8b8cffd03}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6dc54a2b8edb83ab46b056f8b8cffd03}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!config@{config}}
+\index{config@{config}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{config}{config}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+config}
+
+
+
+Definition at line 161 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+parley(), personality\+\_\+captions.\+worlds.\+Role\+Onboard\+World.\+parley(), and personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+parley().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac8ae96a64fc0d4a4c59199a0843070b8}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac8ae96a64fc0d4a4c59199a0843070b8}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!confirm\+\_\+message\+\_\+delivery@{confirm\+\_\+message\+\_\+delivery}}
+\index{confirm\+\_\+message\+\_\+delivery@{confirm\+\_\+message\+\_\+delivery}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{confirm\+\_\+message\+\_\+delivery}{confirm\_message\_delivery}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+confirm\+\_\+message\+\_\+delivery}
+
+
+
+Definition at line 145 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aa926756a975db5267d4ffa4b4475e8f4}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aa926756a975db5267d4ffa4b4475e8f4}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!conversation\+\_\+index@{conversation\+\_\+index}}
+\index{conversation\+\_\+index@{conversation\+\_\+index}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{conversation\+\_\+index}{conversation\_index}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+conversation\+\_\+index}
+
+
+
+Definition at line 138 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a7ee806d10312361d2a065bc9c4a4cde1}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a7ee806d10312361d2a065bc9c4a4cde1}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!handle\+\_\+bot\+\_\+read@{handle\+\_\+bot\+\_\+read}}
+\index{handle\+\_\+bot\+\_\+read@{handle\+\_\+bot\+\_\+read}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{handle\+\_\+bot\+\_\+read}{handle\_bot\_read}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+handle\+\_\+bot\+\_\+read}
+
+
+
+Definition at line 147 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aea62217a2900ff5379d1aad7925db2bd}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aea62217a2900ff5379d1aad7925db2bd}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!handle\+\_\+message\+\_\+read@{handle\+\_\+message\+\_\+read}}
+\index{handle\+\_\+message\+\_\+read@{handle\+\_\+message\+\_\+read}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{handle\+\_\+message\+\_\+read}{handle\_message\_read}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+handle\+\_\+message\+\_\+read}
+
+
+
+Definition at line 146 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a4c496e469b356d2f13f7c6bc5fc42d37}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a4c496e469b356d2f13f7c6bc5fc42d37}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!is\+\_\+running@{is\+\_\+running}}
+\index{is\+\_\+running@{is\+\_\+running}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{is\+\_\+running}{is\_running}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+is\+\_\+running}
+
+
+
+Definition at line 739 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a35f0cada9c255120fff87f7acc48532b}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a35f0cada9c255120fff87f7acc48532b}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!max\+\_\+agents\+\_\+for@{max\+\_\+agents\+\_\+for}}
+\index{max\+\_\+agents\+\_\+for@{max\+\_\+agents\+\_\+for}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{max\+\_\+agents\+\_\+for}{max\_agents\_for}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+max\+\_\+agents\+\_\+for}
+
+
+
+Definition at line 178 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aae47b9ffe4109faa957e374f0b61b0eb}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aae47b9ffe4109faa957e374f0b61b0eb}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!max\+\_\+workers@{max\+\_\+workers}}
+\index{max\+\_\+workers@{max\+\_\+workers}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{max\+\_\+workers}{max\_workers}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+max\+\_\+workers}
+
+
+
+Definition at line 173 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a13cc2f030399233896653f798bb2c51c}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a13cc2f030399233896653f798bb2c51c}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!message\+\_\+sender@{message\+\_\+sender}}
+\index{message\+\_\+sender@{message\+\_\+sender}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{message\+\_\+sender}{message\_sender}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+sender}
+
+
+
+Definition at line 135 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+check\+\_\+timeout\+\_\+in\+\_\+pool(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+observe\+\_\+payload(), and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+upload\+\_\+attachment().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a36b51e8ab8f2f2f86abb173f61ca39f0}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a36b51e8ab8f2f2f86abb173f61ca39f0}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!message\+\_\+socket@{message\+\_\+socket}}
+\index{message\+\_\+socket@{message\+\_\+socket}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{message\+\_\+socket}{message\_socket}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+message\+\_\+socket}
+
+
+
+Definition at line 134 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae4bbc2d71e28d3be4fa29bb745d29f1b}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae4bbc2d71e28d3be4fa29bb745d29f1b}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!messenger\+\_\+agent\+\_\+states@{messenger\+\_\+agent\+\_\+states}}
+\index{messenger\+\_\+agent\+\_\+states@{messenger\+\_\+agent\+\_\+states}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{messenger\+\_\+agent\+\_\+states}{messenger\_agent\_states}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+messenger\+\_\+agent\+\_\+states}
+
+
+
+Definition at line 588 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+agent\+\_\+state().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acacba56e55bace4db7e8326508c6760d}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_acacba56e55bace4db7e8326508c6760d}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!onboard\+\_\+map@{onboard\+\_\+map}}
+\index{onboard\+\_\+map@{onboard\+\_\+map}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{onboard\+\_\+map}{onboard\_map}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+onboard\+\_\+map}
+
+
+
+Definition at line 181 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a26a3006d2fadd195105078dd49101cae}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a26a3006d2fadd195105078dd49101cae}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!opt@{opt}}
+\index{opt@{opt}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt}
+
+
+
+Definition at line 129 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a1136fd856da2014953c613c9fd47c940}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a1136fd856da2014953c613c9fd47c940}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!overworld@{overworld}}
+\index{overworld@{overworld}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{overworld}{overworld}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+overworld}
+
+
+
+Definition at line 162 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a2b5be2bae1166fba82a6881f8c13c5db}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a2b5be2bae1166fba82a6881f8c13c5db}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!page\+\_\+id@{page\+\_\+id}}
+\index{page\+\_\+id@{page\+\_\+id}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{page\+\_\+id}{page\_id}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+page\+\_\+id}
+
+
+
+Definition at line 165 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae384430643dba2c22560df88f3a342cb}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ae384430643dba2c22560df88f3a342cb}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!port@{port}}
+\index{port@{port}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+port}
+
+
+
+Definition at line 131 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afcdbc65efd85d23cb5630f92d2319611}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afcdbc65efd85d23cb5630f92d2319611}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!run\+\_\+id@{run\+\_\+id}}
+\index{run\+\_\+id@{run\+\_\+id}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{run\+\_\+id}{run\_id}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+run\+\_\+id}
+
+
+
+Definition at line 594 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a5ef4e056a714771d461063a8d23bae88}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a5ef4e056a714771d461063a8d23bae88}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!running@{running}}
+\index{running@{running}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{running}{running}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+running}
+
+
+
+Definition at line 137 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Timer.\+reset(), parlai.\+utils.\+misc.\+Timer.\+resume(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task(), parlai.\+utils.\+misc.\+Timer.\+stop(), and parlai.\+utils.\+misc.\+Timer.\+time().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a063f7cbcfb447071cdb09c6411f95a5a}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a063f7cbcfb447071cdb09c6411f95a5a}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!server\+\_\+task\+\_\+name@{server\+\_\+task\+\_\+name}}
+\index{server\+\_\+task\+\_\+name@{server\+\_\+task\+\_\+name}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{server\+\_\+task\+\_\+name}{server\_task\_name}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+server\+\_\+task\+\_\+name}
+
+
+
+Definition at line 525 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac939fada97b8f5246779c39af76322cb}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_ac939fada97b8f5246779c39af76322cb}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!server\+\_\+url@{server\+\_\+url}}
+\index{server\+\_\+url@{server\+\_\+url}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{server\+\_\+url}{server\_url}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+server\+\_\+url}
+
+
+
+Definition at line 130 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a73542ce0f4cca3b8ad455efe3bd8b8e2}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a73542ce0f4cca3b8ad455efe3bd8b8e2}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!shutting\+\_\+down@{shutting\+\_\+down}}
+\index{shutting\+\_\+down@{shutting\+\_\+down}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{shutting\+\_\+down}{shutting\_down}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+shutting\+\_\+down}
+
+
+
+Definition at line 139 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afe880707f85fe8fca3a0adbbc912e0f3}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_afe880707f85fe8fca3a0adbbc912e0f3}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!task\+\_\+configs@{task\+\_\+configs}}
+\index{task\+\_\+configs@{task\+\_\+configs}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{task\+\_\+configs}{task\_configs}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+configs}
+
+
+
+Definition at line 172 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a061555265cacbc4032e0400dc59561fe}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a061555265cacbc4032e0400dc59561fe}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}}
+\index{task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{task\+\_\+group\+\_\+id}{task\_group\_id}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+group\+\_\+id}
+
+
+
+Definition at line 595 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6a69872a10837de73c265c18374d53d3}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6a69872a10837de73c265c18374d53d3}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!task\+\_\+to\+\_\+agent\+\_\+ids@{task\+\_\+to\+\_\+agent\+\_\+ids}}
+\index{task\+\_\+to\+\_\+agent\+\_\+ids@{task\+\_\+to\+\_\+agent\+\_\+ids}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{task\+\_\+to\+\_\+agent\+\_\+ids}{task\_to\_agent\_ids}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+to\+\_\+agent\+\_\+ids}
+
+
+
+Definition at line 589 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aafc5ac83b208a44273d14685ed5b04d1}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_aafc5ac83b208a44273d14685ed5b04d1}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!taskworld\+\_\+map@{taskworld\+\_\+map}}
+\index{taskworld\+\_\+map@{taskworld\+\_\+map}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{taskworld\+\_\+map}{taskworld\_map}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+taskworld\+\_\+map}
+
+
+
+Definition at line 184 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3b7cd98453991de2e2ebcb6b235422ca}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a3b7cd98453991de2e2ebcb6b235422ca}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!world\+\_\+module@{world\+\_\+module}}
+\index{world\+\_\+module@{world\+\_\+module}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{world\+\_\+module}{world\_module}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+world\+\_\+module}
+
+
+
+Definition at line 164 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a47fd7b6103c0f5dcfcb070c97a6f72aa}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a47fd7b6103c0f5dcfcb070c97a6f72aa}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!world\+\_\+path@{world\+\_\+path}}
+\index{world\+\_\+path@{world\+\_\+path}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{world\+\_\+path}{world\_path}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+world\+\_\+path}
+
+
+
+Definition at line 163 of file messenger\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6c552159a92a9e18b2dd517b6f31e73e}\label{classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager_a6c552159a92a9e18b2dd517b6f31e73e}} 
+\index{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}!world\+\_\+runner@{world\+\_\+runner}}
+\index{world\+\_\+runner@{world\+\_\+runner}!parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager@{parlai\+::messenger\+::core\+::messenger\+\_\+manager\+::\+Messenger\+Manager}}
+\subsubsection{\texorpdfstring{world\+\_\+runner}{world\_runner}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+world\+\_\+runner}
+
+
+
+Definition at line 175 of file messenger\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+start\+\_\+task().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/messenger/core/\hyperlink{messenger__manager_8py}{messenger\+\_\+manager.\+py}\end{DoxyCompactItemize}

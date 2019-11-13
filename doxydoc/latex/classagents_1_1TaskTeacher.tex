@@ -1,0 +1,129 @@
+\hypertarget{classagents_1_1TaskTeacher}{}\section{agents.\+Task\+Teacher Class Reference}
+\label{classagents_1_1TaskTeacher}\index{agents.\+Task\+Teacher@{agents.\+Task\+Teacher}}
+
+
+Inheritance diagram for agents.\+Task\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{classagents_1_1TaskTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for agents.\+Task\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{classagents_1_1TaskTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagents_1_1TaskTeacher_aef013b21e09f73914431395efa36686c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FbDialogTeacher_af7a9ec497b9cd0292d7b8fa220da7c28}{opt}, shared=None)
+\item 
+def \hyperlink{classagents_1_1TaskTeacher_aa4657ff478d0f6241272311b3e79351e}{setup\+\_\+data} (self, path)
+\item 
+def \hyperlink{classagents_1_1TaskTeacher_a5905922070928e411cec76cda82281ec}{setup\+\_\+data\+\_\+with\+\_\+feedback} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 67 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classagents_1_1TaskTeacher_aef013b21e09f73914431395efa36686c}\label{classagents_1_1TaskTeacher_aef013b21e09f73914431395efa36686c}} 
+\index{agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def agents.\+Task\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 68 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classagents_1_1TaskTeacher_aa4657ff478d0f6241272311b3e79351e}\label{classagents_1_1TaskTeacher_aa4657ff478d0f6241272311b3e79351e}} 
+\index{agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}!setup\+\_\+data@{setup\+\_\+data}}
+\index{setup\+\_\+data@{setup\+\_\+data}!agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data()}{setup\_data()}}
+{\footnotesize\ttfamily def agents.\+Task\+Teacher.\+setup\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reads feedback for an example along with text and labels
+if 'feedback' argument is specified
+\end{DoxyVerb}
+ 
+
+Definition at line 73 of file agents.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+setup\+\_\+data\+\_\+with\+\_\+feedback(), and agents.\+Task\+Teacher.\+setup\+\_\+data\+\_\+with\+\_\+feedback().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagents_1_1TaskTeacher_aa4657ff478d0f6241272311b3e79351e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagents_1_1TaskTeacher_a5905922070928e411cec76cda82281ec}\label{classagents_1_1TaskTeacher_a5905922070928e411cec76cda82281ec}} 
+\index{agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}!setup\+\_\+data\+\_\+with\+\_\+feedback@{setup\+\_\+data\+\_\+with\+\_\+feedback}}
+\index{setup\+\_\+data\+\_\+with\+\_\+feedback@{setup\+\_\+data\+\_\+with\+\_\+feedback}!agents\+::\+Task\+Teacher@{agents\+::\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data\+\_\+with\+\_\+feedback()}{setup\_data\_with\_feedback()}}
+{\footnotesize\ttfamily def agents.\+Task\+Teacher.\+setup\+\_\+data\+\_\+with\+\_\+feedback (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reads data in the fbdialog format.
+This method is very similar to FbDialogTeacher.setup_data(..).
+The difference is that in this method the feedback is appended to the query
+from the current example; in the default setup the feedback is appended to
+the x from the next example.
+
+The data would look something like this:
+
+Mary moved to the bedroom.
+Mary travelled to the garden.
+Where is John?
+No, that's wrong.
+[labels: garden]
+
+To append feedback to the current example, modify the task name like this:
+  python examples/display_data.py -t dbll_babi:task:2_p0.5:f
+Default setup:
+  python examples/display_data.py -t dbll_babi:task:2_p0.5\end{DoxyVerb}
+ 
+
+Definition at line 82 of file agents.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+cloze, make\+\_\+control\+\_\+dataset.\+float, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by agents.\+Task\+Teacher.\+setup\+\_\+data().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagents_1_1TaskTeacher_a5905922070928e411cec76cda82281ec_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/memnn\+\_\+feedback/tasks/dialog\+\_\+babi\+\_\+feedback/\hyperlink{projects_2memnn__feedback_2tasks_2dialog__babi__feedback_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

@@ -1,4 +1,5 @@
 <map id="mock_turk_manager.MockTurkManager.send_command" name="mock_turk_manager.MockTurkManager.send_command">
-<area shape="rect" id="node1" title=" " alt="" coords="256,5,459,47"/>
-<area shape="rect" id="node2" href="$classmock__turk__manager_1_1MockTurkManager.html#a617657d87cfb41c503404845b5c116c7" title=" " alt="" coords="5,5,208,47"/>
+<area shape="rect" id="node2" href="$classmock__turk__manager_1_1MockTurkManager.html#a06ee464221ed467a72172cb19352e6eb" title="mock_turk_manager.MockTurk\lManager.send_message" alt="" coords="256,5,459,47"/>
+<area shape="rect" id="node4" href="$classmock__turk__manager_1_1MockTurkManager.html#a617657d87cfb41c503404845b5c116c7" title="mock_turk_manager.MockTurk\lManager.worker_alive" alt="" coords="757,35,960,76"/>
+<area shape="rect" id="node3" href="$classmock__turk__manager_1_1MockTurkManager.html#aa71ab452422b7871d2fc2ae2b2b8af0d" title="mock_turk_manager.MockTurk\lManager.onboard_new_agent" alt="" coords="507,5,709,47"/>
 </map>

@@ -1,6 +1,5 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.spacy_span_tokenize" name="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.spacy_span_tokenize">
-<area shape="rect" id="node1" title=" " alt="" coords="225,100,404,171"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acb9c4128aa95e0a6dcd787c33395c877" title=" " alt="" coords="5,5,177,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a0927c0c01fe0abd28964a992e42c0548" title=" " alt="" coords="5,100,177,171"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a8fede3cf83af6a47c5dd4bb356de3350" title=" " alt="" coords="6,195,177,236"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acb9c4128aa95e0a6dcd787c33395c877" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.span\l_tokenize" alt="" coords="232,5,404,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a0927c0c01fe0abd28964a992e42c0548" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.span\l_tokenize" alt="" coords="232,100,404,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a8fede3cf83af6a47c5dd4bb356de3350" title="parlai.core.dict.Dictionary\lAgent.span_tokenize" alt="" coords="233,195,403,236"/>
 </map>

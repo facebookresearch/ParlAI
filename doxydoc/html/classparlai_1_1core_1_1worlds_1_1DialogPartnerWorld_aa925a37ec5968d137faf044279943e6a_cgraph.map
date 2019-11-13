@@ -1,4 +1,3 @@
 <map id="parlai.core.worlds.DialogPartnerWorld.num_examples" name="parlai.core.worlds.DialogPartnerWorld.num_examples">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,196,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a25ccd7740aa992bb7055bf6549574a07" title=" " alt="" coords="244,5,428,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a25ccd7740aa992bb7055bf6549574a07" title="parlai.core.worlds.World.get\l_task_agent" alt="" coords="244,5,428,47"/>
 </map>

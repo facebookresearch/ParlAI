@@ -1,0 +1,268 @@
+\hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender}{}\section{parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender Class Reference}
+\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender}\index{parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender@{parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac39036ce02318777c7c398cffa28e4ff}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, secret\+\_\+token)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a58c876784f5800234ed341a160bcf1b5}{send\+\_\+sender\+\_\+action} (self, receiver\+\_\+id, action, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_aa278e80e25fca3b45bc2d6328d08d638}{send\+\_\+read} (self, receiver\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af18c8b2ca27ba3ff86eed8175cea2656}{typing\+\_\+on} (self, receiver\+\_\+id, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a8bc08e730c5d1fbe4c4cc0d96746b30a}{send\+\_\+fb\+\_\+payload} (self, receiver\+\_\+id, payload, quick\+\_\+replies=None, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac323160e9bbb201ed0c64b819f1c78ca}{send\+\_\+fb\+\_\+message} (self, receiver\+\_\+id, message, is\+\_\+response, quick\+\_\+replies=None, persona\+\_\+id=None)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_afeadd94dbc8a34f974c799c1b0f7e71c}{create\+\_\+persona} (self, name, image\+\_\+url)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a1d7388a73e5e7d20f5174fef8b277f4d}{delete\+\_\+persona} (self, persona\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af3be069cd31087804241627444abe859}{upload\+\_\+fb\+\_\+attachment} (self, payload)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a059a9d303e6db34e6a7bb1660b1a32d8}{auth\+\_\+args}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}MesageSender is a wrapper around the facebook messenger requests that
+simplifies the process of sending content.
+\end{DoxyVerb}
+ 
+
+Definition at line 141 of file message\+\_\+sender.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac39036ce02318777c7c398cffa28e4ff}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac39036ce02318777c7c398cffa28e4ff}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{secret\+\_\+token }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}server_url:           url at which the server is to be run
+port:                 port for the socket to operate on
+message_callback:     function to be called on incoming message objects
+              format: message_callback(self, data)
+\end{DoxyVerb}
+ 
+
+Definition at line 146 of file message\+\_\+sender.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_afeadd94dbc8a34f974c799c1b0f7e71c}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_afeadd94dbc8a34f974c799c1b0f7e71c}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!create\+\_\+persona@{create\+\_\+persona}}
+\index{create\+\_\+persona@{create\+\_\+persona}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{create\+\_\+persona()}{create\_persona()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+create\+\_\+persona (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{name,  }\item[{}]{image\+\_\+url }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates a new persona and returns persona_id\end{DoxyVerb}
+ 
+
+Definition at line 238 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a1d7388a73e5e7d20f5174fef8b277f4d}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a1d7388a73e5e7d20f5174fef8b277f4d}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!delete\+\_\+persona@{delete\+\_\+persona}}
+\index{delete\+\_\+persona@{delete\+\_\+persona}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{delete\+\_\+persona()}{delete\_persona()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+delete\+\_\+persona (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{persona\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Deletes the persona\end{DoxyVerb}
+ 
+
+Definition at line 249 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac323160e9bbb201ed0c64b819f1c78ca}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac323160e9bbb201ed0c64b819f1c78ca}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!send\+\_\+fb\+\_\+message@{send\+\_\+fb\+\_\+message}}
+\index{send\+\_\+fb\+\_\+message@{send\+\_\+fb\+\_\+message}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{send\+\_\+fb\+\_\+message()}{send\_fb\_message()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{message,  }\item[{}]{is\+\_\+response,  }\item[{}]{quick\+\_\+replies = {\ttfamily None},  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sends a message directly to messenger\end{DoxyVerb}
+ 
+
+Definition at line 206 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args, parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+reply\+\_\+option(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+text\+\_\+message(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac323160e9bbb201ed0c64b819f1c78ca_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_ac323160e9bbb201ed0c64b819f1c78ca_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a8bc08e730c5d1fbe4c4cc0d96746b30a}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a8bc08e730c5d1fbe4c4cc0d96746b30a}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!send\+\_\+fb\+\_\+payload@{send\+\_\+fb\+\_\+payload}}
+\index{send\+\_\+fb\+\_\+payload@{send\+\_\+fb\+\_\+payload}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{send\+\_\+fb\+\_\+payload()}{send\_fb\_payload()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{payload,  }\item[{}]{quick\+\_\+replies = {\ttfamily None},  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sends a payload to messenger, processes it if we can\end{DoxyVerb}
+ 
+
+Definition at line 170 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args, parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+attachment(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+compact\+\_\+list\+\_\+message(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+reply\+\_\+option(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+message().
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+typing\+\_\+on().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a8bc08e730c5d1fbe4c4cc0d96746b30a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a8bc08e730c5d1fbe4c4cc0d96746b30a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_aa278e80e25fca3b45bc2d6328d08d638}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_aa278e80e25fca3b45bc2d6328d08d638}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!send\+\_\+read@{send\+\_\+read}}
+\index{send\+\_\+read@{send\+\_\+read}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{send\+\_\+read()}{send\_read()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+read (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 162 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+sender\+\_\+action().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_aa278e80e25fca3b45bc2d6328d08d638_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a58c876784f5800234ed341a160bcf1b5}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a58c876784f5800234ed341a160bcf1b5}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!send\+\_\+sender\+\_\+action@{send\+\_\+sender\+\_\+action}}
+\index{send\+\_\+sender\+\_\+action@{send\+\_\+sender\+\_\+action}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{send\+\_\+sender\+\_\+action()}{send\_sender\_action()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+sender\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{action,  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 155 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+read(), and parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+typing\+\_\+on().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a58c876784f5800234ed341a160bcf1b5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af18c8b2ca27ba3ff86eed8175cea2656}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af18c8b2ca27ba3ff86eed8175cea2656}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!typing\+\_\+on@{typing\+\_\+on}}
+\index{typing\+\_\+on@{typing\+\_\+on}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{typing\+\_\+on()}{typing\_on()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+typing\+\_\+on (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{persona\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 165 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload(), and parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+sender\+\_\+action().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af18c8b2ca27ba3ff86eed8175cea2656_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af3be069cd31087804241627444abe859}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_af3be069cd31087804241627444abe859}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!upload\+\_\+fb\+\_\+attachment@{upload\+\_\+fb\+\_\+attachment}}
+\index{upload\+\_\+fb\+\_\+attachment@{upload\+\_\+fb\+\_\+attachment}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{upload\+\_\+fb\+\_\+attachment()}{upload\_fb\_attachment()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+upload\+\_\+fb\+\_\+attachment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{payload }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Uploads an attachment using the Attachment Upload API and returns
+an attachment ID.
+\end{DoxyVerb}
+ 
+
+Definition at line 259 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a059a9d303e6db34e6a7bb1660b1a32d8}\label{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender_a059a9d303e6db34e6a7bb1660b1a32d8}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}!auth\+\_\+args@{auth\+\_\+args}}
+\index{auth\+\_\+args@{auth\+\_\+args}!parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender@{parlai\+::messenger\+::core\+::message\+\_\+sender\+::\+Message\+Sender}}
+\subsubsection{\texorpdfstring{auth\+\_\+args}{auth\_args}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+auth\+\_\+args}
+
+
+
+Definition at line 153 of file message\+\_\+sender.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+create\+\_\+persona(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+delete\+\_\+persona(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+message(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload(), parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+sender\+\_\+action(), and parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+upload\+\_\+fb\+\_\+attachment().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/messenger/core/\hyperlink{message__sender_8py}{message\+\_\+sender.\+py}\end{DoxyCompactItemize}

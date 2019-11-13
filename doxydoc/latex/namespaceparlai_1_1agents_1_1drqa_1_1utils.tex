@@ -1,0 +1,137 @@
+\hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils}{}\section{parlai.\+agents.\+drqa.\+utils Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1drqa_1_1utils}\index{parlai.\+agents.\+drqa.\+utils@{parlai.\+agents.\+drqa.\+utils}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter}{Average\+Meter}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1utils_a125ab4e64306060e9ecaa3999f7be6b6}{normalize\+\_\+text} (text)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1utils_aa92d9906125210574825a20c75c199c8}{load\+\_\+embeddings} (opt, word\+\_\+dict)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1utils_a14201349d4a16b48aa7929cfdbf10ebd}{build\+\_\+feature\+\_\+dict} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1utils_a5c76cc39e3014c7bcf9199d566dbdc0f}{vectorize} (opt, ex, word\+\_\+dict, feature\+\_\+dict)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1drqa_1_1utils_aca22dd97c5b6dcda2a7479c1cb22ef1e}{batchify} (batch, null=0, cuda=False)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils_aca22dd97c5b6dcda2a7479c1cb22ef1e}\label{namespaceparlai_1_1agents_1_1drqa_1_1utils_aca22dd97c5b6dcda2a7479c1cb22ef1e}} 
+\index{parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}!batchify@{batchify}}
+\index{batchify@{batchify}!parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}}
+\subsubsection{\texorpdfstring{batchify()}{batchify()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+utils.\+batchify (\begin{DoxyParamCaption}\item[{}]{batch,  }\item[{}]{null = {\ttfamily 0},  }\item[{}]{cuda = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Collate inputs into batches.\end{DoxyVerb}
+ 
+
+Definition at line 118 of file utils.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+act(), and parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1drqa_1_1utils_aca22dd97c5b6dcda2a7479c1cb22ef1e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils_a14201349d4a16b48aa7929cfdbf10ebd}\label{namespaceparlai_1_1agents_1_1drqa_1_1utils_a14201349d4a16b48aa7929cfdbf10ebd}} 
+\index{parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}!build\+\_\+feature\+\_\+dict@{build\+\_\+feature\+\_\+dict}}
+\index{build\+\_\+feature\+\_\+dict@{build\+\_\+feature\+\_\+dict}!parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}}
+\subsubsection{\texorpdfstring{build\+\_\+feature\+\_\+dict()}{build\_feature\_dict()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+utils.\+build\+\_\+feature\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make mapping of feature option to feature index.\end{DoxyVerb}
+ 
+
+Definition at line 46 of file utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils_aa92d9906125210574825a20c75c199c8}\label{namespaceparlai_1_1agents_1_1drqa_1_1utils_aa92d9906125210574825a20c75c199c8}} 
+\index{parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}!load\+\_\+embeddings@{load\+\_\+embeddings}}
+\index{load\+\_\+embeddings@{load\+\_\+embeddings}!parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}}
+\subsubsection{\texorpdfstring{load\+\_\+embeddings()}{load\_embeddings()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+utils.\+load\+\_\+embeddings (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{word\+\_\+dict }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize embeddings from file of pretrained vectors.\end{DoxyVerb}
+ 
+
+Definition at line 22 of file utils.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path(), and parlai.\+agents.\+drqa.\+utils.\+normalize\+\_\+text().
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+set\+\_\+embeddings().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1drqa_1_1utils_aa92d9906125210574825a20c75c199c8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1drqa_1_1utils_aa92d9906125210574825a20c75c199c8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils_a125ab4e64306060e9ecaa3999f7be6b6}\label{namespaceparlai_1_1agents_1_1drqa_1_1utils_a125ab4e64306060e9ecaa3999f7be6b6}} 
+\index{parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}!normalize\+\_\+text@{normalize\+\_\+text}}
+\index{normalize\+\_\+text@{normalize\+\_\+text}!parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}}
+\subsubsection{\texorpdfstring{normalize\+\_\+text()}{normalize\_text()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+utils.\+normalize\+\_\+text (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})}
+
+
+
+Definition at line 18 of file utils.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+utils.\+load\+\_\+embeddings().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1drqa_1_1utils_a125ab4e64306060e9ecaa3999f7be6b6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1drqa_1_1utils_a5c76cc39e3014c7bcf9199d566dbdc0f}\label{namespaceparlai_1_1agents_1_1drqa_1_1utils_a5c76cc39e3014c7bcf9199d566dbdc0f}} 
+\index{parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}!vectorize@{vectorize}}
+\index{vectorize@{vectorize}!parlai\+::agents\+::drqa\+::utils@{parlai\+::agents\+::drqa\+::utils}}
+\subsubsection{\texorpdfstring{vectorize()}{vectorize()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+utils.\+vectorize (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{ex,  }\item[{}]{word\+\_\+dict,  }\item[{}]{feature\+\_\+dict }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Turn tokenized text inputs into feature vectors.\end{DoxyVerb}
+ 
+
+Definition at line 66 of file utils.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+save().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1drqa_1_1utils_a5c76cc39e3014c7bcf9199d566dbdc0f_icgraph}
+\end{center}
+\end{figure}

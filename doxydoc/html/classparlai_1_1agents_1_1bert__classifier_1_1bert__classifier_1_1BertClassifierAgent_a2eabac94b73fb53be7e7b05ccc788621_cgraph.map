@@ -1,0 +1,4 @@
+<map id="parlai.agents.bert_classifier.bert_classifier.BertClassifierAgent.upgrade_opt" name="parlai.agents.bert_classifier.bert_classifier.BertClassifierAgent.upgrade_opt">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="264,20,444,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="492,13,635,54"/>
+</map>

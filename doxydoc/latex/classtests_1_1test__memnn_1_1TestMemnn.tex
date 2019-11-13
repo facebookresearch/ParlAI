@@ -1,0 +1,93 @@
+\hypertarget{classtests_1_1test__memnn_1_1TestMemnn}{}\section{tests.\+test\+\_\+memnn.\+Test\+Memnn Class Reference}
+\label{classtests_1_1test__memnn_1_1TestMemnn}\index{tests.\+test\+\_\+memnn.\+Test\+Memnn@{tests.\+test\+\_\+memnn.\+Test\+Memnn}}
+
+
+Inheritance diagram for tests.\+test\+\_\+memnn.\+Test\+Memnn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classtests_1_1test__memnn_1_1TestMemnn__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for tests.\+test\+\_\+memnn.\+Test\+Memnn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classtests_1_1test__memnn_1_1TestMemnn__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtests_1_1test__memnn_1_1TestMemnn_a3e3c10325fc7905dc77b8e1b1db4490a}{test\+\_\+labelcands\+\_\+nomemnn} (self)
+\item 
+def \hyperlink{classtests_1_1test__memnn_1_1TestMemnn_a2e52386c91c00701e4e58c72e100074d}{test\+\_\+labelcands\+\_\+multi} (self)
+\item 
+def \hyperlink{classtests_1_1test__memnn_1_1TestMemnn_a2c3a2e42a94e00651ee32a03d9b7ba84}{test\+\_\+backcomp} (self)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Checks that seq2seq can learn some very basic tasks.\end{DoxyVerb}
+ 
+
+Definition at line 15 of file test\+\_\+memnn.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtests_1_1test__memnn_1_1TestMemnn_a2c3a2e42a94e00651ee32a03d9b7ba84}\label{classtests_1_1test__memnn_1_1TestMemnn_a2c3a2e42a94e00651ee32a03d9b7ba84}} 
+\index{tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}!test\+\_\+backcomp@{test\+\_\+backcomp}}
+\index{test\+\_\+backcomp@{test\+\_\+backcomp}!tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}}
+\subsubsection{\texorpdfstring{test\+\_\+backcomp()}{test\_backcomp()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+memnn.\+Test\+Memnn.\+test\+\_\+backcomp (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tests that the memnn model files continue to works over time
+\end{DoxyVerb}
+ 
+
+Definition at line 80 of file test\+\_\+memnn.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__memnn_1_1TestMemnn_a2e52386c91c00701e4e58c72e100074d}\label{classtests_1_1test__memnn_1_1TestMemnn_a2e52386c91c00701e4e58c72e100074d}} 
+\index{tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}!test\+\_\+labelcands\+\_\+multi@{test\+\_\+labelcands\+\_\+multi}}
+\index{test\+\_\+labelcands\+\_\+multi@{test\+\_\+labelcands\+\_\+multi}!tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}}
+\subsubsection{\texorpdfstring{test\+\_\+labelcands\+\_\+multi()}{test\_labelcands\_multi()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+memnn.\+Test\+Memnn.\+test\+\_\+labelcands\+\_\+multi (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This test uses a multi-turn task and multithreading.\end{DoxyVerb}
+ 
+
+Definition at line 50 of file test\+\_\+memnn.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__memnn_1_1TestMemnn_a3e3c10325fc7905dc77b8e1b1db4490a}\label{classtests_1_1test__memnn_1_1TestMemnn_a3e3c10325fc7905dc77b8e1b1db4490a}} 
+\index{tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}!test\+\_\+labelcands\+\_\+nomemnn@{test\+\_\+labelcands\+\_\+nomemnn}}
+\index{test\+\_\+labelcands\+\_\+nomemnn@{test\+\_\+labelcands\+\_\+nomemnn}!tests\+::test\+\_\+memnn\+::\+Test\+Memnn@{tests\+::test\+\_\+memnn\+::\+Test\+Memnn}}
+\subsubsection{\texorpdfstring{test\+\_\+labelcands\+\_\+nomemnn()}{test\_labelcands\_nomemnn()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+memnn.\+Test\+Memnn.\+test\+\_\+labelcands\+\_\+nomemnn (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This test uses a single-turn task, so doesn't test memories.\end{DoxyVerb}
+ 
+
+Definition at line 18 of file test\+\_\+memnn.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+tests/\hyperlink{test__memnn_8py}{test\+\_\+memnn.\+py}\end{DoxyCompactItemize}

@@ -1,5 +1,4 @@
 <map id="transresnet.transresnet.TransresnetAgent.receive_metrics" name="transresnet.transresnet.TransresnetAgent.receive_metrics">
-<area shape="rect" id="node1" title=" " alt="" coords="5,43,176,99"/>
-<area shape="rect" id="node2" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#aec895ba10ca0d2883f7c0953d9610228" title=" " alt="" coords="224,5,491,61"/>
-<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a8f6f54860cfb1461f574d403e848be0f" title=" " alt="" coords="255,86,460,127"/>
+<area shape="rect" id="node2" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#aec895ba10ca0d2883f7c0953d9610228" title="transresnet_multimodal.transresnet\l_multimodal.TransresnetMultimodalAgent.\l_build_model" alt="" coords="224,5,491,61"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a8f6f54860cfb1461f574d403e848be0f" title="transresnet.transresnet.\lTransresnetAgent._build_model" alt="" coords="255,86,460,127"/>
 </map>

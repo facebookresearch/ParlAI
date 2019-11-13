@@ -1,7 +1,6 @@
 <map id="light_chats.graph.Graph.add_path_to" name="light_chats.graph.Graph.add_path_to">
-<area shape="rect" id="node1" title=" " alt="" coords="5,22,191,63"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#ab343f587ca9bf3b7576fbe93e537dbca" title=" " alt="" coords="239,29,459,56"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#ad12090e48ff11063ece35c115b91d2aa" title=" " alt="" coords="507,22,689,63"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="737,29,952,56"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="1000,22,1204,63"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#ab343f587ca9bf3b7576fbe93e537dbca" title="light_chats.graph.Graph.add_edge" alt="" coords="239,38,459,65"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#ae7da5d306e949414cc4df9d49bc0678d" title="light_chats.graph.Graph.add\l_one_path_to" alt="" coords="507,5,692,47"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#ad12090e48ff11063ece35c115b91d2aa" title="light_chats.graph.Graph.get\l_props_from_either" alt="" coords="508,71,691,112"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="740,78,955,105"/>
 </map>

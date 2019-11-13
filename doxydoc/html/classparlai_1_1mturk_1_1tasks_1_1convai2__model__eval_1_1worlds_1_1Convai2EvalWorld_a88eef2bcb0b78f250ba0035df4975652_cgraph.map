@@ -1,7 +1,7 @@
 <map id="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld.parley" name="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,133,293,174"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a53f3038cc93afa14d4b4a9fb72d6ca73" title=" " alt="" coords="341,5,629,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title=" " alt="" coords="350,85,621,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#af615b8beec269ea925c371b955669770" title=" " alt="" coords="354,165,617,221"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a71bd41e61be058353520917731662a3d" title=" " alt="" coords="354,245,617,301"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a53f3038cc93afa14d4b4a9fb72d6ca73" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.check\l_disconnects" alt="" coords="341,36,629,92"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.get\l_instruction" alt="" coords="677,20,948,76"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="726,132,899,158"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#af615b8beec269ea925c371b955669770" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.is\l_exact_match" alt="" coords="354,166,617,222"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a71bd41e61be058353520917731662a3d" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.is\l_msg_tooshortlong" alt="" coords="354,246,617,302"/>
 </map>

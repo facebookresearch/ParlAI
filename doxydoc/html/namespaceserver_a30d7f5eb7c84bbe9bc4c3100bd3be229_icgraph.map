@@ -1,0 +1,6 @@
+<map id="server.merge_assignments_with_pairings" name="server.merge_assignments_with_pairings">
+<area shape="rect" id="node2" href="$classserver_1_1RunHandler.html#a3dd94b1f7d68486782facb8bdbc74957" title="server.RunHandler.get" alt="" coords="255,5,408,32"/>
+<area shape="rect" id="node4" href="$classserver_1_1WorkerHandler.html#a31d87eeea57f178ecf163cf53a18be93" title="server.WorkerHandler.get" alt="" coords="246,56,417,83"/>
+<area shape="rect" id="node5" href="$classserver_1_1AssignmentHandler.html#aafff6382132dfeb120d0fd1889ab079c" title="server.AssignmentHandler.get" alt="" coords="232,107,431,133"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="479,49,684,90"/>
+</map>

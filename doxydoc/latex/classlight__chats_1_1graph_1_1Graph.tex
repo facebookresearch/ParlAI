@@ -1,0 +1,2815 @@
+\hypertarget{classlight__chats_1_1graph_1_1Graph}{}\section{light\+\_\+chats.\+graph.\+Graph Class Reference}
+\label{classlight__chats_1_1graph_1_1Graph}\index{light\+\_\+chats.\+graph.\+Graph@{light\+\_\+chats.\+graph.\+Graph}}
+
+
+Inheritance diagram for light\+\_\+chats.\+graph.\+Graph\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classlight__chats_1_1graph_1_1Graph__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for light\+\_\+chats.\+graph.\+Graph\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classlight__chats_1_1graph_1_1Graph__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a5bd7cc4e21edc98dcbbac1040f68c878}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4897dcda9b389f41be824fdffce5055b}{copy} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a1fc2b40195b1c7d3ed3a26dbd26fe79b}{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+} (self, memo)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a604091edb800be1aad16f3a64f13d6da}{populate\+\_\+ids} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a5f54739484e05010202517a4714af30f}{unique\+\_\+hash} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a56d79ef43ac8f25d399228cc57f5fa25}{\+\_\+\+\_\+eq\+\_\+\+\_\+} (self, other)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a1200144ee93bfb6e3abae4a41ba10cf0}{all\+\_\+node\+\_\+ids} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aa61c4fbc35d423277f0755cd8a16a43f}{freeze} (self, freeze=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a7094a23385f250b9ea06d07c515ad14c}{version} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad445b8282327b777a3419b2a5309237a}{add\+\_\+message\+\_\+callback} (self, id, func)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a43ff743c3d16850dc7d68d809c88c97d}{has\+\_\+remaining\+\_\+player\+\_\+slots} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a89bb38305c3d42c4ce2ae8dcc966ab6e}{get\+\_\+unused\+\_\+player\+\_\+id} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aa40b8fea9737da5d3f329dfb00c42c6f}{register\+\_\+callbacks} (self, \hyperlink{classlight__chats_1_1graph_1_1Graph_a95a1a4d31dbd607eebd593579b2d6cdd}{callbacks}, \hyperlink{classlight__chats_1_1graph_1_1Graph_a29a00f3191fb45f73bd784ed12cc2c2e}{variables})
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a7f86299224bed2c821ed4ffa853cd669}{get\+\_\+player} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad965678de8b784a4c1506a8814f39767}{get\+\_\+obj} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4130e8f504f9a6eeafbc83a8a38a6efb}{set\+\_\+player} (self, state)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ac46849fddce61ce035feb6ea683b9009}{set\+\_\+obj} (self, state)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a5356cdaf2e48b3a128773c70957cb38a}{add\+\_\+node} (self, desc, props, is\+\_\+player=False, uid=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad9d86fc2b41fef8960a90b517d80cd81}{new\+\_\+agent} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a703188eb5340371b8ad793ddebd2af30}{delete\+\_\+node} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ab343f587ca9bf3b7576fbe93e537dbca}{add\+\_\+edge} (self, id1, edge, id2, edge\+\_\+label=None, locked\+\_\+with=None, edge\+\_\+desc=None, full\+\_\+label=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae7da5d306e949414cc4df9d49bc0678d}{add\+\_\+one\+\_\+path\+\_\+to} (self, id1, id2, label=None, locked\+\_\+with=None, desc=None, full\+\_\+label=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4335de6c1c70dbbab982149a5c1e1586}{add\+\_\+path\+\_\+to} (self, id1, id2, desc1=None, desc2=None, locked\+\_\+with=None, examine1=None, examine2=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a04cfd7a5cc3c2df0c1bfec920d89d84c}{is\+\_\+path\+\_\+to} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aaf9882eb0e887eadf75e4f2460732c05}{node\+\_\+contains} (self, loc)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a764ec9d5d95e071d857644b1947a2385}{add\+\_\+contained\+\_\+in} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a6afbdb89ba9db7f792506d9171f9e287}{node\+\_\+contained\+\_\+in} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a729d07bc1da395a60d3431cec5bb439b}{set\+\_\+follow} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_add43b11ac4acd2b8db044599c492564a}{get\+\_\+followers} (self, agent\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a1f4c0ccc957a89dcec003a73553914b7}{get\+\_\+following} (self, agent\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a96afb6e22927414bb55693609a5e89cb}{combine\+\_\+classed\+\_\+descs} (descs)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a1e8203ba71f1edd33e989ba4a72d8533}{lock\+\_\+path} (self, id1, id2, key\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a7a4820f5a9eff4261a81df8537937ac1}{unlock\+\_\+path} (self, id1, id2, key\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aeeb122366f2f098d889309fa53d19917}{path\+\_\+is\+\_\+locked} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_af857c9968c7787d742ac731d1cd7cb2c}{get\+\_\+path\+\_\+locked\+\_\+with} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a6039eea576e68156be7fcaa7a3929358}{set\+\_\+desc} (self, id, desc)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ab0dd6685d8eb353d76eca8de20a39914}{node\+\_\+exists} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a30483d3bbb88924bb7b98fb72b2e23fe}{get\+\_\+prop} (self, id, prop, default=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4b2f6d6d7714ea3b82ff7a01f3199123}{extract\+\_\+classed\+\_\+from\+\_\+dict} (self, prop\+\_\+d, viewer=None, default=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a33e205ecb0e7d4d2626162250ef585f1}{get\+\_\+classed\+\_\+prop} (self, id, prop, viewer, default=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad12090e48ff11063ece35c115b91d2aa}{get\+\_\+props\+\_\+from\+\_\+either} (self, id1, id2, prop)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae2c69adb1ea1477aaa6d9af693b30fa1}{set\+\_\+prop} (self, id, prop, val=True)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aa8a44c495d154f033ea3ced4d6f2e85d}{has\+\_\+prop} (self, id, prop)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a871d833484089923fa5d1d4bb357ec7a}{inc\+\_\+prop} (self, id, prop, val=1)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ac98ed988f74d9571e195aa9592f84b76}{delete\+\_\+prop} (self, id, prop)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_acb4a884cb1259a506399e8d1eb7a2f33}{add\+\_\+class} (self, object\+\_\+id, class\+\_\+name)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ab799f6160a4e8dd1550b2e245cdd2d53}{remove\+\_\+class} (self, object\+\_\+id, class\+\_\+name)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a33bf40491bd3aa15e65987377b3d580f}{location} (self, thing)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539}{room} (self, thing)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a67fd9624112a695cd6e1a0b92ec3139b}{desc\+\_\+to\+\_\+nodes} (self, desc, nearbyid=None, nearbytype=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4d86c4e411c724a8e169060335314d90}{get\+\_\+all\+\_\+by\+\_\+prop} (self, prop)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a20da62a3d5411d93fe820accdd06fa33}{node\+\_\+path\+\_\+to} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a04cea64dfded92bfd69055e184aa390d}{get\+\_\+actionable\+\_\+ids} (self, actor\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4fa84ee088a8086336cf51a1c41a0477}{get\+\_\+local\+\_\+ids} (self, actor\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a8f2b0882918768e199aee89cf08bde41}{get\+\_\+inventory\+\_\+text\+\_\+for} (self, id, give\+\_\+empty=True)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a3709592a97b55342b767bedb9db16267}{health} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ac6f61220197d0eb8314fb98f6dd6f135}{get\+\_\+action\+\_\+history} (self, agent\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a9ed5168f4d2a93b6a9f3f3ddd07660d4}{node\+\_\+to\+\_\+desc} (self, id, from\+\_\+id=False, use\+\_\+the=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_adf4ddcd30a97e5d02bc23f5c0a09c8bb}{get\+\_\+path\+\_\+ex\+\_\+desc} (self, id1, id2, looker\+\_\+id=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_afd47e9b4f058dc2cbb520164db920664}{path\+\_\+to\+\_\+desc} (self, id1, id2)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae0b96f3393dd176f10c3f154649cdf25}{node\+\_\+to\+\_\+desc\+\_\+raw} (self, id, from\+\_\+id=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a2da14e9a8a4c547fea59eee63dd9f70c}{name\+\_\+prefix} (self, id, txt, use\+\_\+the)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a783ebf83adeed30c0ba89679f535d33c}{send\+\_\+action} (self, agent\+\_\+id, action)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a966d3719771ddc58c520f0821c18d959}{send\+\_\+msg} (self, agent\+\_\+id, txt, action=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae53a707683cac4ddbafbefb0e0130bfa}{broadcast\+\_\+to\+\_\+room} (self, action, exclude\+\_\+agents=None, told\+\_\+by=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_aa28ea4b9a270d74783f277f04170d669}{clean\+\_\+props} (self, object\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_acc495d94797d39558b1711d0bbf6346d}{create} (self, agent\+\_\+id, params)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a3d44dae0701925da960433cb98229c21}{split\+\_\+params} (self, params, word)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_af7460b9c8069563289b8b6b11f831b63}{obj\+\_\+fits} (self, object\+\_\+id, container\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a8a92252320777766ddab522549671f43}{move\+\_\+object} (self, object\+\_\+id, container\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a74bc5374a9c9f411008e726fac4cd7f1}{die} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a2588a6f893b108eb25c9125db8036c0a}{get\+\_\+room\+\_\+edge\+\_\+text} (self, room\+\_\+descs, past=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a4d24052d36cff3896424e2e3bce2d554}{get\+\_\+room\+\_\+object\+\_\+text} (self, object\+\_\+descs, ents, past=False, give\+\_\+empty=True)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_abe32388ae807a26036573890d1293e2a}{get\+\_\+room\+\_\+agent\+\_\+text} (self, agent\+\_\+descs, past=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a1d2efb53425d6f495516d656124413c0}{get\+\_\+room\+\_\+edges} (self, room\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a3830f1a541b3a892a6e37c314b5b5205}{get\+\_\+nondescribed\+\_\+room\+\_\+objects} (self, room\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad078aab1d28474ac43e8b58ba0fb586b}{get\+\_\+room\+\_\+objects} (self, room\+\_\+id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae8a732327aed100ff96fb2349246738c}{get\+\_\+nondescribed\+\_\+room\+\_\+agents} (self, \hyperlink{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539}{room})
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a6e638e9bda7cd6e0f6d964d02a22dec6}{get\+\_\+room\+\_\+agents} (self, \hyperlink{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539}{room})
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a63268fea99420b5cb83436499cd0676b}{get\+\_\+text} (self, agent, clear\+\_\+actions=True)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ae416efe86bf6117aec6dc1de481d0ec1}{cnt\+\_\+obj} (self, obj, c, ents=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a32111f6e4bae319c37f6d8de8dd2bbbe}{display\+\_\+desc\+\_\+list} (self, descs, ents=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a9c3ce0d845610e465f9a5d9bee1cbd23}{display\+\_\+node\+\_\+list} (self, l, from\+\_\+id=False)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a34711f0bfabab728aa51d45bbde67580}{display\+\_\+node} (self, id)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a6a6d39a24244430a899bbc0b752baf25}{help} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ad0c4f66ad462e7aa45324767c551030a}{args\+\_\+to\+\_\+descs} (self, args)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a40e6753f63c9c8d31dd57a5c38aaac3c}{get\+\_\+possible\+\_\+actions} (self, my\+\_\+agent\+\_\+id=\textquotesingle{}dragon\textquotesingle{}, use\+\_\+actions=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a5087252eb40253eacd115e777c092cd8}{parse} (self, inst)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_af644853db532d4cfa276a884f04c8544}{canonical\+\_\+action} (self, agentid, inst)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a7b3fe43bf1e2b53fe7a2e22a24d77ef2}{get\+\_\+reverse\+\_\+action} (self, agentid, action, old\+\_\+g)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_accd7dfd84e4f2bee3fc3fbac8d8577cd}{valid\+\_\+exec} (self, agentid, inst=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a9aede2dd27f6a9ab66f38eaa5f649195}{parse\+\_\+exec} (self, agentid, inst=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_ab4e757d18538326e65b8ed2dce71d9fa}{update\+\_\+world} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a6eaae6c0b9fbcaf9f478a790ff356671}{parse\+\_\+static} (inst)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1Graph_a27cddf5bb9b3718a70a66ac91c22cf96}{filter\+\_\+actions} (inst)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_a95a1a4d31dbd607eebd593579b2d6cdd}{callbacks}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_a29a00f3191fb45f73bd784ed12cc2c2e}{variables}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_ad461dca41746ab79ffdaf70f6a9b25c4}{npc\+\_\+say\+\_\+respond}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_a8ac9ab3b5c6208e0df9b28d436c7c425}{object\+\_\+ids}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_a79bd1a69e214458644ecf74d218e476c}{container\+\_\+ids}
+\item 
+\hyperlink{classlight__chats_1_1graph_1_1Graph_a2bd5d1191b6a64402e7bb1f992516265}{agent\+\_\+ids}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 2693 of file graph.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a5bd7cc4e21edc98dcbbac1040f68c878}\label{classlight__chats_1_1graph_1_1Graph_a5bd7cc4e21edc98dcbbac1040f68c878}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize a graph for the game to run on. Creates all of the
+required bookkeeping members and initializes them to empty. Most
+members of the graph are keyed by a node's unique ids.
+
+Development of this graph is very much still a work in progress,
+and it is only provided in this form to be used for the light_dialog
+task as collected in the 'Learning to Speak and Act in a Fantasy
+Text Adventure Game' paper
+\end{DoxyVerb}
+ 
+
+Definition at line 2694 of file graph.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a1fc2b40195b1c7d3ed3a26dbd26fe79b}\label{classlight__chats_1_1graph_1_1Graph_a1fc2b40195b1c7d3ed3a26dbd26fe79b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!\+\_\+\+\_\+deepcopy\+\_\+\+\_\+@{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+@{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+()}{\_\_deepcopy\_\_()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{memo }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2776 of file graph.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Attr\+Dict.\+\_\+\+\_\+dict\+\_\+\+\_\+, and generate\+\_\+task\+\_\+list.\+id.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a56d79ef43ac8f25d399228cc57f5fa25}\label{classlight__chats_1_1graph_1_1Graph_a56d79ef43ac8f25d399228cc57f5fa25}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!\+\_\+\+\_\+eq\+\_\+\+\_\+@{\+\_\+\+\_\+eq\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+eq\+\_\+\+\_\+@{\+\_\+\+\_\+eq\+\_\+\+\_\+}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+eq\+\_\+\+\_\+()}{\_\_eq\_\_()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+eq\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{other }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2815 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a56d79ef43ac8f25d399228cc57f5fa25_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_acb4a884cb1259a506399e8d1eb7a2f33}\label{classlight__chats_1_1graph_1_1Graph_acb4a884cb1259a506399e8d1eb7a2f33}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+class@{add\+\_\+class}}
+\index{add\+\_\+class@{add\+\_\+class}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+class()}{add\_class()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+class (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+id,  }\item[{}]{class\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3231 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_acb4a884cb1259a506399e8d1eb7a2f33_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_acb4a884cb1259a506399e8d1eb7a2f33_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a764ec9d5d95e071d857644b1947a2385}\label{classlight__chats_1_1graph_1_1Graph_a764ec9d5d95e071d857644b1947a2385}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+contained\+\_\+in@{add\+\_\+contained\+\_\+in}}
+\index{add\+\_\+contained\+\_\+in@{add\+\_\+contained\+\_\+in}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+contained\+\_\+in()}{add\_contained\_in()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+contained\+\_\+in (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3067 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, and light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+drop\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+from(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+give(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+move\+\_\+agent(), light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+put(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+take().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a764ec9d5d95e071d857644b1947a2385_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ab343f587ca9bf3b7576fbe93e537dbca}\label{classlight__chats_1_1graph_1_1Graph_ab343f587ca9bf3b7576fbe93e537dbca}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+edge@{add\+\_\+edge}}
+\index{add\+\_\+edge@{add\+\_\+edge}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+edge()}{add\_edge()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{edge,  }\item[{}]{id2,  }\item[{}]{edge\+\_\+label = {\ttfamily None},  }\item[{}]{locked\+\_\+with = {\ttfamily None},  }\item[{}]{edge\+\_\+desc = {\ttfamily None},  }\item[{}]{full\+\_\+label = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add an edge of the given type from id1 to id2. Optionally can set
+a label for that edge
+\end{DoxyVerb}
+ 
+
+Definition at line 3013 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+one\+\_\+path\+\_\+to(), and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+props\+\_\+from\+\_\+either().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+one\+\_\+path\+\_\+to(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+add\+\_\+path\+\_\+to(), light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+path\+\_\+to(), and light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab343f587ca9bf3b7576fbe93e537dbca_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab343f587ca9bf3b7576fbe93e537dbca_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad445b8282327b777a3419b2a5309237a}\label{classlight__chats_1_1graph_1_1Graph_ad445b8282327b777a3419b2a5309237a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+message\+\_\+callback@{add\+\_\+message\+\_\+callback}}
+\index{add\+\_\+message\+\_\+callback@{add\+\_\+message\+\_\+callback}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+message\+\_\+callback()}{add\_message\_callback()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+message\+\_\+callback (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{func }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Register a message callback to a given agent by their node id. This
+function will be called on the graph and an action when the subscribed
+actor is the subject of an action
+\end{DoxyVerb}
+ 
+
+Definition at line 2830 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+message\+\_\+callbacks.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a5356cdaf2e48b3a128773c70957cb38a}\label{classlight__chats_1_1graph_1_1Graph_a5356cdaf2e48b3a128773c70957cb38a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+node@{add\+\_\+node}}
+\index{add\+\_\+node@{add\+\_\+node}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+node()}{add\_node()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+node (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{desc,  }\item[{}]{props,  }\item[{}]{is\+\_\+player = {\ttfamily False},  }\item[{}]{uid = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2924 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+cnt, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, light\+\_\+chats.\+graph.\+Graph.\+\_\+player\+\_\+ids, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+new\+\_\+agent(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), and light\+\_\+chats.\+graph.\+Graph.\+create().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a5356cdaf2e48b3a128773c70957cb38a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a5356cdaf2e48b3a128773c70957cb38a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae7da5d306e949414cc4df9d49bc0678d}\label{classlight__chats_1_1graph_1_1Graph_ae7da5d306e949414cc4df9d49bc0678d}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+one\+\_\+path\+\_\+to@{add\+\_\+one\+\_\+path\+\_\+to}}
+\index{add\+\_\+one\+\_\+path\+\_\+to@{add\+\_\+one\+\_\+path\+\_\+to}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+one\+\_\+path\+\_\+to()}{add\_one\_path\_to()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+one\+\_\+path\+\_\+to (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{label = {\ttfamily None},  }\item[{}]{locked\+\_\+with = {\ttfamily None},  }\item[{}]{desc = {\ttfamily None},  }\item[{}]{full\+\_\+label = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3033 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge(), and light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+path\+\_\+to().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae7da5d306e949414cc4df9d49bc0678d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae7da5d306e949414cc4df9d49bc0678d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4335de6c1c70dbbab982149a5c1e1586}\label{classlight__chats_1_1graph_1_1Graph_a4335de6c1c70dbbab982149a5c1e1586}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!add\+\_\+path\+\_\+to@{add\+\_\+path\+\_\+to}}
+\index{add\+\_\+path\+\_\+to@{add\+\_\+path\+\_\+to}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{add\+\_\+path\+\_\+to()}{add\_path\_to()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+path\+\_\+to (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{desc1 = {\ttfamily None},  }\item[{}]{desc2 = {\ttfamily None},  }\item[{}]{locked\+\_\+with = {\ttfamily None},  }\item[{}]{examine1 = {\ttfamily None},  }\item[{}]{examine2 = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a path between two rooms\end{DoxyVerb}
+ 
+
+Definition at line 3048 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+one\+\_\+path\+\_\+to(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), and light\+\_\+chats.\+graph.\+Graph.\+create().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4335de6c1c70dbbab982149a5c1e1586_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4335de6c1c70dbbab982149a5c1e1586_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a1200144ee93bfb6e3abae4a41ba10cf0}\label{classlight__chats_1_1graph_1_1Graph_a1200144ee93bfb6e3abae4a41ba10cf0}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!all\+\_\+node\+\_\+ids@{all\+\_\+node\+\_\+ids}}
+\index{all\+\_\+node\+\_\+ids@{all\+\_\+node\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{all\+\_\+node\+\_\+ids()}{all\_node\_ids()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+all\+\_\+node\+\_\+ids (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}return a list of all the node ids in the graph\end{DoxyVerb}
+ 
+
+Definition at line 2818 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+all\+\_\+by\+\_\+prop().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a1200144ee93bfb6e3abae4a41ba10cf0_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad0c4f66ad462e7aa45324767c551030a}\label{classlight__chats_1_1graph_1_1Graph_ad0c4f66ad462e7aa45324767c551030a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!args\+\_\+to\+\_\+descs@{args\+\_\+to\+\_\+descs}}
+\index{args\+\_\+to\+\_\+descs@{args\+\_\+to\+\_\+descs}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{args\+\_\+to\+\_\+descs()}{args\_to\_descs()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+args\+\_\+to\+\_\+descs (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4056 of file graph.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, light\+\_\+chats.\+graph.\+Graph.\+location(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc\+\_\+raw().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad0c4f66ad462e7aa45324767c551030a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae53a707683cac4ddbafbefb0e0130bfa}\label{classlight__chats_1_1graph_1_1Graph_ae53a707683cac4ddbafbefb0e0130bfa}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!broadcast\+\_\+to\+\_\+room@{broadcast\+\_\+to\+\_\+room}}
+\index{broadcast\+\_\+to\+\_\+room@{broadcast\+\_\+to\+\_\+room}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{broadcast\+\_\+to\+\_\+room()}{broadcast\_to\_room()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+broadcast\+\_\+to\+\_\+room (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{action,  }\item[{}]{exclude\+\_\+agents = {\ttfamily None},  }\item[{}]{told\+\_\+by = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}send a message to everyone in a room\end{DoxyVerb}
+ 
+
+Definition at line 3542 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agents(), and light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+action().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae53a707683cac4ddbafbefb0e0130bfa_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae53a707683cac4ddbafbefb0e0130bfa_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_af644853db532d4cfa276a884f04c8544}\label{classlight__chats_1_1graph_1_1Graph_af644853db532d4cfa276a884f04c8544}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!canonical\+\_\+action@{canonical\+\_\+action}}
+\index{canonical\+\_\+action@{canonical\+\_\+action}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{canonical\+\_\+action()}{canonical\_action()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+canonical\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agentid,  }\item[{}]{inst }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4128 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aa28ea4b9a270d74783f277f04170d669}\label{classlight__chats_1_1graph_1_1Graph_aa28ea4b9a270d74783f277f04170d669}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!clean\+\_\+props@{clean\+\_\+props}}
+\index{clean\+\_\+props@{clean\+\_\+props}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{clean\+\_\+props()}{clean\_props()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+clean\+\_\+props (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}ensures all necessary props are set on items that might not have
+been on earlier versions of graphworld
+\end{DoxyVerb}
+ 
+
+Definition at line 3570 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_aa28ea4b9a270d74783f277f04170d669_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae416efe86bf6117aec6dc1de481d0ec1}\label{classlight__chats_1_1graph_1_1Graph_ae416efe86bf6117aec6dc1de481d0ec1}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!cnt\+\_\+obj@{cnt\+\_\+obj}}
+\index{cnt\+\_\+obj@{cnt\+\_\+obj}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{cnt\+\_\+obj()}{cnt\_obj()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+cnt\+\_\+obj (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obj,  }\item[{}]{c,  }\item[{}]{ents = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a text form of the count of an object\end{DoxyVerb}
+ 
+
+Definition at line 3963 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+desc\+\_\+list(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+node\+\_\+list().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae416efe86bf6117aec6dc1de481d0ec1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae416efe86bf6117aec6dc1de481d0ec1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a96afb6e22927414bb55693609a5e89cb}\label{classlight__chats_1_1graph_1_1Graph_a96afb6e22927414bb55693609a5e89cb}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!combine\+\_\+classed\+\_\+descs@{combine\+\_\+classed\+\_\+descs}}
+\index{combine\+\_\+classed\+\_\+descs@{combine\+\_\+classed\+\_\+descs}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{combine\+\_\+classed\+\_\+descs()}{combine\_classed\_descs()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+combine\+\_\+classed\+\_\+descs (\begin{DoxyParamCaption}\item[{}]{descs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3109 of file graph.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4897dcda9b389f41be824fdffce5055b}\label{classlight__chats_1_1graph_1_1Graph_a4897dcda9b389f41be824fdffce5055b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!copy@{copy}}
+\index{copy@{copy}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{copy()}{copy()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+copy (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}return a copy of this graph\end{DoxyVerb}
+ 
+
+Definition at line 2772 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_acc495d94797d39558b1711d0bbf6346d}\label{classlight__chats_1_1graph_1_1Graph_acc495d94797d39558b1711d0bbf6346d}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!create@{create}}
+\index{create@{create}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+create (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id,  }\item[{}]{params }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3589 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+\_\+save\+\_\+fname, light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+path\+\_\+to(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+freeze(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop(), eval\+\_\+ppl.\+int, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+load\+\_\+graph(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+room, light\+\_\+chats.\+graph.\+Graph.\+room(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+save\+\_\+graph(), light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+msg(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+desc(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop(), and light\+\_\+chats.\+graph.\+Graph.\+split\+\_\+params().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_acc495d94797d39558b1711d0bbf6346d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_acc495d94797d39558b1711d0bbf6346d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a703188eb5340371b8ad793ddebd2af30}\label{classlight__chats_1_1graph_1_1Graph_a703188eb5340371b8ad793ddebd2af30}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!delete\+\_\+node@{delete\+\_\+node}}
+\index{delete\+\_\+node@{delete\+\_\+node}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{delete\+\_\+node()}{delete\_node()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Remove a node from the graph, keeping the reference for printing\end{DoxyVerb}
+ 
+
+Definition at line 2969 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+followed\+\_\+by, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+follows, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+npcs, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, light\+\_\+chats.\+graph.\+Graph.\+location(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contained\+\_\+in(), light\+\_\+chats.\+graph.\+rm(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+follow(), and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+die(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+ingest().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a703188eb5340371b8ad793ddebd2af30_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a703188eb5340371b8ad793ddebd2af30_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ac98ed988f74d9571e195aa9592f84b76}\label{classlight__chats_1_1graph_1_1Graph_ac98ed988f74d9571e195aa9592f84b76}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!delete\+\_\+prop@{delete\+\_\+prop}}
+\index{delete\+\_\+prop@{delete\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{delete\+\_\+prop()}{delete\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Remove a prop from the node_to_prop map\end{DoxyVerb}
+ 
+
+Definition at line 3225 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ac98ed988f74d9571e195aa9592f84b76_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a67fd9624112a695cd6e1a0b92ec3139b}\label{classlight__chats_1_1graph_1_1Graph_a67fd9624112a695cd6e1a0b92ec3139b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!desc\+\_\+to\+\_\+nodes@{desc\+\_\+to\+\_\+nodes}}
+\index{desc\+\_\+to\+\_\+nodes@{desc\+\_\+to\+\_\+nodes}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{desc\+\_\+to\+\_\+nodes()}{desc\_to\_nodes()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{desc,  }\item[{}]{nearbyid = {\ttfamily None},  }\item[{}]{nearbytype = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get nodes nearby to a given node from that node's perspective\end{DoxyVerb}
+ 
+
+Definition at line 3257 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+\_\+used\+\_\+player\+\_\+ids, light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, light\+\_\+chats.\+graph.\+Graph.\+location(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+path\+\_\+to(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+room, and light\+\_\+chats.\+graph.\+Graph.\+room().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+create().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a67fd9624112a695cd6e1a0b92ec3139b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a67fd9624112a695cd6e1a0b92ec3139b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a74bc5374a9c9f411008e726fac4cd7f1}\label{classlight__chats_1_1graph_1_1Graph_a74bc5374a9c9f411008e726fac4cd7f1}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!die@{die}}
+\index{die@{die}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{die()}{die()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+die (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update an agent into a dead state\end{DoxyVerb}
+ 
+
+Definition at line 3772 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+class(), light\+\_\+chats.\+graph.\+Graph.\+broadcast\+\_\+to\+\_\+room(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, light\+\_\+chats.\+graph.\+Graph.\+location(), light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), light\+\_\+chats.\+graph.\+Graph.\+remove\+\_\+class(), light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+follow(), and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Ingest\+Function.\+func(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a74bc5374a9c9f411008e726fac4cd7f1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a74bc5374a9c9f411008e726fac4cd7f1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a32111f6e4bae319c37f6d8de8dd2bbbe}\label{classlight__chats_1_1graph_1_1Graph_a32111f6e4bae319c37f6d8de8dd2bbbe}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!display\+\_\+desc\+\_\+list@{display\+\_\+desc\+\_\+list}}
+\index{display\+\_\+desc\+\_\+list@{display\+\_\+desc\+\_\+list}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{display\+\_\+desc\+\_\+list()}{display\_desc\_list()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+desc\+\_\+list (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{descs,  }\item[{}]{ents = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3995 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+cnt\+\_\+obj().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+edge\+\_\+text(), and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+object\+\_\+text().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a32111f6e4bae319c37f6d8de8dd2bbbe_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a32111f6e4bae319c37f6d8de8dd2bbbe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a34711f0bfabab728aa51d45bbde67580}\label{classlight__chats_1_1graph_1_1Graph_a34711f0bfabab728aa51d45bbde67580}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!display\+\_\+node@{display\+\_\+node}}
+\index{display\+\_\+node@{display\+\_\+node}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{display\+\_\+node()}{display\_node()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4019 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a34711f0bfabab728aa51d45bbde67580_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a9c3ce0d845610e465f9a5d9bee1cbd23}\label{classlight__chats_1_1graph_1_1Graph_a9c3ce0d845610e465f9a5d9bee1cbd23}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!display\+\_\+node\+\_\+list@{display\+\_\+node\+\_\+list}}
+\index{display\+\_\+node\+\_\+list@{display\+\_\+node\+\_\+list}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{display\+\_\+node\+\_\+list()}{display\_node\_list()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{l,  }\item[{}]{from\+\_\+id = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4014 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+desc\+\_\+list(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+edges(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+objects(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+examine(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+from(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+inventory\+\_\+text\+\_\+for(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+give(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+inventory(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+put(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+take().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9c3ce0d845610e465f9a5d9bee1cbd23_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9c3ce0d845610e465f9a5d9bee1cbd23_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4b2f6d6d7714ea3b82ff7a01f3199123}\label{classlight__chats_1_1graph_1_1Graph_a4b2f6d6d7714ea3b82ff7a01f3199123}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!extract\+\_\+classed\+\_\+from\+\_\+dict@{extract\+\_\+classed\+\_\+from\+\_\+dict}}
+\index{extract\+\_\+classed\+\_\+from\+\_\+dict@{extract\+\_\+classed\+\_\+from\+\_\+dict}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{extract\+\_\+classed\+\_\+from\+\_\+dict()}{extract\_classed\_from\_dict()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+extract\+\_\+classed\+\_\+from\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{prop\+\_\+d,  }\item[{}]{viewer = {\ttfamily None},  }\item[{}]{default = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3173 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+classed\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+path\+\_\+ex\+\_\+desc(), and light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+action().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4b2f6d6d7714ea3b82ff7a01f3199123_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4b2f6d6d7714ea3b82ff7a01f3199123_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a27cddf5bb9b3718a70a66ac91c22cf96}\label{classlight__chats_1_1graph_1_1Graph_a27cddf5bb9b3718a70a66ac91c22cf96}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!filter\+\_\+actions@{filter\+\_\+actions}}
+\index{filter\+\_\+actions@{filter\+\_\+actions}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{filter\+\_\+actions()}{filter\_actions()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+filter\+\_\+actions (\begin{DoxyParamCaption}\item[{}]{inst }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 4116 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aa61c4fbc35d423277f0755cd8a16a43f}\label{classlight__chats_1_1graph_1_1Graph_aa61c4fbc35d423277f0755cd8a16a43f}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!freeze@{freeze}}
+\index{freeze@{freeze}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{freeze()}{freeze()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+freeze (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{freeze = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2822 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+freeze.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world(), and light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_aa61c4fbc35d423277f0755cd8a16a43f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ac6f61220197d0eb8314fb98f6dd6f135}\label{classlight__chats_1_1graph_1_1Graph_ac6f61220197d0eb8314fb98f6dd6f135}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+action\+\_\+history@{get\+\_\+action\+\_\+history}}
+\index{get\+\_\+action\+\_\+history@{get\+\_\+action\+\_\+history}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+action\+\_\+history()}{get\_action\_history()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+action\+\_\+history (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3405 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+observations.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a04cea64dfded92bfd69055e184aa390d}\label{classlight__chats_1_1graph_1_1Graph_a04cea64dfded92bfd69055e184aa390d}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+actionable\+\_\+ids@{get\+\_\+actionable\+\_\+ids}}
+\index{get\+\_\+actionable\+\_\+ids@{get\+\_\+actionable\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+actionable\+\_\+ids()}{get\_actionable\_ids()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+actionable\+\_\+ids (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{actor\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3330 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a04cea64dfded92bfd69055e184aa390d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a04cea64dfded92bfd69055e184aa390d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4d86c4e411c724a8e169060335314d90}\label{classlight__chats_1_1graph_1_1Graph_a4d86c4e411c724a8e169060335314d90}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+all\+\_\+by\+\_\+prop@{get\+\_\+all\+\_\+by\+\_\+prop}}
+\index{get\+\_\+all\+\_\+by\+\_\+prop@{get\+\_\+all\+\_\+by\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+by\+\_\+prop()}{get\_all\_by\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+all\+\_\+by\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{prop }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3319 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+all\+\_\+node\+\_\+ids(), and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4d86c4e411c724a8e169060335314d90_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a33e205ecb0e7d4d2626162250ef585f1}\label{classlight__chats_1_1graph_1_1Graph_a33e205ecb0e7d4d2626162250ef585f1}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+classed\+\_\+prop@{get\+\_\+classed\+\_\+prop}}
+\index{get\+\_\+classed\+\_\+prop@{get\+\_\+classed\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+classed\+\_\+prop()}{get\_classed\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+classed\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop,  }\item[{}]{viewer,  }\item[{}]{default = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3189 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+extract\+\_\+classed\+\_\+from\+\_\+dict(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+path\+\_\+ex\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a33e205ecb0e7d4d2626162250ef585f1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a33e205ecb0e7d4d2626162250ef585f1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_add43b11ac4acd2b8db044599c492564a}\label{classlight__chats_1_1graph_1_1Graph_add43b11ac4acd2b8db044599c492564a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+followers@{get\+\_\+followers}}
+\index{get\+\_\+followers@{get\+\_\+followers}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+followers()}{get\_followers()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+followers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the nodes following the given agent\end{DoxyVerb}
+ 
+
+Definition at line 3097 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+followed\+\_\+by.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a1f4c0ccc957a89dcec003a73553914b7}\label{classlight__chats_1_1graph_1_1Graph_a1f4c0ccc957a89dcec003a73553914b7}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+following@{get\+\_\+following}}
+\index{get\+\_\+following@{get\+\_\+following}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+following()}{get\_following()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+following (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get the node that the given agent is following, if any\end{DoxyVerb}
+ 
+
+Definition at line 3103 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+follows.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a8f2b0882918768e199aee89cf08bde41}\label{classlight__chats_1_1graph_1_1Graph_a8f2b0882918768e199aee89cf08bde41}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+inventory\+\_\+text\+\_\+for@{get\+\_\+inventory\+\_\+text\+\_\+for}}
+\index{get\+\_\+inventory\+\_\+text\+\_\+for@{get\+\_\+inventory\+\_\+text\+\_\+for}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+inventory\+\_\+text\+\_\+for()}{get\_inventory\_text\_for()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+inventory\+\_\+text\+\_\+for (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{give\+\_\+empty = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get a description of what id is carrying or equipped with\end{DoxyVerb}
+ 
+
+Definition at line 3354 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a8f2b0882918768e199aee89cf08bde41_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4fa84ee088a8086336cf51a1c41a0477}\label{classlight__chats_1_1graph_1_1Graph_a4fa84ee088a8086336cf51a1c41a0477}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+local\+\_\+ids@{get\+\_\+local\+\_\+ids}}
+\index{get\+\_\+local\+\_\+ids@{get\+\_\+local\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+local\+\_\+ids()}{get\_local\_ids()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{actor\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return all accessible ids for an actor given the current area\end{DoxyVerb}
+ 
+
+Definition at line 3338 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, light\+\_\+chats.\+graph.\+Graph.\+location(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+path\+\_\+to().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+actionable\+\_\+ids().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4fa84ee088a8086336cf51a1c41a0477_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4fa84ee088a8086336cf51a1c41a0477_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae8a732327aed100ff96fb2349246738c}\label{classlight__chats_1_1graph_1_1Graph_ae8a732327aed100ff96fb2349246738c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+nondescribed\+\_\+room\+\_\+agents@{get\+\_\+nondescribed\+\_\+room\+\_\+agents}}
+\index{get\+\_\+nondescribed\+\_\+room\+\_\+agents@{get\+\_\+nondescribed\+\_\+room\+\_\+agents}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+nondescribed\+\_\+room\+\_\+agents()}{get\_nondescribed\_room\_agents()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of agents in a room and their current descriptions
+if those agents aren't described in the room text\end{DoxyVerb}
+ 
+
+Definition at line 3938 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae8a732327aed100ff96fb2349246738c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a3830f1a541b3a892a6e37c314b5b5205}\label{classlight__chats_1_1graph_1_1Graph_a3830f1a541b3a892a6e37c314b5b5205}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+nondescribed\+\_\+room\+\_\+objects@{get\+\_\+nondescribed\+\_\+room\+\_\+objects}}
+\index{get\+\_\+nondescribed\+\_\+room\+\_\+objects@{get\+\_\+nondescribed\+\_\+room\+\_\+objects}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+nondescribed\+\_\+room\+\_\+objects()}{get\_nondescribed\_room\_objects()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+objects (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of objects in a room and their current descriptions\end{DoxyVerb}
+ 
+
+Definition at line 3923 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a3830f1a541b3a892a6e37c314b5b5205_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad965678de8b784a4c1506a8814f39767}\label{classlight__chats_1_1graph_1_1Graph_ad965678de8b784a4c1506a8814f39767}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+obj@{get\+\_\+obj}}
+\index{get\+\_\+obj@{get\+\_\+obj}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+obj()}{get\_obj()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+obj (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the state of an object from the graph\end{DoxyVerb}
+ 
+
+Definition at line 2882 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+obj().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+obj(), and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+player().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classlight__chats_1_1graph_1_1Graph_ad965678de8b784a4c1506a8814f39767_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad965678de8b784a4c1506a8814f39767_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_adf4ddcd30a97e5d02bc23f5c0a09c8bb}\label{classlight__chats_1_1graph_1_1Graph_adf4ddcd30a97e5d02bc23f5c0a09c8bb}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+path\+\_\+ex\+\_\+desc@{get\+\_\+path\+\_\+ex\+\_\+desc}}
+\index{get\+\_\+path\+\_\+ex\+\_\+desc@{get\+\_\+path\+\_\+ex\+\_\+desc}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+path\+\_\+ex\+\_\+desc()}{get\_path\_ex\_desc()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+path\+\_\+ex\+\_\+desc (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{looker\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a path description. If both ids are the same return the
+room description instead.
+\end{DoxyVerb}
+ 
+
+Definition at line 3443 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, light\+\_\+chats.\+graph.\+Graph.\+extract\+\_\+classed\+\_\+from\+\_\+dict(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+classed\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_adf4ddcd30a97e5d02bc23f5c0a09c8bb_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_af857c9968c7787d742ac731d1cd7cb2c}\label{classlight__chats_1_1graph_1_1Graph_af857c9968c7787d742ac731d1cd7cb2c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+path\+\_\+locked\+\_\+with@{get\+\_\+path\+\_\+locked\+\_\+with}}
+\index{get\+\_\+path\+\_\+locked\+\_\+with@{get\+\_\+path\+\_\+locked\+\_\+with}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+path\+\_\+locked\+\_\+with()}{get\_path\_locked\_with()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+path\+\_\+locked\+\_\+with (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3151 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a7f86299224bed2c821ed4ffa853cd669}\label{classlight__chats_1_1graph_1_1Graph_a7f86299224bed2c821ed4ffa853cd669}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+player@{get\+\_\+player}}
+\index{get\+\_\+player@{get\+\_\+player}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+player()}{get\_player()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+player (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the state of a player (along with everything they carry) from
+the graph
+\end{DoxyVerb}
+ 
+
+Definition at line 2860 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+text\+\_\+buffer, and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+obj().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a7f86299224bed2c821ed4ffa853cd669_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a40e6753f63c9c8d31dd57a5c38aaac3c}\label{classlight__chats_1_1graph_1_1Graph_a40e6753f63c9c8d31dd57a5c38aaac3c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+possible\+\_\+actions@{get\+\_\+possible\+\_\+actions}}
+\index{get\+\_\+possible\+\_\+actions@{get\+\_\+possible\+\_\+actions}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+possible\+\_\+actions()}{get\_possible\_actions()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{my\+\_\+agent\+\_\+id = {\ttfamily \textquotesingle{}dragon\textquotesingle{}},  }\item[{}]{use\+\_\+actions = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get all actions that are possible from a given agent
+\end{DoxyVerb}
+ 
+
+Definition at line 4060 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+actionable\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), and light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a40e6753f63c9c8d31dd57a5c38aaac3c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a40e6753f63c9c8d31dd57a5c38aaac3c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a30483d3bbb88924bb7b98fb72b2e23fe}\label{classlight__chats_1_1graph_1_1Graph_a30483d3bbb88924bb7b98fb72b2e23fe}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+prop@{get\+\_\+prop}}
+\index{get\+\_\+prop@{get\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+prop()}{get\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop,  }\item[{}]{default = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the given prop, return None if it doesn't exist\end{DoxyVerb}
+ 
+
+Definition at line 3166 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+class(), light\+\_\+chats.\+graph.\+Graph.\+clean\+\_\+props(), light\+\_\+chats.\+graph.\+Graph.\+cnt\+\_\+obj(), light\+\_\+chats.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), light\+\_\+chats.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+extract\+\_\+classed\+\_\+from\+\_\+dict(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+actionable\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+all\+\_\+by\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+classed\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+inventory\+\_\+text\+\_\+for(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+objects(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+path\+\_\+ex\+\_\+desc(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+props\+\_\+from\+\_\+either(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+objects(), light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+health(), light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object(), light\+\_\+chats.\+graph.\+Graph.\+name\+\_\+prefix(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), light\+\_\+chats.\+graph.\+Graph.\+obj\+\_\+fits(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+remove\+\_\+class(), light\+\_\+chats.\+graph.\+Graph.\+room(), light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world(), and light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a30483d3bbb88924bb7b98fb72b2e23fe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad12090e48ff11063ece35c115b91d2aa}\label{classlight__chats_1_1graph_1_1Graph_ad12090e48ff11063ece35c115b91d2aa}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+props\+\_\+from\+\_\+either@{get\+\_\+props\+\_\+from\+\_\+either}}
+\index{get\+\_\+props\+\_\+from\+\_\+either@{get\+\_\+props\+\_\+from\+\_\+either}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+props\+\_\+from\+\_\+either()}{get\_props\_from\_either()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+props\+\_\+from\+\_\+either (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{prop }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Try to get ones own prop, fallback to other's prop. Do this for
+both provided ids symmetrically\end{DoxyVerb}
+ 
+
+Definition at line 3198 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+edge().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad12090e48ff11063ece35c115b91d2aa_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad12090e48ff11063ece35c115b91d2aa_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a7b3fe43bf1e2b53fe7a2e22a24d77ef2}\label{classlight__chats_1_1graph_1_1Graph_a7b3fe43bf1e2b53fe7a2e22a24d77ef2}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+reverse\+\_\+action@{get\+\_\+reverse\+\_\+action}}
+\index{get\+\_\+reverse\+\_\+action@{get\+\_\+reverse\+\_\+action}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+reverse\+\_\+action()}{get\_reverse\_action()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agentid,  }\item[{}]{action,  }\item[{}]{old\+\_\+g }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Attempts to get the reverse action for the given action. Makes no
+guarantees, could fail miserably\end{DoxyVerb}
+ 
+
+Definition at line 4140 of file graph.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse(), and light\+\_\+chats.\+graph.\+Graph.\+parse().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a7b3fe43bf1e2b53fe7a2e22a24d77ef2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_abe32388ae807a26036573890d1293e2a}\label{classlight__chats_1_1graph_1_1Graph_abe32388ae807a26036573890d1293e2a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+agent\+\_\+text@{get\+\_\+room\+\_\+agent\+\_\+text}}
+\index{get\+\_\+room\+\_\+agent\+\_\+text@{get\+\_\+room\+\_\+agent\+\_\+text}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+agent\+\_\+text()}{get\_room\_agent\_text()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agent\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+descs,  }\item[{}]{past = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get text for all the agents in a room\end{DoxyVerb}
+ 
+
+Definition at line 3894 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a6e638e9bda7cd6e0f6d964d02a22dec6}\label{classlight__chats_1_1graph_1_1Graph_a6e638e9bda7cd6e0f6d964d02a22dec6}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+agents@{get\+\_\+room\+\_\+agents}}
+\index{get\+\_\+room\+\_\+agents@{get\+\_\+room\+\_\+agents}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+agents()}{get\_room\_agents()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of agents in a room and their current descriptions\end{DoxyVerb}
+ 
+
+Definition at line 3947 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+broadcast\+\_\+to\+\_\+room().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a6e638e9bda7cd6e0f6d964d02a22dec6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a6e638e9bda7cd6e0f6d964d02a22dec6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a2588a6f893b108eb25c9125db8036c0a}\label{classlight__chats_1_1graph_1_1Graph_a2588a6f893b108eb25c9125db8036c0a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+edge\+\_\+text@{get\+\_\+room\+\_\+edge\+\_\+text}}
+\index{get\+\_\+room\+\_\+edge\+\_\+text@{get\+\_\+room\+\_\+edge\+\_\+text}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+edge\+\_\+text()}{get\_room\_edge\_text()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+edge\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room\+\_\+descs,  }\item[{}]{past = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get text for all the edges outside of a room\end{DoxyVerb}
+ 
+
+Definition at line 3834 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+desc\+\_\+list().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a2588a6f893b108eb25c9125db8036c0a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a1d2efb53425d6f495516d656124413c0}\label{classlight__chats_1_1graph_1_1Graph_a1d2efb53425d6f495516d656124413c0}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+edges@{get\+\_\+room\+\_\+edges}}
+\index{get\+\_\+room\+\_\+edges@{get\+\_\+room\+\_\+edges}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+edges()}{get\_room\_edges()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+edges (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of edges from a room and their current descriptions\end{DoxyVerb}
+ 
+
+Definition at line 3916 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a1d2efb53425d6f495516d656124413c0_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4d24052d36cff3896424e2e3bce2d554}\label{classlight__chats_1_1graph_1_1Graph_a4d24052d36cff3896424e2e3bce2d554}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+object\+\_\+text@{get\+\_\+room\+\_\+object\+\_\+text}}
+\index{get\+\_\+room\+\_\+object\+\_\+text@{get\+\_\+room\+\_\+object\+\_\+text}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+object\+\_\+text()}{get\_room\_object\_text()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+object\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+descs,  }\item[{}]{ents,  }\item[{}]{past = {\ttfamily False},  }\item[{}]{give\+\_\+empty = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get text for all the objects in a room\end{DoxyVerb}
+ 
+
+Definition at line 3876 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+desc\+\_\+list(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4d24052d36cff3896424e2e3bce2d554_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad078aab1d28474ac43e8b58ba0fb586b}\label{classlight__chats_1_1graph_1_1Graph_ad078aab1d28474ac43e8b58ba0fb586b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+room\+\_\+objects@{get\+\_\+room\+\_\+objects}}
+\index{get\+\_\+room\+\_\+objects@{get\+\_\+room\+\_\+objects}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+room\+\_\+objects()}{get\_room\_objects()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+objects (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{room\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of objects in a room and their current descriptions\end{DoxyVerb}
+ 
+
+Definition at line 3931 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad078aab1d28474ac43e8b58ba0fb586b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a63268fea99420b5cb83436499cd0676b}\label{classlight__chats_1_1graph_1_1Graph_a63268fea99420b5cb83436499cd0676b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+text@{get\+\_\+text}}
+\index{get\+\_\+text@{get\+\_\+text}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+text()}{get\_text()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{clear\+\_\+actions = {\ttfamily True} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3954 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+observations, and light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+text\+\_\+buffer.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a63268fea99420b5cb83436499cd0676b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a89bb38305c3d42c4ce2ae8dcc966ab6e}\label{classlight__chats_1_1graph_1_1Graph_a89bb38305c3d42c4ce2ae8dcc966ab6e}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!get\+\_\+unused\+\_\+player\+\_\+id@{get\+\_\+unused\+\_\+player\+\_\+id}}
+\index{get\+\_\+unused\+\_\+player\+\_\+id@{get\+\_\+unused\+\_\+player\+\_\+id}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{get\+\_\+unused\+\_\+player\+\_\+id()}{get\_unused\_player\_id()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+unused\+\_\+player\+\_\+id (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return one of the unused player ids randomly and mark it as registered
+\end{DoxyVerb}
+ 
+
+Definition at line 2842 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+player\+\_\+ids, and light\+\_\+chats.\+graph.\+Graph.\+\_\+used\+\_\+player\+\_\+ids.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aa8a44c495d154f033ea3ced4d6f2e85d}\label{classlight__chats_1_1graph_1_1Graph_aa8a44c495d154f033ea3ced4d6f2e85d}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!has\+\_\+prop@{has\+\_\+prop}}
+\index{has\+\_\+prop@{has\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{has\+\_\+prop()}{has\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return whether or not id has the given prop\end{DoxyVerb}
+ 
+
+Definition at line 3210 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+die(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+agents(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+objects(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+examine(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+health(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+ingest(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+inventory(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+messages\+\_\+in\+\_\+same\+\_\+room\+\_\+as(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+remove(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+room(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+valid().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_aa8a44c495d154f033ea3ced4d6f2e85d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classlight__chats_1_1graph_1_1Graph_aa8a44c495d154f033ea3ced4d6f2e85d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a43ff743c3d16850dc7d68d809c88c97d}\label{classlight__chats_1_1graph_1_1Graph_a43ff743c3d16850dc7d68d809c88c97d}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!has\+\_\+remaining\+\_\+player\+\_\+slots@{has\+\_\+remaining\+\_\+player\+\_\+slots}}
+\index{has\+\_\+remaining\+\_\+player\+\_\+slots@{has\+\_\+remaining\+\_\+player\+\_\+slots}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{has\+\_\+remaining\+\_\+player\+\_\+slots()}{has\_remaining\_player\_slots()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+remaining\+\_\+player\+\_\+slots (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Note if the graph has any space for new players to play a role\end{DoxyVerb}
+ 
+
+Definition at line 2838 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+player\+\_\+ids.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a3709592a97b55342b767bedb9db16267}\label{classlight__chats_1_1graph_1_1Graph_a3709592a97b55342b767bedb9db16267}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!health@{health}}
+\index{health@{health}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{health()}{health()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+health (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the text description of someone's numeric health\end{DoxyVerb}
+ 
+
+Definition at line 3383 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), and eval\+\_\+ppl.\+int.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a3709592a97b55342b767bedb9db16267_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a3709592a97b55342b767bedb9db16267_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a6a6d39a24244430a899bbc0b752baf25}\label{classlight__chats_1_1graph_1_1Graph_a6a6d39a24244430a899bbc0b752baf25}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!help@{help}}
+\index{help@{help}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{help()}{help()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+help (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4030 of file graph.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), and light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a6a6d39a24244430a899bbc0b752baf25_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a871d833484089923fa5d1d4bb357ec7a}\label{classlight__chats_1_1graph_1_1Graph_a871d833484089923fa5d1d4bb357ec7a}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!inc\+\_\+prop@{inc\+\_\+prop}}
+\index{inc\+\_\+prop@{inc\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{inc\+\_\+prop()}{inc\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+inc\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop,  }\item[{}]{val = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Increment a given prop by the given value\end{DoxyVerb}
+ 
+
+Definition at line 3216 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+remove(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wear(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wield().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a871d833484089923fa5d1d4bb357ec7a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a871d833484089923fa5d1d4bb357ec7a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a04cfd7a5cc3c2df0c1bfec920d89d84c}\label{classlight__chats_1_1graph_1_1Graph_a04cfd7a5cc3c2df0c1bfec920d89d84c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!is\+\_\+path\+\_\+to@{is\+\_\+path\+\_\+to}}
+\index{is\+\_\+path\+\_\+to@{is\+\_\+path\+\_\+to}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{is\+\_\+path\+\_\+to()}{is\_path\_to()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+is\+\_\+path\+\_\+to (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}determine if there is a path from id1 to id2\end{DoxyVerb}
+ 
+
+Definition at line 3056 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+move\+\_\+agent().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a04cfd7a5cc3c2df0c1bfec920d89d84c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a33bf40491bd3aa15e65987377b3d580f}\label{classlight__chats_1_1graph_1_1Graph_a33bf40491bd3aa15e65987377b3d580f}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!location@{location}}
+\index{location@{location}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{location()}{location()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+location (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{thing }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get whatever the immediate container of a node is\end{DoxyVerb}
+ 
+
+Definition at line 3241 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+args\+\_\+to\+\_\+descs(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+desc\+\_\+to\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), light\+\_\+chats.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Tell\+Function.\+evaluate\+\_\+constraint\+\_\+set(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+look(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+move\+\_\+agent(), and light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+msg().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a33bf40491bd3aa15e65987377b3d580f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a1e8203ba71f1edd33e989ba4a72d8533}\label{classlight__chats_1_1graph_1_1Graph_a1e8203ba71f1edd33e989ba4a72d8533}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!lock\+\_\+path@{lock\+\_\+path}}
+\index{lock\+\_\+path@{lock\+\_\+path}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{lock\+\_\+path()}{lock\_path()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+lock\+\_\+path (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{key\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}lock the edge from id1 to id2 using the given key\end{DoxyVerb}
+ 
+
+Definition at line 3126 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a8a92252320777766ddab522549671f43}\label{classlight__chats_1_1graph_1_1Graph_a8a92252320777766ddab522549671f43}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!move\+\_\+object@{move\+\_\+object}}
+\index{move\+\_\+object@{move\+\_\+object}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{move\+\_\+object()}{move\_object()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+id,  }\item[{}]{container\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Move an object from wherever it is into somewhere else\end{DoxyVerb}
+ 
+
+Definition at line 3757 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+contained\+\_\+in(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contained\+\_\+in(), and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a8a92252320777766ddab522549671f43_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a8a92252320777766ddab522549671f43_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a2da14e9a8a4c547fea59eee63dd9f70c}\label{classlight__chats_1_1graph_1_1Graph_a2da14e9a8a4c547fea59eee63dd9f70c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!name\+\_\+prefix@{name\+\_\+prefix}}
+\index{name\+\_\+prefix@{name\+\_\+prefix}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{name\+\_\+prefix()}{name\_prefix()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+name\+\_\+prefix (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{txt,  }\item[{}]{use\+\_\+the }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the prefix to prepend an object with in text form\end{DoxyVerb}
+ 
+
+Definition at line 3481 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a2da14e9a8a4c547fea59eee63dd9f70c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a2da14e9a8a4c547fea59eee63dd9f70c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad9d86fc2b41fef8960a90b517d80cd81}\label{classlight__chats_1_1graph_1_1Graph_ad9d86fc2b41fef8960a90b517d80cd81}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!new\+\_\+agent@{new\+\_\+agent}}
+\index{new\+\_\+agent@{new\+\_\+agent}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{new\+\_\+agent()}{new\_agent()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+new\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize special state for the given agent
+\end{DoxyVerb}
+ 
+
+Definition at line 2959 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+last\+\_\+rooms, light\+\_\+chats.\+graph.\+Graph.\+\_\+last\+\_\+tell\+\_\+target, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+observations, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+text\+\_\+buffer, and light\+\_\+chats.\+graph.\+Graph.\+\_\+visited\+\_\+rooms.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+node().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ad9d86fc2b41fef8960a90b517d80cd81_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a6afbdb89ba9db7f792506d9171f9e287}\label{classlight__chats_1_1graph_1_1Graph_a6afbdb89ba9db7f792506d9171f9e287}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+contained\+\_\+in@{node\+\_\+contained\+\_\+in}}
+\index{node\+\_\+contained\+\_\+in@{node\+\_\+contained\+\_\+in}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+contained\+\_\+in()}{node\_contained\_in()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contained\+\_\+in (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3075 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+drop\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), and light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a6afbdb89ba9db7f792506d9171f9e287_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aaf9882eb0e887eadf75e4f2460732c05}\label{classlight__chats_1_1graph_1_1Graph_aaf9882eb0e887eadf75e4f2460732c05}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+contains@{node\+\_\+contains}}
+\index{node\+\_\+contains@{node\+\_\+contains}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+contains()}{node\_contains()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+contains (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{loc }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the set of all things that a node contains\end{DoxyVerb}
+ 
+
+Definition at line 3060 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+desc\+\_\+to\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), light\+\_\+chats.\+graph.\+Graph.\+die(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+agents(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+objects(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+examine(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+actionable\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+inventory\+\_\+text\+\_\+for(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+objects(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+objects(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+inventory().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_aaf9882eb0e887eadf75e4f2460732c05_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ab0dd6685d8eb353d76eca8de20a39914}\label{classlight__chats_1_1graph_1_1Graph_ab0dd6685d8eb353d76eca8de20a39914}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+exists@{node\+\_\+exists}}
+\index{node\+\_\+exists@{node\+\_\+exists}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+exists()}{node\_exists()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+exists (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3161 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+unique\+\_\+hash(), and light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab0dd6685d8eb353d76eca8de20a39914_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a20da62a3d5411d93fe820accdd06fa33}\label{classlight__chats_1_1graph_1_1Graph_a20da62a3d5411d93fe820accdd06fa33}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+path\+\_\+to@{node\+\_\+path\+\_\+to}}
+\index{node\+\_\+path\+\_\+to@{node\+\_\+path\+\_\+to}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+path\+\_\+to()}{node\_path\_to()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+path\+\_\+to (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3323 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+desc\+\_\+to\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+local\+\_\+ids(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world(), and light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a20da62a3d5411d93fe820accdd06fa33_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a9ed5168f4d2a93b6a9f3f3ddd07660d4}\label{classlight__chats_1_1graph_1_1Graph_a9ed5168f4d2a93b6a9f3f3ddd07660d4}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+to\+\_\+desc@{node\+\_\+to\+\_\+desc}}
+\index{node\+\_\+to\+\_\+desc@{node\+\_\+to\+\_\+desc}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+to\+\_\+desc()}{node\_to\_desc()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{from\+\_\+id = {\ttfamily False},  }\item[{}]{use\+\_\+the = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3410 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+has\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+name\+\_\+prefix(), and light\+\_\+chats.\+graph.\+Graph.\+path\+\_\+to\+\_\+desc().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), light\+\_\+chats.\+graph.\+Graph.\+display\+\_\+node\+\_\+list(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+agents(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+edges(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+display\+\_\+room\+\_\+objects(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+examine(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+follow(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+from(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+nondescribed\+\_\+room\+\_\+objects(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+agents(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+edges(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+room\+\_\+objects(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+give(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+inventory(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+look(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+move\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+put(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+take(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9ed5168f4d2a93b6a9f3f3ddd07660d4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9ed5168f4d2a93b6a9f3f3ddd07660d4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae0b96f3393dd176f10c3f154649cdf25}\label{classlight__chats_1_1graph_1_1Graph_ae0b96f3393dd176f10c3f154649cdf25}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!node\+\_\+to\+\_\+desc\+\_\+raw@{node\+\_\+to\+\_\+desc\+\_\+raw}}
+\index{node\+\_\+to\+\_\+desc\+\_\+raw@{node\+\_\+to\+\_\+desc\+\_\+raw}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{node\+\_\+to\+\_\+desc\+\_\+raw()}{node\_to\_desc\_raw()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc\+\_\+raw (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{from\+\_\+id = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3474 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, and light\+\_\+chats.\+graph.\+Graph.\+path\+\_\+to\+\_\+desc().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+args\+\_\+to\+\_\+descs(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+unique\+\_\+hash(), light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash(), and light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae0b96f3393dd176f10c3f154649cdf25_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae0b96f3393dd176f10c3f154649cdf25_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_af7460b9c8069563289b8b6b11f831b63}\label{classlight__chats_1_1graph_1_1Graph_af7460b9c8069563289b8b6b11f831b63}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!obj\+\_\+fits@{obj\+\_\+fits}}
+\index{obj\+\_\+fits@{obj\+\_\+fits}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{obj\+\_\+fits()}{obj\_fits()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+obj\+\_\+fits (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+id,  }\item[{}]{container\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return if one object will fit into another\end{DoxyVerb}
+ 
+
+Definition at line 3745 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_af7460b9c8069563289b8b6b11f831b63_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a5087252eb40253eacd115e777c092cd8}\label{classlight__chats_1_1graph_1_1Graph_a5087252eb40253eacd115e777c092cd8}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!parse@{parse}}
+\index{parse@{parse}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{inst }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4125 of file graph.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+reverse\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), and light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a5087252eb40253eacd115e777c092cd8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a9aede2dd27f6a9ab66f38eaa5f649195}\label{classlight__chats_1_1graph_1_1Graph_a9aede2dd27f6a9ab66f38eaa5f649195}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!parse\+\_\+exec@{parse\+\_\+exec}}
+\index{parse\+\_\+exec@{parse\+\_\+exec}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{parse\+\_\+exec()}{parse\_exec()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agentid,  }\item[{}]{inst = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}ATTENTION: even if one of the actions is invalid, all actions
+before that will still be executed (the world state will be changed)!
+\end{DoxyVerb}
+ 
+
+Definition at line 4189 of file graph.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+help(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse(), light\+\_\+chats.\+graph.\+Graph.\+parse(), light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+action(), light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+msg(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world(), and light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9aede2dd27f6a9ab66f38eaa5f649195_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a9aede2dd27f6a9ab66f38eaa5f649195_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a6eaae6c0b9fbcaf9f478a790ff356671}\label{classlight__chats_1_1graph_1_1Graph_a6eaae6c0b9fbcaf9f478a790ff356671}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!parse\+\_\+static@{parse\+\_\+static}}
+\index{parse\+\_\+static@{parse\+\_\+static}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{parse\+\_\+static()}{parse\_static()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+static (\begin{DoxyParamCaption}\item[{}]{inst }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 4103 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aeeb122366f2f098d889309fa53d19917}\label{classlight__chats_1_1graph_1_1Graph_aeeb122366f2f098d889309fa53d19917}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!path\+\_\+is\+\_\+locked@{path\+\_\+is\+\_\+locked}}
+\index{path\+\_\+is\+\_\+locked@{path\+\_\+is\+\_\+locked}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{path\+\_\+is\+\_\+locked()}{path\_is\_locked()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+path\+\_\+is\+\_\+locked (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3148 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_afd47e9b4f058dc2cbb520164db920664}\label{classlight__chats_1_1graph_1_1Graph_afd47e9b4f058dc2cbb520164db920664}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!path\+\_\+to\+\_\+desc@{path\+\_\+to\+\_\+desc}}
+\index{path\+\_\+to\+\_\+desc@{path\+\_\+to\+\_\+desc}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{path\+\_\+to\+\_\+desc()}{path\_to\_desc()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+path\+\_\+to\+\_\+desc (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get the description for a path from the perspective of id2\end{DoxyVerb}
+ 
+
+Definition at line 3462 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc(), and light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc\+\_\+raw().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_afd47e9b4f058dc2cbb520164db920664_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a604091edb800be1aad16f3a64f13d6da}\label{classlight__chats_1_1graph_1_1Graph_a604091edb800be1aad16f3a64f13d6da}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!populate\+\_\+ids@{populate\+\_\+ids}}
+\index{populate\+\_\+ids@{populate\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{populate\+\_\+ids()}{populate\_ids()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+populate\+\_\+ids (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2787 of file graph.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a604091edb800be1aad16f3a64f13d6da_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_aa40b8fea9737da5d3f329dfb00c42c6f}\label{classlight__chats_1_1graph_1_1Graph_aa40b8fea9737da5d3f329dfb00c42c6f}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!register\+\_\+callbacks@{register\+\_\+callbacks}}
+\index{register\+\_\+callbacks@{register\+\_\+callbacks}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{register\+\_\+callbacks()}{register\_callbacks()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+register\+\_\+callbacks (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{callbacks,  }\item[{}]{variables }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Documentation not yet available\end{DoxyVerb}
+ 
+
+Definition at line 2853 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+callbacks, and light\+\_\+chats.\+graph.\+Graph.\+variables.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ab799f6160a4e8dd1550b2e245cdd2d53}\label{classlight__chats_1_1graph_1_1Graph_ab799f6160a4e8dd1550b2e245cdd2d53}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!remove\+\_\+class@{remove\+\_\+class}}
+\index{remove\+\_\+class@{remove\+\_\+class}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{remove\+\_\+class()}{remove\_class()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+remove\+\_\+class (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{object\+\_\+id,  }\item[{}]{class\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3235 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+die().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab799f6160a4e8dd1550b2e245cdd2d53_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab799f6160a4e8dd1550b2e245cdd2d53_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539}\label{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!room@{room}}
+\index{room@{room}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{room()}{room()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+room (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{thing }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the room that contains a given node\end{DoxyVerb}
+ 
+
+Definition at line 3248 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, and light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+desc\+\_\+to\+\_\+nodes(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+follow(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+update\+\_\+world(), and light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a90e0b9f3f4a4acc29c49cc730aad1539_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a783ebf83adeed30c0ba89679f535d33c}\label{classlight__chats_1_1graph_1_1Graph_a783ebf83adeed30c0ba89679f535d33c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!send\+\_\+action@{send\+\_\+action}}
+\index{send\+\_\+action@{send\+\_\+action}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{send\+\_\+action()}{send\_action()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id,  }\item[{}]{action }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parse the action and send it to the agent with send_msg\end{DoxyVerb}
+ 
+
+Definition at line 3499 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+extract\+\_\+classed\+\_\+from\+\_\+dict(), light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+msg(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+broadcast\+\_\+to\+\_\+room(), and light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a783ebf83adeed30c0ba89679f535d33c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a783ebf83adeed30c0ba89679f535d33c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a966d3719771ddc58c520f0821c18d959}\label{classlight__chats_1_1graph_1_1Graph_a966d3719771ddc58c520f0821c18d959}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!send\+\_\+msg@{send\+\_\+msg}}
+\index{send\+\_\+msg@{send\+\_\+msg}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{send\+\_\+msg()}{send\_msg()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+msg (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id,  }\item[{}]{txt,  }\item[{}]{action = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Send an agent an action and a message\end{DoxyVerb}
+ 
+
+Definition at line 3522 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+message\+\_\+callbacks, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+observations, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+text\+\_\+buffer, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, and light\+\_\+chats.\+graph.\+Graph.\+location().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+die(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+drop\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+examine(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+follow(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+from(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+give(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+ingest(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+messages\+\_\+in\+\_\+same\+\_\+room\+\_\+as(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+move\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+put(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+remove(), light\+\_\+chats.\+graph.\+Graph.\+send\+\_\+action(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+take(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wear(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wield().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a966d3719771ddc58c520f0821c18d959_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a966d3719771ddc58c520f0821c18d959_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a6039eea576e68156be7fcaa7a3929358}\label{classlight__chats_1_1graph_1_1Graph_a6039eea576e68156be7fcaa7a3929358}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!set\+\_\+desc@{set\+\_\+desc}}
+\index{set\+\_\+desc@{set\+\_\+desc}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{set\+\_\+desc()}{set\_desc()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+desc (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{desc }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3158 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), and light\+\_\+chats.\+graph.\+Graph.\+create().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a6039eea576e68156be7fcaa7a3929358_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a729d07bc1da395a60d3431cec5bb439b}\label{classlight__chats_1_1graph_1_1Graph_a729d07bc1da395a60d3431cec5bb439b}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!set\+\_\+follow@{set\+\_\+follow}}
+\index{set\+\_\+follow@{set\+\_\+follow}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{set\+\_\+follow()}{set\_follow()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+follow (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set id1 to be following id2, unfollowing whatever id1 followed
+before if necessary
+\end{DoxyVerb}
+ 
+
+Definition at line 3080 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+followed\+\_\+by, and light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+follows.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+delete\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Graph.\+die(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+follow().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a729d07bc1da395a60d3431cec5bb439b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ac46849fddce61ce035feb6ea683b9009}\label{classlight__chats_1_1graph_1_1Graph_ac46849fddce61ce035feb6ea683b9009}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!set\+\_\+obj@{set\+\_\+obj}}
+\index{set\+\_\+obj@{set\+\_\+obj}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{set\+\_\+obj()}{set\_obj()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+obj (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate an object into the graph with the given state\end{DoxyVerb}
+ 
+
+Definition at line 2913 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+desc, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+obj().
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+obj(), and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+player().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classlight__chats_1_1graph_1_1Graph_ac46849fddce61ce035feb6ea683b9009_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ac46849fddce61ce035feb6ea683b9009_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a4130e8f504f9a6eeafbc83a8a38a6efb}\label{classlight__chats_1_1graph_1_1Graph_a4130e8f504f9a6eeafbc83a8a38a6efb}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!set\+\_\+player@{set\+\_\+player}}
+\index{set\+\_\+player@{set\+\_\+player}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{set\+\_\+player()}{set\_player()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+player (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate a player into the graph with the given state\end{DoxyVerb}
+ 
+
+Definition at line 2899 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+text\+\_\+buffer, and light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+obj().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a4130e8f504f9a6eeafbc83a8a38a6efb_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ae2c69adb1ea1477aaa6d9af693b30fa1}\label{classlight__chats_1_1graph_1_1Graph_ae2c69adb1ea1477aaa6d9af693b30fa1}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!set\+\_\+prop@{set\+\_\+prop}}
+\index{set\+\_\+prop@{set\+\_\+prop}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{set\+\_\+prop()}{set\_prop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+set\+\_\+prop (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id,  }\item[{}]{prop,  }\item[{}]{val = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set a prop to a given value, True otherwise\end{DoxyVerb}
+ 
+
+Definition at line 3205 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+add\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+add\+\_\+node(), light\+\_\+chats.\+graph.\+Graph.\+clean\+\_\+props(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+delete\+\_\+node(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+die(), light\+\_\+chats.\+graph.\+Graph.\+die(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+hit\+\_\+agent(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+inc\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+inc\+\_\+prop(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+ingest(), light\+\_\+chats.\+graph.\+Graph.\+move\+\_\+object(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+remove(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wear(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+wield().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ae2c69adb1ea1477aaa6d9af693b30fa1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a3d44dae0701925da960433cb98229c21}\label{classlight__chats_1_1graph_1_1Graph_a3d44dae0701925da960433cb98229c21}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!split\+\_\+params@{split\+\_\+params}}
+\index{split\+\_\+params@{split\+\_\+params}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{split\+\_\+params()}{split\_params()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+split\+\_\+params (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{params,  }\item[{}]{word }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3733 of file graph.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+create(), light\+\_\+chats.\+graph.\+Graph.\+create(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a3d44dae0701925da960433cb98229c21_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a5f54739484e05010202517a4714af30f}\label{classlight__chats_1_1graph_1_1Graph_a5f54739484e05010202517a4714af30f}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!unique\+\_\+hash@{unique\+\_\+hash}}
+\index{unique\+\_\+hash@{unique\+\_\+hash}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{unique\+\_\+hash()}{unique\_hash()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2792 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contained\+\_\+in, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+prop, light\+\_\+chats.\+graph.\+Graph.\+agent\+\_\+ids, light\+\_\+chats.\+graph.\+Graph.\+container\+\_\+ids, light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+exists(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc\+\_\+raw(), light\+\_\+chats.\+graph.\+Graph.\+object\+\_\+ids, and light\+\_\+chats.\+graph.\+Graph.\+populate\+\_\+ids().
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+\_\+\+\_\+eq\+\_\+\+\_\+(), and light\+\_\+chats.\+graph.\+Graph.\+\_\+\+\_\+eq\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a5f54739484e05010202517a4714af30f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_a5f54739484e05010202517a4714af30f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a7a4820f5a9eff4261a81df8537937ac1}\label{classlight__chats_1_1graph_1_1Graph_a7a4820f5a9eff4261a81df8537937ac1}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!unlock\+\_\+path@{unlock\+\_\+path}}
+\index{unlock\+\_\+path@{unlock\+\_\+path}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{unlock\+\_\+path()}{unlock\_path()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+unlock\+\_\+path (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{id1,  }\item[{}]{id2,  }\item[{}]{key\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}unlock the edge from id1 to id2 using the given key\end{DoxyVerb}
+ 
+
+Definition at line 3137 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+to\+\_\+edges.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ab4e757d18538326e65b8ed2dce71d9fa}\label{classlight__chats_1_1graph_1_1Graph_ab4e757d18538326e65b8ed2dce71d9fa}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!update\+\_\+world@{update\+\_\+world}}
+\index{update\+\_\+world@{update\+\_\+world}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{update\+\_\+world()}{update\_world()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+update\+\_\+world (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Move agents, do basic actions with npcs, handle telling npcs things
+\end{DoxyVerb}
+ 
+
+Definition at line 4255 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+contains, light\+\_\+chats.\+graph.\+Graph.\+\_\+node\+\_\+npcs, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+graph.\+Graph.\+freeze(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+text(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+path\+\_\+to(), light\+\_\+chats.\+graph.\+Graph.\+node\+\_\+to\+\_\+desc\+\_\+raw(), light\+\_\+chats.\+graph.\+Graph.\+parse\+\_\+exec(), light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+room, and light\+\_\+chats.\+graph.\+Graph.\+room().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_ab4e757d18538326e65b8ed2dce71d9fa_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_accd7dfd84e4f2bee3fc3fbac8d8577cd}\label{classlight__chats_1_1graph_1_1Graph_accd7dfd84e4f2bee3fc3fbac8d8577cd}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!valid\+\_\+exec@{valid\+\_\+exec}}
+\index{valid\+\_\+exec@{valid\+\_\+exec}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{valid\+\_\+exec()}{valid\_exec()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+valid\+\_\+exec (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agentid,  }\item[{}]{inst = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 4158 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph.\+get\+\_\+prop(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse(), and light\+\_\+chats.\+graph.\+Graph.\+parse().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1Graph_accd7dfd84e4f2bee3fc3fbac8d8577cd_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a7094a23385f250b9ea06d07c515ad14c}\label{classlight__chats_1_1graph_1_1Graph_a7094a23385f250b9ea06d07c515ad14c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!version@{version}}
+\index{version@{version}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{version()}{version()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Graph.\+version (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2827 of file graph.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a2bd5d1191b6a64402e7bb1f992516265}\label{classlight__chats_1_1graph_1_1Graph_a2bd5d1191b6a64402e7bb1f992516265}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!agent\+\_\+ids@{agent\+\_\+ids}}
+\index{agent\+\_\+ids@{agent\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{agent\+\_\+ids}{agent\_ids}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+agent\+\_\+ids}
+
+
+
+Definition at line 2790 of file graph.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+unique\+\_\+hash(), and light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a95a1a4d31dbd607eebd593579b2d6cdd}\label{classlight__chats_1_1graph_1_1Graph_a95a1a4d31dbd607eebd593579b2d6cdd}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!callbacks@{callbacks}}
+\index{callbacks@{callbacks}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{callbacks}{callbacks}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+callbacks}
+
+
+
+Definition at line 2708 of file graph.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+register\+\_\+callbacks().
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a79bd1a69e214458644ecf74d218e476c}\label{classlight__chats_1_1graph_1_1Graph_a79bd1a69e214458644ecf74d218e476c}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!container\+\_\+ids@{container\+\_\+ids}}
+\index{container\+\_\+ids@{container\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{container\+\_\+ids}{container\_ids}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+container\+\_\+ids}
+
+
+
+Definition at line 2789 of file graph.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+unique\+\_\+hash(), and light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_ad461dca41746ab79ffdaf70f6a9b25c4}\label{classlight__chats_1_1graph_1_1Graph_ad461dca41746ab79ffdaf70f6a9b25c4}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!npc\+\_\+say\+\_\+respond@{npc\+\_\+say\+\_\+respond}}
+\index{npc\+\_\+say\+\_\+respond@{npc\+\_\+say\+\_\+respond}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{npc\+\_\+say\+\_\+respond}{npc\_say\_respond}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+npc\+\_\+say\+\_\+respond}
+
+
+
+Definition at line 2768 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a8ac9ab3b5c6208e0df9b28d436c7c425}\label{classlight__chats_1_1graph_1_1Graph_a8ac9ab3b5c6208e0df9b28d436c7c425}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!object\+\_\+ids@{object\+\_\+ids}}
+\index{object\+\_\+ids@{object\+\_\+ids}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{object\+\_\+ids}{object\_ids}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+object\+\_\+ids}
+
+
+
+Definition at line 2788 of file graph.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+get\+\_\+possible\+\_\+actions(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+unique\+\_\+hash(), and light\+\_\+chats.\+graph.\+Graph.\+unique\+\_\+hash().
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1Graph_a29a00f3191fb45f73bd784ed12cc2c2e}\label{classlight__chats_1_1graph_1_1Graph_a29a00f3191fb45f73bd784ed12cc2c2e}} 
+\index{light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}!variables@{variables}}
+\index{variables@{variables}!light\+\_\+chats\+::graph\+::\+Graph@{light\+\_\+chats\+::graph\+::\+Graph}}
+\subsubsection{\texorpdfstring{variables}{variables}}
+{\footnotesize\ttfamily light\+\_\+chats.\+graph.\+Graph.\+variables}
+
+
+
+Definition at line 2711 of file graph.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Graph.\+register\+\_\+callbacks().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/light/light\+\_\+chats/\hyperlink{parlai_2mturk_2tasks_2light_2light__chats_2graph_8py}{graph.\+py}\end{DoxyCompactItemize}

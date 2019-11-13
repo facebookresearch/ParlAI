@@ -1,0 +1,4 @@
+<map id="parlai.tasks.insuranceqa.build.ParseInsuranceQA.create_fb_format" name="parlai.tasks.insuranceqa.build.ParseInsuranceQA.create_fb_format">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV1.html#aec860cdc7404febddbbc3434828c74e3" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQAV1.write_data_files" alt="" coords="288,5,531,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQAV2.html#a8a510d31a4f0b733beb887de3c8379b0" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQAV2.write_data_files" alt="" coords="288,71,531,112"/>
+</map>

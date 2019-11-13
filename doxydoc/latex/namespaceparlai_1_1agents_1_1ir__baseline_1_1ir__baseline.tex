@@ -1,0 +1,112 @@
+\hypertarget{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline}{}\section{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline}\index{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline@{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent}{Ir\+Baseline\+Agent}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue}{Max\+Priority\+Queue}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a64aaaccb38f5dd5f51c09439456b2f6e}{score\+\_\+match} (query\+\_\+rep, text, length\+\_\+penalty, dictionary=None, debug=False)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a995475fdd96a7bbd8886a3ebcfa56156}{rank\+\_\+candidates} (query\+\_\+rep, cands, length\+\_\+penalty, dictionary=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_ad39f034177c71e873eeedb1cc2d24e52}{stopwords}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a995475fdd96a7bbd8886a3ebcfa56156}\label{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a995475fdd96a7bbd8886a3ebcfa56156}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}!rank\+\_\+candidates@{rank\+\_\+candidates}}
+\index{rank\+\_\+candidates@{rank\+\_\+candidates}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}}
+\subsubsection{\texorpdfstring{rank\+\_\+candidates()}{rank\_candidates()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+rank\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{query\+\_\+rep,  }\item[{}]{cands,  }\item[{}]{length\+\_\+penalty,  }\item[{}]{dictionary = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Rank candidates given representation of query.
+
+:param query_rep: base query representation to match text again.
+:param cands: strings to compare against query_rep for matching tokens
+:param length_penalty: scores are divided by the norm taken to this power
+:dictionary: optional dictionary to use to tokenize text
+
+:returns: ordered list of candidate strings in score-ranked order
+\end{DoxyVerb}
+ 
+
+Definition at line 183 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+score\+\_\+match().
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a995475fdd96a7bbd8886a3ebcfa56156_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a995475fdd96a7bbd8886a3ebcfa56156_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a64aaaccb38f5dd5f51c09439456b2f6e}\label{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a64aaaccb38f5dd5f51c09439456b2f6e}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}!score\+\_\+match@{score\+\_\+match}}
+\index{score\+\_\+match@{score\+\_\+match}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}}
+\subsubsection{\texorpdfstring{score\+\_\+match()}{score\_match()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+score\+\_\+match (\begin{DoxyParamCaption}\item[{}]{query\+\_\+rep,  }\item[{}]{text,  }\item[{}]{length\+\_\+penalty,  }\item[{}]{dictionary = {\ttfamily None},  }\item[{}]{debug = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Calculate the score match between the query representation the text.
+
+:param query_rep: base query representation to match text again.
+:param text: string to comapre against query_rep for matching tokens
+:param length_penalty: scores are divided by the norm taken to this power
+:dictionary: optional dictionary to use to tokenize text
+:debug: flag to enable printing every match
+
+:returns: float score of match
+\end{DoxyVerb}
+ 
+
+Definition at line 150 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+rank\+\_\+candidates().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_a64aaaccb38f5dd5f51c09439456b2f6e_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_ad39f034177c71e873eeedb1cc2d24e52}\label{namespaceparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_ad39f034177c71e873eeedb1cc2d24e52}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}!stopwords@{stopwords}}
+\index{stopwords@{stopwords}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline}}
+\subsubsection{\texorpdfstring{stopwords}{stopwords}}
+{\footnotesize\ttfamily dictionary parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+stopwords}
+
+
+
+Definition at line 83 of file ir\+\_\+baseline.\+py.
+

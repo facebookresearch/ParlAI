@@ -1,6 +1,4 @@
 <map id="parlai.tasks.vqa_v1.agents.VQADataset" name="parlai.tasks.vqa_v1.agents.VQADataset">
-<area shape="rect" id="node1" title=" " alt="" coords="121,39,304,80"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1DefaultDataset.html" title=" " alt="" coords="352,5,535,47"/>
-<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1DefaultDataset.html" title=" " alt="" coords="352,71,535,112"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,46,73,73"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1DefaultDataset.html" title="parlai.tasks.vqa_v1.agents.\lDefaultDataset" alt="" coords="352,5,535,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1DefaultDataset.html" title="parlai.tasks.vqa_v2.agents.\lDefaultDataset" alt="" coords="352,71,535,112"/>
 </map>

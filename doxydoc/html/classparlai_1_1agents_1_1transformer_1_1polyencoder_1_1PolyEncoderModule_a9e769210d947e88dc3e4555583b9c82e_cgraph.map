@@ -1,8 +1,8 @@
 <map id="parlai.agents.transformer.polyencoder.PolyEncoderModule.forward" name="parlai.agents.transformer.polyencoder.PolyEncoderModule.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="5,119,249,160"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a54ca3cb24e2a0fbbfa7b3f145c7558ed" title=" " alt="" coords="297,5,541,47"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html#a2fa163d78b44698fa35a491e9a7a6207" title=" " alt="" coords="334,71,505,127"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#a29485cab795b6c8abe0a61d9c6bb87fd" title=" " alt="" coords="304,151,535,207"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a52218a8c0594ff4d5bf8e666dc38f508" title=" " alt="" coords="297,232,541,273"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a21343cb181ee148326166a8e32e9e3d6" title=" " alt="" coords="589,119,833,160"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a54ca3cb24e2a0fbbfa7b3f145c7558ed" title="parlai.agents.transformer.polyencoder.\lPolyEncoderModule.encode" alt="" coords="297,5,541,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html#a2fa163d78b44698fa35a491e9a7a6207" title="parlai.agents.bert\l_classifier.bert_classifier.\lBertClassifierAgent.score" alt="" coords="334,71,505,127"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#a29485cab795b6c8abe0a61d9c6bb87fd" title="parlai.agents.legacy\l_agents.memnn.memnn_v0.Memnn\lAgent.score" alt="" coords="304,218,535,274"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a52218a8c0594ff4d5bf8e666dc38f508" title="parlai.agents.transformer.polyencoder.\lPolyEncoderModule.score" alt="" coords="297,152,541,193"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a21343cb181ee148326166a8e32e9e3d6" title="parlai.agents.transformer.polyencoder.\lPolyEncoderModule.attend" alt="" coords="589,79,833,120"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0.html#a8bf19c6993b40602c1d86a848b30c5a1" title="parlai.agents.legacy\l_agents.memnn.memnn_v0.to\l_tensors" alt="" coords="612,218,811,274"/>
 </map>

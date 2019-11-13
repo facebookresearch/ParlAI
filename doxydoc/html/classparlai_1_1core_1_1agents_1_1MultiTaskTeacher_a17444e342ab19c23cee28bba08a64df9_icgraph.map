@@ -1,4 +1,3 @@
 <map id="parlai.core.agents.MultiTaskTeacher.epoch_done" name="parlai.core.agents.MultiTaskTeacher.epoch_done">
-<area shape="rect" id="node1" title=" " alt="" coords="211,5,383,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html#a29a2c8f7679aafd2d67b4b0db54d58a3" title=" " alt="" coords="5,5,163,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html#a29a2c8f7679aafd2d67b4b0db54d58a3" title="parlai.core.agents.Multi\lTaskTeacher.act" alt="" coords="225,5,383,47"/>
 </map>

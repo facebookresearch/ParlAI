@@ -1,0 +1,6 @@
+<map id="parlai.mturk.tasks.personachat.personachat_rephrase.worlds.RephrasePersonaWorld.is_msg_tooshortlong" name="parlai.mturk.tasks.personachat.personachat_rephrase.worlds.RephrasePersonaWorld.is_msg_tooshortlong">
+<area shape="rect" id="node2" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8d951acf0577bb2cfbfe77f49c9147da" title="mturk_evaluation_task.worlds.\lWizardEval.get_human_agent_act" alt="" coords="371,5,593,47"/>
+<area shape="rect" id="node3" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#af81be6365b8b4be98cb300aa51f1de9c" title="mturk.worlds.Controllable\lDialogEval.get_human_agent_act" alt="" coords="373,71,591,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html#a534d1775b3a45b3765ea0ee65c5cc201" title="parlai.mturk.tasks.personachat.personachat\l_rephrase.worlds.RephrasePersonaWorld.parley" alt="" coords="331,136,633,177"/>
+<area shape="rect" id="node5" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="363,202,601,229"/>
+</map>

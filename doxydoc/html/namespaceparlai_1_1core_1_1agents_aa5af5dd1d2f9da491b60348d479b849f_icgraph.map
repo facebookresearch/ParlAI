@@ -1,0 +1,10 @@
+<map id="parlai.core.agents.create_agent_from_shared" name="parlai.core.agents.create_agent_from_shared">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1agents.html#a5600530545f5e60a79e2d657b5af1d8c" title="parlai.core.agents.create\l_agents_from_shared" alt="" coords="281,5,446,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1tasks_1_1chatbot_1_1worlds_1_1MessengerBotChatTaskWorld.html#a157b8abe4ccd3162acf89440b0cb2bfb" title="parlai.messenger.tasks.chatbot.worlds.\lMessengerBotChatTaskWorld.generate_world" alt="" coords="219,71,508,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1scripts_1_1train__model.html#a70da71a6f4f9ad144666e6353d9278e3" title="parlai.scripts.train\l_model.load_eval_worlds" alt="" coords="279,136,447,177"/>
+<area shape="rect" id="node8" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#aadf263b222e27bfd83d568148683a8e0" title="tests.test_torch_agent.Test\lTorchAgent.test_interactive_mode" alt="" coords="253,201,474,243"/>
+<area shape="rect" id="node9" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a9954f92efc8cc7a9770f90f3a297d397" title="tests.test_torch_agent.Test\lTorchAgent.test_mturk_racehistory" alt="" coords="250,267,477,308"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1scripts_1_1train__model.html#a5130cce2fb2a33694a2537d800ad9e9e" title="parlai.scripts.train\l_model.setup_args" alt="" coords="556,136,688,177"/>
+<area shape="rect" id="node6" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8c15c0d4490891fd3e61e57501474e40" title="parlai.scripts.train\l_model.TrainLoop.train" alt="" coords="736,136,891,177"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="939,136,1152,177"/>
+</map>

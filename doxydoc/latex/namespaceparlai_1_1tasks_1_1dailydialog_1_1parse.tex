@@ -1,0 +1,305 @@
+\hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse}{}\section{parlai.\+tasks.\+dailydialog.\+parse Namespace Reference}
+\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse}\index{parlai.\+tasks.\+dailydialog.\+parse@{parlai.\+tasks.\+dailydialog.\+parse}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a9bee736957d0b4eb0a046855faa821dc}{cleanup\+\_\+text} (\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad0b494b4bb78b7da65dba688516fd065}{text})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab81027afb6e00df2a610bb3d3c77e11b}{B\+A\+D\+S\+E\+NT} = r\textquotesingle{}\textbackslash{}.(\textbackslash{}w)\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD} = \char`\"{}validation\char`\"{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}{F\+O\+L\+D\+\_\+\+O\+UT} = \char`\"{}valid\char`\"{}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}{A\+C\+TS} = \mbox{[}\textquotesingle{}no\+\_\+act\textquotesingle{}, \textquotesingle{}inform\textquotesingle{}, \textquotesingle{}question\textquotesingle{}, \textquotesingle{}directive\textquotesingle{}, \textquotesingle{}commissive\textquotesingle{}\mbox{]}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}{E\+M\+O\+T\+I\+O\+NS}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a567cf2e7cf2a587676683cf7a0860ac9}{T\+O\+P\+I\+CS}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1b9c736e5b172f676234ff6d85390763}{A\+L\+L\+\_\+\+C\+O\+U\+N\+TS} = Counter()
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a770d23d03169b162728cd3059fb9ac6e}{f\+\_\+acts} = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+act\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6dacd6c7ec446b2a8c20bce692c3f0a2}{f\+\_\+emotions} = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+emotion\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a47da41fc1bbbd6a59d8fc5c3640f46e8}{f\+\_\+texts} = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+dictionary \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1257c1312ee37cbf84fd9892736a6282}{topic\+\_\+map} = \{\}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad0b494b4bb78b7da65dba688516fd065}{text}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a50ad2692c4cc4e33f1a5303dc3394ebe}{topic}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab6bfab164fed7ef268d5494379f02aee}{f\+\_\+out} = open(\textquotesingle{}out/\textquotesingle{} + \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}{F\+O\+L\+D\+\_\+\+O\+UT} + \textquotesingle{}.json\textquotesingle{}, \textquotesingle{}w\textquotesingle{})
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad099a0783a1e05f3cbe453600b28c6b0}{acts} = \mbox{[}\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}{A\+C\+TS}\mbox{[}int(x)\mbox{]} for x in acts.\+strip().split()\mbox{]}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_adfeb415521d435bbc0f876aa2d7c7a76}{emotions} = \mbox{[}\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}{E\+M\+O\+T\+I\+O\+NS}\mbox{[}int(x)\mbox{]} for x in emotions.\+strip().split()\mbox{]}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6928532917f959f2a4efb079fde20949}{raw\+\_\+text} = raw\+\_\+text.\+strip()
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad9c36b3a53f03612c29b79525a210c75}{texts} = raw\+\_\+text.\+split(\char`\"{}\+\_\+\+\_\+eou\+\_\+\+\_\+\char`\"{})\mbox{[}\+:-\/1\mbox{]}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}{record}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8def0964ca56880605d77f01e510fcf8}{outline} = json.\+dumps(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}{record})
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a9bee736957d0b4eb0a046855faa821dc}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a9bee736957d0b4eb0a046855faa821dc}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!cleanup\+\_\+text@{cleanup\+\_\+text}}
+\index{cleanup\+\_\+text@{cleanup\+\_\+text}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{cleanup\+\_\+text()}{cleanup\_text()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+dailydialog.\+parse.\+cleanup\+\_\+text (\begin{DoxyParamCaption}\item[{}]{text }\end{DoxyParamCaption})}
+
+
+
+Definition at line 55 of file parse.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!A\+C\+TS@{A\+C\+TS}}
+\index{A\+C\+TS@{A\+C\+TS}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{A\+C\+TS}{ACTS}}
+{\footnotesize\ttfamily list parlai.\+tasks.\+dailydialog.\+parse.\+A\+C\+TS = \mbox{[}\textquotesingle{}no\+\_\+act\textquotesingle{}, \textquotesingle{}inform\textquotesingle{}, \textquotesingle{}question\textquotesingle{}, \textquotesingle{}directive\textquotesingle{}, \textquotesingle{}commissive\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 26 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad099a0783a1e05f3cbe453600b28c6b0}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad099a0783a1e05f3cbe453600b28c6b0}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!acts@{acts}}
+\index{acts@{acts}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{acts}{acts}}
+{\footnotesize\ttfamily list parlai.\+tasks.\+dailydialog.\+parse.\+acts = \mbox{[}\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}{A\+C\+TS}\mbox{[}int(x)\mbox{]} for x in acts.\+strip().split()\mbox{]}}
+
+
+
+Definition at line 94 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1b9c736e5b172f676234ff6d85390763}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1b9c736e5b172f676234ff6d85390763}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!A\+L\+L\+\_\+\+C\+O\+U\+N\+TS@{A\+L\+L\+\_\+\+C\+O\+U\+N\+TS}}
+\index{A\+L\+L\+\_\+\+C\+O\+U\+N\+TS@{A\+L\+L\+\_\+\+C\+O\+U\+N\+TS}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{A\+L\+L\+\_\+\+C\+O\+U\+N\+TS}{ALL\_COUNTS}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+A\+L\+L\+\_\+\+C\+O\+U\+N\+TS = Counter()}
+
+
+
+Definition at line 52 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab81027afb6e00df2a610bb3d3c77e11b}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab81027afb6e00df2a610bb3d3c77e11b}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!B\+A\+D\+S\+E\+NT@{B\+A\+D\+S\+E\+NT}}
+\index{B\+A\+D\+S\+E\+NT@{B\+A\+D\+S\+E\+NT}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{B\+A\+D\+S\+E\+NT}{BADSENT}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+dailydialog.\+parse.\+B\+A\+D\+S\+E\+NT = r\textquotesingle{}\textbackslash{}.(\textbackslash{}w)\textquotesingle{}}
+
+
+
+Definition at line 16 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!E\+M\+O\+T\+I\+O\+NS@{E\+M\+O\+T\+I\+O\+NS}}
+\index{E\+M\+O\+T\+I\+O\+NS@{E\+M\+O\+T\+I\+O\+NS}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{E\+M\+O\+T\+I\+O\+NS}{EMOTIONS}}
+{\footnotesize\ttfamily list parlai.\+tasks.\+dailydialog.\+parse.\+E\+M\+O\+T\+I\+O\+NS}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  [
+2     \textcolor{stringliteral}{'no\_emotion'},
+3     \textcolor{stringliteral}{'anger'},
+4     \textcolor{stringliteral}{'disgust'},
+5     \textcolor{stringliteral}{'fear'},
+6     \textcolor{stringliteral}{'happiness'},
+7     \textcolor{stringliteral}{'sadness'},
+8     \textcolor{stringliteral}{'surprise'},
+9 ]
+\end{DoxyCode}
+
+
+Definition at line 28 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_adfeb415521d435bbc0f876aa2d7c7a76}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_adfeb415521d435bbc0f876aa2d7c7a76}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!emotions@{emotions}}
+\index{emotions@{emotions}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{emotions}{emotions}}
+{\footnotesize\ttfamily list parlai.\+tasks.\+dailydialog.\+parse.\+emotions = \mbox{[}\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}{E\+M\+O\+T\+I\+O\+NS}\mbox{[}int(x)\mbox{]} for x in emotions.\+strip().split()\mbox{]}}
+
+
+
+Definition at line 95 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a770d23d03169b162728cd3059fb9ac6e}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a770d23d03169b162728cd3059fb9ac6e}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!f\+\_\+acts@{f\+\_\+acts}}
+\index{f\+\_\+acts@{f\+\_\+acts}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{f\+\_\+acts}{f\_acts}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+acts = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+act\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))}
+
+
+
+Definition at line 80 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6dacd6c7ec446b2a8c20bce692c3f0a2}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6dacd6c7ec446b2a8c20bce692c3f0a2}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!f\+\_\+emotions@{f\+\_\+emotions}}
+\index{f\+\_\+emotions@{f\+\_\+emotions}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{f\+\_\+emotions}{f\_emotions}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+emotions = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+emotion\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))}
+
+
+
+Definition at line 81 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab6bfab164fed7ef268d5494379f02aee}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab6bfab164fed7ef268d5494379f02aee}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!f\+\_\+out@{f\+\_\+out}}
+\index{f\+\_\+out@{f\+\_\+out}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{f\+\_\+out}{f\_out}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+out = open(\textquotesingle{}out/\textquotesingle{} + \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}{F\+O\+L\+D\+\_\+\+O\+UT} + \textquotesingle{}.json\textquotesingle{}, \textquotesingle{}w\textquotesingle{})}
+
+
+
+Definition at line 91 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a47da41fc1bbbd6a59d8fc5c3640f46e8}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a47da41fc1bbbd6a59d8fc5c3640f46e8}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!f\+\_\+texts@{f\+\_\+texts}}
+\index{f\+\_\+texts@{f\+\_\+texts}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{f\+\_\+texts}{f\_texts}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+texts = open(os.\+path.\+join(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{F\+O\+LD}, \char`\"{}dialogues\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))}
+
+
+
+Definition at line 82 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!F\+O\+LD@{F\+O\+LD}}
+\index{F\+O\+LD@{F\+O\+LD}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{F\+O\+LD}{FOLD}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+dailydialog.\+parse.\+F\+O\+LD = \char`\"{}validation\char`\"{}}
+
+
+
+Definition at line 19 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!F\+O\+L\+D\+\_\+\+O\+UT@{F\+O\+L\+D\+\_\+\+O\+UT}}
+\index{F\+O\+L\+D\+\_\+\+O\+UT@{F\+O\+L\+D\+\_\+\+O\+UT}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{F\+O\+L\+D\+\_\+\+O\+UT}{FOLD\_OUT}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+dailydialog.\+parse.\+F\+O\+L\+D\+\_\+\+O\+UT = \char`\"{}valid\char`\"{}}
+
+
+
+Definition at line 20 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8def0964ca56880605d77f01e510fcf8}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8def0964ca56880605d77f01e510fcf8}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!outline@{outline}}
+\index{outline@{outline}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{outline}{outline}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+outline = json.\+dumps(\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}{record})}
+
+
+
+Definition at line 115 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6928532917f959f2a4efb079fde20949}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6928532917f959f2a4efb079fde20949}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!raw\+\_\+text@{raw\+\_\+text}}
+\index{raw\+\_\+text@{raw\+\_\+text}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{raw\+\_\+text}{raw\_text}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+raw\+\_\+text = raw\+\_\+text.\+strip()}
+
+
+
+Definition at line 96 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!record@{record}}
+\index{record@{record}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{record}{record}}
+{\footnotesize\ttfamily dictionary parlai.\+tasks.\+dailydialog.\+parse.\+record}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \{
+2         \textcolor{stringliteral}{'fold'}: FOLD,
+3         \textcolor{stringliteral}{'topic'}: topic\_map[raw\_text],
+4         \textcolor{stringliteral}{'dialogue'}: [
+5             \{\textcolor{stringliteral}{'emotion'}: e, \textcolor{stringliteral}{'act'}: a, \textcolor{stringliteral}{'text'}: \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a9bee736957d0b4eb0a046855faa821dc}{cleanup\_text}(t)\}
+6             \textcolor{keywordflow}{for} e, a, t \textcolor{keywordflow}{in} zip(emotions, acts, texts)
+7         ],
+8     \}
+\end{DoxyCode}
+
+
+Definition at line 107 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad0b494b4bb78b7da65dba688516fd065}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad0b494b4bb78b7da65dba688516fd065}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!text@{text}}
+\index{text@{text}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{text}{text}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+text}
+
+
+
+Definition at line 87 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad9c36b3a53f03612c29b79525a210c75}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad9c36b3a53f03612c29b79525a210c75}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!texts@{texts}}
+\index{texts@{texts}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{texts}{texts}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+texts = raw\+\_\+text.\+split(\char`\"{}\+\_\+\+\_\+eou\+\_\+\+\_\+\char`\"{})\mbox{[}\+:-\/1\mbox{]}}
+
+
+
+Definition at line 97 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a50ad2692c4cc4e33f1a5303dc3394ebe}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a50ad2692c4cc4e33f1a5303dc3394ebe}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!topic@{topic}}
+\index{topic@{topic}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{topic}{topic}}
+{\footnotesize\ttfamily parlai.\+tasks.\+dailydialog.\+parse.\+topic}
+
+
+
+Definition at line 87 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1257c1312ee37cbf84fd9892736a6282}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1257c1312ee37cbf84fd9892736a6282}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!topic\+\_\+map@{topic\+\_\+map}}
+\index{topic\+\_\+map@{topic\+\_\+map}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{topic\+\_\+map}{topic\_map}}
+{\footnotesize\ttfamily dictionary parlai.\+tasks.\+dailydialog.\+parse.\+topic\+\_\+map = \{\}}
+
+
+
+Definition at line 84 of file parse.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a567cf2e7cf2a587676683cf7a0860ac9}\label{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a567cf2e7cf2a587676683cf7a0860ac9}} 
+\index{parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}!T\+O\+P\+I\+CS@{T\+O\+P\+I\+CS}}
+\index{T\+O\+P\+I\+CS@{T\+O\+P\+I\+CS}!parlai\+::tasks\+::dailydialog\+::parse@{parlai\+::tasks\+::dailydialog\+::parse}}
+\subsubsection{\texorpdfstring{T\+O\+P\+I\+CS}{TOPICS}}
+{\footnotesize\ttfamily list parlai.\+tasks.\+dailydialog.\+parse.\+T\+O\+P\+I\+CS}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  [
+2     \textcolor{stringliteral}{'no\_topic'},
+3     \textcolor{stringliteral}{'ordinary\_life'},
+4     \textcolor{stringliteral}{'school\_life'},
+5     \textcolor{stringliteral}{'culture\_and\_educastion'},
+6     \textcolor{stringliteral}{'attitude\_and\_emotion'},
+7     \textcolor{stringliteral}{'relationship'},
+8     \textcolor{stringliteral}{'tourism'},
+9     \textcolor{stringliteral}{'health'},
+10     \textcolor{stringliteral}{'work'},
+11     \textcolor{stringliteral}{'politics'},
+12     \textcolor{stringliteral}{'finance'},
+13 ]
+\end{DoxyCode}
+
+
+Definition at line 38 of file parse.\+py.
+

@@ -1,0 +1,7 @@
+<map id="server.AssignmentHandler.get" name="server.AssignmentHandler.get">
+<area shape="rect" id="node2" href="$namespaceserver.html#a2467b58afe94f16856770faf20184b7b" title="server.get_config_module" alt="" coords="256,13,427,39"/>
+<area shape="rect" id="node4" href="$namespaceserver.html#a30d7f5eb7c84bbe9bc4c3100bd3be229" title="server.merge_assignments\l_with_pairings" alt="" coords="252,64,431,105"/>
+<area shape="rect" id="node6" href="$classparlai_1_1utils_1_1testing_1_1TeeStringIO.html#af8c256be884cbcb0081768bc04738015" title="parlai.utils.testing.Tee\lStringIO.write" alt="" coords="266,129,417,171"/>
+<area shape="rect" id="node3" href="$namespaceserver.html#a20f5670b2d0cc9c06be867b56798550d" title="server.get_mturk_task\l_module" alt="" coords="479,5,631,47"/>
+<area shape="rect" id="node5" href="$namespaceserver.html#a417f4d334a42b589c973649990ea52a8" title="server.row_to_dict" alt="" coords="490,71,619,98"/>
+</map>

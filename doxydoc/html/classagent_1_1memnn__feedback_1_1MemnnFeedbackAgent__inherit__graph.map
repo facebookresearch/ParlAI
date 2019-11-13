@@ -1,5 +1,3 @@
 <map id="agent.memnn_feedback.MemnnFeedbackAgent" name="agent.memnn_feedback.MemnnFeedbackAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,155,213,196"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="28,80,191,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="81,5,138,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="28,80,191,107"/>
 </map>

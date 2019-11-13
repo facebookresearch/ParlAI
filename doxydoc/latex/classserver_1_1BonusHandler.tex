@@ -1,0 +1,102 @@
+\hypertarget{classserver_1_1BonusHandler}{}\section{server.\+Bonus\+Handler Class Reference}
+\label{classserver_1_1BonusHandler}\index{server.\+Bonus\+Handler@{server.\+Bonus\+Handler}}
+
+
+Inheritance diagram for server.\+Bonus\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{classserver_1_1BonusHandler__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for server.\+Bonus\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{classserver_1_1BonusHandler__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classserver_1_1BonusHandler_aa0917e26df68d971bdcea1af70c72220}{initialize} (self, app)
+\item 
+def \hyperlink{classserver_1_1BonusHandler_a8bd13dda76f95db6e56f29d5a2e0a472}{post} (self, worker\+\_\+target)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classserver_1_1BonusHandler_a546ed34c4955342e1f0556c43c2a7a38}{mturk\+\_\+manager}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 482 of file server.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classserver_1_1BonusHandler_aa0917e26df68d971bdcea1af70c72220}\label{classserver_1_1BonusHandler_aa0917e26df68d971bdcea1af70c72220}} 
+\index{server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}!initialize@{initialize}}
+\index{initialize@{initialize}!server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}}
+\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily def server.\+Bonus\+Handler.\+initialize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{app }\end{DoxyParamCaption})}
+
+
+
+Definition at line 483 of file server.\+py.
+
+\mbox{\Hypertarget{classserver_1_1BonusHandler_a8bd13dda76f95db6e56f29d5a2e0a472}\label{classserver_1_1BonusHandler_a8bd13dda76f95db6e56f29d5a2e0a472}} 
+\index{server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}!post@{post}}
+\index{post@{post}!server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}}
+\subsubsection{\texorpdfstring{post()}{post()}}
+{\footnotesize\ttfamily def server.\+Bonus\+Handler.\+post (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+target }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Requests to /bonus/{worker_id} will give a bonus to that worker.
+Requires a reason, assignment_id, a unique token (for idempotence),
+and the bonus amount IN CENTS
+\end{DoxyVerb}
+ 
+
+Definition at line 486 of file server.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, server.\+Application.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, server.\+Approval\+Handler.\+mturk\+\_\+manager, server.\+Reverse\+Handler.\+mturk\+\_\+manager, server.\+Rejection\+Handler.\+mturk\+\_\+manager, server.\+Block\+Handler.\+mturk\+\_\+manager, server.\+Bonus\+Handler.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, and parlai.\+utils.\+testing.\+Tee\+String\+I\+O.\+write().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classserver_1_1BonusHandler_a8bd13dda76f95db6e56f29d5a2e0a472_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classserver_1_1BonusHandler_a546ed34c4955342e1f0556c43c2a7a38}\label{classserver_1_1BonusHandler_a546ed34c4955342e1f0556c43c2a7a38}} 
+\index{server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}!mturk\+\_\+manager@{mturk\+\_\+manager}}
+\index{mturk\+\_\+manager@{mturk\+\_\+manager}!server\+::\+Bonus\+Handler@{server\+::\+Bonus\+Handler}}
+\subsubsection{\texorpdfstring{mturk\+\_\+manager}{mturk\_manager}}
+{\footnotesize\ttfamily server.\+Bonus\+Handler.\+mturk\+\_\+manager}
+
+
+
+Definition at line 484 of file server.\+py.
+
+
+
+Referenced by server.\+Bonus\+Handler.\+post().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/webapp/\hyperlink{server_8py}{server.\+py}\end{DoxyCompactItemize}

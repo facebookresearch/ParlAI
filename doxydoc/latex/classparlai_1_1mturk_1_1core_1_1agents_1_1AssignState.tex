@@ -1,0 +1,467 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState}{}\section{parlai.\+mturk.\+core.\+agents.\+Assign\+State Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState}\index{parlai.\+mturk.\+core.\+agents.\+Assign\+State@{parlai.\+mturk.\+core.\+agents.\+Assign\+State}}
+
+
+Collaboration diagram for parlai.\+mturk.\+core.\+agents.\+Assign\+State\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=310pt]{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aace503a7d51d513573c41ac25cd6510f}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a1d77495a7694cc88c937c06d4d4d039e}{status}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6a683e69e6ba2fc0db6570a7af70d1c0}{clear\+\_\+messages} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a655ebb0e19f6a1b66416848bc2abca27}{append\+\_\+message} (self, message)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6251191f5a8d16778dc56e21564ede79}{set\+\_\+last\+\_\+command} (self, command)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a50b030308201e7e8e91292ec2419400b}{get\+\_\+last\+\_\+command} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a969247ece20ee74e12196bd5b5c448cc}{get\+\_\+messages} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7cd23ff37c1c1e0c6d8548f77a8d078c}{set\+\_\+status} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a1d77495a7694cc88c937c06d4d4d039e}{status})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a14f5a0cbaf099fb25cfa284a502a8275}{get\+\_\+status} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a95b2a76b6e8ec7e045542450ee49f971}{is\+\_\+final} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aeda3adf715e8ed5a39d302792b056960}{get\+\_\+inactive\+\_\+command\+\_\+text} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a1d77495a7694cc88c937c06d4d4d039e}{status}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a8f08edc51460fb9ad6afc26c60e19990}{messages}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a055a267b03cf1ad3aed703ca83b52597}{last\+\_\+command}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a11bf85034efc6e223c6a58a695b022b8}{message\+\_\+ids}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac947c4fee13881e6ecd8451bdf098485}{S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE} = \textquotesingle{}none\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a49d2be98face46c46e4159243ccaf04a}{S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG} = \textquotesingle{}onboarding\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aabbbd889d7189a6d858727dca3f72a9d}{S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG} = \textquotesingle{}waiting\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a01bc536c6ffa8629ef343c8b5f69a22a}{S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK} = \textquotesingle{}in task\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a13ac505cad1e67ccaee03cde2a98841f}{S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE} = \textquotesingle{}done\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7a16ee88b20628d6080afa2b879a3304}{S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT} = \textquotesingle{}disconnect\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a40bffac556fb62243872a69d8ec52700}{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT} = \textquotesingle{}partner disconnect\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac62ca437e5cf0da61cb4e26de3913198}{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY} = \textquotesingle{}partner disconnect early\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ab6e92544f1357440c879cda2a2df9b82}{S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED} = \textquotesingle{}expired\textquotesingle{}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a0d0bdd6ec3b881635fc9ed3283903f7a}{S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED} = \textquotesingle{}returned\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class for holding state information about an assignment currently
+claimed by an agent
+\end{DoxyVerb}
+ 
+
+Definition at line 25 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aace503a7d51d513573c41ac25cd6510f}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aace503a7d51d513573c41ac25cd6510f}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{status = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create an AssignState to track the state of an agent's assignment\end{DoxyVerb}
+ 
+
+Definition at line 42 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a655ebb0e19f6a1b66416848bc2abca27}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a655ebb0e19f6a1b66416848bc2abca27}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!append\+\_\+message@{append\+\_\+message}}
+\index{append\+\_\+message@{append\+\_\+message}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{append\+\_\+message()}{append\_message()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+append\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{message }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Appends a message to the list of messages, ensures that it is
+not a duplicate message.
+\end{DoxyVerb}
+ 
+
+Definition at line 56 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+message\+\_\+ids, and parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+messages.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6a683e69e6ba2fc0db6570a7af70d1c0}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6a683e69e6ba2fc0db6570a7af70d1c0}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!clear\+\_\+messages@{clear\+\_\+messages}}
+\index{clear\+\_\+messages@{clear\+\_\+messages}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{clear\+\_\+messages()}{clear\_messages()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+clear\+\_\+messages (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 51 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+last\+\_\+command, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+message\+\_\+ids, and parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+messages.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aeda3adf715e8ed5a39d302792b056960}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aeda3adf715e8ed5a39d302792b056960}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!get\+\_\+inactive\+\_\+command\+\_\+text@{get\+\_\+inactive\+\_\+command\+\_\+text}}
+\index{get\+\_\+inactive\+\_\+command\+\_\+text@{get\+\_\+inactive\+\_\+command\+\_\+text}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+inactive\+\_\+command\+\_\+text()}{get\_inactive\_command\_text()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get appropriate inactive command and text to respond to a reconnect
+given the current assignment state
+
+returns text, command
+\end{DoxyVerb}
+ 
+
+Definition at line 97 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY, and parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a50b030308201e7e8e91292ec2419400b}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a50b030308201e7e8e91292ec2419400b}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!get\+\_\+last\+\_\+command@{get\+\_\+last\+\_\+command}}
+\index{get\+\_\+last\+\_\+command@{get\+\_\+last\+\_\+command}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+last\+\_\+command()}{get\_last\_command()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+last\+\_\+command (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 68 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+last\+\_\+command.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a969247ece20ee74e12196bd5b5c448cc}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a969247ece20ee74e12196bd5b5c448cc}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!get\+\_\+messages@{get\+\_\+messages}}
+\index{get\+\_\+messages@{get\+\_\+messages}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+messages()}{get\_messages()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+messages (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 71 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+messages.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a14f5a0cbaf099fb25cfa284a502a8275}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a14f5a0cbaf099fb25cfa284a502a8275}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!get\+\_\+status@{get\+\_\+status}}
+\index{get\+\_\+status@{get\+\_\+status}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+status()}{get\_status()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the status of this agent on its task\end{DoxyVerb}
+ 
+
+Definition at line 79 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+episode\+\_\+done(), mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+get\+\_\+update\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+is\+\_\+in\+\_\+task(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+log\+\_\+reconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+log\+\_\+reconnect(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+submitted\+\_\+hit(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+submitted\+\_\+hit(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+submitted\+\_\+hit(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+status(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+status().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a14f5a0cbaf099fb25cfa284a502a8275_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a95b2a76b6e8ec7e045542450ee49f971}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a95b2a76b6e8ec7e045542450ee49f971}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!is\+\_\+final@{is\+\_\+final}}
+\index{is\+\_\+final@{is\+\_\+final}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{is\+\_\+final()}{is\_final()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return True if the assignment is in a final status that
+can no longer be acted on.
+\end{DoxyVerb}
+ 
+
+Definition at line 84 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY, and parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+status(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+wait\+\_\+for\+\_\+status().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a95b2a76b6e8ec7e045542450ee49f971_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6251191f5a8d16778dc56e21564ede79}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a6251191f5a8d16778dc56e21564ede79}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!set\+\_\+last\+\_\+command@{set\+\_\+last\+\_\+command}}
+\index{set\+\_\+last\+\_\+command@{set\+\_\+last\+\_\+command}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{set\+\_\+last\+\_\+command()}{set\_last\_command()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+set\+\_\+last\+\_\+command (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{command }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+last\+\_\+command.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7cd23ff37c1c1e0c6d8548f77a8d078c}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7cd23ff37c1c1e0c6d8548f77a8d078c}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!set\+\_\+status@{set\+\_\+status}}
+\index{set\+\_\+status@{set\+\_\+status}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{set\+\_\+status()}{set\_status()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+set\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{status }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set the status of this agent on the task\end{DoxyVerb}
+ 
+
+Definition at line 74 of file agents.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status.
+
+
+
+Referenced by server.\+Redirect\+Handler.\+post().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7cd23ff37c1c1e0c6d8548f77a8d078c_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a055a267b03cf1ad3aed703ca83b52597}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a055a267b03cf1ad3aed703ca83b52597}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!last\+\_\+command@{last\+\_\+command}}
+\index{last\+\_\+command@{last\+\_\+command}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{last\+\_\+command}{last\_command}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+last\+\_\+command}
+
+
+
+Definition at line 48 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+last\+\_\+command(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+last\+\_\+command(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+set\+\_\+last\+\_\+command(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+set\+\_\+last\+\_\+command().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a11bf85034efc6e223c6a58a695b022b8}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a11bf85034efc6e223c6a58a695b022b8}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!message\+\_\+ids@{message\+\_\+ids}}
+\index{message\+\_\+ids@{message\+\_\+ids}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{message\+\_\+ids}{message\_ids}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+message\+\_\+ids}
+
+
+
+Definition at line 49 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+clear\+\_\+messages(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+clear\+\_\+messages().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a8f08edc51460fb9ad6afc26c60e19990}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a8f08edc51460fb9ad6afc26c60e19990}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!messages@{messages}}
+\index{messages@{messages}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{messages}{messages}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+messages}
+
+
+
+Definition at line 47 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+append\+\_\+message(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+clear\+\_\+messages(), parlai.\+tasks.\+multiwoz.\+agents.\+Multi\+Woz\+Teacher.\+get(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+messages(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+messages(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+get\+\_\+messages(), parlai.\+tasks.\+multiwoz.\+agents.\+Multi\+Woz\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+multiwoz.\+agents.\+Multi\+Woz\+Teacher.\+num\+\_\+examples(), convai.\+convai\+\_\+world.\+Conv\+A\+I\+World.\+parley(), and convai.\+convai\+\_\+world.\+Conv\+A\+I\+World.\+pull\+\_\+new\+\_\+messages().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a1d77495a7694cc88c937c06d4d4d039e}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a1d77495a7694cc88c937c06d4d4d039e}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!status@{status}}
+\index{status@{status}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status}
+
+
+
+Definition at line 46 of file agents.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+evaluate\+\_\+location(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+status(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+status(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+get\+\_\+status(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+observe(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+review\+\_\+work(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+save(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+set\+\_\+status(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+set\+\_\+status(), parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+set\+\_\+status(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+timeout().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7a16ee88b20628d6080afa2b879a3304}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a7a16ee88b20628d6080afa2b879a3304}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT@{S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT@{S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}{STATUS\_DISCONNECT}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT = \textquotesingle{}disconnect\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 36 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a13ac505cad1e67ccaee03cde2a98841f}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a13ac505cad1e67ccaee03cde2a98841f}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE@{S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE@{S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE}{STATUS\_DONE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+D\+O\+NE = \textquotesingle{}done\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 35 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ab6e92544f1357440c879cda2a2df9b82}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ab6e92544f1357440c879cda2a2df9b82}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED@{S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED@{S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED}{STATUS\_EXPIRED}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+E\+X\+P\+I\+R\+ED = \textquotesingle{}expired\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 39 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a01bc536c6ffa8629ef343c8b5f69a22a}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a01bc536c6ffa8629ef343c8b5f69a22a}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK@{S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK@{S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK}{STATUS\_IN\_TASK}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+I\+N\+\_\+\+T\+A\+SK = \textquotesingle{}in task\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 34 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac947c4fee13881e6ecd8451bdf098485}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac947c4fee13881e6ecd8451bdf098485}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE@{S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE@{S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE}{STATUS\_NONE}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+N\+O\+NE = \textquotesingle{}none\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 31 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+\_\+\+\_\+init\+\_\+\+\_\+(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a49d2be98face46c46e4159243ccaf04a}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a49d2be98face46c46e4159243ccaf04a}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG@{S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG@{S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG}{STATUS\_ONBOARDING}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+O\+N\+B\+O\+A\+R\+D\+I\+NG = \textquotesingle{}onboarding\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 32 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a40bffac556fb62243872a69d8ec52700}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a40bffac556fb62243872a69d8ec52700}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT@{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT@{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT}{STATUS\_PARTNER\_DISCONNECT}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+CT = \textquotesingle{}partner disconnect\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 37 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac62ca437e5cf0da61cb4e26de3913198}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_ac62ca437e5cf0da61cb4e26de3913198}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY@{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY@{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY}{STATUS\_PARTNER\_DISCONNECT\_EARLY}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+P\+A\+R\+T\+N\+E\+R\+\_\+\+D\+I\+S\+C\+O\+N\+N\+E\+C\+T\+\_\+\+E\+A\+R\+LY = \textquotesingle{}partner disconnect early\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 38 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a0d0bdd6ec3b881635fc9ed3283903f7a}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_a0d0bdd6ec3b881635fc9ed3283903f7a}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED@{S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED@{S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED}{STATUS\_RETURNED}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+T\+U\+R\+N\+ED = \textquotesingle{}returned\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 40 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+get\+\_\+inactive\+\_\+command\+\_\+text(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+is\+\_\+final(), parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+is\+\_\+final(), and parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+is\+\_\+final().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aabbbd889d7189a6d858727dca3f72a9d}\label{classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState_aabbbd889d7189a6d858727dca3f72a9d}} 
+\index{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}!S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG@{S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG}}
+\index{S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG@{S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG}!parlai\+::mturk\+::core\+::agents\+::\+Assign\+State@{parlai\+::mturk\+::core\+::agents\+::\+Assign\+State}}
+\subsubsection{\texorpdfstring{S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG}{STATUS\_WAITING}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+S\+T\+A\+T\+U\+S\+\_\+\+W\+A\+I\+T\+I\+NG = \textquotesingle{}waiting\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 33 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/\hyperlink{parlai_2mturk_2core_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

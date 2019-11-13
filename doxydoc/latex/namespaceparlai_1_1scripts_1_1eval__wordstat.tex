@@ -1,0 +1,111 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat}{}\section{parlai.\+scripts.\+eval\+\_\+wordstat Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1eval__wordstat}\index{parlai.\+scripts.\+eval\+\_\+wordstat@{parlai.\+scripts.\+eval\+\_\+wordstat}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_af41cd95533433b93e7383bc6dab04963}{setup\+\_\+args} (\hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_a78304b921cd79a0fe7c659ed87bad685}{parser}=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_ab2d96b5ac07c988934a0320739fc3c60}{get\+\_\+word\+\_\+stats} (text, agent\+\_\+dict, bins=(0, 100, 1000, 100000))
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_abdad0c3df5ffa1768c0d5822d3668ba0}{eval\+\_\+wordstat} (opt, \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_a3425702146738eb147346873ecda1983}{print\+\_\+parser}=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_a78304b921cd79a0fe7c659ed87bad685}{parser} = \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_af41cd95533433b93e7383bc6dab04963}{setup\+\_\+args}()
+\item 
+\hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_a3425702146738eb147346873ecda1983}{print\+\_\+parser}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat_abdad0c3df5ffa1768c0d5822d3668ba0}\label{namespaceparlai_1_1scripts_1_1eval__wordstat_abdad0c3df5ffa1768c0d5822d3668ba0}} 
+\index{parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}!eval\+\_\+wordstat@{eval\+\_\+wordstat}}
+\index{eval\+\_\+wordstat@{eval\+\_\+wordstat}!parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{eval\+\_\+wordstat()}{eval\_wordstat()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+wordstat.\+eval\+\_\+wordstat (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{print\+\_\+parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluates a model.
+
+:param opt: tells the evaluation function how to run
+:param print_parser: if provided, prints the options that are set within the
+    model after loading the model
+\end{DoxyVerb}
+ 
+
+Definition at line 110 of file eval\+\_\+wordstat.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+core.\+worlds.\+create\+\_\+task(), make\+\_\+control\+\_\+dataset.\+float, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+scripts.\+eval\+\_\+wordstat.\+get\+\_\+word\+\_\+stats(), eval\+\_\+ppl.\+int, and parlai.\+core.\+metrics.\+normalize\+\_\+answer().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1eval__wordstat_abdad0c3df5ffa1768c0d5822d3668ba0_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat_ab2d96b5ac07c988934a0320739fc3c60}\label{namespaceparlai_1_1scripts_1_1eval__wordstat_ab2d96b5ac07c988934a0320739fc3c60}} 
+\index{parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}!get\+\_\+word\+\_\+stats@{get\+\_\+word\+\_\+stats}}
+\index{get\+\_\+word\+\_\+stats@{get\+\_\+word\+\_\+stats}!parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{get\+\_\+word\+\_\+stats()}{get\_word\_stats()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+wordstat.\+get\+\_\+word\+\_\+stats (\begin{DoxyParamCaption}\item[{}]{text,  }\item[{}]{agent\+\_\+dict,  }\item[{}]{bins = {\ttfamily (0,~100,~1000,~100000)} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Function which takes text sequence and dict, returns word freq and length statistics
+
+:param sequence: text sequence
+:param agent_dict: can be external dict or dict from the model
+:param bins: list with range boundaries
+:return: freqs dictionary, num words, avg word length, avg char length
+\end{DoxyVerb}
+ 
+
+Definition at line 87 of file eval\+\_\+wordstat.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+eval\+\_\+wordstat.\+eval\+\_\+wordstat().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1eval__wordstat_ab2d96b5ac07c988934a0320739fc3c60_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat_af41cd95533433b93e7383bc6dab04963}\label{namespaceparlai_1_1scripts_1_1eval__wordstat_af41cd95533433b93e7383bc6dab04963}} 
+\index{parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+wordstat.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 46 of file eval\+\_\+wordstat.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat_a78304b921cd79a0fe7c659ed87bad685}\label{namespaceparlai_1_1scripts_1_1eval__wordstat_a78304b921cd79a0fe7c659ed87bad685}} 
+\index{parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}!parser@{parser}}
+\index{parser@{parser}!parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+wordstat.\+parser = \hyperlink{namespaceparlai_1_1scripts_1_1eval__wordstat_af41cd95533433b93e7383bc6dab04963}{setup\+\_\+args}()}
+
+
+
+Definition at line 275 of file eval\+\_\+wordstat.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__wordstat_a3425702146738eb147346873ecda1983}\label{namespaceparlai_1_1scripts_1_1eval__wordstat_a3425702146738eb147346873ecda1983}} 
+\index{parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}!print\+\_\+parser@{print\+\_\+parser}}
+\index{print\+\_\+parser@{print\+\_\+parser}!parlai\+::scripts\+::eval\+\_\+wordstat@{parlai\+::scripts\+::eval\+\_\+wordstat}}
+\subsubsection{\texorpdfstring{print\+\_\+parser}{print\_parser}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+wordstat.\+print\+\_\+parser}
+
+
+
+Definition at line 276 of file eval\+\_\+wordstat.\+py.
+

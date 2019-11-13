@@ -1,0 +1,6 @@
+<map id="parlai.mturk.core.worker_manager.WorkerManager.assign_task_to_worker" name="parlai.mturk.core.worker_manager.WorkerManager.assign_task_to_worker">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a426bb5e28f981e66f16950b5f117d502" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager._create_agent" alt="" coords="271,5,532,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#ae2c5cc1b5742b0e062f219ed2d99eb5b" title="parlai.mturk.core.legacy\l_2018.worker_manager.WorkerManager.\l_create_agent" alt="" coords="273,71,530,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager.html#a21900a3c0401494b195e564025b72faa" title="parlai.mturk.core.worker\l_manager.WorkerManager.\l_create_agent" alt="" coords="312,151,491,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a353706036e3eb7cc4968d6d728e76f2c" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_create_agent" alt="" coords="292,231,511,287"/>
+</map>

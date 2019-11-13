@@ -1,0 +1,125 @@
+\hypertarget{namespacestack__rank__evals_1_1run}{}\section{stack\+\_\+rank\+\_\+evals.\+run Namespace Reference}
+\label{namespacestack__rank__evals_1_1run}\index{stack\+\_\+rank\+\_\+evals.\+run@{stack\+\_\+rank\+\_\+evals.\+run}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacestack__rank__evals_1_1run_a5e968ebe737f4f8e703b5be5bec893bf}{main} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespacestack__rank__evals_1_1run_aa9e7faafd240a56b1961d5f2d8ecdf6d}{round\+\_\+choices} = \mbox{[}\textquotesingle{}first\+\_\+response\textquotesingle{}, \textquotesingle{}second\+\_\+response\textquotesingle{}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacestack__rank__evals_1_1run_a5e968ebe737f4f8e703b5be5bec893bf}\label{namespacestack__rank__evals_1_1run_a5e968ebe737f4f8e703b5be5bec893bf}} 
+\index{stack\+\_\+rank\+\_\+evals\+::run@{stack\+\_\+rank\+\_\+evals\+::run}!main@{main}}
+\index{main@{main}!stack\+\_\+rank\+\_\+evals\+::run@{stack\+\_\+rank\+\_\+evals\+::run}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def stack\+\_\+rank\+\_\+evals.\+run.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}    Human Evaluation of various responses to comments on images.
+
+    A turker is shown an image and some dialog history. Then, the
+    turker is asked to choose which response they think is more engaging.
+
+    If no `--eval-data-path` is given, the data from the original
+    Image-Chat dataset is used.
+
+    To use your own data, please specify `--eval-data-path`, a path to an
+    appropriate json file with a list of examples, where each example
+    has the following structure:
+        {
+            'image_hash': <hash of image>,
+            'dialog': [(personality, text), ...] - list of personality, text tuples
+            'personality': <personality of responses to compare>
+            '<compare_key_1>': <first response to compare>,
+            '<compare_key_2>': <second option to compare>,
+            .
+            .
+            .
+        }
+    Note that compare_key_1 and compare_key_2 can be any field, as long as they
+    map to a string response.
+
+    Example Scenario:
+        Suppose you have the original Image-Chat dataset, and
+        you would like to compare the outputs of your model called `model`.
+
+        Your data may look like the following:
+        [{
+            'image_hash': hashforimageofcat,
+            'dialog': [
+                ('Sweet', 'What a cute cat!'),
+                ('Neutral', 'Just looks like a plain cat to me')
+            ]
+            'personality': 'Sweet',
+            'comment': 'It really is adorable if you look!', # Human Comment
+            'model_comment': 'You'll love it if you pet it!' # Model Comment
+        }, ...]
+
+        Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
+        the outputs of the model vs. the human comments from Personality-Captions\end{DoxyVerb}
+
+
+\begin{DoxyVerb}    Human Evaluation of various image captions/comments.
+
+    A turker is shown an image and two possible comments/captions, and
+    optionally the personality used to create these captions. Then, the
+    turker is asked to choose which caption they think is more engaging.
+
+    In this example, we will just be comparing the original comment twice
+    (this is just to demonstrate the task for future use).
+
+    To use your own data, please specify `--eval-data-path` to an
+    appropriate json file with a list of examples, where each example
+    has the following structure:
+        {
+            'image_hash': <hash of image>,
+            'personality': <personality, if applicable>,
+            '<compare_key_1>': <first option to compare>,
+            '<compare_key_2>': <second option to compare>,
+            .
+            .
+            .
+        }
+    Note that compare_key_1 and compare_key_2 can be any field, as long as they
+    map to a string comment/caption.
+
+    Example Scenario:
+        Suppose you have the original Personality-Captions dataset, and
+        you would like to compare the outputs of your model called `model`.
+
+        Your data may look like the following:
+        [{
+            'image_hash': hashforimageofcat,
+            'personality': 'Sweet',
+            'comment': 'Look at the cute cat!', # Human Comment
+            'model_comment': 'That's a weird looking dog' # Model Comment
+        }, ...]
+
+        Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
+        the outputs of the model vs. the human comments from Personality-Captions
+\end{DoxyVerb}
+ 
+
+Definition at line 21 of file run.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacestack__rank__evals_1_1run_aa9e7faafd240a56b1961d5f2d8ecdf6d}\label{namespacestack__rank__evals_1_1run_aa9e7faafd240a56b1961d5f2d8ecdf6d}} 
+\index{stack\+\_\+rank\+\_\+evals\+::run@{stack\+\_\+rank\+\_\+evals\+::run}!round\+\_\+choices@{round\+\_\+choices}}
+\index{round\+\_\+choices@{round\+\_\+choices}!stack\+\_\+rank\+\_\+evals\+::run@{stack\+\_\+rank\+\_\+evals\+::run}}
+\subsubsection{\texorpdfstring{round\+\_\+choices}{round\_choices}}
+{\footnotesize\ttfamily list stack\+\_\+rank\+\_\+evals.\+run.\+round\+\_\+choices = \mbox{[}\textquotesingle{}first\+\_\+response\textquotesingle{}, \textquotesingle{}second\+\_\+response\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 18 of file run.\+py.
+

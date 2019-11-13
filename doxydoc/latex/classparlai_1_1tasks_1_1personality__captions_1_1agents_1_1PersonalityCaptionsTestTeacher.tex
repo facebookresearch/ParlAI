@@ -1,0 +1,189 @@
+\hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher}{}\section{parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher}\index{parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher@{parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_acb0270ac7c4e00d2e9067082599d4c16}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_abd4a7d0a0310ae93861f1e3e70e02260}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa3c10b49dc8d2510f8d28846194ac2a6}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a07f538c8c1ff16a9d08b78d1ea3ef1f8}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx}=0)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a3b99c22797205aaf11f652bd28c314c3}{image\+\_\+features}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a183b3779c4ce45111f608a263e8147a5}{example}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa2232ceb48d0dd2f67e8f15ac0a549e0}{num\+\_\+test\+\_\+labels}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Test PersonalityCaptions teacher for ensuring pretrained model does not break.\end{DoxyVerb}
+ 
+
+Definition at line 286 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a07f538c8c1ff16a9d08b78d1ea3ef1f8}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a07f538c8c1ff16a9d08b78d1ea3ef1f8}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get an example.
+
+:param episode_idx:
+    index of episode in self.data
+:param entry_idx:
+    optional, which entry in the episode to get
+
+:return:
+    an example
+\end{DoxyVerb}
+ 
+
+Definition at line 315 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+image\+\_\+features, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+image\+\_\+features, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+include\+\_\+personality, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+include\+\_\+personality, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+include\+\_\+personality, and parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+include\+\_\+personality.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a07f538c8c1ff16a9d08b78d1ea3ef1f8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_abd4a7d0a0310ae93861f1e3e70e02260}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_abd4a7d0a0310ae93861f1e3e70e02260}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return number of episodes.\end{DoxyVerb}
+ 
+
+Definition at line 307 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+image\+\_\+features, and parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+image\+\_\+features.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_abd4a7d0a0310ae93861f1e3e70e02260_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa3c10b49dc8d2510f8d28846194ac2a6}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa3c10b49dc8d2510f8d28846194ac2a6}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return number of examples.\end{DoxyVerb}
+ 
+
+Definition at line 311 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+image\+\_\+features, and parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+image\+\_\+features.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_acb0270ac7c4e00d2e9067082599d4c16}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_acb0270ac7c4e00d2e9067082599d4c16}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!reset@{reset}}
+\index{reset@{reset}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset teacher.\end{DoxyVerb}
+ 
+
+Definition at line 302 of file agents.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a183b3779c4ce45111f608a263e8147a5}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a183b3779c4ce45111f608a263e8147a5}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!example@{example}}
+\index{example@{example}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{example}{example}}
+{\footnotesize\ttfamily parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+example}
+
+
+
+Definition at line 305 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+next\+\_\+example(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+next\+\_\+example().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a3b99c22797205aaf11f652bd28c314c3}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_a3b99c22797205aaf11f652bd28c314c3}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!image\+\_\+features@{image\+\_\+features}}
+\index{image\+\_\+features@{image\+\_\+features}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{image\+\_\+features}{image\_features}}
+{\footnotesize\ttfamily parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+image\+\_\+features}
+
+
+
+Definition at line 300 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+get(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+num\+\_\+episodes(), and parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa2232ceb48d0dd2f67e8f15ac0a549e0}\label{classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTestTeacher_aa2232ceb48d0dd2f67e8f15ac0a549e0}} 
+\index{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}!num\+\_\+test\+\_\+labels@{num\+\_\+test\+\_\+labels}}
+\index{num\+\_\+test\+\_\+labels@{num\+\_\+test\+\_\+labels}!parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher@{parlai\+::tasks\+::personality\+\_\+captions\+::agents\+::\+Personality\+Captions\+Test\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+test\+\_\+labels}{num\_test\_labels}}
+{\footnotesize\ttfamily parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+num\+\_\+test\+\_\+labels}
+
+
+
+Definition at line 335 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/personality\+\_\+captions/\hyperlink{parlai_2tasks_2personality__captions_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

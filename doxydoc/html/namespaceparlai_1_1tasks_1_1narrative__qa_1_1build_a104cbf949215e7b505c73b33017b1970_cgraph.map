@@ -1,0 +1,5 @@
+<map id="parlai.tasks.narrative_qa.build.divide_csv_into_sets" name="parlai.tasks.narrative_qa.build.divide_csv_into_sets">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a8d4e1f30e3de3f62c039296cbed12e8d" title="parlai.tasks.narrative\l_qa.build.get_rows_for_set" alt="" coords="253,5,432,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#a7fae633ea705d970c2a6d56b7004f6cd" title="parlai.tasks.narrative\l_qa.build.read_csv_to\l_dict_list" alt="" coords="268,71,417,127"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1narrative__qa_1_1build.html#ab49502ac724edd933f89bec8f414b452" title="parlai.tasks.narrative\l_qa.build.write_dict_list\l_to_csv" alt="" coords="263,151,422,207"/>
+</map>

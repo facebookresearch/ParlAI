@@ -1,0 +1,211 @@
+\hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN}{}\section{parlai.\+agents.\+memnn.\+modules.\+Mem\+NN Class Reference}
+\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN}\index{parlai.\+agents.\+memnn.\+modules.\+Mem\+NN@{parlai.\+agents.\+memnn.\+modules.\+Mem\+NN}}
+
+
+Inheritance diagram for parlai.\+agents.\+memnn.\+modules.\+Mem\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+memnn.\+modules.\+Mem\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a8bfe18ec94ebe8fc68a4147a1ebcbcb4}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embedding\+\_\+size, \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a2c29f0e03952f1a7603072a8f13d675f}{hops}=1, memsize=32, time\+\_\+features=False, position\+\_\+encoding=False, dropout=0, padding\+\_\+idx=0)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ab4402719d43be5dba7eb6a15074c0273}{forward} (self, xs, mems, cands=None, pad\+\_\+mask=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a2c29f0e03952f1a7603072a8f13d675f}{hops}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_aa6b47d1470856e76a31e266a049da848}{query\+\_\+lt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a5aa6b0e36ae580858341aea864a11caf}{in\+\_\+memory\+\_\+lt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9eecf9c267fd2c15ba376a1bac3a9cc5}{out\+\_\+memory\+\_\+lt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ac1282441a297691b0c9287db71f381ff}{answer\+\_\+embedder}
+\item 
+\hyperlink{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9186fc7eb97fc4a18517928091ea7a3b}{memory\+\_\+hop}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Memory Network module.\end{DoxyVerb}
+ 
+
+Definition at line 22 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a8bfe18ec94ebe8fc68a4147a1ebcbcb4}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a8bfe18ec94ebe8fc68a4147a1ebcbcb4}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embedding\+\_\+size,  }\item[{}]{hops = {\ttfamily 1},  }\item[{}]{memsize = {\ttfamily 32},  }\item[{}]{time\+\_\+features = {\ttfamily False},  }\item[{}]{position\+\_\+encoding = {\ttfamily False},  }\item[{}]{dropout = {\ttfamily 0},  }\item[{}]{padding\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize memnn model.
+
+See cmdline args in MemnnAgent for description of arguments.
+\end{DoxyVerb}
+ 
+
+Definition at line 35 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ab4402719d43be5dba7eb6a15074c0273}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ab4402719d43be5dba7eb6a15074c0273}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{mems,  }\item[{}]{cands = {\ttfamily None},  }\item[{}]{pad\+\_\+mask = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}One forward step.
+
+:param xs:
+    (bsz x seqlen) LongTensor queries to the model
+
+:param mems:
+    (bsz x num_mems x seqlen) LongTensor memories
+
+:param cands:
+    (num_cands x seqlen) or (bsz x num_cands x seqlen)
+    LongTensor with candidates to rank
+:param pad_mask:
+    (bsz x num_mems) optional mask indicating which tokens
+    correspond to padding
+
+:returns:
+    scores contains the model's predicted scores.
+    if cand_params is None, the candidates are the vocabulary;
+    otherwise, these scores are over the candidates provided.
+    (bsz x num_cands)
+\end{DoxyVerb}
+ 
+
+Definition at line 63 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+answer\+\_\+embedder, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+hops, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+in\+\_\+memory\+\_\+lt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+memory\+\_\+hop, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+memory\+\_\+hop, parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+out\+\_\+memory\+\_\+lt, and parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+query\+\_\+lt.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ab4402719d43be5dba7eb6a15074c0273_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ac1282441a297691b0c9287db71f381ff}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_ac1282441a297691b0c9287db71f381ff}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!answer\+\_\+embedder@{answer\+\_\+embedder}}
+\index{answer\+\_\+embedder@{answer\+\_\+embedder}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{answer\+\_\+embedder}{answer\_embedder}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+answer\+\_\+embedder}
+
+
+
+Definition at line 60 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), agent.\+modules.\+Mem\+N\+N.\+forward(), and agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a2c29f0e03952f1a7603072a8f13d675f}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a2c29f0e03952f1a7603072a8f13d675f}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!hops@{hops}}
+\index{hops@{hops}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{hops}{hops}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+hops}
+
+
+
+Definition at line 43 of file modules.\+py.
+
+
+
+Referenced by modules.\+Kvmemnn.\+forward(), and parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a5aa6b0e36ae580858341aea864a11caf}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a5aa6b0e36ae580858341aea864a11caf}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!in\+\_\+memory\+\_\+lt@{in\+\_\+memory\+\_\+lt}}
+\index{in\+\_\+memory\+\_\+lt@{in\+\_\+memory\+\_\+lt}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{in\+\_\+memory\+\_\+lt}{in\_memory\_lt}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+in\+\_\+memory\+\_\+lt}
+
+
+
+Definition at line 58 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9186fc7eb97fc4a18517928091ea7a3b}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9186fc7eb97fc4a18517928091ea7a3b}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!memory\+\_\+hop@{memory\+\_\+hop}}
+\index{memory\+\_\+hop@{memory\+\_\+hop}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{memory\+\_\+hop}{memory\_hop}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+memory\+\_\+hop}
+
+
+
+Definition at line 61 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), and agent.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9eecf9c267fd2c15ba376a1bac3a9cc5}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_a9eecf9c267fd2c15ba376a1bac3a9cc5}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!out\+\_\+memory\+\_\+lt@{out\+\_\+memory\+\_\+lt}}
+\index{out\+\_\+memory\+\_\+lt@{out\+\_\+memory\+\_\+lt}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{out\+\_\+memory\+\_\+lt}{out\_memory\_lt}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+out\+\_\+memory\+\_\+lt}
+
+
+
+Definition at line 59 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_aa6b47d1470856e76a31e266a049da848}\label{classparlai_1_1agents_1_1memnn_1_1modules_1_1MemNN_aa6b47d1470856e76a31e266a049da848}} 
+\index{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}!query\+\_\+lt@{query\+\_\+lt}}
+\index{query\+\_\+lt@{query\+\_\+lt}!parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN@{parlai\+::agents\+::memnn\+::modules\+::\+Mem\+NN}}
+\subsubsection{\texorpdfstring{query\+\_\+lt}{query\_lt}}
+{\footnotesize\ttfamily parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+query\+\_\+lt}
+
+
+
+Definition at line 57 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/memnn/\hyperlink{parlai_2agents_2memnn_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

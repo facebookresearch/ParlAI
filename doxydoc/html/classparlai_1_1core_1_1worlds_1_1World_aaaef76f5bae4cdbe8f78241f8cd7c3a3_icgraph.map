@@ -1,8 +1,6 @@
 <map id="parlai.core.worlds.World.episode_done" name="parlai.core.worlds.World.episode_done">
-<area shape="rect" id="node1" title=" " alt="" coords="475,127,721,153"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld.html#afcda29202fc3fd773522edbd3c40e4a4" title=" " alt="" coords="214,5,422,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#a9f2f4de7791e3b295359039e9d26a523" title=" " alt="" coords="240,86,396,127"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#ab37222b5a1e607c5f8f301de880241f2" title=" " alt="" coords="209,151,427,193"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html#a5eb7b6e957de17b89a2e24c3d6fef751" title=" " alt="" coords="223,217,413,273"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#aae71b8182e17a1579352a52b56614b64" title=" " alt="" coords="5,86,161,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#a9f2f4de7791e3b295359039e9d26a523" title="parlai.core.worlds.Multi\lWorld.parley_init" alt="" coords="331,5,487,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#ab37222b5a1e607c5f8f301de880241f2" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld.prep_save_data" alt="" coords="300,71,517,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html#a5eb7b6e957de17b89a2e24c3d6fef751" title="parlai.mturk.core.dev.worlds.\lStaticMTurkTaskWorld.prep\l_save_data" alt="" coords="313,137,504,193"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#aae71b8182e17a1579352a52b56614b64" title="parlai.core.worlds.Multi\lWorld.parley" alt="" coords="565,5,721,47"/>
 </map>

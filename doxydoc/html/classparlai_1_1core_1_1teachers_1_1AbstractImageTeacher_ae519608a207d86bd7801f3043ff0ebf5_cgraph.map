@@ -1,9 +1,6 @@
 <map id="parlai.core.teachers.AbstractImageTeacher.next_example" name="parlai.core.teachers.AbstractImageTeacher.next_example">
-<area shape="rect" id="node1" title=" " alt="" coords="5,111,196,152"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae2f395708462355b28888be7a434ebf4" title=" " alt="" coords="244,37,433,79"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#aa75286450850638274d7f076a81f7e90" title=" " alt="" coords="244,103,433,159"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a001ed7924490d0e291588c54d383384a" title=" " alt="" coords="247,184,431,225"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a3e1f85a8de230d8733272bd1e860cd92" title=" " alt="" coords="481,5,704,47"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a95e578f9650f77c1d397319b9050af51" title=" " alt="" coords="498,71,687,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ada83f1832b7c75f9daab8e4d196ba893" title=" " alt="" coords="752,5,941,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae2f395708462355b28888be7a434ebf4" title="parlai.core.teachers.Abstract\lImageTeacher.get" alt="" coords="244,39,433,80"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a3e1f85a8de230d8733272bd1e860cd92" title="parlai.core.teachers.Abstract\lImageTeacher.get_image_features" alt="" coords="481,5,704,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a95e578f9650f77c1d397319b9050af51" title="parlai.core.teachers.Abstract\lImageTeacher.text_key" alt="" coords="498,71,687,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ada83f1832b7c75f9daab8e4d196ba893" title="parlai.core.teachers.Abstract\lImageTeacher.image_id_key" alt="" coords="752,5,941,47"/>
 </map>

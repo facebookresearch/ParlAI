@@ -1,0 +1,102 @@
+\hypertarget{server_8py}{}\section{parlai/mturk/webapp/server.py File Reference}
+\label{server_8py}\index{parlai/mturk/webapp/server.\+py@{parlai/mturk/webapp/server.\+py}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classserver_1_1PacketWrap}{server.\+Packet\+Wrap}
+\item 
+class \hyperlink{classserver_1_1Application}{server.\+Application}
+\item 
+class \hyperlink{classserver_1_1BaseHandler}{server.\+Base\+Handler}
+\item 
+class \hyperlink{classserver_1_1AppHandler}{server.\+App\+Handler}
+\item 
+class \hyperlink{classserver_1_1RedirectHandler}{server.\+Redirect\+Handler}
+\item 
+class \hyperlink{classserver_1_1RunListHandler}{server.\+Run\+List\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskListHandler}{server.\+Task\+List\+Handler}
+\item 
+class \hyperlink{classserver_1_1RunHandler}{server.\+Run\+Handler}
+\item 
+class \hyperlink{classserver_1_1WorkerListHandler}{server.\+Worker\+List\+Handler}
+\item 
+class \hyperlink{classserver_1_1WorkerHandler}{server.\+Worker\+Handler}
+\item 
+class \hyperlink{classserver_1_1AssignmentHandler}{server.\+Assignment\+Handler}
+\item 
+class \hyperlink{classserver_1_1ApprovalHandler}{server.\+Approval\+Handler}
+\item 
+class \hyperlink{classserver_1_1ReverseHandler}{server.\+Reverse\+Handler}
+\item 
+class \hyperlink{classserver_1_1RejectionHandler}{server.\+Rejection\+Handler}
+\item 
+class \hyperlink{classserver_1_1BlockHandler}{server.\+Block\+Handler}
+\item 
+class \hyperlink{classserver_1_1BonusHandler}{server.\+Bonus\+Handler}
+\item 
+class \hyperlink{classserver_1_1ErrorHandler}{server.\+Error\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskSocketHandler}{server.\+Task\+Socket\+Handler}
+\item 
+class \hyperlink{classserver_1_1TaskRunHandler}{server.\+Task\+Run\+Handler}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceserver}{server}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceserver_a417f4d334a42b589c973649990ea52a8}{server.\+row\+\_\+to\+\_\+dict} (row)
+\item 
+def \hyperlink{namespaceserver_a2cde4e039120e25dbaa04e72af4683a3}{server.\+get\+\_\+rand\+\_\+id} ()
+\item 
+def \hyperlink{namespaceserver_a9ddf2e515b916af96b6e9e79894482ed}{server.\+force\+\_\+dir} (path)
+\item 
+def \hyperlink{namespaceserver_aa8c035a44061d07462939492cd21b0b8}{server.\+get\+\_\+path} (filename)
+\item 
+def \hyperlink{namespaceserver_a20f5670b2d0cc9c06be867b56798550d}{server.\+get\+\_\+mturk\+\_\+task\+\_\+module} (task\+\_\+name, target\+\_\+module)
+\item 
+def \hyperlink{namespaceserver_a19d9a32c8654358136f27ac2f710208d}{server.\+get\+\_\+run\+\_\+module} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceserver_a2467b58afe94f16856770faf20184b7b}{server.\+get\+\_\+config\+\_\+module} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceserver_adf70e1f9b13f82a360769a9ce6e3333c}{server.\+broadcast\+\_\+msg} (handler, msg, target\+\_\+subs=None)
+\item 
+def \hyperlink{namespaceserver_a66add92486d2392c31b001d57d1e6b3e}{server.\+send\+\_\+to\+\_\+sources} (handler, msg)
+\item 
+def \hyperlink{namespaceserver_a30d7f5eb7c84bbe9bc4c3100bd3be229}{server.\+merge\+\_\+assignments\+\_\+with\+\_\+pairings} (assignments, pairings, log\+\_\+id)
+\item 
+def \hyperlink{namespaceserver_a16739378649273e6ea462b460262a854}{server.\+start\+\_\+server} (port=D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT, hostname=D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME, db\+\_\+file=D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE, is\+\_\+sandbox=False)
+\item 
+def \hyperlink{namespaceserver_ac31b8422e56c4f0bf9a35c5cc2234a42}{server.\+crawl\+\_\+dir\+\_\+for\+\_\+tasks} (search\+\_\+dir)
+\item 
+def \hyperlink{namespaceserver_a802e832a8f540e02174b559972488adb}{server.\+rebuild\+\_\+source} ()
+\item 
+def \hyperlink{namespaceserver_a6d1c10ed8aa5d27e61ed9db6b4274261}{server.\+main} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceserver_abd4781cfa228e5322b9a3dad522e4b17}{server.\+parlai\+\_\+path} = parlai\+\_\+path\mbox{[}0\mbox{]}
+\item 
+\hyperlink{namespaceserver_a74bacf9786854a2e0d38291f46a4f0a5}{server.\+parlai\+\_\+int\+\_\+path} = parlai\+\_\+int\+\_\+path\mbox{[}0\mbox{]}
+\item 
+int \hyperlink{namespaceserver_a799b32fdd2321df0f6d93809c1aca14a}{server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+P\+O\+RT} = 8095
+\item 
+string \hyperlink{namespaceserver_a0ea5dfe17186557ed34035da16619aa6}{server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+H\+O\+S\+T\+N\+A\+ME} = \char`\"{}localhost\char`\"{}
+\item 
+string \hyperlink{namespaceserver_a4d969e2880bb5b39591808aa7992ba7f}{server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+D\+B\+\_\+\+F\+I\+LE} = \textquotesingle{}pmt\+\_\+data.\+db\textquotesingle{}
+\item 
+string \hyperlink{namespaceserver_a0353dec6c16b5c818b9250723ced65b9}{server.\+D\+E\+F\+A\+U\+L\+T\+\_\+\+S\+B\+\_\+\+D\+B\+\_\+\+F\+I\+LE} = \textquotesingle{}pmt\+\_\+sbdata.\+db\textquotesingle{}
+\item 
+bool \hyperlink{namespaceserver_a4da0f891642a0631c5baf8dec244ef4a}{server.\+I\+S\+\_\+\+D\+E\+B\+UG} = True
+\item 
+\hyperlink{namespaceserver_a3ed884cbe61302d8889e5f7495bb60e4}{server.\+here} = os.\+path.\+abspath(os.\+path.\+dirname(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\item 
+dictionary \hyperlink{namespaceserver_a847ccf0f415507e9b016ec8b9239669c}{server.\+tasks} = \{\}
+\item 
+dictionary \hyperlink{namespaceserver_a3c637d57121d469c84c0f13a6fe3722b}{server.\+tornado\+\_\+settings}
+\end{DoxyCompactItemize}

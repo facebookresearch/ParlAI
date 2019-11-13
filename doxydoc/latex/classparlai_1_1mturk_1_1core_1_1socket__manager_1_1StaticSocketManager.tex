@@ -1,0 +1,89 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager}{}\section{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager}\index{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager@{parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager}}
+
+
+Inheritance diagram for parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_ac141271b1df6f50a5bfee040d7904696}{channel\+\_\+thread} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_a4672bc8a07f4ae122338ceb3a59cd54a}{open\+\_\+channel} (self, worker\+\_\+id, assignment\+\_\+id)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Version of SocketManager that communicates consistently with the world,
+but isn't keeping track of the liveliness of the agents that connect as
+these are single person tasks. Submissions are handled via post rather
+than served over socket, so it doesn't make sense to.
+\end{DoxyVerb}
+ 
+
+Definition at line 754 of file socket\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_ac141271b1df6f50a5bfee040d7904696}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_ac141271b1df6f50a5bfee040d7904696}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager}!channel\+\_\+thread@{channel\+\_\+thread}}
+\index{channel\+\_\+thread@{channel\+\_\+thread}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{channel\+\_\+thread()}{channel\_thread()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+channel\+\_\+thread (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handler thread for monitoring all channels to send things to\end{DoxyVerb}
+ 
+
+Definition at line 761 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+safe\+\_\+put(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+blocking\+\_\+packets, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+is\+\_\+shutdown, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+should\+\_\+block(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+packet\+\_\+should\+\_\+block(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+run.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_ac141271b1df6f50a5bfee040d7904696_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_a4672bc8a07f4ae122338ceb3a59cd54a}\label{classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager_a4672bc8a07f4ae122338ceb3a59cd54a}} 
+\index{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager}!open\+\_\+channel@{open\+\_\+channel}}
+\index{open\+\_\+channel@{open\+\_\+channel}!parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager@{parlai\+::mturk\+::core\+::socket\+\_\+manager\+::\+Static\+Socket\+Manager}}
+\subsubsection{\texorpdfstring{open\+\_\+channel()}{open\_channel()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Static\+Socket\+Manager.\+open\+\_\+channel (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Opens a channel for a worker on a given assignment, doesn't re-open
+if the channel is already open.\end{DoxyVerb}
+ 
+
+Definition at line 808 of file socket\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+queues, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+run, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+worker\+\_\+assign\+\_\+ids.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/\hyperlink{socket__manager_8py}{socket\+\_\+manager.\+py}\end{DoxyCompactItemize}

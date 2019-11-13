@@ -1,0 +1,166 @@
+\hypertarget{classserver_1_1WorkerHandler}{}\section{server.\+Worker\+Handler Class Reference}
+\label{classserver_1_1WorkerHandler}\index{server.\+Worker\+Handler@{server.\+Worker\+Handler}}
+
+
+Inheritance diagram for server.\+Worker\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classserver_1_1WorkerHandler__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for server.\+Worker\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classserver_1_1WorkerHandler__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classserver_1_1WorkerHandler_ac9a15821c152007d643fc6e8250a1b74}{initialize} (self, app)
+\item 
+def \hyperlink{classserver_1_1WorkerHandler_a31d87eeea57f178ecf163cf53a18be93}{get} (self, worker\+\_\+target)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classserver_1_1WorkerHandler_a89716a189e35063d081d77b89b2b4013}{state}
+\item 
+\hyperlink{classserver_1_1WorkerHandler_ac0c164cd91b7ed4a21d81f1908c2d099}{subs}
+\item 
+\hyperlink{classserver_1_1WorkerHandler_a9c1392c52e51d6697273645bada48ac3}{sources}
+\item 
+\hyperlink{classserver_1_1WorkerHandler_a8e5f034200f695f81dfe03a1366ed391}{port}
+\item 
+\hyperlink{classserver_1_1WorkerHandler_a909f407723986b24288290f47350713b}{data\+\_\+handler}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 360 of file server.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_a31d87eeea57f178ecf163cf53a18be93}\label{classserver_1_1WorkerHandler_a31d87eeea57f178ecf163cf53a18be93}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!get@{get}}
+\index{get@{get}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def server.\+Worker\+Handler.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+target }\end{DoxyParamCaption})}
+
+
+
+Definition at line 368 of file server.\+py.
+
+
+
+References server.\+Application.\+data\+\_\+handler, server.\+App\+Handler.\+data\+\_\+handler, server.\+Run\+List\+Handler.\+data\+\_\+handler, server.\+Task\+List\+Handler.\+data\+\_\+handler, server.\+Run\+Handler.\+data\+\_\+handler, server.\+Worker\+List\+Handler.\+data\+\_\+handler, server.\+Worker\+Handler.\+data\+\_\+handler, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, server.\+merge\+\_\+assignments\+\_\+with\+\_\+pairings(), server.\+row\+\_\+to\+\_\+dict(), and parlai.\+utils.\+testing.\+Tee\+String\+I\+O.\+write().
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classserver_1_1WorkerHandler_a31d87eeea57f178ecf163cf53a18be93_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classserver_1_1WorkerHandler_a31d87eeea57f178ecf163cf53a18be93_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_ac9a15821c152007d643fc6e8250a1b74}\label{classserver_1_1WorkerHandler_ac9a15821c152007d643fc6e8250a1b74}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!initialize@{initialize}}
+\index{initialize@{initialize}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily def server.\+Worker\+Handler.\+initialize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{app }\end{DoxyParamCaption})}
+
+
+
+Definition at line 361 of file server.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_a909f407723986b24288290f47350713b}\label{classserver_1_1WorkerHandler_a909f407723986b24288290f47350713b}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!data\+\_\+handler@{data\+\_\+handler}}
+\index{data\+\_\+handler@{data\+\_\+handler}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{data\+\_\+handler}{data\_handler}}
+{\footnotesize\ttfamily server.\+Worker\+Handler.\+data\+\_\+handler}
+
+
+
+Definition at line 366 of file server.\+py.
+
+
+
+Referenced by server.\+Worker\+Handler.\+get(), and server.\+Assignment\+Handler.\+get().
+
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_a8e5f034200f695f81dfe03a1366ed391}\label{classserver_1_1WorkerHandler_a8e5f034200f695f81dfe03a1366ed391}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!port@{port}}
+\index{port@{port}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily server.\+Worker\+Handler.\+port}
+
+
+
+Definition at line 365 of file server.\+py.
+
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_a9c1392c52e51d6697273645bada48ac3}\label{classserver_1_1WorkerHandler_a9c1392c52e51d6697273645bada48ac3}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!sources@{sources}}
+\index{sources@{sources}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{sources}{sources}}
+{\footnotesize\ttfamily server.\+Worker\+Handler.\+sources}
+
+
+
+Definition at line 364 of file server.\+py.
+
+
+
+Referenced by server.\+Task\+Socket\+Handler.\+on\+\_\+close().
+
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_a89716a189e35063d081d77b89b2b4013}\label{classserver_1_1WorkerHandler_a89716a189e35063d081d77b89b2b4013}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!state@{state}}
+\index{state@{state}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily server.\+Worker\+Handler.\+state}
+
+
+
+Definition at line 362 of file server.\+py.
+
+
+
+Referenced by server.\+Assignment\+Handler.\+get(), and parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay.\+step().
+
+\mbox{\Hypertarget{classserver_1_1WorkerHandler_ac0c164cd91b7ed4a21d81f1908c2d099}\label{classserver_1_1WorkerHandler_ac0c164cd91b7ed4a21d81f1908c2d099}} 
+\index{server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}!subs@{subs}}
+\index{subs@{subs}!server\+::\+Worker\+Handler@{server\+::\+Worker\+Handler}}
+\subsubsection{\texorpdfstring{subs}{subs}}
+{\footnotesize\ttfamily server.\+Worker\+Handler.\+subs}
+
+
+
+Definition at line 363 of file server.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/webapp/\hyperlink{server_8py}{server.\+py}\end{DoxyCompactItemize}

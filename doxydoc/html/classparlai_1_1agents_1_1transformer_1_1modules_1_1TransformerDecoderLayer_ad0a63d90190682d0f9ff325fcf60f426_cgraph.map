@@ -1,4 +1,3 @@
 <map id="parlai.agents.transformer.modules.TransformerDecoderLayer.forward" name="parlai.agents.transformer.modules.TransformerDecoderLayer.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,228,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerDecoderLayer.html#ac20ce9888aacdabd2766583f28c9d2f5" title=" " alt="" coords="276,5,499,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerDecoderLayer.html#ac20ce9888aacdabd2766583f28c9d2f5" title="parlai.agents.transformer.modules.\lTransformerDecoderLayer._create\l_selfattn_mask" alt="" coords="276,5,499,61"/>
 </map>

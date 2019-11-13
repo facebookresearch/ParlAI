@@ -1,4 +1,4 @@
 <map id="generator.agents.EndToEndAgent.batchify" name="generator.agents.EndToEndAgent.batchify">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,189,47"/>
-<area shape="rect" id="node2" href="$classgenerator_1_1agents_1_1EndToEndAgent.html#ab417ce7fa367822b96e708964865d0ab" title=" " alt="" coords="237,5,421,47"/>
+<area shape="rect" id="node2" href="$classgenerator_1_1agents_1_1EndToEndAgent.html#ab417ce7fa367822b96e708964865d0ab" title="generator.agents.EndToEnd\lAgent._parse_knowledge" alt="" coords="237,5,421,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1.html#adb5a414ae439f14c54e8c760b91cc4c8" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v1.padded_tensor" alt="" coords="255,71,404,127"/>
 </map>

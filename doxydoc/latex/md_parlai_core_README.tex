@@ -1,0 +1,36 @@
+The core library contains the following files\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries agents.\+py}\+: this file contains a few basic agents which can be extended by your own model
+\begin{DoxyItemize}
+\item $\ast$$\ast$\+\_\+\+Agent\+\_\+$\ast$$\ast$\+: base class for all other agents, implements the act() method which receives an observation table and returns a table in response
+\item $\ast$$\ast$\+\_\+\+Teacher\+\_\+$\ast$$\ast$\+: child of Agent, also implements the report method for returning metrics. Tasks implement the Teacher class
+\item $\ast$$\ast$\+\_\+\+Multi\+Task\+Teacher\+\_\+$\ast$$\ast$\+: creates a set of teachers based on a \char`\"{}task string\char`\"{} passed to the Teacher, creating multiple teachers within it and alternating between them
+\item create\+\_\+task\+\_\+teacher\+: instantiate a teacher from a given task string (e.\+g. \textquotesingle{}babi\+:task\+:1\textquotesingle{} or \textquotesingle{}squad\textquotesingle{})
+\end{DoxyItemize}
+\item {\bfseries \hyperlink{build__data_8py}{build\+\_\+data.\+py}}\+: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
+\item {\bfseries \hyperlink{dict_8py}{dict.\+py}}\+: contains code for building general N\+L\+P-\/style dictionaries from observations
+\begin{DoxyItemize}
+\item Dictionary\+Agent\+: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
+\end{DoxyItemize}
+\item {\bfseries \hyperlink{metrics_8py}{metrics.\+py}}\+: computes evaluation metrics, e.\+g. ranking metrics, etc.
+\item {\bfseries \hyperlink{params_8py}{params.\+py}}\+: uses argparse to interpret command line arguments for Parl\+AI
+\item {\bfseries \hyperlink{teachers_8py}{teachers.\+py}}\+: contains teachers that deal with dialogue-\/based tasks, as well as data classes for storing data
+\begin{DoxyItemize}
+\item $\ast$$\ast$\+\_\+\+Fixed\+Dialog\+Teacher\+\_\+$\ast$$\ast$\+: base class for a teacher that utilizes fixed data
+\item $\ast$$\ast$\+\_\+\+Dialog\+Teacher\+\_\+$\ast$$\ast$\+: base class for a teacher doing dialogue with fixed chat logs
+\item $\ast$$\ast$\+\_\+\+Parl\+A\+I\+Dialog\+Teacher\+\_\+$\ast$$\ast$\+: a teacher that implements a simple standard text format for many tasks (non-\/visual tasks only)
+\end{DoxyItemize}
+\item {\bfseries thread\+\_\+utils.\+py}\+: utility classes/functions for use in Hogwild multithreading (multiprocessing)
+\begin{DoxyItemize}
+\item Shared\+Table\+: provides a lock-\/protected, shared-\/memory, dictionary-\/like interface for keeping track of metrics
+\end{DoxyItemize}
+\item {\bfseries worlds.\+py}\+: contains a set of basic worlds for tasks to take place inside
+\begin{DoxyItemize}
+\item $\ast$$\ast$\+\_\+\+World\+\_\+$\ast$$\ast$\+: base class for all other worlds, implements {\ttfamily parley}, {\ttfamily shutdown}, {\ttfamily \+\_\+\+\_\+enter\+\_\+\+\_\+}, and {\ttfamily \+\_\+\+\_\+exit\+\_\+\+\_\+}
+\item $\ast$$\ast$\+\_\+\+Dialog\+Partner\+World\+\_\+$\ast$$\ast$\+: default world for turn-\/based two-\/agent communication
+\item $\ast$$\ast$\+\_\+\+Multi\+Agent\+Dialog\+World\+\_\+$\ast$$\ast$\+: round-\/robin turn-\/based agent communication for two or more agents
+\item $\ast$$\ast$\+\_\+\+Hogwild\+World\+\_\+$\ast$$\ast$\+: default world for setting up a separate world for every thread when using multiple threads (processes) 
+\end{DoxyItemize}
+\end{DoxyItemize}

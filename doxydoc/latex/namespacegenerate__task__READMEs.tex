@@ -1,0 +1,156 @@
+\hypertarget{namespacegenerate__task__READMEs}{}\section{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es Namespace Reference}
+\label{namespacegenerate__task__READMEs}\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{namespacegenerate__task__READMEs_a8f4da8ba04584af52e0e9e2f209245c2}{tasks} = \{\}
+\item 
+\hyperlink{namespacegenerate__task__READMEs_aaa66ad764f8d9c0957d0101c4e6a0719}{id} = task\+\_\+dict.\+get(\textquotesingle{}id\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__READMEs_ae22075b887eb68b5bfef641a5deb2200}{display\+\_\+name} = task\+\_\+dict.\+get(\textquotesingle{}display\+\_\+name\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a54940b639db498c2c79b53d5f90a5050}{task\+\_\+detailed} = task\+\_\+dict.\+get(\textquotesingle{}\hyperlink{namespacegenerate__task__READMEs_a1cd96208f46b10658c7fda64585ee590}{task}\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a1cd96208f46b10658c7fda64585ee590}{task} = \hyperlink{namespacegenerate__task__READMEs_a54940b639db498c2c79b53d5f90a5050}{task\+\_\+detailed}\mbox{[}0 \+: task\+\_\+detailed.\+find(\textquotesingle{}\+:\textquotesingle{})\mbox{]}
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a8de3c21c7f37d509eed7cdc5ad012c9c}{tags} = task\+\_\+dict.\+get(\textquotesingle{}tags\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a1fa3d286642336f46142b43041428763}{description} = task\+\_\+dict.\+get(\textquotesingle{}description\textquotesingle{}, None)
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a5589709d7fbcff4d2f00557c341334c7}{notes} = task\+\_\+dict.\+get(\textquotesingle{}notes\textquotesingle{}, None)
+\item 
+string \hyperlink{namespacegenerate__task__READMEs_a5b88452ffb87b78c8c85ececebafc09f}{str} = \char`\"{}Task\+: \char`\"{} + display\+\_\+name + \textquotesingle{}\textbackslash{}n\textquotesingle{}
+\item 
+string \hyperlink{namespacegenerate__task__READMEs_a7b092bf14e09c4d0daeb749f1a42eecb}{tag\+\_\+list\+\_\+string} = \textquotesingle{}\textquotesingle{}
+\item 
+\hyperlink{namespacegenerate__task__READMEs_ae2eccad91867a8cb484ed9d5d92187e1}{path} = os.\+path.\+join(\char`\"{}../../parlai/\hyperlink{namespacegenerate__task__READMEs_a8f4da8ba04584af52e0e9e2f209245c2}{tasks}/\char`\"{}, t, \textquotesingle{}R\+E\+A\+D\+M\+E.\+md\textquotesingle{})
+\item 
+\hyperlink{namespacegenerate__task__READMEs_a5ee0f93b9dd3539a16bd60d77a2a87a4}{fout} = open(\hyperlink{namespacegenerate__task__READMEs_ae2eccad91867a8cb484ed9d5d92187e1}{path}, \textquotesingle{}w\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a1fa3d286642336f46142b43041428763}\label{namespacegenerate__task__READMEs_a1fa3d286642336f46142b43041428763}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!description@{description}}
+\index{description@{description}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{description}{description}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+description = task\+\_\+dict.\+get(\textquotesingle{}description\textquotesingle{}, None)}
+
+
+
+Definition at line 19 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_ae22075b887eb68b5bfef641a5deb2200}\label{namespacegenerate__task__READMEs_ae22075b887eb68b5bfef641a5deb2200}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!display\+\_\+name@{display\+\_\+name}}
+\index{display\+\_\+name@{display\+\_\+name}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{display\+\_\+name}{display\_name}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+display\+\_\+name = task\+\_\+dict.\+get(\textquotesingle{}display\+\_\+name\textquotesingle{}, None)}
+
+
+
+Definition at line 12 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a5ee0f93b9dd3539a16bd60d77a2a87a4}\label{namespacegenerate__task__READMEs_a5ee0f93b9dd3539a16bd60d77a2a87a4}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!fout@{fout}}
+\index{fout@{fout}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{fout}{fout}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+fout = open(\hyperlink{namespacegenerate__task__READMEs_ae2eccad91867a8cb484ed9d5d92187e1}{path}, \textquotesingle{}w\textquotesingle{})}
+
+
+
+Definition at line 43 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_aaa66ad764f8d9c0957d0101c4e6a0719}\label{namespacegenerate__task__READMEs_aaa66ad764f8d9c0957d0101c4e6a0719}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!id@{id}}
+\index{id@{id}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+id = task\+\_\+dict.\+get(\textquotesingle{}id\textquotesingle{}, None)}
+
+
+
+Definition at line 11 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a5589709d7fbcff4d2f00557c341334c7}\label{namespacegenerate__task__READMEs_a5589709d7fbcff4d2f00557c341334c7}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!notes@{notes}}
+\index{notes@{notes}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{notes}{notes}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+notes = task\+\_\+dict.\+get(\textquotesingle{}notes\textquotesingle{}, None)}
+
+
+
+Definition at line 20 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_ae2eccad91867a8cb484ed9d5d92187e1}\label{namespacegenerate__task__READMEs_ae2eccad91867a8cb484ed9d5d92187e1}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!path@{path}}
+\index{path@{path}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{path}{path}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+path = os.\+path.\+join(\char`\"{}../../parlai/\hyperlink{namespacegenerate__task__READMEs_a8f4da8ba04584af52e0e9e2f209245c2}{tasks}/\char`\"{}, t, \textquotesingle{}R\+E\+A\+D\+M\+E.\+md\textquotesingle{})}
+
+
+
+Definition at line 42 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a5b88452ffb87b78c8c85ececebafc09f}\label{namespacegenerate__task__READMEs_a5b88452ffb87b78c8c85ececebafc09f}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!str@{str}}
+\index{str@{str}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{str}{str}}
+{\footnotesize\ttfamily string generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str = \char`\"{}Task\+: \char`\"{} + display\+\_\+name + \textquotesingle{}\textbackslash{}n\textquotesingle{}}
+
+
+
+Definition at line 22 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+fvqa.\+agents.\+Split\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Predictor.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+utils.\+thread.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+core.\+metrics.\+Metrics.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+\_\+\+\_\+str\+\_\+\+\_\+(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+\_\+\+\_\+str\+\_\+\+\_\+(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+add\+\_\+node(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act(), parlai.\+tasks.\+light\+\_\+dialog.\+build.\+build(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+scripts.\+build\+\_\+candidates.\+build\+\_\+cands(), parlai.\+utils.\+distributed.\+check\+\_\+synced\+\_\+parameters(), parlai.\+core.\+params.\+class2str(), parlai.\+core.\+metrics.\+Metrics.\+clear(), parlai.\+utils.\+misc.\+clip\+\_\+text(), parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts(), parlai.\+tasks.\+ms\+\_\+marco.\+build.\+convert\+\_\+file(), parlai.\+tasks.\+cornell\+\_\+movie.\+build.\+create\+\_\+fb\+\_\+format(), parlai.\+tasks.\+opensubtitles.\+build\+\_\+2009.\+create\+\_\+fb\+\_\+format(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+test.\+test\+\_\+db\+\_\+interactions.\+Test\+Data\+Handler.\+create\+\_\+hit(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type(), parlai.\+mturk.\+core.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type(), parlai.\+scripts.\+detect\+\_\+offensive\+\_\+language.\+detect(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict\+\_\+neighbors(), kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), parlai.\+core.\+worlds.\+Multi\+World.\+display(), parlai.\+core.\+worlds.\+Batch\+World.\+display(), parlai.\+utils.\+misc.\+display\+\_\+messages(), parlai.\+core.\+build\+\_\+data.\+download\+\_\+multiprocess(), convai2.\+eval\+\_\+f1.\+eval\+\_\+f1(), convai2.\+eval\+\_\+hits.\+eval\+\_\+hits(), parlai.\+scripts.\+eval\+\_\+ppl.\+eval\+\_\+ppl(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), eval\+\_\+wordstat.\+eval\+\_\+wordstat(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+evaluate\+\_\+location(), parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+extract\+\_\+feats(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+agent\+\_\+location(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+get\+\_\+bert\+\_\+optimizer(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+get\+\_\+image(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+get\+\_\+image\+\_\+features(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), server.\+get\+\_\+rand\+\_\+id(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+text\+\_\+map(), interactive.\+My\+Handler.\+interactive\+\_\+running(), parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+label\+\_\+candidates(), controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word(), parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module(), parlai.\+utils.\+misc.\+Time\+Logger.\+log(), parlai.\+mturk.\+scripts.\+bonus\+\_\+workers.\+main(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+response(), parlai.\+scripts.\+build\+\_\+pytorch\+\_\+data.\+make\+\_\+serializable(), parlai.\+core.\+build\+\_\+data.\+mark\+\_\+done(), parlai.\+utils.\+misc.\+msg\+\_\+to\+\_\+str(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+observe(), server.\+Task\+Socket\+Handler.\+on\+\_\+message(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+parley(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+parley(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+parley(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+parley(), parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+known\+\_\+args(), parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+pay\+\_\+bonus(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+pay\+\_\+bonus(), parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+pay\+\_\+bonus(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+predict(), parlai.\+core.\+params.\+Parlai\+Parser.\+print\+\_\+args(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions(), parlai.\+scripts.\+data\+\_\+stats.\+report(), parlai.\+core.\+metrics.\+Metrics.\+report(), parlai.\+scripts.\+train\+\_\+model.\+run\+\_\+eval(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), repeat.\+Repeat\+Teacher.\+setup\+\_\+data(), parlai.\+utils.\+misc.\+str\+\_\+to\+\_\+msg(), test\+\_\+convai2.\+Test\+Convai2\+K\+V\+Memnn.\+test\+\_\+kvmemnn\+\_\+f1(), test\+\_\+convai2.\+Test\+Convai2\+K\+V\+Memnn.\+test\+\_\+kvmemnn\+\_\+hits1(), test\+\_\+convai2.\+Test\+Convai2\+Language\+Model.\+test\+\_\+languagemodel\+\_\+f1(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+test\+\_\+message\+\_\+queue(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+test\+\_\+message\+\_\+queue(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+test\+\_\+message\+\_\+queue(), test\+\_\+convai2.\+Test\+Convai2\+Seq2\+Seq.\+test\+\_\+seq2seq\+\_\+f1(), test\+\_\+convai2.\+Test\+Convai2\+Seq2\+Seq.\+test\+\_\+seq2seq\+\_\+hits1(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+fb(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+train\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+train\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+txt2vec(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec(), parlai.\+scripts.\+verify\+\_\+data.\+warn(), and parlai.\+tasks.\+light\+\_\+dialog.\+builder.\+write\+\_\+dialog().
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a7b092bf14e09c4d0daeb749f1a42eecb}\label{namespacegenerate__task__READMEs_a7b092bf14e09c4d0daeb749f1a42eecb}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!tag\+\_\+list\+\_\+string@{tag\+\_\+list\+\_\+string}}
+\index{tag\+\_\+list\+\_\+string@{tag\+\_\+list\+\_\+string}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{tag\+\_\+list\+\_\+string}{tag\_list\_string}}
+{\footnotesize\ttfamily string generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+tag\+\_\+list\+\_\+string = \textquotesingle{}\textquotesingle{}}
+
+
+
+Definition at line 27 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a8de3c21c7f37d509eed7cdc5ad012c9c}\label{namespacegenerate__task__READMEs_a8de3c21c7f37d509eed7cdc5ad012c9c}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!tags@{tags}}
+\index{tags@{tags}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{tags}{tags}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+tags = task\+\_\+dict.\+get(\textquotesingle{}tags\textquotesingle{}, None)}
+
+
+
+Definition at line 18 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a1cd96208f46b10658c7fda64585ee590}\label{namespacegenerate__task__READMEs_a1cd96208f46b10658c7fda64585ee590}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!task@{task}}
+\index{task@{task}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{task}{task}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+task = \hyperlink{namespacegenerate__task__READMEs_a54940b639db498c2c79b53d5f90a5050}{task\+\_\+detailed}\mbox{[}0 \+: task\+\_\+detailed.\+find(\textquotesingle{}\+:\textquotesingle{})\mbox{]}}
+
+
+
+Definition at line 15 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a54940b639db498c2c79b53d5f90a5050}\label{namespacegenerate__task__READMEs_a54940b639db498c2c79b53d5f90a5050}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!task\+\_\+detailed@{task\+\_\+detailed}}
+\index{task\+\_\+detailed@{task\+\_\+detailed}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{task\+\_\+detailed}{task\_detailed}}
+{\footnotesize\ttfamily generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+task\+\_\+detailed = task\+\_\+dict.\+get(\textquotesingle{}\hyperlink{namespacegenerate__task__READMEs_a1cd96208f46b10658c7fda64585ee590}{task}\textquotesingle{}, None)}
+
+
+
+Definition at line 13 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+
+\mbox{\Hypertarget{namespacegenerate__task__READMEs_a8f4da8ba04584af52e0e9e2f209245c2}\label{namespacegenerate__task__READMEs_a8f4da8ba04584af52e0e9e2f209245c2}} 
+\index{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}!tasks@{tasks}}
+\index{tasks@{tasks}!generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es@{generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es}}
+\subsubsection{\texorpdfstring{tasks}{tasks}}
+{\footnotesize\ttfamily dictionary generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+tasks = \{\}}
+
+
+
+Definition at line 8 of file generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+py.
+

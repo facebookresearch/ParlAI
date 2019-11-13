@@ -1,0 +1,322 @@
+\hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer}{}\section{controllable\+\_\+seq2seq.\+modules.\+Output\+Layer Class Reference}
+\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer}\index{controllable\+\_\+seq2seq.\+modules.\+Output\+Layer@{controllable\+\_\+seq2seq.\+modules.\+Output\+Layer}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+modules.\+Output\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1OutputLayer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+modules.\+Output\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1OutputLayer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4c3d42775e8cdc7be2418ebce2b7c520}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embeddingsize, hiddensize, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a42615c82dd8fd45b13ec9177aa57c262}{dropout}=0, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa93bd6c9df1b3da404ca37574170503e}{numsoftmax}=1, shared\+\_\+weight=None, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a59a23fd9f78ac2cd2832c23ee500d537}{padding\+\_\+idx}=-\/1)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a74905ac31b97b3943484c27caac2a467}{reset\+\_\+parameters} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aedb4579621c30dfed917004e89aa50cd}{forward} (self, input)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a42615c82dd8fd45b13ec9177aa57c262}{dropout}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a59a23fd9f78ac2cd2832c23ee500d537}{padding\+\_\+idx}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1fba2d6f654f837b247af2491bebcecd}{e2s}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a63d3fce378c2d83c183b2883c1766552}{weight}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a7e748364955b9813a0609abe8a90ab94}{bias}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa93bd6c9df1b3da404ca37574170503e}{numsoftmax}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a9535735473900bd1656f8ac48de4b758}{esz}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1129f33e8fbbffdd2898f2823c077f2b}{softmax}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4a9c4567d549b1904d49f3fb135ea11c}{prior}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa086ff276f0ba867bac3d0a6e1b9ab4c}{latent}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4d93a31b950773bde47175bdcab28955}{activation}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a813ea806c8100843f808f41329fa37af}{o2e}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Takes in final states and returns distribution over candidates.\end{DoxyVerb}
+ 
+
+Definition at line 654 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4c3d42775e8cdc7be2418ebce2b7c520}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4c3d42775e8cdc7be2418ebce2b7c520}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embeddingsize,  }\item[{}]{hiddensize,  }\item[{}]{dropout = {\ttfamily 0},  }\item[{}]{numsoftmax = {\ttfamily 1},  }\item[{}]{shared\+\_\+weight = {\ttfamily None},  }\item[{}]{padding\+\_\+idx = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize output layer.
+
+:param num_features:  number of candidates to rank
+:param hiddensize:    (last) dimension of the input vectors
+:param embeddingsize: (last) dimension of the candidate vectors
+:param numsoftmax:   (default 1) number of softmaxes to calculate.
+              see arxiv.org/abs/1711.03953 for more info.
+              increasing this slows down computation but can
+              add more expressivity to the embeddings.
+:param shared_weight: (num_features x esz) vector of weights to use as
+              the final linear layer's weight matrix. default
+              None starts with a new linear layer.
+:param padding_idx:   model should output a large negative number for
+              score at this index. if set to -1 (default),
+              this is disabled. if >= 0, subtracts one from
+              num_features and always outputs -1e20 at this
+              index. only used when shared_weight is not None.
+              setting this param helps protect gradient from
+              entering shared embedding matrices.
+\end{DoxyVerb}
+ 
+
+Definition at line 666 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aedb4579621c30dfed917004e89aa50cd}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aedb4579621c30dfed917004e89aa50cd}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!forward@{forward}}
+\index{forward@{forward}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute scores from inputs.
+
+:param input: (bsz x seq_len x num_directions * hiddensize) tensor of
+       states, e.g. the output states of an RNN
+
+:returns: (bsz x seqlen x num_cands) scores for each candidate
+\end{DoxyVerb}
+ 
+
+Definition at line 730 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+activation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+activation, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+activation, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+activation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+activation, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+activation, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+activation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dropout, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+dropout, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+e2s, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+e2s, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+e2s, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+esz, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+esz, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+esz, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+esz, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+latent, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+latent, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+latent, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+latent, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+numsoftmax, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+o2e, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+o2e, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+o2e, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+o2e, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+padding\+\_\+idx, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+padding\+\_\+idx, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+prior, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+prior, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+prior, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+prior, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+softmax, and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+softmax.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aedb4579621c30dfed917004e89aa50cd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a74905ac31b97b3943484c27caac2a467}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a74905ac31b97b3943484c27caac2a467}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!reset\+\_\+parameters@{reset\+\_\+parameters}}
+\index{reset\+\_\+parameters@{reset\+\_\+parameters}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{reset\+\_\+parameters()}{reset\_parameters()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+reset\+\_\+parameters (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset bias param.\end{DoxyVerb}
+ 
+
+Definition at line 724 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+bias, and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+bias.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4d93a31b950773bde47175bdcab28955}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4d93a31b950773bde47175bdcab28955}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!activation@{activation}}
+\index{activation@{activation}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{activation}{activation}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+activation}
+
+
+
+Definition at line 714 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a7e748364955b9813a0609abe8a90ab94}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a7e748364955b9813a0609abe8a90ab94}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!bias@{bias}}
+\index{bias@{bias}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{bias}{bias}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+bias}
+
+
+
+Definition at line 704 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+reset\+\_\+parameters().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a42615c82dd8fd45b13ec9177aa57c262}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a42615c82dd8fd45b13ec9177aa57c262}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!dropout@{dropout}}
+\index{dropout@{dropout}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+dropout}
+
+
+
+Definition at line 688 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1fba2d6f654f837b247af2491bebcecd}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1fba2d6f654f837b247af2491bebcecd}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!e2s@{e2s}}
+\index{e2s@{e2s}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{e2s}{e2s}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+e2s}
+
+
+
+Definition at line 695 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a9535735473900bd1656f8ac48de4b758}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a9535735473900bd1656f8ac48de4b758}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!esz@{esz}}
+\index{esz@{esz}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{esz}{esz}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+esz}
+
+
+
+Definition at line 710 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa086ff276f0ba867bac3d0a6e1b9ab4c}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa086ff276f0ba867bac3d0a6e1b9ab4c}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!latent@{latent}}
+\index{latent@{latent}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{latent}{latent}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+latent}
+
+
+
+Definition at line 713 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa93bd6c9df1b3da404ca37574170503e}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_aa93bd6c9df1b3da404ca37574170503e}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!numsoftmax@{numsoftmax}}
+\index{numsoftmax@{numsoftmax}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{numsoftmax}{numsoftmax}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+numsoftmax}
+
+
+
+Definition at line 708 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a813ea806c8100843f808f41329fa37af}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a813ea806c8100843f808f41329fa37af}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!o2e@{o2e}}
+\index{o2e@{o2e}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{o2e}{o2e}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+o2e}
+
+
+
+Definition at line 719 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a59a23fd9f78ac2cd2832c23ee500d537}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a59a23fd9f78ac2cd2832c23ee500d537}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!padding\+\_\+idx@{padding\+\_\+idx}}
+\index{padding\+\_\+idx@{padding\+\_\+idx}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{padding\+\_\+idx}{padding\_idx}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx}
+
+
+
+Definition at line 690 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), agent.\+modules.\+Embed.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4a9c4567d549b1904d49f3fb135ea11c}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a4a9c4567d549b1904d49f3fb135ea11c}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!prior@{prior}}
+\index{prior@{prior}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{prior}{prior}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+prior}
+
+
+
+Definition at line 712 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1129f33e8fbbffdd2898f2823c077f2b}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a1129f33e8fbbffdd2898f2823c077f2b}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!softmax@{softmax}}
+\index{softmax@{softmax}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+softmax}
+
+
+
+Definition at line 711 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), taskntalk.\+modules.\+Predict\+Net.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a63d3fce378c2d83c183b2883c1766552}\label{classcontrollable__seq2seq_1_1modules_1_1OutputLayer_a63d3fce378c2d83c183b2883c1766552}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}!weight@{weight}}
+\index{weight@{weight}!controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{weight}{weight}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+weight}
+
+
+
+Definition at line 703 of file modules.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{projects_2controllable__dialogue_2controllable__seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

@@ -1,11 +1,10 @@
 <map id="transresnet.modules.TransresnetModel.eval_batch_of_100" name="transresnet.modules.TransresnetModel.eval_batch_of_100">
-<area shape="rect" id="node1" title=" " alt="" coords="5,238,219,279"/>
-<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a2cce905d8e06109ae23cf4910386526d" title=" " alt="" coords="267,238,480,279"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a97a3e0824539ff7df230ccaee5cdda20" title=" " alt="" coords="595,5,758,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ad7b6363acdfb3d009cd9a3bcc6206faf" title=" " alt="" coords="565,85,788,141"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#af2e9c4d06f55802308dbfedfea69d0cd" title=" " alt="" coords="580,165,773,221"/>
-<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#ae907d1e9d3b1ce9708d40b905d4888f5" title=" " alt="" coords="558,245,795,272"/>
-<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#aef0ce4355736782b861b06407d5de115" title=" " alt="" coords="528,297,825,338"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a0be9f1e378a403284d8afac5648fbf4d" title=" " alt="" coords="580,363,773,419"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a91c163f3e2d39b380095b7083f673b6e" title=" " alt="" coords="597,443,756,485"/>
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a2cce905d8e06109ae23cf4910386526d" title="transresnet.modules.Transresnet\lModel.evaluate_one_batch" alt="" coords="267,246,480,287"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ad7b6363acdfb3d009cd9a3bcc6206faf" title="parlai.agents.language\l_model.language_model.Language\lModelAgent.zero_grad" alt="" coords="565,5,788,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a0be9f1e378a403284d8afac5648fbf4d" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.zero_grad" alt="" coords="580,85,773,141"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#af2e9c4d06f55802308dbfedfea69d0cd" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent.zero_grad" alt="" coords="580,165,773,221"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a91c163f3e2d39b380095b7083f673b6e" title="parlai.core.torch_agent.\lTorchAgent.zero_grad" alt="" coords="597,246,756,287"/>
+<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#aef0ce4355736782b861b06407d5de115" title="controllable_seq2seq.controllable\l_seq2seq.ControllableSeq2seqAgent.zero_grad" alt="" coords="528,311,825,353"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html#ae907d1e9d3b1ce9708d40b905d4888f5" title="kvmemnn.KvmemnnAgent.zero_grad" alt="" coords="558,377,795,404"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a97a3e0824539ff7df230ccaee5cdda20" title="parlai.agents.tfidf\l_retriever.tfidf_retriever.\lTfidfRetrieverAgent.eval" alt="" coords="595,428,758,484"/>
 </map>

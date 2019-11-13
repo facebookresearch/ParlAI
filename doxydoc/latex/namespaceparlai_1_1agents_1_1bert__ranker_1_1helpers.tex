@@ -1,0 +1,148 @@
+\hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+helpers Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers}\index{parlai.\+agents.\+bert\+\_\+ranker.\+helpers@{parlai.\+agents.\+bert\+\_\+ranker.\+helpers}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay}{Adam\+With\+Decay}
+\item 
+class \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1BertWrapper}{Bert\+Wrapper}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ac2e926c3aba3a62be09e2c37dffcaee2}{add\+\_\+common\+\_\+args} (parser)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ae5621255d8851c9628c116cb6db4c28c}{surround} (idx\+\_\+vector, start\+\_\+idx, end\+\_\+idx)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a7a144c1f6c9af7925e754b9b61c0e6fb}{get\+\_\+bert\+\_\+optimizer} (models, type\+\_\+optimization, learning\+\_\+rate, fp16=False)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a596044b27f3659ebe25c250dca2f15f7}{M\+O\+D\+E\+L\+\_\+\+P\+A\+TH} = \textquotesingle{}bert-\/base-\/uncased.\+tar.\+gz\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a88c47b25646aed4d2d140a159443bb7c}{V\+O\+C\+A\+B\+\_\+\+P\+A\+TH} = \textquotesingle{}bert-\/base-\/uncased-\/vocab.\+txt\textquotesingle{}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_aebda7127ff111489042a68edcd62830f}{patterns\+\_\+optimizer}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ac2e926c3aba3a62be09e2c37dffcaee2}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ac2e926c3aba3a62be09e2c37dffcaee2}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!add\+\_\+common\+\_\+args@{add\+\_\+common\+\_\+args}}
+\index{add\+\_\+common\+\_\+args@{add\+\_\+common\+\_\+args}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{add\+\_\+common\+\_\+args()}{add\_common\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+add\+\_\+common\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add command line arguments for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 32 of file helpers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), and parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ac2e926c3aba3a62be09e2c37dffcaee2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a7a144c1f6c9af7925e754b9b61c0e6fb}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a7a144c1f6c9af7925e754b9b61c0e6fb}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!get\+\_\+bert\+\_\+optimizer@{get\+\_\+bert\+\_\+optimizer}}
+\index{get\+\_\+bert\+\_\+optimizer@{get\+\_\+bert\+\_\+optimizer}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{get\+\_\+bert\+\_\+optimizer()}{get\_bert\_optimizer()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+get\+\_\+bert\+\_\+optimizer (\begin{DoxyParamCaption}\item[{}]{models,  }\item[{}]{type\+\_\+optimization,  }\item[{}]{learning\+\_\+rate,  }\item[{}]{fp16 = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Optimizes the network with AdamWithDecay.\end{DoxyVerb}
+ 
+
+Definition at line 195 of file helpers.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+fp16\+\_\+optimizer\+\_\+wrapper(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=323pt]{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a7a144c1f6c9af7925e754b9b61c0e6fb_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ae5621255d8851c9628c116cb6db4c28c}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ae5621255d8851c9628c116cb6db4c28c}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!surround@{surround}}
+\index{surround@{surround}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{surround()}{surround()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+surround (\begin{DoxyParamCaption}\item[{}]{idx\+\_\+vector,  }\item[{}]{start\+\_\+idx,  }\item[{}]{end\+\_\+idx }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Surround the vector by start_idx and end_idx.\end{DoxyVerb}
+ 
+
+Definition at line 173 of file helpers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+dictionary\+\_\+class(), and parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+encode\+\_\+candidates().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_ae5621255d8851c9628c116cb6db4c28c_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a596044b27f3659ebe25c250dca2f15f7}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a596044b27f3659ebe25c250dca2f15f7}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!M\+O\+D\+E\+L\+\_\+\+P\+A\+TH@{M\+O\+D\+E\+L\+\_\+\+P\+A\+TH}}
+\index{M\+O\+D\+E\+L\+\_\+\+P\+A\+TH@{M\+O\+D\+E\+L\+\_\+\+P\+A\+TH}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{M\+O\+D\+E\+L\+\_\+\+P\+A\+TH}{MODEL\_PATH}}
+{\footnotesize\ttfamily string parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+M\+O\+D\+E\+L\+\_\+\+P\+A\+TH = \textquotesingle{}bert-\/base-\/uncased.\+tar.\+gz\textquotesingle{}}
+
+
+
+Definition at line 28 of file helpers.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_aebda7127ff111489042a68edcd62830f}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_aebda7127ff111489042a68edcd62830f}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!patterns\+\_\+optimizer@{patterns\+\_\+optimizer}}
+\index{patterns\+\_\+optimizer@{patterns\+\_\+optimizer}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{patterns\+\_\+optimizer}{patterns\_optimizer}}
+{\footnotesize\ttfamily dictionary parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+patterns\+\_\+optimizer}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  \{
+2     \textcolor{stringliteral}{'additional\_layers'}: [\textcolor{stringliteral}{'additional'}],
+3     \textcolor{stringliteral}{'top\_layer'}: [\textcolor{stringliteral}{'additional'}, \textcolor{stringliteral}{'bert\_model.encoder.layer.11.'}],
+4     \textcolor{stringliteral}{'top4\_layers'}: [
+5         \textcolor{stringliteral}{'additional'},
+6         \textcolor{stringliteral}{'bert\_model.encoder.layer.11.'},
+7         \textcolor{stringliteral}{'encoder.layer.10.'},
+8         \textcolor{stringliteral}{'encoder.layer.9.'},
+9         \textcolor{stringliteral}{'encoder.layer.8'},
+10     ],
+11     \textcolor{stringliteral}{'all\_encoder\_layers'}: [\textcolor{stringliteral}{'additional'}, \textcolor{stringliteral}{'bert\_model.encoder.layer'}],
+12     \textcolor{stringliteral}{'all'}: [\textcolor{stringliteral}{'additional'}, \textcolor{stringliteral}{'bert\_model.encoder.layer'}, \textcolor{stringliteral}{'bert\_model.embeddings'}],
+13 \}
+\end{DoxyCode}
+
+
+Definition at line 180 of file helpers.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a88c47b25646aed4d2d140a159443bb7c}\label{namespaceparlai_1_1agents_1_1bert__ranker_1_1helpers_a88c47b25646aed4d2d140a159443bb7c}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}!V\+O\+C\+A\+B\+\_\+\+P\+A\+TH@{V\+O\+C\+A\+B\+\_\+\+P\+A\+TH}}
+\index{V\+O\+C\+A\+B\+\_\+\+P\+A\+TH@{V\+O\+C\+A\+B\+\_\+\+P\+A\+TH}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers}}
+\subsubsection{\texorpdfstring{V\+O\+C\+A\+B\+\_\+\+P\+A\+TH}{VOCAB\_PATH}}
+{\footnotesize\ttfamily string parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+V\+O\+C\+A\+B\+\_\+\+P\+A\+TH = \textquotesingle{}bert-\/base-\/uncased-\/vocab.\+txt\textquotesingle{}}
+
+
+
+Definition at line 29 of file helpers.\+py.
+

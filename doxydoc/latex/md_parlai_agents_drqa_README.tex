@@ -1,0 +1,19 @@
+This agent is a (partial) implementation of the Dr\+QA Document Reader from\+:
+
+{\itshape Danqi Chen, Adam Fisch, Jason Weston, Antoine Bordes. 2017. Reading Wikipedia to Answer Open-\/\+Domain Questions. In Association for Computational Linguistics (A\+CL).}
+
+Read more about Dr\+QA \href{https://arxiv.org/pdf/1704.00051.pdf}{\tt here}.
+
+\subsection*{Basic Examples}
+
+Train a Dr\+QA model on \href{https://rajpurkar.github.io/SQuAD-explorer/}{\tt S\+Qu\+AD}. 
+\begin{DoxyCode}
+python projects/drqa/train.py
+\end{DoxyCode}
+
+
+Evaluate a pre-\/trained model on S\+Qu\+AD. 
+\begin{DoxyCode}
+python projects/drqa/eval\_pretrained.py
+\end{DoxyCode}
+ 

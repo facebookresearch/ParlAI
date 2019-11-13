@@ -1,0 +1,532 @@
+\hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent}{}\section{interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent Class Reference}
+\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent}\index{interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent}}
+
+
+Inheritance diagram for interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a9824f3d5f8f195c1c7a713d5eea52041}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a223bbe2d336caaeec4a45acb1e9f6ecd}{opt}, shared=None)
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a89ffcbffdda3d20c82ef7ee65ab63461}{get\+\_\+chosen\+\_\+topic\+\_\+passages} (self, chosen\+\_\+topic)
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_acee2bc62b6109f28c06b82efb816eee3}{get\+\_\+passages} (self, \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52}{act})
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a07ae26123c56441549800bd116a86626}{retriever\+\_\+act} (self, history)
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ac8b7ac5b6dbc150f066995b25368d9bd}{observe} (self, \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_af1452e6e3b61f2a081548d7b939df7a7}{observation})
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae3894ebf2b1bb0695eba66d9b1a0f13f}{maintain\+\_\+retrieved\+\_\+texts} (self, history, \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_af1452e6e3b61f2a081548d7b939df7a7}{observation})
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a83b0e3a253116e5ce23a4a9388cbc672}{get\+\_\+unique\+\_\+reply} (self, \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52}{act})
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52}{act} (self)
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a36cc026e093f92e322b5a8c42cad556a}{share} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aee00317227b637f9ef4240369575f7ac}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a42475fe95013b529e6bfd98833930ccc}{debug}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aac72b58ddfd349c3c027d01406af4c29}{get\+\_\+unique}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae72aa4004665f34696ba66765d369fcd}{used\+\_\+messages}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a957e9be219bc0c8c2f04bf21deabf06f}{model\+\_\+path}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a223bbe2d336caaeec4a45acb1e9f6ecd}{opt}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_abcebf849a73120e94a1848def5d2b70a}{retriever}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad86a617fdd066c0259091c996b1055e3}{responder}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad5589ceb946df4efce9ef934973022e7}{sent\+\_\+tok}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ab8d026df807beebb656c537e6190e085}{wiki\+\_\+map}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a528df05d1b8f7b7900261c23f4369b11}{id}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a44261e1b26c611d0679ae8eea1b5dc60}{ret\+\_\+history}
+\item 
+\hyperlink{classinteractive__retrieval_1_1InteractiveRetrievalAgent_af1452e6e3b61f2a081548d7b939df7a7}{observation}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 23 of file interactive\+\_\+retrieval.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a9824f3d5f8f195c1c7a713d5eea52041}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a9824f3d5f8f195c1c7a713d5eea52041}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 24 of file interactive\+\_\+retrieval.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!act@{act}}
+\index{act@{act}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 273 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+debug, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+debug, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+debug, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+unique, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+unique\+\_\+reply(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+responder, and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+responder.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad350c65cd9fc9393902f61cd77f1cc52_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aee00317227b637f9ef4240369575f7ac}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aee00317227b637f9ef4240369575f7ac}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 53 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+\_\+set\+\_\+up\+\_\+sent\+\_\+tok(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+\_\+set\+\_\+up\+\_\+sent\+\_\+tok(), parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+model\+\_\+path, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+model\+\_\+path, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+responder, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+responder, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+retriever, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+retriever, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+sent\+\_\+tok, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+sent\+\_\+tok, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+sent\+\_\+tok, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+wiki\+\_\+map, and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+wiki\+\_\+map.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aee00317227b637f9ef4240369575f7ac_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a89ffcbffdda3d20c82ef7ee65ab63461}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a89ffcbffdda3d20c82ef7ee65ab63461}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!get\+\_\+chosen\+\_\+topic\+\_\+passages@{get\+\_\+chosen\+\_\+topic\+\_\+passages}}
+\index{get\+\_\+chosen\+\_\+topic\+\_\+passages@{get\+\_\+chosen\+\_\+topic\+\_\+passages}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+chosen\+\_\+topic\+\_\+passages()}{get\_chosen\_topic\_passages()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{chosen\+\_\+topic }\end{DoxyParamCaption})}
+
+
+
+Definition at line 133 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+sent\+\_\+tok, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+sent\+\_\+tok, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+sent\+\_\+tok, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+wiki\+\_\+map, and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+wiki\+\_\+map.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a89ffcbffdda3d20c82ef7ee65ab63461_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a89ffcbffdda3d20c82ef7ee65ab63461_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_acee2bc62b6109f28c06b82efb816eee3}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_acee2bc62b6109f28c06b82efb816eee3}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!get\+\_\+passages@{get\+\_\+passages}}
+\index{get\+\_\+passages@{get\+\_\+passages}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+passages()}{get\_passages()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Format passages retrieved by taking the first paragraph of the
+top `num_retrieved` passages.
+\end{DoxyVerb}
+ 
+
+Definition at line 157 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+sent\+\_\+tok, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+sent\+\_\+tok, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+sent\+\_\+tok, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_acee2bc62b6109f28c06b82efb816eee3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_acee2bc62b6109f28c06b82efb816eee3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a83b0e3a253116e5ce23a4a9388cbc672}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a83b0e3a253116e5ce23a4a9388cbc672}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!get\+\_\+unique\+\_\+reply@{get\+\_\+unique\+\_\+reply}}
+\index{get\+\_\+unique\+\_\+reply@{get\+\_\+unique\+\_\+reply}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+unique\+\_\+reply()}{get\_unique\_reply()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+unique\+\_\+reply (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+
+
+Definition at line 265 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+used\+\_\+messages.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a83b0e3a253116e5ce23a4a9388cbc672_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae3894ebf2b1bb0695eba66d9b1a0f13f}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae3894ebf2b1bb0695eba66d9b1a0f13f}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!maintain\+\_\+retrieved\+\_\+texts@{maintain\+\_\+retrieved\+\_\+texts}}
+\index{maintain\+\_\+retrieved\+\_\+texts@{maintain\+\_\+retrieved\+\_\+texts}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{maintain\+\_\+retrieved\+\_\+texts()}{maintain\_retrieved\_texts()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+maintain\+\_\+retrieved\+\_\+texts (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{history,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Maintain texts retrieved by the retriever to mimic the set-up
+from the data collection for the task.
+\end{DoxyVerb}
+ 
+
+Definition at line 232 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae3894ebf2b1bb0695eba66d9b1a0f13f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ac8b7ac5b6dbc150f066995b25368d9bd}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ac8b7ac5b6dbc150f066995b25368d9bd}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!observe@{observe}}
+\index{observe@{observe}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+
+
+Definition at line 223 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+debug, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+debug, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+debug, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+maintain\+\_\+retrieved\+\_\+texts(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+maintain\+\_\+retrieved\+\_\+texts(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+ret\+\_\+history, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+ret\+\_\+history, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+retriever\+\_\+act(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ac8b7ac5b6dbc150f066995b25368d9bd_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ac8b7ac5b6dbc150f066995b25368d9bd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a07ae26123c56441549800bd116a86626}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a07ae26123c56441549800bd116a86626}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!retriever\+\_\+act@{retriever\+\_\+act}}
+\index{retriever\+\_\+act@{retriever\+\_\+act}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{retriever\+\_\+act()}{retriever\_act()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{history }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Combines and formats texts retrieved by the TFIDF retriever for the
+chosen topic, the last thing the wizard said, and the last thing the
+apprentice said.
+\end{DoxyVerb}
+ 
+
+Definition at line 183 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+ret\+\_\+history, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+ret\+\_\+history, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+retriever, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+retriever, and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a07ae26123c56441549800bd116a86626_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a07ae26123c56441549800bd116a86626_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a36cc026e093f92e322b5a8c42cad556a}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a36cc026e093f92e322b5a8c42cad556a}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!share@{share}}
+\index{share@{share}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share internal saved_model between parent and child instances.\end{DoxyVerb}
+ 
+
+Definition at line 288 of file interactive\+\_\+retrieval.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+responder, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+responder, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+retriever, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+retriever, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+sent\+\_\+tok, interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+sent\+\_\+tok, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+sent\+\_\+tok, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+sent\+\_\+tok, interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+wiki\+\_\+map, and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+wiki\+\_\+map.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a42475fe95013b529e6bfd98833930ccc}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a42475fe95013b529e6bfd98833930ccc}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!debug@{debug}}
+\index{debug@{debug}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{debug}{debug}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+debug}
+
+
+
+Definition at line 26 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aac72b58ddfd349c3c027d01406af4c29}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_aac72b58ddfd349c3c027d01406af4c29}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!get\+\_\+unique@{get\+\_\+unique}}
+\index{get\+\_\+unique@{get\+\_\+unique}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+unique}{get\_unique}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+unique}
+
+
+
+Definition at line 27 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a528df05d1b8f7b7900261c23f4369b11}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a528df05d1b8f7b7900261c23f4369b11}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!id@{id}}
+\index{id@{id}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+id}
+
+
+
+Definition at line 49 of file interactive\+\_\+retrieval.\+py.
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a957e9be219bc0c8c2f04bf21deabf06f}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a957e9be219bc0c8c2f04bf21deabf06f}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!model\+\_\+path@{model\+\_\+path}}
+\index{model\+\_\+path@{model\+\_\+path}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{model\+\_\+path}{model\_path}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+model\+\_\+path}
+
+
+
+Definition at line 30 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_af1452e6e3b61f2a081548d7b939df7a7}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_af1452e6e3b61f2a081548d7b939df7a7}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!observation@{observation}}
+\index{observation@{observation}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observation}
+
+
+
+Definition at line 230 of file interactive\+\_\+retrieval.\+py.
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a223bbe2d336caaeec4a45acb1e9f6ecd}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a223bbe2d336caaeec4a45acb1e9f6ecd}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!opt@{opt}}
+\index{opt@{opt}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+opt}
+
+
+
+Definition at line 43 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), and mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad86a617fdd066c0259091c996b1055e3}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad86a617fdd066c0259091c996b1055e3}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!responder@{responder}}
+\index{responder@{responder}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{responder}{responder}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+responder}
+
+
+
+Definition at line 45 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+act(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a44261e1b26c611d0679ae8eea1b5dc60}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_a44261e1b26c611d0679ae8eea1b5dc60}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!ret\+\_\+history@{ret\+\_\+history}}
+\index{ret\+\_\+history@{ret\+\_\+history}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{ret\+\_\+history}{ret\_history}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+ret\+\_\+history}
+
+
+
+Definition at line 50 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+observe(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_abcebf849a73120e94a1848def5d2b70a}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_abcebf849a73120e94a1848def5d2b70a}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!retriever@{retriever}}
+\index{retriever@{retriever}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{retriever}{retriever}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever}
+
+
+
+Definition at line 44 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+retriever\+\_\+act(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad5589ceb946df4efce9ef934973022e7}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ad5589ceb946df4efce9ef934973022e7}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!sent\+\_\+tok@{sent\+\_\+tok}}
+\index{sent\+\_\+tok@{sent\+\_\+tok}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{sent\+\_\+tok}{sent\_tok}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+sent\+\_\+tok}
+
+
+
+Definition at line 46 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae72aa4004665f34696ba66765d369fcd}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ae72aa4004665f34696ba66765d369fcd}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!used\+\_\+messages@{used\+\_\+messages}}
+\index{used\+\_\+messages@{used\+\_\+messages}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{used\+\_\+messages}{used\_messages}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+used\+\_\+messages}
+
+
+
+Definition at line 29 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+unique\+\_\+reply().
+
+\mbox{\Hypertarget{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ab8d026df807beebb656c537e6190e085}\label{classinteractive__retrieval_1_1InteractiveRetrievalAgent_ab8d026df807beebb656c537e6190e085}} 
+\index{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}!wiki\+\_\+map@{wiki\+\_\+map}}
+\index{wiki\+\_\+map@{wiki\+\_\+map}!interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent@{interactive\+\_\+retrieval\+::\+Interactive\+Retrieval\+Agent}}
+\subsubsection{\texorpdfstring{wiki\+\_\+map}{wiki\_map}}
+{\footnotesize\ttfamily interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+wiki\+\_\+map}
+
+
+
+Definition at line 47 of file interactive\+\_\+retrieval.\+py.
+
+
+
+Referenced by interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/wizard\+\_\+of\+\_\+wikipedia/interactive\+\_\+retrieval/\hyperlink{interactive__retrieval_8py}{interactive\+\_\+retrieval.\+py}\end{DoxyCompactItemize}

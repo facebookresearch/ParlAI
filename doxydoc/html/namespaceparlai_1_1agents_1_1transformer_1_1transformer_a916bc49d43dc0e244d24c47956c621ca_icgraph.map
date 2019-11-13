@@ -1,0 +1,4 @@
+<map id="parlai.agents.transformer.transformer.add_common_cmdline_args" name="parlai.agents.transformer.transformer.add_common_cmdline_args">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6836668a4c2394d7217631fed533a7ac" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent.add_cmdline_args" alt="" coords="315,5,592,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a496b5ccc5efe17f290c37dc094ff74e8" title="parlai.agents.transformer.transformer.\lTransformerGeneratorAgent.add\l_cmdline_args" alt="" coords="333,71,573,127"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="parlai.core.torch_ranker_agent.TorchRankerAgent.load_candidates" name="parlai.core.torch_ranker_agent.TorchRankerAgent.load_candidates">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1misc.html#ad96b0c9ef6237d9ca051251089faf2c7" title="parlai.utils.misc.padded_3d" alt="" coords="288,5,468,32"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#ad002f52bc5bfbe8269983bbfc0988f98" title="parlai.agents.transformer.polyencoder.\lPolyencoderAgent.vectorize_fixed\l_candidates" alt="" coords="256,56,500,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a3062adbae2449553b4a6e12c5973116d" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.\lBiEncoderRankerAgent.vectorize\l_fixed_candidates" alt="" coords="271,137,485,207"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#af2e2d618f056bb68089c7252fa07d07b" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.vectorize\l_fixed_candidates" alt="" coords="263,232,493,288"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1biencoder_1_1BiencoderAgent.html#a45aee31b546b6cc40f1308397c226a69" title="parlai.agents.transformer.biencoder.\lBiencoderAgent._vectorize_text" alt="" coords="548,115,779,157"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#ac698ff0226e4d22f8498a9d9e667a34c" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.\l_vectorize_text" alt="" coords="585,181,742,251"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a024c4a0801e7dddf54bf3222dc77eaf6" title="parlai.core.torch_agent.\lTorchAgent._vectorize_text" alt="" coords="572,275,755,317"/>
+</map>

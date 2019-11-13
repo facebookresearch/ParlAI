@@ -1,4 +1,3 @@
 <map id="parlai.core.teachers.AbstractImageTeacher.get_data_path" name="parlai.core.teachers.AbstractImageTeacher.get_data_path">
-<area shape="rect" id="node1" title=" " alt="" coords="255,5,445,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a22a280003b7f4202e0d917040bd56eb8" title=" " alt="" coords="5,5,207,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a22a280003b7f4202e0d917040bd56eb8" title="parlai.core.teachers.Abstract\lImageTeacher.get_image_path" alt="" coords="244,5,445,47"/>
 </map>

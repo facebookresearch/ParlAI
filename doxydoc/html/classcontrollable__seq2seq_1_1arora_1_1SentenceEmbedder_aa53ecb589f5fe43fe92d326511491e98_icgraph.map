@@ -1,4 +1,3 @@
 <map id="controllable_seq2seq.arora.SentenceEmbedder.get_glove_embs" name="controllable_seq2seq.arora.SentenceEmbedder.get_glove_embs">
-<area shape="rect" id="node1" title=" " alt="" coords="264,5,499,47"/>
-<area shape="rect" id="node2" href="$classcontrollable__seq2seq_1_1arora_1_1SentenceEmbedder.html#a1a24583e505d601696f51d5e5a0a3182" title=" " alt="" coords="5,5,216,47"/>
+<area shape="rect" id="node2" href="$classcontrollable__seq2seq_1_1arora_1_1SentenceEmbedder.html#a1a24583e505d601696f51d5e5a0a3182" title="controllable_seq2seq.arora.\lSentenceEmbedder.embed_sent" alt="" coords="288,5,499,47"/>
 </map>

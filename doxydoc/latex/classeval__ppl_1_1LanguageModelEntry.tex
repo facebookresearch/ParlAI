@@ -1,0 +1,171 @@
+\hypertarget{classeval__ppl_1_1LanguageModelEntry}{}\section{eval\+\_\+ppl.\+Language\+Model\+Entry Class Reference}
+\label{classeval__ppl_1_1LanguageModelEntry}\index{eval\+\_\+ppl.\+Language\+Model\+Entry@{eval\+\_\+ppl.\+Language\+Model\+Entry}}
+
+
+Inheritance diagram for eval\+\_\+ppl.\+Language\+Model\+Entry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classeval__ppl_1_1LanguageModelEntry__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for eval\+\_\+ppl.\+Language\+Model\+Entry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classeval__ppl_1_1LanguageModelEntry__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classeval__ppl_1_1LanguageModelEntry_afaa98a6a3b889e3bb42476f922ad0c85}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent_af8d8114af65bf817afe01545033d51e6}{opt}, shared=None)
+\item 
+def \hyperlink{classeval__ppl_1_1LanguageModelEntry_afaf442afdbe4e60c6ba23ef124580833}{share} (self)
+\item 
+def \hyperlink{classeval__ppl_1_1LanguageModelEntry_af85d7318e4f445adc2a942190dc68081}{next\+\_\+word\+\_\+probability} (self, partial\+\_\+out)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classeval__ppl_1_1LanguageModelEntry_a74ba7064b448984bf665064434c65d14}{probs}
+\item 
+\hyperlink{classeval__ppl_1_1LanguageModelEntry_a87e4936bda2064ad015d67d19cad7b97}{last\+\_\+text}
+\item 
+\hyperlink{classeval__ppl_1_1LanguageModelEntry_aab90db3556ebfed7f31ab9d560e033f5}{reset\+\_\+next}
+\item 
+\hyperlink{classeval__ppl_1_1LanguageModelEntry_a0c227eedb0c0436603b7fb7e6e99fd95}{hidden}
+\item 
+\hyperlink{classeval__ppl_1_1LanguageModelEntry_adbd6dba726e3a9f80630a2d2ccc9dc68}{seen}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 15 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_afaa98a6a3b889e3bb42476f922ad0c85}\label{classeval__ppl_1_1LanguageModelEntry_afaa98a6a3b889e3bb42476f922ad0c85}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def eval\+\_\+ppl.\+Language\+Model\+Entry.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_af85d7318e4f445adc2a942190dc68081}\label{classeval__ppl_1_1LanguageModelEntry_af85d7318e4f445adc2a942190dc68081}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}}
+\index{next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{next\+\_\+word\+\_\+probability()}{next\_word\_probability()}}
+{\footnotesize\ttfamily def eval\+\_\+ppl.\+Language\+Model\+Entry.\+next\+\_\+word\+\_\+probability (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{partial\+\_\+out }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return probability distribution over next words given an partial
+true output. This is used to calculate the per-word perplexity.
+Arguments:
+partial_out -- previous "true" words
+Returns a dict, where each key is a word and each value is a probability
+score for that word. Unset keys assume a probability of zero.
+e.g.
+{'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
+\end{DoxyVerb}
+ 
+
+Definition at line 29 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, and parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation.
+
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_afaf442afdbe4e60c6ba23ef124580833}\label{classeval__ppl_1_1LanguageModelEntry_afaf442afdbe4e60c6ba23ef124580833}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!share@{share}}
+\index{share@{share}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def eval\+\_\+ppl.\+Language\+Model\+Entry.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 24 of file eval\+\_\+ppl.\+py.
+
+
+
+References eval\+\_\+ppl.\+Language\+Model\+Entry.\+probs.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_a0c227eedb0c0436603b7fb7e6e99fd95}\label{classeval__ppl_1_1LanguageModelEntry_a0c227eedb0c0436603b7fb7e6e99fd95}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!hidden@{hidden}}
+\index{hidden@{hidden}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{hidden}{hidden}}
+{\footnotesize\ttfamily eval\+\_\+ppl.\+Language\+Model\+Entry.\+hidden}
+
+
+
+Definition at line 46 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_a87e4936bda2064ad015d67d19cad7b97}\label{classeval__ppl_1_1LanguageModelEntry_a87e4936bda2064ad015d67d19cad7b97}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!last\+\_\+text@{last\+\_\+text}}
+\index{last\+\_\+text@{last\+\_\+text}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{last\+\_\+text}{last\_text}}
+{\footnotesize\ttfamily eval\+\_\+ppl.\+Language\+Model\+Entry.\+last\+\_\+text}
+
+
+
+Definition at line 41 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_a74ba7064b448984bf665064434c65d14}\label{classeval__ppl_1_1LanguageModelEntry_a74ba7064b448984bf665064434c65d14}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!probs@{probs}}
+\index{probs@{probs}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{probs}{probs}}
+{\footnotesize\ttfamily eval\+\_\+ppl.\+Language\+Model\+Entry.\+probs}
+
+
+
+Definition at line 19 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by eval\+\_\+ppl.\+Language\+Model\+Entry.\+share().
+
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_aab90db3556ebfed7f31ab9d560e033f5}\label{classeval__ppl_1_1LanguageModelEntry_aab90db3556ebfed7f31ab9d560e033f5}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!reset\+\_\+next@{reset\+\_\+next}}
+\index{reset\+\_\+next@{reset\+\_\+next}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{reset\+\_\+next}{reset\_next}}
+{\footnotesize\ttfamily eval\+\_\+ppl.\+Language\+Model\+Entry.\+reset\+\_\+next}
+
+
+
+Definition at line 42 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{classeval__ppl_1_1LanguageModelEntry_adbd6dba726e3a9f80630a2d2ccc9dc68}\label{classeval__ppl_1_1LanguageModelEntry_adbd6dba726e3a9f80630a2d2ccc9dc68}} 
+\index{eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}!seen@{seen}}
+\index{seen@{seen}!eval\+\_\+ppl\+::\+Language\+Model\+Entry@{eval\+\_\+ppl\+::\+Language\+Model\+Entry}}
+\subsubsection{\texorpdfstring{seen}{seen}}
+{\footnotesize\ttfamily eval\+\_\+ppl.\+Language\+Model\+Entry.\+seen}
+
+
+
+Definition at line 48 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/convai2/baselines/language\+\_\+model/\hyperlink{projects_2convai2_2baselines_2language__model_2eval__ppl_8py}{eval\+\_\+ppl.\+py}\end{DoxyCompactItemize}

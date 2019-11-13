@@ -1,12 +1,11 @@
 <map id="controllable_seq2seq.controllable_seq2seq.Beam.get_top_hyp" name="controllable_seq2seq.controllable_seq2seq.Beam.get_top_hyp">
-<area shape="rect" id="node1" title=" " alt="" coords="5,291,220,332"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a2df9b1e26c3f35c7149e4d7ae75c2f03" title=" " alt="" coords="293,5,457,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a5ae82a3d567dd8f282678d0ee40aa41e" title=" " alt="" coords="290,100,461,171"/>
-<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#ab4532f62a0428f5581680c9915b9c95e" title=" " alt="" coords="268,195,483,251"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a3c573eb1104002cb7da1483a6afb3cfe" title=" " alt="" coords="295,276,455,347"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332" title=" " alt="" coords="270,371,481,427"/>
-<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a3dbc095780f560a02bfafc0e0f646ebc" title=" " alt="" coords="276,452,475,523"/>
-<area shape="rect" id="node10" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a18e46c4a301f453b669101bd539e2d53" title=" " alt="" coords="268,547,483,603"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title=" " alt="" coords="537,331,726,387"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title=" " alt="" coords="531,411,732,467"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a2df9b1e26c3f35c7149e4d7ae75c2f03" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_hyp_from\l_finished" alt="" coords="293,5,457,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a5ae82a3d567dd8f282678d0ee40aa41e" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_hyp\l_from_finished" alt="" coords="290,100,461,171"/>
+<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#ab4532f62a0428f5581680c9915b9c95e" title="controllable_seq2seq.controllable\l_seq2seq.Beam.get_hyp_from\l_finished" alt="" coords="268,195,483,251"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a3c573eb1104002cb7da1483a6afb3cfe" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_rescored\l_finished" alt="" coords="295,276,455,347"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332" title="parlai.core.torch_generator\l_agent.TreeSearch.get_rescored\l_finished" alt="" coords="270,371,481,427"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a3dbc095780f560a02bfafc0e0f646ebc" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_rescored\l_finished" alt="" coords="276,452,475,523"/>
+<area shape="rect" id="node10" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a18e46c4a301f453b669101bd539e2d53" title="controllable_seq2seq.controllable\l_seq2seq.Beam.get_rescored\l_finished" alt="" coords="268,547,483,603"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title="parlai.core.torch_generator\l_agent.TreeSearch._get_pretty\l_hypothesis" alt="" coords="531,331,732,387"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title="parlai.core.torch_generator\l_agent.TreeSearch._get_hyp\l_from_finished" alt="" coords="537,411,726,467"/>
 </map>

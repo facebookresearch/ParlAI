@@ -1,0 +1,146 @@
+\hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder}{}\section{controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder Class Reference}
+\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder}\index{controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder@{controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a149fcfacc8604ffc6117e89aa14225c0}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ada06d98cdb802bdc1a1ee58d7a2500f8}{control\+\_\+settings})
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ae678ed4e13762eb620c918f32de0ca11}{forward} (self, control\+\_\+inputs)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ada06d98cdb802bdc1a1ee58d7a2500f8}{control\+\_\+settings}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a424e293e34037eef998d7281f82d7d6c}{idx2ctrl}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a332c9792eac6f124ed071429fb4403ff}{control\+\_\+embeddings}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Given CT control variable, gives the concatenated control embeddings vector.\end{DoxyVerb}
+ 
+
+Definition at line 381 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a149fcfacc8604ffc6117e89aa14225c0}\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a149fcfacc8604ffc6117e89aa14225c0}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{control\+\_\+settings }\end{DoxyParamCaption})}
+
+
+
+Definition at line 384 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ae678ed4e13762eb620c918f32de0ca11}\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ae678ed4e13762eb620c918f32de0ca11}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}!forward@{forward}}
+\index{forward@{forward}!controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{control\+\_\+inputs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.
+
+:param control_inputs: (bsz x num_control_vars) LongTensor of control
+    variable values (i.e. bucket ids)
+
+:returns: control_embs, (bsz x sum of control emb sizes) FloatTensor of
+    control variable embeddings, concatenated
+\end{DoxyVerb}
+ 
+
+Definition at line 401 of file modules.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+control\+\_\+embeddings, controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+control\+\_\+settings, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+control\+\_\+settings, and controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+idx2ctrl.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ae678ed4e13762eb620c918f32de0ca11_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a332c9792eac6f124ed071429fb4403ff}\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a332c9792eac6f124ed071429fb4403ff}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}!control\+\_\+embeddings@{control\+\_\+embeddings}}
+\index{control\+\_\+embeddings@{control\+\_\+embeddings}!controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}}
+\subsubsection{\texorpdfstring{control\+\_\+embeddings}{control\_embeddings}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+control\+\_\+embeddings}
+
+
+
+Definition at line 394 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ada06d98cdb802bdc1a1ee58d7a2500f8}\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_ada06d98cdb802bdc1a1ee58d7a2500f8}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}!control\+\_\+settings@{control\+\_\+settings}}
+\index{control\+\_\+settings@{control\+\_\+settings}!controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}}
+\subsubsection{\texorpdfstring{control\+\_\+settings}{control\_settings}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+control\+\_\+settings}
+
+
+
+Definition at line 386 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a424e293e34037eef998d7281f82d7d6c}\label{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder_a424e293e34037eef998d7281f82d7d6c}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}!idx2ctrl@{idx2ctrl}}
+\index{idx2ctrl@{idx2ctrl}!controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder@{controllable\+\_\+seq2seq\+::modules\+::\+Control\+Encoder}}
+\subsubsection{\texorpdfstring{idx2ctrl}{idx2ctrl}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+idx2ctrl}
+
+
+
+Definition at line 389 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{projects_2controllable__dialogue_2controllable__seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

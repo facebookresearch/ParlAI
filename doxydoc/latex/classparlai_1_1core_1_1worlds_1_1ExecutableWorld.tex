@@ -1,0 +1,187 @@
+\hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld}{}\section{parlai.\+core.\+worlds.\+Executable\+World Class Reference}
+\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld}\index{parlai.\+core.\+worlds.\+Executable\+World@{parlai.\+core.\+worlds.\+Executable\+World}}
+
+
+Inheritance diagram for parlai.\+core.\+worlds.\+Executable\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+worlds.\+Executable\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a53d0974884562c0c2f92727dcc5a811b}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld_a05fc93525cb86edef121980fc55f9926}{agents}=None, shared=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a8bb31ec1d93a94cb261f89ce0992159a}{init\+\_\+world} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a318fbf7c75178f62a6d46647f1a063fa}{execute} (self, agent, act)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a69934ec2181a8b22269e02ab8b3bb1f2}{observe} (self, agent, act)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a6555592d2b7c316e72febc1fccf43bdb}{parley} (self)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}World where messages from agents can be interpreted as _actions_.
+
+Actions result in changes in the environment (are executed). Hence a grounded
+simulation can be implemented rather than just dialogue between agents.
+\end{DoxyVerb}
+ 
+
+Definition at line 409 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a53d0974884562c0c2f92727dcc5a811b}\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a53d0974884562c0c2f92727dcc5a811b}} 
+\index{parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Executable\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 417 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Executable\+World.\+init\+\_\+world().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a53d0974884562c0c2f92727dcc5a811b_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a318fbf7c75178f62a6d46647f1a063fa}\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a318fbf7c75178f62a6d46647f1a063fa}} 
+\index{parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}!execute@{execute}}
+\index{execute@{execute}!parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}}
+\subsubsection{\texorpdfstring{execute()}{execute()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Executable\+World.\+execute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Execute an action.
+
+An executable world class should implement this function, otherwise
+the actions do not do anything (and it is the same as MultiAgentDialogWorld).
+\end{DoxyVerb}
+ 
+
+Definition at line 431 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute\+\_\+and\+\_\+write(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+parley(), and parlai.\+core.\+worlds.\+Executable\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a318fbf7c75178f62a6d46647f1a063fa_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a8bb31ec1d93a94cb261f89ce0992159a}\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a8bb31ec1d93a94cb261f89ce0992159a}} 
+\index{parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}!init\+\_\+world@{init\+\_\+world}}
+\index{init\+\_\+world@{init\+\_\+world}!parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}}
+\subsubsection{\texorpdfstring{init\+\_\+world()}{init\_world()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Executable\+World.\+init\+\_\+world (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the world.
+
+An executable world class should implement this function, otherwise
+the actions do not do anything (and it is the same as MultiAgentDialogWorld).
+\end{DoxyVerb}
+ 
+
+Definition at line 421 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Executable\+World.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a8bb31ec1d93a94cb261f89ce0992159a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a69934ec2181a8b22269e02ab8b3bb1f2}\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a69934ec2181a8b22269e02ab8b3bb1f2}} 
+\index{parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}!observe@{observe}}
+\index{observe@{observe}!parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Executable\+World.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Observe an action.
+
+An executable world class should implement this function, otherwise
+the observations for each agent are just the messages from other agents
+and not confitioned on the world at all (and it is thus the same as
+MultiAgentDialogWorld).
+\end{DoxyVerb}
+ 
+
+Definition at line 440 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+parley(), and parlai.\+core.\+worlds.\+Executable\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a69934ec2181a8b22269e02ab8b3bb1f2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a6555592d2b7c316e72febc1fccf43bdb}\label{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a6555592d2b7c316e72febc1fccf43bdb}} 
+\index{parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::core\+::worlds\+::\+Executable\+World@{parlai\+::core\+::worlds\+::\+Executable\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Executable\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}For each agent: act, execute and observe actions in world.\end{DoxyVerb}
+ 
+
+Definition at line 454 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+acts, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+acts, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+core.\+worlds.\+Executable\+World.\+execute(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observe(), parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+observe(), parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observe(), parlai.\+core.\+agents.\+Agent.\+observe(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observe(), parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observe(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observe(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observe(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+observe(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+observe(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observe(), parlai.\+core.\+worlds.\+Executable\+World.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observe(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+observe(), and parlai.\+core.\+worlds.\+World.\+update\+\_\+counters().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1ExecutableWorld_a6555592d2b7c316e72febc1fccf43bdb_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{parlai_2core_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,744 @@
+\hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld}{}\section{worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World Class Reference}
+\label{classworlds_1_1MTurkWizardOfWikipediaWorld}\index{worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+
+
+Inheritance diagram for worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classworlds_1_1MTurkWizardOfWikipediaWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classworlds_1_1MTurkWizardOfWikipediaWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a63cc7094d112761f6f4b1d0e9450da65}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ad379b376ca949228453ed6340b93da89}{agents}=None, shared=None, \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a285ebfae1d64f9535e4142dba8069fa2}{world\+\_\+tag}=\textquotesingle{}N\+O\+NE\textquotesingle{}, \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ade9f0ec53fc216d66d1028ddef048454}{ir\+\_\+agent}=None, task=\textquotesingle{}\textquotesingle{}, \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aabcfa4f0477fd7f62392cb2ba91e0ed8}{wiki\+\_\+title\+\_\+to\+\_\+passage}=None)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aae637ce288e90d30e654557b0b2165f8}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_adeec00a2a46a1bebabc3d57d16ec5ac9}{setup\+\_\+tokenizer} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt})
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a4b49dac2356a6684979f3b4c81057773}{sufficient\+\_\+overlap} (self, text, sent\+\_\+dict)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ad49b2e40a83896f6d0e67928f661d1c1}{parley} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a2b08068e94df414f15e2173d5e8bd20b}{format\+\_\+passages} (self, ir\+\_\+passages, max\+\_\+length=M\+A\+X\+\_\+\+D\+O\+C\+\_\+\+L\+EN)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a7c581b582a8770ebbf4b1c343dd68f3d}{retrieve\+\_\+passages} (self, act, num\+\_\+passages=None)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a99b976d4f864256d99873f88933632c0}{get\+\_\+instruction} (self, agent\+\_\+id=None, tag=\textquotesingle{}first\textquotesingle{})
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a79a5b5c3295a41bf9f35b6fa3e8b0d85}{check\+\_\+timeout} (self, act)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a45710d2207e28b30a51192a536a3b796}{reset\+\_\+random} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a9b43063f4245fde1798b4736cf236aa0}{save\+\_\+data} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_acf9de6ee85091278282c7c4028b75acf}{check\+\_\+wizard\+\_\+quality} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a909d3ecab331b3207e59f52a896cebe5}{review\+\_\+work} (self)
+\item 
+def \hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a1667562badf2e1b2d77004fd400dabb3}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a90311faeec02a535455cdb10f0d44c42}{turn\+\_\+idx}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_abe496f15c0cb0373742d9b9c8c4217ef}{min\+\_\+turns}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a91af484c279c33ecd9fe06b6607ca3cc}{max\+\_\+turns}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a7828d2c2042815cabe29567692445722}{num\+\_\+turns}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aa55109e65852986463c3071b9e9a20cd}{dialog}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c90da28eb6f1188fd43e926cf82fff9}{wizard\+\_\+eval}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ac55cb6fd6e8840148b7c70edfa015583}{task\+\_\+type}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a26a4b1f918aa527483fdaabac78d9743}{chat\+\_\+done}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a285ebfae1d64f9535e4142dba8069fa2}{world\+\_\+tag}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ad928e9dd4376aaf16afc88cea85efe80}{max\+\_\+resp\+\_\+time}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a8ad448b7a12e18a8248fc6d782fa0e21}{num\+\_\+passages\+\_\+to\+\_\+retrieve}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ad379b376ca949228453ed6340b93da89}{agents}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a99e35bc2ef6531ebe9c8eeba4db094cd}{persona\+\_\+generator}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a22db3e8a2dee11cdb898f10bd7aed0ea}{relevant\+\_\+topics}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ad9e31c4e57313210c092569178a68db5}{persona\+\_\+to\+\_\+topics}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ade9f0ec53fc216d66d1028ddef048454}{ir\+\_\+agent}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_ab574cbcf9160080d5afa5742916f4cb3}{chosen\+\_\+topic}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_afd69124efd4b557e347d4fffc880f4b6}{chosen\+\_\+topic\+\_\+passage}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aaba53793131eda8cc75a8fa35519152a}{O\+LD}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aabcfa4f0477fd7f62392cb2ba91e0ed8}{wiki\+\_\+title\+\_\+to\+\_\+passage}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a9dcd28ef1322d765f074004f05bf4e33}{sent\+\_\+tok}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aa1c9b5b2238a556d6b5ee36f3cd6186d}{convo\+\_\+finished}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_aba0d79caf9c4fc54053aec059a3e1398}{wizard\+\_\+worker}
+\item 
+\hyperlink{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c8a7347284827e281dccd9265c7eb3f}{good\+\_\+wiz}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}World where two agents have a dialogue; one chats freely, perhaps based
+    on a persona, while the other is the 'wizard', who bases his/her
+    responses on documents (i.e. sentences) retrieved based on what the
+    other agent says.
+\end{DoxyVerb}
+ 
+
+Definition at line 168 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a63cc7094d112761f6f4b1d0e9450da65}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a63cc7094d112761f6f4b1d0e9450da65}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None},  }\item[{}]{world\+\_\+tag = {\ttfamily \textquotesingle{}NONE\textquotesingle{}},  }\item[{}]{ir\+\_\+agent = {\ttfamily None},  }\item[{}]{task = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{wiki\+\_\+title\+\_\+to\+\_\+passage = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 184 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a79a5b5c3295a41bf9f35b6fa3e8b0d85}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a79a5b5c3295a41bf9f35b6fa3e8b0d85}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!check\+\_\+timeout@{check\+\_\+timeout}}
+\index{check\+\_\+timeout@{check\+\_\+timeout}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{check\+\_\+timeout()}{check\_timeout()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act }\end{DoxyParamCaption})}
+
+
+
+Definition at line 474 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+get\+\_\+instruction(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+get\+\_\+instruction(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+get\+\_\+instruction(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+get\+\_\+instruction(), and parlai.\+core.\+worlds.\+validate().
+
+
+
+Referenced by mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+consistency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+engagingness(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+fluency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+persona(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+repetitiveness(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topic\+Choose\+World.\+parley(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), mturk.\+worlds.\+Persona\+Assign\+World.\+parley(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a79a5b5c3295a41bf9f35b6fa3e8b0d85_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a79a5b5c3295a41bf9f35b6fa3e8b0d85_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_acf9de6ee85091278282c7c4028b75acf}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_acf9de6ee85091278282c7c4028b75acf}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!check\+\_\+wizard\+\_\+quality@{check\+\_\+wizard\+\_\+quality}}
+\index{check\+\_\+wizard\+\_\+quality@{check\+\_\+wizard\+\_\+quality}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{check\+\_\+wizard\+\_\+quality()}{check\_wizard\_quality()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determines whether to soft-block this turker or not
+   Only called if the conversation finishes
+   Returns True if the Wizard is good
+\end{DoxyVerb}
+ 
+
+Definition at line 552 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+dialog, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+dialog, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aae637ce288e90d30e654557b0b2165f8}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aae637ce288e90d30e654557b0b2165f8}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 222 of file worlds.\+py.
+
+
+
+References stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, and personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a2b08068e94df414f15e2173d5e8bd20b}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a2b08068e94df414f15e2173d5e8bd20b}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!format\+\_\+passages@{format\+\_\+passages}}
+\index{format\+\_\+passages@{format\+\_\+passages}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{format\+\_\+passages()}{format\_passages()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+format\+\_\+passages (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ir\+\_\+passages,  }\item[{}]{max\+\_\+length = {\ttfamily MAX\+\_\+DOC\+\_\+LEN} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 438 of file worlds.\+py.
+
+
+
+References worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a2b08068e94df414f15e2173d5e8bd20b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a2b08068e94df414f15e2173d5e8bd20b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a99b976d4f864256d99873f88933632c0}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a99b976d4f864256d99873f88933632c0}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!get\+\_\+instruction@{get\+\_\+instruction}}
+\index{get\+\_\+instruction@{get\+\_\+instruction}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+instruction()}{get\_instruction()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent\+\_\+id = {\ttfamily None},  }\item[{}]{tag = {\ttfamily \textquotesingle{}first\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 465 of file worlds.\+py.
+
+
+
+References worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+turns.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a99b976d4f864256d99873f88933632c0_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ad49b2e40a83896f6d0e67928f661d1c1}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ad49b2e40a83896f6d0e67928f661d1c1}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!parley@{parley}}
+\index{parley@{parley}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Each agent acts; when the APPRENTICE says something, the
+WIZARD is given retrieved documents based on the text response\end{DoxyVerb}
+ 
+
+Definition at line 250 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+acts, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+acts, parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+chat\+\_\+done, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+chat\+\_\+done, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+chat\+\_\+done, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+chat\+\_\+done, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+chat\+\_\+done, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+check\+\_\+timeout(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+check\+\_\+timeout(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+check\+\_\+timeout(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+check\+\_\+timeout(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+check\+\_\+timeout(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chosen\+\_\+topic, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chosen\+\_\+topic\+\_\+passage, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+dialog, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+dialog, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+format\+\_\+passages(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+get\+\_\+instruction(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+get\+\_\+instruction(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+get\+\_\+instruction(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+get\+\_\+instruction(), eval\+\_\+ppl.\+int, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+max\+\_\+resp\+\_\+time, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+max\+\_\+resp\+\_\+time, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+max\+\_\+resp\+\_\+time, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+max\+\_\+resp\+\_\+time, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+max\+\_\+resp\+\_\+time, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+max\+\_\+resp\+\_\+time, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+max\+\_\+resp\+\_\+time, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+max\+\_\+resp\+\_\+time, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+turns, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+O\+LD, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+O\+LD, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+relevant\+\_\+topics, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+retrieve\+\_\+passages(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+sent\+\_\+tok, parlai.\+core.\+dict.\+Dictionary\+Agent.\+sent\+\_\+tok, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap(), parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+turn\+\_\+idx, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+turn\+\_\+idx, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+turn\+\_\+idx, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+turn\+\_\+idx, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+turn\+\_\+idx, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+turn\+\_\+idx, parlai.\+core.\+worlds.\+validate(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+wiki\+\_\+title\+\_\+to\+\_\+passage, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+wizard\+\_\+eval, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+world\+\_\+tag, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+world\+\_\+tag, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+world\+\_\+tag, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+world\+\_\+tag, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+world\+\_\+tag, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+world\+\_\+tag, and personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+world\+\_\+tag.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_ad49b2e40a83896f6d0e67928f661d1c1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a45710d2207e28b30a51192a536a3b796}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a45710d2207e28b30a51192a536a3b796}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!reset\+\_\+random@{reset\+\_\+random}}
+\index{reset\+\_\+random@{reset\+\_\+random}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{reset\+\_\+random()}{reset\_random()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+reset\+\_\+random (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 487 of file worlds.\+py.
+
+
+
+References worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+max\+\_\+turns, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+min\+\_\+turns, and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+turns.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a7c581b582a8770ebbf4b1c343dd68f3d}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a7c581b582a8770ebbf4b1c343dd68f3d}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!retrieve\+\_\+passages@{retrieve\+\_\+passages}}
+\index{retrieve\+\_\+passages@{retrieve\+\_\+passages}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{retrieve\+\_\+passages()}{retrieve\_passages()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+retrieve\+\_\+passages (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{act,  }\item[{}]{num\+\_\+passages = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 457 of file worlds.\+py.
+
+
+
+References worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+ir\+\_\+agent, and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+passages\+\_\+to\+\_\+retrieve.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a7c581b582a8770ebbf4b1c343dd68f3d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a909d3ecab331b3207e59f52a896cebe5}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a909d3ecab331b3207e59f52a896cebe5}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!review\+\_\+work@{review\+\_\+work}}
+\index{review\+\_\+work@{review\+\_\+work}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{review\+\_\+work()}{review\_work()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+review\+\_\+work (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 580 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+dialog, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog, and parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+dialog.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a9b43063f4245fde1798b4736cf236aa0}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a9b43063f4245fde1798b4736cf236aa0}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!save\+\_\+data@{save\+\_\+data}}
+\index{save\+\_\+data@{save\+\_\+data}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{save\+\_\+data()}{save\_data()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 490 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+turns, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+persona\+\_\+generator, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+turn\+\_\+idx, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+turn\+\_\+idx, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+turn\+\_\+idx, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+turn\+\_\+idx, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+turn\+\_\+idx, parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+turn\+\_\+idx, and personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+turn\+\_\+idx.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_adeec00a2a46a1bebabc3d57d16ec5ac9}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_adeec00a2a46a1bebabc3d57d16ec5ac9}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!setup\+\_\+tokenizer@{setup\+\_\+tokenizer}}
+\index{setup\+\_\+tokenizer@{setup\+\_\+tokenizer}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{setup\+\_\+tokenizer()}{setup\_tokenizer()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+setup\+\_\+tokenizer (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 225 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a1667562badf2e1b2d77004fd400dabb3}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a1667562badf2e1b2d77004fd400dabb3}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shutdown all mturk agents in parallel, otherwise if one mturk agent
+is disconnected then it could prevent other mturk agents from
+completing.
+\end{DoxyVerb}
+ 
+
+Definition at line 598 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a4b49dac2356a6684979f3b4c81057773}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a4b49dac2356a6684979f3b4c81057773}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!sufficient\+\_\+overlap@{sufficient\+\_\+overlap}}
+\index{sufficient\+\_\+overlap@{sufficient\+\_\+overlap}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{sufficient\+\_\+overlap()}{sufficient\_overlap()}}
+{\footnotesize\ttfamily def worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{sent\+\_\+dict }\end{DoxyParamCaption})}
+
+
+
+Definition at line 238 of file worlds.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, and worlds.\+split\+\_\+tokenize().
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a4b49dac2356a6684979f3b4c81057773_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classworlds_1_1MTurkWizardOfWikipediaWorld_a4b49dac2356a6684979f3b4c81057773_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ad379b376ca949228453ed6340b93da89}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ad379b376ca949228453ed6340b93da89}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!agents@{agents}}
+\index{agents@{agents}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{agents}{agents}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+agents}
+
+
+
+Definition at line 197 of file worlds.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+timeout\+\_\+all\+\_\+agents().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a26a4b1f918aa527483fdaabac78d9743}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a26a4b1f918aa527483fdaabac78d9743}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!chat\+\_\+done@{chat\+\_\+done}}
+\index{chat\+\_\+done@{chat\+\_\+done}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{chat\+\_\+done}{chat\_done}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chat\+\_\+done}
+
+
+
+Definition at line 192 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+episode\+\_\+done(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+episode\+\_\+done(), worlds.\+Persona\+Chat\+Eval\+World.\+episode\+\_\+done(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+episode\+\_\+done(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ab574cbcf9160080d5afa5742916f4cb3}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ab574cbcf9160080d5afa5742916f4cb3}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!chosen\+\_\+topic@{chosen\+\_\+topic}}
+\index{chosen\+\_\+topic@{chosen\+\_\+topic}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{chosen\+\_\+topic}{chosen\_topic}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chosen\+\_\+topic}
+
+
+
+Definition at line 216 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), and mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_afd69124efd4b557e347d4fffc880f4b6}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_afd69124efd4b557e347d4fffc880f4b6}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!chosen\+\_\+topic\+\_\+passage@{chosen\+\_\+topic\+\_\+passage}}
+\index{chosen\+\_\+topic\+\_\+passage@{chosen\+\_\+topic\+\_\+passage}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{chosen\+\_\+topic\+\_\+passage}{chosen\_topic\_passage}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+chosen\+\_\+topic\+\_\+passage}
+
+
+
+Definition at line 217 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aa1c9b5b2238a556d6b5ee36f3cd6186d}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aa1c9b5b2238a556d6b5ee36f3cd6186d}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!convo\+\_\+finished@{convo\+\_\+finished}}
+\index{convo\+\_\+finished@{convo\+\_\+finished}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{convo\+\_\+finished}{convo\_finished}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+convo\+\_\+finished}
+
+
+
+Definition at line 509 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aa55109e65852986463c3071b9e9a20cd}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aa55109e65852986463c3071b9e9a20cd}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!dialog@{dialog}}
+\index{dialog@{dialog}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{dialog}{dialog}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+dialog}
+
+
+
+Definition at line 189 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+review\+\_\+work(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data(), and mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c8a7347284827e281dccd9265c7eb3f}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c8a7347284827e281dccd9265c7eb3f}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!good\+\_\+wiz@{good\+\_\+wiz}}
+\index{good\+\_\+wiz@{good\+\_\+wiz}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{good\+\_\+wiz}{good\_wiz}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+good\+\_\+wiz}
+
+
+
+Definition at line 530 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ade9f0ec53fc216d66d1028ddef048454}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ade9f0ec53fc216d66d1028ddef048454}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!ir\+\_\+agent@{ir\+\_\+agent}}
+\index{ir\+\_\+agent@{ir\+\_\+agent}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{ir\+\_\+agent}{ir\_agent}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+ir\+\_\+agent}
+
+
+
+Definition at line 214 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+retrieve\+\_\+passages().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ad928e9dd4376aaf16afc88cea85efe80}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ad928e9dd4376aaf16afc88cea85efe80}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!max\+\_\+resp\+\_\+time@{max\+\_\+resp\+\_\+time}}
+\index{max\+\_\+resp\+\_\+time@{max\+\_\+resp\+\_\+time}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+resp\+\_\+time}{max\_resp\_time}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+max\+\_\+resp\+\_\+time}
+
+
+
+Definition at line 194 of file worlds.\+py.
+
+
+
+Referenced by mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+consistency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+engagingness(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+fluency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+persona(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+repetitiveness(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+human\+\_\+agent\+\_\+act(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+get\+\_\+human\+\_\+agent\+\_\+act(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a91af484c279c33ecd9fe06b6607ca3cc}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a91af484c279c33ecd9fe06b6607ca3cc}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!max\+\_\+turns@{max\+\_\+turns}}
+\index{max\+\_\+turns@{max\+\_\+turns}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{max\+\_\+turns}{max\_turns}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+max\+\_\+turns}
+
+
+
+Definition at line 187 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+reset\+\_\+random().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_abe496f15c0cb0373742d9b9c8c4217ef}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_abe496f15c0cb0373742d9b9c8c4217ef}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!min\+\_\+turns@{min\+\_\+turns}}
+\index{min\+\_\+turns@{min\+\_\+turns}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{min\+\_\+turns}{min\_turns}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+min\+\_\+turns}
+
+
+
+Definition at line 186 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+reset\+\_\+random().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a8ad448b7a12e18a8248fc6d782fa0e21}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a8ad448b7a12e18a8248fc6d782fa0e21}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!num\+\_\+passages\+\_\+to\+\_\+retrieve@{num\+\_\+passages\+\_\+to\+\_\+retrieve}}
+\index{num\+\_\+passages\+\_\+to\+\_\+retrieve@{num\+\_\+passages\+\_\+to\+\_\+retrieve}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+passages\+\_\+to\+\_\+retrieve}{num\_passages\_to\_retrieve}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+passages\+\_\+to\+\_\+retrieve}
+
+
+
+Definition at line 195 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+retrieve\+\_\+passages().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a7828d2c2042815cabe29567692445722}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a7828d2c2042815cabe29567692445722}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!num\+\_\+turns@{num\+\_\+turns}}
+\index{num\+\_\+turns@{num\+\_\+turns}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+turns}{num\_turns}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+num\+\_\+turns}
+
+
+
+Definition at line 188 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+get\+\_\+instruction(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+reset\+\_\+random(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aaba53793131eda8cc75a8fa35519152a}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aaba53793131eda8cc75a8fa35519152a}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!O\+LD@{O\+LD}}
+\index{O\+LD@{O\+LD}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{O\+LD}{OLD}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+O\+LD}
+
+
+
+Definition at line 218 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a99e35bc2ef6531ebe9c8eeba4db094cd}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a99e35bc2ef6531ebe9c8eeba4db094cd}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!persona\+\_\+generator@{persona\+\_\+generator}}
+\index{persona\+\_\+generator@{persona\+\_\+generator}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{persona\+\_\+generator}{persona\_generator}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+persona\+\_\+generator}
+
+
+
+Definition at line 199 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ad9e31c4e57313210c092569178a68db5}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ad9e31c4e57313210c092569178a68db5}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!persona\+\_\+to\+\_\+topics@{persona\+\_\+to\+\_\+topics}}
+\index{persona\+\_\+to\+\_\+topics@{persona\+\_\+to\+\_\+topics}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{persona\+\_\+to\+\_\+topics}{persona\_to\_topics}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+persona\+\_\+to\+\_\+topics}
+
+
+
+Definition at line 202 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a22db3e8a2dee11cdb898f10bd7aed0ea}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a22db3e8a2dee11cdb898f10bd7aed0ea}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!relevant\+\_\+topics@{relevant\+\_\+topics}}
+\index{relevant\+\_\+topics@{relevant\+\_\+topics}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{relevant\+\_\+topics}{relevant\_topics}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+relevant\+\_\+topics}
+
+
+
+Definition at line 200 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a9dcd28ef1322d765f074004f05bf4e33}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a9dcd28ef1322d765f074004f05bf4e33}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!sent\+\_\+tok@{sent\+\_\+tok}}
+\index{sent\+\_\+tok@{sent\+\_\+tok}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{sent\+\_\+tok}{sent\_tok}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sent\+\_\+tok}
+
+
+
+Definition at line 233 of file worlds.\+py.
+
+
+
+Referenced by interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+format\+\_\+passages(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Sentence\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Index\+Edit\+Teacher.\+get(), parlai.\+tasks.\+squad.\+agents.\+Fulldocsentence\+Teacher.\+get(), parlai.\+tasks.\+squad2.\+agents.\+Sentence\+Labels\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+chosen\+\_\+topic\+\_\+passages(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+get\+\_\+passages(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+get\+\_\+passages(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+share(), and interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+share().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_ac55cb6fd6e8840148b7c70edfa015583}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_ac55cb6fd6e8840148b7c70edfa015583}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!task\+\_\+type@{task\+\_\+type}}
+\index{task\+\_\+type@{task\+\_\+type}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{task\+\_\+type}{task\_type}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+task\+\_\+type}
+
+
+
+Definition at line 191 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a90311faeec02a535455cdb10f0d44c42}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a90311faeec02a535455cdb10f0d44c42}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!turn\+\_\+idx@{turn\+\_\+idx}}
+\index{turn\+\_\+idx@{turn\+\_\+idx}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{turn\+\_\+idx}{turn\_idx}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+turn\+\_\+idx}
+
+
+
+Definition at line 185 of file worlds.\+py.
+
+
+
+Referenced by mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+get\+\_\+instruction(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+get\+\_\+instruction(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), and worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aabcfa4f0477fd7f62392cb2ba91e0ed8}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aabcfa4f0477fd7f62392cb2ba91e0ed8}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!wiki\+\_\+title\+\_\+to\+\_\+passage@{wiki\+\_\+title\+\_\+to\+\_\+passage}}
+\index{wiki\+\_\+title\+\_\+to\+\_\+passage@{wiki\+\_\+title\+\_\+to\+\_\+passage}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{wiki\+\_\+title\+\_\+to\+\_\+passage}{wiki\_title\_to\_passage}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+wiki\+\_\+title\+\_\+to\+\_\+passage}
+
+
+
+Definition at line 220 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c90da28eb6f1188fd43e926cf82fff9}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a2c90da28eb6f1188fd43e926cf82fff9}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!wizard\+\_\+eval@{wizard\+\_\+eval}}
+\index{wizard\+\_\+eval@{wizard\+\_\+eval}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{wizard\+\_\+eval}{wizard\_eval}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+wizard\+\_\+eval}
+
+
+
+Definition at line 190 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley().
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_aba0d79caf9c4fc54053aec059a3e1398}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_aba0d79caf9c4fc54053aec059a3e1398}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!wizard\+\_\+worker@{wizard\+\_\+worker}}
+\index{wizard\+\_\+worker@{wizard\+\_\+worker}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{wizard\+\_\+worker}{wizard\_worker}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+wizard\+\_\+worker}
+
+
+
+Definition at line 510 of file worlds.\+py.
+
+\mbox{\Hypertarget{classworlds_1_1MTurkWizardOfWikipediaWorld_a285ebfae1d64f9535e4142dba8069fa2}\label{classworlds_1_1MTurkWizardOfWikipediaWorld_a285ebfae1d64f9535e4142dba8069fa2}} 
+\index{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}!world\+\_\+tag@{world\+\_\+tag}}
+\index{world\+\_\+tag@{world\+\_\+tag}!worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World@{worlds\+::\+M\+Turk\+Wizard\+Of\+Wikipedia\+World}}
+\subsubsection{\texorpdfstring{world\+\_\+tag}{world\_tag}}
+{\footnotesize\ttfamily worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+world\+\_\+tag}
+
+
+
+Definition at line 193 of file worlds.\+py.
+
+
+
+Referenced by worlds.\+Persona\+Chat\+Eval\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), and worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/wizard\+\_\+of\+\_\+wikipedia/\hyperlink{parlai_2mturk_2tasks_2wizard__of__wikipedia_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

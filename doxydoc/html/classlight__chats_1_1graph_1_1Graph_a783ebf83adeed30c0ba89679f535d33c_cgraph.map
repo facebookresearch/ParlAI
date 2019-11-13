@@ -1,6 +1,6 @@
 <map id="light_chats.graph.Graph.send_action" name="light_chats.graph.Graph.send_action">
-<area shape="rect" id="node1" title=" " alt="" coords="5,35,197,76"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="255,5,459,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a966d3719771ddc58c520f0821c18d959" title=" " alt="" coords="245,71,469,98"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a33bf40491bd3aa15e65987377b3d580f" title=" " alt="" coords="517,71,727,98"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title="light_chats.graph.Graph.extract\l_classed_from_dict" alt="" coords="255,5,459,47"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a966d3719771ddc58c520f0821c18d959" title="light_chats.graph.Graph.send_msg" alt="" coords="245,71,469,98"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="517,13,732,39"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a33bf40491bd3aa15e65987377b3d580f" title="light_chats.graph.Graph.location" alt="" coords="520,71,729,98"/>
 </map>

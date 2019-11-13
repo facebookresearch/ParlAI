@@ -1,0 +1,12 @@
+<map id="make_control_dataset.make_dataset" name="make_control_dataset.make_dataset">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="265,78,461,105"/>
+<area shape="rect" id="node5" href="$namespacecontrollable__seq2seq_1_1controls.html#a7c6540f026d763dbf534f1a3e60500a3" title="controllable_seq2seq.controls.initialize\l_control_information" alt="" coords="240,169,485,211"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1utils_1_1misc.html#ae5db473b41d3b49814e2566e866282b6" title="parlai.utils.misc.msg\l_to_str" alt="" coords="291,235,434,276"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="563,5,709,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="554,71,718,112"/>
+<area shape="rect" id="node6" href="$namespacecontrollable__seq2seq_1_1arora.html#a576d45e4f9888847ff61af471423f47d" title="controllable_seq2seq.arora.load\l_arora" alt="" coords="533,136,739,177"/>
+<area shape="rect" id="node7" href="$namespacecontrollable__seq2seq_1_1nidf.html#abeea1f9ad5a454af61b4744b6fcc553f" title="controllable_seq2seq.nidf.load\l_word2nidf" alt="" coords="537,201,735,243"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="561,267,711,323"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="787,282,991,309"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="1039,282,1220,309"/>
+</map>

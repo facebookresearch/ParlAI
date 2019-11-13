@@ -1,0 +1,16 @@
+The set of tasks in Parl\+AI.
+
+Each directory contains a task or a set of related tasks.
+
+The list of tasks can also be found in this file\+: \href{https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py}{\tt https\+://github.\+com/facebookresearch/\+Parl\+A\+I/blob/master/parlai/tasks/task\+\_\+list.\+py}
+
+or in the documentation, here\+: \href{http://www.parl.ai/static/docs/tasks.html}{\tt http\+://www.\+parl.\+ai/static/docs/tasks.\+html}
+
+Each task folder contains\+:
+\begin{DoxyItemize}
+\item {\bfseries build.\+py} file for setting up data for the task (downloading data, etc, only done the first time requested, and not downloaded if the task is not used).
+\item {\bfseries agents.\+py} file which contains default or special teacher classes used by core.\+create\+\_\+task to instantiate these classes from command-\/line arguments (if desired).
+\item {\bfseries worlds.\+py} file can optionally be added for tasks that need to define new/complex environments.
+\end{DoxyItemize}
+
+To add your own task, see the \href{http://www.parl.ai/static/docs/tutorial_task.html}{\tt tutorial}. 

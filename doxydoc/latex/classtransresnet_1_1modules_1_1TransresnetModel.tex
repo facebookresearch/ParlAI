@@ -1,0 +1,776 @@
+\hypertarget{classtransresnet_1_1modules_1_1TransresnetModel}{}\section{transresnet.\+modules.\+Transresnet\+Model Class Reference}
+\label{classtransresnet_1_1modules_1_1TransresnetModel}\index{transresnet.\+modules.\+Transresnet\+Model@{transresnet.\+modules.\+Transresnet\+Model}}
+
+
+Inheritance diagram for transresnet.\+modules.\+Transresnet\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classtransresnet_1_1modules_1_1TransresnetModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for transresnet.\+modules.\+Transresnet\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classtransresnet_1_1modules_1_1TransresnetModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ab2645d81cc43af74c22941da848a4102}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a21d64d399d42b5d8f275b93a7ef3f5db}{opt}, \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a39b68fff51a01dd00581b553ee37eb50}{personalities\+\_\+list}, \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a9755441a27672c7126eea150daaee0c1}{dictionary})
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a371736aee24f40d0841a74aeb01f9145}{forward} (self, image\+\_\+features, personalities, captions, personalities\+\_\+tensor=None)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_aa3f65819701999860b414e1bb6bf74cb}{forward\+\_\+personality} (self, personalities, personalities\+\_\+tensor)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a578be5b044ee4d34d48541fdeb3ee947}{forward\+\_\+image} (self, image\+\_\+features)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_aedf5402061ce43a2b594eb9c8a374738}{train\+\_\+batch} (self, image\+\_\+features, personalities, captions)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ad41dbceaf0c86aac1b29e68fea3c4f14}{eval\+\_\+batch} (self, image\+\_\+features, personalities, captions)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a9db8fd3e6b80ef4f17a9975673e46d01}{choose\+\_\+best\+\_\+caption} (self, image\+\_\+features, personalities, candidates, candidates\+\_\+encoded=None, k=1)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a1cd91f1cd051b1545683b465f7a74e12}{eval\+\_\+batch\+\_\+of\+\_\+100} (self, context\+\_\+encoded, captions\+\_\+encoded)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a2cce905d8e06109ae23cf4910386526d}{evaluate\+\_\+one\+\_\+batch} (self, context\+\_\+encoded, captions\+\_\+encoded, during\+\_\+train=False)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_aaa175ffaf6daa6348a2c5479f38be530}{freeze\+\_\+text\+\_\+encoder} (self)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_af09f30a28796ae02eaa8b6cf39bcf2d1}{unfreeze\+\_\+text\+\_\+encoder} (self)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ad510db9128829888d74b02e520cad7b9}{sum\+\_\+encodings} (self, addends)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a850b8d781e749d3242788dc8e344b8fe}{personalities\+\_\+to\+\_\+index} (self, personalities)
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a6d8ed65c210d4ab0a665ba305257c3d6}{captions\+\_\+to\+\_\+tensor} (self, captions)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a37a730369e722d8b9bad531b3cf7e8a3}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a16d44027020d2029b30bde80b86b9985}{use\+\_\+cuda}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a21d64d399d42b5d8f275b93a7ef3f5db}{opt}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a9755441a27672c7126eea150daaee0c1}{dictionary}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_adb1828371e851d80247142fdbfe9ec6a}{truncate\+\_\+length}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ac5cca78fec98a84dd761d68782902c2c}{text\+\_\+encoder\+\_\+frozen}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a6094f5e2576bb4b018f06afdb0a5ab25}{optimizer}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a39b68fff51a01dd00581b553ee37eb50}{personalities\+\_\+list}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a2449ec2c088462e64ba02714291b324b}{personality\+\_\+to\+\_\+id}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a6d5bdf29c9be08754bce63a7f03d8bc9}{num\+\_\+personalities}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ac423b03e2d7c2e0e845e922ba6be8d2b}{embeddings}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_ae2185f04a629b71ceebc00db1cadee6b}{text\+\_\+encoder}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a42cc931560cfffa5765b6f3327f1003e}{additional\+\_\+layer}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_a37b2604569a59d4e583cfb9d1967fc66}{image\+\_\+encoder}
+\item 
+\hyperlink{classtransresnet_1_1modules_1_1TransresnetModel_acb657ad36ea30840ecec314dd011132a}{personality\+\_\+encoder}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Actual model code for the Transresnet Agent.\end{DoxyVerb}
+ 
+
+Definition at line 15 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ab2645d81cc43af74c22941da848a4102}\label{classtransresnet_1_1modules_1_1TransresnetModel_ab2645d81cc43af74c22941da848a4102}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{personalities\+\_\+list,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 94 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a37a730369e722d8b9bad531b3cf7e8a3}\label{classtransresnet_1_1modules_1_1TransresnetModel_a37a730369e722d8b9bad531b3cf7e8a3}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add command line arguments.\end{DoxyVerb}
+ 
+
+Definition at line 19 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a6d8ed65c210d4ab0a665ba305257c3d6}\label{classtransresnet_1_1modules_1_1TransresnetModel_a6d8ed65c210d4ab0a665ba305257c3d6}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!captions\+\_\+to\+\_\+tensor@{captions\+\_\+to\+\_\+tensor}}
+\index{captions\+\_\+to\+\_\+tensor@{captions\+\_\+to\+\_\+tensor}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{captions\+\_\+to\+\_\+tensor()}{captions\_to\_tensor()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{captions }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize a list of sentences into a 2D float tensor.
+
+:param captions:
+    list of sentences to tokenize
+
+:return:
+    a (batchsize X truncate_length) tensor representation of the captions,
+    and a similarly sized mask tensor
+\end{DoxyVerb}
+ 
+
+Definition at line 508 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+dictionary, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+dictionary, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, agent.\+modules.\+Mem\+N\+N.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, modules.\+Kvmemnn.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, dbll\+\_\+babi.\+agents.\+Task\+Teacher.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, kvmemnn.\+Kvmemnn\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder, transresnet.\+modules.\+Transresnet\+Model.\+truncate\+\_\+length, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a6d8ed65c210d4ab0a665ba305257c3d6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a9db8fd3e6b80ef4f17a9975673e46d01}\label{classtransresnet_1_1modules_1_1TransresnetModel_a9db8fd3e6b80ef4f17a9975673e46d01}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!choose\+\_\+best\+\_\+caption@{choose\+\_\+best\+\_\+caption}}
+\index{choose\+\_\+best\+\_\+caption@{choose\+\_\+best\+\_\+caption}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{choose\+\_\+best\+\_\+caption()}{choose\_best\_caption()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{candidates,  }\item[{}]{candidates\+\_\+encoded = {\ttfamily None},  }\item[{}]{k = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Choose the best caption for each example.
+
+:param image_features:
+    list of tensors of image features
+:param personalities:
+    list of personalities
+:param candidates:
+    list of candidates, one set per example
+:param candidates_encoded:
+    optional; if specified, a fixed set of encoded candidates that is
+    used for each example
+:param k:
+    number of ranked candidates to return. if < 1, we return the ranks
+    of all candidates in the set.
+
+:return:
+    a set of ranked candidates for each example
+\end{DoxyVerb}
+ 
+
+Definition at line 363 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+eval(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+eval, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward(), modules.\+Kvmemnn.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+forward(), parlai.\+agents.\+starspace.\+modules.\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+forward(), agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Bert\+Wrapper.\+forward(), modules.\+Encoder.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), agent.\+modules.\+Embed.\+forward(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+forward(), transresnet.\+modules.\+Transresnet\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+forward(), agent.\+modules.\+Hop.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), agent.\+modules.\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Identity.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a9db8fd3e6b80ef4f17a9975673e46d01_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ad41dbceaf0c86aac1b29e68fea3c4f14}\label{classtransresnet_1_1modules_1_1TransresnetModel_ad41dbceaf0c86aac1b29e68fea3c4f14}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!eval\+\_\+batch@{eval\+\_\+batch}}
+\index{eval\+\_\+batch@{eval\+\_\+batch}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{eval\+\_\+batch()}{eval\_batch()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{captions }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluate performance of model on one batch.
+
+Batch is split into chunks of 100 to evaluate hits@1/100
+
+:param image_features:
+    list of tensors of image features
+:param personalities:
+    list of personalities
+:param captions:
+    list of captions
+
+:return:
+    the total loss, the number of correct examples, and the number of
+    examples trained on
+\end{DoxyVerb}
+ 
+
+Definition at line 331 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+eval(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+eval, transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch\+\_\+of\+\_\+100(), parlai.\+agents.\+starspace.\+modules.\+Starspace.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward(), modules.\+Kvmemnn.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+forward(), parlai.\+agents.\+starspace.\+modules.\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+forward(), agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Bert\+Wrapper.\+forward(), modules.\+Encoder.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), agent.\+modules.\+Embed.\+forward(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+forward(), transresnet.\+modules.\+Transresnet\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+forward(), agent.\+modules.\+Hop.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), agent.\+modules.\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Identity.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a1cd91f1cd051b1545683b465f7a74e12}\label{classtransresnet_1_1modules_1_1TransresnetModel_a1cd91f1cd051b1545683b465f7a74e12}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!eval\+\_\+batch\+\_\+of\+\_\+100@{eval\+\_\+batch\+\_\+of\+\_\+100}}
+\index{eval\+\_\+batch\+\_\+of\+\_\+100@{eval\+\_\+batch\+\_\+of\+\_\+100}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{eval\+\_\+batch\+\_\+of\+\_\+100()}{eval\_batch\_of\_100()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch\+\_\+of\+\_\+100 (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{context\+\_\+encoded,  }\item[{}]{captions\+\_\+encoded }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluate a batch of 100 examples.
+
+The captions of the other examples are used as negatives.
+
+:param context_encoded:
+    the encoded context
+:param captions_encoded:
+    the encoded captions
+
+:return:
+    the total loss, the total number of correct examples, and the
+    total number of examples evaluated.
+\end{DoxyVerb}
+ 
+
+Definition at line 414 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a1cd91f1cd051b1545683b465f7a74e12_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a1cd91f1cd051b1545683b465f7a74e12_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a2cce905d8e06109ae23cf4910386526d}\label{classtransresnet_1_1modules_1_1TransresnetModel_a2cce905d8e06109ae23cf4910386526d}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!evaluate\+\_\+one\+\_\+batch@{evaluate\+\_\+one\+\_\+batch}}
+\index{evaluate\+\_\+one\+\_\+batch@{evaluate\+\_\+one\+\_\+batch}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{evaluate\+\_\+one\+\_\+batch()}{evaluate\_one\_batch()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{context\+\_\+encoded,  }\item[{}]{captions\+\_\+encoded,  }\item[{}]{during\+\_\+train = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute loss - and number of correct examples - for one batch.
+
+:param context_encoded:
+    the encoded context
+:param captions_encoded:
+    the encoded captions
+:param during_train:
+    true if training, else False
+
+:return:
+    the batch loss and the number of correct examples
+\end{DoxyVerb}
+ 
+
+Definition at line 443 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+eval(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+eval, make\+\_\+control\+\_\+dataset.\+float, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+zero\+\_\+grad(), kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+zero\+\_\+grad(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch\+\_\+of\+\_\+100(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a2cce905d8e06109ae23cf4910386526d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a2cce905d8e06109ae23cf4910386526d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a371736aee24f40d0841a74aeb01f9145}\label{classtransresnet_1_1modules_1_1TransresnetModel_a371736aee24f40d0841a74aeb01f9145}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!forward@{forward}}
+\index{forward@{forward}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{captions,  }\item[{}]{personalities\+\_\+tensor = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Model forward pass.
+
+:param image_features:
+    list of tensors of image features, one per example
+:param personalities:
+    list of personalities, one per example
+:param captions:
+    list of captions, one per example
+:param personalities_tensor:
+    (optional) list of personality representations, usually a one-hot
+    vector if specified
+
+:return:
+    the encoded context and the encoded captions.
+\end{DoxyVerb}
+ 
+
+Definition at line 209 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+additional\+\_\+layer, transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+image(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+personality(), transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality(), transresnet.\+modules.\+Transresnet\+Model.\+sum\+\_\+encodings(), transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder, and transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder\+\_\+frozen.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a371736aee24f40d0841a74aeb01f9145_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a371736aee24f40d0841a74aeb01f9145_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a578be5b044ee4d34d48541fdeb3ee947}\label{classtransresnet_1_1modules_1_1TransresnetModel_a578be5b044ee4d34d48541fdeb3ee947}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!forward\+\_\+image@{forward\+\_\+image}}
+\index{forward\+\_\+image@{forward\+\_\+image}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+image()}{forward\_image()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+image (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encode image features.
+
+:param image_features:
+    list of image features
+
+:return:
+    encoded representation of the image features
+\end{DoxyVerb}
+ 
+
+Definition at line 278 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+image\+\_\+encoder, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a578be5b044ee4d34d48541fdeb3ee947_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_aa3f65819701999860b414e1bb6bf74cb}\label{classtransresnet_1_1modules_1_1TransresnetModel_aa3f65819701999860b414e1bb6bf74cb}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!forward\+\_\+personality@{forward\+\_\+personality}}
+\index{forward\+\_\+personality@{forward\+\_\+personality}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+personality()}{forward\_personality()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{personalities,  }\item[{}]{personalities\+\_\+tensor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encode personalities.
+
+:param personalities:
+    list of personalities, one per example
+:param personalities_tensor:
+    (optional) list of personality representations, usually a one-hot
+    vector if specified
+
+:return:
+    encoded representation of the personalities
+\end{DoxyVerb}
+ 
+
+Definition at line 247 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+num\+\_\+personalities, transresnet.\+modules.\+Transresnet\+Model.\+personalities\+\_\+to\+\_\+index(), transresnet.\+modules.\+Transresnet\+Model.\+personality\+\_\+encoder, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_aa3f65819701999860b414e1bb6bf74cb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_aa3f65819701999860b414e1bb6bf74cb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_aaa175ffaf6daa6348a2c5479f38be530}\label{classtransresnet_1_1modules_1_1TransresnetModel_aaa175ffaf6daa6348a2c5479f38be530}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!freeze\+\_\+text\+\_\+encoder@{freeze\+\_\+text\+\_\+encoder}}
+\index{freeze\+\_\+text\+\_\+encoder@{freeze\+\_\+text\+\_\+encoder}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{freeze\+\_\+text\+\_\+encoder()}{freeze\_text\_encoder()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+freeze\+\_\+text\+\_\+encoder (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Freeze the text (candidate) encoder.\end{DoxyVerb}
+ 
+
+Definition at line 469 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder\+\_\+frozen.
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a850b8d781e749d3242788dc8e344b8fe}\label{classtransresnet_1_1modules_1_1TransresnetModel_a850b8d781e749d3242788dc8e344b8fe}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!personalities\+\_\+to\+\_\+index@{personalities\+\_\+to\+\_\+index}}
+\index{personalities\+\_\+to\+\_\+index@{personalities\+\_\+to\+\_\+index}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{personalities\+\_\+to\+\_\+index()}{personalities\_to\_index()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+personalities\+\_\+to\+\_\+index (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{personalities }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Map personalities to their index in the personality dictionary.
+
+:param personalities:
+    list of personalities
+
+:return:
+    list of personality ids
+\end{DoxyVerb}
+ 
+
+Definition at line 490 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+personality\+\_\+to\+\_\+id.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_a850b8d781e749d3242788dc8e344b8fe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ad510db9128829888d74b02e520cad7b9}\label{classtransresnet_1_1modules_1_1TransresnetModel_ad510db9128829888d74b02e520cad7b9}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!sum\+\_\+encodings@{sum\+\_\+encodings}}
+\index{sum\+\_\+encodings@{sum\+\_\+encodings}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{sum\+\_\+encodings()}{sum\_encodings()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+sum\+\_\+encodings (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{addends }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add up a list of encodings, some of which may be `None`.
+
+:param addends:
+    tensors to add
+
+:return:
+    sum of non-`None` addends
+\end{DoxyVerb}
+ 
+
+Definition at line 477 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet_1_1modules_1_1TransresnetModel_ad510db9128829888d74b02e520cad7b9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_aedf5402061ce43a2b594eb9c8a374738}\label{classtransresnet_1_1modules_1_1TransresnetModel_aedf5402061ce43a2b594eb9c8a374738}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!train\+\_\+batch@{train\+\_\+batch}}
+\index{train\+\_\+batch@{train\+\_\+batch}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{train\+\_\+batch()}{train\_batch()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{image\+\_\+features,  }\item[{}]{personalities,  }\item[{}]{captions }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Batch train on a set of examples.
+
+Uses captions from other examples as negatives during training
+
+:param image_features:
+    list of tensors of image features
+:param personalities:
+    list of personalities
+:param captions:
+    list of captions
+
+:return:
+    the total loss, the number of correct examples, and the number of
+    examples trained on
+\end{DoxyVerb}
+ 
+
+Definition at line 297 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch\+\_\+of\+\_\+100(), transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch(), parlai.\+agents.\+starspace.\+modules.\+Starspace.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward(), modules.\+Kvmemnn.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+forward(), parlai.\+agents.\+starspace.\+modules.\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+forward(), agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Bert\+Wrapper.\+forward(), modules.\+Encoder.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Embed.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), agent.\+modules.\+Embed.\+forward(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+forward(), transresnet.\+modules.\+Transresnet\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+memnn.\+modules.\+Hop.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+forward(), agent.\+modules.\+Hop.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward(), parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Module.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), agent.\+modules.\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Control\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Identity.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward(), parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, transresnet.\+modules.\+Transresnet\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, kvmemnn.\+Kvmemnn\+Agent.\+optimizer, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+train, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+train, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+train(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+zero\+\_\+grad(), kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+zero\+\_\+grad(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_af09f30a28796ae02eaa8b6cf39bcf2d1}\label{classtransresnet_1_1modules_1_1TransresnetModel_af09f30a28796ae02eaa8b6cf39bcf2d1}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!unfreeze\+\_\+text\+\_\+encoder@{unfreeze\+\_\+text\+\_\+encoder}}
+\index{unfreeze\+\_\+text\+\_\+encoder@{unfreeze\+\_\+text\+\_\+encoder}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{unfreeze\+\_\+text\+\_\+encoder()}{unfreeze\_text\_encoder()}}
+{\footnotesize\ttfamily def transresnet.\+modules.\+Transresnet\+Model.\+unfreeze\+\_\+text\+\_\+encoder (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Unfreeze the text (candidate) encoder.\end{DoxyVerb}
+ 
+
+Definition at line 473 of file modules.\+py.
+
+
+
+References transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder\+\_\+frozen.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a42cc931560cfffa5765b6f3327f1003e}\label{classtransresnet_1_1modules_1_1TransresnetModel_a42cc931560cfffa5765b6f3327f1003e}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!additional\+\_\+layer@{additional\+\_\+layer}}
+\index{additional\+\_\+layer@{additional\+\_\+layer}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{additional\+\_\+layer}{additional\_layer}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+additional\+\_\+layer}
+
+
+
+Definition at line 173 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward(), and transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a9755441a27672c7126eea150daaee0c1}\label{classtransresnet_1_1modules_1_1TransresnetModel_a9755441a27672c7126eea150daaee0c1}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!dictionary@{dictionary}}
+\index{dictionary@{dictionary}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{dictionary}{dictionary}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+dictionary}
+
+
+
+Definition at line 98 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ac423b03e2d7c2e0e845e922ba6be8d2b}\label{classtransresnet_1_1modules_1_1TransresnetModel_ac423b03e2d7c2e0e845e922ba6be8d2b}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!embeddings@{embeddings}}
+\index{embeddings@{embeddings}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{embeddings}{embeddings}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+embeddings}
+
+
+
+Definition at line 143 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a37b2604569a59d4e583cfb9d1967fc66}\label{classtransresnet_1_1modules_1_1TransresnetModel_a37b2604569a59d4e583cfb9d1967fc66}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!image\+\_\+encoder@{image\+\_\+encoder}}
+\index{image\+\_\+encoder@{image\+\_\+encoder}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{image\+\_\+encoder}{image\_encoder}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+image\+\_\+encoder}
+
+
+
+Definition at line 197 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+image().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a6d5bdf29c9be08754bce63a7f03d8bc9}\label{classtransresnet_1_1modules_1_1TransresnetModel_a6d5bdf29c9be08754bce63a7f03d8bc9}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!num\+\_\+personalities@{num\+\_\+personalities}}
+\index{num\+\_\+personalities@{num\+\_\+personalities}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{num\+\_\+personalities}{num\_personalities}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+num\+\_\+personalities}
+
+
+
+Definition at line 134 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a21d64d399d42b5d8f275b93a7ef3f5db}\label{classtransresnet_1_1modules_1_1TransresnetModel_a21d64d399d42b5d8f275b93a7ef3f5db}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!opt@{opt}}
+\index{opt@{opt}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+opt}
+
+
+
+Definition at line 97 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a6094f5e2576bb4b018f06afdb0a5ab25}\label{classtransresnet_1_1modules_1_1TransresnetModel_a6094f5e2576bb4b018f06afdb0a5ab25}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+optimizer}
+
+
+
+Definition at line 120 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a39b68fff51a01dd00581b553ee37eb50}\label{classtransresnet_1_1modules_1_1TransresnetModel_a39b68fff51a01dd00581b553ee37eb50}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!personalities\+\_\+list@{personalities\+\_\+list}}
+\index{personalities\+\_\+list@{personalities\+\_\+list}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{personalities\+\_\+list}{personalities\_list}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+personalities\+\_\+list}
+
+
+
+Definition at line 132 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_acb657ad36ea30840ecec314dd011132a}\label{classtransresnet_1_1modules_1_1TransresnetModel_acb657ad36ea30840ecec314dd011132a}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!personality\+\_\+encoder@{personality\+\_\+encoder}}
+\index{personality\+\_\+encoder@{personality\+\_\+encoder}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{personality\+\_\+encoder}{personality\_encoder}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+personality\+\_\+encoder}
+
+
+
+Definition at line 205 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a2449ec2c088462e64ba02714291b324b}\label{classtransresnet_1_1modules_1_1TransresnetModel_a2449ec2c088462e64ba02714291b324b}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!personality\+\_\+to\+\_\+id@{personality\+\_\+to\+\_\+id}}
+\index{personality\+\_\+to\+\_\+id@{personality\+\_\+to\+\_\+id}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{personality\+\_\+to\+\_\+id}{personality\_to\_id}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+personality\+\_\+to\+\_\+id}
+
+
+
+Definition at line 133 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+personalities\+\_\+to\+\_\+index().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ae2185f04a629b71ceebc00db1cadee6b}\label{classtransresnet_1_1modules_1_1TransresnetModel_ae2185f04a629b71ceebc00db1cadee6b}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!text\+\_\+encoder@{text\+\_\+encoder}}
+\index{text\+\_\+encoder@{text\+\_\+encoder}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{text\+\_\+encoder}{text\_encoder}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder}
+
+
+
+Definition at line 152 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), and transresnet.\+modules.\+Transresnet\+Model.\+forward().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_ac5cca78fec98a84dd761d68782902c2c}\label{classtransresnet_1_1modules_1_1TransresnetModel_ac5cca78fec98a84dd761d68782902c2c}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!text\+\_\+encoder\+\_\+frozen@{text\+\_\+encoder\+\_\+frozen}}
+\index{text\+\_\+encoder\+\_\+frozen@{text\+\_\+encoder\+\_\+frozen}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{text\+\_\+encoder\+\_\+frozen}{text\_encoder\_frozen}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+text\+\_\+encoder\+\_\+frozen}
+
+
+
+Definition at line 105 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+forward\+\_\+text\+\_\+encoder(), transresnet.\+modules.\+Transresnet\+Model.\+freeze\+\_\+text\+\_\+encoder(), and transresnet.\+modules.\+Transresnet\+Model.\+unfreeze\+\_\+text\+\_\+encoder().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_adb1828371e851d80247142fdbfe9ec6a}\label{classtransresnet_1_1modules_1_1TransresnetModel_adb1828371e851d80247142fdbfe9ec6a}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!truncate\+\_\+length@{truncate\+\_\+length}}
+\index{truncate\+\_\+length@{truncate\+\_\+length}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{truncate\+\_\+length}{truncate\_length}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+truncate\+\_\+length}
+
+
+
+Definition at line 99 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor().
+
+\mbox{\Hypertarget{classtransresnet_1_1modules_1_1TransresnetModel_a16d44027020d2029b30bde80b86b9985}\label{classtransresnet_1_1modules_1_1TransresnetModel_a16d44027020d2029b30bde80b86b9985}} 
+\index{transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}!use\+\_\+cuda@{use\+\_\+cuda}}
+\index{use\+\_\+cuda@{use\+\_\+cuda}!transresnet\+::modules\+::\+Transresnet\+Model@{transresnet\+::modules\+::\+Transresnet\+Model}}
+\subsubsection{\texorpdfstring{use\+\_\+cuda}{use\_cuda}}
+{\footnotesize\ttfamily transresnet.\+modules.\+Transresnet\+Model.\+use\+\_\+cuda}
+
+
+
+Definition at line 96 of file modules.\+py.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch(), transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+image(), transresnet.\+modules.\+Transresnet\+Model.\+forward\+\_\+personality(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+loss(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+get\+\_\+rep(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), and taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/personality\+\_\+captions/transresnet/\hyperlink{projects_2personality__captions_2transresnet_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

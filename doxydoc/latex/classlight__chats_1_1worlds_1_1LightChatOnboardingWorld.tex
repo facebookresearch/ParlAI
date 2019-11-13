@@ -1,0 +1,250 @@
+\hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld}{}\section{light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World Class Reference}
+\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld}\index{light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World}}
+
+
+Inheritance diagram for light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=204pt]{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=204pt]{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a0f913f08e74b21ad1d6b04c302e38850}{block\+\_\+loop} (self)
+\item 
+def \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ade47ed749c72e46f2f692a96aaede09a}{parley} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a25ce483673ea7734de9f659a3b960c2b}{turns}
+\item 
+\hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ae9e8f6956884cf389fa20c47f574bf61}{episode\+Done}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_aa32ca75831c73dae0407cd74dc63e4df}{instruction\+\_\+act}
+\item 
+dictionary \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a6815f9e8e89c92ca5496451dc6c59584}{bad\+\_\+choice\+\_\+act}
+\item 
+dictionary \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5b2b58ba5374d0ef950bd3c0298085c7}{too\+\_\+short\+\_\+act}
+\item 
+dictionary \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5dabed94efc09ac9a18be394756f6cdc}{block\+\_\+act}
+\item 
+dictionary \hyperlink{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a8a829ffc9441313b2934f656f8632fc7}{complete\+\_\+act}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Example onboarding world. Sends a message from the world to the
+worker and then exits as complete after the worker uses the interface
+\end{DoxyVerb}
+ 
+
+Definition at line 25 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a0f913f08e74b21ad1d6b04c302e38850}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a0f913f08e74b21ad1d6b04c302e38850}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!block\+\_\+loop@{block\+\_\+loop}}
+\index{block\+\_\+loop@{block\+\_\+loop}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{block\+\_\+loop()}{block\_loop()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+block\+\_\+loop (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 86 of file worlds.\+py.
+
+
+
+References light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+block\+\_\+act, light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+block\+\_\+act, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, light\+\_\+chats.\+worlds.\+is\+\_\+disconnected(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, and parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a0f913f08e74b21ad1d6b04c302e38850_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ade47ed749c72e46f2f692a96aaede09a}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ade47ed749c72e46f2f692a96aaede09a}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!parley@{parley}}
+\index{parley@{parley}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 96 of file worlds.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a6815f9e8e89c92ca5496451dc6c59584}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a6815f9e8e89c92ca5496451dc6c59584}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!bad\+\_\+choice\+\_\+act@{bad\+\_\+choice\+\_\+act}}
+\index{bad\+\_\+choice\+\_\+act@{bad\+\_\+choice\+\_\+act}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{bad\+\_\+choice\+\_\+act}{bad\_choice\_act}}
+{\footnotesize\ttfamily dictionary light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+bad\+\_\+choice\+\_\+act\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'id'}: \textcolor{stringliteral}{'System'},
+        \textcolor{stringliteral}{'text'}: \textcolor{stringliteral}{"Are you sure that's an appropriate action to take given your "}
+        \textcolor{stringliteral}{"persona and the current setting? Try again."},
+    \}
+\end{DoxyCode}
+
+
+Definition at line 61 of file worlds.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5dabed94efc09ac9a18be394756f6cdc}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5dabed94efc09ac9a18be394756f6cdc}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!block\+\_\+act@{block\+\_\+act}}
+\index{block\+\_\+act@{block\+\_\+act}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{block\+\_\+act}{block\_act}}
+{\footnotesize\ttfamily dictionary light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+block\+\_\+act\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'id'}: \textcolor{stringliteral}{'System'},
+        \textcolor{stringliteral}{'text'}: \textcolor{stringliteral}{"Sorry, you've exceeded the maximum amount of tries to get the "}
+        \textcolor{stringliteral}{"correct actions given your persona and the setting, and thus we "}
+        \textcolor{stringliteral}{"don't believe you can complete the task correctly. Please return "}
+        \textcolor{stringliteral}{"the HIT."},
+    \}
+\end{DoxyCode}
+
+
+Definition at line 73 of file worlds.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+block\+\_\+loop().
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a8a829ffc9441313b2934f656f8632fc7}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a8a829ffc9441313b2934f656f8632fc7}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!complete\+\_\+act@{complete\+\_\+act}}
+\index{complete\+\_\+act@{complete\+\_\+act}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{complete\+\_\+act}{complete\_act}}
+{\footnotesize\ttfamily dictionary light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+complete\+\_\+act\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'id'}: \textcolor{stringliteral}{'System'},
+        \textcolor{stringliteral}{'text'}: \textcolor{stringliteral}{"Passed - We'll be pairing you with a partner. Hold on tight."},
+    \}
+\end{DoxyCode}
+
+
+Definition at line 81 of file worlds.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ae9e8f6956884cf389fa20c47f574bf61}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_ae9e8f6956884cf389fa20c47f574bf61}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+episode\+Done}
+
+
+
+Definition at line 105 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_aa32ca75831c73dae0407cd74dc63e4df}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_aa32ca75831c73dae0407cd74dc63e4df}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!instruction\+\_\+act@{instruction\+\_\+act}}
+\index{instruction\+\_\+act@{instruction\+\_\+act}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{instruction\+\_\+act}{instruction\_act}}
+{\footnotesize\ttfamily dictionary light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+instruction\+\_\+act\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'id'}: \textcolor{stringliteral}{'System'},
+        \textcolor{stringliteral}{'text'}: \textcolor{stringliteral}{'Please attempt to take a turn given the setting and persona '}
+        \textcolor{stringliteral}{'on the left. This is where your information will appear in '}
+        \textcolor{stringliteral}{'the main task.'},
+        \textcolor{stringliteral}{'task\_data'}: \{
+            \textcolor{stringliteral}{'base\_name'}: \textcolor{stringliteral}{'bandit'},
+            \textcolor{stringliteral}{'persona'}: (
+                \textcolor{stringliteral}{"I am an unforgiving bandit. Orcs have stolen my family away,"}
+                \textcolor{stringliteral}{" and they treat me like trash. I one day want to have my "}
+                \textcolor{stringliteral}{"revenge, be it through blood or gold. I'll try to get back at"}
+                \textcolor{stringliteral}{" them any chance I get."}
+            ),
+            \textcolor{stringliteral}{'setting'}: (
+                \textcolor{stringliteral}{"You are in a bar. There isn't anything really special about "}
+                \textcolor{stringliteral}{"it, and it's relatively quiet tonight. The air is somewhat "}
+                \textcolor{stringliteral}{"tense. A sign above the bar says 'No Fighting' and something "}
+                \textcolor{stringliteral}{"tells you that rule is taken pretty seriously. "}
+                \textcolor{stringliteral}{"There is a beer here. There is an orc here. "}
+            ),
+            \textcolor{stringliteral}{'actions'}: [
+                \textcolor{stringliteral}{'wave at orc'},
+                \textcolor{stringliteral}{'steal coin purse from orc'},
+                \textcolor{stringliteral}{'hit orc'},
+                \textcolor{stringliteral}{'give beer to orc'},
+                \textcolor{stringliteral}{'hug orc'},
+                \textcolor{stringliteral}{'get beer'},
+            ],
+        \},
+    \}
+\end{DoxyCode}
+
+
+Definition at line 30 of file worlds.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5b2b58ba5374d0ef950bd3c0298085c7}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a5b2b58ba5374d0ef950bd3c0298085c7}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!too\+\_\+short\+\_\+act@{too\+\_\+short\+\_\+act}}
+\index{too\+\_\+short\+\_\+act@{too\+\_\+short\+\_\+act}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{too\+\_\+short\+\_\+act}{too\_short\_act}}
+{\footnotesize\ttfamily dictionary light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+too\+\_\+short\+\_\+act\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'id'}: \textcolor{stringliteral}{'System'},
+        \textcolor{stringliteral}{'text'}: \textcolor{stringliteral}{"Please generally speak in full sentences unless your persona "}
+        \textcolor{stringliteral}{"implies that your character isn't able to."},
+    \}
+\end{DoxyCode}
+
+
+Definition at line 67 of file worlds.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a25ce483673ea7734de9f659a3b960c2b}\label{classlight__chats_1_1worlds_1_1LightChatOnboardingWorld_a25ce483673ea7734de9f659a3b960c2b}} 
+\index{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}!turns@{turns}}
+\index{turns@{turns}!light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World@{light\+\_\+chats\+::worlds\+::\+Light\+Chat\+Onboarding\+World}}
+\subsubsection{\texorpdfstring{turns}{turns}}
+{\footnotesize\ttfamily light\+\_\+chats.\+worlds.\+Light\+Chat\+Onboarding\+World.\+turns}
+
+
+
+Definition at line 97 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+parley(), parlai.\+mturk.\+tasks.\+react\+\_\+task\+\_\+demo.\+react\+\_\+custom\+\_\+with\+\_\+deps.\+worlds.\+Multi\+Role\+Agent\+World.\+parley(), and light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+parley().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/light/light\+\_\+chats/\hyperlink{parlai_2mturk_2tasks_2light_2light__chats_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

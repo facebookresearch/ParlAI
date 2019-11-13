@@ -1,4 +1,4 @@
 <map id="parlai.core.worlds.DialogPartnerWorld.parley" name="parlai.core.worlds.DialogPartnerWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,171,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a77730e92a331274ab7b6ea3e7b99d1a4" title=" " alt="" coords="219,5,424,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#a77730e92a331274ab7b6ea3e7b99d1a4" title="parlai.core.worlds.World.update\l_counters" alt="" coords="219,5,424,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="235,71,408,98"/>
 </map>

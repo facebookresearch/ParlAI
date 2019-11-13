@@ -1,0 +1,196 @@
+\hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN}{}\section{parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+NN Class Reference}
+\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN}\index{parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+NN@{parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+NN}}
+
+
+Inheritance diagram for parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+NN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ac2e446b2811a6a62ce19f5bb511f6a74}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, input\+\_\+size, hidden\+\_\+size, \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a5a3f2c30cf13a1db1242b3870589554f}{num\+\_\+layers}, \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0d9b1ee6b2a24c349e35821cf689b6e4}{dropout\+\_\+rate}=0, \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ae40607cb097234025ead5baa817b1a43}{dropout\+\_\+output}=False, rnn\+\_\+type=nn.\+L\+S\+TM, \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_aa70222a319180cce80be6827c07d391a}{concat\+\_\+layers}=False, \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0639e785d34232babbaebf8c5be1e8e9}{padding}=False)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a77f43de1cd3b3461c3ce791973aa9eb5}{forward} (self, x, x\+\_\+mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0639e785d34232babbaebf8c5be1e8e9}{padding}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ae40607cb097234025ead5baa817b1a43}{dropout\+\_\+output}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0d9b1ee6b2a24c349e35821cf689b6e4}{dropout\+\_\+rate}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a5a3f2c30cf13a1db1242b3870589554f}{num\+\_\+layers}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_aa70222a319180cce80be6827c07d391a}{concat\+\_\+layers}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a122616c972deeb4368a9b4115650e9dc}{rnns}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 17 of file layers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ac2e446b2811a6a62ce19f5bb511f6a74}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ac2e446b2811a6a62ce19f5bb511f6a74}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input\+\_\+size,  }\item[{}]{hidden\+\_\+size,  }\item[{}]{num\+\_\+layers,  }\item[{}]{dropout\+\_\+rate = {\ttfamily 0},  }\item[{}]{dropout\+\_\+output = {\ttfamily False},  }\item[{}]{rnn\+\_\+type = {\ttfamily nn.LSTM},  }\item[{}]{concat\+\_\+layers = {\ttfamily False},  }\item[{}]{padding = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file layers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a77f43de1cd3b3461c3ce791973aa9eb5}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a77f43de1cd3b3461c3ce791973aa9eb5}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{x\+\_\+mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Can choose to either handle or ignore variable length sequences.
+Always handle padding in eval.
+\end{DoxyVerb}
+ 
+
+Definition at line 42 of file layers.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+\_\+forward\+\_\+padded(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+\_\+forward\+\_\+unpadded(), parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+concat\+\_\+layers, parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+dropout\+\_\+output, parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+dropout\+\_\+rate, parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+num\+\_\+layers, parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+padding, parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+rnns, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+training, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+training, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+training, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+training, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+training, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+training, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+training, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+training, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+training.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a77f43de1cd3b3461c3ce791973aa9eb5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a77f43de1cd3b3461c3ce791973aa9eb5_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_aa70222a319180cce80be6827c07d391a}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_aa70222a319180cce80be6827c07d391a}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!concat\+\_\+layers@{concat\+\_\+layers}}
+\index{concat\+\_\+layers@{concat\+\_\+layers}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{concat\+\_\+layers}{concat\_layers}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+concat\+\_\+layers}
+
+
+
+Definition at line 34 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ae40607cb097234025ead5baa817b1a43}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_ae40607cb097234025ead5baa817b1a43}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!dropout\+\_\+output@{dropout\+\_\+output}}
+\index{dropout\+\_\+output@{dropout\+\_\+output}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{dropout\+\_\+output}{dropout\_output}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+dropout\+\_\+output}
+
+
+
+Definition at line 31 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0d9b1ee6b2a24c349e35821cf689b6e4}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0d9b1ee6b2a24c349e35821cf689b6e4}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!dropout\+\_\+rate@{dropout\+\_\+rate}}
+\index{dropout\+\_\+rate@{dropout\+\_\+rate}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{dropout\+\_\+rate}{dropout\_rate}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+dropout\+\_\+rate}
+
+
+
+Definition at line 32 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a5a3f2c30cf13a1db1242b3870589554f}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a5a3f2c30cf13a1db1242b3870589554f}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!num\+\_\+layers@{num\+\_\+layers}}
+\index{num\+\_\+layers@{num\+\_\+layers}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{num\+\_\+layers}{num\_layers}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+num\+\_\+layers}
+
+
+
+Definition at line 33 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0639e785d34232babbaebf8c5be1e8e9}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a0639e785d34232babbaebf8c5be1e8e9}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!padding@{padding}}
+\index{padding@{padding}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{padding}{padding}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+padding}
+
+
+
+Definition at line 30 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a122616c972deeb4368a9b4115650e9dc}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN_a122616c972deeb4368a9b4115650e9dc}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}!rnns@{rnns}}
+\index{rnns@{rnns}!parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN@{parlai\+::agents\+::drqa\+::layers\+::\+Stacked\+B\+R\+NN}}
+\subsubsection{\texorpdfstring{rnns}{rnns}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+rnns}
+
+
+
+Definition at line 35 of file layers.\+py.
+
+
+
+Referenced by parlai.\+agents.\+drqa.\+layers.\+Stacked\+B\+R\+N\+N.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/drqa/\hyperlink{layers_8py}{layers.\+py}\end{DoxyCompactItemize}

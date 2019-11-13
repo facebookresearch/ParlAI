@@ -1,0 +1,556 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager}{}\section{parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager}\index{parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager@{parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a3cb56395af2a5c89c048ee3f9b5b8f7a}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a90e4c41010915289fa5e8e1fb0572623}{mturk\+\_\+manager}, \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a69b6fcf739bcdaf914fe524772738309}{opt})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae583d18246beaa4e75c2d1d539fe77ad}{get\+\_\+worker\+\_\+data\+\_\+package} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a829bf9d74d9afb0277c11347745ac6db}{route\+\_\+packet} (self, pkt)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a252814b16fd59e725345146e6004e90a}{map\+\_\+over\+\_\+agents} (self, map\+\_\+function, filter\+\_\+func=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa60e04ed5327e2b3dc9f886a17352e72}{get\+\_\+agent\+\_\+for\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a95b104ab69a0c75312657ce77842a690}{time\+\_\+block\+\_\+worker} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_af4c5d947d5477e2b5a7bd6167e125ba9}{un\+\_\+time\+\_\+block\+\_\+workers} (self, workers=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aac0a3b7f87f3f60035cbb35155ea480d}{load\+\_\+disconnects} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad5ea6d1d764743de25c71d027d6f981c}{save\+\_\+disconnects} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a26f5469b17d425d52277f50b59e611f1}{handle\+\_\+agent\+\_\+disconnect} (self, worker\+\_\+id, assignment\+\_\+id, partner\+\_\+callback)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ac75275d1b201b5bcbd8f23740b4e1080}{handle\+\_\+bad\+\_\+disconnect} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae07d1e801e6436a33d2a19f32e41088a}{worker\+\_\+alive} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1d5d674e56ea539d50051012780572b5}{assign\+\_\+task\+\_\+to\+\_\+worker} (self, hit\+\_\+id, assign\+\_\+id, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a451312cbfad4b059777195ffcdbc0410}{get\+\_\+complete\+\_\+hits} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_add7bab97c8116b679d516564c9cf0f6d}{get\+\_\+agent\+\_\+work\+\_\+status} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa140d322d7237605580f5162a437e0ba}{change\+\_\+agent\+\_\+conversation} (self, agent, conversation\+\_\+id, new\+\_\+agent\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a814ac330b709eeef4abf4e4a73d71447}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a69b6fcf739bcdaf914fe524772738309}{opt}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a90e4c41010915289fa5e8e1fb0572623}{mturk\+\_\+manager}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a52976ae5dca085ae8398305c36e781b9}{mturk\+\_\+workers}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a878a7bb6afd1530ecc8cc8852a8990a6}{conv\+\_\+to\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad3bec2328ee19706027d1279e5910a22}{assignment\+\_\+to\+\_\+worker\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abff39f43090e885a3c8b74f4fcc06d55}{hit\+\_\+id\+\_\+to\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa51476aab479eae8096ae6097a8571f8}{time\+\_\+blocked\+\_\+workers}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abd069a274bd03b3aeab20c3f788cf127}{is\+\_\+sandbox}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1fcba62024d92a25d76e0f106d76fd81}{disconnects}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class used to keep track of workers state, as well as processing
+messages that come from the web client.
+\end{DoxyVerb}
+ 
+
+Definition at line 87 of file worker\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a3cb56395af2a5c89c048ee3f9b5b8f7a}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a3cb56395af2a5c89c048ee3f9b5b8f7a}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{mturk\+\_\+manager,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 92 of file worker\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1d5d674e56ea539d50051012780572b5}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1d5d674e56ea539d50051012780572b5}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!assign\+\_\+task\+\_\+to\+\_\+worker@{assign\+\_\+task\+\_\+to\+\_\+worker}}
+\index{assign\+\_\+task\+\_\+to\+\_\+worker@{assign\+\_\+task\+\_\+to\+\_\+worker}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{assign\+\_\+task\+\_\+to\+\_\+worker()}{assign\_task\_to\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assign\+\_\+task\+\_\+to\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hit\+\_\+id,  }\item[{}]{assign\+\_\+id,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 275 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+create\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+create\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+create\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+create\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1d5d674e56ea539d50051012780572b5_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa140d322d7237605580f5162a437e0ba}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa140d322d7237605580f5162a437e0ba}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!change\+\_\+agent\+\_\+conversation@{change\+\_\+agent\+\_\+conversation}}
+\index{change\+\_\+agent\+\_\+conversation@{change\+\_\+agent\+\_\+conversation}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{change\+\_\+agent\+\_\+conversation()}{change\_agent\_conversation()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+change\+\_\+agent\+\_\+conversation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent,  }\item[{}]{conversation\+\_\+id,  }\item[{}]{new\+\_\+agent\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handle changing a conversation for an agent, takes a callback for
+when the command is acknowledged
+\end{DoxyVerb}
+ 
+
+Definition at line 353 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+change\+\_\+agent\+\_\+to\+\_\+conv(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+change\+\_\+agent\+\_\+to\+\_\+conv(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, and parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa140d322d7237605580f5162a437e0ba_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa60e04ed5327e2b3dc9f886a17352e72}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa60e04ed5327e2b3dc9f886a17352e72}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!get\+\_\+agent\+\_\+for\+\_\+assignment@{get\+\_\+agent\+\_\+for\+\_\+assignment}}
+\index{get\+\_\+agent\+\_\+for\+\_\+assignment@{get\+\_\+agent\+\_\+for\+\_\+assignment}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+for\+\_\+assignment()}{get\_agent\_for\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+for\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns agent for the assignment, none if no agent assigned\end{DoxyVerb}
+ 
+
+Definition at line 160 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_add7bab97c8116b679d516564c9cf0f6d}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_add7bab97c8116b679d516564c9cf0f6d}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!get\+\_\+agent\+\_\+work\+\_\+status@{get\+\_\+agent\+\_\+work\+\_\+status}}
+\index{get\+\_\+agent\+\_\+work\+\_\+status@{get\+\_\+agent\+\_\+work\+\_\+status}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+work\+\_\+status()}{get\_agent\_work\_status()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+work\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the current status of an assignment's work\end{DoxyVerb}
+ 
+
+Definition at line 290 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+assign\+\_\+agent\+\_\+to\+\_\+conversation(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+assign\+\_\+agent\+\_\+to\+\_\+conversation(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent\+\_\+from\+\_\+pkt(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent\+\_\+from\+\_\+pkt(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent\+\_\+from\+\_\+pkt(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+log\+\_\+missing\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+log\+\_\+missing\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+log\+\_\+missing\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+log\+\_\+missing\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox, and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_add7bab97c8116b679d516564c9cf0f6d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a451312cbfad4b059777195ffcdbc0410}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a451312cbfad4b059777195ffcdbc0410}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!get\+\_\+complete\+\_\+hits@{get\+\_\+complete\+\_\+hits}}
+\index{get\+\_\+complete\+\_\+hits@{get\+\_\+complete\+\_\+hits}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+complete\+\_\+hits()}{get\_complete\_hits()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+complete\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the list of all currently completed HITs\end{DoxyVerb}
+ 
+
+Definition at line 282 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae583d18246beaa4e75c2d1d539fe77ad}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae583d18246beaa4e75c2d1d539fe77ad}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!get\+\_\+worker\+\_\+data\+\_\+package@{get\+\_\+worker\+\_\+data\+\_\+package}}
+\index{get\+\_\+worker\+\_\+data\+\_\+package@{get\+\_\+worker\+\_\+data\+\_\+package}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+worker\+\_\+data\+\_\+package()}{get\_worker\_data\_package()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 103 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+worker(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+worker(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae583d18246beaa4e75c2d1d539fe77ad_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a26f5469b17d425d52277f50b59e611f1}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a26f5469b17d425d52277f50b59e611f1}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!handle\+\_\+agent\+\_\+disconnect@{handle\+\_\+agent\+\_\+disconnect}}
+\index{handle\+\_\+agent\+\_\+disconnect@{handle\+\_\+agent\+\_\+disconnect}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{handle\+\_\+agent\+\_\+disconnect()}{handle\_agent\_disconnect()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+agent\+\_\+disconnect (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{partner\+\_\+callback }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handles a disconnect by the given worker, calls partner_callback
+on all of the conversation partners of that worker
+\end{DoxyVerb}
+ 
+
+Definition at line 212 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), and parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a26f5469b17d425d52277f50b59e611f1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ac75275d1b201b5bcbd8f23740b4e1080}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ac75275d1b201b5bcbd8f23740b4e1080}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!handle\+\_\+bad\+\_\+disconnect@{handle\+\_\+bad\+\_\+disconnect}}
+\index{handle\+\_\+bad\+\_\+disconnect@{handle\+\_\+bad\+\_\+disconnect}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{handle\+\_\+bad\+\_\+disconnect()}{handle\_bad\_disconnect()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update the number of bad disconnects for the given worker, block
+them if they've exceeded the disconnect limit
+\end{DoxyVerb}
+ 
+
+Definition at line 233 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+agent\+\_\+disconnect().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ac75275d1b201b5bcbd8f23740b4e1080_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aac0a3b7f87f3f60035cbb35155ea480d}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aac0a3b7f87f3f60035cbb35155ea480d}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!load\+\_\+disconnects@{load\+\_\+disconnects}}
+\index{load\+\_\+disconnects@{load\+\_\+disconnects}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{load\+\_\+disconnects()}{load\_disconnects()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+load\+\_\+disconnects (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load disconnects from file, populate the disconnects field for any
+worker_id that has disconnects in the list. Any disconnect that
+occurred longer ago than the disconnect persist length is ignored
+\end{DoxyVerb}
+ 
+
+Definition at line 179 of file worker\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a252814b16fd59e725345146e6004e90a}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a252814b16fd59e725345146e6004e90a}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!map\+\_\+over\+\_\+agents@{map\+\_\+over\+\_\+agents}}
+\index{map\+\_\+over\+\_\+agents@{map\+\_\+over\+\_\+agents}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{map\+\_\+over\+\_\+agents()}{map\_over\_agents()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+map\+\_\+over\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{map\+\_\+function,  }\item[{}]{filter\+\_\+func = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Take an action over all the agents we have access to, filters if
+a filter_func is given\end{DoxyVerb}
+ 
+
+Definition at line 152 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a829bf9d74d9afb0277c11347745ac6db}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a829bf9d74d9afb0277c11347745ac6db}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!route\+\_\+packet@{route\+\_\+packet}}
+\index{route\+\_\+packet@{route\+\_\+packet}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{route\+\_\+packet()}{route\_packet()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{pkt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Put an incoming message into the queue for the agent specified in
+the packet, as they have sent a message from the web client.
+\end{DoxyVerb}
+ 
+
+Definition at line 132 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+\_\+get\+\_\+agent(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+\_\+get\+\_\+agent(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a829bf9d74d9afb0277c11347745ac6db_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad5ea6d1d764743de25c71d027d6f981c}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad5ea6d1d764743de25c71d027d6f981c}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!save\+\_\+disconnects@{save\+\_\+disconnects}}
+\index{save\+\_\+disconnects@{save\+\_\+disconnects}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{save\+\_\+disconnects()}{save\_disconnects()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Saves the local list of disconnects to file\end{DoxyVerb}
+ 
+
+Definition at line 204 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+disconnects, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects, and parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+shutdown().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad5ea6d1d764743de25c71d027d6f981c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a814ac330b709eeef4abf4e4a73d71447}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a814ac330b709eeef4abf4e4a73d71447}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handles cleaning up and storing state related to workers\end{DoxyVerb}
+ 
+
+Definition at line 372 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers(), and parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a814ac330b709eeef4abf4e4a73d71447_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a95b104ab69a0c75312657ce77842a690}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a95b104ab69a0c75312657ce77842a690}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!time\+\_\+block\+\_\+worker@{time\+\_\+block\+\_\+worker}}
+\index{time\+\_\+block\+\_\+worker@{time\+\_\+block\+\_\+worker}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{time\+\_\+block\+\_\+worker()}{time\_block\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+block\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 168 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers, and parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_af4c5d947d5477e2b5a7bd6167e125ba9}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_af4c5d947d5477e2b5a7bd6167e125ba9}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!un\+\_\+time\+\_\+block\+\_\+workers@{un\+\_\+time\+\_\+block\+\_\+workers}}
+\index{un\+\_\+time\+\_\+block\+\_\+workers@{un\+\_\+time\+\_\+block\+\_\+workers}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{un\+\_\+time\+\_\+block\+\_\+workers()}{un\_time\_block\_workers()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{workers = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 172 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+manager, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers, and parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+shutdown().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_af4c5d947d5477e2b5a7bd6167e125ba9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae07d1e801e6436a33d2a19f32e41088a}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ae07d1e801e6436a33d2a19f32e41088a}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!worker\+\_\+alive@{worker\+\_\+alive}}
+\index{worker\+\_\+alive@{worker\+\_\+alive}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{worker\+\_\+alive()}{worker\_alive()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+worker\+\_\+alive (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates a new worker record if it doesn't exist, returns state\end{DoxyVerb}
+ 
+
+Definition at line 269 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad3bec2328ee19706027d1279e5910a22}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_ad3bec2328ee19706027d1279e5910a22}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!assignment\+\_\+to\+\_\+worker\+\_\+id@{assignment\+\_\+to\+\_\+worker\+\_\+id}}
+\index{assignment\+\_\+to\+\_\+worker\+\_\+id@{assignment\+\_\+to\+\_\+worker\+\_\+id}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{assignment\+\_\+to\+\_\+worker\+\_\+id}{assignment\_to\_worker\_id}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assignment\+\_\+to\+\_\+worker\+\_\+id}
+
+
+
+Definition at line 97 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assign\+\_\+task\+\_\+to\+\_\+worker(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+for\+\_\+assignment(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+work\+\_\+status().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a878a7bb6afd1530ecc8cc8852a8990a6}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a878a7bb6afd1530ecc8cc8852a8990a6}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!conv\+\_\+to\+\_\+agent@{conv\+\_\+to\+\_\+agent}}
+\index{conv\+\_\+to\+\_\+agent@{conv\+\_\+to\+\_\+agent}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{conv\+\_\+to\+\_\+agent}{conv\_to\_agent}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+conv\+\_\+to\+\_\+agent}
+
+
+
+Definition at line 96 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+work\+\_\+status(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+agent\+\_\+disconnect().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1fcba62024d92a25d76e0f106d76fd81}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a1fcba62024d92a25d76e0f106d76fd81}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!disconnects@{disconnects}}
+\index{disconnects@{disconnects}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{disconnects}{disconnects}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+disconnects}
+
+
+
+Definition at line 184 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abff39f43090e885a3c8b74f4fcc06d55}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abff39f43090e885a3c8b74f4fcc06d55}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!hit\+\_\+id\+\_\+to\+\_\+agent@{hit\+\_\+id\+\_\+to\+\_\+agent}}
+\index{hit\+\_\+id\+\_\+to\+\_\+agent@{hit\+\_\+id\+\_\+to\+\_\+agent}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{hit\+\_\+id\+\_\+to\+\_\+agent}{hit\_id\_to\_agent}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+hit\+\_\+id\+\_\+to\+\_\+agent}
+
+
+
+Definition at line 98 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assign\+\_\+task\+\_\+to\+\_\+worker(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+complete\+\_\+hits().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abd069a274bd03b3aeab20c3f788cf127}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_abd069a274bd03b3aeab20c3f788cf127}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!is\+\_\+sandbox@{is\+\_\+sandbox}}
+\index{is\+\_\+sandbox@{is\+\_\+sandbox}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{is\+\_\+sandbox}{is\_sandbox}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+is\+\_\+sandbox}
+
+
+
+Definition at line 101 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+work\+\_\+status(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a90e4c41010915289fa5e8e1fb0572623}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a90e4c41010915289fa5e8e1fb0572623}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!mturk\+\_\+manager@{mturk\+\_\+manager}}
+\index{mturk\+\_\+manager@{mturk\+\_\+manager}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{mturk\+\_\+manager}{mturk\_manager}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+manager}
+
+
+
+Definition at line 94 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+change\+\_\+agent\+\_\+conversation(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), server.\+Approval\+Handler.\+post(), server.\+Reverse\+Handler.\+post(), server.\+Rejection\+Handler.\+post(), server.\+Block\+Handler.\+post(), server.\+Bonus\+Handler.\+post(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+block\+\_\+worker(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a52976ae5dca085ae8398305c36e781b9}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a52976ae5dca085ae8398305c36e781b9}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!mturk\+\_\+workers@{mturk\+\_\+workers}}
+\index{mturk\+\_\+workers@{mturk\+\_\+workers}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{mturk\+\_\+workers}{mturk\_workers}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+mturk\+\_\+workers}
+
+
+
+Definition at line 95 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+assign\+\_\+task\+\_\+to\+\_\+worker(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+agent\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+map\+\_\+over\+\_\+agents(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+worker\+\_\+alive().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a69b6fcf739bcdaf914fe524772738309}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_a69b6fcf739bcdaf914fe524772738309}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!opt@{opt}}
+\index{opt@{opt}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt}
+
+
+
+Definition at line 93 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa51476aab479eae8096ae6097a8571f8}\label{classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager_aa51476aab479eae8096ae6097a8571f8}} 
+\index{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}!time\+\_\+blocked\+\_\+workers@{time\+\_\+blocked\+\_\+workers}}
+\index{time\+\_\+blocked\+\_\+workers@{time\+\_\+blocked\+\_\+workers}!parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager@{parlai\+::mturk\+::core\+::worker\+\_\+manager\+::\+Worker\+Manager}}
+\subsubsection{\texorpdfstring{time\+\_\+blocked\+\_\+workers}{time\_blocked\_workers}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+blocked\+\_\+workers}
+
+
+
+Definition at line 99 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+time\+\_\+block\+\_\+worker(), and parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+un\+\_\+time\+\_\+block\+\_\+workers().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/\hyperlink{worker__manager_8py}{worker\+\_\+manager.\+py}\end{DoxyCompactItemize}

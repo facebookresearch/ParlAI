@@ -1,0 +1,8 @@
+<map id="controllable_seq2seq.controls.flatten" name="controllable_seq2seq.controls.flatten">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache.html#ae97120b4fec464f79c7d0d9cd54c101d" title="parlai.core.pytorch\l_data_teacher.BatchSortCache.batch_cache" alt="" coords="288,5,571,47"/>
+<area shape="rect" id="node3" href="$namespacecontrollable__seq2seq_1_1controls.html#acce6374d8291de7af1df375285d65054" title="controllable_seq2seq.controls.extrep\l_ngram_used_before" alt="" coords="619,56,853,97"/>
+<area shape="rect" id="node4" href="$namespacecontrollable__seq2seq_1_1controls.html#ae87a6983e2e8bfd8a5eaa33973c6acc3" title="controllable_seq2seq.controls.lastutt\l_sim_arora_word" alt="" coords="901,140,1136,181"/>
+<area shape="rect" id="node5" href="$namespacecontrollable__seq2seq_1_1controls.html#ae434171bae1e0ae82095b6d54ad4cadd" title="controllable_seq2seq.controls.extrep\l_word_used_before" alt="" coords="312,173,547,215"/>
+<area shape="rect" id="node7" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#aa7818a9d2c6c401d2c6aeb75dec54397" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.overall_split" alt="" coords="311,239,548,280"/>
+<area shape="rect" id="node6" href="$namespacecontrollable__seq2seq_1_1controls.html#ae0245f482c87ad27a92efebe1d95d607" title="controllable_seq2seq.controls.intrep\l_ngram_used_before" alt="" coords="621,224,851,265"/>
+</map>

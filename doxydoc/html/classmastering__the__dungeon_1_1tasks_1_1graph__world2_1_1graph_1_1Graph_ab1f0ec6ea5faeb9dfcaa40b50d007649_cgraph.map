@@ -1,0 +1,8 @@
+<map id="mastering_the_dungeon.tasks.graph_world2.graph.Graph.messages_in_same_room_as" name="mastering_the_dungeon.tasks.graph_world2.graph.Graph.messages_in_same_room_as">
+<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#afeb622f5376ff440089d5c294cb8a358" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.has_prop" alt="" coords="285,5,517,47"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#aa8a44c495d154f033ea3ced4d6f2e85d" title="light_chats.graph.Graph.has_prop" alt="" coords="293,71,510,98"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a4a99f9a773c1a5939fc45c50f92b4449" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.send_msg" alt="" coords="285,123,517,164"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#a966d3719771ddc58c520f0821c18d959" title="light_chats.graph.Graph.send_msg" alt="" coords="289,189,513,215"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="565,71,780,98"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1Graph.html#a33bf40491bd3aa15e65987377b3d580f" title="light_chats.graph.Graph.location" alt="" coords="568,189,777,215"/>
+</map>

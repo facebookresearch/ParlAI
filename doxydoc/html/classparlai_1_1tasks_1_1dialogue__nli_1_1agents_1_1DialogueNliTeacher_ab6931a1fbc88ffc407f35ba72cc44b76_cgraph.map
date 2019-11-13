@@ -1,0 +1,11 @@
+<map id="parlai.tasks.dialogue_nli.agents.DialogueNliTeacher.__init__" name="parlai.tasks.dialogue_nli.agents.DialogueNliTeacher.__init__">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1CCPEAllTeacher.html#a5e9200199ce4048f02ac7b229a56d5d2" title="parlai.tasks.ccpe.agents.\lCCPEAllTeacher._setup_data" alt="" coords="280,5,477,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1dailydialog_1_1agents_1_1Convai2Teacher.html#a67f341cfe02a047a101c48e29a1f9b38" title="parlai.tasks.dailydialog.agents.\lConvai2Teacher._setup_data" alt="" coords="278,71,479,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1dialogue__nli_1_1agents_1_1DialogueNliTeacher.html#a9940fcade509804ee59959728026a1e5" title="parlai.tasks.dialogue\l_nli.agents.DialogueNliTeacher.\l_setup_data" alt="" coords="275,137,482,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a1a121db5789cddaf83dd28c000826e08" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher._setup_data" alt="" coords="273,217,484,259"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1CCPEAssistantTeacher.html#a5d52d0ba13e1a15f0fcace50b75639a2" title="parlai.tasks.ccpe.agents.\lCCPEAssistantTeacher._setup_data" alt="" coords="260,283,497,324"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultDataset.html#a28e25bcc44d0555d328e88380c5ebf51" title="parlai.tasks.coco_caption.agents.\lDefaultDataset._setup_data" alt="" coords="270,348,487,389"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#ac85c699557b6584eb9e0bc2df01b1b79" title="parlai.tasks.coco_caption.agents.\lDefaultTeacher._setup_data" alt="" coords="270,413,487,455"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1ParlAIDataset.html#a870ebe1ff0f9c0a2188c60685ebb9c0d" title="parlai.core.pytorch\l_data_teacher.ParlAIDataset.\l_setup_data" alt="" coords="281,479,476,535"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html#a92fb71aa4e5d3a4751d78ecca202c608" title="parlai.core.teachers.Parl\lAIDialogTeacher._setup_data" alt="" coords="281,560,476,601"/>
+</map>

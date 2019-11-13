@@ -1,0 +1,272 @@
+\hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent}\index{parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent@{parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=217pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=305pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_aedf3441c187fc809926e490a9cab9875}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent_a6c0d7c9c31b38e99b747be88395d689f}{opt})
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a407dcd1aa927f8065334a825b2d099d9}{txt2vec} (self, text, vec\+\_\+type=list)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a6269b15dc01bfaac5dd1b5da995f2f0f}{vec2txt} (self, vec)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a35cefbd011319119e4a395afd6618ac6}{act} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a255b3fa65375a03d2e74e0c2b2cc0fad}{tokenizer}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a5b59ef24fb4aba9be417dd1c5ebd63af}{start\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a73ca2778d48882faa1bba25e33841d9c}{end\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a19f8c6b3d3954b4db246df54a4f8cb90}{null\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_abbfc373c86a5d10c89b022c7082a051b}{start\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a108b974b0f3048fc15aafd83cd0774f6}{end\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a27aa43e578c745c4f7a340973a9e9eff}{pad\+\_\+idx}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file bert\+\_\+dictionary.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_aedf3441c187fc809926e490a9cab9875}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_aedf3441c187fc809926e490a9cab9875}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 26 of file bert\+\_\+dictionary.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_aedf3441c187fc809926e490a9cab9875_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a35cefbd011319119e4a395afd6618ac6}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a35cefbd011319119e4a395afd6618ac6}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!act@{act}}
+\index{act@{act}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+act\+\_\+blocking().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a35cefbd011319119e4a395afd6618ac6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a407dcd1aa927f8065334a825b2d099d9}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a407dcd1aa927f8065334a825b2d099d9}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!txt2vec@{txt2vec}}
+\index{txt2vec@{txt2vec}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{txt2vec()}{txt2vec()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+txt2vec (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{vec\+\_\+type = {\ttfamily list} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 52 of file bert\+\_\+dictionary.\+py.
+
+
+
+References parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize(), and parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a407dcd1aa927f8065334a825b2d099d9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a407dcd1aa927f8065334a825b2d099d9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a6269b15dc01bfaac5dd1b5da995f2f0f}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a6269b15dc01bfaac5dd1b5da995f2f0f}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!vec2txt@{vec2txt}}
+\index{vec2txt@{vec2txt}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{vec2txt()}{vec2txt()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+vec2txt (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{vec }\end{DoxyParamCaption})}
+
+
+
+Definition at line 57 of file bert\+\_\+dictionary.\+py.
+
+
+
+References parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a6269b15dc01bfaac5dd1b5da995f2f0f_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a108b974b0f3048fc15aafd83cd0774f6}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a108b974b0f3048fc15aafd83cd0774f6}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!end\+\_\+idx@{end\+\_\+idx}}
+\index{end\+\_\+idx@{end\+\_\+idx}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{end\+\_\+idx}{end\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+end\+\_\+idx}
+
+
+
+Definition at line 39 of file bert\+\_\+dictionary.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a73ca2778d48882faa1bba25e33841d9c}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a73ca2778d48882faa1bba25e33841d9c}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!end\+\_\+token@{end\+\_\+token}}
+\index{end\+\_\+token@{end\+\_\+token}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{end\+\_\+token}{end\_token}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+end\+\_\+token}
+
+
+
+Definition at line 34 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+eos\+\_\+index(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+max\+\_\+freq(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a19f8c6b3d3954b4db246df54a4f8cb90}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a19f8c6b3d3954b4db246df54a4f8cb90}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!null\+\_\+token@{null\+\_\+token}}
+\index{null\+\_\+token@{null\+\_\+token}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{null\+\_\+token}{null\_token}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+null\+\_\+token}
+
+
+
+Definition at line 35 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Vqa\+Dictionary\+Agent.\+encode\+\_\+question(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+load(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq(), and parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+pad\+\_\+index().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a27aa43e578c745c4f7a340973a9e9eff}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a27aa43e578c745c4f7a340973a9e9eff}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!pad\+\_\+idx@{pad\+\_\+idx}}
+\index{pad\+\_\+idx@{pad\+\_\+idx}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{pad\+\_\+idx}{pad\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+pad\+\_\+idx}
+
+
+
+Definition at line 42 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+encoder(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_abbfc373c86a5d10c89b022c7082a051b}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_abbfc373c86a5d10c89b022c7082a051b}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!start\+\_\+idx@{start\+\_\+idx}}
+\index{start\+\_\+idx@{start\+\_\+idx}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{start\+\_\+idx}{start\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+start\+\_\+idx}
+
+
+
+Definition at line 36 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a5b59ef24fb4aba9be417dd1c5ebd63af}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a5b59ef24fb4aba9be417dd1c5ebd63af}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!start\+\_\+token@{start\+\_\+token}}
+\index{start\+\_\+token@{start\+\_\+token}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{start\+\_\+token}{start\_token}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+start\+\_\+token}
+
+
+
+Definition at line 33 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Fairseq\+Dictionary.\+bos\+\_\+index(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+max\+\_\+freq(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+max\+\_\+freq(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+max\+\_\+freq().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a255b3fa65375a03d2e74e0c2b2cc0fad}\label{classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent_a255b3fa65375a03d2e74e0c2b2cc0fad}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}!tokenizer@{tokenizer}}
+\index{tokenizer@{tokenizer}!parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent@{parlai\+::agents\+::bert\+\_\+ranker\+::bert\+\_\+dictionary\+::\+Bert\+Dictionary\+Agent}}
+\subsubsection{\texorpdfstring{tokenizer}{tokenizer}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+tokenizer}
+
+
+
+Definition at line 31 of file bert\+\_\+dictionary.\+py.
+
+
+
+Referenced by parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+save(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+sort(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+span\+\_\+tokenize(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+dict.\+Wizard\+Dict\+Agent.\+tokenize(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+txt2vec(), parlai.\+agents.\+bert\+\_\+ranker.\+bert\+\_\+dictionary.\+Bert\+Dictionary\+Agent.\+vec2txt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+vec2txt(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+vec2txt(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+vec2txt().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/bert\+\_\+ranker/\hyperlink{bert__dictionary_8py}{bert\+\_\+dictionary.\+py}\end{DoxyCompactItemize}

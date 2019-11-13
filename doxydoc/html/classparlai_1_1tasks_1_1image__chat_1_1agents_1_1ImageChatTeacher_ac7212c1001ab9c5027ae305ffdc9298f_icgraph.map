@@ -1,4 +1,4 @@
 <map id="parlai.tasks.image_chat.agents.ImageChatTeacher.get" name="parlai.tasks.image_chat.agents.ImageChatTeacher.get">
-<area shape="rect" id="node1" title=" " alt="" coords="295,13,529,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a2b795770610618bf94e76705cb90611a" title=" " alt="" coords="5,5,247,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="306,5,511,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a2b795770610618bf94e76705cb90611a" title="parlai.tasks.image\l_chat.agents.ImageChatTeacher.next\l_example" alt="" coords="288,71,529,127"/>
 </map>

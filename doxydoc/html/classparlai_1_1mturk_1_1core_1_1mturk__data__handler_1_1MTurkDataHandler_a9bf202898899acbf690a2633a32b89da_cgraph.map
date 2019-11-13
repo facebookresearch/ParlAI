@@ -1,6 +1,5 @@
 <map id="parlai.mturk.core.mturk_data_handler.MTurkDataHandler.log_reject_assignment" name="parlai.mturk.core.mturk_data_handler.MTurkDataHandler.log_reject_assignment">
-<area shape="rect" id="node1" title=" " alt="" coords="5,85,244,141"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title=" " alt="" coords="292,5,513,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title=" " alt="" coords="295,85,511,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#af3e12131a13c79e458e3ae06c8c699a7" title=" " alt="" coords="292,165,513,221"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="292,5,513,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7db1fa74b5a0da10c02d00e6dd9893db" title="parlai.mturk.core.legacy\l_2018.mturk_data_handler.MTurk\lDataHandler._get_connection" alt="" coords="295,85,511,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#af3e12131a13c79e458e3ae06c8c699a7" title="parlai.mturk.core.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="292,165,513,221"/>
 </map>

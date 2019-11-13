@@ -1,5 +1,4 @@
 <map id="interactive.MyHandler.do_GET" name="interactive.MyHandler.do_GET">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,207,32"/>
-<area shape="rect" id="node2" href="$classinteractive_1_1MyHandler.html#a90d22dc71dcfeeedcb3c6d4ce61cccf1" title=" " alt="" coords="255,5,453,32"/>
-<area shape="rect" id="node3" href="$classinteractive_1_1MyHandler.html#a5941a3caf26e4d5931324edbdbf51f8b" title=" " alt="" coords="501,5,721,32"/>
+<area shape="rect" id="node2" href="$classinteractive_1_1MyHandler.html#a90d22dc71dcfeeedcb3c6d4ce61cccf1" title="interactive.MyHandler.respond" alt="" coords="255,5,453,32"/>
+<area shape="rect" id="node3" href="$classinteractive_1_1MyHandler.html#a5941a3caf26e4d5931324edbdbf51f8b" title="interactive.MyHandler.handle_http" alt="" coords="501,5,721,32"/>
 </map>

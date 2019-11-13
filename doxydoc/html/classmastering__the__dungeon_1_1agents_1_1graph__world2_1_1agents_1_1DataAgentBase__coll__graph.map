@@ -1,5 +1,3 @@
 <map id="mastering_the_dungeon.agents.graph_world2.agents.DataAgentBase" name="mastering_the_dungeon.agents.graph_world2.agents.DataAgentBase">
-<area shape="rect" id="node1" title=" " alt="" coords="5,155,244,196"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="43,80,206,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="96,5,153,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="43,80,206,107"/>
 </map>

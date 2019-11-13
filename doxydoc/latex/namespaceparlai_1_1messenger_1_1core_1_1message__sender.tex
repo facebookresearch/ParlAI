@@ -1,0 +1,234 @@
+\hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender}{}\section{parlai.\+messenger.\+core.\+message\+\_\+sender Namespace Reference}
+\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender}\index{parlai.\+messenger.\+core.\+message\+\_\+sender@{parlai.\+messenger.\+core.\+message\+\_\+sender}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender}{Message\+Sender}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ae26a16d26bdd28795220ad9ef76c96fd}{create\+\_\+attachment} (payload)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ad1b8681b56d567251598624cf3efa587}{create\+\_\+reply\+\_\+option} (title, payload=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5476d988fc16eb2cf726dc63e72fb0f5}{create\+\_\+text\+\_\+message} (text, quick\+\_\+replies=None)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5bd9c5675042d0a3a4fc808bab365548}{create\+\_\+attachment\+\_\+message} (attachment\+\_\+item, quick\+\_\+replies=None)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a0fb8b2849a9c5d3e0db470a399358b5b}{create\+\_\+list\+\_\+element} (element)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a4359c421913c537e0003032b1d1b79b5}{create\+\_\+compact\+\_\+list\+\_\+message} (raw\+\_\+elems)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a96fe2d14734c84fe282de28cb03b2301}{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES} = 10
+\item 
+int \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a29e274aca6cfe0c05417565bcae456b9}{M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS} = 640
+\item 
+int \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a896cae6f3c68db97df9820726f738fd1}{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS} = 20
+\item 
+int \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a2f6531e51639866a10b3b0442c0579f2}{M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS} = 1000
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ae26a16d26bdd28795220ad9ef76c96fd}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ae26a16d26bdd28795220ad9ef76c96fd}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+attachment@{create\+\_\+attachment}}
+\index{create\+\_\+attachment@{create\+\_\+attachment}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+attachment()}{create\_attachment()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+attachment (\begin{DoxyParamCaption}\item[{}]{payload }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a simple url-based attachment\end{DoxyVerb}
+ 
+
+Definition at line 22 of file message\+\_\+sender.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ae26a16d26bdd28795220ad9ef76c96fd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5bd9c5675042d0a3a4fc808bab365548}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5bd9c5675042d0a3a4fc808bab365548}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+attachment\+\_\+message@{create\+\_\+attachment\+\_\+message}}
+\index{create\+\_\+attachment\+\_\+message@{create\+\_\+attachment\+\_\+message}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+attachment\+\_\+message()}{create\_attachment\_message()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+attachment\+\_\+message (\begin{DoxyParamCaption}\item[{}]{attachment\+\_\+item,  }\item[{}]{quick\+\_\+replies = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a message list made with only an attachment.
+quick_replies should be a list of options made with create_reply_option.
+\end{DoxyVerb}
+ 
+
+Definition at line 98 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a4359c421913c537e0003032b1d1b79b5}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a4359c421913c537e0003032b1d1b79b5}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+compact\+\_\+list\+\_\+message@{create\+\_\+compact\+\_\+list\+\_\+message}}
+\index{create\+\_\+compact\+\_\+list\+\_\+message@{create\+\_\+compact\+\_\+list\+\_\+message}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+compact\+\_\+list\+\_\+message()}{create\_compact\_list\_message()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+compact\+\_\+list\+\_\+message (\begin{DoxyParamCaption}\item[{}]{raw\+\_\+elems }\end{DoxyParamCaption})}
+
+
+
+Definition at line 129 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+list\+\_\+element().
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a4359c421913c537e0003032b1d1b79b5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a4359c421913c537e0003032b1d1b79b5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a0fb8b2849a9c5d3e0db470a399358b5b}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a0fb8b2849a9c5d3e0db470a399358b5b}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+list\+\_\+element@{create\+\_\+list\+\_\+element}}
+\index{create\+\_\+list\+\_\+element@{create\+\_\+list\+\_\+element}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+list\+\_\+element()}{create\_list\_element()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+list\+\_\+element (\begin{DoxyParamCaption}\item[{}]{element }\end{DoxyParamCaption})}
+
+
+
+Definition at line 113 of file message\+\_\+sender.\+py.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+compact\+\_\+list\+\_\+message().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a0fb8b2849a9c5d3e0db470a399358b5b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ad1b8681b56d567251598624cf3efa587}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ad1b8681b56d567251598624cf3efa587}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+reply\+\_\+option@{create\+\_\+reply\+\_\+option}}
+\index{create\+\_\+reply\+\_\+option@{create\+\_\+reply\+\_\+option}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+reply\+\_\+option()}{create\_reply\_option()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+reply\+\_\+option (\begin{DoxyParamCaption}\item[{}]{title,  }\item[{}]{payload = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a quick reply option. Takes in display title and optionally extra
+custom data.
+\end{DoxyVerb}
+ 
+
+Definition at line 43 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+message(), and parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+payload().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_ad1b8681b56d567251598624cf3efa587_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5476d988fc16eb2cf726dc63e72fb0f5}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5476d988fc16eb2cf726dc63e72fb0f5}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!create\+\_\+text\+\_\+message@{create\+\_\+text\+\_\+message}}
+\index{create\+\_\+text\+\_\+message@{create\+\_\+text\+\_\+message}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{create\+\_\+text\+\_\+message()}{create\_text\_message()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+sender.\+create\+\_\+text\+\_\+message (\begin{DoxyParamCaption}\item[{}]{text,  }\item[{}]{quick\+\_\+replies = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return a list of text messages from the given text. If the message is
+too long it is split into multiple messages.
+quick_replies should be a list of options made with create_reply_option.
+\end{DoxyVerb}
+ 
+
+Definition at line 60 of file message\+\_\+sender.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+message\+\_\+sender.\+Message\+Sender.\+send\+\_\+fb\+\_\+message().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a5476d988fc16eb2cf726dc63e72fb0f5_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a2f6531e51639866a10b3b0442c0579f2}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a2f6531e51639866a10b3b0442c0579f2}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS}}
+\index{M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS}{MAX\_POSTBACK\_CHARS}}
+{\footnotesize\ttfamily int parlai.\+messenger.\+core.\+message\+\_\+sender.\+M\+A\+X\+\_\+\+P\+O\+S\+T\+B\+A\+C\+K\+\_\+\+C\+H\+A\+RS = 1000}
+
+
+
+Definition at line 15 of file message\+\_\+sender.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a96fe2d14734c84fe282de28cb03b2301}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a96fe2d14734c84fe282de28cb03b2301}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES@{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES}}
+\index{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES@{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES}{MAX\_QUICK\_REPLIES}}
+{\footnotesize\ttfamily int parlai.\+messenger.\+core.\+message\+\_\+sender.\+M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+I\+ES = 10}
+
+
+
+Definition at line 12 of file message\+\_\+sender.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a896cae6f3c68db97df9820726f738fd1}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a896cae6f3c68db97df9820726f738fd1}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS}}
+\index{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS}{MAX\_QUICK\_REPLY\_TITLE\_CHARS}}
+{\footnotesize\ttfamily int parlai.\+messenger.\+core.\+message\+\_\+sender.\+M\+A\+X\+\_\+\+Q\+U\+I\+C\+K\+\_\+\+R\+E\+P\+L\+Y\+\_\+\+T\+I\+T\+L\+E\+\_\+\+C\+H\+A\+RS = 20}
+
+
+
+Definition at line 14 of file message\+\_\+sender.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a29e274aca6cfe0c05417565bcae456b9}\label{namespaceparlai_1_1messenger_1_1core_1_1message__sender_a29e274aca6cfe0c05417565bcae456b9}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}!M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS}}
+\index{M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS@{M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS}!parlai\+::messenger\+::core\+::message\+\_\+sender@{parlai\+::messenger\+::core\+::message\+\_\+sender}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS}{MAX\_TEXT\_CHARS}}
+{\footnotesize\ttfamily int parlai.\+messenger.\+core.\+message\+\_\+sender.\+M\+A\+X\+\_\+\+T\+E\+X\+T\+\_\+\+C\+H\+A\+RS = 640}
+
+
+
+Definition at line 13 of file message\+\_\+sender.\+py.
+

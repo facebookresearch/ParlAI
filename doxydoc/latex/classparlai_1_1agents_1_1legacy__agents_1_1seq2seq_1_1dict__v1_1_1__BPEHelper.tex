@@ -1,0 +1,192 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a95e6fa33247082a01355d39ee96fed39}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, codecs\+\_\+filename)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a4123dd721a13dc6607498ae29d7dd8a3}{tokenize} (self, text)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a90568a5897058075adae4b066693c0cc}{finalize} (self, frequencies, num\+\_\+symbols=30000, minfreq=2)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a354bb157f80cf8d87a1d0f87387f4cde}{splitter}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a610fc5289a22d9bfe229cd090f647d43}{codecs}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_ac6a1f3216616fc9ac78a4b5501693848}{bpe}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Helper class for performing BPE subword tokenization.
+
+For technical details, please refer to https://arxiv.org/abs/1508.07909.
+This class just wraps around the official subword-nmt repository.
+
+This API expects the user to call tokenize() onto the training data,
+then call finalize() to learn the encodings, and then iterate over the data
+in a second pass, calling tokenize() again to get processed output.
+\end{DoxyVerb}
+ 
+
+Definition at line 669 of file dict\+\_\+v1.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a95e6fa33247082a01355d39ee96fed39}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a95e6fa33247082a01355d39ee96fed39}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{codecs\+\_\+filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the BPE module.
+
+If `codecs_filename` already exists, loads the pretrained codecs.
+If it does not, codecs will be saved there after a call to `finalize()`.
+
+:param codecs_filename: place to save/load codecs.
+\end{DoxyVerb}
+ 
+
+Definition at line 680 of file dict\+\_\+v1.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a90568a5897058075adae4b066693c0cc}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a90568a5897058075adae4b066693c0cc}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!finalize@{finalize}}
+\index{finalize@{finalize}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{finalize()}{finalize()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+finalize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{frequencies,  }\item[{}]{num\+\_\+symbols = {\ttfamily 30000},  }\item[{}]{minfreq = {\ttfamily 2} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the codecs.
+
+:param: dictionary of (token: frequency) pairs
+:param num_symbols: Number of BPE symbols. Recommend 30000-40000.
+    If <= 0, default 30000 will be used.
+:param minfreq: Minimum frequency of a token before forced BPE
+    decomposition. If <= 0 will use subword-nmt default of 2.
+\end{DoxyVerb}
+ 
+
+Definition at line 720 of file dict\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+\_\+load\+\_\+from\+\_\+codecs(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+\_\+load\+\_\+from\+\_\+codecs(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+codecs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+codecs, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a90568a5897058075adae4b066693c0cc_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a4123dd721a13dc6607498ae29d7dd8a3}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a4123dd721a13dc6607498ae29d7dd8a3}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!tokenize@{tokenize}}
+\index{tokenize@{tokenize}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{tokenize()}{tokenize()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tokenize the text with bpe if codecs are already finalized.
+
+Otherwise, returns the regularly split tokens that will train the bpe.
+
+:param text: str. Raw text to tokenize.
+:return: a list of tokens. Will use BPE once finalized.
+\end{DoxyVerb}
+ 
+
+Definition at line 704 of file dict\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+splitter, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+splitter.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+act(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+span\+\_\+tokenize(), and parlai.\+core.\+dict.\+Dictionary\+Agent.\+txt2vec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a4123dd721a13dc6607498ae29d7dd8a3_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_ac6a1f3216616fc9ac78a4b5501693848}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_ac6a1f3216616fc9ac78a4b5501693848}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!bpe@{bpe}}
+\index{bpe@{bpe}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{bpe}{bpe}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+bpe}
+
+
+
+Definition at line 702 of file dict\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+tokenize().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a610fc5289a22d9bfe229cd090f647d43}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a610fc5289a22d9bfe229cd090f647d43}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!codecs@{codecs}}
+\index{codecs@{codecs}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{codecs}{codecs}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+codecs}
+
+
+
+Definition at line 696 of file dict\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+copy\+\_\+codecs\+\_\+file(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+finalize(), and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+finalize().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a354bb157f80cf8d87a1d0f87387f4cde}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper_a354bb157f80cf8d87a1d0f87387f4cde}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}!splitter@{splitter}}
+\index{splitter@{splitter}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::dict\+\_\+v1\+::\+\_\+\+B\+P\+E\+Helper}}
+\subsubsection{\texorpdfstring{splitter}{splitter}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+splitter}
+
+
+
+Definition at line 694 of file dict\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+tokenize(), and parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+tokenize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{dict__v1_8py}{dict\+\_\+v1.\+py}\end{DoxyCompactItemize}

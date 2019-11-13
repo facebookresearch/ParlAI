@@ -1,0 +1,80 @@
+This directory contains a few particular examples of basic loops.
+
+
+\begin{DoxyItemize}
+\item \hyperlink{base__train_8py}{base\+\_\+train.\+py}\+: {\itshape very simple example shows the outline of a training/validation loop using the default Agent parent class}
+\item display\+\_\+data.\+py\+: {\itshape uses agent.\+repeat\+\_\+label to display data from a particular task provided on the command-\/line}
+\item display\+\_\+model.\+py\+: {\itshape shows the predictions of a provided model on a particular task provided on the command-\/line}
+\item eval\+\_\+model.\+py\+: {\itshape uses the named agent to compute evaluation metrics data for a particular task provided on the command-\/line}
+\item build\+\_\+dict.\+py\+: {\itshape build a dictionary from a particular task provided on the command-\/line using core.\+dict.\+Dictionary\+Agent}
+\end{DoxyItemize}
+
+\subsection*{Running These Examples}
+
+Most of them can be run simply by typing {\ttfamily python \{example\}.py -\/t \{task\+\_\+name\}}. Here are some examples\+:
+
+Display 10 random examples from task 1 of the \char`\"{}1k training examples\char`\"{} b\+AbI task\+: 
+\begin{DoxyCode}
+python display\_data.py -t babi:task1k:1
+\end{DoxyCode}
+
+
+Run a train/valid loop with the basic agent (which prints what it receives and then says hello to the teacher, rather than learning anything) on the babi task\+: 
+\begin{DoxyCode}
+python base\_train.py -t babi:task1k:1
+\end{DoxyCode}
+
+
+Displays 100 random examples from multi-\/tasking on the b\+AbI task and the S\+Qu\+AD dataset at the same time\+: 
+\begin{DoxyCode}
+python display\_data.py -t babi:task1k:1,squad -ne 100
+\end{DoxyCode}
+
+
+Evaluate on the b\+AbI test set with a human agent (using the local keyboard as input)\+: 
+\begin{DoxyCode}
+python eval\_model.py -m local\_human -t babi:Task1k:1 -dt valid
+\end{DoxyCode}
+
+
+Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset\+: 
+\begin{DoxyCode}
+python eval\_model.py -m ir\_baseline -t "#moviedd-reddit" -dt valid
+\end{DoxyCode}
+
+
+Display the predictions of that same IR baseline model\+: 
+\begin{DoxyCode}
+python display\_model.py -m ir\_baseline -t "#moviedd-reddit" -dt valid
+\end{DoxyCode}
+
+
+Build a dictionary on a b\+AbI \char`\"{}1k training examples\char`\"{} task 1 and save it to /tmp/dict.tsv 
+\begin{DoxyCode}
+python build\_dict.py -t babi:task1k:1 --dict-file /tmp/dict.tsv
+\end{DoxyCode}
+
+
+Train a simple sequence to sequence model on the \char`\"{}1k training examples\char`\"{} b\+AbI task 1 with batch size of 8 examples for one epoch (requires pytorch)\+: 
+\begin{DoxyCode}
+python train\_model.py -m seq2seq -t babi:task1k:1 -bs 8 -eps 1 -mf /tmp/model\_s2s
+\end{DoxyCode}
+
+
+Trains an attentive L\+S\+TM model of \href{https://arxiv.org/abs/1704.00051}{\tt Chen et al.} on the S\+Qu\+AD dataset with a batch size of 32 examples (requires pytorch)\+: 
+\begin{DoxyCode}
+python train\_model.py -m drqa -t squad -bs 32 -mf /tmp/model\_drqa
+\end{DoxyCode}
+
+
+Evaluates on an already trained S\+Qu\+AD model\+: 
+\begin{DoxyCode}
+python eval\_model.py -t squad -mf "models:drqa/squad/model"
+\end{DoxyCode}
+
+
+Interactive session on an already trained S\+Qu\+AD model\+: 
+\begin{DoxyCode}
+python interactive.py -mf "models:drqa/squad/model"
+\end{DoxyCode}
+ 

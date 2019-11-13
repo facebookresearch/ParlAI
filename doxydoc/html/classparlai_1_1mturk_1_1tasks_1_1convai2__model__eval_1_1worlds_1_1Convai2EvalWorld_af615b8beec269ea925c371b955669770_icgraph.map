@@ -1,0 +1,5 @@
+<map id="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld.is_exact_match" name="parlai.mturk.tasks.convai2_model_eval.worlds.Convai2EvalWorld.is_exact_match">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#af1504dbfbf076f8e3dad5f8ac823f761" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonaChatWorld.parley" alt="" coords="322,5,598,47"/>
+<area shape="rect" id="node3" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="341,71,579,98"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a88eef2bcb0b78f250ba0035df4975652" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.parley" alt="" coords="316,123,604,164"/>
+</map>

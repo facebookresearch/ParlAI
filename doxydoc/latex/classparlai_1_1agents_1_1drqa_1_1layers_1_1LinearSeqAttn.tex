@@ -1,0 +1,111 @@
+\hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn}{}\section{parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn Class Reference}
+\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn}\index{parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn@{parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn}}
+
+
+Inheritance diagram for parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a4f7535d9314733bcbcbe957d96600907}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, input\+\_\+size)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_adae548d437f9b26ca9d928989e80a3ad}{forward} (self, x, x\+\_\+mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a5e221c809306db7c5877e5f6f919ac7f}{linear}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Self attention over a sequence:
+* o_i = softmax(Wx_i) for x_i in X.
+\end{DoxyVerb}
+ 
+
+Definition at line 228 of file layers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a4f7535d9314733bcbcbe957d96600907}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a4f7535d9314733bcbcbe957d96600907}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 233 of file layers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_adae548d437f9b26ca9d928989e80a3ad}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_adae548d437f9b26ca9d928989e80a3ad}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{x\+\_\+mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}x = batch * len * hdim
+x_mask = batch * len
+\end{DoxyVerb}
+ 
+
+Definition at line 237 of file layers.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+linear, parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+linear, and parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+linear.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_adae548d437f9b26ca9d928989e80a3ad_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a5e221c809306db7c5877e5f6f919ac7f}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1LinearSeqAttn_a5e221c809306db7c5877e5f6f919ac7f}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}!linear@{linear}}
+\index{linear@{linear}!parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn@{parlai\+::agents\+::drqa\+::layers\+::\+Linear\+Seq\+Attn}}
+\subsubsection{\texorpdfstring{linear}{linear}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+linear}
+
+
+
+Definition at line 235 of file layers.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), agent.\+modules.\+Hop.\+forward(), and parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/drqa/\hyperlink{layers_8py}{layers.\+py}\end{DoxyCompactItemize}

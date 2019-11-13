@@ -1,0 +1,492 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule}{}\section{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule}\index{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module@{parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acf6f1b0dd5025b20c330d08bd2a13755}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, dict, \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a7a029490f5786bfa0fb2755e716118e4}{null\+\_\+idx})
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acd213717123d2f2f24e6f03270c3db14}{get\+\_\+encoder} (self, opt, dict, \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a7a029490f5786bfa0fb2755e716118e4}{null\+\_\+idx}, reduction\+\_\+type)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a21343cb181ee148326166a8e32e9e3d6}{attend} (self, attention\+\_\+layer, queries, keys, values, mask)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a54ca3cb24e2a0fbbfa7b3f145c7558ed}{encode} (self, ctxt\+\_\+tokens, cand\+\_\+tokens)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a52218a8c0594ff4d5bf8e666dc38f508}{score} (self, ctxt\+\_\+rep, ctxt\+\_\+rep\+\_\+mask, ctxt\+\_\+pos, cand\+\_\+embed)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9e769210d947e88dc3e4555583b9c82e}{forward} (self, ctxt\+\_\+tokens=None, cand\+\_\+tokens=None, ctxt\+\_\+rep=None, ctxt\+\_\+rep\+\_\+mask=None, ctxt\+\_\+pos=None, cand\+\_\+rep=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a7a029490f5786bfa0fb2755e716118e4}{null\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9a5e58bfbd75ec89e10b8e4bcbcd4ab6}{encoder\+\_\+ctxt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af70c94c4e4073e804904b983a683c0a7}{encoder\+\_\+cand}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a3eea152c32cd33d1e6b0ca680887d0e7}{type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8440bd98b6ee31c0540fdbc2e9efe987}{n\+\_\+codes}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a2efc9276c4ab6d1533b7ab3ceef3ac3a}{attention\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af29f6ff1656451ec4c35b4cc9ea0f5dc}{attention\+\_\+keys}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acc2312ac770d343991de882c05da56e6}{attention\+\_\+num\+\_\+heads}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a80cf22447d874c72d3e9b64a64cf5747}{codes\+\_\+attention\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ae30ed526a2a4442222b6572a6fa41604}{codes\+\_\+attention\+\_\+num\+\_\+heads}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ac8d8955e72761c0775aeefea5ce80c3c}{codes}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a6740a4e891b964a41484a793ae0e6e6d}{code\+\_\+attention}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8fab02ef33d1e1ee413e4bcbe25aa03b}{attention}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Poly-encoder model.
+
+See https://arxiv.org/abs/1905.01969 for more details
+\end{DoxyVerb}
+ 
+
+Definition at line 187 of file polyencoder.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acf6f1b0dd5025b20c330d08bd2a13755}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acf6f1b0dd5025b20c330d08bd2a13755}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{dict,  }\item[{}]{null\+\_\+idx }\end{DoxyParamCaption})}
+
+
+
+Definition at line 193 of file polyencoder.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a21343cb181ee148326166a8e32e9e3d6}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a21343cb181ee148326166a8e32e9e3d6}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!attend@{attend}}
+\index{attend@{attend}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{attend()}{attend()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attend (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{attention\+\_\+layer,  }\item[{}]{queries,  }\item[{}]{keys,  }\item[{}]{values,  }\item[{}]{mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Apply attention.
+
+:param attention_layer:
+    nn.Module attention layer to use for the attention
+:param queries:
+    the queries for attention
+:param keys:
+    the keys for attention
+:param values:
+    the values for attention
+:param mask:
+    mask for the attention keys
+
+:return:
+    the result of applying attention to the values, with weights computed
+    wrt to the queries and keys.
+\end{DoxyVerb}
+ 
+
+Definition at line 284 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a21343cb181ee148326166a8e32e9e3d6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a54ca3cb24e2a0fbbfa7b3f145c7558ed}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a54ca3cb24e2a0fbbfa7b3f145c7558ed}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!encode@{encode}}
+\index{encode@{encode}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{encode()}{encode()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ctxt\+\_\+tokens,  }\item[{}]{cand\+\_\+tokens }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encode a text sequence.
+
+:param ctxt_tokens:
+    2D long tensor, batchsize x sent_len
+:param cand_tokens:
+    3D long tensor, batchsize x num_cands x sent_len
+    Note this will actually view it as a 2D tensor
+:return:
+    (ctxt_rep, ctxt_mask, ctxt_pos, cand_rep)
+    - ctxt_rep 3D float tensor, batchsize x n_codes x dim
+    - ctxt_mask byte:  batchsize x n_codes (all 1 in case
+    of polyencoder with code. Which are the vectors to use
+    in the ctxt_rep)
+    - ctxt_pos 3D float tensor, batchsize x sent_len x dim
+    - cand_rep (3D float tensor) batchsize x num_cands x dim
+\end{DoxyVerb}
+ 
+
+Definition at line 311 of file polyencoder.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attend(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention\+\_\+keys, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+code\+\_\+attention, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+codes, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encoder\+\_\+cand, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encoder\+\_\+ctxt, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+n\+\_\+codes, and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+type.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a54ca3cb24e2a0fbbfa7b3f145c7558ed_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a54ca3cb24e2a0fbbfa7b3f145c7558ed_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9e769210d947e88dc3e4555583b9c82e}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9e769210d947e88dc3e4555583b9c82e}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ctxt\+\_\+tokens = {\ttfamily None},  }\item[{}]{cand\+\_\+tokens = {\ttfamily None},  }\item[{}]{ctxt\+\_\+rep = {\ttfamily None},  }\item[{}]{ctxt\+\_\+rep\+\_\+mask = {\ttfamily None},  }\item[{}]{ctxt\+\_\+pos = {\ttfamily None},  }\item[{}]{cand\+\_\+rep = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass of the model.
+
+Due to a limitation of parlai, we have to have one single model
+in the agent. And because we want to be able to use data-parallel,
+we need to have one single forward() method.
+Therefore the operation_type can be either 'encode' or 'score'.
+
+:param ctxt_tokens:
+    tokenized contexts
+:param cand_tokens:
+    tokenized candidates
+:param ctxt_rep:
+    (bsz x num_codes x hsz)
+    encoded representation of the context. If self.type == 'codes', these
+    are the context codes. Otherwise, they are the outputs from the
+    encoder
+:param ctxt_rep_mask:
+    mask for ctxt rep
+:param ctxt_pos:
+    position embeddings for the ctxt_rep. If self.type == 'codes', these
+    are None, as their use is earlier in the pipeline.
+:param cand_rep:
+    encoded representation of the candidates
+\end{DoxyVerb}
+ 
+
+Definition at line 405 of file polyencoder.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+score, agent.\+modules.\+Mem\+N\+N.\+score, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+score(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+\_\+\+Hypothesis\+Tail.\+score.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9e769210d947e88dc3e4555583b9c82e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9e769210d947e88dc3e4555583b9c82e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acd213717123d2f2f24e6f03270c3db14}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acd213717123d2f2f24e6f03270c3db14}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!get\+\_\+encoder@{get\+\_\+encoder}}
+\index{get\+\_\+encoder@{get\+\_\+encoder}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{get\+\_\+encoder()}{get\_encoder()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+get\+\_\+encoder (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{dict,  }\item[{}]{null\+\_\+idx,  }\item[{}]{reduction\+\_\+type }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return encoder, given options.
+
+:param opt:
+    opt dict
+:param dict:
+    dictionary agent
+:param null_idx:
+    null/pad index into dict
+:reduction_type:
+    reduction type for the encoder
+
+:return:
+    a TransformerEncoder, initialized correctly
+\end{DoxyVerb}
+ 
+
+Definition at line 243 of file polyencoder.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+get\+\_\+n\+\_\+positions\+\_\+from\+\_\+options().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acd213717123d2f2f24e6f03270c3db14_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a52218a8c0594ff4d5bf8e666dc38f508}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a52218a8c0594ff4d5bf8e666dc38f508}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!score@{score}}
+\index{score@{score}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{score()}{score()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ctxt\+\_\+rep,  }\item[{}]{ctxt\+\_\+rep\+\_\+mask,  }\item[{}]{ctxt\+\_\+pos,  }\item[{}]{cand\+\_\+embed }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Score the candidates.
+
+:param ctxt_rep:
+    3D float tensor, bsz x ctxt_len x dim
+:param ctxt_rep_mask:
+    2D byte tensor, bsz x ctxt_len, in case there are some elements
+    of the ctxt that we should not take into account.
+:param ctx_pos: 3D float tensor, bsz x sent_len x dim
+:param cand_embed: 3D float tensor, bsz x num_cands x dim
+
+:return: scores, 2D float tensor: bsz x num_cands
+\end{DoxyVerb}
+ 
+
+Definition at line 374 of file polyencoder.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attend(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attention, parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention\+\_\+keys, and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward().
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a52218a8c0594ff4d5bf8e666dc38f508_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a52218a8c0594ff4d5bf8e666dc38f508_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8fab02ef33d1e1ee413e4bcbe25aa03b}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8fab02ef33d1e1ee413e4bcbe25aa03b}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!attention@{attention}}
+\index{attention@{attention}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{attention}{attention}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention}
+
+
+
+Definition at line 231 of file polyencoder.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af29f6ff1656451ec4c35b4cc9ea0f5dc}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af29f6ff1656451ec4c35b4cc9ea0f5dc}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!attention\+\_\+keys@{attention\+\_\+keys}}
+\index{attention\+\_\+keys@{attention\+\_\+keys}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{attention\+\_\+keys}{attention\_keys}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention\+\_\+keys}
+
+
+
+Definition at line 202 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acc2312ac770d343991de882c05da56e6}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_acc2312ac770d343991de882c05da56e6}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!attention\+\_\+num\+\_\+heads@{attention\+\_\+num\+\_\+heads}}
+\index{attention\+\_\+num\+\_\+heads@{attention\+\_\+num\+\_\+heads}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{attention\+\_\+num\+\_\+heads}{attention\_num\_heads}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention\+\_\+num\+\_\+heads}
+
+
+
+Definition at line 203 of file polyencoder.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a2efc9276c4ab6d1533b7ab3ceef3ac3a}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a2efc9276c4ab6d1533b7ab3ceef3ac3a}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!attention\+\_\+type@{attention\+\_\+type}}
+\index{attention\+\_\+type@{attention\+\_\+type}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{attention\+\_\+type}{attention\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention\+\_\+type}
+
+
+
+Definition at line 201 of file polyencoder.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a6740a4e891b964a41484a793ae0e6e6d}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a6740a4e891b964a41484a793ae0e6e6d}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!code\+\_\+attention@{code\+\_\+attention}}
+\index{code\+\_\+attention@{code\+\_\+attention}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{code\+\_\+attention}{code\_attention}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+code\+\_\+attention}
+
+
+
+Definition at line 217 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ac8d8955e72761c0775aeefea5ce80c3c}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ac8d8955e72761c0775aeefea5ce80c3c}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!codes@{codes}}
+\index{codes@{codes}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{codes}{codes}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+codes}
+
+
+
+Definition at line 213 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ae30ed526a2a4442222b6572a6fa41604}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_ae30ed526a2a4442222b6572a6fa41604}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!codes\+\_\+attention\+\_\+num\+\_\+heads@{codes\+\_\+attention\+\_\+num\+\_\+heads}}
+\index{codes\+\_\+attention\+\_\+num\+\_\+heads@{codes\+\_\+attention\+\_\+num\+\_\+heads}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{codes\+\_\+attention\+\_\+num\+\_\+heads}{codes\_attention\_num\_heads}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+codes\+\_\+attention\+\_\+num\+\_\+heads}
+
+
+
+Definition at line 205 of file polyencoder.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a80cf22447d874c72d3e9b64a64cf5747}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a80cf22447d874c72d3e9b64a64cf5747}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!codes\+\_\+attention\+\_\+type@{codes\+\_\+attention\+\_\+type}}
+\index{codes\+\_\+attention\+\_\+type@{codes\+\_\+attention\+\_\+type}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{codes\+\_\+attention\+\_\+type}{codes\_attention\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+codes\+\_\+attention\+\_\+type}
+
+
+
+Definition at line 204 of file polyencoder.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af70c94c4e4073e804904b983a683c0a7}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_af70c94c4e4073e804904b983a683c0a7}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!encoder\+\_\+cand@{encoder\+\_\+cand}}
+\index{encoder\+\_\+cand@{encoder\+\_\+cand}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{encoder\+\_\+cand}{encoder\_cand}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encoder\+\_\+cand}
+
+
+
+Definition at line 197 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9a5e58bfbd75ec89e10b8e4bcbcd4ab6}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a9a5e58bfbd75ec89e10b8e4bcbcd4ab6}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!encoder\+\_\+ctxt@{encoder\+\_\+ctxt}}
+\index{encoder\+\_\+ctxt@{encoder\+\_\+ctxt}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{encoder\+\_\+ctxt}{encoder\_ctxt}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encoder\+\_\+ctxt}
+
+
+
+Definition at line 196 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8440bd98b6ee31c0540fdbc2e9efe987}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a8440bd98b6ee31c0540fdbc2e9efe987}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!n\+\_\+codes@{n\+\_\+codes}}
+\index{n\+\_\+codes@{n\+\_\+codes}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{n\+\_\+codes}{n\_codes}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+n\+\_\+codes}
+
+
+
+Definition at line 200 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a7a029490f5786bfa0fb2755e716118e4}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a7a029490f5786bfa0fb2755e716118e4}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!null\+\_\+idx@{null\+\_\+idx}}
+\index{null\+\_\+idx@{null\+\_\+idx}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{null\+\_\+idx}{null\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+null\+\_\+idx}
+
+
+
+Definition at line 195 of file polyencoder.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a3eea152c32cd33d1e6b0ca680887d0e7}\label{classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule_a3eea152c32cd33d1e6b0ca680887d0e7}} 
+\index{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}!type@{type}}
+\index{type@{type}!parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module@{parlai\+::agents\+::transformer\+::polyencoder\+::\+Poly\+Encoder\+Module}}
+\subsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+type}
+
+
+
+Definition at line 199 of file polyencoder.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+encode(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+set\+\_\+type(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+set\+\_\+type(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+set\+\_\+type().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{polyencoder_8py}{polyencoder.\+py}\end{DoxyCompactItemize}

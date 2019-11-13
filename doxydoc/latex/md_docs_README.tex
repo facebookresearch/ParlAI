@@ -1,0 +1,13 @@
+First install the theme we use\+: 
+\begin{DoxyCode}
+pip install -r requirements.txt
+\end{DoxyCode}
+
+
+Then use make to build the html\+: 
+\begin{DoxyCode}
+make html
+\end{DoxyCode}
+
+
+Then, make any changes to the documentation in {\ttfamily source}, do {\ttfamily make html} again, and check your changes by checking the html files in {\ttfamily build/html} (you can start by opening {\ttfamily index.\+html}). If everything looks good, make a Pull Request and the documentation will update automatically once the change has landed. If the documentation is not up to date within an hour after landing, please file an issue. 

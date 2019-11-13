@@ -1,6 +1,5 @@
 <map id="parlai.agents.memnn.modules.Embed.forward" name="parlai.agents.memnn.modules.Embed.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="5,79,205,120"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed.html#ae99da777029f198797b59fdaf651a967" title=" " alt="" coords="253,5,453,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1Embed.html#aac0da7cbc9d64949060c6c681172220f" title=" " alt="" coords="263,71,443,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed.html#aa6a44a42ac7d06f0f0598b7291d1dc58" title=" " alt="" coords="253,152,453,193"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed.html#ae99da777029f198797b59fdaf651a967" title="parlai.agents.memnn.modules.\lEmbed._reduce" alt="" coords="253,5,453,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1Embed.html#aac0da7cbc9d64949060c6c681172220f" title="parlai.agents.legacy\l_agents.memnn.modules\l_v0.Embed.position_matrix" alt="" coords="263,71,443,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed.html#aa6a44a42ac7d06f0f0598b7291d1dc58" title="parlai.agents.memnn.modules.\lEmbed.position_matrix" alt="" coords="253,152,453,193"/>
 </map>

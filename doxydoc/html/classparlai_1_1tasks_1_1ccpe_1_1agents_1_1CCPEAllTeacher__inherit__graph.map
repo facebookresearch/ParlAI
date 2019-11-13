@@ -1,9 +1,7 @@
 <map id="parlai.tasks.ccpe.agents.CCPEAllTeacher" name="parlai.tasks.ccpe.agents.CCPEAllTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="765,39,933,80"/>
-<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1CCPEAssistantTeacher.html" title=" " alt="" coords="981,5,1149,47"/>
-<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="981,71,1149,112"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="545,39,717,80"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="321,46,497,73"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,46,273,73"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,46,63,73"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1CCPEAssistantTeacher.html" title="parlai.tasks.ccpe.agents.\lCCPEAssistantTeacher" alt="" coords="981,5,1149,47"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1DefaultTeacher.html" title="parlai.tasks.ccpe.agents.\lDefaultTeacher" alt="" coords="981,71,1149,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="545,39,717,80"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="321,46,497,73"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="111,46,273,73"/>
 </map>

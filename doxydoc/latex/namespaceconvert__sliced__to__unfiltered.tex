@@ -1,0 +1,70 @@
+\hypertarget{namespaceconvert__sliced__to__unfiltered}{}\section{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered Namespace Reference}
+\label{namespaceconvert__sliced__to__unfiltered}\index{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceconvert__sliced__to__unfiltered_a21ac677a0cb0c5ba6129567460c1ee35}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespaceconvert__sliced__to__unfiltered_a90657fd736afc2f0af90b8cbdb3ee2aa}{main} (\hyperlink{namespaceconvert__sliced__to__unfiltered_a53af57b08cb362399bd3263e7a94c646}{config})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceconvert__sliced__to__unfiltered_a53af57b08cb362399bd3263e7a94c646}{config} = \hyperlink{namespaceconvert__sliced__to__unfiltered_a21ac677a0cb0c5ba6129567460c1ee35}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceconvert__sliced__to__unfiltered_a90657fd736afc2f0af90b8cbdb3ee2aa}\label{namespaceconvert__sliced__to__unfiltered_a90657fd736afc2f0af90b8cbdb3ee2aa}} 
+\index{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}!main@{main}}
+\index{main@{main}!convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+main (\begin{DoxyParamCaption}\item[{}]{config }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates .unfiltered files from .sliced files
+
+input: a .sliced file of logs (in ParlaiDialog format) from Mturk task 1, each of
+    which starts with an initial prompt or topic request, and ends with a y_exp
+output: a .unfiltered file (in self-feeding format) with every utterance output by
+    bot used as a label (i.e., act as though the bot was a human and we want to
+    train in a normal supervised way).
+\end{DoxyVerb}
+ 
+
+Definition at line 25 of file convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+add\+\_\+person\+\_\+tokens(), and self\+\_\+feeding.\+utils.\+extract\+\_\+parlai\+\_\+episodes().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceconvert__sliced__to__unfiltered_a90657fd736afc2f0af90b8cbdb3ee2aa_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceconvert__sliced__to__unfiltered_a21ac677a0cb0c5ba6129567460c1ee35}\label{namespaceconvert__sliced__to__unfiltered_a21ac677a0cb0c5ba6129567460c1ee35}} 
+\index{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceconvert__sliced__to__unfiltered_a53af57b08cb362399bd3263e7a94c646}\label{namespaceconvert__sliced__to__unfiltered_a53af57b08cb362399bd3263e7a94c646}} 
+\index{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}!config@{config}}
+\index{config@{config}!convert\+\_\+sliced\+\_\+to\+\_\+unfiltered@{convert\+\_\+sliced\+\_\+to\+\_\+unfiltered}}
+\subsubsection{\texorpdfstring{config}{config}}
+{\footnotesize\ttfamily def convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+config = \hyperlink{namespaceconvert__sliced__to__unfiltered_a21ac677a0cb0c5ba6129567460c1ee35}{setup\+\_\+args}()}
+
+
+
+Definition at line 67 of file convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+py.
+

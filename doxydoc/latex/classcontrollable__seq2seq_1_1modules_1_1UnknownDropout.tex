@@ -1,0 +1,133 @@
+\hypertarget{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout}{}\section{controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout Class Reference}
+\label{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout}\index{controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout@{controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a457306c1bd63cc7ee69c18d12ccc2c38}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a89674ff3d4854744a0f2671e474a42a2}{unknown\+\_\+idx}, probability)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a875d78f9d759c57eaa5d42aab22ecaeb}{forward} (self, input)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a89674ff3d4854744a0f2671e474a42a2}{unknown\+\_\+idx}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a5305b89df485d6ab49f1037b4fa11449}{prob}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}With set frequency, replaces tokens with unknown token.
+
+This layer can be used right before an embedding layer to make the model
+more robust to unknown words at test time.
+\end{DoxyVerb}
+ 
+
+Definition at line 429 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a457306c1bd63cc7ee69c18d12ccc2c38}\label{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a457306c1bd63cc7ee69c18d12ccc2c38}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{unknown\+\_\+idx,  }\item[{}]{probability }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize layer.
+
+:param unknown_idx: index of unknown token, replace tokens with this
+:param probability: during training, replaces tokens with unknown token
+            at this rate.
+\end{DoxyVerb}
+ 
+
+Definition at line 436 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a875d78f9d759c57eaa5d42aab22ecaeb}\label{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a875d78f9d759c57eaa5d42aab22ecaeb}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}!forward@{forward}}
+\index{forward@{forward}!controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}If training and dropout rate > 0, masks input with unknown token.\end{DoxyVerb}
+ 
+
+Definition at line 447 of file modules.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+prob, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+prob, controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+prob, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+training, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+training, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+training, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+training, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+training, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+training, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+training, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+training, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+training, parlai.\+agents.\+seq2seq.\+modules.\+Unknown\+Dropout.\+unknown\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Unknown\+Dropout.\+unknown\+\_\+idx, and controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+unknown\+\_\+idx.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a875d78f9d759c57eaa5d42aab22ecaeb_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a5305b89df485d6ab49f1037b4fa11449}\label{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a5305b89df485d6ab49f1037b4fa11449}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}!prob@{prob}}
+\index{prob@{prob}!controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}}
+\subsubsection{\texorpdfstring{prob}{prob}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+prob}
+
+
+
+Definition at line 445 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a89674ff3d4854744a0f2671e474a42a2}\label{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout_a89674ff3d4854744a0f2671e474a42a2}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}!unknown\+\_\+idx@{unknown\+\_\+idx}}
+\index{unknown\+\_\+idx@{unknown\+\_\+idx}!controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout@{controllable\+\_\+seq2seq\+::modules\+::\+Unknown\+Dropout}}
+\subsubsection{\texorpdfstring{unknown\+\_\+idx}{unknown\_idx}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+unknown\+\_\+idx}
+
+
+
+Definition at line 444 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Unknown\+Dropout.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{projects_2controllable__dialogue_2controllable__seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,123 @@
+\hypertarget{namespaceparlai_1_1core_1_1worlds}{}\section{parlai.\+core.\+worlds Namespace Reference}
+\label{namespaceparlai_1_1core_1_1worlds}\index{parlai.\+core.\+worlds@{parlai.\+core.\+worlds}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1BatchWorld}{Batch\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld}{Dialog\+Partner\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1ExecutableWorld}{Executable\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess}{Hogwild\+Process}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildWorld}{Hogwild\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld}{Multi\+Agent\+Dialog\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld}{Multi\+World}
+\item 
+class \hyperlink{classparlai_1_1core_1_1worlds_1_1World}{World}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1worlds_afc3fad603b7bce41dbdc9cdc04a9c794}{validate} (observation)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1worlds_a055ee493c9ed03ecff4832f52b408f8c}{create\+\_\+task\+\_\+world} (opt, user\+\_\+agents, default\+\_\+world=None)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1worlds_a11923c10b545c7ecc1b08fe2242d9c2c}{create\+\_\+task} (opt, user\+\_\+agents, default\+\_\+world=None)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1worlds_a11923c10b545c7ecc1b08fe2242d9c2c}\label{namespaceparlai_1_1core_1_1worlds_a11923c10b545c7ecc1b08fe2242d9c2c}} 
+\index{parlai\+::core\+::worlds@{parlai\+::core\+::worlds}!create\+\_\+task@{create\+\_\+task}}
+\index{create\+\_\+task@{create\+\_\+task}!parlai\+::core\+::worlds@{parlai\+::core\+::worlds}}
+\subsubsection{\texorpdfstring{create\+\_\+task()}{create\_task()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+create\+\_\+task (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{user\+\_\+agents,  }\item[{}]{default\+\_\+world = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a world + task_agents (aka a task).
+
+Assuming ``opt['task']="task_dir:teacher_class:options"``
+e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
+see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
+for list of tasks.
+\end{DoxyVerb}
+ 
+
+Definition at line 1176 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task\+\_\+world(), parlai.\+tasks.\+tasks.\+ids\+\_\+to\+\_\+tasks(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by get\+\_\+bucket\+\_\+lowerbounds.\+bucket\+\_\+data(), parlai.\+scripts.\+build\+\_\+candidates.\+build\+\_\+cands(), parlai.\+scripts.\+build\+\_\+pytorch\+\_\+data.\+build\+\_\+data(), parlai.\+scripts.\+build\+\_\+dict.\+build\+\_\+dict(), create\+\_\+synth\+\_\+supp.\+create\+\_\+supp(), parlai.\+scripts.\+detect\+\_\+offensive\+\_\+language.\+detect(), parlai.\+scripts.\+display\+\_\+data.\+display\+\_\+data(), parlai.\+scripts.\+display\+\_\+model.\+display\+\_\+model(), parlai.\+scripts.\+convert\+\_\+data\+\_\+to\+\_\+fasttext\+\_\+format.\+dump\+\_\+data(), parlai.\+scripts.\+convert\+\_\+data\+\_\+to\+\_\+parlai\+\_\+format.\+dump\+\_\+data(), parlai.\+scripts.\+eval\+\_\+ppl.\+eval\+\_\+ppl(), parlai.\+scripts.\+eval\+\_\+wordstat.\+eval\+\_\+wordstat(), eval\+\_\+wordstat.\+eval\+\_\+wordstat(), extract\+\_\+and\+\_\+save\+\_\+personas.\+extract\+\_\+and\+\_\+save(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+extract\+\_\+and\+\_\+save\+\_\+personas.\+extract\+\_\+and\+\_\+save(), parlai.\+scripts.\+extract\+\_\+image\+\_\+feature.\+extract\+\_\+feats(), controllable\+\_\+seq2seq.\+nidf.\+get\+\_\+word\+\_\+counts(), controllable\+\_\+seq2seq.\+arora.\+get\+\_\+word\+\_\+counts(), self\+\_\+feeding.\+interactive.\+interactive(), convai2.\+interactive.\+interactive(), parlai.\+scripts.\+interactive.\+interactive(), parlai.\+scripts.\+train\+\_\+model.\+load\+\_\+eval\+\_\+worlds(), light\+\_\+chat\+\_\+eval.\+run.\+main(), base\+\_\+train.\+main(), remote.\+main(), train.\+main(), make\+\_\+control\+\_\+dataset.\+make\+\_\+dataset(), train.\+prepro(), interactive.\+My\+Handler.\+respond(), test\+\_\+wizard\+\_\+of\+\_\+wikipedia.\+Test\+Wo\+W.\+run\+\_\+display\+\_\+test(), parlai.\+scripts.\+eval\+\_\+model.\+setup\+\_\+args(), parlai.\+scripts.\+interactive\+\_\+web.\+setup\+\_\+interactive(), interactive.\+setup\+\_\+interactive(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pyt\+\_\+batchsort\+\_\+field(), tests.\+test\+\_\+tfidf\+\_\+retriever.\+Test\+Tfidf\+Retriever.\+test\+\_\+sparse\+\_\+tfidf\+\_\+retriever(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+valid\+\_\+pyt\+\_\+batchsort(), train.\+validate(), parlai.\+scripts.\+verify\+\_\+data.\+verify(), and parlai.\+scripts.\+data\+\_\+stats.\+verify().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1worlds_a11923c10b545c7ecc1b08fe2242d9c2c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1worlds_a11923c10b545c7ecc1b08fe2242d9c2c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1worlds_a055ee493c9ed03ecff4832f52b408f8c}\label{namespaceparlai_1_1core_1_1worlds_a055ee493c9ed03ecff4832f52b408f8c}} 
+\index{parlai\+::core\+::worlds@{parlai\+::core\+::worlds}!create\+\_\+task\+\_\+world@{create\+\_\+task\+\_\+world}}
+\index{create\+\_\+task\+\_\+world@{create\+\_\+task\+\_\+world}!parlai\+::core\+::worlds@{parlai\+::core\+::worlds}}
+\subsubsection{\texorpdfstring{create\+\_\+task\+\_\+world()}{create\_task\_world()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+create\+\_\+task\+\_\+world (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{user\+\_\+agents,  }\item[{}]{default\+\_\+world = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate a world with the supplied options and user agents.
+
+(A world factory.)
+\end{DoxyVerb}
+ 
+
+Definition at line 1164 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+create\+\_\+task().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1worlds_a055ee493c9ed03ecff4832f52b408f8c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1worlds_afc3fad603b7bce41dbdc9cdc04a9c794}\label{namespaceparlai_1_1core_1_1worlds_afc3fad603b7bce41dbdc9cdc04a9c794}} 
+\index{parlai\+::core\+::worlds@{parlai\+::core\+::worlds}!validate@{validate}}
+\index{validate@{validate}!parlai\+::core\+::worlds@{parlai\+::core\+::worlds}}
+\subsubsection{\texorpdfstring{validate()}{validate()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+validate (\begin{DoxyParamCaption}\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make sure the observation table is valid, or raise an error.\end{DoxyVerb}
+ 
+
+Definition at line 64 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Batch\+World.\+batch\+\_\+observe(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+check\+\_\+disconnects(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+check\+\_\+timeout(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+check\+\_\+timeout(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+check\+\_\+timeout(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+check\+\_\+timeout(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+check\+\_\+timeout(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+check\+\_\+timeout(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+check\+\_\+timeout(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+timeout(), worlds.\+Persona\+Chat\+Eval\+World.\+check\+\_\+timeout(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+consistency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+engagingness(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+fluency(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+persona(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+repetitiveness(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+is\+\_\+close\+\_\+match(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+is\+\_\+exact\+\_\+match(), worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+is\+\_\+exact\+\_\+match(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+is\+\_\+msg\+\_\+tooshortlong(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+is\+\_\+msg\+\_\+tooshortlong(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+is\+\_\+msg\+\_\+tooshortlong(), worlds.\+Persona\+Chat\+Eval\+World.\+is\+\_\+msg\+\_\+tooshortlong(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+is\+\_\+msg\+\_\+tooshortlong(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+is\+\_\+msg\+\_\+tooshortlong(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+parallel\+\_\+eval\+\_\+mode(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+parley(), parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+parley(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+parley(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+parley(), parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+parley(), parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+parley(), parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topic\+Choose\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+parley(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+parley(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+parley(), worlds.\+Persona\+Chat\+Eval\+World.\+parley(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+parley(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+parley(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+parley(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+parley(), parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+parley(), and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1worlds_afc3fad603b7bce41dbdc9cdc04a9c794_icgraph}
+\end{center}
+\end{figure}

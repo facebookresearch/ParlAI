@@ -1,9 +1,8 @@
 <map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.get_hyp_from_finished" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.get_hyp_from_finished">
-<area shape="rect" id="node1" title=" " alt="" coords="268,189,439,259"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a0f15f5dc35437659d1ab17d4508d3abe" title=" " alt="" coords="29,5,196,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#af4d7c9fd1fd93f59148fe7ab90c58da9" title=" " alt="" coords="9,85,216,141"/>
-<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a4d1acfa68e54ee73cc7fbcb7f334bf99" title=" " alt="" coords="5,166,220,207"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#abbb522afdc69dbce77f997dd392c5c1d" title=" " alt="" coords="35,232,191,288"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#abd7ea96a6f890297fc526e31e143a018" title=" " alt="" coords="15,312,210,368"/>
-<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a5224a8abe07503fe549bc6e2140eb244" title=" " alt="" coords="5,393,220,434"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a0f15f5dc35437659d1ab17d4508d3abe" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_beam_dot" alt="" coords="248,5,415,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#af4d7c9fd1fd93f59148fe7ab90c58da9" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_beam_dot" alt="" coords="228,85,435,141"/>
+<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a4d1acfa68e54ee73cc7fbcb7f334bf99" title="controllable_seq2seq.controllable\l_seq2seq.Beam.get_beam_dot" alt="" coords="224,166,439,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#abbb522afdc69dbce77f997dd392c5c1d" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_top_hyp" alt="" coords="253,232,409,288"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#abd7ea96a6f890297fc526e31e143a018" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.Beam.get_top_hyp" alt="" coords="234,312,429,368"/>
+<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a5224a8abe07503fe549bc6e2140eb244" title="controllable_seq2seq.controllable\l_seq2seq.Beam.get_top_hyp" alt="" coords="224,393,439,434"/>
 </map>

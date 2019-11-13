@@ -1,0 +1,55 @@
+\hypertarget{dev_2mturk__utils_8py}{}\section{parlai/mturk/core/dev/mturk\+\_\+utils.py File Reference}
+\label{dev_2mturk__utils_8py}\index{parlai/mturk/core/dev/mturk\+\_\+utils.\+py@{parlai/mturk/core/dev/mturk\+\_\+utils.\+py}}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a086d7381c328214587d3ec28bbcd19ab}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+setup\+\_\+aws\+\_\+credentials} ()
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_ab0dab541f46c0b18e96bcbbb536bddf6}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+calculate\+\_\+mturk\+\_\+cost} (payment\+\_\+opt)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_af89757251500a96195029eb22e58e516}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+check\+\_\+mturk\+\_\+balance} (balance\+\_\+needed, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_aad5b4cc1ff4815272164f620b952d037}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+config} (opt, task\+\_\+description, unique\+\_\+worker, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_ad9e4ecfca00663796f26ca16a2778f29}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+get\+\_\+mturk\+\_\+client} (is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a1a4243aaafd94de8087e0d6ae06ad45c}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+delete\+\_\+qualification} (qualification\+\_\+id, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_acd636315cbbf11cc5d9d641173e51586}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+find\+\_\+qualification} (qualification\+\_\+name, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_ab4c0dfc58f9fe37c28c9d23628d1de4e}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+find\+\_\+or\+\_\+create\+\_\+qualification} (qualification\+\_\+name, description, is\+\_\+sandbox, must\+\_\+be\+\_\+owned=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a631fbce36ff4d09422f29513460bc744}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+give\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, value=None, is\+\_\+sandbox=True)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_abc2c057b91641179f7c4bb50dd916488}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+remove\+\_\+worker\+\_\+qualification} (worker\+\_\+id, qualification\+\_\+id, is\+\_\+sandbox=True, reason=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_acd08d4459a8231afa32daccd82c5c957}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+type} (hit\+\_\+title, hit\+\_\+description, hit\+\_\+keywords, hit\+\_\+reward, assignment\+\_\+duration\+\_\+in\+\_\+seconds, is\+\_\+sandbox, qualifications=None, auto\+\_\+approve\+\_\+delay=7 $\ast$24 $\ast$3600)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a471ced1f7df897dcf3414dd49b84ddeb}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+create\+\_\+hit\+\_\+with\+\_\+hit\+\_\+type} (opt, page\+\_\+url, hit\+\_\+type\+\_\+id, num\+\_\+assignments, is\+\_\+sandbox)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a26e9e405bc015ef647ef58a133c88f40}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+expire\+\_\+hit} (is\+\_\+sandbox, hit\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a01315ef04ead23e4c1a84c027dcccf3f}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+setup\+\_\+sns\+\_\+topic} (task\+\_\+name, server\+\_\+url, task\+\_\+group\+\_\+id)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a06d86a6c70c953fda4ae13db4d43bc79}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+subscribe\+\_\+to\+\_\+hits} (hit\+\_\+type\+\_\+id, is\+\_\+sandbox, sns\+\_\+arn)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_abfc17443a7c8018fc56dcc058e7b86f1}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+send\+\_\+test\+\_\+notif} (topic\+\_\+arn, event\+\_\+type)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_aa321f5dc5e9700bc3906fca85490e25e}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+delete\+\_\+sns\+\_\+topic} (topic\+\_\+arn)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a80d4af773d771a7d737aedd44d633d7f}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+region\+\_\+name} = \textquotesingle{}us-\/east-\/1\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_ad221229123682daefccc47fe5e8052da}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+aws\+\_\+profile\+\_\+name} = \textquotesingle{}parlai\+\_\+mturk\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a09d7c0fc880089c5194ddc68af118f15}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+client} = None
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils_a5813bb15ba851c7bbbf0871a7979720d}{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+utils.\+parent\+\_\+dir} = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\end{DoxyCompactItemize}

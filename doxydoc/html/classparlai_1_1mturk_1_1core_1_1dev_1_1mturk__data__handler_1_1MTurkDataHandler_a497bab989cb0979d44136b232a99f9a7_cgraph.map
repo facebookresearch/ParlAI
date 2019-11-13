@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.dev.mturk_data_handler.MTurkDataHandler.get_all_task_pairings_for_worker" name="parlai.mturk.core.dev.mturk_data_handler.MTurkDataHandler.get_all_task_pairings_for_worker">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,244,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title=" " alt="" coords="292,5,513,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title=" " alt="" coords="292,85,513,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_force_task_group_id" alt="" coords="292,5,513,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="292,85,513,141"/>
 </map>

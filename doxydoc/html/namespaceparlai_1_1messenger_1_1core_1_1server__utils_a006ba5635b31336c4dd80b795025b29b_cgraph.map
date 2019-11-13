@@ -1,0 +1,5 @@
+<map id="parlai.messenger.core.server_utils.setup_server" name="parlai.messenger.core.server_utils.setup_server">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1messenger_1_1core_1_1server__utils.html#a3da4024deca88ca3c1ac20a2857b06db" title="parlai.messenger.core.server\l_utils.setup_heroku_server" alt="" coords="244,5,435,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1messenger_1_1core_1_1server__utils.html#a3b993fcdfa397479c469c7d20dcbfd9d" title="parlai.messenger.core.server\l_utils.setup_local_server" alt="" coords="244,71,435,112"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1messenger_1_1core_1_1server__utils.html#a94b0647ae0e38dcada7dd0c4501dd179" title="parlai.messenger.core.server\l_utils.delete_heroku_server" alt="" coords="483,5,673,47"/>
+</map>

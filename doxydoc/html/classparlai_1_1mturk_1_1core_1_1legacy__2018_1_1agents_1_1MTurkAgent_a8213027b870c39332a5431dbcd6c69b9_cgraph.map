@@ -1,15 +1,14 @@
 <map id="parlai.mturk.core.legacy_2018.agents.MTurkAgent.act" name="parlai.mturk.core.legacy_2018.agents.MTurkAgent.act">
-<area shape="rect" id="node1" title=" " alt="" coords="5,305,203,346"/>
-<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#afc5f00a73bd86a16176ca5bcc819a51b" title=" " alt="" coords="267,5,465,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aab8cc8a2bb337300bd39709702e68cff" title=" " alt="" coords="251,86,481,127"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a4a4600fbaef5ddae36ae3d74542b35fe" title=" " alt="" coords="267,377,465,433"/>
-<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a04758a4244229d4978a92573ec538883" title=" " alt="" coords="281,217,451,273"/>
-<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a547ab71740a8dccd4a94150109876c9c" title=" " alt="" coords="271,151,461,193"/>
-<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a8b3209004d4c83fdb11cacb82528e871" title=" " alt="" coords="255,297,477,353"/>
-<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aac39e834ecff137bc0cfbb584c4d6c7f" title=" " alt="" coords="266,458,466,499"/>
-<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a7c3620ae641e70de1b9d212910ec1158" title=" " alt="" coords="255,524,477,580"/>
-<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ade43480595cc2f6be96b5eb690e3128d" title=" " alt="" coords="266,605,466,646"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a9761bfc34d22aae02017a258276dfaa8" title=" " alt="" coords="529,86,729,127"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#add5cb1e41b1df16cc908da3724f0acc7" title=" " alt="" coords="542,257,717,313"/>
-<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a5344c5fb69081892bc09992ac4ca5612" title=" " alt="" coords="540,337,719,393"/>
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#afc5f00a73bd86a16176ca5bcc819a51b" title="parlai.messenger.core.agents.\lMessengerAgent.get_new_act\l_message" alt="" coords="267,5,465,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aab8cc8a2bb337300bd39709702e68cff" title="parlai.mturk.core.dev.agents.\lMTurkAgent.get_new_act_message" alt="" coords="251,86,481,127"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a04758a4244229d4978a92573ec538883" title="parlai.mturk.core.agents.\lMTurkAgent.get_new_act\l_message" alt="" coords="281,217,451,273"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a4a4600fbaef5ddae36ae3d74542b35fe" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.get\l_new_act_message" alt="" coords="267,377,465,433"/>
+<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a547ab71740a8dccd4a94150109876c9c" title="parlai.mturk.core.agents.\lMTurkAgent.prepare_timeout" alt="" coords="271,151,461,193"/>
+<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a8b3209004d4c83fdb11cacb82528e871" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.prepare\l_timeout" alt="" coords="255,297,477,353"/>
+<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aac39e834ecff137bc0cfbb584c4d6c7f" title="parlai.mturk.core.dev.agents.\lMTurkAgent.request_message" alt="" coords="266,458,466,499"/>
+<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ade43480595cc2f6be96b5eb690e3128d" title="parlai.mturk.core.agents.\lMTurkAgent.request_message" alt="" coords="266,523,466,565"/>
+<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a7c3620ae641e70de1b9d212910ec1158" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.request\l_message" alt="" coords="255,589,477,645"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a9761bfc34d22aae02017a258276dfaa8" title="parlai.mturk.core.dev.agents.\lMTurkAgent.assert_connected" alt="" coords="529,86,729,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#add5cb1e41b1df16cc908da3724f0acc7" title="parlai.mturk.core.agents.\lMTurkAgent._get_episode\l_done_msg" alt="" coords="542,257,717,313"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a5344c5fb69081892bc09992ac4ca5612" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.\l_get_episode_done_msg" alt="" coords="540,337,719,393"/>
 </map>

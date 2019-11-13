@@ -1,0 +1,7 @@
+<map id="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher.get_task_index" name="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher.get_task_index">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1SelfFeedingMTLTeacher.html#ab27a186b935f2194fb38e56bfe14b86c" title="parlai.tasks.self_feeding.agents.\lSelfFeedingMTLTeacher.batch_act" alt="" coords="309,104,535,145"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="622,5,782,47"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="583,71,821,112"/>
+<area shape="rect" id="node5" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="598,136,806,177"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="603,202,801,229"/>
+</map>

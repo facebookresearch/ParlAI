@@ -1,10 +1,6 @@
 <map id="parlai.core.teachers.FixedDialogTeacher.next_example" name="parlai.core.teachers.FixedDialogTeacher.next_example">
-<area shape="rect" id="node1" title=" " alt="" coords="5,159,196,200"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a7c4cbfbe5cf6e9dbdf8c00d140ef4e7e" title=" " alt="" coords="263,5,435,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1mydefaultdict.html#aa078ac7ad7ce0d11a8aba0834acb4831" title=" " alt="" coords="262,71,437,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1mydefaultdict.html#a189be974031427bf68e4691307e2f2c2" title=" " alt="" coords="262,151,437,207"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a7fccfc09aef3510f8bb9834398eff8e9" title=" " alt="" coords="244,232,455,273"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#aa35e171610f8dd8e6a2fd5a87ad91e10" title=" " alt="" coords="505,291,711,332"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="522,173,694,215"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="503,239,713,266"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a7fccfc09aef3510f8bb9834398eff8e9" title="parlai.core.teachers.Fixed\lDialogTeacher.next_episode_idx" alt="" coords="244,64,455,105"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title="parlai.core.teachers.Fixed\lDialogTeacher._lock" alt="" coords="522,5,694,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title="parlai.core.metrics.Metrics._lock" alt="" coords="503,71,713,98"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#aa35e171610f8dd8e6a2fd5a87ad91e10" title="parlai.core.agents.Teacher.num\l_episodes" alt="" coords="505,123,711,164"/>
 </map>

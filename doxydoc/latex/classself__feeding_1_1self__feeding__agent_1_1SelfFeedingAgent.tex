@@ -1,0 +1,1044 @@
+\hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent}{}\section{self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent Class Reference}
+\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent}\index{self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent@{self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent}}
+
+
+Inheritance diagram for self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7b8ee86c2feb4aec821218307549f888}{add\+\_\+cmdline\+\_\+args} (cls, argparser)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac76dc7e656c40b4209513286a5b1b2d9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a5946764aadcca1685cbd228ddf57bdce}{upgrade\+\_\+opt} (cls, opt\+\_\+on\+\_\+disk)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae8934c79f3d7079b09dadb1fc78d59b5}{build\+\_\+model} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7306b2ce2dbf45f5ac67bd374e66718a}{act} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7e76b6e8f11577a56a9c000cb360a44e}{observe} (self, \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa826e88c1add64cff04a432785f0e43a}{observation})
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a46f3cf20e84609fb9431031adaf4c721}{batchify} (self, observations)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4f04842d386c1747eefba384966687de}{train\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9f6ed50b9db65bede09f19810e05abc4}{eval\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a761c50309d11237b261a3600923964c9}{dialog\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7a3807c6692b7a628fa1477d99b73e0b}{feedback\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6bda38afad8e51159c7af9288098cab1}{satisfaction\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa2700baedf333a938accade463fefd62}{update\+\_\+dia\+\_\+metrics} (self, loss, ranks, label\+\_\+inds, batchsize)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4a3059142c34335e709642a333cfd0a2}{update\+\_\+fee\+\_\+metrics} (self, loss, ranks, label\+\_\+inds, batchsize)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a01851e94cd789600609c8aa3c3696241}{update\+\_\+sat\+\_\+metrics} (self, loss, preds, labels, batchsize)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae2a86795d3df6fbd0b0a41825922b247}{reset} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2776d1c54e11c170e50add2d20cd2633}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0731b4f9dc3e9763fbccaf48e531f3c6}{report} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae156bc0076ea687e2d29cb2d1986b5db}{encode\+\_\+candidates} (self, cands)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6d28a8c3f063bde4cd98cfb209821bf5}{do\+\_\+request\+\_\+feedback} (self, positivity)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab0ccbaba9de0874d235a2ce14dd8ead3}{do\+\_\+request\+\_\+rating} (self, positivity)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a85ecc5ffb61d545ae003232ffb1e0f57}{extract\+\_\+rating} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab995d9cb7e699570a4179865ce7e09be}{predict\+\_\+satisfaction} (self, \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa826e88c1add64cff04a432785f0e43a}{observation})
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9613b626ec2e4bbdeca8b1decc9d7513}{predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty} (self, batch)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7dc80f7fcb8270b3fb87ddff8848750d}{check\+\_\+prev\+\_\+response} (self, preds, cand\+\_\+ranked)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a876feb626f411fd0a18fbce66a886764}{make\+\_\+action} (self, text, reward=0)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abb5225edea055887a8ec2da2d02b7463}{make\+\_\+feedback\+\_\+request} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abc842083fdfd34983ed64bd7dc8d8b4a}{make\+\_\+rating\+\_\+request} (self)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36a79f932c2ba47838596bc88c26625d}{make\+\_\+rating\+\_\+response} (self, rating)
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab500915eed5d30c7f2672f9db4ef32cc}{set\+\_\+subtasks} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt})
+\item 
+def \hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a50e6f81560e522b6178f913bb3f1258a}{load} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a12f2d6f909f0eb8b4b8156e073e7bb95}{multitask}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad08ff6158e3acf2ffe3b9c9931da7ccb}{subtask}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a27ac824e8f978ecaa8a40d973ea4b42d}{prev\+\_\+responses}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9bcbe38dc1d8ded7d34676280e54cc2d}{prev\+\_\+response}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aedf90f87c0d0aa6bbab460e4b4d190a8}{status}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2b74d181da38d6a0f91273d7802249a4}{task\+\_\+weight}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac13ff9e92bb3650b6c15c51ad0204084}{satisfaction\+\_\+criterion}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a08305755b2fdd14eae66b55abf8de50e}{rating\+\_\+classifier}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0939e63a7ee0e3f679c3b7086c2589ad}{model}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa3d365c57936a448b3981bef2f7a04bc}{requested\+\_\+rating}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad5201e5491619412389d386413bffbe4}{last\+\_\+rating}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa826e88c1add64cff04a432785f0e43a}{observation}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36938129a0e9388b99080640471ed668}{eval\+\_\+candidates}
+\item 
+\hyperlink{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a37e85a73af4cff789a7a7de7e503bb9c}{subtasks}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 54 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac76dc7e656c40b4209513286a5b1b2d9}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac76dc7e656c40b4209513286a5b1b2d9}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 223 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+set\+\_\+subtasks().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac76dc7e656c40b4209513286a5b1b2d9_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7306b2ce2dbf45f5ac67bd374e66718a}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7306b2ce2dbf45f5ac67bd374e66718a}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!act@{act}}
+\index{act@{act}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 306 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+feedback(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+action(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+feedback\+\_\+request(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+request(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status, mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+status, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+status, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+status, parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+status, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+status, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+status.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+response().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7306b2ce2dbf45f5ac67bd374e66718a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7306b2ce2dbf45f5ac67bd374e66718a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7b8ee86c2feb4aec821218307549f888}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7b8ee86c2feb4aec821218307549f888}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{argparser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 56 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a46f3cf20e84609fb9431031adaf4c721}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a46f3cf20e84609fb9431031adaf4c721}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!batchify@{batchify}}
+\index{batchify@{batchify}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{batchify()}{batchify()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+batchify (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observations }\end{DoxyParamCaption})}
+
+
+
+Definition at line 381 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+\_\+check\+\_\+truncate(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+check\+\_\+truncate(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+multitask, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtask.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a46f3cf20e84609fb9431031adaf4c721_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae8934c79f3d7079b09dadb1fc78d59b5}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae8934c79f3d7079b09dadb1fc78d59b5}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 294 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7dc80f7fcb8270b3fb87ddff8848750d}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7dc80f7fcb8270b3fb87ddff8848750d}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!check\+\_\+prev\+\_\+response@{check\+\_\+prev\+\_\+response}}
+\index{check\+\_\+prev\+\_\+response@{check\+\_\+prev\+\_\+response}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{check\+\_\+prev\+\_\+response()}{check\_prev\_response()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+check\+\_\+prev\+\_\+response (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{preds,  }\item[{}]{cand\+\_\+ranked }\end{DoxyParamCaption})}
+
+
+
+Definition at line 770 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+prev\+\_\+response.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7dc80f7fcb8270b3fb87ddff8848750d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a761c50309d11237b261a3600923964c9}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a761c50309d11237b261a3600923964c9}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!dialog\+\_\+step@{dialog\+\_\+step}}
+\index{dialog\+\_\+step@{dialog\+\_\+step}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{dialog\+\_\+step()}{dialog\_step()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 470 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+\_\+build\+\_\+candidates(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+encode\+\_\+candidate\+\_\+vecs, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+eval\+\_\+candidates, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a761c50309d11237b261a3600923964c9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a761c50309d11237b261a3600923964c9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6d28a8c3f063bde4cd98cfb209821bf5}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6d28a8c3f063bde4cd98cfb209821bf5}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!do\+\_\+request\+\_\+feedback@{do\+\_\+request\+\_\+feedback}}
+\index{do\+\_\+request\+\_\+feedback@{do\+\_\+request\+\_\+feedback}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{do\+\_\+request\+\_\+feedback()}{do\_request\_feedback()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+feedback (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{positivity }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decide whether to request an feedback this turn\end{DoxyVerb}
+ 
+
+Definition at line 680 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6d28a8c3f063bde4cd98cfb209821bf5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab0ccbaba9de0874d235a2ce14dd8ead3}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab0ccbaba9de0874d235a2ce14dd8ead3}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!do\+\_\+request\+\_\+rating@{do\+\_\+request\+\_\+rating}}
+\index{do\+\_\+request\+\_\+rating@{do\+\_\+request\+\_\+rating}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{do\+\_\+request\+\_\+rating()}{do\_request\_rating()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{positivity }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decide whether to request a rating this turn\end{DoxyVerb}
+ 
+
+Definition at line 688 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+requested\+\_\+rating.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab0ccbaba9de0874d235a2ce14dd8ead3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae156bc0076ea687e2d29cb2d1986b5db}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae156bc0076ea687e2d29cb2d1986b5db}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!encode\+\_\+candidates@{encode\+\_\+candidates}}
+\index{encode\+\_\+candidates@{encode\+\_\+candidates}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{encode\+\_\+candidates()}{encode\_candidates()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+encode\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{cands }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Encodes a tensor of vectorized candidates
+
+:param cands: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
+    candidates
+\end{DoxyVerb}
+ 
+
+Definition at line 672 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9f6ed50b9db65bede09f19810e05abc4}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9f6ed50b9db65bede09f19810e05abc4}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!eval\+\_\+step@{eval\+\_\+step}}
+\index{eval\+\_\+step@{eval\+\_\+step}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{eval\+\_\+step()}{eval\_step()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 438 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+check\+\_\+prev\+\_\+response(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtask.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9f6ed50b9db65bede09f19810e05abc4_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a85ecc5ffb61d545ae003232ffb1e0f57}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a85ecc5ffb61d545ae003232ffb1e0f57}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!extract\+\_\+rating@{extract\+\_\+rating}}
+\index{extract\+\_\+rating@{extract\+\_\+rating}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{extract\+\_\+rating()}{extract\_rating()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+extract\+\_\+rating (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert user response to rating request from text to an integer rating\end{DoxyVerb}
+ 
+
+Definition at line 707 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+last\+\_\+rating.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7a3807c6692b7a628fa1477d99b73e0b}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7a3807c6692b7a628fa1477d99b73e0b}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!feedback\+\_\+step@{feedback\+\_\+step}}
+\index{feedback\+\_\+step@{feedback\+\_\+step}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{feedback\+\_\+step()}{feedback\_step()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 519 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+\_\+build\+\_\+candidates(), parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+criterion, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+criterion, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+criterion, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+fee\+\_\+metrics(), and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7a3807c6692b7a628fa1477d99b73e0b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7a3807c6692b7a628fa1477d99b73e0b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a50e6f81560e522b6178f913bb3f1258a}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a50e6f81560e522b6178f913bb3f1258a}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!load@{load}}
+\index{load@{load}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return opt and model states.
+
+Overriding TorchAgent.load() to enable partial loading
+\end{DoxyVerb}
+ 
+
+Definition at line 824 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+\_\+add\+\_\+prev\+\_\+responses(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+\_\+extract\+\_\+prev\+\_\+responses(), parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load\+\_\+state\+\_\+dict(), parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+prev\+\_\+responses, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda, and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a50e6f81560e522b6178f913bb3f1258a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a876feb626f411fd0a18fbce66a886764}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a876feb626f411fd0a18fbce66a886764}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!make\+\_\+action@{make\+\_\+action}}
+\index{make\+\_\+action@{make\+\_\+action}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{make\+\_\+action()}{make\_action()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text,  }\item[{}]{reward = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 778 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+repeat\+\_\+query.\+repeat\+\_\+query.\+Repeat\+Query\+Agent.\+id, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+id, parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+id, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+id, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+id, parlai.\+agents.\+repeat\+\_\+label.\+repeat\+\_\+label.\+Repeat\+Label\+Agent.\+id, parlai.\+core.\+agents.\+Agent.\+id, parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+id, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+id, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+id, parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+id, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+id, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+id, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+id, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+id, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+id, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+id.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a876feb626f411fd0a18fbce66a886764_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abb5225edea055887a8ec2da2d02b7463}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abb5225edea055887a8ec2da2d02b7463}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!make\+\_\+feedback\+\_\+request@{make\+\_\+feedback\+\_\+request}}
+\index{make\+\_\+feedback\+\_\+request@{make\+\_\+feedback\+\_\+request}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{make\+\_\+feedback\+\_\+request()}{make\_feedback\_request()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+feedback\+\_\+request (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 784 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abb5225edea055887a8ec2da2d02b7463_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abc842083fdfd34983ed64bd7dc8d8b4a}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abc842083fdfd34983ed64bd7dc8d8b4a}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!make\+\_\+rating\+\_\+request@{make\+\_\+rating\+\_\+request}}
+\index{make\+\_\+rating\+\_\+request@{make\+\_\+rating\+\_\+request}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{make\+\_\+rating\+\_\+request()}{make\_rating\_request()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+request (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 787 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_abc842083fdfd34983ed64bd7dc8d8b4a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36a79f932c2ba47838596bc88c26625d}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36a79f932c2ba47838596bc88c26625d}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!make\+\_\+rating\+\_\+response@{make\+\_\+rating\+\_\+response}}
+\index{make\+\_\+rating\+\_\+response@{make\+\_\+rating\+\_\+response}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{make\+\_\+rating\+\_\+response()}{make\_rating\_response()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+make\+\_\+rating\+\_\+response (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{rating }\end{DoxyParamCaption})}
+
+
+
+Definition at line 790 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36a79f932c2ba47838596bc88c26625d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7e76b6e8f11577a56a9c000cb360a44e}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a7e76b6e8f11577a56a9c000cb360a44e}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!observe@{observe}}
+\index{observe@{observe}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add to history, concatenate history-size utterances, and add person tokens\end{DoxyVerb}
+ 
+
+Definition at line 358 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+Assign\+State.\+status, mock\+\_\+turk\+\_\+agent.\+Mock\+Turk\+Agent.\+status, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+status, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+status, parlai.\+mturk.\+core.\+dev.\+agents.\+Assign\+State.\+status, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+status, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+status, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+status.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab995d9cb7e699570a4179865ce7e09be}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab995d9cb7e699570a4179865ce7e09be}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!predict\+\_\+satisfaction@{predict\+\_\+satisfaction}}
+\index{predict\+\_\+satisfaction@{predict\+\_\+satisfaction}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{predict\+\_\+satisfaction()}{predict\_satisfaction()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+
+
+Definition at line 717 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+rating\+\_\+classifier.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab995d9cb7e699570a4179865ce7e09be_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9613b626ec2e4bbdeca8b1decc9d7513}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9613b626ec2e4bbdeca8b1decc9d7513}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty@{predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty}}
+\index{predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty@{predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty()}{predict\_satisfaction\_by\_uncertainty()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 724 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, eval\+\_\+ppl.\+int, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics().
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9613b626ec2e4bbdeca8b1decc9d7513_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9613b626ec2e4bbdeca8b1decc9d7513_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0731b4f9dc3e9763fbccaf48e531f3c6}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0731b4f9dc3e9763fbccaf48e531f3c6}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!report@{report}}
+\index{report@{report}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report metrics from model's perspective.\end{DoxyVerb}
+ 
+
+Definition at line 633 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0731b4f9dc3e9763fbccaf48e531f3c6_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae2a86795d3df6fbd0b0a41825922b247}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ae2a86795d3df6fbd0b0a41825922b247}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!reset@{reset}}
+\index{reset@{reset}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 607 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+requested\+\_\+rating.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2776d1c54e11c170e50add2d20cd2633}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2776d1c54e11c170e50add2d20cd2633}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics.\end{DoxyVerb}
+ 
+
+Definition at line 611 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtasks.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6bda38afad8e51159c7af9288098cab1}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6bda38afad8e51159c7af9288098cab1}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!satisfaction\+\_\+step@{satisfaction\+\_\+step}}
+\index{satisfaction\+\_\+step@{satisfaction\+\_\+step}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{satisfaction\+\_\+step()}{satisfaction\_step()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 553 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, eval\+\_\+ppl.\+int, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+rating\+\_\+classifier, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+criterion, and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics().
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6bda38afad8e51159c7af9288098cab1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a6bda38afad8e51159c7af9288098cab1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab500915eed5d30c7f2672f9db4ef32cc}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab500915eed5d30c7f2672f9db4ef32cc}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!set\+\_\+subtasks@{set\+\_\+subtasks}}
+\index{set\+\_\+subtasks@{set\+\_\+subtasks}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{set\+\_\+subtasks()}{set\_subtasks()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+set\+\_\+subtasks (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 801 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ab500915eed5d30c7f2672f9db4ef32cc_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4f04842d386c1747eefba384966687de}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4f04842d386c1747eefba384966687de}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!train\+\_\+step@{train\+\_\+step}}
+\index{train\+\_\+step@{train\+\_\+step}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{train\+\_\+step()}{train\_step()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Train on a single batch of examples.\end{DoxyVerb}
+ 
+
+Definition at line 411 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+dialog\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtask, self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+task\+\_\+weight, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4f04842d386c1747eefba384966687de_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa2700baedf333a938accade463fefd62}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa2700baedf333a938accade463fefd62}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!update\+\_\+dia\+\_\+metrics@{update\+\_\+dia\+\_\+metrics}}
+\index{update\+\_\+dia\+\_\+metrics@{update\+\_\+dia\+\_\+metrics}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{update\+\_\+dia\+\_\+metrics()}{update\_dia\_metrics()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+dia\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{loss,  }\item[{}]{ranks,  }\item[{}]{label\+\_\+inds,  }\item[{}]{batchsize }\end{DoxyParamCaption})}
+
+
+
+Definition at line 576 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4a3059142c34335e709642a333cfd0a2}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4a3059142c34335e709642a333cfd0a2}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!update\+\_\+fee\+\_\+metrics@{update\+\_\+fee\+\_\+metrics}}
+\index{update\+\_\+fee\+\_\+metrics@{update\+\_\+fee\+\_\+metrics}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{update\+\_\+fee\+\_\+metrics()}{update\_fee\_metrics()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+fee\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{loss,  }\item[{}]{ranks,  }\item[{}]{label\+\_\+inds,  }\item[{}]{batchsize }\end{DoxyParamCaption})}
+
+
+
+Definition at line 585 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+feedback\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a4a3059142c34335e709642a333cfd0a2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a01851e94cd789600609c8aa3c3696241}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a01851e94cd789600609c8aa3c3696241}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!update\+\_\+sat\+\_\+metrics@{update\+\_\+sat\+\_\+metrics}}
+\index{update\+\_\+sat\+\_\+metrics@{update\+\_\+sat\+\_\+metrics}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{update\+\_\+sat\+\_\+metrics()}{update\_sat\_metrics()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+update\+\_\+sat\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{loss,  }\item[{}]{preds,  }\item[{}]{labels,  }\item[{}]{batchsize }\end{DoxyParamCaption})}
+
+
+
+Definition at line 594 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a01851e94cd789600609c8aa3c3696241_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a5946764aadcca1685cbd228ddf57bdce}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a5946764aadcca1685cbd228ddf57bdce}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!upgrade\+\_\+opt@{upgrade\+\_\+opt}}
+\index{upgrade\+\_\+opt@{upgrade\+\_\+opt}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{upgrade\+\_\+opt()}{upgrade\_opt()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+upgrade\+\_\+opt (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{opt\+\_\+on\+\_\+disk }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Upgrade opts from older model files.\end{DoxyVerb}
+ 
+
+Definition at line 281 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a5946764aadcca1685cbd228ddf57bdce_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36938129a0e9388b99080640471ed668}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a36938129a0e9388b99080640471ed668}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!eval\+\_\+candidates@{eval\+\_\+candidates}}
+\index{eval\+\_\+candidates@{eval\+\_\+candidates}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{eval\+\_\+candidates}{eval\_candidates}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+candidates}
+
+
+
+Definition at line 486 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad5201e5491619412389d386413bffbe4}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad5201e5491619412389d386413bffbe4}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!last\+\_\+rating@{last\+\_\+rating}}
+\index{last\+\_\+rating@{last\+\_\+rating}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{last\+\_\+rating}{last\_rating}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+last\+\_\+rating}
+
+
+
+Definition at line 363 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+extract\+\_\+rating().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0939e63a7ee0e3f679c3b7086c2589ad}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a0939e63a7ee0e3f679c3b7086c2589ad}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!model@{model}}
+\index{model@{model}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+model}
+
+
+
+Definition at line 295 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a12f2d6f909f0eb8b4b8156e073e7bb95}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a12f2d6f909f0eb8b4b8156e073e7bb95}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!multitask@{multitask}}
+\index{multitask@{multitask}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{multitask}{multitask}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+multitask}
+
+
+
+Definition at line 230 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa826e88c1add64cff04a432785f0e43a}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa826e88c1add64cff04a432785f0e43a}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!observation@{observation}}
+\index{observation@{observation}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+observation}
+
+
+
+Definition at line 378 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9bcbe38dc1d8ded7d34676280e54cc2d}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a9bcbe38dc1d8ded7d34676280e54cc2d}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!prev\+\_\+response@{prev\+\_\+response}}
+\index{prev\+\_\+response@{prev\+\_\+response}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{prev\+\_\+response}{prev\_response}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+prev\+\_\+response}
+
+
+
+Definition at line 251 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+check\+\_\+prev\+\_\+response().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a27ac824e8f978ecaa8a40d973ea4b42d}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a27ac824e8f978ecaa8a40d973ea4b42d}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!prev\+\_\+responses@{prev\+\_\+responses}}
+\index{prev\+\_\+responses@{prev\+\_\+responses}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{prev\+\_\+responses}{prev\_responses}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+prev\+\_\+responses}
+
+
+
+Definition at line 242 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a08305755b2fdd14eae66b55abf8de50e}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a08305755b2fdd14eae66b55abf8de50e}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!rating\+\_\+classifier@{rating\+\_\+classifier}}
+\index{rating\+\_\+classifier@{rating\+\_\+classifier}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{rating\+\_\+classifier}{rating\_classifier}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+rating\+\_\+classifier}
+
+
+
+Definition at line 275 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa3d365c57936a448b3981bef2f7a04bc}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aa3d365c57936a448b3981bef2f7a04bc}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!requested\+\_\+rating@{requested\+\_\+rating}}
+\index{requested\+\_\+rating@{requested\+\_\+rating}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{requested\+\_\+rating}{requested\_rating}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+requested\+\_\+rating}
+
+
+
+Definition at line 327 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+do\+\_\+request\+\_\+rating(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+reset().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac13ff9e92bb3650b6c15c51ad0204084}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ac13ff9e92bb3650b6c15c51ad0204084}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!satisfaction\+\_\+criterion@{satisfaction\+\_\+criterion}}
+\index{satisfaction\+\_\+criterion@{satisfaction\+\_\+criterion}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{satisfaction\+\_\+criterion}{satisfaction\_criterion}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+criterion}
+
+
+
+Definition at line 271 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+satisfaction\+\_\+step().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aedf90f87c0d0aa6bbab460e4b4d190a8}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_aedf90f87c0d0aa6bbab460e4b4d190a8}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!status@{status}}
+\index{status@{status}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+status}
+
+
+
+Definition at line 255 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+act(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+observe().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad08ff6158e3acf2ffe3b9c9931da7ccb}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_ad08ff6158e3acf2ffe3b9c9931da7ccb}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!subtask@{subtask}}
+\index{subtask@{subtask}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{subtask}{subtask}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtask}
+
+
+
+Definition at line 232 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+batchify(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+eval\+\_\+step(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a37e85a73af4cff789a7a7de7e503bb9c}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a37e85a73af4cff789a7a7de7e503bb9c}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!subtasks@{subtasks}}
+\index{subtasks@{subtasks}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{subtasks}{subtasks}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+subtasks}
+
+
+
+Definition at line 821 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+report(), and self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+reset\+\_\+metrics().
+
+\mbox{\Hypertarget{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2b74d181da38d6a0f91273d7802249a4}\label{classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent_a2b74d181da38d6a0f91273d7802249a4}} 
+\index{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}!task\+\_\+weight@{task\+\_\+weight}}
+\index{task\+\_\+weight@{task\+\_\+weight}!self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent@{self\+\_\+feeding\+::self\+\_\+feeding\+\_\+agent\+::\+Self\+Feeding\+Agent}}
+\subsubsection{\texorpdfstring{task\+\_\+weight}{task\_weight}}
+{\footnotesize\ttfamily self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+task\+\_\+weight}
+
+
+
+Definition at line 263 of file self\+\_\+feeding\+\_\+agent.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/self\+\_\+feeding/\hyperlink{self__feeding__agent_8py}{self\+\_\+feeding\+\_\+agent.\+py}\end{DoxyCompactItemize}

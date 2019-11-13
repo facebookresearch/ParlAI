@@ -1,7 +1,8 @@
 <map id="light_chats.graph.Graph.get_possible_actions" name="light_chats.graph.Graph.get_possible_actions">
-<area shape="rect" id="node1" title=" " alt="" coords="5,88,188,129"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a04cea64dfded92bfd69055e184aa390d" title=" " alt="" coords="252,5,435,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="236,95,451,122"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#aaf9882eb0e887eadf75e4f2460732c05" title=" " alt="" coords="247,147,439,188"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="499,88,703,129"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a04cea64dfded92bfd69055e184aa390d" title="light_chats.graph.Graph.get\l_actionable_ids" alt="" coords="236,85,419,126"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="697,5,912,32"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#aaf9882eb0e887eadf75e4f2460732c05" title="light_chats.graph.Graph.node\l_contains" alt="" coords="709,173,901,214"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a4fa84ee088a8086336cf51a1c41a0477" title="light_chats.graph.Graph.get\l_local_ids" alt="" coords="467,85,649,126"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a33bf40491bd3aa15e65987377b3d580f" title="light_chats.graph.Graph.location" alt="" coords="700,56,909,83"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1Graph.html#a20da62a3d5411d93fe820accdd06fa33" title="light_chats.graph.Graph.node\l_path_to" alt="" coords="709,107,901,149"/>
 </map>

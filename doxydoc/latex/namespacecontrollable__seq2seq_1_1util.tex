@@ -1,0 +1,139 @@
+\hypertarget{namespacecontrollable__seq2seq_1_1util}{}\section{controllable\+\_\+seq2seq.\+util Namespace Reference}
+\label{namespacecontrollable__seq2seq_1_1util}\index{controllable\+\_\+seq2seq.\+util@{controllable\+\_\+seq2seq.\+util}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1util_1_1ConvAI2History}{Conv\+A\+I2\+History}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1util_a6667311d5a790733c7e4bee96705e5fe}{remove\+\_\+prefix} (utt, prefix)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1util_ac43b54c05e08b32a3732af240d957cec}{fix\+\_\+personaline\+\_\+period} (line)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1util_a616447119991c41cded3c7a8c3e01acc}{show\+\_\+beam\+\_\+cands} (n\+\_\+best\+\_\+beam\+\_\+preds, history, dictionary)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1util_ab2f0e2b4043e6e1fbd59ca27b9383dc0}{reorder\+\_\+extrep2gram\+\_\+qn} (n\+\_\+best\+\_\+beam\+\_\+preds, history, dictionary, verbose)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1util_ac43b54c05e08b32a3732af240d957cec}\label{namespacecontrollable__seq2seq_1_1util_ac43b54c05e08b32a3732af240d957cec}} 
+\index{controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}!fix\+\_\+personaline\+\_\+period@{fix\+\_\+personaline\+\_\+period}}
+\index{fix\+\_\+personaline\+\_\+period@{fix\+\_\+personaline\+\_\+period}!controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}}
+\subsubsection{\texorpdfstring{fix\+\_\+personaline\+\_\+period()}{fix\_personaline\_period()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+util.\+fix\+\_\+personaline\+\_\+period (\begin{DoxyParamCaption}\item[{}]{line }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sometimes the tokenized persona lines have a period at the end but no space before
+the period. This function fixes it, e.g. changes
+  'my favorite color is blue.' to 'my favorite color is blue .'
+\end{DoxyVerb}
+ 
+
+Definition at line 90 of file util.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1util_ac43b54c05e08b32a3732af240d957cec_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1util_a6667311d5a790733c7e4bee96705e5fe}\label{namespacecontrollable__seq2seq_1_1util_a6667311d5a790733c7e4bee96705e5fe}} 
+\index{controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}!remove\+\_\+prefix@{remove\+\_\+prefix}}
+\index{remove\+\_\+prefix@{remove\+\_\+prefix}!controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}}
+\subsubsection{\texorpdfstring{remove\+\_\+prefix()}{remove\_prefix()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+util.\+remove\+\_\+prefix (\begin{DoxyParamCaption}\item[{}]{utt,  }\item[{}]{prefix }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check that utt begins with prefix+" ", and then remove.
+
+Inputs:
+  utt: string
+  prefix: string
+
+Returns:
+  new utt: utt with the prefix+" " removed.
+\end{DoxyVerb}
+ 
+
+Definition at line 69 of file util.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+util.\+Conv\+A\+I2\+History.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1util_a6667311d5a790733c7e4bee96705e5fe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1util_ab2f0e2b4043e6e1fbd59ca27b9383dc0}\label{namespacecontrollable__seq2seq_1_1util_ab2f0e2b4043e6e1fbd59ca27b9383dc0}} 
+\index{controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}!reorder\+\_\+extrep2gram\+\_\+qn@{reorder\+\_\+extrep2gram\+\_\+qn}}
+\index{reorder\+\_\+extrep2gram\+\_\+qn@{reorder\+\_\+extrep2gram\+\_\+qn}!controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}}
+\subsubsection{\texorpdfstring{reorder\+\_\+extrep2gram\+\_\+qn()}{reorder\_extrep2gram\_qn()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+util.\+reorder\+\_\+extrep2gram\+\_\+qn (\begin{DoxyParamCaption}\item[{}]{n\+\_\+best\+\_\+beam\+\_\+preds,  }\item[{}]{history,  }\item[{}]{dictionary,  }\item[{}]{verbose }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Inputs:
+    n_best_beam_preds: list length num_candidates of (prediction, score) pairs.
+      prediction is a tensor of word indices, score is a single float tensor.
+    history: ConvAI2History
+    dictionary: parlai DictionaryAgent
+    verbose: bool. If True, print out the selection process.
+
+Outputs: (tensor, tensor) pair which is the chosen (prediction, score)
+\end{DoxyVerb}
+ 
+
+Definition at line 124 of file util.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1util_ab2f0e2b4043e6e1fbd59ca27b9383dc0_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1util_a616447119991c41cded3c7a8c3e01acc}\label{namespacecontrollable__seq2seq_1_1util_a616447119991c41cded3c7a8c3e01acc}} 
+\index{controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}!show\+\_\+beam\+\_\+cands@{show\+\_\+beam\+\_\+cands}}
+\index{show\+\_\+beam\+\_\+cands@{show\+\_\+beam\+\_\+cands}!controllable\+\_\+seq2seq\+::util@{controllable\+\_\+seq2seq\+::util}}
+\subsubsection{\texorpdfstring{show\+\_\+beam\+\_\+cands()}{show\_beam\_cands()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+util.\+show\+\_\+beam\+\_\+cands (\begin{DoxyParamCaption}\item[{}]{n\+\_\+best\+\_\+beam\+\_\+preds,  }\item[{}]{history,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Pretty-print the n-best candidates from beam search, along with their probabilities
+
+Inputs:
+  n_best_beam_preds: list length num_candidates of (prediction, score) pairs.
+    prediction is a tensor of word indices, score is a single float tensor.
+  history: ConvAI2History
+  dictionary: parlai DictionaryAgent
+\end{DoxyVerb}
+ 
+
+Definition at line 102 of file util.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1util_a616447119991c41cded3c7a8c3e01acc_icgraph}
+\end{center}
+\end{figure}

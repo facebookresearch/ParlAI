@@ -1,0 +1,290 @@
+\hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils}{}\section{parlai.\+messenger.\+core.\+server\+\_\+utils Namespace Reference}
+\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils}\index{parlai.\+messenger.\+core.\+server\+\_\+utils@{parlai.\+messenger.\+core.\+server\+\_\+utils}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3da4024deca88ca3c1ac20a2857b06db}{setup\+\_\+heroku\+\_\+server} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a94b0647ae0e38dcada7dd0c4501dd179}{delete\+\_\+heroku\+\_\+server} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3b993fcdfa397479c469c7d20dcbfd9d}{setup\+\_\+local\+\_\+server} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0c2ab25112f98f6d7f95174f8f55f4fa}{delete\+\_\+local\+\_\+server} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a006ba5635b31336c4dd80b795025b29b}{setup\+\_\+server} (task\+\_\+name, local=False)
+\item 
+def \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a606f5ec3e035a05cae9d1b44ff88fdde}{delete\+\_\+server} (task\+\_\+name, local=False)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0141ad67f4ed6b9f9e191c1abd62d22c}{region\+\_\+name} = \textquotesingle{}us-\/east-\/1\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a42bc15986abd6792e94812568f545e06}{user\+\_\+name} = getpass.\+getuser()
+\item 
+\hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a045bfeca7b0cc10551c83eb5e4618524}{parent\+\_\+dir} = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a009ee576064d60761424a5c472f081a4}{server\+\_\+source\+\_\+directory\+\_\+name} = \textquotesingle{}server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a29a8a8e11fb4ed5bb4db081009ede6aa}{heroku\+\_\+server\+\_\+directory\+\_\+name} = \textquotesingle{}heroku\+\_\+server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a84b23bb1b0184a0b36f98c6a29699fc8}{local\+\_\+server\+\_\+directory\+\_\+name} = \textquotesingle{}local\+\_\+server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_aa0250aef1e93e928eb577c3303c70fd6}{task\+\_\+directory\+\_\+name} = \textquotesingle{}task\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a7e49ed248488f38290c6029824739cd0}{server\+\_\+process} = None
+\item 
+string \hyperlink{namespaceparlai_1_1messenger_1_1core_1_1server__utils_acbdcfdd8a06254191437907df0e90659}{heroku\+\_\+url} = \textquotesingle{}https\+://cli-\/assets.\+heroku.\+com/heroku-\/cli/channels/stable/heroku-\/cli\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a94b0647ae0e38dcada7dd0c4501dd179}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a94b0647ae0e38dcada7dd0c4501dd179}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!delete\+\_\+heroku\+\_\+server@{delete\+\_\+heroku\+\_\+server}}
+\index{delete\+\_\+heroku\+\_\+server@{delete\+\_\+heroku\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+heroku\+\_\+server()}{delete\_heroku\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 208 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+server(), and parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a94b0647ae0e38dcada7dd0c4501dd179_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0c2ab25112f98f6d7f95174f8f55f4fa}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0c2ab25112f98f6d7f95174f8f55f4fa}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!delete\+\_\+local\+\_\+server@{delete\+\_\+local\+\_\+server}}
+\index{delete\+\_\+local\+\_\+server@{delete\+\_\+local\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+local\+\_\+server()}{delete\_local\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+local\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 273 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+server().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0c2ab25112f98f6d7f95174f8f55f4fa_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a606f5ec3e035a05cae9d1b44ff88fdde}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a606f5ec3e035a05cae9d1b44ff88fdde}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!delete\+\_\+server@{delete\+\_\+server}}
+\index{delete\+\_\+server@{delete\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+server()}{delete\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{local = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 291 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server(), and parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+local\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a606f5ec3e035a05cae9d1b44ff88fdde_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3da4024deca88ca3c1ac20a2857b06db}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3da4024deca88ca3c1ac20a2857b06db}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!setup\+\_\+heroku\+\_\+server@{setup\+\_\+heroku\+\_\+server}}
+\index{setup\+\_\+heroku\+\_\+server@{setup\+\_\+heroku\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+heroku\+\_\+server()}{setup\_heroku\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3da4024deca88ca3c1ac20a2857b06db_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3da4024deca88ca3c1ac20a2857b06db_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3b993fcdfa397479c469c7d20dcbfd9d}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3b993fcdfa397479c469c7d20dcbfd9d}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!setup\+\_\+local\+\_\+server@{setup\+\_\+local\+\_\+server}}
+\index{setup\+\_\+local\+\_\+server@{setup\+\_\+local\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+local\+\_\+server()}{setup\_local\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+local\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 236 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input.
+
+
+
+Referenced by parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+server().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a3b993fcdfa397479c469c7d20dcbfd9d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a006ba5635b31336c4dd80b795025b29b}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a006ba5635b31336c4dd80b795025b29b}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!setup\+\_\+server@{setup\+\_\+server}}
+\index{setup\+\_\+server@{setup\+\_\+server}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+server()}{setup\_server()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{local = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 285 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server(), and parlai.\+messenger.\+core.\+server\+\_\+utils.\+setup\+\_\+local\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a006ba5635b31336c4dd80b795025b29b_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a29a8a8e11fb4ed5bb4db081009ede6aa}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a29a8a8e11fb4ed5bb4db081009ede6aa}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!heroku\+\_\+server\+\_\+directory\+\_\+name@{heroku\+\_\+server\+\_\+directory\+\_\+name}}
+\index{heroku\+\_\+server\+\_\+directory\+\_\+name@{heroku\+\_\+server\+\_\+directory\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{heroku\+\_\+server\+\_\+directory\+\_\+name}{heroku\_server\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+heroku\+\_\+server\+\_\+directory\+\_\+name = \textquotesingle{}heroku\+\_\+server\textquotesingle{}}
+
+
+
+Definition at line 24 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_acbdcfdd8a06254191437907df0e90659}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_acbdcfdd8a06254191437907df0e90659}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!heroku\+\_\+url@{heroku\+\_\+url}}
+\index{heroku\+\_\+url@{heroku\+\_\+url}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{heroku\+\_\+url}{heroku\_url}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+heroku\+\_\+url = \textquotesingle{}https\+://cli-\/assets.\+heroku.\+com/heroku-\/cli/channels/stable/heroku-\/cli\textquotesingle{}}
+
+
+
+Definition at line 30 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a84b23bb1b0184a0b36f98c6a29699fc8}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a84b23bb1b0184a0b36f98c6a29699fc8}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!local\+\_\+server\+\_\+directory\+\_\+name@{local\+\_\+server\+\_\+directory\+\_\+name}}
+\index{local\+\_\+server\+\_\+directory\+\_\+name@{local\+\_\+server\+\_\+directory\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{local\+\_\+server\+\_\+directory\+\_\+name}{local\_server\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+local\+\_\+server\+\_\+directory\+\_\+name = \textquotesingle{}local\+\_\+server\textquotesingle{}}
+
+
+
+Definition at line 25 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a045bfeca7b0cc10551c83eb5e4618524}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a045bfeca7b0cc10551c83eb5e4618524}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!parent\+\_\+dir@{parent\+\_\+dir}}
+\index{parent\+\_\+dir@{parent\+\_\+dir}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{parent\+\_\+dir}{parent\_dir}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+server\+\_\+utils.\+parent\+\_\+dir = os.\+path.\+dirname(os.\+path.\+abspath(\+\_\+\+\_\+file\+\_\+\+\_\+))}
+
+
+
+Definition at line 22 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0141ad67f4ed6b9f9e191c1abd62d22c}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a0141ad67f4ed6b9f9e191c1abd62d22c}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!region\+\_\+name@{region\+\_\+name}}
+\index{region\+\_\+name@{region\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{region\+\_\+name}{region\_name}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+region\+\_\+name = \textquotesingle{}us-\/east-\/1\textquotesingle{}}
+
+
+
+Definition at line 19 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a7e49ed248488f38290c6029824739cd0}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a7e49ed248488f38290c6029824739cd0}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!server\+\_\+process@{server\+\_\+process}}
+\index{server\+\_\+process@{server\+\_\+process}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{server\+\_\+process}{server\_process}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+server\+\_\+utils.\+server\+\_\+process = None}
+
+
+
+Definition at line 28 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a009ee576064d60761424a5c472f081a4}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a009ee576064d60761424a5c472f081a4}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!server\+\_\+source\+\_\+directory\+\_\+name@{server\+\_\+source\+\_\+directory\+\_\+name}}
+\index{server\+\_\+source\+\_\+directory\+\_\+name@{server\+\_\+source\+\_\+directory\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{server\+\_\+source\+\_\+directory\+\_\+name}{server\_source\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+server\+\_\+source\+\_\+directory\+\_\+name = \textquotesingle{}server\textquotesingle{}}
+
+
+
+Definition at line 23 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_aa0250aef1e93e928eb577c3303c70fd6}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_aa0250aef1e93e928eb577c3303c70fd6}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!task\+\_\+directory\+\_\+name@{task\+\_\+directory\+\_\+name}}
+\index{task\+\_\+directory\+\_\+name@{task\+\_\+directory\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{task\+\_\+directory\+\_\+name}{task\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+messenger.\+core.\+server\+\_\+utils.\+task\+\_\+directory\+\_\+name = \textquotesingle{}task\textquotesingle{}}
+
+
+
+Definition at line 26 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a42bc15986abd6792e94812568f545e06}\label{namespaceparlai_1_1messenger_1_1core_1_1server__utils_a42bc15986abd6792e94812568f545e06}} 
+\index{parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}!user\+\_\+name@{user\+\_\+name}}
+\index{user\+\_\+name@{user\+\_\+name}!parlai\+::messenger\+::core\+::server\+\_\+utils@{parlai\+::messenger\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{user\+\_\+name}{user\_name}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+server\+\_\+utils.\+user\+\_\+name = getpass.\+getuser()}
+
+
+
+Definition at line 20 of file server\+\_\+utils.\+py.
+

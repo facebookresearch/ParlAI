@@ -1,0 +1,1073 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler}{}\section{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler}\index{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler@{parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac6706c58fc7fc4f76a8d92e55c4d64df}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None, file\+\_\+name=\textquotesingle{}pmt\+\_\+data.\+db\textquotesingle{})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a08e9ad4daabe8117c158b0c2a986f6f1}{create\+\_\+default\+\_\+tables} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ae8c02400cd4261b79571e6108955c883}{log\+\_\+new\+\_\+run} (self, target\+\_\+hits, taskname, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a97043bdbc4faa87164cd1e9d71559327}{log\+\_\+hit\+\_\+status} (self, mturk\+\_\+hit\+\_\+creation\+\_\+response, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7b7b243f1ae901dce38b639fb9dcde22}{log\+\_\+worker\+\_\+accept\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id, hit\+\_\+id, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a07f6dfb250fe119f1fdd44c58e6c05aa}{log\+\_\+complete\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id, approve\+\_\+time, complete\+\_\+type, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a42409b508f2b135f6d02c80f39aee466}{log\+\_\+disconnect\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id, approve\+\_\+time, disconnect\+\_\+type, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab175fd5970bfd7b24751ad99e7b99111}{log\+\_\+expire\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a5a9a1246250044f6f13117c899285c82}{log\+\_\+submit\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6f53c1208c4e3b71be96c4f3e96dab2e}{log\+\_\+abandon\+\_\+assignment} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa084ae52cbcc1fdce7e5a20f079f3f47}{log\+\_\+start\+\_\+onboard} (self, worker\+\_\+id, assignment\+\_\+id, conversation\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a520efb5a04ffab6b689c0562997f76e0}{log\+\_\+finish\+\_\+onboard} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac8a4ba8bd6942424ff47149189c027a3}{log\+\_\+start\+\_\+task} (self, worker\+\_\+id, assignment\+\_\+id, conversation\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ba0bf16c83138626c33c71a041674f}{log\+\_\+award\+\_\+amount} (self, worker\+\_\+id, assignment\+\_\+id, amount, reason)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_abf54a08cd2b503358c52229258c1f2c6}{log\+\_\+pay\+\_\+extra\+\_\+bonus} (self, worker\+\_\+id, assignment\+\_\+id, amount, reason)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aaa2ae4ebfd4b668bdef7642cdf4d9392}{log\+\_\+bonus\+\_\+paid} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a57266a8380587e0256b966ad780ec7d7}{log\+\_\+approve\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_afd8d5abb26cbd00f96ff7d8ad44b1f49}{log\+\_\+reject\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_acb69b500f70e42e4e8a99e224534cc27}{log\+\_\+worker\+\_\+note} (self, worker\+\_\+id, assignment\+\_\+id, note)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a3e7435a5ea6af94b4d668c095184a234}{get\+\_\+all\+\_\+worker\+\_\+data} (self, start=0, count=100)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a748e6271a1618272cd17ec412b2c2a25}{get\+\_\+worker\+\_\+data} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa3f132c04075d005d6639b938414ac0f}{get\+\_\+assignments\+\_\+for\+\_\+run} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ee72567e0c94eea130cdee21549ada}{get\+\_\+assignment\+\_\+data} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9aa7011c4fdd163ed18b99bbd697da78}{get\+\_\+worker\+\_\+assignment\+\_\+pairing} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a23837cfc187beca71c486a2b3000459e}{get\+\_\+all\+\_\+run\+\_\+data} (self, start=0, count=1000)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a915eb49ef703f1606b8039a76b6a9385}{get\+\_\+run\+\_\+data} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9effb9b4fadb19804787129f064f23a2}{get\+\_\+hits\+\_\+for\+\_\+run} (self, run\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac6a98f191bfacfb9092f2d0138fb429}{get\+\_\+hit\+\_\+data} (self, hit\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a112a75abc2ccd02aa53119c88d1c6bb2}{get\+\_\+pairings\+\_\+for\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac09cee0791b834add5a50e430b6030e}{get\+\_\+pairings\+\_\+for\+\_\+run} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a507259114132bb247683c7f9b127c12c}{get\+\_\+pairings\+\_\+for\+\_\+conversation} (self, conversation\+\_\+id, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a46feee52b8950688e8d916dcd263d2c1}{get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab4f6bcf277206b3ac02971f208c2ec32}{get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker} (self, worker\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7d86983e9f01a1f785284bbda21a2860}{get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker} (self, worker\+\_\+id, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a497bab989cb0979d44136b232a99f9a7}{get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker} (self, worker\+\_\+id, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6d5a47cdeede36a2fb650f28dd72ef12}{save\+\_\+world\+\_\+data} (prepped\+\_\+save\+\_\+data, \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}, conversation\+\_\+id, sandbox=False)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af46969088769ed561fd4206e729aecf9}{get\+\_\+conversation\+\_\+data} (\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}, conv\+\_\+id, worker\+\_\+id, is\+\_\+sandbox)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af089c1fdb7266ba77936d53d957932f4}{get\+\_\+full\+\_\+conversation\+\_\+data} (\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}, conv\+\_\+id, is\+\_\+sandbox)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7cca153268ab042892a68ad4aa032414}{db\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a66361d334cabae5782ca8a8740b32e95}{conn}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}{task\+\_\+group\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a782fb3d819b27356b34060bc3b9f110e}{table\+\_\+access\+\_\+condition}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Handles logging data to and reading data from a SQLite3 table for
+observation across processes and for controlled restarts
+\end{DoxyVerb}
+ 
+
+Definition at line 102 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac6706c58fc7fc4f76a8d92e55c4d64df}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac6706c58fc7fc4f76a8d92e55c4d64df}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None},  }\item[{}]{file\+\_\+name = {\ttfamily \textquotesingle{}pmt\+\_\+data.db\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 107 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a08e9ad4daabe8117c158b0c2a986f6f1}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a08e9ad4daabe8117c158b0c2a986f6f1}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!create\+\_\+default\+\_\+tables@{create\+\_\+default\+\_\+tables}}
+\index{create\+\_\+default\+\_\+tables@{create\+\_\+default\+\_\+tables}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{create\+\_\+default\+\_\+tables()}{create\_default\_tables()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+create\+\_\+default\+\_\+tables (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Prepares the default tables in the database if they don't exist\end{DoxyVerb}
+ 
+
+Definition at line 170 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a08e9ad4daabe8117c158b0c2a986f6f1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a46feee52b8950688e8d916dcd263d2c1}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a46feee52b8950688e8d916dcd263d2c1}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker}}
+\index{get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker()}{get\_all\_assignments\_for\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all assignments associated with a particular worker_id\end{DoxyVerb}
+ 
+
+Definition at line 784 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a46feee52b8950688e8d916dcd263d2c1_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab4f6bcf277206b3ac02971f208c2ec32}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab4f6bcf277206b3ac02971f208c2ec32}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker}}
+\index{get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker()}{get\_all\_pairings\_for\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all pairings associated with a particular worker_id\end{DoxyVerb}
+ 
+
+Definition at line 793 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab4f6bcf277206b3ac02971f208c2ec32_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a23837cfc187beca71c486a2b3000459e}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a23837cfc187beca71c486a2b3000459e}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+run\+\_\+data@{get\+\_\+all\+\_\+run\+\_\+data}}
+\index{get\+\_\+all\+\_\+run\+\_\+data@{get\+\_\+all\+\_\+run\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+run\+\_\+data()}{get\_all\_run\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+run\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{start = {\ttfamily 0},  }\item[{}]{count = {\ttfamily 1000} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all the run data for all task_group_ids.\end{DoxyVerb}
+ 
+
+Definition at line 706 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a23837cfc187beca71c486a2b3000459e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7d86983e9f01a1f785284bbda21a2860}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7d86983e9f01a1f785284bbda21a2860}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker}}
+\index{get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker()}{get\_all\_task\_assignments\_for\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all assignments for a particular worker within a
+particular run by worker_id and task_group_id
+\end{DoxyVerb}
+ 
+
+Definition at line 802 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7d86983e9f01a1f785284bbda21a2860_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a497bab989cb0979d44136b232a99f9a7}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a497bab989cb0979d44136b232a99f9a7}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker}}
+\index{get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker@{get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker()}{get\_all\_task\_pairings\_for\_worker()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all pairings for a particular worker within a
+particular run by worker_id and task_group_id
+\end{DoxyVerb}
+ 
+
+Definition at line 823 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a497bab989cb0979d44136b232a99f9a7_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a3e7435a5ea6af94b4d668c095184a234}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a3e7435a5ea6af94b4d668c095184a234}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+all\+\_\+worker\+\_\+data@{get\+\_\+all\+\_\+worker\+\_\+data}}
+\index{get\+\_\+all\+\_\+worker\+\_\+data@{get\+\_\+all\+\_\+worker\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+all\+\_\+worker\+\_\+data()}{get\_all\_worker\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+worker\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{start = {\ttfamily 0},  }\item[{}]{count = {\ttfamily 100} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all the worker data for all worker_ids.\end{DoxyVerb}
+ 
+
+Definition at line 648 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a3e7435a5ea6af94b4d668c095184a234_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ee72567e0c94eea130cdee21549ada}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ee72567e0c94eea130cdee21549ada}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+assignment\+\_\+data@{get\+\_\+assignment\+\_\+data}}
+\index{get\+\_\+assignment\+\_\+data@{get\+\_\+assignment\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+assignment\+\_\+data()}{get\_assignment\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignment\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get assignment data for a particular assignment by assignment_id\end{DoxyVerb}
+ 
+
+Definition at line 682 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ee72567e0c94eea130cdee21549ada_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa3f132c04075d005d6639b938414ac0f}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa3f132c04075d005d6639b938414ac0f}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+assignments\+\_\+for\+\_\+run@{get\+\_\+assignments\+\_\+for\+\_\+run}}
+\index{get\+\_\+assignments\+\_\+for\+\_\+run@{get\+\_\+assignments\+\_\+for\+\_\+run}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+assignments\+\_\+for\+\_\+run()}{get\_assignments\_for\_run()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignments\+\_\+for\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+group\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all assignments for a particular run by task_group_id\end{DoxyVerb}
+ 
+
+Definition at line 666 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa3f132c04075d005d6639b938414ac0f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af46969088769ed561fd4206e729aecf9}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af46969088769ed561fd4206e729aecf9}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+conversation\+\_\+data@{get\+\_\+conversation\+\_\+data}}
+\index{get\+\_\+conversation\+\_\+data@{get\+\_\+conversation\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+conversation\+\_\+data()}{get\_conversation\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+conversation\+\_\+data (\begin{DoxyParamCaption}\item[{}]{task\+\_\+group\+\_\+id,  }\item[{}]{conv\+\_\+id,  }\item[{}]{worker\+\_\+id,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}A poorly named function that gets conversation data for a worker\end{DoxyVerb}
+ 
+
+Definition at line 840 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af089c1fdb7266ba77936d53d957932f4}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af089c1fdb7266ba77936d53d957932f4}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+full\+\_\+conversation\+\_\+data@{get\+\_\+full\+\_\+conversation\+\_\+data}}
+\index{get\+\_\+full\+\_\+conversation\+\_\+data@{get\+\_\+full\+\_\+conversation\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+full\+\_\+conversation\+\_\+data()}{get\_full\_conversation\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+full\+\_\+conversation\+\_\+data (\begin{DoxyParamCaption}\item[{}]{task\+\_\+group\+\_\+id,  }\item[{}]{conv\+\_\+id,  }\item[{}]{is\+\_\+sandbox }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Gets all conversation data saved for a world\end{DoxyVerb}
+ 
+
+Definition at line 877 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac6a98f191bfacfb9092f2d0138fb429}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac6a98f191bfacfb9092f2d0138fb429}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+hit\+\_\+data@{get\+\_\+hit\+\_\+data}}
+\index{get\+\_\+hit\+\_\+data@{get\+\_\+hit\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+hit\+\_\+data()}{get\_hit\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hit\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hit\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get the hit data for the given hit_id, return None if not\end{DoxyVerb}
+ 
+
+Definition at line 735 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac6a98f191bfacfb9092f2d0138fb429_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9effb9b4fadb19804787129f064f23a2}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9effb9b4fadb19804787129f064f23a2}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+hits\+\_\+for\+\_\+run@{get\+\_\+hits\+\_\+for\+\_\+run}}
+\index{get\+\_\+hits\+\_\+for\+\_\+run@{get\+\_\+hits\+\_\+for\+\_\+run}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+hits\+\_\+for\+\_\+run()}{get\_hits\_for\_run()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hits\+\_\+for\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{run\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the full list of HITs for the given run_id\end{DoxyVerb}
+ 
+
+Definition at line 726 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9effb9b4fadb19804787129f064f23a2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a112a75abc2ccd02aa53119c88d1c6bb2}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a112a75abc2ccd02aa53119c88d1c6bb2}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+pairings\+\_\+for\+\_\+assignment@{get\+\_\+pairings\+\_\+for\+\_\+assignment}}
+\index{get\+\_\+pairings\+\_\+for\+\_\+assignment@{get\+\_\+pairings\+\_\+for\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+pairings\+\_\+for\+\_\+assignment()}{get\_pairings\_for\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all pairings attached to a particular assignment_id\end{DoxyVerb}
+ 
+
+Definition at line 744 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a112a75abc2ccd02aa53119c88d1c6bb2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a507259114132bb247683c7f9b127c12c}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a507259114132bb247683c7f9b127c12c}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+pairings\+\_\+for\+\_\+conversation@{get\+\_\+pairings\+\_\+for\+\_\+conversation}}
+\index{get\+\_\+pairings\+\_\+for\+\_\+conversation@{get\+\_\+pairings\+\_\+for\+\_\+conversation}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+pairings\+\_\+for\+\_\+conversation()}{get\_pairings\_for\_conversation()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+conversation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{conversation\+\_\+id,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all pairings for a singular conversation in a run by
+conversation_id and task_group_id
+\end{DoxyVerb}
+ 
+
+Definition at line 768 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a507259114132bb247683c7f9b127c12c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac09cee0791b834add5a50e430b6030e}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac09cee0791b834add5a50e430b6030e}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+pairings\+\_\+for\+\_\+run@{get\+\_\+pairings\+\_\+for\+\_\+run}}
+\index{get\+\_\+pairings\+\_\+for\+\_\+run@{get\+\_\+pairings\+\_\+for\+\_\+run}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+pairings\+\_\+for\+\_\+run()}{get\_pairings\_for\_run()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+group\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all pairings from a particular run by task_group_id\end{DoxyVerb}
+ 
+
+Definition at line 755 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aac09cee0791b834add5a50e430b6030e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a915eb49ef703f1606b8039a76b6a9385}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a915eb49ef703f1606b8039a76b6a9385}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+run\+\_\+data@{get\+\_\+run\+\_\+data}}
+\index{get\+\_\+run\+\_\+data@{get\+\_\+run\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+run\+\_\+data()}{get\_run\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+run\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+group\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get the run data for the given task_group_id, return None if not
+found.
+\end{DoxyVerb}
+ 
+
+Definition at line 715 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a915eb49ef703f1606b8039a76b6a9385_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9aa7011c4fdd163ed18b99bbd697da78}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9aa7011c4fdd163ed18b99bbd697da78}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+worker\+\_\+assignment\+\_\+pairing@{get\+\_\+worker\+\_\+assignment\+\_\+pairing}}
+\index{get\+\_\+worker\+\_\+assignment\+\_\+pairing@{get\+\_\+worker\+\_\+assignment\+\_\+pairing}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+worker\+\_\+assignment\+\_\+pairing()}{get\_worker\_assignment\_pairing()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+assignment\+\_\+pairing (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get a pairing data structure between a worker and an assignment\end{DoxyVerb}
+ 
+
+Definition at line 693 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a9aa7011c4fdd163ed18b99bbd697da78_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a748e6271a1618272cd17ec412b2c2a25}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a748e6271a1618272cd17ec412b2c2a25}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!get\+\_\+worker\+\_\+data@{get\+\_\+worker\+\_\+data}}
+\index{get\+\_\+worker\+\_\+data@{get\+\_\+worker\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{get\+\_\+worker\+\_\+data()}{get\_worker\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get all worker data for a particular worker_id.\end{DoxyVerb}
+ 
+
+Definition at line 657 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a748e6271a1618272cd17ec412b2c2a25_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6f53c1208c4e3b71be96c4f3e96dab2e}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6f53c1208c4e3b71be96c4f3e96dab2e}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+abandon\+\_\+assignment@{log\+\_\+abandon\+\_\+assignment}}
+\index{log\+\_\+abandon\+\_\+assignment@{log\+\_\+abandon\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+abandon\+\_\+assignment()}{log\_abandon\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+abandon\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}To be called whenever a worker returns a hit\end{DoxyVerb}
+ 
+
+Definition at line 438 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6f53c1208c4e3b71be96c4f3e96dab2e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a57266a8380587e0256b966ad780ec7d7}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a57266a8380587e0256b966ad780ec7d7}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+approve\+\_\+assignment@{log\+\_\+approve\+\_\+assignment}}
+\index{log\+\_\+approve\+\_\+assignment@{log\+\_\+approve\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+approve\+\_\+assignment()}{log\_approve\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+approve\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update assignment state to reflect approval, update worker state to
+increment number of accepted assignments
+\end{DoxyVerb}
+ 
+
+Definition at line 558 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a57266a8380587e0256b966ad780ec7d7_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ba0bf16c83138626c33c71a041674f}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ba0bf16c83138626c33c71a041674f}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+award\+\_\+amount@{log\+\_\+award\+\_\+amount}}
+\index{log\+\_\+award\+\_\+amount@{log\+\_\+award\+\_\+amount}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+award\+\_\+amount()}{log\_award\_amount()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+award\+\_\+amount (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{amount,  }\item[{}]{reason }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update a pairing state to add a task bonus to be paid,
+appends reason. To be used for automatic evaluation bonuses
+\end{DoxyVerb}
+ 
+
+Definition at line 507 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, eval\+\_\+ppl.\+int, and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a70ba0bf16c83138626c33c71a041674f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aaa2ae4ebfd4b668bdef7642cdf4d9392}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aaa2ae4ebfd4b668bdef7642cdf4d9392}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+bonus\+\_\+paid@{log\+\_\+bonus\+\_\+paid}}
+\index{log\+\_\+bonus\+\_\+paid@{log\+\_\+bonus\+\_\+paid}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+bonus\+\_\+paid()}{log\_bonus\_paid()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+bonus\+\_\+paid (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update to show that the intended bonus amount awarded for work
+in the task has been paid
+\end{DoxyVerb}
+ 
+
+Definition at line 544 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aaa2ae4ebfd4b668bdef7642cdf4d9392_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a07f6dfb250fe119f1fdd44c58e6c05aa}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a07f6dfb250fe119f1fdd44c58e6c05aa}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+complete\+\_\+assignment@{log\+\_\+complete\+\_\+assignment}}
+\index{log\+\_\+complete\+\_\+assignment@{log\+\_\+complete\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+complete\+\_\+assignment()}{log\_complete\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{approve\+\_\+time,  }\item[{}]{complete\+\_\+type,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Note that an assignment was completed\end{DoxyVerb}
+ 
+
+Definition at line 313 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+disconnect\+\_\+assignment(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a07f6dfb250fe119f1fdd44c58e6c05aa_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a07f6dfb250fe119f1fdd44c58e6c05aa_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a42409b508f2b135f6d02c80f39aee466}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a42409b508f2b135f6d02c80f39aee466}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+disconnect\+\_\+assignment@{log\+\_\+disconnect\+\_\+assignment}}
+\index{log\+\_\+disconnect\+\_\+assignment@{log\+\_\+disconnect\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+disconnect\+\_\+assignment()}{log\_disconnect\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+disconnect\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{approve\+\_\+time,  }\item[{}]{disconnect\+\_\+type,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Note that an assignment was disconnected from\end{DoxyVerb}
+ 
+
+Definition at line 355 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a42409b508f2b135f6d02c80f39aee466_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a42409b508f2b135f6d02c80f39aee466_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab175fd5970bfd7b24751ad99e7b99111}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab175fd5970bfd7b24751ad99e7b99111}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+expire\+\_\+assignment@{log\+\_\+expire\+\_\+assignment}}
+\index{log\+\_\+expire\+\_\+assignment@{log\+\_\+expire\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+expire\+\_\+assignment()}{log\_expire\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+expire\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Note that an assignment was expired by us\end{DoxyVerb}
+ 
+
+Definition at line 390 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ab175fd5970bfd7b24751ad99e7b99111_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a520efb5a04ffab6b689c0562997f76e0}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a520efb5a04ffab6b689c0562997f76e0}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+finish\+\_\+onboard@{log\+\_\+finish\+\_\+onboard}}
+\index{log\+\_\+finish\+\_\+onboard@{log\+\_\+finish\+\_\+onboard}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+finish\+\_\+onboard()}{log\_finish\_onboard()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+finish\+\_\+onboard (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update a pairing state to reflect waiting status\end{DoxyVerb}
+ 
+
+Definition at line 476 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a520efb5a04ffab6b689c0562997f76e0_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a97043bdbc4faa87164cd1e9d71559327}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a97043bdbc4faa87164cd1e9d71559327}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+hit\+\_\+status@{log\+\_\+hit\+\_\+status}}
+\index{log\+\_\+hit\+\_\+status@{log\+\_\+hit\+\_\+status}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+hit\+\_\+status()}{log\_hit\_status()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+hit\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{mturk\+\_\+hit\+\_\+creation\+\_\+response,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create or update an entry in the hit status table\end{DoxyVerb}
+ 
+
+Definition at line 214 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a97043bdbc4faa87164cd1e9d71559327_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ae8c02400cd4261b79571e6108955c883}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ae8c02400cd4261b79571e6108955c883}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+new\+\_\+run@{log\+\_\+new\+\_\+run}}
+\index{log\+\_\+new\+\_\+run@{log\+\_\+new\+\_\+run}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+new\+\_\+run()}{log\_new\_run()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+new\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{target\+\_\+hits,  }\item[{}]{taskname,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add a new run to the runs table\end{DoxyVerb}
+ 
+
+Definition at line 202 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ae8c02400cd4261b79571e6108955c883_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_abf54a08cd2b503358c52229258c1f2c6}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_abf54a08cd2b503358c52229258c1f2c6}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+pay\+\_\+extra\+\_\+bonus@{log\+\_\+pay\+\_\+extra\+\_\+bonus}}
+\index{log\+\_\+pay\+\_\+extra\+\_\+bonus@{log\+\_\+pay\+\_\+extra\+\_\+bonus}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+pay\+\_\+extra\+\_\+bonus()}{log\_pay\_extra\_bonus()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+pay\+\_\+extra\+\_\+bonus (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{amount,  }\item[{}]{reason }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update a pairing state to add a bonus to be paid, appends reason.
+To be used for extra bonuses awarded at the discretion of the requester
+\end{DoxyVerb}
+ 
+
+Definition at line 525 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, eval\+\_\+ppl.\+int, and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_abf54a08cd2b503358c52229258c1f2c6_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_afd8d5abb26cbd00f96ff7d8ad44b1f49}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_afd8d5abb26cbd00f96ff7d8ad44b1f49}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+reject\+\_\+assignment@{log\+\_\+reject\+\_\+assignment}}
+\index{log\+\_\+reject\+\_\+assignment@{log\+\_\+reject\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+reject\+\_\+assignment()}{log\_reject\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+reject\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update assignment state to reflect rejection, update worker state to
+increment number of rejected assignments
+\end{DoxyVerb}
+ 
+
+Definition at line 601 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_afd8d5abb26cbd00f96ff7d8ad44b1f49_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa084ae52cbcc1fdce7e5a20f079f3f47}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa084ae52cbcc1fdce7e5a20f079f3f47}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+start\+\_\+onboard@{log\+\_\+start\+\_\+onboard}}
+\index{log\+\_\+start\+\_\+onboard@{log\+\_\+start\+\_\+onboard}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+start\+\_\+onboard()}{log\_start\_onboard()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+onboard (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{conversation\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update a pairing state to reflect onboarding status\end{DoxyVerb}
+ 
+
+Definition at line 457 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_aa084ae52cbcc1fdce7e5a20f079f3f47_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac8a4ba8bd6942424ff47149189c027a3}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac8a4ba8bd6942424ff47149189c027a3}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+start\+\_\+task@{log\+\_\+start\+\_\+task}}
+\index{log\+\_\+start\+\_\+task@{log\+\_\+start\+\_\+task}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+start\+\_\+task()}{log\_start\_task()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{conversation\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update a pairing state to reflect in_task status\end{DoxyVerb}
+ 
+
+Definition at line 488 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_ac8a4ba8bd6942424ff47149189c027a3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a5a9a1246250044f6f13117c899285c82}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a5a9a1246250044f6f13117c899285c82}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+submit\+\_\+assignment@{log\+\_\+submit\+\_\+assignment}}
+\index{log\+\_\+submit\+\_\+assignment@{log\+\_\+submit\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+submit\+\_\+assignment()}{log\_submit\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+submit\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}To be called whenever a worker hits the "submit hit" button\end{DoxyVerb}
+ 
+
+Definition at line 425 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a5a9a1246250044f6f13117c899285c82_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7b7b243f1ae901dce38b639fb9dcde22}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7b7b243f1ae901dce38b639fb9dcde22}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+worker\+\_\+accept\+\_\+assignment@{log\+\_\+worker\+\_\+accept\+\_\+assignment}}
+\index{log\+\_\+worker\+\_\+accept\+\_\+assignment@{log\+\_\+worker\+\_\+accept\+\_\+assignment}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+worker\+\_\+accept\+\_\+assignment()}{log\_worker\_accept\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{hit\+\_\+id,  }\item[{}]{task\+\_\+group\+\_\+id = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Log a worker accept, update assignment state and pairings to match
+the acceptance
+\end{DoxyVerb}
+ 
+
+Definition at line 253 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+force\+\_\+task\+\_\+group\+\_\+id(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+hit\+\_\+status().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7b7b243f1ae901dce38b639fb9dcde22_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7b7b243f1ae901dce38b639fb9dcde22_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_acb69b500f70e42e4e8a99e224534cc27}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_acb69b500f70e42e4e8a99e224534cc27}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!log\+\_\+worker\+\_\+note@{log\+\_\+worker\+\_\+note}}
+\index{log\+\_\+worker\+\_\+note@{log\+\_\+worker\+\_\+note}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{log\+\_\+worker\+\_\+note()}{log\_worker\_note()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+note (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{note }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Append a note to the worker notes for a particular worker-assignment
+pairing. Adds newline to the note.
+\end{DoxyVerb}
+ 
+
+Definition at line 630 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+\_\+get\+\_\+connection(), and parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_acb69b500f70e42e4e8a99e224534cc27_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6d5a47cdeede36a2fb650f28dd72ef12}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6d5a47cdeede36a2fb650f28dd72ef12}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!save\+\_\+world\+\_\+data@{save\+\_\+world\+\_\+data}}
+\index{save\+\_\+world\+\_\+data@{save\+\_\+world\+\_\+data}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{save\+\_\+world\+\_\+data()}{save\_world\_data()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data (\begin{DoxyParamCaption}\item[{}]{prepped\+\_\+save\+\_\+data,  }\item[{}]{task\+\_\+group\+\_\+id,  }\item[{}]{conversation\+\_\+id,  }\item[{}]{sandbox = {\ttfamily False} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 117 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+conn, parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+db\+\_\+path, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+db\+\_\+path, parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+force\+\_\+dir(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+task\+\_\+group\+\_\+id, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+task\+\_\+group\+\_\+id, and parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+task\+\_\+group\+\_\+id.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a6d5a47cdeede36a2fb650f28dd72ef12_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a66361d334cabae5782ca8a8740b32e95}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a66361d334cabae5782ca8a8740b32e95}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!conn@{conn}}
+\index{conn@{conn}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{conn}{conn}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+conn}
+
+
+
+Definition at line 109 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), and parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7cca153268ab042892a68ad4aa032414}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a7cca153268ab042892a68ad4aa032414}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!db\+\_\+path@{db\+\_\+path}}
+\index{db\+\_\+path@{db\+\_\+path}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{db\+\_\+path}{db\_path}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+db\+\_\+path}
+
+
+
+Definition at line 108 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), and parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a782fb3d819b27356b34060bc3b9f110e}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_a782fb3d819b27356b34060bc3b9f110e}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!table\+\_\+access\+\_\+condition@{table\+\_\+access\+\_\+condition}}
+\index{table\+\_\+access\+\_\+condition@{table\+\_\+access\+\_\+condition}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{table\+\_\+access\+\_\+condition}{table\_access\_condition}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+table\+\_\+access\+\_\+condition}
+
+
+
+Definition at line 111 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+create\+\_\+default\+\_\+tables(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+create\+\_\+default\+\_\+tables(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+create\+\_\+default\+\_\+tables(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+assignments\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+task\+\_\+pairings\+\_\+for\+\_\+worker(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+all\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignment\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignment\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignment\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignments\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignments\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+assignments\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hit\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hit\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hit\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hits\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hits\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+hits\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+conversation(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+conversation(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+conversation(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+pairings\+\_\+for\+\_\+run(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+run\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+assignment\+\_\+pairing(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+assignment\+\_\+pairing(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+assignment\+\_\+pairing(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+get\+\_\+worker\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+abandon\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+abandon\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+abandon\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+approve\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+approve\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+approve\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+award\+\_\+amount(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+award\+\_\+amount(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+award\+\_\+amount(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+bonus\+\_\+paid(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+bonus\+\_\+paid(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+bonus\+\_\+paid(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+complete\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+disconnect\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+disconnect\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+disconnect\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+expire\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+expire\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+expire\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+finish\+\_\+onboard(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+finish\+\_\+onboard(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+finish\+\_\+onboard(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+hit\+\_\+status(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+hit\+\_\+status(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+hit\+\_\+status(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+new\+\_\+run(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+new\+\_\+run(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+new\+\_\+run(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+pay\+\_\+extra\+\_\+bonus(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+pay\+\_\+extra\+\_\+bonus(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+pay\+\_\+extra\+\_\+bonus(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+reject\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+reject\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+reject\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+onboard(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+onboard(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+onboard(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+task(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+task(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+start\+\_\+task(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+submit\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+submit\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+submit\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+accept\+\_\+assignment(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+note(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+note(), and parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+log\+\_\+worker\+\_\+note().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}\label{classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler_af4bebaca067ce2d388fe76ee8859e1bd}} 
+\index{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}!task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}}
+\index{task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}!parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler@{parlai\+::mturk\+::core\+::dev\+::mturk\+\_\+data\+\_\+handler\+::\+M\+Turk\+Data\+Handler}}
+\subsubsection{\texorpdfstring{task\+\_\+group\+\_\+id}{task\_group\_id}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+task\+\_\+group\+\_\+id}
+
+
+
+Definition at line 110 of file mturk\+\_\+data\+\_\+handler.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+mturk\+\_\+data\+\_\+handler.\+M\+Turk\+Data\+Handler.\+save\+\_\+world\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/dev/\hyperlink{dev_2mturk__data__handler_8py}{mturk\+\_\+data\+\_\+handler.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,156 @@
+\hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker}{}\section{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker Class Reference}
+\label{classtests_1_1test__transformers_1_1TestTransformerRanker}\index{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker@{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker}}
+
+
+Inheritance diagram for tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classtests_1_1test__transformers_1_1TestTransformerRanker__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=201pt]{classtests_1_1test__transformers_1_1TestTransformerRanker__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_a386da89601a1778da3844cf901df3697}{test\+\_\+repeater} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_a55dff1bae7f3fef267f2437423ee008f}{test\+\_\+resuming} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_aaaf8b461c4f6460c770c1717c6cf9f5c}{test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_a63dd66de96a7eee38a2bf477bd27441f}{test\+\_\+backcomp} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_a2a4671741d853fa9ff5bf484ec98487c}{test\+\_\+xlm} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_a511fbe2d896e28baff21f5c9e7f0b0b4}{test\+\_\+alt\+\_\+reduction} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtests_1_1test__transformers_1_1TestTransformerRanker_ac580716d99f1d6e925acdf3deee22def}{ntries}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Checks that transformer_ranker can learn some very basic tasks.\end{DoxyVerb}
+ 
+
+Definition at line 14 of file test\+\_\+transformers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_a511fbe2d896e28baff21f5c9e7f0b0b4}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_a511fbe2d896e28baff21f5c9e7f0b0b4}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+alt\+\_\+reduction@{test\+\_\+alt\+\_\+reduction}}
+\index{test\+\_\+alt\+\_\+reduction@{test\+\_\+alt\+\_\+reduction}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+alt\+\_\+reduction()}{test\_alt\_reduction()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+alt\+\_\+reduction (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test a transformer ranker reduction method other than `mean`.\end{DoxyVerb}
+ 
+
+Definition at line 209 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_a63dd66de96a7eee38a2bf477bd27441f}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_a63dd66de96a7eee38a2bf477bd27441f}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+backcomp@{test\+\_\+backcomp}}
+\index{test\+\_\+backcomp@{test\+\_\+backcomp}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+backcomp()}{test\_backcomp()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+backcomp (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tests that the transformer ranker model files continue to work over time.\end{DoxyVerb}
+ 
+
+Definition at line 132 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_a386da89601a1778da3844cf901df3697}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_a386da89601a1778da3844cf901df3697}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+repeater@{test\+\_\+repeater}}
+\index{test\+\_\+repeater@{test\+\_\+repeater}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+repeater()}{test\_repeater()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+repeater (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test a simple repeat-after-me model.\end{DoxyVerb}
+ 
+
+Definition at line 18 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_a55dff1bae7f3fef267f2437423ee008f}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_a55dff1bae7f3fef267f2437423ee008f}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+resuming@{test\+\_\+resuming}}
+\index{test\+\_\+resuming@{test\+\_\+resuming}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+resuming()}{test\_resuming()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+resuming (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test saving and resuming training.\end{DoxyVerb}
+ 
+
+Definition at line 50 of file test\+\_\+transformers.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_aaaf8b461c4f6460c770c1717c6cf9f5c}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_aaaf8b461c4f6460c770c1717c6cf9f5c}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau@{test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau}}
+\index{test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau@{test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau()}{test\_resuming\_reduce\_on\_plateau()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+resuming\+\_\+reduce\+\_\+on\+\_\+plateau (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reduce on Plateau can be tricky when combined with warmup.
+
+See: https://github.com/facebookresearch/ParlAI/pull/1812
+\end{DoxyVerb}
+ 
+
+Definition at line 92 of file test\+\_\+transformers.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_a2a4671741d853fa9ff5bf484ec98487c}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_a2a4671741d853fa9ff5bf484ec98487c}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!test\+\_\+xlm@{test\+\_\+xlm}}
+\index{test\+\_\+xlm@{test\+\_\+xlm}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{test\+\_\+xlm()}{test\_xlm()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+test\+\_\+xlm (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test --variant xlm.\end{DoxyVerb}
+ 
+
+Definition at line 174 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerRanker_ac580716d99f1d6e925acdf3deee22def}\label{classtests_1_1test__transformers_1_1TestTransformerRanker_ac580716d99f1d6e925acdf3deee22def}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}!ntries@{ntries}}
+\index{ntries@{ntries}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Ranker}}
+\subsubsection{\texorpdfstring{ntries}{ntries}}
+{\footnotesize\ttfamily tests.\+test\+\_\+transformers.\+Test\+Transformer\+Ranker.\+ntries\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 17 of file test\+\_\+transformers.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+tests/\hyperlink{test__transformers_8py}{test\+\_\+transformers.\+py}\end{DoxyCompactItemize}

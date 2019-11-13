@@ -1,0 +1,10 @@
+<map id="mturk_evaluation_task.worlds.WizardEval.get_human_agent_act" name="mturk_evaluation_task.worlds.WizardEval.get_human_agent_act">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html#a0f7d1da525b71529c408a4f944fa036a" title="parlai.mturk.tasks.personachat.personachat\l_rephrase.worlds.RephrasePersonaWorld.is\l_msg_tooshortlong" alt="" coords="275,5,552,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#a7f6c59f2e1f897e1e480b43fc67680df" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonaChatWorld.is\l_msg_tooshortlong" alt="" coords="275,85,551,141"/>
+<area shape="rect" id="node5" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#ad30c9575f816b5905836d78d35ac135e" title="mturk_evaluation_task.worlds.\lWizardEval.is_msg_tooshortlong" alt="" coords="307,166,520,207"/>
+<area shape="rect" id="node6" href="$classworlds_1_1PersonaChatEvalWorld.html#a3968b6677767a53dab21e828a8b575a6" title="worlds.PersonaChatEvalWorld.is\l_msg_tooshortlong" alt="" coords="306,231,521,273"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a71bd41e61be058353520917731662a3d" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.is\l_msg_tooshortlong" alt="" coords="282,297,545,353"/>
+<area shape="rect" id="node8" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a549992c78140c745d43874d073eb90c1" title="mturk.worlds.Controllable\lDialogEval.is_msg_tooshortlong" alt="" coords="309,378,518,419"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="606,207,779,233"/>
+<area shape="rect" id="node9" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#ae626e15abbeee2b200a4b53dd43c961d" title="mturk.worlds.Controllable\lDialogEval.get_control_msg" alt="" coords="600,378,785,419"/>
+</map>

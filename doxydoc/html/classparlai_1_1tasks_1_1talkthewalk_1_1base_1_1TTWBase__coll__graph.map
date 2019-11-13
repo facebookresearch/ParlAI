@@ -1,7 +1,5 @@
 <map id="parlai.tasks.talkthewalk.base.TTWBase" name="parlai.tasks.talkthewalk.base.TTWBase">
-<area shape="rect" id="node1" title=" " alt="" coords="5,319,200,360"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="17,229,189,271"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="15,155,191,181"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="21,80,184,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="74,5,131,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="17,229,189,271"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="15,155,191,181"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="21,80,184,107"/>
 </map>

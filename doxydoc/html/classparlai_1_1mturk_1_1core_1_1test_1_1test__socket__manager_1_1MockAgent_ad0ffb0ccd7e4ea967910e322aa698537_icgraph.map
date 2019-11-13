@@ -1,4 +1,4 @@
 <map id="parlai.mturk.core.test.test_socket_manager.MockAgent.send_heartbeat" name="parlai.mturk.core.test.test_socket_manager.MockAgent.send_heartbeat">
-<area shape="rect" id="node1" title=" " alt="" coords="284,5,511,61"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#a06d5e6cb09b2472a0b1972a7bb82ef31" title=" " alt="" coords="5,5,236,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#a06d5e6cb09b2472a0b1972a7bb82ef31" title="parlai.mturk.core.test.test\l_socket_manager.MockAgent.make\l_packet_handler" alt="" coords="280,5,511,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#acb9b096d3f537b0b28b535b387a86967" title="parlai.mturk.core.test.test\l_socket_manager.MockAgent.register\l_to_socket" alt="" coords="559,5,801,61"/>
 </map>

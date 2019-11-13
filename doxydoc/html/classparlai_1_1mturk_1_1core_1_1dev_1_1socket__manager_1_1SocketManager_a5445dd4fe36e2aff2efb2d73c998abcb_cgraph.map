@@ -1,0 +1,6 @@
+<map id="parlai.mturk.core.dev.socket_manager.SocketManager.get_my_sender_id" name="parlai.mturk.core.dev.socket_manager.SocketManager.get_my_sender_id">
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket.html#a9493072cadd12d3a26641cb6358b6e17" title="parlai.messenger.core.message\l_socket.MessageSocket._safe_send" alt="" coords="253,5,491,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a0a309096d83158652038119cb12da2a0" title="parlai.mturk.core.dev.socket\l_manager.SocketManager._safe_send" alt="" coords="249,71,495,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket.html#a5eaeae2dd36ed396b8dc6c6ed342fe6a" title="parlai.messenger.core.message\l_socket.MessageSocket._send\l_world_alive" alt="" coords="269,137,475,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a754ed079c4369ddf36fd7a033fa84178" title="parlai.mturk.core.dev.socket\l_manager.SocketManager._send\l_world_alive" alt="" coords="265,217,479,273"/>
+</map>

@@ -1,6 +1,5 @@
 <map id="transresnet.modules.TransresnetModel.evaluate_one_batch" name="transresnet.modules.TransresnetModel.evaluate_one_batch">
-<area shape="rect" id="node1" title=" " alt="" coords="528,41,741,83"/>
-<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a1cd91f1cd051b1545683b465f7a74e12" title=" " alt="" coords="267,12,480,53"/>
-<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title=" " alt="" coords="5,71,219,112"/>
-<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title=" " alt="" coords="5,5,219,47"/>
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a1cd91f1cd051b1545683b465f7a74e12" title="transresnet.modules.Transresnet\lModel.eval_batch_of_100" alt="" coords="267,12,480,53"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="528,71,741,112"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="528,5,741,47"/>
 </map>

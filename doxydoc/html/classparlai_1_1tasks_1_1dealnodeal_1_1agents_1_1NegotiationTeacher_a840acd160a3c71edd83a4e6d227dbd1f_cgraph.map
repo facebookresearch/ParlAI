@@ -1,6 +1,4 @@
 <map id="parlai.tasks.dealnodeal.agents.NegotiationTeacher.act" name="parlai.tasks.dealnodeal.agents.NegotiationTeacher.act">
-<area shape="rect" id="node1" title=" " alt="" coords="5,93,208,134"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a77429683090173398fd30c4f5c50e8c1" title=" " alt="" coords="256,5,459,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a26645911633f652f063e1f12f4e00bb9" title=" " alt="" coords="256,85,459,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#af3fd13e84bbd133e8916f2306d3c0ca7" title=" " alt="" coords="256,165,459,221"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a77429683090173398fd30c4f5c50e8c1" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher._continue\l_dialogue" alt="" coords="256,5,459,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#af3fd13e84bbd133e8916f2306d3c0ca7" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher._start\l_dialogue" alt="" coords="256,85,459,141"/>
 </map>

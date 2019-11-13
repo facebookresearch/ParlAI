@@ -1,5 +1,4 @@
 <map id="interactive_retrieval.InteractiveRetrievalAgent.observe" name="interactive_retrieval.InteractiveRetrievalAgent.observe">
-<area shape="rect" id="node1" title=" " alt="" coords="501,76,701,117"/>
-<area shape="rect" id="node2" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ad350c65cd9fc9393902f61cd77f1cc52" title=" " alt="" coords="253,5,453,47"/>
-<area shape="rect" id="node3" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#a07ae26123c56441549800bd116a86626" title=" " alt="" coords="5,76,205,117"/>
+<area shape="rect" id="node2" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ad350c65cd9fc9393902f61cd77f1cc52" title="interactive_retrieval.Interactive\lRetrievalAgent.act" alt="" coords="253,5,453,47"/>
+<area shape="rect" id="node3" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#a07ae26123c56441549800bd116a86626" title="interactive_retrieval.Interactive\lRetrievalAgent.retriever_act" alt="" coords="501,76,701,117"/>
 </map>

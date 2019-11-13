@@ -1,8 +1,5 @@
 <map id="parlai.mturk.tasks.model_evaluator.worlds.ModelEvaluatorWorld" name="parlai.mturk.tasks.model_evaluator.worlds.ModelEvaluatorWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="29,352,281,393"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="5,248,171,289"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="5,157,171,199"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="7,81,169,108"/>
-<area shape="rect" id="node5" title=" " alt="" coords="59,5,117,32"/>
-<area shape="rect" id="node6" title=" " alt="" coords="195,255,250,282"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title="parlai.mturk.core.worlds.\lMTurkTaskWorld" alt="" coords="5,248,171,289"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.worlds.\lMTurkDataWorld" alt="" coords="5,157,171,199"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="7,81,169,108"/>
 </map>

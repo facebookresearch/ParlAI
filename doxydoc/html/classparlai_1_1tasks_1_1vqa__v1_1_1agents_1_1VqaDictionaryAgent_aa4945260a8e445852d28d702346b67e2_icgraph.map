@@ -1,0 +1,4 @@
+<map id="parlai.tasks.vqa_v1.agents.VqaDictionaryAgent.tokenize_mcb" name="parlai.tasks.vqa_v1.agents.VqaDictionaryAgent.tokenize_mcb">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#af491fa3e37b0ff66ce8feb0c6ea7da16" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent.act" alt="" coords="277,5,459,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#af2c2144d6a142cb70d8954b00d3a3720" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent.encode\l_question" alt="" coords="276,71,460,127"/>
+</map>

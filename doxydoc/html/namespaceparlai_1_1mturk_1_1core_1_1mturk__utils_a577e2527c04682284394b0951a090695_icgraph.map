@@ -1,0 +1,13 @@
+<map id="parlai.mturk.core.mturk_utils.get_mturk_client" name="parlai.mturk.core.mturk_utils.get_mturk_client">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a68fb1962cbfa751d20f701da94ada62b" title="parlai.mturk.core.mturk\l_utils.check_mturk_balance" alt="" coords="209,5,393,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a2812666cca37ae0fa15e1843d3a87cd4" title="parlai.mturk.core.mturk\l_utils.create_hit_type" alt="" coords="223,71,379,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a9221bb896f04cca6c0acac4bc127fdbf" title="parlai.mturk.core.mturk\l_utils.remove_worker_qualification" alt="" coords="441,121,664,163"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a640e2d9d121507f92649cccbd27e3af9" title="parlai.mturk.core.mturk\l_utils.give_worker_qualification" alt="" coords="712,151,915,192"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a2e92dde4f8ec17749f22f83b6d362d4f" title="parlai.mturk.core.mturk\l_utils.create_hit_with\l_hit_type" alt="" coords="223,238,379,294"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a389ca1d743e6319cb35916a6b0d7867d" title="parlai.mturk.core.mturk\l_utils.delete_qualification" alt="" coords="217,319,385,360"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a960c8639f5fa43ab8be109eb48ea1925" title="parlai.mturk.core.mturk\l_utils.expire_hit" alt="" coords="223,384,379,425"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#ae5d70edec5817ee9e05b9675320859d7" title="parlai.mturk.core.mturk\l_utils.find_or_create\l_qualification" alt="" coords="223,450,379,506"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a54121023abc81124ba03cc50d5f23af3" title="parlai.mturk.core.mturk\l_utils.find_qualification" alt="" coords="475,457,631,499"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#a03b8f25675cb76e8b27205ca5d26e623" title="parlai.mturk.core.mturk\l_utils.send_test_notif" alt="" coords="223,581,379,623"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1mturk_1_1core_1_1mturk__utils.html#accc5838e30ccf9ab95050ab11ac0d973" title="parlai.mturk.core.mturk\l_utils.subscribe_to_hits" alt="" coords="222,647,381,688"/>
+</map>

@@ -1,0 +1,161 @@
+\subsection*{Paper information}
+
+Braden Hancock, Antoine Bordes, Pierre-\/\+Emmanuel Mazaré, Jason Weston. {\itshape \href{https://arxiv.org/abs/1901.05415}{\tt Learning from Dialogue after Deployment\+: Feed Yourself, Chatbot!}}. To appear in A\+CL 2019.
+
+\subsection*{Abstract}
+
+The majority of conversations a dialogue agent sees over its lifetime occur after it has already been trained and deployed, leaving a vast store of potential training signal untapped. In this work, we propose the self-\/feeding chatbot, a dialogue agent with the ability to extract new training examples from the conversations it participates in. As our agent engages in conversation, it also estimates user satisfaction in its responses. When the conversation appears to be going well, the user’s responses become new training examples to imitate. When the agent believes it has made a mistake, it asks for feedback; learning to predict the feedback that will be given improves the chatbot’s dialogue abilities further. On the Persona\+Chat chit-\/chat dataset with over 131k training examples, we find that learning from dialogue with a self-\/ feeding chatbot significantly improves performance, regardless of the amount of traditional supervision.
+
+\subsection*{Citation}
+
+If you use the dataset or models in your own work, please cite with the following Bib\+Tex entry\+: \begin{DoxyVerb}@inproceedings{hancock2019feed,
+  author={Braden Hancock and Antoine Bordes and Pierre-Emmanuel Mazar\'{e} and Jason Weston},
+  booktitle={Association for Computational Linguistics (ACL)},
+  title={Learning from Dialogue after Deployment: Feed Yourself, Chatbot!},
+  url={https://arxiv.org/abs/1901.05415},
+  year={2019},
+}
+\end{DoxyVerb}
+
+
+\section*{Code Instructions}
+
+Once you have \href{https://github.com/facebookresearch/ParlAI/#installing-parlai}{\tt installed Parl\+AI}, follow the instructions below.
+
+\subsection*{Download the data}
+
+Running the commands to train or chat with the models will automatically download the data for you. Alternatively, you can manually download the data by running {\ttfamily python \hyperlink{download__data_8py}{projects/self\+\_\+feeding/download\+\_\+data.\+py}}. This will download the following files to {\ttfamily data/self\+\_\+feeding/}\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \{train, valid, test\}\+\_\+hh.\+txt}\+: D\+I\+A\+L\+O\+G\+UE Human-\/\+Human (HH) conversations from the Persona\+Chat dataset, with one context and response per line (train\+: 131,438; valid\+: 2,000; test\+: 5,801).
+\item {\ttfamily train\+\_\+hb.\+txt}\+: D\+I\+A\+L\+O\+G\+UE Human-\/\+Bot (HB) conversations collected between crowdworkers and a trained chatbot, with only human utterances as responses (train\+: 131,923).
+\item {\ttfamily train\+\_\+fb\+\_\+a.\+txt}\+: F\+E\+E\+D\+B\+A\+CK Human-\/\+Bot conversations wherein all responses are the feedback given by a human in response to a request by the bot after it estimated that the human was dissatisfied with its previous response. (The turns where the bot messed up, the human expressed dissatisfaction, and the bot requested feedback are removed so that the context is primarily normal-\/looking conversation). (train\+: 40,082)
+\item {\ttfamily train\+\_\+fb\+\_\+b.\+txt}\+: The same as {\ttfamily train\+\_\+fb\+\_\+a.\+txt} but with a chatbot that was retrained using the additional feedback examples collected from the A set (train\+: 21,257).
+\item {\ttfamily \{valid, test\}\+\_\+fb.\+txt}\+: F\+E\+E\+D\+B\+A\+CK validation and test sets collected at the same time and with the same model as the {\ttfamily train\+\_\+fb\+\_\+a.\+txt} file.
+\end{DoxyItemize}
+
+We also include three derivative files for convenience (as they were used in experiments and in some of the sample commands in the sections below)\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily train\+\_\+fb.\+txt}\+: The result of {\ttfamily cat train\+\_\+fb\+\_\+a.\+txt train\+\_\+fb\+\_\+b.\+txt $\vert$ shuf $>$ train\+\_\+fb.\+txt}
+\item {\ttfamily train\+\_\+hb60k.\+txt}\+: The result of {\ttfamily head -\/n 60000 train\+\_\+hb.\+txt $>$ train\+\_\+hb60k.\+txt}
+\item {\ttfamily train\+\_\+hh131k\+\_\+hb60k.\+txt}\+: The result of {\ttfamily cat train\+\_\+hh.\+txt train\+\_\+hb60k.\+txt $>$ train\+\_\+hh131k\+\_\+hb60k.\+txt}
+\end{DoxyItemize}
+
+For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper. In this distribution, we include all data collected of each type. To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.
+
+\subsection*{Train a model}
+
+To train a model, use the standard {\ttfamily Parl\+AI} protocol with {\ttfamily train\+\_\+model.\+py}. The following commands assume that you have set the following environment variables\+:
+
+
+\begin{DoxyCode}
+export PARLAIHOME=/path/to/ParlAI
+export MODEL=/path/to/model
+\end{DoxyCode}
+
+
+You may require a G\+PU to train a model to convergence in a reasonable amount of time. On a P100 G\+PU, these training commands take approximately 10 minutes to converge.
+
+\subsubsection*{Train on the D\+I\+A\+L\+O\+G\+UE (HH) examples}
+
+Here is a minimal command for training on the D\+I\+A\+L\+O\+G\+UE task using Human-\/\+Human (HH) examples\+:
+
+
+\begin{DoxyCode}
+python examples/train\_model.py -t self\_feeding:dialog --model
+       projects.self\_feeding.self\_feeding\_agent:SelfFeedingAgent --model-file /tmp/mymodel1 -bs 128
+\end{DoxyCode}
+
+
+Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following\+:
+
+
+\begin{DoxyCode}
+python examples/train\_model.py -t self\_feeding:dialog --model-file /tmp/mymodel2 -ltim 5 -vtim 10 -vp 10 -m
+       projects.self\_feeding.self\_feeding\_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2
+       --embedding-type fasttext\_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax
+       --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025
+       --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia\_acc -vmm max
+\end{DoxyCode}
+
+
+\subsubsection*{Train on D\+I\+A\+L\+O\+G\+UE (HH) + D\+I\+A\+L\+O\+G\+UE (HB) examples}
+
+To train on both HH and HB D\+I\+A\+L\+O\+G\+UE examples, point the model to a train file that includes examples from both sets. For example, if you combined 131k HH D\+I\+A\+L\+O\+G\+UE examples and 60k HB dialogue examples into a file called {\ttfamily train\+\_\+hh131k\+\_\+hb60k.\+txt}, you could add the following flag to train on that combined file for the D\+I\+A\+L\+O\+G\+UE task\+:
+
+
+\begin{DoxyCode}
+--dia-train train\_hh131k\_hb60k.txt
+\end{DoxyCode}
+
+
+\subsubsection*{Train on D\+I\+A\+L\+O\+G\+UE (HH) + F\+E\+E\+D\+B\+A\+CK examples}
+
+To train on more than one task (such as D\+I\+A\+L\+O\+G\+UE and F\+E\+E\+D\+B\+A\+CK), modify the command for training on D\+I\+A\+L\+O\+G\+UE (HH) alone as follows\+:
+
+
+\begin{DoxyItemize}
+\item Change {\ttfamily -\/t \hyperlink{namespaceself__feeding}{self\+\_\+feeding}\+:dialog} to {\ttfamily -\/t \hyperlink{namespaceself__feeding}{self\+\_\+feeding}\+:diafee}. This will result in a different \char`\"{}teacher\char`\"{} agent being used to train the chatbot, one with access to both \textquotesingle{}dia\mbox{[}logue\mbox{]}\textquotesingle{} and \textquotesingle{}fee\mbox{[}dback\mbox{]}`.
+\end{DoxyItemize}
+
+Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH)\+:
+
+
+\begin{DoxyCode}
+python examples/train\_model.py -t self\_feeding:diafee --model-file /tmp/mymodel3 -ltim 5 -vtim 10 -vp 10 -m
+       projects.self\_feeding.self\_feeding\_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2
+       --embedding-type fasttext\_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax
+       --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025
+       --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia\_acc -vmm max
+\end{DoxyCode}
+
+
+\subsubsection*{Train on D\+I\+A\+L\+O\+G\+UE (HH) + D\+I\+A\+L\+O\+G\+UE (HB) + F\+E\+E\+D\+B\+A\+CK (FB) + S\+A\+T\+I\+S\+F\+A\+C\+T\+I\+ON (ST) examples}
+
+You can train on all three tasks at once with the command below. 
+\begin{DoxyCode}
+python examples/train\_model.py -t self\_feeding:all --model-file /tmp/mymodel4 -ltim 5 -vtim 10 -vp 50 -m
+       projects.self\_feeding.self\_feeding\_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2
+       --embedding-type fasttext\_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax
+       --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025
+       --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train\_hh131k\_hb60k.txt -vmt dia\_acc -vmm
+       max
+\end{DoxyCode}
+
+
+\subsubsection*{Evaluate a trained model}
+
+To evaluate a model, use the following command, which specifies which teacher to use (the one with all three tasks), which splits to test on ({\ttfamily test} or {\ttfamily valid}), and what batch size to use (larger will evaluate faster)\+: 
+\begin{DoxyCode}
+python examples/eval\_model.py -mf /tmp/mymodel1 -t self\_feeding:all --datatype test -bs 20
+\end{DoxyCode}
+
+
+\subsection*{Using a pretrained Model}
+
+Running any of the following commands will automatically download a pretrained model and place it in {\ttfamily data/models/self\+\_\+feeding}. You can then evaluate this model on the corpus, or even chat with it live!
+
+\subsubsection*{Evaluating the pretrained model}
+
+You can
+
+
+\begin{DoxyCode}
+python examples/eval\_model.py -mf zoo:self\_feeding/hh131k\_hb60k\_fb60k\_st1k/model -t self\_feeding:all
+       --datatype test -bs 20
+\end{DoxyCode}
+
+
+\subsubsection*{Chat with a pretrained model}
+
+To chat with a model that\textquotesingle{}s already been trained, use the {\ttfamily interactive.\+py} script. You can add the flag {\ttfamily -\/-\/request-\/feedback true} to have the model ask for feedback based on its estimate of your satisfaction with the conversation. 
+\begin{DoxyCode}
+python projects/self\_feeding/interactive.py --model-file zoo:self\_feeding/hh131k\_hb60k\_fb60k\_st1k/model
+       --no-cuda
+\end{DoxyCode}
+
+
+You can change the filename to any of your own models to interactive with a model you have trained. 

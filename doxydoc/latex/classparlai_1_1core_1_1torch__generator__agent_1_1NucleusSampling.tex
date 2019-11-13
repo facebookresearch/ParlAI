@@ -1,0 +1,102 @@
+\hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling}{}\section{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling Class Reference}
+\label{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling}\index{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling@{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a90c444c7fa1f76baac3a54fc7c980e15}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a54a43b58e2e2cf7da776c40311e0a3c1}{p}, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a91abde2fb2dccf5cd0564825ddc5ea4d}{select\+\_\+paths} (self, logprobs, prior\+\_\+scores)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a54a43b58e2e2cf7da776c40311e0a3c1}{p}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Nucelus, aka top-p sampling (Holtzman et al., 2019).
+
+Samples from a truncated distribution which covers a fixed CDF proportion
+of the original distribution.
+
+Typical values of p are 0.3 and 0.9.
+
+See https://arxiv.org/abs/1904.09751 for details.
+\end{DoxyVerb}
+ 
+
+Definition at line 1051 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a90c444c7fa1f76baac3a54fc7c980e15}\label{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a90c444c7fa1f76baac3a54fc7c980e15}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{p,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1063 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a91abde2fb2dccf5cd0564825ddc5ea4d}\label{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a91abde2fb2dccf5cd0564825ddc5ea4d}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}!select\+\_\+paths@{select\+\_\+paths}}
+\index{select\+\_\+paths@{select\+\_\+paths}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}}
+\subsubsection{\texorpdfstring{select\+\_\+paths()}{select\_paths()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling.\+select\+\_\+paths (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{logprobs,  }\item[{}]{prior\+\_\+scores }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1067 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling.\+p.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a54a43b58e2e2cf7da776c40311e0a3c1}\label{classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling_a54a43b58e2e2cf7da776c40311e0a3c1}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}!p@{p}}
+\index{p@{p}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Nucleus\+Sampling}}
+\subsubsection{\texorpdfstring{p}{p}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling.\+p}
+
+
+
+Definition at line 1065 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Nucleus\+Sampling.\+select\+\_\+paths().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__generator__agent_8py}{torch\+\_\+generator\+\_\+agent.\+py}\end{DoxyCompactItemize}

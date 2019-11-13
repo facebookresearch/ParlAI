@@ -1,0 +1,129 @@
+\hypertarget{namespaceconvert__chatted__to__polarized}{}\section{convert\+\_\+chatted\+\_\+to\+\_\+polarized Namespace Reference}
+\label{namespaceconvert__chatted__to__polarized}\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceconvert__chatted__to__polarized_a1318d32a7ea5fa636f9e29e8e92b2833}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespaceconvert__chatted__to__polarized_aadba9ee59fc962ba83f4c31a22d4c28d}{main} (\hyperlink{namespaceconvert__chatted__to__polarized_a6bd35917e096a6c4a1756db1ac134f99}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__polarized_a5d9d308ac90c97cbc7a5ecf960208b80}{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT} = \char`\"{}start a conversation\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__polarized_afdb74da6446c7fd9ed87b0331e07e2b2}{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST} = \char`\"{}oops! i think i messed up.\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__polarized_a9614b853f8f2316f687e3003b6e66e82}{N\+E\+W\+T\+O\+P\+IC} = \char`\"{}thanks! i\textquotesingle{}ll try to remember that.\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__polarized_ac07ae61db0ef5d7b1b9b20fc2d85aae5}{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST} = \char`\"{}just checking\+:\char`\"{}
+\item 
+string \hyperlink{namespaceconvert__chatted__to__polarized_aa93c711ce445e91cd463ee6f76a6dc47}{C\+O\+N\+T\+I\+N\+UE} = \char`\"{}and in response to what you were saying before\char`\"{}
+\item 
+def \hyperlink{namespaceconvert__chatted__to__polarized_a6bd35917e096a6c4a1756db1ac134f99}{opt} = \hyperlink{namespaceconvert__chatted__to__polarized_a1318d32a7ea5fa636f9e29e8e92b2833}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_aadba9ee59fc962ba83f4c31a22d4c28d}\label{namespaceconvert__chatted__to__polarized_aadba9ee59fc962ba83f4c31a22d4c28d}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!main@{main}}
+\index{main@{main}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+main (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extracts training data for the negative response classifier (NRC) from Mturk logs
+
+input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
+    quality ratings 1-5
+output: file of episodes (self-feeding format) w/ +1/-1 ratings indicating
+    positive/negative example
+\end{DoxyVerb}
+ 
+
+Definition at line 53 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+add\+\_\+person\+\_\+tokens(), and self\+\_\+feeding.\+utils.\+extract\+\_\+parlai\+\_\+episodes().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=339pt]{namespaceconvert__chatted__to__polarized_aadba9ee59fc962ba83f4c31a22d4c28d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_a1318d32a7ea5fa636f9e29e8e92b2833}\label{namespaceconvert__chatted__to__polarized_a1318d32a7ea5fa636f9e29e8e92b2833}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 23 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_aa93c711ce445e91cd463ee6f76a6dc47}\label{namespaceconvert__chatted__to__polarized_aa93c711ce445e91cd463ee6f76a6dc47}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!C\+O\+N\+T\+I\+N\+UE@{C\+O\+N\+T\+I\+N\+UE}}
+\index{C\+O\+N\+T\+I\+N\+UE@{C\+O\+N\+T\+I\+N\+UE}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{C\+O\+N\+T\+I\+N\+UE}{CONTINUE}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+C\+O\+N\+T\+I\+N\+UE = \char`\"{}and in response to what you were saying before\char`\"{}}
+
+
+
+Definition at line 20 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_afdb74da6446c7fd9ed87b0331e07e2b2}\label{namespaceconvert__chatted__to__polarized_afdb74da6446c7fd9ed87b0331e07e2b2}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST@{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}}
+\index{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST@{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST}{EXP\_REQUEST}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+E\+X\+P\+\_\+\+R\+E\+Q\+U\+E\+ST = \char`\"{}oops! i think i messed up.\char`\"{}}
+
+
+
+Definition at line 17 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_a5d9d308ac90c97cbc7a5ecf960208b80}\label{namespaceconvert__chatted__to__polarized_a5d9d308ac90c97cbc7a5ecf960208b80}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}}
+\index{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT@{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT}{INITIAL\_PROMPT}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+I\+N\+I\+T\+I\+A\+L\+\_\+\+P\+R\+O\+M\+PT = \char`\"{}start a conversation\char`\"{}}
+
+
+
+Definition at line 16 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_a9614b853f8f2316f687e3003b6e66e82}\label{namespaceconvert__chatted__to__polarized_a9614b853f8f2316f687e3003b6e66e82}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!N\+E\+W\+T\+O\+P\+IC@{N\+E\+W\+T\+O\+P\+IC}}
+\index{N\+E\+W\+T\+O\+P\+IC@{N\+E\+W\+T\+O\+P\+IC}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{N\+E\+W\+T\+O\+P\+IC}{NEWTOPIC}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+N\+E\+W\+T\+O\+P\+IC = \char`\"{}thanks! i\textquotesingle{}ll try to remember that.\char`\"{}}
+
+
+
+Definition at line 18 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_a6bd35917e096a6c4a1756db1ac134f99}\label{namespaceconvert__chatted__to__polarized_a6bd35917e096a6c4a1756db1ac134f99}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!opt@{opt}}
+\index{opt@{opt}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily def convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+opt = \hyperlink{namespaceconvert__chatted__to__polarized_a1318d32a7ea5fa636f9e29e8e92b2833}{setup\+\_\+args}()}
+
+
+
+Definition at line 135 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+
+\mbox{\Hypertarget{namespaceconvert__chatted__to__polarized_ac07ae61db0ef5d7b1b9b20fc2d85aae5}\label{namespaceconvert__chatted__to__polarized_ac07ae61db0ef5d7b1b9b20fc2d85aae5}} 
+\index{convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}!R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}}
+\index{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST@{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}!convert\+\_\+chatted\+\_\+to\+\_\+polarized@{convert\+\_\+chatted\+\_\+to\+\_\+polarized}}
+\subsubsection{\texorpdfstring{R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST}{RAT\_REQUEST}}
+{\footnotesize\ttfamily string convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+R\+A\+T\+\_\+\+R\+E\+Q\+U\+E\+ST = \char`\"{}just checking\+:\char`\"{}}
+
+
+
+Definition at line 19 of file convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+py.
+

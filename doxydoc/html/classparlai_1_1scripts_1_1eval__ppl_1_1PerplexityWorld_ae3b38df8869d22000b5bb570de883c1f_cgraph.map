@@ -1,0 +1,7 @@
+<map id="parlai.scripts.eval_ppl.PerplexityWorld.report" name="parlai.scripts.eval_ppl.PerplexityWorld.report">
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html#a14441a6ac10802e2ca328dc1d1debe75" title="parlai.scripts.eval\l_ppl.PerplexityWorld._lock" alt="" coords="249,5,426,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title="parlai.core.teachers.Fixed\lDialogTeacher._lock" alt="" coords="251,71,423,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title="parlai.core.metrics.Metrics._lock" alt="" coords="232,137,443,163"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title="parlai.core.teachers.Stream\lDialogData._lock" alt="" coords="246,188,429,229"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#af377ec61bfc0423461e7b409ffc883b9" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.round_sigfigs" alt="" coords="263,254,412,310"/>
+</map>

@@ -1,0 +1,285 @@
+\hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel}{}\section{mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model Class Reference}
+\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel}\index{mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model}}
+
+
+Inheritance diagram for mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=264pt]{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a3d91e40c45e7a98dacbe455fa4fc4855}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aaed641658fa203252d4b76862370bea0}{opt}, data\+\_\+agent)
+\item 
+def \hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a003f55fcaddd7a33512dea38e338d9d9}{forward\+\_\+loss} (self, x, action\+\_\+key, second\+\_\+action\+\_\+key, action\+\_\+type, current\+\_\+room, checked, y, y\+\_\+mask, counter\+\_\+feat, average\+\_\+=True)
+\item 
+def \hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aabcbed1be0d98035d2cfc4d3ad151256}{forward\+\_\+predict} (self, x, action\+\_\+key, second\+\_\+action\+\_\+key, action\+\_\+type, check\+\_\+mapping, checked, graphs, data\+\_\+agent, constrain\+\_\+=True)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aaed641658fa203252d4b76862370bea0}{opt}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a9a895da645756672771d269b51392802}{input\+\_\+emb}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a21c0616875ad2f5f4457286fb9847052}{action\+\_\+type\+\_\+emb}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_af84908af2be7c0b304e49e0d53b611eb}{encoder}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8e5e4a8bc425c33000a62162b1228691}{decoder}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a6a759ef028b4aed5d2ed0097d5c0569f}{log\+\_\+softmax}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8322505c97d6bff2df39ef10381e7db0}{trans}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a5f90dccceff07e0e306c85c5c081dddb}{dec\+\_\+gru}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a68072a25c2792c1ab2daf2cf12c3ed04}{merge}
+\item 
+\hyperlink{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_ad2c82d67d10cb20660da774c1cc7ed8b}{counter\+\_\+emb}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 22 of file models.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a3d91e40c45e7a98dacbe455fa4fc4855}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a3d91e40c45e7a98dacbe455fa4fc4855}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{data\+\_\+agent }\end{DoxyParamCaption})}
+
+
+
+Definition at line 23 of file models.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a003f55fcaddd7a33512dea38e338d9d9}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a003f55fcaddd7a33512dea38e338d9d9}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!forward\+\_\+loss@{forward\+\_\+loss}}
+\index{forward\+\_\+loss@{forward\+\_\+loss}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+loss()}{forward\_loss()}}
+{\footnotesize\ttfamily def mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{action\+\_\+key,  }\item[{}]{second\+\_\+action\+\_\+key,  }\item[{}]{action\+\_\+type,  }\item[{}]{current\+\_\+room,  }\item[{}]{checked,  }\item[{}]{y,  }\item[{}]{y\+\_\+mask,  }\item[{}]{counter\+\_\+feat,  }\item[{}]{average\+\_\+ = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}x: [batch, seq_in], int
+action_key: [y_dim], int
+second_action_key: [y_dim], int
+action_type: [y_dim], int
+current_room: [batch, seq_out], int
+checked: [batch, seq_out + 1, y_dim], float, binary
+y: [batch, seq_out, y_dim], float, binary
+y_mask: [batch, seq_out, y_dim], float, binary
+counter_feat: [batch, seq_out, y_dim], int
+\end{DoxyVerb}
+ 
+
+Definition at line 77 of file models.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+action\+\_\+type\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+counter\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+dec\+\_\+gru, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+decoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+decoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+decoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+decoder, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+encoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder, parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+encoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+encoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+input\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+log\+\_\+softmax, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+merge, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+trans.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a003f55fcaddd7a33512dea38e338d9d9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aabcbed1be0d98035d2cfc4d3ad151256}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aabcbed1be0d98035d2cfc4d3ad151256}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!forward\+\_\+predict@{forward\+\_\+predict}}
+\index{forward\+\_\+predict@{forward\+\_\+predict}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{forward\+\_\+predict()}{forward\_predict()}}
+{\footnotesize\ttfamily def mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{action\+\_\+key,  }\item[{}]{second\+\_\+action\+\_\+key,  }\item[{}]{action\+\_\+type,  }\item[{}]{check\+\_\+mapping,  }\item[{}]{checked,  }\item[{}]{graphs,  }\item[{}]{data\+\_\+agent,  }\item[{}]{constrain\+\_\+ = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}check_mapping: [y_dim, y_dim], float, binary
+\end{DoxyVerb}
+ 
+
+Definition at line 251 of file models.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+action\+\_\+type\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+counter\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+dec\+\_\+gru, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+decoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+decoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+decoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+decoder, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+encoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder, parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+encoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+encoder, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+input\+\_\+emb, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+merge, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt, parlai.\+tasks.\+wikipedia.\+agents.\+Full\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+opt, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+opt, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+opt, parlai.\+utils.\+misc.\+Predictor.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+trans.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aabcbed1be0d98035d2cfc4d3ad151256_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a21c0616875ad2f5f4457286fb9847052}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a21c0616875ad2f5f4457286fb9847052}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!action\+\_\+type\+\_\+emb@{action\+\_\+type\+\_\+emb}}
+\index{action\+\_\+type\+\_\+emb@{action\+\_\+type\+\_\+emb}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{action\+\_\+type\+\_\+emb}{action\_type\_emb}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+action\+\_\+type\+\_\+emb}
+
+
+
+Definition at line 30 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_ad2c82d67d10cb20660da774c1cc7ed8b}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_ad2c82d67d10cb20660da774c1cc7ed8b}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!counter\+\_\+emb@{counter\+\_\+emb}}
+\index{counter\+\_\+emb@{counter\+\_\+emb}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{counter\+\_\+emb}{counter\_emb}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+counter\+\_\+emb}
+
+
+
+Definition at line 63 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a5f90dccceff07e0e306c85c5c081dddb}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a5f90dccceff07e0e306c85c5c081dddb}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!dec\+\_\+gru@{dec\+\_\+gru}}
+\index{dec\+\_\+gru@{dec\+\_\+gru}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{dec\+\_\+gru}{dec\_gru}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+dec\+\_\+gru}
+
+
+
+Definition at line 49 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8e5e4a8bc425c33000a62162b1228691}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8e5e4a8bc425c33000a62162b1228691}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!decoder@{decoder}}
+\index{decoder@{decoder}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{decoder}{decoder}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+decoder}
+
+
+
+Definition at line 40 of file models.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_af84908af2be7c0b304e49e0d53b611eb}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_af84908af2be7c0b304e49e0d53b611eb}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!encoder@{encoder}}
+\index{encoder@{encoder}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+encoder}
+
+
+
+Definition at line 33 of file models.\+py.
+
+
+
+Referenced by modules.\+Kvmemnn.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a9a895da645756672771d269b51392802}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a9a895da645756672771d269b51392802}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!input\+\_\+emb@{input\+\_\+emb}}
+\index{input\+\_\+emb@{input\+\_\+emb}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{input\+\_\+emb}{input\_emb}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+input\+\_\+emb}
+
+
+
+Definition at line 27 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a6a759ef028b4aed5d2ed0097d5c0569f}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a6a759ef028b4aed5d2ed0097d5c0569f}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!log\+\_\+softmax@{log\+\_\+softmax}}
+\index{log\+\_\+softmax@{log\+\_\+softmax}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{log\+\_\+softmax}{log\_softmax}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+log\+\_\+softmax}
+
+
+
+Definition at line 41 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a68072a25c2792c1ab2daf2cf12c3ed04}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a68072a25c2792c1ab2daf2cf12c3ed04}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!merge@{merge}}
+\index{merge@{merge}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{merge}{merge}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+merge}
+
+
+
+Definition at line 62 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aaed641658fa203252d4b76862370bea0}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_aaed641658fa203252d4b76862370bea0}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!opt@{opt}}
+\index{opt@{opt}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+opt}
+
+
+
+Definition at line 25 of file models.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+\mbox{\Hypertarget{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8322505c97d6bff2df39ef10381e7db0}\label{classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1models_1_1ObjectChecklistModel_a8322505c97d6bff2df39ef10381e7db0}} 
+\index{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}!trans@{trans}}
+\index{trans@{trans}!mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model@{mastering\+\_\+the\+\_\+dungeon\+::agents\+::graph\+\_\+world2\+::models\+::\+Object\+Checklist\+Model}}
+\subsubsection{\texorpdfstring{trans}{trans}}
+{\footnotesize\ttfamily mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+trans}
+
+
+
+Definition at line 42 of file models.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), and mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/mastering\+\_\+the\+\_\+dungeon/agents/graph\+\_\+world2/\hyperlink{models_8py}{models.\+py}\end{DoxyCompactItemize}

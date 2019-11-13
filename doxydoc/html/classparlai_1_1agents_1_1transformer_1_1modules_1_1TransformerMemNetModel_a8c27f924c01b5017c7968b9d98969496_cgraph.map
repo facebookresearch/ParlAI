@@ -1,5 +1,4 @@
 <map id="parlai.agents.transformer.modules.TransformerMemNetModel.forward" name="parlai.agents.transformer.modules.TransformerMemNetModel.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="5,43,229,84"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerMemNetModel.html#a1e39cdf6357c9e8dd9f90e7f351e42a1" title=" " alt="" coords="277,5,536,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerMemNetModel.html#a12c6c4a26be5401e61c43ec4aa886812" title=" " alt="" coords="295,71,518,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerMemNetModel.html#a1e39cdf6357c9e8dd9f90e7f351e42a1" title="parlai.agents.transformer.modules.\lTransformerMemNetModel.encode_cand" alt="" coords="277,5,536,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerMemNetModel.html#a12c6c4a26be5401e61c43ec4aa886812" title="parlai.agents.transformer.modules.\lTransformerMemNetModel.encode\l_context_memory" alt="" coords="295,71,518,127"/>
 </map>

@@ -1,9 +1,7 @@
 <map id="parlai.tasks.cnn_dm.agents.CNNDMTeacher" name="parlai.tasks.cnn_dm.agents.CNNDMTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,408,192,449"/>
-<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1cnn__dm_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="5,497,192,539"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="10,319,187,360"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="13,229,185,271"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="11,155,187,181"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="17,80,180,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="70,5,127,32"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1cnn__dm_1_1agents_1_1DefaultTeacher.html" title="parlai.tasks.cnn_dm.agents.\lDefaultTeacher" alt="" coords="5,497,192,539"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title="parlai.core.teachers.Dialog\lTeacher" alt="" coords="10,319,187,360"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="13,229,185,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="11,155,187,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="17,80,180,107"/>
 </map>

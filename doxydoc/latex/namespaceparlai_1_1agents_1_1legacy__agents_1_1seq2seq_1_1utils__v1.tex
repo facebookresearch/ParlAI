@@ -1,0 +1,139 @@
+\hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1 Namespace Reference}
+\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a17553492abb2e671bc3fc58e1e3a96b0}{set\+\_\+namedtuple\+\_\+defaults} (namedtuple, default=None)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_adb5a414ae439f14c54e8c760b91cc4c8}{padded\+\_\+tensor} (items, pad\+\_\+idx=0, use\+\_\+cuda=False, left\+\_\+padded=False, max\+\_\+len=None)
+\item 
+def \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a1521e559b740f741ebb47b8755202bb2}{argsort} (keys, lists, descending=False)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_ab1b867624df2a08ba94de6bd5a7acca4}{N\+E\+A\+R\+\_\+\+I\+NF} = 1e20
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a1521e559b740f741ebb47b8755202bb2}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a1521e559b740f741ebb47b8755202bb2}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}!argsort@{argsort}}
+\index{argsort@{argsort}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}}
+\subsubsection{\texorpdfstring{argsort()}{argsort()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+argsort (\begin{DoxyParamCaption}\item[{}]{keys,  }\item[{}]{lists,  }\item[{}]{descending = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder each list in lists by the (descending) sorted order of keys.
+
+:param iter keys: Keys to order by.
+:param list[list] lists: Lists to reordered by keys's order.
+                         Correctly handles lists and 1-D tensors.
+:param bool descending: Use descending order if true.
+
+:returns: The reordered items.
+\end{DoxyVerb}
+ 
+
+Definition at line 101 of file utils\+\_\+v1.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+eval\+\_\+step(), and tests.\+test\+\_\+utils.\+Test\+Utils.\+test\+\_\+argsort().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a1521e559b740f741ebb47b8755202bb2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_adb5a414ae439f14c54e8c760b91cc4c8}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_adb5a414ae439f14c54e8c760b91cc4c8}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}!padded\+\_\+tensor@{padded\+\_\+tensor}}
+\index{padded\+\_\+tensor@{padded\+\_\+tensor}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}}
+\subsubsection{\texorpdfstring{padded\+\_\+tensor()}{padded\_tensor()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor (\begin{DoxyParamCaption}\item[{}]{items,  }\item[{}]{pad\+\_\+idx = {\ttfamily 0},  }\item[{}]{use\+\_\+cuda = {\ttfamily False},  }\item[{}]{left\+\_\+padded = {\ttfamily False},  }\item[{}]{max\+\_\+len = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a right-padded matrix from an uneven list of lists.
+
+Returns (padded, lengths), where padded is the padded matrix, and lengths
+is a list containing the lengths of each row.
+
+Matrix is right-padded (filled to the right) by default, but can be
+left padded if the flag is set to True.
+
+Matrix can also be placed on cuda automatically.
+
+:param list[iter[int]] items: List of items
+:param bool sort: If True, orders by the length
+:param int pad_idx: the value to use for padding
+:param bool use_cuda: if true, places `padded` on GPU
+:param bool left_padded:
+:param int max_len: if None, the max length is the maximum item length
+
+:returns: (padded, lengths) tuple
+:rtype: (Tensor[int64], list[int])
+\end{DoxyVerb}
+ 
+
+Definition at line 38 of file utils\+\_\+v1.\+py.
+
+
+
+Referenced by generator.\+agents.\+End\+To\+End\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+block\+\_\+repeats(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+predict\+\_\+satisfaction\+\_\+by\+\_\+uncertainty(), tests.\+test\+\_\+utils.\+Test\+Utils.\+test\+\_\+padded\+\_\+tensor(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+train\+\_\+step(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+train\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_adb5a414ae439f14c54e8c760b91cc4c8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a17553492abb2e671bc3fc58e1e3a96b0}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a17553492abb2e671bc3fc58e1e3a96b0}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}!set\+\_\+namedtuple\+\_\+defaults@{set\+\_\+namedtuple\+\_\+defaults}}
+\index{set\+\_\+namedtuple\+\_\+defaults@{set\+\_\+namedtuple\+\_\+defaults}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}}
+\subsubsection{\texorpdfstring{set\+\_\+namedtuple\+\_\+defaults()}{set\_namedtuple\_defaults()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+set\+\_\+namedtuple\+\_\+defaults (\begin{DoxyParamCaption}\item[{}]{namedtuple,  }\item[{}]{default = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set *all* of the fields for a given nametuple to a singular value.
+
+Modifies the tuple in place, but returns it anyway.
+
+More info:
+https://stackoverflow.com/a/18348004
+
+:param namedtuple: A constructed collections.namedtuple
+:param default: The default value to set.
+
+:returns: the modified namedtuple
+\end{DoxyVerb}
+ 
+
+Definition at line 21 of file utils\+\_\+v1.\+py.
+
+
+
+Referenced by tests.\+test\+\_\+utils.\+Test\+Utils.\+test\+\_\+setnamedtupledefaults().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_a17553492abb2e671bc3fc58e1e3a96b0_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_ab1b867624df2a08ba94de6bd5a7acca4}\label{namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1_ab1b867624df2a08ba94de6bd5a7acca4}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}!N\+E\+A\+R\+\_\+\+I\+NF@{N\+E\+A\+R\+\_\+\+I\+NF}}
+\index{N\+E\+A\+R\+\_\+\+I\+NF@{N\+E\+A\+R\+\_\+\+I\+NF}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v1}}
+\subsubsection{\texorpdfstring{N\+E\+A\+R\+\_\+\+I\+NF}{NEAR\_INF}}
+{\footnotesize\ttfamily int parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+N\+E\+A\+R\+\_\+\+I\+NF = 1e20}
+
+
+
+Definition at line 18 of file utils\+\_\+v1.\+py.
+

@@ -1,12 +1,8 @@
 <map id="parlai.core.worlds.World.update_counters" name="parlai.core.worlds.World.update_counters">
-<area shape="rect" id="node1" title=" " alt="" coords="261,283,467,324"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1convai2_1_1worlds_1_1InteractiveWorld.html#a75559c133b900cdd71389c9760e9a703" title=" " alt="" coords="17,5,201,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld.html#afcda29202fc3fd773522edbd3c40e4a4" title=" " alt="" coords="5,71,213,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="7,152,212,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html#a3ae10cae524d87d709e55bc7b2fd8265" title=" " alt="" coords="27,217,192,259"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html#a2b41d3026bc5afa04e7f874ba097b721" title=" " alt="" coords="26,283,193,324"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="13,348,206,389"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#aae71b8182e17a1579352a52b56614b64" title=" " alt="" coords="31,413,187,455"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title=" " alt="" coords="28,479,191,520"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a9853e25a58444d4516c3f6da8c44d9c2" title=" " alt="" coords="22,544,197,585"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html#a3ae10cae524d87d709e55bc7b2fd8265" title="parlai.core.worlds.Dialog\lPartnerWorld.parley" alt="" coords="273,5,438,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html#a2b41d3026bc5afa04e7f874ba097b721" title="parlai.core.worlds.Multi\lAgentDialogWorld.parley" alt="" coords="272,71,439,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title="parlai.core.worlds.Executable\lWorld.parley" alt="" coords="259,136,452,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html#aae71b8182e17a1579352a52b56614b64" title="parlai.core.worlds.Multi\lWorld.parley" alt="" coords="277,201,433,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title="parlai.core.worlds.Batch\lWorld.parley" alt="" coords="274,267,437,308"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a9853e25a58444d4516c3f6da8c44d9c2" title="parlai.core.worlds.Hogwild\lWorld.parley" alt="" coords="268,332,443,373"/>
 </map>

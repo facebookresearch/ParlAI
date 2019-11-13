@@ -1,0 +1,143 @@
+\hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader}{}\section{parlai.\+core.\+teachers.\+Data\+Loader Class Reference}
+\label{classparlai_1_1core_1_1teachers_1_1DataLoader}\index{parlai.\+core.\+teachers.\+Data\+Loader@{parlai.\+core.\+teachers.\+Data\+Loader}}
+
+
+Inheritance diagram for parlai.\+core.\+teachers.\+Data\+Loader\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1core_1_1teachers_1_1DataLoader__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+teachers.\+Data\+Loader\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1core_1_1teachers_1_1DataLoader__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1DataLoader_af06f90bbe1a2d310ac43e963c2eb8f88}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1DataLoader_a06bfd397f84fd1e2d0d64d64182ae5f5}{request\+\_\+load} (self, receive\+\_\+fn, load\+\_\+fn, args)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1DataLoader_a2663781dd1e8cc85535e3cb075fbb8b7}{run} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1DataLoader_a223a0d846ce98840f8f3338611f94d34}{num\+\_\+workers}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1DataLoader_a960bf1159e437cfb304352213df50a8f}{request\+\_\+queue}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}A worker thread that provides a threadpool for data loading.
+
+A teacher may submit a request to the loader, which will return the
+appropriate data.
+
+To submit a request, a teacher should call ``request_load``.
+\end{DoxyVerb}
+ 
+
+Definition at line 56 of file teachers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader_af06f90bbe1a2d310ac43e963c2eb8f88}\label{classparlai_1_1core_1_1teachers_1_1DataLoader_af06f90bbe1a2d310ac43e963c2eb8f88}} 
+\index{parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Data\+Loader.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file teachers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader_a06bfd397f84fd1e2d0d64d64182ae5f5}\label{classparlai_1_1core_1_1teachers_1_1DataLoader_a06bfd397f84fd1e2d0d64d64182ae5f5}} 
+\index{parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}!request\+\_\+load@{request\+\_\+load}}
+\index{request\+\_\+load@{request\+\_\+load}!parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}}
+\subsubsection{\texorpdfstring{request\+\_\+load()}{request\_load()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Data\+Loader.\+request\+\_\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receive\+\_\+fn,  }\item[{}]{load\+\_\+fn,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Queue a request for loading.
+
+:param receive_fn:
+    a receive function (for receiving the data)
+:param load_fn:
+    a load function (for loading the data)
+:param args:
+    arguments for the load function. args can be either a dictionary of
+    arguments for a function, or a list of positional arguments
+\end{DoxyVerb}
+ 
+
+Definition at line 71 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Data\+Loader.\+request\+\_\+queue.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader_a2663781dd1e8cc85535e3cb075fbb8b7}\label{classparlai_1_1core_1_1teachers_1_1DataLoader_a2663781dd1e8cc85535e3cb075fbb8b7}} 
+\index{parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}!run@{run}}
+\index{run@{run}!parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Data\+Loader.\+run (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run the execution loop.\end{DoxyVerb}
+ 
+
+Definition at line 85 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Data\+Loader.\+num\+\_\+workers, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+num\+\_\+workers, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+num\+\_\+workers, parlai.\+core.\+teachers.\+Data\+Loader.\+request\+\_\+queue, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader_a223a0d846ce98840f8f3338611f94d34}\label{classparlai_1_1core_1_1teachers_1_1DataLoader_a223a0d846ce98840f8f3338611f94d34}} 
+\index{parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}!num\+\_\+workers@{num\+\_\+workers}}
+\index{num\+\_\+workers@{num\+\_\+workers}!parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}}
+\subsubsection{\texorpdfstring{num\+\_\+workers}{num\_workers}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Data\+Loader.\+num\+\_\+workers}
+
+
+
+Definition at line 68 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Data\+Loader.\+run().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1DataLoader_a960bf1159e437cfb304352213df50a8f}\label{classparlai_1_1core_1_1teachers_1_1DataLoader_a960bf1159e437cfb304352213df50a8f}} 
+\index{parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}!request\+\_\+queue@{request\+\_\+queue}}
+\index{request\+\_\+queue@{request\+\_\+queue}!parlai\+::core\+::teachers\+::\+Data\+Loader@{parlai\+::core\+::teachers\+::\+Data\+Loader}}
+\subsubsection{\texorpdfstring{request\+\_\+queue}{request\_queue}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Data\+Loader.\+request\+\_\+queue}
+
+
+
+Definition at line 69 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Data\+Loader.\+request\+\_\+load(), and parlai.\+core.\+teachers.\+Data\+Loader.\+run().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{teachers_8py}{teachers.\+py}\end{DoxyCompactItemize}

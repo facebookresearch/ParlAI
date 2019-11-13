@@ -1,0 +1,412 @@
+\hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent}{}\section{parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent Class Reference}
+\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent}\index{parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent@{parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af9f194b4566a43f0840286a39ee0032a}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_adeab756c0b58667aaf417575c23d1dfb}{build\+\_\+criterion} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a33e56566ee5e81b257b049bd6a3c1cd6}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a3baacdb005c5f5a6367c45c93d21d398}{train\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a5d456df843180fb32ca574dc2a33cc80}{eval\+\_\+step} (self, batch)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac96e55ac13019eace0641a7efcf6dc44}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf3aabdf7a98e434614c4da20c599df2}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a04e97e79ef7e497c0927c10b31e42337}{score} (self, batch)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac1dcd540b081131810d3472e91920fa7}{add\+\_\+cmdline\+\_\+args} (parser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a9d5bac9fe43ddf4129d486e3061a7a69}{is\+\_\+finetune}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a98e1aad7d454f0ef1a971b60db1bcd18}{class\+\_\+list}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a80b1b3e0162c2dca36a1e1763cf3cad9}{class\+\_\+dict}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac4c098a9fe13fcbb279cb388059fbdb7}{class\+\_\+weights}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a830ed9662779e824cc9596695b04e985}{ref\+\_\+class}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aba6e1d0ef53762f5930c271c3ae8d63a}{threshold}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf08c5622edd3627fbe993730f16baa4}{model}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aa59eee6c442bfb02846661fba0904a3d}{criterion}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af7bc3e7b011e16ae3e75617c4773a1a4}{optimizer}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Abstract Classifier agent. Only meant to be extended.
+
+TorchClassifierAgent aims to handle much of the bookkeeping any
+classification model.
+\end{DoxyVerb}
+ 
+
+Definition at line 19 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af9f194b4566a43f0840286a39ee0032a}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af9f194b4566a43f0840286a39ee0032a}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 85 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac1dcd540b081131810d3472e91920fa7}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac1dcd540b081131810d3472e91920fa7}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add CLI args.\end{DoxyVerb}
+ 
+
+Definition at line 28 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_adeab756c0b58667aaf417575c23d1dfb}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_adeab756c0b58667aaf417575c23d1dfb}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!build\+\_\+criterion@{build\+\_\+criterion}}
+\index{build\+\_\+criterion@{build\+\_\+criterion}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+criterion()}{build\_criterion()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+build\+\_\+criterion (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 160 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+weights.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a5d456df843180fb32ca574dc2a33cc80}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a5d456df843180fb32ca574dc2a33cc80}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!eval\+\_\+step@{eval\+\_\+step}}
+\index{eval\+\_\+step@{eval\+\_\+step}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{eval\+\_\+step()}{eval\_step()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Train on a single batch of examples.\end{DoxyVerb}
+ 
+
+Definition at line 241 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+format\+\_\+interactive\+\_\+output(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+get\+\_\+labels(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+update\+\_\+confusion\+\_\+matrix(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+criterion, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+criterion, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+score, agent.\+modules.\+Mem\+N\+N.\+score, parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+score(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+score(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+score(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+\_\+\+Hypothesis\+Tail.\+score, and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+threshold.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a5d456df843180fb32ca574dc2a33cc80_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a5d456df843180fb32ca574dc2a33cc80_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf3aabdf7a98e434614c4da20c599df2}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf3aabdf7a98e434614c4da20c599df2}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!report@{report}}
+\index{report@{report}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report loss as well as precision, recall, and F1 metrics.\end{DoxyVerb}
+ 
+
+Definition at line 314 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+report\+\_\+prec\+\_\+recall\+\_\+metrics(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+ref\+\_\+class, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf3aabdf7a98e434614c4da20c599df2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac96e55ac13019eace0641a7efcf6dc44}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac96e55ac13019eace0641a7efcf6dc44}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics.\end{DoxyVerb}
+ 
+
+Definition at line 270 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a04e97e79ef7e497c0927c10b31e42337}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a04e97e79ef7e497c0927c10b31e42337}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!score@{score}}
+\index{score@{score}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{score()}{score()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+score (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Given a batch and labels, returns the scores.
+
+:param batch:
+    a Batch object (defined in torch_agent.py)
+:return:
+    a [bsz, num_classes] FloatTensor containing the score of each
+    class.
+\end{DoxyVerb}
+ 
+
+Definition at line 350 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a04e97e79ef7e497c0927c10b31e42337_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a33e56566ee5e81b257b049bd6a3c1cd6}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a33e56566ee5e81b257b049bd6a3c1cd6}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!share@{share}}
+\index{share@{share}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share model parameters.\end{DoxyVerb}
+ 
+
+Definition at line 164 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+dict, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+weights, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a33e56566ee5e81b257b049bd6a3c1cd6_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a3baacdb005c5f5a6367c45c93d21d398}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a3baacdb005c5f5a6367c45c93d21d398}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!train\+\_\+step@{train\+\_\+step}}
+\index{train\+\_\+step@{train\+\_\+step}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{train\+\_\+step()}{train\_step()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Train on a single batch of examples.\end{DoxyVerb}
+ 
+
+Definition at line 216 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+get\+\_\+labels(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+\_\+update\+\_\+confusion\+\_\+matrix(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+criterion, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+criterion, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+criterion, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+criterion, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+criterion, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+score, agent.\+modules.\+Mem\+N\+N.\+score, parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+score(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+score(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+score(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+\_\+\+Hypothesis\+Tail.\+score, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a3baacdb005c5f5a6367c45c93d21d398_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a3baacdb005c5f5a6367c45c93d21d398_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a80b1b3e0162c2dca36a1e1763cf3cad9}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a80b1b3e0162c2dca36a1e1763cf3cad9}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!class\+\_\+dict@{class\+\_\+dict}}
+\index{class\+\_\+dict@{class\+\_\+dict}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{class\+\_\+dict}{class\_dict}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+dict}
+
+
+
+Definition at line 94 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a98e1aad7d454f0ef1a971b60db1bcd18}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a98e1aad7d454f0ef1a971b60db1bcd18}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!class\+\_\+list@{class\+\_\+list}}
+\index{class\+\_\+list@{class\+\_\+list}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{class\+\_\+list}{class\_list}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list}
+
+
+
+Definition at line 93 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+build\+\_\+model(), parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+build\+\_\+model(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+reset\+\_\+metrics(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac4c098a9fe13fcbb279cb388059fbdb7}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_ac4c098a9fe13fcbb279cb388059fbdb7}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!class\+\_\+weights@{class\+\_\+weights}}
+\index{class\+\_\+weights@{class\+\_\+weights}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{class\+\_\+weights}{class\_weights}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+weights}
+
+
+
+Definition at line 96 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+build\+\_\+criterion(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aa59eee6c442bfb02846661fba0904a3d}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aa59eee6c442bfb02846661fba0904a3d}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!criterion@{criterion}}
+\index{criterion@{criterion}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{criterion}{criterion}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+criterion}
+
+
+
+Definition at line 133 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a9d5bac9fe43ddf4129d486e3061a7a69}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a9d5bac9fe43ddf4129d486e3061a7a69}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!is\+\_\+finetune@{is\+\_\+finetune}}
+\index{is\+\_\+finetune@{is\+\_\+finetune}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{is\+\_\+finetune}{is\_finetune}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+is\+\_\+finetune}
+
+
+
+Definition at line 86 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf08c5622edd3627fbe993730f16baa4}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_acf08c5622edd3627fbe993730f16baa4}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!model@{model}}
+\index{model@{model}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model}
+
+
+
+Definition at line 130 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+backward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+contains\+\_\+offensive\+\_\+language(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+eval\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+eval\+\_\+step(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+get\+\_\+cand\+\_\+embeddings\+\_\+with\+\_\+added\+\_\+beta(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+parley(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+train\+\_\+step(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af7bc3e7b011e16ae3e75617c4773a1a4}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_af7bc3e7b011e16ae3e75617c4773a1a4}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer}
+
+
+
+Definition at line 154 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), kvmemnn.\+Kvmemnn\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+save(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch(), kvmemnn.\+Kvmemnn\+Agent.\+update\+\_\+params(), and kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a830ed9662779e824cc9596695b04e985}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_a830ed9662779e824cc9596695b04e985}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!ref\+\_\+class@{ref\+\_\+class}}
+\index{ref\+\_\+class@{ref\+\_\+class}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{ref\+\_\+class}{ref\_class}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+ref\+\_\+class}
+
+
+
+Definition at line 109 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aba6e1d0ef53762f5930c271c3ae8d63a}\label{classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent_aba6e1d0ef53762f5930c271c3ae8d63a}} 
+\index{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}!threshold@{threshold}}
+\index{threshold@{threshold}!parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent@{parlai\+::core\+::torch\+\_\+classifier\+\_\+agent\+::\+Torch\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{threshold}{threshold}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+threshold}
+
+
+
+Definition at line 123 of file torch\+\_\+classifier\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__classifier__agent_8py}{torch\+\_\+classifier\+\_\+agent.\+py}\end{DoxyCompactItemize}

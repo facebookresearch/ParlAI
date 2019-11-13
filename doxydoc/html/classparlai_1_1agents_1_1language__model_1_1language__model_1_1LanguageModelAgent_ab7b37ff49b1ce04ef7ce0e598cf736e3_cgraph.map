@@ -1,9 +1,12 @@
 <map id="parlai.agents.language_model.language_model.LanguageModelAgent.shutdown" name="parlai.agents.language_model.language_model.LanguageModelAgent.shutdown">
-<area shape="rect" id="node1" title=" " alt="" coords="5,177,228,233"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html#a5e8419dfd48e5a9b0a999058a9537831" title=" " alt="" coords="276,5,528,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#af50a0adfb1e85342655305813c814f86" title=" " alt="" coords="318,86,486,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a654906588f91d21110921ad2ba498c95" title=" " alt="" coords="323,151,481,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html#af0deeaf3d545dac60187f95d30b48171" title=" " alt="" coords="299,217,505,258"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ad4804131388a6f88f01fc124e7692069" title=" " alt="" coords="309,282,495,323"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#adc621ff0e625e2f00225d78408e9bafc" title=" " alt="" coords="291,348,513,404"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html#a5e8419dfd48e5a9b0a999058a9537831" title="parlai.agents.bert\l_ranker.both_encoder\l_ranker.BothEncoderRankerAgent.save" alt="" coords="276,5,528,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#af50a0adfb1e85342655305813c814f86" title="parlai.agents.drqa.model.\lDocReaderModel.save" alt="" coords="318,86,486,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a654906588f91d21110921ad2ba498c95" title="parlai.agents.drqa.drqa.\lDrqaAgent.save" alt="" coords="323,151,481,193"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html#af0deeaf3d545dac60187f95d30b48171" title="parlai.agents.ir_baseline.ir\l_baseline.IrBaselineAgent.save" alt="" coords="299,217,505,258"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ad4804131388a6f88f01fc124e7692069" title="parlai.agents.fairseq.fairseq.\lFairseqAgent.save" alt="" coords="309,282,495,323"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#adc621ff0e625e2f00225d78408e9bafc" title="parlai.agents.language\l_model.language_model.Language\lModelAgent.save" alt="" coords="291,348,513,404"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a2ee48b5b7886e50c3a2d527b9510ad99" title="parlai.agents.drqa.drqa.\lDrqaAgent._find_target" alt="" coords="602,53,761,94"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a3e2eb4421862adea12492bb93926baf5" title="parlai.agents.drqa.drqa.\lDrqaAgent._subsample_doc" alt="" coords="588,118,775,159"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a1fdb457e98eb4e4c26047e229686a616" title="parlai.agents.tfidf\l_retriever.build_tfidf.tokenize" alt="" coords="587,183,776,225"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1agents_1_1drqa_1_1utils.html#a5c76cc39e3014c7bcf9199d566dbdc0f" title="parlai.agents.drqa.utils.vectorize" alt="" coords="576,249,787,276"/>
 </map>

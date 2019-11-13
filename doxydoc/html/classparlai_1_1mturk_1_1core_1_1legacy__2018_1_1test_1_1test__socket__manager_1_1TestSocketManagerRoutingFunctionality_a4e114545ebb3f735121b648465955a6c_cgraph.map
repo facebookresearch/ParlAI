@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.legacy_2018.test.test_socket_manager.TestSocketManagerRoutingFunctionality.test_blocking_ack_packet_send" name="parlai.mturk.core.legacy_2018.test.test_socket_manager.TestSocketManagerRoutingFunctionality.test_blocking_ack_packet_send">
-<area shape="rect" id="node1" title=" " alt="" coords="5,39,251,124"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__socket__manager_1_1TestSocketManagerRoutingFunctionality.html#a7c38565a3b1826df93ab6d0e64d77805" title=" " alt="" coords="299,5,589,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1TestSocketManagerRoutingFunctionality.html#a0a1f4244e38933c233aec7a096f3ed58" title=" " alt="" coords="321,85,567,171"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__socket__manager_1_1TestSocketManagerRoutingFunctionality.html#a7c38565a3b1826df93ab6d0e64d77805" title="parlai.mturk.core.dev.test.test\l_socket_manager.TestSocketManagerRouting\lFunctionality._send_packet_in_background" alt="" coords="299,5,589,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1TestSocketManagerRoutingFunctionality.html#a0a1f4244e38933c233aec7a096f3ed58" title="parlai.mturk.core.legacy\l_2018.test.test_socket\l_manager.TestSocketManagerRouting\lFunctionality._send_packet_in\l_background" alt="" coords="321,85,567,171"/>
 </map>

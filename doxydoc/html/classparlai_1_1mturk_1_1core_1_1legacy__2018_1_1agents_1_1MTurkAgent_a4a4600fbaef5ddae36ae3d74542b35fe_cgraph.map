@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_new_act_message" name="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_new_act_message">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,203,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#add5cb1e41b1df16cc908da3724f0acc7" title=" " alt="" coords="253,5,427,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a5344c5fb69081892bc09992ac4ca5612" title=" " alt="" coords="251,85,429,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#add5cb1e41b1df16cc908da3724f0acc7" title="parlai.mturk.core.agents.\lMTurkAgent._get_episode\l_done_msg" alt="" coords="253,5,427,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a5344c5fb69081892bc09992ac4ca5612" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.\l_get_episode_done_msg" alt="" coords="251,85,429,141"/>
 </map>

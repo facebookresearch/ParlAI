@@ -1,0 +1,15 @@
+<map id="parlai.core.agents.get_task_module" name="parlai.core.agents.get_task_module">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a61ff766a70bd11365cbcbf71431ce527" title="parlai.core.params.Parlai\lParser.add_task_args" alt="" coords="212,89,379,131"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1agents.html#ab4473fa54af02b5ab385b41b51dacd10" title="parlai.core.agents.create\l_task_agent_from_taskname" alt="" coords="200,239,391,280"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ade9c068595c2b1110d019f3dedeb79ba" title="parlai.core.params.Parlai\lParser.add_extra_args" alt="" coords="459,5,625,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ad549d75e2808d63fbc5c5d0e30682f18" title="parlai.core.params.Parlai\lParser.parse_args" alt="" coords="693,5,860,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#adb1dec3d3433b40209bb2c24722df335" title="parlai.core.params.Parlai\lParser.print_args" alt="" coords="908,5,1075,47"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1scripts_1_1interactive__rank.html#a9997f1d0eba4a72a45a773ec05874af3" title="parlai.scripts.interactive\l_rank.interactive_rank" alt="" coords="462,71,622,112"/>
+<area shape="rect" id="node8" href="$namespacerun.html#a8c0e38f5a5957dd35a11cc5d806887fd" title="run.setup_title_to\l_passage" alt="" coords="481,136,603,177"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a3960deb08a179884b1eea2e423437db2" title="parlai.core.worlds.Hogwild\lWorld.shutdown" alt="" coords="455,201,629,243"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__db.html#a794fe63c76c7ac42ca1ac1b18c2528f4" title="parlai.agents.tfidf\l_retriever.build_db.store\l_contents" alt="" coords="461,267,623,323"/>
+<area shape="rect" id="node12" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#ad9d9065300215a4afeb0589192b5ba05" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pyt_preprocess" alt="" coords="439,347,645,403"/>
+<area shape="rect" id="node13" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a3ff18909bd05956b4fa7970bc3c96afb" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pytd_teacher" alt="" coords="439,427,645,483"/>
+<area shape="rect" id="node14" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#aaecd01e211d3e5b0c87f58da6c9b3def" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_shuffle" alt="" coords="439,507,645,563"/>
+<area shape="rect" id="node9" href="$namespacerun.html#aa82b870a20fb0f19feebf9c895b0cfd9" title="run.main" alt="" coords="741,143,813,170"/>
+</map>

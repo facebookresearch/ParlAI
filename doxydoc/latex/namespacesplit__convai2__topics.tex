@@ -1,0 +1,151 @@
+\hypertarget{namespacesplit__convai2__topics}{}\section{split\+\_\+convai2\+\_\+topics Namespace Reference}
+\label{namespacesplit__convai2__topics}\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacesplit__convai2__topics_a94fe060c5f31bc5a5a8b33c2a28f50f8}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespacesplit__convai2__topics_a141f246ea2a420cf68009cb02b0fe41d}{includes\+\_\+topic} (episode, topic)
+\item 
+def \hyperlink{namespacesplit__convai2__topics_a4477eb52fdcb7e5f0da1639ecd493130}{main} (\hyperlink{namespacesplit__convai2__topics_a60cd6faaa7a004794b9023bda5954a3c}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespacesplit__convai2__topics_a6f7c4fd4944e5189515d3d8d0b3182ae}{F\+A\+M\+I\+LY}
+\item 
+list \hyperlink{namespacesplit__convai2__topics_a857e535782ce59a523b60a0489963f92}{variants} = \mbox{[}$\,$\mbox{]}
+\item 
+list \hyperlink{namespacesplit__convai2__topics_a2a4fdd83f40810da7299d0d546dc0218}{S\+P\+O\+R\+TS} = \mbox{[}\char`\"{}ball\char`\"{}, \char`\"{}sports\char`\"{}\mbox{]}
+\item 
+list \hyperlink{namespacesplit__convai2__topics_aa609f0883fcd414b29d582e18d043e27}{T\+O\+P\+IC} = \hyperlink{namespacesplit__convai2__topics_a2a4fdd83f40810da7299d0d546dc0218}{S\+P\+O\+R\+TS}
+\item 
+string \hyperlink{namespacesplit__convai2__topics_a64a4acce063d2a57cf6d882eb0862212}{T\+O\+P\+I\+C\+\_\+\+N\+A\+ME} = \textquotesingle{}sports\textquotesingle{}
+\item 
+def \hyperlink{namespacesplit__convai2__topics_a60cd6faaa7a004794b9023bda5954a3c}{opt} = \hyperlink{namespacesplit__convai2__topics_a94fe060c5f31bc5a5a8b33c2a28f50f8}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a141f246ea2a420cf68009cb02b0fe41d}\label{namespacesplit__convai2__topics_a141f246ea2a420cf68009cb02b0fe41d}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!includes\+\_\+topic@{includes\+\_\+topic}}
+\index{includes\+\_\+topic@{includes\+\_\+topic}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{includes\+\_\+topic()}{includes\_topic()}}
+{\footnotesize\ttfamily def split\+\_\+convai2\+\_\+topics.\+includes\+\_\+topic (\begin{DoxyParamCaption}\item[{}]{episode,  }\item[{}]{topic }\end{DoxyParamCaption})}
+
+
+
+Definition at line 103 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+
+
+Referenced by main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacesplit__convai2__topics_a141f246ea2a420cf68009cb02b0fe41d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a4477eb52fdcb7e5f0da1639ecd493130}\label{namespacesplit__convai2__topics_a4477eb52fdcb7e5f0da1639ecd493130}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!main@{main}}
+\index{main@{main}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def split\+\_\+convai2\+\_\+topics.\+main (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Converts a Fbdialog file of episodes into two self-feeding files (split by topic)
+
+All conversations including a word in the provided topic's bag of words will be
+separated from conversations without those words.
+\end{DoxyVerb}
+ 
+
+Definition at line 115 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+episode\+\_\+to\+\_\+examples(), self\+\_\+feeding.\+utils.\+extract\+\_\+fb\+\_\+episodes(), and includes\+\_\+topic().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacesplit__convai2__topics_a4477eb52fdcb7e5f0da1639ecd493130_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a94fe060c5f31bc5a5a8b33c2a28f50f8}\label{namespacesplit__convai2__topics_a94fe060c5f31bc5a5a8b33c2a28f50f8}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def split\+\_\+convai2\+\_\+topics.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 69 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a6f7c4fd4944e5189515d3d8d0b3182ae}\label{namespacesplit__convai2__topics_a6f7c4fd4944e5189515d3d8d0b3182ae}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!F\+A\+M\+I\+LY@{F\+A\+M\+I\+LY}}
+\index{F\+A\+M\+I\+LY@{F\+A\+M\+I\+LY}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{F\+A\+M\+I\+LY}{FAMILY}}
+{\footnotesize\ttfamily list split\+\_\+convai2\+\_\+topics.\+F\+A\+M\+I\+LY}
+
+
+
+Definition at line 13 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a60cd6faaa7a004794b9023bda5954a3c}\label{namespacesplit__convai2__topics_a60cd6faaa7a004794b9023bda5954a3c}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!opt@{opt}}
+\index{opt@{opt}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily def split\+\_\+convai2\+\_\+topics.\+opt = \hyperlink{namespacesplit__convai2__topics_a94fe060c5f31bc5a5a8b33c2a28f50f8}{setup\+\_\+args}()}
+
+
+
+Definition at line 168 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a2a4fdd83f40810da7299d0d546dc0218}\label{namespacesplit__convai2__topics_a2a4fdd83f40810da7299d0d546dc0218}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!S\+P\+O\+R\+TS@{S\+P\+O\+R\+TS}}
+\index{S\+P\+O\+R\+TS@{S\+P\+O\+R\+TS}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{S\+P\+O\+R\+TS}{SPORTS}}
+{\footnotesize\ttfamily list split\+\_\+convai2\+\_\+topics.\+S\+P\+O\+R\+TS = \mbox{[}\char`\"{}ball\char`\"{}, \char`\"{}sports\char`\"{}\mbox{]}}
+
+
+
+Definition at line 59 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+\mbox{\Hypertarget{namespacesplit__convai2__topics_aa609f0883fcd414b29d582e18d043e27}\label{namespacesplit__convai2__topics_aa609f0883fcd414b29d582e18d043e27}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!T\+O\+P\+IC@{T\+O\+P\+IC}}
+\index{T\+O\+P\+IC@{T\+O\+P\+IC}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{T\+O\+P\+IC}{TOPIC}}
+{\footnotesize\ttfamily list split\+\_\+convai2\+\_\+topics.\+T\+O\+P\+IC = \hyperlink{namespacesplit__convai2__topics_a2a4fdd83f40810da7299d0d546dc0218}{S\+P\+O\+R\+TS}}
+
+
+
+Definition at line 65 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a64a4acce063d2a57cf6d882eb0862212}\label{namespacesplit__convai2__topics_a64a4acce063d2a57cf6d882eb0862212}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!T\+O\+P\+I\+C\+\_\+\+N\+A\+ME@{T\+O\+P\+I\+C\+\_\+\+N\+A\+ME}}
+\index{T\+O\+P\+I\+C\+\_\+\+N\+A\+ME@{T\+O\+P\+I\+C\+\_\+\+N\+A\+ME}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{T\+O\+P\+I\+C\+\_\+\+N\+A\+ME}{TOPIC\_NAME}}
+{\footnotesize\ttfamily string split\+\_\+convai2\+\_\+topics.\+T\+O\+P\+I\+C\+\_\+\+N\+A\+ME = \textquotesingle{}sports\textquotesingle{}}
+
+
+
+Definition at line 66 of file split\+\_\+convai2\+\_\+topics.\+py.
+
+\mbox{\Hypertarget{namespacesplit__convai2__topics_a857e535782ce59a523b60a0489963f92}\label{namespacesplit__convai2__topics_a857e535782ce59a523b60a0489963f92}} 
+\index{split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}!variants@{variants}}
+\index{variants@{variants}!split\+\_\+convai2\+\_\+topics@{split\+\_\+convai2\+\_\+topics}}
+\subsubsection{\texorpdfstring{variants}{variants}}
+{\footnotesize\ttfamily list split\+\_\+convai2\+\_\+topics.\+variants = \mbox{[}$\,$\mbox{]}}
+
+
+
+Definition at line 53 of file split\+\_\+convai2\+\_\+topics.\+py.
+

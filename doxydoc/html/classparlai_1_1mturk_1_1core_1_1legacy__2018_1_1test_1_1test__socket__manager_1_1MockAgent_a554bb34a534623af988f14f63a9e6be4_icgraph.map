@@ -1,6 +1,8 @@
 <map id="parlai.mturk.core.legacy_2018.test.test_socket_manager.MockAgent.send_heartbeat" name="parlai.mturk.core.legacy_2018.test.test_socket_manager.MockAgent.send_heartbeat">
-<area shape="rect" id="node1" title=" " alt="" coords="284,86,465,157"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__full__system_1_1MockAgent.html#a872f69350ed59fcccfa5819f2bd65337" title=" " alt="" coords="19,5,222,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1MockAgent.html#af0f9ec941e61587e1f4145c354031d7a" title=" " alt="" coords="28,86,213,157"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#a06d5e6cb09b2472a0b1972a7bb82ef31" title=" " alt="" coords="5,181,236,237"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__full__system_1_1MockAgent.html#a872f69350ed59fcccfa5819f2bd65337" title="parlai.mturk.core.test.test\l_full_system.MockAgent.make\l_packet_handler" alt="" coords="249,141,451,197"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#a06d5e6cb09b2472a0b1972a7bb82ef31" title="parlai.mturk.core.test.test\l_socket_manager.MockAgent.make\l_packet_handler" alt="" coords="235,221,465,277"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1MockAgent.html#af0f9ec941e61587e1f4145c354031d7a" title="parlai.mturk.core.legacy\l_2018.test.test_socket\l_manager.MockAgent.make\l_packet_handler" alt="" coords="257,45,443,116"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__full__system_1_1MockAgent.html#aa3aaa3fa10d7f1ca6a135bcd28e18be4" title="parlai.mturk.core.test.test\l_full_system.MockAgent.register\l_to_socket" alt="" coords="528,101,741,157"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__socket__manager_1_1MockAgent.html#acb9b096d3f537b0b28b535b387a86967" title="parlai.mturk.core.test.test\l_socket_manager.MockAgent.register\l_to_socket" alt="" coords="513,181,756,237"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1MockAgent.html#aa02e8404e36bc2afa425163c297f7951" title="parlai.mturk.core.legacy\l_2018.test.test_socket\l_manager.MockAgent.register\l_to_socket" alt="" coords="537,5,733,76"/>
 </map>

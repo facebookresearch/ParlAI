@@ -1,0 +1,6 @@
+<map id="parlai.agents.drqa.drqa.DrqaAgent.save" name="parlai.agents.drqa.drqa.DrqaAgent.save">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a2ee48b5b7886e50c3a2d527b9510ad99" title="parlai.agents.drqa.drqa.\lDrqaAgent._find_target" alt="" coords="238,5,397,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a3e2eb4421862adea12492bb93926baf5" title="parlai.agents.drqa.drqa.\lDrqaAgent._subsample_doc" alt="" coords="224,71,411,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a1fdb457e98eb4e4c26047e229686a616" title="parlai.agents.tfidf\l_retriever.build_tfidf.tokenize" alt="" coords="223,136,412,177"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1agents_1_1drqa_1_1utils.html#a5c76cc39e3014c7bcf9199d566dbdc0f" title="parlai.agents.drqa.utils.vectorize" alt="" coords="212,202,423,229"/>
+</map>

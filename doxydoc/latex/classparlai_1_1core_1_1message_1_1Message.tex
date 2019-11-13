@@ -1,0 +1,109 @@
+\hypertarget{classparlai_1_1core_1_1message_1_1Message}{}\section{parlai.\+core.\+message.\+Message Class Reference}
+\label{classparlai_1_1core_1_1message_1_1Message}\index{parlai.\+core.\+message.\+Message@{parlai.\+core.\+message.\+Message}}
+
+
+Inheritance diagram for parlai.\+core.\+message.\+Message\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=227pt]{classparlai_1_1core_1_1message_1_1Message__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+message.\+Message\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=227pt]{classparlai_1_1core_1_1message_1_1Message__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1message_1_1Message_a2fd83603b06a7da7ab7fc99649d855f6}{\+\_\+\+\_\+setitem\+\_\+\+\_\+} (self, key, val)
+\item 
+def \hyperlink{classparlai_1_1core_1_1message_1_1Message_acbafaa2540a6b2ca6513fe9db49a9291}{force\+\_\+set} (self, key, val)
+\item 
+def \hyperlink{classparlai_1_1core_1_1message_1_1Message_a374ac4a5d73e853960cc0f964b73a7fd}{copy} (self)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class for observations and actions in ParlAI
+
+Functions like a dict, but triggers a RuntimeError when calling __setitem__
+for a key that already exists in the dict.
+\end{DoxyVerb}
+ 
+
+Definition at line 13 of file message.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1message_1_1Message_a2fd83603b06a7da7ab7fc99649d855f6}\label{classparlai_1_1core_1_1message_1_1Message_a2fd83603b06a7da7ab7fc99649d855f6}} 
+\index{parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}!\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}!parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+setitem\+\_\+\+\_\+()}{\_\_setitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+message.\+Message.\+\_\+\+\_\+setitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key,  }\item[{}]{val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 21 of file message.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+core.\+message.\+Message.\+force\+\_\+set().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1message_1_1Message_a2fd83603b06a7da7ab7fc99649d855f6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1message_1_1Message_a374ac4a5d73e853960cc0f964b73a7fd}\label{classparlai_1_1core_1_1message_1_1Message_a374ac4a5d73e853960cc0f964b73a7fd}} 
+\index{parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}!copy@{copy}}
+\index{copy@{copy}!parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}}
+\subsubsection{\texorpdfstring{copy()}{copy()}}
+{\footnotesize\ttfamily def parlai.\+core.\+message.\+Message.\+copy (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 32 of file message.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1message_1_1Message_acbafaa2540a6b2ca6513fe9db49a9291}\label{classparlai_1_1core_1_1message_1_1Message_acbafaa2540a6b2ca6513fe9db49a9291}} 
+\index{parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}!force\+\_\+set@{force\+\_\+set}}
+\index{force\+\_\+set@{force\+\_\+set}!parlai\+::core\+::message\+::\+Message@{parlai\+::core\+::message\+::\+Message}}
+\subsubsection{\texorpdfstring{force\+\_\+set()}{force\_set()}}
+{\footnotesize\ttfamily def parlai.\+core.\+message.\+Message.\+force\+\_\+set (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key,  }\item[{}]{val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file message.\+py.
+
+
+
+References parlai.\+core.\+message.\+Message.\+\_\+\+\_\+setitem\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1message_1_1Message_acbafaa2540a6b2ca6513fe9db49a9291_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{message_8py}{message.\+py}\end{DoxyCompactItemize}

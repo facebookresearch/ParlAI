@@ -1,0 +1,146 @@
+\hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit}{}\section{parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit Namespace Reference}
+\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit}\index{parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit@{parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit}}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ad6ca26b2f1c966bd00304cb47a612bd4}{H\+I\+T\+\_\+page\+\_\+url} = sys.\+argv\mbox{[}1\mbox{]}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_aa84d687a4e23d5c4cb07ab0c07396a5c}{driver} = webdriver.\+Chrome()
+\item 
+int \hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5e0869eaab0170f523d6b5fea648b1a1}{total\+\_\+hits\+\_\+done} = 0
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a841a3d5068e1ad07066a7ea28418b5ed}{N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG} = \char`\"{}There are no H\+I\+Ts in this group available to you at the moment.\char`\"{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a41016a44ce805b615732efe5c479551c}{wait} = Web\+Driver\+Wait(\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_aa84d687a4e23d5c4cb07ab0c07396a5c}{driver}, 30)
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_afebd2d6c99ba96ac7f06da75a096702f}{accept\+\_\+button}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a34e374bb9e9600346544be6a7feeb6c2}{iframe}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ac373c84090ad4712c390633f7ff3bb77}{input\+\_\+box}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5a46afcb5e8b24725e3dbbc7fee116aa}{done\+\_\+button}
+\end{DoxyCompactItemize}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_afebd2d6c99ba96ac7f06da75a096702f}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_afebd2d6c99ba96ac7f06da75a096702f}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!accept\+\_\+button@{accept\+\_\+button}}
+\index{accept\+\_\+button@{accept\+\_\+button}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{accept\+\_\+button}{accept\_button}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+accept\+\_\+button}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  wait.until(
+2         EC.presence\_of\_element\_located(
+3             (By.CSS\_SELECTOR, )
+4         )
+5     )
+\end{DoxyCode}
+
+
+Definition at line 51 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5a46afcb5e8b24725e3dbbc7fee116aa}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5a46afcb5e8b24725e3dbbc7fee116aa}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!done\+\_\+button@{done\+\_\+button}}
+\index{done\+\_\+button@{done\+\_\+button}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{done\+\_\+button}{done\_button}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+done\+\_\+button}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  wait.until(
+2         EC.visibility\_of\_element\_located((By.CSS\_SELECTOR, \textcolor{stringliteral}{"#done-button"}))
+3     )
+\end{DoxyCode}
+
+
+Definition at line 79 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_aa84d687a4e23d5c4cb07ab0c07396a5c}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_aa84d687a4e23d5c4cb07ab0c07396a5c}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!driver@{driver}}
+\index{driver@{driver}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{driver}{driver}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+driver = webdriver.\+Chrome()}
+
+
+
+Definition at line 30 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ad6ca26b2f1c966bd00304cb47a612bd4}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ad6ca26b2f1c966bd00304cb47a612bd4}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!H\+I\+T\+\_\+page\+\_\+url@{H\+I\+T\+\_\+page\+\_\+url}}
+\index{H\+I\+T\+\_\+page\+\_\+url@{H\+I\+T\+\_\+page\+\_\+url}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{H\+I\+T\+\_\+page\+\_\+url}{HIT\_page\_url}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+H\+I\+T\+\_\+page\+\_\+url = sys.\+argv\mbox{[}1\mbox{]}}
+
+
+
+Definition at line 27 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a34e374bb9e9600346544be6a7feeb6c2}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a34e374bb9e9600346544be6a7feeb6c2}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!iframe@{iframe}}
+\index{iframe@{iframe}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{iframe}{iframe}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+iframe}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  WebDriverWait(driver, 30).until(
+2         EC.presence\_of\_element\_located((By.CSS\_SELECTOR, \textcolor{stringliteral}{"body > form > iframe"}))
+3     )
+\end{DoxyCode}
+
+
+Definition at line 61 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ac373c84090ad4712c390633f7ff3bb77}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_ac373c84090ad4712c390633f7ff3bb77}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!input\+\_\+box@{input\+\_\+box}}
+\index{input\+\_\+box@{input\+\_\+box}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{input\+\_\+box}{input\_box}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+input\+\_\+box}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  WebDriverWait(driver, 30).until(
+2         EC.presence\_of\_element\_located((By.CSS\_SELECTOR, \textcolor{stringliteral}{"#id\_text\_input"}))
+3     )
+\end{DoxyCode}
+
+
+Definition at line 66 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a841a3d5068e1ad07066a7ea28418b5ed}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a841a3d5068e1ad07066a7ea28418b5ed}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG@{N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG}}
+\index{N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG@{N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG}{NO\_HITS\_MSG}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+N\+O\+\_\+\+H\+I\+T\+S\+\_\+\+M\+SG = \char`\"{}There are no H\+I\+Ts in this group available to you at the moment.\char`\"{}}
+
+
+
+Definition at line 46 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5e0869eaab0170f523d6b5fea648b1a1}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a5e0869eaab0170f523d6b5fea648b1a1}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!total\+\_\+hits\+\_\+done@{total\+\_\+hits\+\_\+done}}
+\index{total\+\_\+hits\+\_\+done@{total\+\_\+hits\+\_\+done}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{total\+\_\+hits\+\_\+done}{total\_hits\_done}}
+{\footnotesize\ttfamily int parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+total\+\_\+hits\+\_\+done = 0}
+
+
+
+Definition at line 44 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a41016a44ce805b615732efe5c479551c}\label{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_a41016a44ce805b615732efe5c479551c}} 
+\index{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}!wait@{wait}}
+\index{wait@{wait}!parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit@{parlai\+::mturk\+::scripts\+::auto\+\_\+complete\+\_\+hit}}
+\subsubsection{\texorpdfstring{wait}{wait}}
+{\footnotesize\ttfamily parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+wait = Web\+Driver\+Wait(\hyperlink{namespaceparlai_1_1mturk_1_1scripts_1_1auto__complete__hit_aa84d687a4e23d5c4cb07ab0c07396a5c}{driver}, 30)}
+
+
+
+Definition at line 50 of file auto\+\_\+complete\+\_\+hit.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache().
+

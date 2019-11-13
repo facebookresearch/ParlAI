@@ -1,0 +1,10 @@
+<map id="parlai.core.agents.create_task_agent_from_taskname" name="parlai.core.agents.create_task_agent_from_taskname">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1interactive__rank.html#a9997f1d0eba4a72a45a773ec05874af3" title="parlai.scripts.interactive\l_rank.interactive_rank" alt="" coords="267,5,427,47"/>
+<area shape="rect" id="node3" href="$namespacerun.html#a8c0e38f5a5957dd35a11cc5d806887fd" title="run.setup_title_to\l_passage" alt="" coords="286,71,409,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a3960deb08a179884b1eea2e423437db2" title="parlai.core.worlds.Hogwild\lWorld.shutdown" alt="" coords="260,136,435,177"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__db.html#a794fe63c76c7ac42ca1ac1b18c2528f4" title="parlai.agents.tfidf\l_retriever.build_db.store\l_contents" alt="" coords="267,202,428,258"/>
+<area shape="rect" id="node7" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#ad9d9065300215a4afeb0589192b5ba05" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pyt_preprocess" alt="" coords="244,282,451,338"/>
+<area shape="rect" id="node8" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a3ff18909bd05956b4fa7970bc3c96afb" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pytd_teacher" alt="" coords="244,362,451,418"/>
+<area shape="rect" id="node9" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#aaecd01e211d3e5b0c87f58da6c9b3def" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_shuffle" alt="" coords="244,442,451,498"/>
+<area shape="rect" id="node4" href="$namespacerun.html#aa82b870a20fb0f19feebf9c895b0cfd9" title="run.main" alt="" coords="499,78,571,105"/>
+</map>

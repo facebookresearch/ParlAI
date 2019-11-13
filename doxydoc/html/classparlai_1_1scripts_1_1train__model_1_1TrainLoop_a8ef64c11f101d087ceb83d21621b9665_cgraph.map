@@ -1,8 +1,8 @@
 <map id="parlai.scripts.train_model.TrainLoop.log" name="parlai.scripts.train_model.TrainLoop.log">
-<area shape="rect" id="node1" title=" " alt="" coords="5,115,152,157"/>
-<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#aaa614b60a1667ddad7492afb347290ee" title=" " alt="" coords="215,5,396,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#ad45bc64e9420a8e7e81beb6951f43690" title=" " alt="" coords="200,86,411,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1b8d75bb6c0c8b273939431f580b282d" title=" " alt="" coords="487,137,647,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1dd41281ca4a9caf25fe22f1ca075555" title=" " alt="" coords="223,203,387,259"/>
-<area shape="rect" id="node6" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a94493761834ef80a5db3f43aa38afbcf" title=" " alt="" coords="459,218,676,259"/>
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#aaa614b60a1667ddad7492afb347290ee" title="parlai.scripts.train\l_model.TrainLoop._cleanup\l_inaccurate_metrics" alt="" coords="215,5,396,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#ad45bc64e9420a8e7e81beb6951f43690" title="parlai.scripts.train\l_model.TrainLoop._compute_eta" alt="" coords="200,86,411,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1b8d75bb6c0c8b273939431f580b282d" title="parlai.scripts.train\l_model.TrainLoop._nice\l_format" alt="" coords="225,152,385,208"/>
+<area shape="rect" id="node5" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a1dd41281ca4a9caf25fe22f1ca075555" title="parlai.scripts.train\l_model.TrainLoop._sync\l_training_metrics" alt="" coords="223,232,387,288"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1utils_1_1distributed.html#a9bb1dac198180590ef8c6b6c6f9fc2c4" title="parlai.utils.distributed.is\l_primary_worker" alt="" coords="226,313,385,354"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1utils_1_1distributed.html#a023acb5e3b66e1f27e21247c35661279" title="parlai.utils.distributed.is\l_distributed" alt="" coords="459,313,617,354"/>
 </map>

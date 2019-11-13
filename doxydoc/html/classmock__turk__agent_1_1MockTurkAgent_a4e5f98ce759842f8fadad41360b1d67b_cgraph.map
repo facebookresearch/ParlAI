@@ -1,7 +1,6 @@
 <map id="mock_turk_agent.MockTurkAgent.get_update_packet" name="mock_turk_agent.MockTurkAgent.get_update_packet">
-<area shape="rect" id="node1" title=" " alt="" coords="5,105,189,147"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ae941b277cbfee3e76b543b780ca804f9" title=" " alt="" coords="237,5,420,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title=" " alt="" coords="468,105,635,147"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title=" " alt="" coords="245,147,412,188"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab7e57409d6591f78a3b9d28c5a0f98e6" title=" " alt="" coords="245,212,412,253"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ae941b277cbfee3e76b543b780ca804f9" title="parlai.mturk.core.agents.\lMTurkAgent.get_messages" alt="" coords="237,5,420,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title="parlai.mturk.core.agents.\lAssignState.get_status" alt="" coords="245,71,412,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title="parlai.mturk.core.agents.\lMTurkAgent.get_status" alt="" coords="245,136,412,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab7e57409d6591f78a3b9d28c5a0f98e6" title="parlai.mturk.core.agents.\lMTurkAgent.is_final" alt="" coords="245,201,412,243"/>
 </map>

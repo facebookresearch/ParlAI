@@ -1,0 +1,5 @@
+<map id="parlai.agents.bert_ranker.helpers.add_common_args" name="parlai.agents.bert_ranker.helpers.add_common_args">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html#a763f87c99544b29a0f8fae2c6019e2f8" title="parlai.agents.bert\l_ranker.both_encoder\l_ranker.BothEncoderRankerAgent.add\l_cmdline_args" alt="" coords="193,5,439,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a94b0668eadb20cdd95bd5f95641fc2a6" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.\lBiEncoderRankerAgent.add\l_cmdline_args" alt="" coords="225,100,407,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent.html#a15c4f37715a216f5a4f37f5dbcb446f5" title="parlai.agents.bert\l_ranker.cross_encoder\l_ranker.CrossEncoderRankerAgent.add\l_cmdline_args" alt="" coords="189,195,443,265"/>
+</map>

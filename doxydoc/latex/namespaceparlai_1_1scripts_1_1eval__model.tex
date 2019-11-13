@@ -1,0 +1,81 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1eval__model}{}\section{parlai.\+scripts.\+eval\+\_\+model Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1eval__model}\index{parlai.\+scripts.\+eval\+\_\+model@{parlai.\+scripts.\+eval\+\_\+model}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8}{setup\+\_\+args} (\hyperlink{namespaceparlai_1_1scripts_1_1eval__model_ad0eac535b81763908ecc3cc63c12c885}{parser}=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__model_ade1dfda1be70776553a1fbd6a3450c40}{eval\+\_\+model} (opt, print\+\_\+parser=None)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1eval__model_ad0eac535b81763908ecc3cc63c12c885}{parser} = \hyperlink{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8}{setup\+\_\+args}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__model_ade1dfda1be70776553a1fbd6a3450c40}\label{namespaceparlai_1_1scripts_1_1eval__model_ade1dfda1be70776553a1fbd6a3450c40}} 
+\index{parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}!eval\+\_\+model@{eval\+\_\+model}}
+\index{eval\+\_\+model@{eval\+\_\+model}!parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}}
+\subsubsection{\texorpdfstring{eval\+\_\+model()}{eval\_model()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+model.\+eval\+\_\+model (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{print\+\_\+parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Evaluates a model.
+
+:param opt: tells the evaluation function how to run
+:param bool print_parser: if provided, prints the options that are set within the
+    model after loading the model
+:return: the final result of calling report()
+\end{DoxyVerb}
+ 
+
+Definition at line 97 of file eval\+\_\+model.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports(), parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+core.\+params.\+print\+\_\+announcements().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1eval__model_ade1dfda1be70776553a1fbd6a3450c40_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8}\label{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8}} 
+\index{parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+model.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 29 of file eval\+\_\+model.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task(), make\+\_\+control\+\_\+dataset.\+float, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1eval__model_ad0eac535b81763908ecc3cc63c12c885}\label{namespaceparlai_1_1scripts_1_1eval__model_ad0eac535b81763908ecc3cc63c12c885}} 
+\index{parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}!parser@{parser}}
+\index{parser@{parser}!parlai\+::scripts\+::eval\+\_\+model@{parlai\+::scripts\+::eval\+\_\+model}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+model.\+parser = \hyperlink{namespaceparlai_1_1scripts_1_1eval__model_a2eaba0aa76c4d83e2a0f7f77c23479c8}{setup\+\_\+args}()}
+
+
+
+Definition at line 137 of file eval\+\_\+model.\+py.
+

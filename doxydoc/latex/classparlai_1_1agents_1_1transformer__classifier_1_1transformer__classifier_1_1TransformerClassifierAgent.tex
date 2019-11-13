@@ -1,0 +1,182 @@
+\hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent}{}\section{parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent}\index{parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent@{parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=282pt]{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a10a0e65863e4e7b6a0ac30d3ff6f3c5f}{build\+\_\+model} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_afff32a6e789532e0bf6223b466e43588}{vectorize} (self, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a8d3cb4862ab598c8f93239255dd65eeb}{score} (self, batch)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a2799356b935d49c3fa522f07428ff1c3}{load\+\_\+state\+\_\+dict} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a9f89e606931a4622a5c6a6f6b832235c}{state\+\_\+dict})
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_aedef4e7b90acc77302db619b742f7ab4}{add\+\_\+cmdline\+\_\+args} (parser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a9893f246ed245dd63751b31e1ce9b8ef}{base\+\_\+model}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Classifier based on Transformer.
+\end{DoxyVerb}
+ 
+
+Definition at line 14 of file transformer\+\_\+classifier.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_aedef4e7b90acc77302db619b742f7ab4}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_aedef4e7b90acc77302db619b742f7ab4}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 20 of file transformer\+\_\+classifier.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a10a0e65863e4e7b6a0ac30d3ff6f3c5f}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a10a0e65863e4e7b6a0ac30d3ff6f3c5f}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 32 of file transformer\+\_\+classifier.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a2799356b935d49c3fa522f07428ff1c3}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a2799356b935d49c3fa522f07428ff1c3}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!load\+\_\+state\+\_\+dict@{load\+\_\+state\+\_\+dict}}
+\index{load\+\_\+state\+\_\+dict@{load\+\_\+state\+\_\+dict}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{load\+\_\+state\+\_\+dict()}{load\_state\_dict()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state\+\_\+dict }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load the state dict into model.
+
+This is easily overridable to facilitate transfer of state dicts.
+\end{DoxyVerb}
+ 
+
+Definition at line 61 of file transformer\+\_\+classifier.\+py.
+
+
+
+References parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+base\+\_\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+is\+\_\+finetune, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a2799356b935d49c3fa522f07428ff1c3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a8d3cb4862ab598c8f93239255dd65eeb}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a8d3cb4862ab598c8f93239255dd65eeb}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!score@{score}}
+\index{score@{score}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{score()}{score()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+score (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+
+
+Definition at line 58 of file transformer\+\_\+classifier.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a8d3cb4862ab598c8f93239255dd65eeb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_afff32a6e789532e0bf6223b466e43588}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_afff32a6e789532e0bf6223b466e43588}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!vectorize@{vectorize}}
+\index{vectorize@{vectorize}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{vectorize()}{vectorize()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+vectorize (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add the start and end token to the text.
+\end{DoxyVerb}
+ 
+
+Definition at line 37 of file transformer\+\_\+classifier.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+\_\+add\+\_\+start\+\_\+end\+\_\+tokens().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_afff32a6e789532e0bf6223b466e43588_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a9893f246ed245dd63751b31e1ce9b8ef}\label{classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent_a9893f246ed245dd63751b31e1ce9b8ef}} 
+\index{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}!base\+\_\+model@{base\+\_\+model}}
+\index{base\+\_\+model@{base\+\_\+model}!parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent@{parlai\+::agents\+::transformer\+\_\+classifier\+::transformer\+\_\+classifier\+::\+Transformer\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{base\+\_\+model}{base\_model}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+base\+\_\+model}
+
+
+
+Definition at line 34 of file transformer\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer\+\_\+classifier.\+transformer\+\_\+classifier.\+Transformer\+Classifier\+Agent.\+load\+\_\+state\+\_\+dict().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer\+\_\+classifier/\hyperlink{transformer__classifier_8py}{transformer\+\_\+classifier.\+py}\end{DoxyCompactItemize}

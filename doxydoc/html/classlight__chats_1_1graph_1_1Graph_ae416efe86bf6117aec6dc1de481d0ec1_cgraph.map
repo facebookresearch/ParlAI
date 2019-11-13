@@ -1,11 +1,3 @@
 <map id="light_chats.graph.Graph.cnt_obj" name="light_chats.graph.Graph.cnt_obj">
-<area shape="rect" id="node1" title=" " alt="" coords="5,211,212,238"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a32111f6e4bae319c37f6d8de8dd2bbbe" title=" " alt="" coords="265,5,470,47"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a9c3ce0d845610e465f9a5d9bee1cbd23" title=" " alt="" coords="265,71,470,112"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="260,161,475,187"/>
-<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#a33bf40491bd3aa15e65987377b3d580f" title=" " alt="" coords="263,211,472,238"/>
-<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1Graph.html#aaf9882eb0e887eadf75e4f2460732c05" title=" " alt="" coords="271,263,463,304"/>
-<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#a9ed5168f4d2a93b6a9f3f3ddd07660d4" title=" " alt="" coords="271,328,463,369"/>
-<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1Graph.html#ae0b96f3393dd176f10c3f154649cdf25" title=" " alt="" coords="271,393,463,435"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="523,153,727,195"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="260,5,475,32"/>
 </map>

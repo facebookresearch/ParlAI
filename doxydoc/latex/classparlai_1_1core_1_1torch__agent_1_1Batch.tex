@@ -1,0 +1,96 @@
+\hypertarget{classparlai_1_1core_1_1torch__agent_1_1Batch}{}\section{parlai.\+core.\+torch\+\_\+agent.\+Batch Class Reference}
+\label{classparlai_1_1core_1_1torch__agent_1_1Batch}\index{parlai.\+core.\+torch\+\_\+agent.\+Batch@{parlai.\+core.\+torch\+\_\+agent.\+Batch}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+agent.\+Batch\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classparlai_1_1core_1_1torch__agent_1_1Batch__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+agent.\+Batch\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=199pt]{classparlai_1_1core_1_1torch__agent_1_1Batch__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__agent_1_1Batch_a6ef9b406e741e455da515aa8f84c798e}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, text\+\_\+vec=None, text\+\_\+lengths=None, label\+\_\+vec=None, label\+\_\+lengths=None, labels=None, valid\+\_\+indices=None, candidates=None, candidate\+\_\+vecs=None, image=None, observations=None, kwargs)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Batch is a namedtuple containing data being sent to an agent.
+
+This is the input type of the train_step and eval_step functions.
+Agents can override the batchify function to return an extended namedtuple
+with additional fields if they would like, though we recommend calling the
+parent function to set up these fields as a base.
+
+:param text_vec:
+    bsz x seqlen tensor containing the parsed text data.
+
+:param text_lengths:
+    list of length bsz containing the lengths of the text in same order as
+    text_vec; necessary for pack_padded_sequence.
+
+:param label_vec:
+    bsz x seqlen tensor containing the parsed label (one per batch row).
+
+:param label_lengths:
+    list of length bsz containing the lengths of the labels in same order as
+    label_vec.
+
+:param labels:
+    list of length bsz containing the selected label for each batch row (some
+    datasets have multiple labels per input example).
+
+:param valid_indices:
+    list of length bsz containing the original indices of each example in the
+    batch. we use these to map predictions back to their proper row, since e.g.
+    we may sort examples by their length or some examples may be invalid.
+
+:param candidates:
+    list of lists of text. outer list has size bsz, inner lists vary in size
+    based on the number of candidates for each row in the batch.
+
+:param candidate_vecs:
+    list of lists of tensors. outer list has size bsz, inner lists vary in size
+    based on the number of candidates for each row in the batch.
+
+:param image:
+    list of image features in the format specified by the --image-mode arg.
+
+:param observations:
+    the original observations in the batched order
+\end{DoxyVerb}
+ 
+
+Definition at line 49 of file torch\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__agent_1_1Batch_a6ef9b406e741e455da515aa8f84c798e}\label{classparlai_1_1core_1_1torch__agent_1_1Batch_a6ef9b406e741e455da515aa8f84c798e}} 
+\index{parlai\+::core\+::torch\+\_\+agent\+::\+Batch@{parlai\+::core\+::torch\+\_\+agent\+::\+Batch}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+agent\+::\+Batch@{parlai\+::core\+::torch\+\_\+agent\+::\+Batch}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+agent.\+Batch.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text\+\_\+vec = {\ttfamily None},  }\item[{}]{text\+\_\+lengths = {\ttfamily None},  }\item[{}]{label\+\_\+vec = {\ttfamily None},  }\item[{}]{label\+\_\+lengths = {\ttfamily None},  }\item[{}]{labels = {\ttfamily None},  }\item[{}]{valid\+\_\+indices = {\ttfamily None},  }\item[{}]{candidates = {\ttfamily None},  }\item[{}]{candidate\+\_\+vecs = {\ttfamily None},  }\item[{}]{image = {\ttfamily None},  }\item[{}]{observations = {\ttfamily None},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 109 of file torch\+\_\+agent.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__agent_8py}{torch\+\_\+agent.\+py}\end{DoxyCompactItemize}

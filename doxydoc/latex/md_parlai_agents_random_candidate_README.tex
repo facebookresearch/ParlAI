@@ -1,0 +1,11 @@
+This is an agent which chooses a random label candidate, to be used for debugging or as an extremely simple baseline.
+
+If label candidates are available for the task, it chooses one randomly as a response. It randomly sorts the candidates to return in the {\ttfamily text\+\_\+candidates} field, used for calculating hits metrics. If label candidates are not available, it just repeats the label.
+
+\subsection*{Basic Examples}
+
+Evaluate on b\+Abi by choosing a random candidate. 
+\begin{DoxyCode}
+python examples/eval\_model.py -m random\_candidate -t babi
+\end{DoxyCode}
+ 

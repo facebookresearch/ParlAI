@@ -1,0 +1,5 @@
+<map id="mturk.worlds.ControllableDialogEval.is_msg_tooshortlong" name="mturk.worlds.ControllableDialogEval.is_msg_tooshortlong">
+<area shape="rect" id="node2" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8d951acf0577bb2cfbfe77f49c9147da" title="mturk_evaluation_task.worlds.\lWizardEval.get_human_agent_act" alt="" coords="271,5,493,47"/>
+<area shape="rect" id="node3" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#af81be6365b8b4be98cb300aa51f1de9c" title="mturk.worlds.Controllable\lDialogEval.get_human_agent_act" alt="" coords="273,71,491,112"/>
+<area shape="rect" id="node4" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="263,137,501,163"/>
+</map>

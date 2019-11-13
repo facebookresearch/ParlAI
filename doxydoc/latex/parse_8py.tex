@@ -1,0 +1,55 @@
+\hypertarget{parse_8py}{}\section{parlai/tasks/dailydialog/parse.py File Reference}
+\label{parse_8py}\index{parlai/tasks/dailydialog/parse.\+py@{parlai/tasks/dailydialog/parse.\+py}}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse}{parlai.\+tasks.\+dailydialog.\+parse}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a9bee736957d0b4eb0a046855faa821dc}{parlai.\+tasks.\+dailydialog.\+parse.\+cleanup\+\_\+text} (text)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab81027afb6e00df2a610bb3d3c77e11b}{parlai.\+tasks.\+dailydialog.\+parse.\+B\+A\+D\+S\+E\+NT} = r\textquotesingle{}\textbackslash{}.(\textbackslash{}w)\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8c9e030332871e8cb356bcb74c0ddc8c}{parlai.\+tasks.\+dailydialog.\+parse.\+F\+O\+LD} = \char`\"{}validation\char`\"{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ae6d3cefc4e18c51bfedecae2c5bc875d}{parlai.\+tasks.\+dailydialog.\+parse.\+F\+O\+L\+D\+\_\+\+O\+UT} = \char`\"{}valid\char`\"{}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a780ada59eb3694949604bb14d68e2465}{parlai.\+tasks.\+dailydialog.\+parse.\+A\+C\+TS} = \mbox{[}\textquotesingle{}no\+\_\+act\textquotesingle{}, \textquotesingle{}inform\textquotesingle{}, \textquotesingle{}question\textquotesingle{}, \textquotesingle{}directive\textquotesingle{}, \textquotesingle{}commissive\textquotesingle{}\mbox{]}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a4dcf4c3798e88e5b49c655dee367234d}{parlai.\+tasks.\+dailydialog.\+parse.\+E\+M\+O\+T\+I\+O\+NS}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a567cf2e7cf2a587676683cf7a0860ac9}{parlai.\+tasks.\+dailydialog.\+parse.\+T\+O\+P\+I\+CS}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1b9c736e5b172f676234ff6d85390763}{parlai.\+tasks.\+dailydialog.\+parse.\+A\+L\+L\+\_\+\+C\+O\+U\+N\+TS} = Counter()
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a770d23d03169b162728cd3059fb9ac6e}{parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+acts} = open(os.\+path.\+join(F\+O\+LD, \char`\"{}dialogues\+\_\+act\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6dacd6c7ec446b2a8c20bce692c3f0a2}{parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+emotions} = open(os.\+path.\+join(F\+O\+LD, \char`\"{}dialogues\+\_\+emotion\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a47da41fc1bbbd6a59d8fc5c3640f46e8}{parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+texts} = open(os.\+path.\+join(F\+O\+LD, \char`\"{}dialogues\+\_\+\char`\"{} + F\+O\+LD + \char`\"{}.txt\char`\"{}))
+\item 
+dictionary \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a1257c1312ee37cbf84fd9892736a6282}{parlai.\+tasks.\+dailydialog.\+parse.\+topic\+\_\+map} = \{\}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad0b494b4bb78b7da65dba688516fd065}{parlai.\+tasks.\+dailydialog.\+parse.\+text}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a50ad2692c4cc4e33f1a5303dc3394ebe}{parlai.\+tasks.\+dailydialog.\+parse.\+topic}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ab6bfab164fed7ef268d5494379f02aee}{parlai.\+tasks.\+dailydialog.\+parse.\+f\+\_\+out} = open(\textquotesingle{}out/\textquotesingle{} + F\+O\+L\+D\+\_\+\+O\+UT + \textquotesingle{}.json\textquotesingle{}, \textquotesingle{}w\textquotesingle{})
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad099a0783a1e05f3cbe453600b28c6b0}{parlai.\+tasks.\+dailydialog.\+parse.\+acts} = \mbox{[}A\+C\+TS\mbox{[}int(x)\mbox{]} for x in acts.\+strip().split()\mbox{]}
+\item 
+list \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_adfeb415521d435bbc0f876aa2d7c7a76}{parlai.\+tasks.\+dailydialog.\+parse.\+emotions} = \mbox{[}E\+M\+O\+T\+I\+O\+NS\mbox{[}int(x)\mbox{]} for x in emotions.\+strip().split()\mbox{]}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a6928532917f959f2a4efb079fde20949}{parlai.\+tasks.\+dailydialog.\+parse.\+raw\+\_\+text} = raw\+\_\+text.\+strip()
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_ad9c36b3a53f03612c29b79525a210c75}{parlai.\+tasks.\+dailydialog.\+parse.\+texts} = raw\+\_\+text.\+split(\char`\"{}\+\_\+\+\_\+eou\+\_\+\+\_\+\char`\"{})\mbox{[}\+:-\/1\mbox{]}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a0774e7d0e2917f02dec4999e17c26eee}{parlai.\+tasks.\+dailydialog.\+parse.\+record}
+\item 
+\hyperlink{namespaceparlai_1_1tasks_1_1dailydialog_1_1parse_a8def0964ca56880605d77f01e510fcf8}{parlai.\+tasks.\+dailydialog.\+parse.\+outline} = json.\+dumps(record)
+\end{DoxyCompactItemize}

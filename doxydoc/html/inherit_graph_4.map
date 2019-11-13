@@ -1,7 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,127,69,153"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderModule.html" title=" " alt="" coords="154,5,333,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1BertWrapper.html" title=" " alt="" coords="149,86,337,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1transformer_1_1crossencoder_1_1CrossEncoderModule.html" title=" " alt="" coords="117,151,369,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html" title=" " alt="" coords="121,217,365,258"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderModule.html" title="parlai.agents.bert\l_ranker.bi_encoder_ranker.\lBiEncoderModule" alt="" coords="154,5,333,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1BertWrapper.html" title="parlai.agents.bert\l_ranker.helpers.BertWrapper" alt="" coords="149,86,337,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1transformer_1_1crossencoder_1_1CrossEncoderModule.html" title="parlai.agents.transformer.crossencoder.\lCrossEncoderModule" alt="" coords="117,151,369,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html" title="parlai.agents.transformer.polyencoder.\lPolyEncoderModule" alt="" coords="121,217,365,258"/>
 </map>

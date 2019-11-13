@@ -1,4 +1,4 @@
 <map id="parlai.mturk.core.socket_manager.Packet.as_dict" name="parlai.mturk.core.socket_manager.Packet.as_dict">
-<area shape="rect" id="node1" title=" " alt="" coords="240,5,411,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a308912fbfb5d9423d882100db5c79756" title=" " alt="" coords="5,5,192,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a140e38046a95501d5a7798f04b1553bb" title="parlai.mturk.core.socket\l_manager.Packet.__repr__" alt="" coords="228,5,407,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a308912fbfb5d9423d882100db5c79756" title="parlai.mturk.core.socket\l_manager.Packet.new_copy" alt="" coords="224,71,411,112"/>
 </map>

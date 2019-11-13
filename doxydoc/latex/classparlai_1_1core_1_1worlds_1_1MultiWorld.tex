@@ -1,0 +1,523 @@
+\hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld}{}\section{parlai.\+core.\+worlds.\+Multi\+World Class Reference}
+\label{classparlai_1_1core_1_1worlds_1_1MultiWorld}\index{parlai.\+core.\+worlds.\+Multi\+World@{parlai.\+core.\+worlds.\+Multi\+World}}
+
+
+Inheritance diagram for parlai.\+core.\+worlds.\+Multi\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+worlds.\+Multi\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_abe32f537dd97543bbfdf51d417d81d9b}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a728f75194cc26ea4035047c46cf62608}{agents}=None, shared=None, default\+\_\+world=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae62ad8500e4208ed99ffcf91707746e1}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3efde7408bd94052b0a4880aefbc5d0a}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6e012b3db760d95f189baf3466fc55d0}{get\+\_\+agents} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a593c1eb833633014c2506abd80695317}{get\+\_\+task\+\_\+agent} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a73074f333544de25b4e07ffc48819896}{get\+\_\+acts} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae780a8cfd7c6b675727cca24b8321015}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7034326fa264402e0857a98d1ec688de}{epoch\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a9f2f4de7791e3b295359039e9d26a523}{parley\+\_\+init} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_aae71b8182e17a1579352a52b56614b64}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a03a162a9c53ed806221e46762d3fcb52}{display} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa89365baa3672e08d8e239199df4eda7}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_afcdadb92455ce41a8156390d876ebb96}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7d52dd60bfa5654bfc4ad656ccb07fa1}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a4d72a950f8aae3d248a9694908f0fc85}{save\+\_\+agents} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_afd4cbc3c724de6b6bf8f55e6fc56964e}{worlds}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3d2a0158d96bed4eead1e3b4138d5242}{world\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_ac88454a3fca862db7f00fb165b483dc5}{new\+\_\+world}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4332cdcbb6a8f91d55fbdeaa412cbe3}{parleys}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa8e5d1fe78cd5ad37c142c95ff2a0a76}{random}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4264dd13f5d8e7f7883e3afd6d726e7}{cum\+\_\+task\+\_\+weights}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_af84190b29a206943d32a09e70301a5a2}{task\+\_\+choices}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a97cb387aa6641126af73571731042ece}{num\+\_\+exs}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6f874903b97f9bfd44354223ae38679e}{num\+\_\+eps}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Container for multiple worlds.
+
+Container for a set of worlds where each world gets a turn
+in a round-robin fashion. The same user_agents are placed in each,
+though each world may contain additional agents according to the task
+that world represents.
+\end{DoxyVerb}
+ 
+
+Definition at line 470 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_abe32f537dd97543bbfdf51d417d81d9b}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_abe32f537dd97543bbfdf51d417d81d9b}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None},  }\item[{}]{default\+\_\+world = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 480 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a03a162a9c53ed806221e46762d3fcb52}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a03a162a9c53ed806221e46762d3fcb52}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!display@{display}}
+\index{display@{display}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+display (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Display all subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 596 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+parleys, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7034326fa264402e0857a98d1ec688de}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7034326fa264402e0857a98d1ec688de}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!epoch\+\_\+done@{epoch\+\_\+done}}
+\index{epoch\+\_\+done@{epoch\+\_\+done}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{epoch\+\_\+done()}{epoch\_done()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+epoch\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return if *all* the subworlds are done.\end{DoxyVerb}
+ 
+
+Definition at line 556 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7034326fa264402e0857a98d1ec688de_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a73074f333544de25b4e07ffc48819896}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a73074f333544de25b4e07ffc48819896}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!get\+\_\+acts@{get\+\_\+acts}}
+\index{get\+\_\+acts@{get\+\_\+acts}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+acts()}{get\_acts()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+acts (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the acts in the *current* subworld.\end{DoxyVerb}
+ 
+
+Definition at line 544 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6e012b3db760d95f189baf3466fc55d0}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6e012b3db760d95f189baf3466fc55d0}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!get\+\_\+agents@{get\+\_\+agents}}
+\index{get\+\_\+agents@{get\+\_\+agents}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+agents()}{get\_agents()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the agents in the *current* subworld.\end{DoxyVerb}
+ 
+
+Definition at line 536 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a593c1eb833633014c2506abd80695317}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a593c1eb833633014c2506abd80695317}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!get\+\_\+task\+\_\+agent@{get\+\_\+task\+\_\+agent}}
+\index{get\+\_\+task\+\_\+agent@{get\+\_\+task\+\_\+agent}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+task\+\_\+agent()}{get\_task\_agent()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+task\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Not possible/well-defined in this setting.\end{DoxyVerb}
+ 
+
+Definition at line 540 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3efde7408bd94052b0a4880aefbc5d0a}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3efde7408bd94052b0a4880aefbc5d0a}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return sum of each subworld's number of episodes.\end{DoxyVerb}
+ 
+
+Definition at line 526 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3efde7408bd94052b0a4880aefbc5d0a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae62ad8500e4208ed99ffcf91707746e1}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae62ad8500e4208ed99ffcf91707746e1}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return sum of each subworld's number of examples.\end{DoxyVerb}
+ 
+
+Definition at line 516 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), and parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae62ad8500e4208ed99ffcf91707746e1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_aae71b8182e17a1579352a52b56614b64}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_aae71b8182e17a1579352a52b56614b64}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parley the *current* subworld.\end{DoxyVerb}
+ 
+
+Definition at line 590 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init(), parlai.\+core.\+worlds.\+World.\+update\+\_\+counters(), parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_aae71b8182e17a1579352a52b56614b64_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a9f2f4de7791e3b295359039e9d26a523}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a9f2f4de7791e3b295359039e9d26a523}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!parley\+\_\+init@{parley\+\_\+init}}
+\index{parley\+\_\+init@{parley\+\_\+init}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{parley\+\_\+init()}{parley\_init()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Update the current subworld.
+
+If we are in the middle of an episode, keep the same world and finish this
+episode. If we have finished this episode, pick a new world (either in a
+random or round-robin fashion).
+\end{DoxyVerb}
+ 
+
+Definition at line 563 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+cum\+\_\+task\+\_\+weights, parlai.\+core.\+worlds.\+Multi\+World.\+cum\+\_\+task\+\_\+weights, parlai.\+core.\+worlds.\+World.\+episode\+\_\+done(), parlai.\+core.\+worlds.\+Multi\+World.\+epoch\+\_\+done(), parlai.\+core.\+worlds.\+Multi\+World.\+new\+\_\+world, parlai.\+core.\+worlds.\+Multi\+World.\+parleys, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+random, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+random, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+random, parlai.\+core.\+worlds.\+Multi\+World.\+random, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+random, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+choices, parlai.\+core.\+worlds.\+Multi\+World.\+task\+\_\+choices, parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+parley().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_a9f2f4de7791e3b295359039e9d26a523_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_a9f2f4de7791e3b295359039e9d26a523_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa89365baa3672e08d8e239199df4eda7}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa89365baa3672e08d8e239199df4eda7}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!report@{report}}
+\index{report@{report}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report aggregate metrics across all subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 608 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+aggregate\+\_\+metrics(), parlai.\+core.\+worlds.\+World.\+total\+\_\+exs, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa89365baa3672e08d8e239199df4eda7_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_afcdadb92455ce41a8156390d876ebb96}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_afcdadb92455ce41a8156390d876ebb96}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!reset@{reset}}
+\index{reset@{reset}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset all subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 614 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7d52dd60bfa5654bfc4ad656ccb07fa1}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a7d52dd60bfa5654bfc4ad656ccb07fa1}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics in all subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 619 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a4d72a950f8aae3d248a9694908f0fc85}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a4d72a950f8aae3d248a9694908f0fc85}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!save\+\_\+agents@{save\+\_\+agents}}
+\index{save\+\_\+agents@{save\+\_\+agents}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{save\+\_\+agents()}{save\_agents()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+save\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save agents in all subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 624 of file worlds.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae780a8cfd7c6b675727cca24b8321015}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_ae780a8cfd7c6b675727cca24b8321015}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!share@{share}}
+\index{share@{share}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Multi\+World.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share all the subworlds.\end{DoxyVerb}
+ 
+
+Definition at line 548 of file worlds.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type, and parlai.\+core.\+worlds.\+Multi\+World.\+worlds.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4264dd13f5d8e7f7883e3afd6d726e7}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4264dd13f5d8e7f7883e3afd6d726e7}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!cum\+\_\+task\+\_\+weights@{cum\+\_\+task\+\_\+weights}}
+\index{cum\+\_\+task\+\_\+weights@{cum\+\_\+task\+\_\+weights}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{cum\+\_\+task\+\_\+weights}{cum\_task\_weights}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+cum\+\_\+task\+\_\+weights}
+
+
+
+Definition at line 504 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_ac88454a3fca862db7f00fb165b483dc5}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_ac88454a3fca862db7f00fb165b483dc5}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!new\+\_\+world@{new\+\_\+world}}
+\index{new\+\_\+world@{new\+\_\+world}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{new\+\_\+world}{new\_world}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+new\+\_\+world}
+
+
+
+Definition at line 500 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6f874903b97f9bfd44354223ae38679e}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a6f874903b97f9bfd44354223ae38679e}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!num\+\_\+eps@{num\+\_\+eps}}
+\index{num\+\_\+eps@{num\+\_\+eps}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+eps}{num\_eps}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+eps}
+
+
+
+Definition at line 531 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+episodes(), and parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+episodes().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a97cb387aa6641126af73571731042ece}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a97cb387aa6641126af73571731042ece}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!num\+\_\+exs@{num\+\_\+exs}}
+\index{num\+\_\+exs@{num\+\_\+exs}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+exs}{num\_exs}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+exs}
+
+
+
+Definition at line 521 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+num\+\_\+examples(), and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4332cdcbb6a8f91d55fbdeaa412cbe3}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa4332cdcbb6a8f91d55fbdeaa412cbe3}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!parleys@{parleys}}
+\index{parleys@{parleys}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{parleys}{parleys}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+parleys}
+
+
+
+Definition at line 501 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+display(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa8e5d1fe78cd5ad37c142c95ff2a0a76}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_aa8e5d1fe78cd5ad37c142c95ff2a0a76}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!random@{random}}
+\index{random@{random}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{random}{random}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+random}
+
+
+
+Definition at line 502 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_af84190b29a206943d32a09e70301a5a2}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_af84190b29a206943d32a09e70301a5a2}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!task\+\_\+choices@{task\+\_\+choices}}
+\index{task\+\_\+choices@{task\+\_\+choices}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{task\+\_\+choices}{task\_choices}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+task\+\_\+choices}
+
+
+
+Definition at line 505 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3d2a0158d96bed4eead1e3b4138d5242}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_a3d2a0158d96bed4eead1e3b4138d5242}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!world\+\_\+idx@{world\+\_\+idx}}
+\index{world\+\_\+idx@{world\+\_\+idx}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{world\+\_\+idx}{world\_idx}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+world\+\_\+idx}
+
+
+
+Definition at line 499 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Multi\+World.\+display(), parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+acts(), parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+agents(), parlai.\+core.\+worlds.\+Multi\+World.\+parley(), and parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1MultiWorld_afd4cbc3c724de6b6bf8f55e6fc56964e}\label{classparlai_1_1core_1_1worlds_1_1MultiWorld_afd4cbc3c724de6b6bf8f55e6fc56964e}} 
+\index{parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}!worlds@{worlds}}
+\index{worlds@{worlds}!parlai\+::core\+::worlds\+::\+Multi\+World@{parlai\+::core\+::worlds\+::\+Multi\+World}}
+\subsubsection{\texorpdfstring{worlds}{worlds}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Multi\+World.\+worlds}
+
+
+
+Definition at line 482 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Batch\+World.\+batch\+\_\+act(), parlai.\+core.\+worlds.\+Batch\+World.\+batch\+\_\+observe(), parlai.\+core.\+worlds.\+Multi\+World.\+display(), parlai.\+core.\+worlds.\+Batch\+World.\+display(), parlai.\+core.\+worlds.\+Multi\+World.\+epoch\+\_\+done(), parlai.\+core.\+worlds.\+Batch\+World.\+epoch\+\_\+done(), parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+acts(), parlai.\+core.\+worlds.\+Multi\+World.\+get\+\_\+agents(), parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+episodes(), parlai.\+core.\+worlds.\+Multi\+World.\+num\+\_\+examples(), parlai.\+core.\+worlds.\+Multi\+World.\+parley(), parlai.\+core.\+worlds.\+Batch\+World.\+parley(), parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init(), parlai.\+core.\+worlds.\+Multi\+World.\+report(), parlai.\+core.\+worlds.\+Multi\+World.\+reset(), parlai.\+core.\+worlds.\+Batch\+World.\+reset(), parlai.\+core.\+worlds.\+Multi\+World.\+reset\+\_\+metrics(), parlai.\+core.\+worlds.\+Multi\+World.\+save\+\_\+agents(), parlai.\+core.\+worlds.\+Multi\+World.\+share(), and parlai.\+core.\+worlds.\+Batch\+World.\+shutdown().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{parlai_2core_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

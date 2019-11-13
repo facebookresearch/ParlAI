@@ -1,5 +1,5 @@
 <map id="parlai.core.worlds.ExecutableWorld.execute" name="parlai.core.worlds.ExecutableWorld.execute">
-<area shape="rect" id="node1" title=" " alt="" coords="259,39,452,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,5,211,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,71,205,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator.html#ae196cf0b53564026703d3ebbd4e741eb" title="parlai.tasks.talkthewalk.worlds.\lSimulator.execute_and_write" alt="" coords="247,5,452,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title="parlai.tasks.talkthewalk.worlds.\lSimulateWorld.parley" alt="" coords="247,71,452,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title="parlai.core.worlds.Executable\lWorld.parley" alt="" coords="253,136,446,177"/>
 </map>

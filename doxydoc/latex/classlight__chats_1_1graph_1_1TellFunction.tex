@@ -1,0 +1,213 @@
+\hypertarget{classlight__chats_1_1graph_1_1TellFunction}{}\section{light\+\_\+chats.\+graph.\+Tell\+Function Class Reference}
+\label{classlight__chats_1_1graph_1_1TellFunction}\index{light\+\_\+chats.\+graph.\+Tell\+Function@{light\+\_\+chats.\+graph.\+Tell\+Function}}
+
+
+Inheritance diagram for light\+\_\+chats.\+graph.\+Tell\+Function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classlight__chats_1_1graph_1_1TellFunction__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for light\+\_\+chats.\+graph.\+Tell\+Function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classlight__chats_1_1graph_1_1TellFunction__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_ab0442ec224b9e0a627806d5634be2926}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_a91e865e9bbba1f3ed3f01445896be21d}{func} (self, graph, args)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_ab4c8496d4fa9e03040b6090eaa65528a}{format\+\_\+observation} (self, graph, viewing\+\_\+agent, action, telling\+\_\+agent=None)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_a86e8534217b3d10cb4daf5cc080d624e}{valid\+\_\+args} (self, graph, args)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_ad70758fa554b68e7b2517704a7ab5e76}{evaluate\+\_\+constraint\+\_\+set} (self, graph, args, constraints)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_a88ac4115a6cca664cd220fb0b8852629}{parse\+\_\+text\+\_\+to\+\_\+args} (self, graph, actor\+\_\+id, text)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_a39a099e864d0d20f997c03d96d7e1df8}{get\+\_\+name} (self)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1TellFunction_a1ce8fd5a8ee86a01e68e9115f8cc9108}{get\+\_\+canonical\+\_\+form} (self, graph, args)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Output all the following arguments [Actor, Target, raw text]\end{DoxyVerb}
+ 
+
+Definition at line 504 of file graph.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_ab0442ec224b9e0a627806d5634be2926}\label{classlight__chats_1_1graph_1_1TellFunction_ab0442ec224b9e0a627806d5634be2926}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 507 of file graph.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_ad70758fa554b68e7b2517704a7ab5e76}\label{classlight__chats_1_1graph_1_1TellFunction_ad70758fa554b68e7b2517704a7ab5e76}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!evaluate\+\_\+constraint\+\_\+set@{evaluate\+\_\+constraint\+\_\+set}}
+\index{evaluate\+\_\+constraint\+\_\+set@{evaluate\+\_\+constraint\+\_\+set}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{evaluate\+\_\+constraint\+\_\+set()}{evaluate\_constraint\_set()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+evaluate\+\_\+constraint\+\_\+set (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args,  }\item[{}]{constraints }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Can't talk to yourself, only constraint\end{DoxyVerb}
+ 
+
+Definition at line 578 of file graph.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+location, mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+location(), and light\+\_\+chats.\+graph.\+Graph.\+location().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1TellFunction_ad70758fa554b68e7b2517704a7ab5e76_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_ab4c8496d4fa9e03040b6090eaa65528a}\label{classlight__chats_1_1graph_1_1TellFunction_ab4c8496d4fa9e03040b6090eaa65528a}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!format\+\_\+observation@{format\+\_\+observation}}
+\index{format\+\_\+observation@{format\+\_\+observation}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{format\+\_\+observation()}{format\_observation()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+format\+\_\+observation (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{viewing\+\_\+agent,  }\item[{}]{action,  }\item[{}]{telling\+\_\+agent = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Parse the observations to recount, then return them\end{DoxyVerb}
+ 
+
+Definition at line 536 of file graph.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_a91e865e9bbba1f3ed3f01445896be21d}\label{classlight__chats_1_1graph_1_1TellFunction_a91e865e9bbba1f3ed3f01445896be21d}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!func@{func}}
+\index{func@{func}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{func()}{func()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+func (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}<Actor> sends message history to room [or specified <recipient>]\end{DoxyVerb}
+ 
+
+Definition at line 518 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph\+Function.\+get\+\_\+name().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1TellFunction_a91e865e9bbba1f3ed3f01445896be21d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_a1ce8fd5a8ee86a01e68e9115f8cc9108}\label{classlight__chats_1_1graph_1_1TellFunction_a1ce8fd5a8ee86a01e68e9115f8cc9108}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!get\+\_\+canonical\+\_\+form@{get\+\_\+canonical\+\_\+form}}
+\index{get\+\_\+canonical\+\_\+form@{get\+\_\+canonical\+\_\+form}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{get\+\_\+canonical\+\_\+form()}{get\_canonical\_form()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+get\+\_\+canonical\+\_\+form (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get canonical form for the given args on this function\end{DoxyVerb}
+ 
+
+Definition at line 632 of file graph.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_a39a099e864d0d20f997c03d96d7e1df8}\label{classlight__chats_1_1graph_1_1TellFunction_a39a099e864d0d20f997c03d96d7e1df8}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!get\+\_\+name@{get\+\_\+name}}
+\index{get\+\_\+name@{get\+\_\+name}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{get\+\_\+name()}{get\_name()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+get\+\_\+name (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the canonical name of this function\end{DoxyVerb}
+ 
+
+Definition at line 625 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph\+Function.\+name, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_a88ac4115a6cca664cd220fb0b8852629}\label{classlight__chats_1_1graph_1_1TellFunction_a88ac4115a6cca664cd220fb0b8852629}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!parse\+\_\+text\+\_\+to\+\_\+args@{parse\+\_\+text\+\_\+to\+\_\+args}}
+\index{parse\+\_\+text\+\_\+to\+\_\+args@{parse\+\_\+text\+\_\+to\+\_\+args}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{parse\+\_\+text\+\_\+to\+\_\+args()}{parse\_text\_to\_args()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+parse\+\_\+text\+\_\+to\+\_\+args (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{actor\+\_\+id,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Breaks text into function arguments based on tell target "something"
+Returns:
+(None, display text, None) if parsing failed to find valid candidates
+(True, arg_ids, canonical_text_args) if parsing and constraints succeed
+(False, Failure action, matched_args)
+if parsing succeeds but constraints fail
+\end{DoxyVerb}
+ 
+
+Definition at line 592 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph\+Function.\+parse\+\_\+descs\+\_\+to\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1TellFunction_a88ac4115a6cca664cd220fb0b8852629_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1TellFunction_a86e8534217b3d10cb4daf5cc080d624e}\label{classlight__chats_1_1graph_1_1TellFunction_a86e8534217b3d10cb4daf5cc080d624e}} 
+\index{light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}!valid\+\_\+args@{valid\+\_\+args}}
+\index{valid\+\_\+args@{valid\+\_\+args}!light\+\_\+chats\+::graph\+::\+Tell\+Function@{light\+\_\+chats\+::graph\+::\+Tell\+Function}}
+\subsubsection{\texorpdfstring{valid\+\_\+args()}{valid\_args()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Tell\+Function.\+valid\+\_\+args (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+
+
+Definition at line 558 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph\+Function.\+evaluate\+\_\+constraint\+\_\+set(), light\+\_\+chats.\+graph.\+Graph\+Function.\+func\+\_\+constraints, and light\+\_\+chats.\+graph.\+Graph\+Function.\+parse\+\_\+descs\+\_\+to\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classlight__chats_1_1graph_1_1TellFunction_a86e8534217b3d10cb4daf5cc080d624e_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/light/light\+\_\+chats/\hyperlink{parlai_2mturk_2tasks_2light_2light__chats_2graph_8py}{graph.\+py}\end{DoxyCompactItemize}

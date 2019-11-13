@@ -1,0 +1,55 @@
+\hypertarget{namespacekvmemnn}{}\section{kvmemnn Namespace Reference}
+\label{namespacekvmemnn}\index{kvmemnn@{kvmemnn}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classkvmemnn_1_1KvmemnnAgent}{Kvmemnn\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacekvmemnn_a2a74a2753494bd274e31c8efd30f6067}{maintain\+\_\+dialog\+\_\+history} (history, observation, reply=\textquotesingle{}\textquotesingle{}, history\+Length=1, use\+Replies=\char`\"{}labels\char`\"{}, dict=None, use\+Start\+End\+Indices=True, use\+Personas=True)
+\item 
+def \hyperlink{namespacekvmemnn_abcca0290090a06f9273da1b1c7345c9d}{load\+\_\+cands} (path)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacekvmemnn_abcca0290090a06f9273da1b1c7345c9d}\label{namespacekvmemnn_abcca0290090a06f9273da1b1c7345c9d}} 
+\index{kvmemnn@{kvmemnn}!load\+\_\+cands@{load\+\_\+cands}}
+\index{load\+\_\+cands@{load\+\_\+cands}!kvmemnn@{kvmemnn}}
+\subsubsection{\texorpdfstring{load\+\_\+cands()}{load\_cands()}}
+{\footnotesize\ttfamily def kvmemnn.\+load\+\_\+cands (\begin{DoxyParamCaption}\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load global fixed set of candidate labels that the teacher provides
+every example (the true labels for a specific example are also added to
+this set, so that it's possible to get the right answer).
+\end{DoxyVerb}
+ 
+
+Definition at line 98 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{namespacekvmemnn_a2a74a2753494bd274e31c8efd30f6067}\label{namespacekvmemnn_a2a74a2753494bd274e31c8efd30f6067}} 
+\index{kvmemnn@{kvmemnn}!maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}}
+\index{maintain\+\_\+dialog\+\_\+history@{maintain\+\_\+dialog\+\_\+history}!kvmemnn@{kvmemnn}}
+\subsubsection{\texorpdfstring{maintain\+\_\+dialog\+\_\+history()}{maintain\_dialog\_history()}}
+{\footnotesize\ttfamily def kvmemnn.\+maintain\+\_\+dialog\+\_\+history (\begin{DoxyParamCaption}\item[{}]{history,  }\item[{}]{observation,  }\item[{}]{reply = {\ttfamily \textquotesingle{}\textquotesingle{}},  }\item[{}]{history\+Length = {\ttfamily 1},  }\item[{}]{use\+Replies = {\ttfamily \char`\"{}labels\char`\"{}},  }\item[{}]{dict = {\ttfamily None},  }\item[{}]{use\+Start\+End\+Indices = {\ttfamily True},  }\item[{}]{use\+Personas = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Keeps track of dialog history, up to a truncation length.
+Either includes replies from the labels, model, or not all using param 'replies'.\end{DoxyVerb}
+ 
+
+Definition at line 35 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+observe().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacekvmemnn_a2a74a2753494bd274e31c8efd30f6067_icgraph}
+\end{center}
+\end{figure}

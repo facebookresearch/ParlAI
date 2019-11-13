@@ -1,0 +1,8 @@
+<map id="split_convai2_topics.main" name="split_convai2_topics.main">
+<area shape="rect" id="node2" href="$namespaceself__feeding_1_1utils.html#a40d25d283be41f59e7167424691b4ba8" title="self_feeding.utils.episode\l_to_examples" alt="" coords="237,5,406,47"/>
+<area shape="rect" id="node4" href="$namespaceself__feeding_1_1utils.html#a578aab95575fe72eee6768341a257a05" title="self_feeding.utils.extract\l_fb_episodes" alt="" coords="239,71,403,112"/>
+<area shape="rect" id="node7" href="$namespacesplit__convai2__topics.html#a141f246ea2a420cf68009cb02b0fe41d" title="split_convai2_topics.includes\l_topic" alt="" coords="225,136,417,177"/>
+<area shape="rect" id="node3" href="$namespaceself__feeding_1_1utils.html#ab55b6655be64ff265dbccaf4b59ccdfe" title="self_feeding.utils.add\l_person_tokens" alt="" coords="509,5,654,47"/>
+<area shape="rect" id="node5" href="$namespaceself__feeding_1_1utils.html#a6c6383b2b208a5cf7d3d043376411034" title="self_feeding.utils.sanitize\l_parley" alt="" coords="497,71,666,112"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1tasks_1_1aqua_1_1agents.html#a2d4e9f4e80d4edc0646c7e3d52be9f25" title="parlai.tasks.aqua.agents.setup_data" alt="" coords="465,137,697,163"/>
+</map>

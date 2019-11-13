@@ -1,7 +1,4 @@
 <map id="parrot.ParrotAgent" name="parrot.ParrotAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="32,244,160,271"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="17,155,175,196"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,80,56,107"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="80,80,243,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="133,5,190,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="17,155,175,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="80,80,243,107"/>
 </map>

@@ -1,0 +1,12 @@
+<map id="parlai.core.params.ParlaiParser.add_argument_group" name="parlai.core.params.ParlaiParser.add_argument_group">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a718f9802eec8bcac25866900d2ae69b0" title="parlai.core.params.Parlai\lParser.add_distributed\l_training_args" alt="" coords="277,5,443,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a33d186a0cd665df88726b96f1bc3d88e" title="parlai.core.params.Parlai\lParser.add_image_args" alt="" coords="277,86,443,127"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#aed38c7346112f11851969224cb25ad1e" title="parlai.core.params.Parlai\lParser.add_messenger_args" alt="" coords="266,151,454,193"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#af05d40e27abb0740948fdccfde5b8808" title="parlai.core.params.Parlai\lParser.add_model_args" alt="" coords="277,217,443,258"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a6043b5b5c36f99f85a9791dd8dc35551" title="parlai.core.params.Parlai\lParser.add_mturk_args" alt="" coords="277,282,443,323"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a3dfaa7781346d8c974d60684e81cb705" title="parlai.core.params.Parlai\lParser.add_parlai_args" alt="" coords="277,347,443,389"/>
+<area shape="rect" id="node11" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a037989eca768126b981270b2bdf06b0c" title="parlai.core.params.Parlai\lParser.add_pytorch_datateacher_args" alt="" coords="239,413,481,454"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ade9c068595c2b1110d019f3dedeb79ba" title="parlai.core.params.Parlai\lParser.add_extra_args" alt="" coords="529,86,696,127"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ad549d75e2808d63fbc5c5d0e30682f18" title="parlai.core.params.Parlai\lParser.parse_args" alt="" coords="744,86,911,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#adb1dec3d3433b40209bb2c24722df335" title="parlai.core.params.Parlai\lParser.print_args" alt="" coords="959,86,1125,127"/>
+</map>

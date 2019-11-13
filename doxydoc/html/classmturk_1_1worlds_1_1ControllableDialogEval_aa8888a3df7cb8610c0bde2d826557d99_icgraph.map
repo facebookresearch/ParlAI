@@ -1,5 +1,3 @@
 <map id="mturk.worlds.ControllableDialogEval.shutdown" name="mturk.worlds.ControllableDialogEval.shutdown">
-<area shape="rect" id="node1" title=" " alt="" coords="500,5,671,47"/>
-<area shape="rect" id="node2" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06c86b010d4db36333eb3f520dfc926b" title=" " alt="" coords="252,5,452,47"/>
-<area shape="rect" id="node3" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8c2713a39b3a8e89bec417c2b6c0c1eb" title=" " alt="" coords="5,5,204,47"/>
+<area shape="rect" id="node2" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06c86b010d4db36333eb3f520dfc926b" title="mturk.worlds.Controllable\lDialogEval.parallel_eval_mode" alt="" coords="224,5,424,47"/>
 </map>

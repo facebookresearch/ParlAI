@@ -1,0 +1,213 @@
+\hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner}{}\section{transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner Class Reference}
+\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner}\index{transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner@{transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner}}
+
+
+Inheritance diagram for transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7d29a30f80b0372d0beacd3af1958e65}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a42df74fa15a2ffa8a6e89ef3dae57b1a}{n\+\_\+heads}, \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a40f7628fa8ceafe84a189c5368b9c239}{n\+\_\+layers}, hidden\+\_\+dim, \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a58c6b1d922a7193704abb451891e3649}{ffn\+\_\+size}, \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a1c81e3d38a243852940532ca19476c09}{reduction}=True, attention\+\_\+dropout=0.\+0, relu\+\_\+dropout=0.\+0, learn\+\_\+positional\+\_\+embeddings=False)
+\item 
+def \hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a6967efeaad96c86a9993b959a3c7c713}{forward} (self, tensor, mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a58c6b1d922a7193704abb451891e3649}{ffn\+\_\+size}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a40f7628fa8ceafe84a189c5368b9c239}{n\+\_\+layers}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a42df74fa15a2ffa8a6e89ef3dae57b1a}{n\+\_\+heads}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_afeccec813594ac23a028665977aa46b0}{out\+\_\+dim}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a75530decd105d14f092bb17baefa436e}{dim}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a1c81e3d38a243852940532ca19476c09}{reduction}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_ae51f1cfb4490c5a5f2ed43f75bbc66f7}{position\+\_\+embeddings}
+\item 
+\hyperlink{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7acc2965a0129fae66c0f6685094368b}{layers}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Multimodal Combination module.\end{DoxyVerb}
+ 
+
+Definition at line 491 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7d29a30f80b0372d0beacd3af1958e65}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7d29a30f80b0372d0beacd3af1958e65}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+heads,  }\item[{}]{n\+\_\+layers,  }\item[{}]{hidden\+\_\+dim,  }\item[{}]{ffn\+\_\+size,  }\item[{}]{reduction = {\ttfamily True},  }\item[{}]{attention\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{relu\+\_\+dropout = {\ttfamily 0.0},  }\item[{}]{learn\+\_\+positional\+\_\+embeddings = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 504 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a6967efeaad96c86a9993b959a3c7c713}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a6967efeaad96c86a9993b959a3c7c713}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!forward@{forward}}
+\index{forward@{forward}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tensor,  }\item[{}]{mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.
+
+:param tensor:
+    a [bsz, seq_len, hidden_dim] FloatTensor
+:param mask:
+    a [bsz, seq_len] ByteTensor filled with 1 when inside the sequence and 0 outside.
+
+:return:
+    output: a [bsz, hidden_dim] FloatTensor of encodings
+    mask: the same as before
+\end{DoxyVerb}
+ 
+
+Definition at line 530 of file modules.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+layers, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+layers, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+layers, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+layers, transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+layers, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+n\+\_\+layers, transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+n\+\_\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+n\+\_\+layers, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+position\+\_\+embeddings, transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+position\+\_\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+position\+\_\+embeddings, parlai.\+agents.\+memnn.\+modules.\+Embed.\+reduction, and transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+reduction.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a6967efeaad96c86a9993b959a3c7c713_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a75530decd105d14f092bb17baefa436e}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a75530decd105d14f092bb17baefa436e}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!dim@{dim}}
+\index{dim@{dim}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{dim}{dim}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+dim}
+
+
+
+Definition at line 510 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a58c6b1d922a7193704abb451891e3649}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a58c6b1d922a7193704abb451891e3649}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!ffn\+\_\+size@{ffn\+\_\+size}}
+\index{ffn\+\_\+size@{ffn\+\_\+size}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{ffn\+\_\+size}{ffn\_size}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+ffn\+\_\+size}
+
+
+
+Definition at line 506 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7acc2965a0129fae66c0f6685094368b}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a7acc2965a0129fae66c0f6685094368b}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!layers@{layers}}
+\index{layers@{layers}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{layers}{layers}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+layers}
+
+
+
+Definition at line 522 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a42df74fa15a2ffa8a6e89ef3dae57b1a}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a42df74fa15a2ffa8a6e89ef3dae57b1a}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!n\+\_\+heads@{n\+\_\+heads}}
+\index{n\+\_\+heads@{n\+\_\+heads}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{n\+\_\+heads}{n\_heads}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+n\+\_\+heads}
+
+
+
+Definition at line 508 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a40f7628fa8ceafe84a189c5368b9c239}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a40f7628fa8ceafe84a189c5368b9c239}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!n\+\_\+layers@{n\+\_\+layers}}
+\index{n\+\_\+layers@{n\+\_\+layers}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{n\+\_\+layers}{n\_layers}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+n\+\_\+layers}
+
+
+
+Definition at line 507 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_afeccec813594ac23a028665977aa46b0}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_afeccec813594ac23a028665977aa46b0}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!out\+\_\+dim@{out\+\_\+dim}}
+\index{out\+\_\+dim@{out\+\_\+dim}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{out\+\_\+dim}{out\_dim}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+out\+\_\+dim}
+
+
+
+Definition at line 509 of file modules.\+py.
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_ae51f1cfb4490c5a5f2ed43f75bbc66f7}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_ae51f1cfb4490c5a5f2ed43f75bbc66f7}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!position\+\_\+embeddings@{position\+\_\+embeddings}}
+\index{position\+\_\+embeddings@{position\+\_\+embeddings}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{position\+\_\+embeddings}{position\_embeddings}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+position\+\_\+embeddings}
+
+
+
+Definition at line 514 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+\mbox{\Hypertarget{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a1c81e3d38a243852940532ca19476c09}\label{classtransresnet__multimodal_1_1modules_1_1MultimodalCombiner_a1c81e3d38a243852940532ca19476c09}} 
+\index{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}!reduction@{reduction}}
+\index{reduction@{reduction}!transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner@{transresnet\+\_\+multimodal\+::modules\+::\+Multimodal\+Combiner}}
+\subsubsection{\texorpdfstring{reduction}{reduction}}
+{\footnotesize\ttfamily transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+reduction}
+
+
+
+Definition at line 511 of file modules.\+py.
+
+
+
+Referenced by transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/image\+\_\+chat/transresnet\+\_\+multimodal/\hyperlink{projects_2image__chat_2transresnet__multimodal_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

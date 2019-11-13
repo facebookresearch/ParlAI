@@ -1,0 +1,22 @@
+<map id="parlai.agents.tfidf_retriever.tokenizers.spacy_tokenizer.SpacyTokenizer.tokenize" name="parlai.agents.tfidf_retriever.tokenizers.spacy_tokenizer.SpacyTokenizer.tokenize">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#af34b92857b41748aafdecee34ebf9345" title="parlai.core.dict.Dictionary\lAgent.act" alt="" coords="287,57,457,99"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a8fede3cf83af6a47c5dd4bb356de3350" title="parlai.core.dict.Dictionary\lAgent.span_tokenize" alt="" coords="287,123,457,164"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#abc3baf742422fc7cdaece698224709d4" title="parlai.core.dict.Dictionary\lAgent.txt2vec" alt="" coords="287,188,457,229"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#ad34c4135329f6768d22d519c3c483d68" title="parlai.core.dict.Dictionary\lAgent.parse" alt="" coords="505,188,676,229"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title="parlai.core.torch_agent.\lHistory.reset" alt="" coords="761,5,919,47"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title="light_chats.graph.Graph.get\l_reverse_action" alt="" coords="749,71,931,112"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1Graph.html#accd7dfd84e4f2bee3fc3fbac8d8577cd" title="light_chats.graph.Graph.valid_exec" alt="" coords="727,137,953,163"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title="light_chats.graph.Graph.parse_exec" alt="" coords="725,254,955,281"/>
+<area shape="rect" id="node13" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="724,188,956,229"/>
+<area shape="rect" id="node14" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title="kvmemnn.KvmemnnAgent.batchify" alt="" coords="727,305,953,331"/>
+<area shape="rect" id="node19" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batchify" alt="" coords="736,356,944,397"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title="parlai.core.torch_agent.\lHistory.update_history" alt="" coords="1043,5,1202,47"/>
+<area shape="rect" id="node11" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="1007,184,1239,225"/>
+<area shape="rect" id="node12" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title="light_chats.graph.Graph.update\l_world" alt="" coords="1021,249,1224,291"/>
+<area shape="rect" id="node15" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="1004,315,1241,342"/>
+<area shape="rect" id="node16" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="1329,243,1489,284"/>
+<area shape="rect" id="node17" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="1289,308,1528,349"/>
+<area shape="rect" id="node18" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="1309,374,1508,401"/>
+<area shape="rect" id="node20" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a0988c186c27ab70d318ea30e39a0a5cc" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batch_act" alt="" coords="1019,367,1227,408"/>
+<area shape="rect" id="node21" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="1305,425,1513,467"/>
+</map>

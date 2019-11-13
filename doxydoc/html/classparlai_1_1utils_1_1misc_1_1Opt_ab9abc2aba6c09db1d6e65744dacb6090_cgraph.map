@@ -1,0 +1,9 @@
+<map id="parlai.utils.misc.Opt.__setstate__" name="parlai.utils.misc.Opt.__setstate__">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#afd9953bd722fe099619e883981e3fc38" title="parlai.agents.drqa.model.\lDocReaderModel.update" alt="" coords="221,52,389,93"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#a5a66f2a884034fcdf004468a980d1318" title="parlai.agents.drqa.utils.\lAverageMeter.update" alt="" coords="227,117,384,159"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab1a5a659f2c5747af5d0b674dc647742" title="parlai.core.metrics.Metrics.update" alt="" coords="196,183,415,210"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#aaefd7c0afecedb97555c466befd2a68c" title="parlai.agents.drqa.model.\lDocReaderModel.cuda" alt="" coords="493,5,661,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#ac509d418866e6d8bd2ad29eaf1152f52" title="parlai.agents.drqa.model.\lDocReaderModel.reset_parameters" alt="" coords="463,71,691,112"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title="parlai.core.metrics.Metrics._lock" alt="" coords="471,154,682,181"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#aa44ff7222a52b8fb044cba7321193b7e" title="parlai.core.metrics.Metrics.\l_update_ranking_metrics" alt="" coords="487,205,667,247"/>
+</map>

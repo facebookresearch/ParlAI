@@ -1,0 +1,129 @@
+\hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder}{}\section{generator.\+modules.\+Context\+Knowledge\+Encoder Class Reference}
+\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder}\index{generator.\+modules.\+Context\+Knowledge\+Encoder@{generator.\+modules.\+Context\+Knowledge\+Encoder}}
+
+
+Inheritance diagram for generator.\+modules.\+Context\+Knowledge\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classgenerator_1_1modules_1_1ContextKnowledgeEncoder__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for generator.\+modules.\+Context\+Knowledge\+Encoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classgenerator_1_1modules_1_1ContextKnowledgeEncoder__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_af3314218e3107ed62bb188c66fd9a91d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_ac2e37a1a1e66ec7eeb00a65075dc14cf}{transformer})
+\item 
+def \hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a131ee3cac93f38e5b5503ca43e62cf55}{forward} (self, src\+\_\+tokens, know\+\_\+tokens, ck\+\_\+mask, cs\+\_\+ids, use\+\_\+cs\+\_\+ids)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a0d864b6bf2c7a983760ebb5ff29f20a4}{embeddings}
+\item 
+\hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_aaff127b3e981c6d851692040a4d4665f}{embed\+\_\+dim}
+\item 
+\hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_ac2e37a1a1e66ec7eeb00a65075dc14cf}{transformer}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 55 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_af3314218e3107ed62bb188c66fd9a91d}\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_af3314218e3107ed62bb188c66fd9a91d}} 
+\index{generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def generator.\+modules.\+Context\+Knowledge\+Encoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{transformer }\end{DoxyParamCaption})}
+
+
+
+Definition at line 56 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a131ee3cac93f38e5b5503ca43e62cf55}\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a131ee3cac93f38e5b5503ca43e62cf55}} 
+\index{generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}!forward@{forward}}
+\index{forward@{forward}!generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{src\+\_\+tokens,  }\item[{}]{know\+\_\+tokens,  }\item[{}]{ck\+\_\+mask,  }\item[{}]{cs\+\_\+ids,  }\item[{}]{use\+\_\+cs\+\_\+ids }\end{DoxyParamCaption})}
+
+
+
+Definition at line 64 of file modules.\+py.
+
+
+
+References generator.\+modules.\+Context\+Knowledge\+Encoder.\+embed\+\_\+dim, parlai.\+utils.\+misc.\+neginf(), generator.\+modules.\+Context\+Knowledge\+Encoder.\+transformer, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+transformer, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+transformer, and generator.\+modules.\+universal\+\_\+sentence\+\_\+embedding().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a131ee3cac93f38e5b5503ca43e62cf55_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_aaff127b3e981c6d851692040a4d4665f}\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_aaff127b3e981c6d851692040a4d4665f}} 
+\index{generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}!embed\+\_\+dim@{embed\+\_\+dim}}
+\index{embed\+\_\+dim@{embed\+\_\+dim}!generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}}
+\subsubsection{\texorpdfstring{embed\+\_\+dim}{embed\_dim}}
+{\footnotesize\ttfamily generator.\+modules.\+Context\+Knowledge\+Encoder.\+embed\+\_\+dim}
+
+
+
+Definition at line 61 of file modules.\+py.
+
+
+
+Referenced by generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a0d864b6bf2c7a983760ebb5ff29f20a4}\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_a0d864b6bf2c7a983760ebb5ff29f20a4}} 
+\index{generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}!embeddings@{embeddings}}
+\index{embeddings@{embeddings}!generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}}
+\subsubsection{\texorpdfstring{embeddings}{embeddings}}
+{\footnotesize\ttfamily generator.\+modules.\+Context\+Knowledge\+Encoder.\+embeddings}
+
+
+
+Definition at line 60 of file modules.\+py.
+
+\mbox{\Hypertarget{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_ac2e37a1a1e66ec7eeb00a65075dc14cf}\label{classgenerator_1_1modules_1_1ContextKnowledgeEncoder_ac2e37a1a1e66ec7eeb00a65075dc14cf}} 
+\index{generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}!transformer@{transformer}}
+\index{transformer@{transformer}!generator\+::modules\+::\+Context\+Knowledge\+Encoder@{generator\+::modules\+::\+Context\+Knowledge\+Encoder}}
+\subsubsection{\texorpdfstring{transformer}{transformer}}
+{\footnotesize\ttfamily generator.\+modules.\+Context\+Knowledge\+Encoder.\+transformer}
+
+
+
+Definition at line 62 of file modules.\+py.
+
+
+
+Referenced by generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward(), and generator.\+modules.\+Context\+Knowledge\+Decoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/wizard\+\_\+of\+\_\+wikipedia/generator/\hyperlink{projects_2wizard__of__wikipedia_2generator_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

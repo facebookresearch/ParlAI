@@ -1,51 +1,49 @@
 <map id="parlai.core.agents.Agent" name="parlai.core.agents.Agent">
-<area shape="rect" id="node1" title=" " alt="" coords="111,1221,273,1247"/>
-<area shape="rect" id="node3" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html" title=" " alt="" coords="337,5,545,47"/>
-<area shape="rect" id="node4" href="$classconvai2_1_1eval__ppl_1_1WordFrequencyEntry.html" title=" " alt="" coords="334,71,549,112"/>
-<area shape="rect" id="node5" href="$classconvai_1_1convai__bot_1_1ConvAISampleAgent.html" title=" " alt="" coords="332,136,551,177"/>
-<area shape="rect" id="node6" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html" title=" " alt="" coords="327,201,555,243"/>
-<area shape="rect" id="node7" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html" title=" " alt="" coords="341,267,541,308"/>
-<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html" title=" " alt="" coords="353,333,529,359"/>
-<area shape="rect" id="node9" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1DataAgentBase.html" title=" " alt="" coords="322,384,561,425"/>
-<area shape="rect" id="node12" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html" title=" " alt="" coords="322,449,561,491"/>
-<area shape="rect" id="node15" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html" title=" " alt="" coords="362,515,521,556"/>
-<area shape="rect" id="node16" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html" title=" " alt="" coords="355,580,528,621"/>
-<area shape="rect" id="node17" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html" title=" " alt="" coords="330,646,553,702"/>
-<area shape="rect" id="node19" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html" title=" " alt="" coords="368,726,515,782"/>
-<area shape="rect" id="node20" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html" title=" " alt="" coords="368,806,515,862"/>
-<area shape="rect" id="node21" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html" title=" " alt="" coords="364,886,519,942"/>
-<area shape="rect" id="node23" href="$classparlai_1_1agents_1_1local__human_1_1local__human_1_1LocalHumanAgent.html" title=" " alt="" coords="330,966,553,1022"/>
-<area shape="rect" id="node24" href="$classparlai_1_1agents_1_1random__candidate_1_1random__candidate_1_1RandomCandidateAgent.html" title=" " alt="" coords="342,1046,541,1102"/>
-<area shape="rect" id="node25" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent.html" title=" " alt="" coords="327,1126,555,1182"/>
-<area shape="rect" id="node27" href="$classparlai_1_1agents_1_1repeat__label_1_1repeat__label_1_1RepeatLabelAgent.html" title=" " alt="" coords="338,1206,545,1262"/>
-<area shape="rect" id="node28" href="$classparlai_1_1agents_1_1repeat__query_1_1repeat__query_1_1RepeatQueryAgent.html" title=" " alt="" coords="331,1286,552,1342"/>
-<area shape="rect" id="node29" href="$classparlai_1_1agents_1_1retriever__reader_1_1retriever__reader_1_1RetrieverReaderAgent.html" title=" " alt="" coords="333,1366,549,1422"/>
-<area shape="rect" id="node30" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html" title=" " alt="" coords="330,1447,553,1488"/>
-<area shape="rect" id="node31" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockDict.html" title=" " alt="" coords="366,1513,517,1569"/>
-<area shape="rect" id="node32" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html" title=" " alt="" coords="361,1593,521,1649"/>
-<area shape="rect" id="node33" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1Transformer.html" title=" " alt="" coords="321,1673,561,1715"/>
-<area shape="rect" id="node34" href="$classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent.html" title=" " alt="" coords="341,1739,541,1780"/>
-<area shape="rect" id="node35" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="353,1805,529,1831"/>
-<area shape="rect" id="node41" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html" title=" " alt="" coords="356,1856,527,1897"/>
-<area shape="rect" id="node42" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="362,1921,521,1963"/>
-<area shape="rect" id="node43" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html" title=" " alt="" coords="343,1987,540,2028"/>
-<area shape="rect" id="node44" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html" title=" " alt="" coords="358,2052,525,2093"/>
-<area shape="rect" id="node45" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html" title=" " alt="" coords="346,2117,537,2159"/>
-<area shape="rect" id="node46" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html" title=" " alt="" coords="354,2183,529,2224"/>
-<area shape="rect" id="node47" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html" title=" " alt="" coords="350,2248,533,2289"/>
-<area shape="rect" id="node48" href="$classtaskntalk_1_1coopgame__agent_1_1CooperativeGameAgent.html" title=" " alt="" coords="339,2313,543,2355"/>
-<area shape="rect" id="node49" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html" title=" " alt="" coords="361,2379,521,2420"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,1221,63,1247"/>
-<area shape="rect" id="node10" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ObjectChecklistDataAgent.html" title=" " alt="" coords="613,319,882,360"/>
-<area shape="rect" id="node11" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1Seq2SeqDataAgent.html" title=" " alt="" coords="628,384,867,425"/>
-<area shape="rect" id="node13" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ObjectChecklistModelAgent.html" title=" " alt="" coords="609,449,885,491"/>
-<area shape="rect" id="node14" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1Seq2SeqModelAgent.html" title=" " alt="" coords="628,515,867,556"/>
-<area shape="rect" id="node18" href="$classeval__ppl_1_1LanguageModelEntry.html" title=" " alt="" coords="649,661,845,687"/>
-<area shape="rect" id="node22" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html" title=" " alt="" coords="660,886,835,942"/>
-<area shape="rect" id="node26" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent.html" title=" " alt="" coords="630,1126,865,1182"/>
-<area shape="rect" id="node36" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="631,1667,863,1708"/>
-<area shape="rect" id="node37" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html" title=" " alt="" coords="669,1732,826,1773"/>
-<area shape="rect" id="node38" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="661,1797,833,1839"/>
-<area shape="rect" id="node39" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html" title=" " alt="" coords="646,1863,849,1904"/>
-<area shape="rect" id="node40" href="$classparlai_1_1tasks_1_1fvqa_1_1agents_1_1SplitTeacher.html" title=" " alt="" coords="665,1928,830,1969"/>
+<area shape="rect" id="node3" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html" title="agent.memnn_feedback.Memnn\lFeedbackAgent" alt="" coords="337,5,545,47"/>
+<area shape="rect" id="node4" href="$classconvai2_1_1eval__ppl_1_1WordFrequencyEntry.html" title="convai2.eval_ppl.WordFrequency\lEntry" alt="" coords="334,71,549,112"/>
+<area shape="rect" id="node5" href="$classconvai_1_1convai__bot_1_1ConvAISampleAgent.html" title="convai.convai_bot.ConvAISample\lAgent" alt="" coords="332,136,551,177"/>
+<area shape="rect" id="node6" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html" title="interactive_end2end.interactive\l_end2end.InteractiveEnd2endAgent" alt="" coords="327,201,555,243"/>
+<area shape="rect" id="node7" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html" title="interactive_retrieval.Interactive\lRetrievalAgent" alt="" coords="341,267,541,308"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html" title="kvmemnn.KvmemnnAgent" alt="" coords="353,333,529,359"/>
+<area shape="rect" id="node9" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1DataAgentBase.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.DataAgentBase" alt="" coords="322,384,561,425"/>
+<area shape="rect" id="node12" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase" alt="" coords="322,449,561,491"/>
+<area shape="rect" id="node15" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html" title="parlai.agents.drqa.drqa.\lDrqaAgent" alt="" coords="362,515,521,556"/>
+<area shape="rect" id="node16" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html" title="parlai.agents.ir_baseline.ir\l_baseline.IrBaselineAgent" alt="" coords="355,580,528,621"/>
+<area shape="rect" id="node17" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html" title="parlai.agents.language\l_model.language_model.Language\lModelAgent" alt="" coords="330,646,553,702"/>
+<area shape="rect" id="node19" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent" alt="" coords="368,726,515,782"/>
+<area shape="rect" id="node20" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent" alt="" coords="368,806,515,862"/>
+<area shape="rect" id="node21" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent" alt="" coords="364,886,519,942"/>
+<area shape="rect" id="node23" href="$classparlai_1_1agents_1_1local__human_1_1local__human_1_1LocalHumanAgent.html" title="parlai.agents.local\l_human.local_human.LocalHuman\lAgent" alt="" coords="330,966,553,1022"/>
+<area shape="rect" id="node24" href="$classparlai_1_1agents_1_1random__candidate_1_1random__candidate_1_1RandomCandidateAgent.html" title="parlai.agents.random\l_candidate.random_candidate.\lRandomCandidateAgent" alt="" coords="342,1046,541,1102"/>
+<area shape="rect" id="node25" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent.html" title="parlai.agents.remote\l_agent.remote_agent.RemoteAgent\lAgent" alt="" coords="327,1126,555,1182"/>
+<area shape="rect" id="node27" href="$classparlai_1_1agents_1_1repeat__label_1_1repeat__label_1_1RepeatLabelAgent.html" title="parlai.agents.repeat\l_label.repeat_label.RepeatLabel\lAgent" alt="" coords="338,1206,545,1262"/>
+<area shape="rect" id="node28" href="$classparlai_1_1agents_1_1repeat__query_1_1repeat__query_1_1RepeatQueryAgent.html" title="parlai.agents.repeat\l_query.repeat_query.RepeatQuery\lAgent" alt="" coords="331,1286,552,1342"/>
+<area shape="rect" id="node29" href="$classparlai_1_1agents_1_1retriever__reader_1_1retriever__reader_1_1RetrieverReaderAgent.html" title="parlai.agents.retriever\l_reader.retriever_reader.Retriever\lReaderAgent" alt="" coords="333,1366,549,1422"/>
+<area shape="rect" id="node30" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html" title="parlai.agents.starspace.starspace.\lStarspaceAgent" alt="" coords="330,1447,553,1488"/>
+<area shape="rect" id="node31" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockDict.html" title="parlai.agents.test\l_agents.dummy_torch\l_agent.MockDict" alt="" coords="366,1513,517,1569"/>
+<area shape="rect" id="node32" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html" title="parlai.agents.tfidf\l_retriever.tfidf_retriever.\lTfidfRetrieverAgent" alt="" coords="361,1593,521,1649"/>
+<area shape="rect" id="node33" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1Transformer.html" title="parlai.agents.transformer.transformer.\lTransformer" alt="" coords="321,1673,561,1715"/>
+<area shape="rect" id="node34" href="$classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent.html" title="parlai.agents.unigram.unigram.\lUnigramAgent" alt="" coords="341,1739,541,1780"/>
+<area shape="rect" id="node35" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="353,1805,529,1831"/>
+<area shape="rect" id="node41" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html" title="parlai.core.dict.Dictionary\lAgent" alt="" coords="356,1856,527,1897"/>
+<area shape="rect" id="node42" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="362,1921,521,1963"/>
+<area shape="rect" id="node43" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html" title="parlai.messenger.core.agents.\lMessengerAgent" alt="" coords="343,1987,540,2028"/>
+<area shape="rect" id="node44" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html" title="parlai.mturk.core.agents.\lMTurkAgent" alt="" coords="358,2052,525,2093"/>
+<area shape="rect" id="node45" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html" title="parlai.mturk.core.dev.agents.\lMTurkAgent" alt="" coords="346,2117,537,2159"/>
+<area shape="rect" id="node46" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent" alt="" coords="354,2183,529,2224"/>
+<area shape="rect" id="node47" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent" alt="" coords="350,2248,533,2289"/>
+<area shape="rect" id="node48" href="$classtaskntalk_1_1coopgame__agent_1_1CooperativeGameAgent.html" title="taskntalk.coopgame\l_agent.CooperativeGameAgent" alt="" coords="339,2313,543,2355"/>
+<area shape="rect" id="node49" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html" title="transresnet.transresnet.\lTransresnetAgent" alt="" coords="361,2379,521,2420"/>
+<area shape="rect" id="node10" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ObjectChecklistDataAgent.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.ObjectChecklistDataAgent" alt="" coords="613,319,882,360"/>
+<area shape="rect" id="node11" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1Seq2SeqDataAgent.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.Seq2SeqDataAgent" alt="" coords="628,384,867,425"/>
+<area shape="rect" id="node13" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ObjectChecklistModelAgent.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.ObjectChecklistModelAgent" alt="" coords="609,449,885,491"/>
+<area shape="rect" id="node14" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1Seq2SeqModelAgent.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.Seq2SeqModelAgent" alt="" coords="628,515,867,556"/>
+<area shape="rect" id="node18" href="$classeval__ppl_1_1LanguageModelEntry.html" title="eval_ppl.LanguageModelEntry" alt="" coords="649,661,845,687"/>
+<area shape="rect" id="node22" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent" alt="" coords="660,886,835,942"/>
+<area shape="rect" id="node26" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent.html" title="parlai.agents.remote\l_agent.remote_agent.ParsedRemote\lAgent" alt="" coords="630,1126,865,1182"/>
+<area shape="rect" id="node36" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1agents_1_1DefaultTeacher.html" title="mastering_the_dungeon.tasks.graph\l_world2.agents.DefaultTeacher" alt="" coords="631,1667,863,1708"/>
+<area shape="rect" id="node37" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html" title="parlai.core.agents.Multi\lTaskTeacher" alt="" coords="669,1732,826,1773"/>
+<area shape="rect" id="node38" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="661,1797,833,1839"/>
+<area shape="rect" id="node39" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher" alt="" coords="646,1863,849,1904"/>
+<area shape="rect" id="node40" href="$classparlai_1_1tasks_1_1fvqa_1_1agents_1_1SplitTeacher.html" title="parlai.tasks.fvqa.agents.\lSplitTeacher" alt="" coords="665,1928,830,1969"/>
 </map>

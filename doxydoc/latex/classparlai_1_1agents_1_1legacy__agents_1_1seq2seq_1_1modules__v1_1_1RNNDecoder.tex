@@ -1,0 +1,254 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a83138d66aff992a0b8412d2d50906c78}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embeddingsize, hiddensize, padding\+\_\+idx=0, rnn\+\_\+class=\textquotesingle{}lstm\textquotesingle{}, numlayers=2, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aafa9ff93604c33107620e2286d31bc81}{dropout}=0.\+1, bidir\+\_\+input=False, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_acbbf1a67ceb9dc480faabf0db0fadb3d}{attn\+\_\+type}=\textquotesingle{}none\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a596b3a31dc03cd19485d86ad7be90981}{attn\+\_\+time}=\textquotesingle{}pre\textquotesingle{}, attn\+\_\+length=-\/1, sparse=False)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aa0fdddaf98d3385b432a9b52a0d1adbb}{forward} (self, xs, hidden=None, attn\+\_\+params=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aafa9ff93604c33107620e2286d31bc81}{dropout}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_ae07b00d6b87da72582999538b279d57c}{layers}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aab11ebf05dd6029a3db64b8170c552c7}{hsz}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6a0beb3ff226d0757b023acd8189366f}{esz}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6780484ed7624987b046a01952e48b4a}{lt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_adc1ecb61f30e70d211f0d53adb399fd6}{rnn}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_acbbf1a67ceb9dc480faabf0db0fadb3d}{attn\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a596b3a31dc03cd19485d86ad7be90981}{attn\+\_\+time}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a03c0b43494c2b18f4f6dcb04e14de8e1}{attention}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Recurrent decoder module.
+
+Can be used as a standalone language model or paired with an encoder.
+\end{DoxyVerb}
+ 
+
+Definition at line 477 of file modules\+\_\+v1.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a83138d66aff992a0b8412d2d50906c78}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a83138d66aff992a0b8412d2d50906c78}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embeddingsize,  }\item[{}]{hiddensize,  }\item[{}]{padding\+\_\+idx = {\ttfamily 0},  }\item[{}]{rnn\+\_\+class = {\ttfamily \textquotesingle{}lstm\textquotesingle{}},  }\item[{}]{numlayers = {\ttfamily 2},  }\item[{}]{dropout = {\ttfamily 0.1},  }\item[{}]{bidir\+\_\+input = {\ttfamily False},  }\item[{}]{attn\+\_\+type = {\ttfamily \textquotesingle{}none\textquotesingle{}},  }\item[{}]{attn\+\_\+time = {\ttfamily \textquotesingle{}pre\textquotesingle{}},  }\item[{}]{attn\+\_\+length = {\ttfamily -\/1},  }\item[{}]{sparse = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize recurrent decoder.\end{DoxyVerb}
+ 
+
+Definition at line 497 of file modules\+\_\+v1.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aa0fdddaf98d3385b432a9b52a0d1adbb}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aa0fdddaf98d3385b432a9b52a0d1adbb}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{hidden = {\ttfamily None},  }\item[{}]{attn\+\_\+params = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decode from input tokens.
+
+:param xs:          (bsz x seqlen) LongTensor of input token indices
+:param hidden:      hidden state to feed into decoder. default (None)
+            initializes tensors using the RNN's defaults.
+:param attn_params: (optional) tuple containing attention parameters,
+            default AttentionLayer needs encoder_output states
+            and attention mask (e.g. encoder_input.ne(0))
+
+:returns:           output state(s), hidden state.
+            output state of the encoder. for an RNN, this is
+            (bsz, seq_len, num_directions * hiddensize).
+            hidden state will be same dimensions as input
+            hidden state. for an RNN, this is a tensor of sizes
+            (bsz, numlayers * num_directions, hiddensize).
+\end{DoxyVerb}
+ 
+
+Definition at line 527 of file modules\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attn\+\_\+time, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attn\+\_\+time, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+lt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+lt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+lt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+lt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+rnn, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+rnn.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aa0fdddaf98d3385b432a9b52a0d1adbb_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a03c0b43494c2b18f4f6dcb04e14de8e1}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a03c0b43494c2b18f4f6dcb04e14de8e1}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!attention@{attention}}
+\index{attention@{attention}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{attention}{attention}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attention}
+
+
+
+Definition at line 518 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+score().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a596b3a31dc03cd19485d86ad7be90981}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a596b3a31dc03cd19485d86ad7be90981}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!attn\+\_\+time@{attn\+\_\+time}}
+\index{attn\+\_\+time@{attn\+\_\+time}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{attn\+\_\+time}{attn\_time}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attn\+\_\+time}
+
+
+
+Definition at line 517 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_acbbf1a67ceb9dc480faabf0db0fadb3d}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_acbbf1a67ceb9dc480faabf0db0fadb3d}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!attn\+\_\+type@{attn\+\_\+type}}
+\index{attn\+\_\+type@{attn\+\_\+type}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{attn\+\_\+type}{attn\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attn\+\_\+type}
+
+
+
+Definition at line 516 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+encoder\+\_\+states().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aafa9ff93604c33107620e2286d31bc81}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aafa9ff93604c33107620e2286d31bc81}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!dropout@{dropout}}
+\index{dropout@{dropout}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout}
+
+
+
+Definition at line 500 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+get(), and agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6a0beb3ff226d0757b023acd8189366f}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6a0beb3ff226d0757b023acd8189366f}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!esz@{esz}}
+\index{esz@{esz}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{esz}{esz}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+esz}
+
+
+
+Definition at line 503 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aab11ebf05dd6029a3db64b8170c552c7}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_aab11ebf05dd6029a3db64b8170c552c7}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!hsz@{hsz}}
+\index{hsz@{hsz}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{hsz}{hsz}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+hsz}
+
+
+
+Definition at line 502 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_ae07b00d6b87da72582999538b279d57c}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_ae07b00d6b87da72582999538b279d57c}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!layers@{layers}}
+\index{layers@{layers}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{layers}{layers}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+layers}
+
+
+
+Definition at line 501 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), transresnet\+\_\+multimodal.\+modules.\+Multimodal\+Combiner.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6780484ed7624987b046a01952e48b4a}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_a6780484ed7624987b046a01952e48b4a}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!lt@{lt}}
+\index{lt@{lt}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{lt}{lt}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+lt}
+
+
+
+Definition at line 505 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+starspace.\+modules.\+Encoder.\+forward(), modules.\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_adc1ecb61f30e70d211f0d53adb399fd6}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1RNNDecoder_adc1ecb61f30e70d211f0d53adb399fd6}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}!rnn@{rnn}}
+\index{rnn@{rnn}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v1\+::\+R\+N\+N\+Decoder}}
+\subsubsection{\texorpdfstring{rnn}{rnn}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+rnn}
+
+
+
+Definition at line 508 of file modules\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), agent.\+modules.\+Decoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{modules__v1_8py}{modules\+\_\+v1.\+py}\end{DoxyCompactItemize}

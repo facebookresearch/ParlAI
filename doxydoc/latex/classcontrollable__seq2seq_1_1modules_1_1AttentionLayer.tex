@@ -1,0 +1,188 @@
+\hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer}{}\section{controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer Class Reference}
+\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer}\index{controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer@{controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=231pt]{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a8c89cc171cf09decb5d3ed91ca0f04db}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, attn\+\_\+type, hiddensize, embeddingsize, bidirectional=False, attn\+\_\+length=-\/1, attn\+\_\+time=\textquotesingle{}pre\textquotesingle{})
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a908031aac1e672fba1a7760f84b453a5}{forward} (self, xes, hidden, attn\+\_\+params)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a13769759702e0da66efe31953796eba2}{attention}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_ab95d1744eac0f5b8729e45434f6c01db}{attn\+\_\+combine}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa9561ae460a709651164167155f0a472}{max\+\_\+length}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aaec4b2aa251549f510cb35c064d39f35}{attn}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa232f7fe7d2de13d30a7f1b45042e03d}{attn\+\_\+v}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Computes attention between hidden and encoder states.
+
+See arxiv.org/abs/1508.04025 for more info on each attention type.
+\end{DoxyVerb}
+ 
+
+Definition at line 773 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a8c89cc171cf09decb5d3ed91ca0f04db}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a8c89cc171cf09decb5d3ed91ca0f04db}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{attn\+\_\+type,  }\item[{}]{hiddensize,  }\item[{}]{embeddingsize,  }\item[{}]{bidirectional = {\ttfamily False},  }\item[{}]{attn\+\_\+length = {\ttfamily -\/1},  }\item[{}]{attn\+\_\+time = {\ttfamily \textquotesingle{}pre\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize attention layer.\end{DoxyVerb}
+ 
+
+Definition at line 787 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a908031aac1e672fba1a7760f84b453a5}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a908031aac1e672fba1a7760f84b453a5}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!forward@{forward}}
+\index{forward@{forward}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xes,  }\item[{}]{hidden,  }\item[{}]{attn\+\_\+params }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute attention over attn_params given input and hidden states.
+
+:param xes:         input state. will be combined with applied
+            attention.
+:param hidden:      hidden state from model. will be used to select
+            states to attend to in from the attn_params.
+:param attn_params: tuple of encoder output states and a mask showing
+            which input indices are nonzero.
+
+:returns: output, attn_weights
+  output is a new state of same size as input state `xes`.
+  attn_weights are the weights given to each state in the
+  encoder outputs.
+\end{DoxyVerb}
+ 
+
+Definition at line 822 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attention, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attention, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attention, controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attention, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attn, controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+attn, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+combine, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attn\+\_\+combine, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attn\+\_\+combine, controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+combine, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+v, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attn\+\_\+v, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attn\+\_\+v, controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+v, parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+max\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+max\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+max\+\_\+length, controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+max\+\_\+length, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a908031aac1e672fba1a7760f84b453a5_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a13769759702e0da66efe31953796eba2}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_a13769759702e0da66efe31953796eba2}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!attention@{attention}}
+\index{attention@{attention}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{attention}{attention}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attention}
+
+
+
+Definition at line 790 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aaec4b2aa251549f510cb35c064d39f35}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aaec4b2aa251549f510cb35c064d39f35}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!attn@{attn}}
+\index{attn@{attn}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{attn}{attn}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn}
+
+
+
+Definition at line 813 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_ab95d1744eac0f5b8729e45434f6c01db}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_ab95d1744eac0f5b8729e45434f6c01db}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!attn\+\_\+combine@{attn\+\_\+combine}}
+\index{attn\+\_\+combine@{attn\+\_\+combine}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{attn\+\_\+combine}{attn\_combine}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+combine}
+
+
+
+Definition at line 805 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa232f7fe7d2de13d30a7f1b45042e03d}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa232f7fe7d2de13d30a7f1b45042e03d}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!attn\+\_\+v@{attn\+\_\+v}}
+\index{attn\+\_\+v@{attn\+\_\+v}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{attn\+\_\+v}{attn\_v}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+attn\+\_\+v}
+
+
+
+Definition at line 817 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa9561ae460a709651164167155f0a472}\label{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer_aa9561ae460a709651164167155f0a472}} 
+\index{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}!max\+\_\+length@{max\+\_\+length}}
+\index{max\+\_\+length@{max\+\_\+length}!controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer@{controllable\+\_\+seq2seq\+::modules\+::\+Attention\+Layer}}
+\subsubsection{\texorpdfstring{max\+\_\+length}{max\_length}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+max\+\_\+length}
+
+
+
+Definition at line 811 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{projects_2controllable__dialogue_2controllable__seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

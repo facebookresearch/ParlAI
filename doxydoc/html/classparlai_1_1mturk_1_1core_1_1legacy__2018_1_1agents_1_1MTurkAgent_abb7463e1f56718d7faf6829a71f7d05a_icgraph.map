@@ -1,5 +1,5 @@
 <map id="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_status" name="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_status">
-<area shape="rect" id="node1" title=" " alt="" coords="256,53,496,94"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#affe73b112be62cb32e0f8122c5f030fd" title=" " alt="" coords="9,5,205,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a523bffdcd46a437e641b94f5700c0e16" title=" " alt="" coords="5,85,208,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#affe73b112be62cb32e0f8122c5f030fd" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.log\l_reconnect" alt="" coords="324,5,520,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a8f1e6f940081eab5ce329b106c61b294" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.submitted_hit" alt="" coords="293,86,551,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1MTurkAgent.html#a523bffdcd46a437e641b94f5700c0e16" title="parlai.mturk.core.legacy\l_2018.agents.MTurkAgent.wait\l_for_status" alt="" coords="321,152,523,208"/>
 </map>

@@ -1,0 +1,58 @@
+\hypertarget{namespacecontrollable__seq2seq_1_1modules}{}\section{controllable\+\_\+seq2seq.\+modules Namespace Reference}
+\label{namespacecontrollable__seq2seq_1_1modules}\index{controllable\+\_\+seq2seq.\+modules@{controllable\+\_\+seq2seq.\+modules}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1AttentionLayer}{Attention\+Layer}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1ControlEncoder}{Control\+Encoder}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1OutputLayer}{Output\+Layer}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1RNNDecoder}{R\+N\+N\+Decoder}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1RNNEncoder}{R\+N\+N\+Encoder}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1Seq2seq}{Seq2seq}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1modules_1_1UnknownDropout}{Unknown\+Dropout}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1modules_a9e3af31e5044fc5d666f3e212c217ee9}{opt\+\_\+to\+\_\+kwargs} (opt)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1modules_a0a1785427c3f3fdbb88c1b3cb0d9020c}{pad} (tensor, length, dim=0, pad=0)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1modules_a9e3af31e5044fc5d666f3e212c217ee9}\label{namespacecontrollable__seq2seq_1_1modules_a9e3af31e5044fc5d666f3e212c217ee9}} 
+\index{controllable\+\_\+seq2seq\+::modules@{controllable\+\_\+seq2seq\+::modules}!opt\+\_\+to\+\_\+kwargs@{opt\+\_\+to\+\_\+kwargs}}
+\index{opt\+\_\+to\+\_\+kwargs@{opt\+\_\+to\+\_\+kwargs}!controllable\+\_\+seq2seq\+::modules@{controllable\+\_\+seq2seq\+::modules}}
+\subsubsection{\texorpdfstring{opt\+\_\+to\+\_\+kwargs()}{opt\_to\_kwargs()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+opt\+\_\+to\+\_\+kwargs (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get kwargs for seq2seq from opt.\end{DoxyVerb}
+ 
+
+Definition at line 19 of file modules.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1modules_a0a1785427c3f3fdbb88c1b3cb0d9020c}\label{namespacecontrollable__seq2seq_1_1modules_a0a1785427c3f3fdbb88c1b3cb0d9020c}} 
+\index{controllable\+\_\+seq2seq\+::modules@{controllable\+\_\+seq2seq\+::modules}!pad@{pad}}
+\index{pad@{pad}!controllable\+\_\+seq2seq\+::modules@{controllable\+\_\+seq2seq\+::modules}}
+\subsubsection{\texorpdfstring{pad()}{pad()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+modules.\+pad (\begin{DoxyParamCaption}\item[{}]{tensor,  }\item[{}]{length,  }\item[{}]{dim = {\ttfamily 0},  }\item[{}]{pad = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Pad tensor to a specific length.
+
+:param tensor: vector to pad
+:param length: new length
+:param dim: (default 0) dimension to pad
+
+:returns: padded tensor if the tensor is shorter than length
+\end{DoxyVerb}
+ 
+
+Definition at line 41 of file modules.\+py.
+

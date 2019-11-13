@@ -1,0 +1,8 @@
+<map id="parlai.mturk.core.dev.server_utils.delete_heroku_server" name="parlai.mturk.core.dev.server_utils.delete_heroku_server">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#a3e5b4105c54a289108a8a240aa9b9043" title="parlai.mturk.core.dev.server\l_utils.delete_server" alt="" coords="1397,14,1581,55"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#a138743e96f495bce1535782ffa0f38bf" title="parlai.mturk.core.dev.server\l_utils.setup_heroku_server" alt="" coords="237,43,421,85"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#ab2ee72bd56197de749229032b05254da" title="parlai.mturk.core.dev.server\l_utils.compile_server" alt="" coords="469,43,653,85"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#a13d7101c43eceb479444919d4e5f49fe" title="parlai.mturk.core.dev.server\l_utils.setup_server" alt="" coords="933,43,1117,85"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#a914cced79fceeef08836d69d91e2d683" title="parlai.mturk.core.dev.server\l_utils.setup_local_server" alt="" coords="701,43,885,85"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1server__utils.html#aa5556bd5a5a417d78b4142e697e9a6be" title="parlai.mturk.core.dev.server\l_utils.delete_local_server" alt="" coords="1165,43,1349,85"/>
+</map>

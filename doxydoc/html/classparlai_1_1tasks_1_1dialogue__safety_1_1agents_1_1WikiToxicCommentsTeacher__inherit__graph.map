@@ -1,8 +1,6 @@
 <map id="parlai.tasks.dialogue_safety.agents.WikiToxicCommentsTeacher" name="parlai.tasks.dialogue_safety.agents.WikiToxicCommentsTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,319,240,375"/>
-<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="22,423,223,464"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="37,229,209,271"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="35,155,211,181"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="41,80,204,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="94,5,151,32"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1DefaultTeacher.html" title="parlai.tasks.dialogue\l_safety.agents.DefaultTeacher" alt="" coords="22,423,223,464"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="37,229,209,271"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="35,155,211,181"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="41,80,204,107"/>
 </map>

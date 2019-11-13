@@ -1,0 +1,7 @@
+<map id="parlai.core.pytorch_data_teacher.get_dataset_classes" name="parlai.core.pytorch_data_teacher.get_dataset_classes">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1LoaderProcess.html#a4d40640c8122f0f93dc49a3eaa188260" title="parlai.core.pytorch\l_data_teacher.LoaderProcess.\l__init__" alt="" coords="229,5,428,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a7d85a5e2fac2c1e8f0f75a4255850b9b" title="parlai.core.params.Parlai\lParser.add_pyt_dataset_args" alt="" coords="233,86,425,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ade9c068595c2b1110d019f3dedeb79ba" title="parlai.core.params.Parlai\lParser.add_extra_args" alt="" coords="476,86,643,127"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ad549d75e2808d63fbc5c5d0e30682f18" title="parlai.core.params.Parlai\lParser.parse_args" alt="" coords="691,86,857,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#adb1dec3d3433b40209bb2c24722df335" title="parlai.core.params.Parlai\lParser.print_args" alt="" coords="905,86,1072,127"/>
+</map>

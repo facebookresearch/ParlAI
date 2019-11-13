@@ -1,11 +1,13 @@
 <map id="parlai.core.torch_generator_agent.TorchGeneratorAgent.eval_step" name="parlai.core.torch_generator_agent.TorchGeneratorAgent.eval_step">
-<area shape="rect" id="node1" title=" " alt="" coords="5,195,255,236"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acfaca66bf4dd1d86e2d3a9d4a26a1717" title=" " alt="" coords="347,5,533,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#aca404444170e370dd8b17f1e2c115aa7" title=" " alt="" coords="343,414,537,470"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a7a1ac5b6aafd060ce2ce124b0464df11" title=" " alt="" coords="625,122,819,178"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#ad9708bd066d65d8ba66fd8697e6f6e4c" title=" " alt="" coords="353,187,527,243"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#abe1fbeb5c08873917bc34e6ba5350ec5" title=" " alt="" coords="349,267,531,323"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#ab158cf10bf42325f82fa878e75ef5d74" title=" " alt="" coords="361,348,519,389"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a94808a13bba0d5283613acd98516bd3c" title=" " alt="" coords="303,71,577,112"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a845794fc24d9316b69fb440a7536e04c" title=" " alt="" coords="625,414,819,470"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acfaca66bf4dd1d86e2d3a9d4a26a1717" title="parlai.agents.fairseq.fairseq.\lFairseqAgent._generate" alt="" coords="347,5,533,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#aca404444170e370dd8b17f1e2c115aa7" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent.\l_generate" alt="" coords="343,71,537,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a7a1ac5b6aafd060ce2ce124b0464df11" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent.\l_model_input" alt="" coords="625,319,819,375"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a845794fc24d9316b69fb440a7536e04c" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent.\l_treesearch_factory" alt="" coords="343,202,537,258"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#ad9708bd066d65d8ba66fd8697e6f6e4c" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent._v2t" alt="" coords="353,282,527,338"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#abe1fbeb5c08873917bc34e6ba5350ec5" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent._v2t" alt="" coords="349,362,531,418"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#ab158cf10bf42325f82fa878e75ef5d74" title="parlai.core.torch_agent.\lTorchAgent._v2t" alt="" coords="361,443,519,484"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a94808a13bba0d5283613acd98516bd3c" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent.compute_loss" alt="" coords="303,508,577,549"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v1.html#adb5a414ae439f14c54e8c760b91cc4c8" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v1.padded_tensor" alt="" coords="365,574,515,630"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="350,654,530,681"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="651,647,793,688"/>
 </map>

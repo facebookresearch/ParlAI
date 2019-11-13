@@ -1,13 +1,8 @@
 <map id="self_feeding.self_feeding_agent.SelfFeedingAgent.act" name="self_feeding.self_feeding_agent.SelfFeedingAgent.act">
-<area shape="rect" id="node1" title=" " alt="" coords="5,269,196,310"/>
-<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a6d28a8c3f063bde4cd98cfb209821bf5" title=" " alt="" coords="276,5,463,61"/>
-<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ab0ccbaba9de0874d235a2ce14dd8ead3" title=" " alt="" coords="276,85,463,141"/>
-<area shape="rect" id="node4" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a85ecc5ffb61d545ae003232ffb1e0f57" title=" " alt="" coords="244,166,495,207"/>
-<area shape="rect" id="node6" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a876feb626f411fd0a18fbce66a886764" title=" " alt="" coords="246,231,493,273"/>
-<area shape="rect" id="node7" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#abb5225edea055887a8ec2da2d02b7463" title=" " alt="" coords="267,297,471,353"/>
-<area shape="rect" id="node8" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#abc842083fdfd34983ed64bd7dc8d8b4a" title=" " alt="" coords="267,377,471,433"/>
-<area shape="rect" id="node9" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a36a79f932c2ba47838596bc88c26625d" title=" " alt="" coords="267,457,471,513"/>
-<area shape="rect" id="node10" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ab995d9cb7e699570a4179865ce7e09be" title=" " alt="" coords="264,537,475,593"/>
-<area shape="rect" id="node11" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ae2a86795d3df6fbd0b0a41825922b247" title=" " alt="" coords="269,618,470,659"/>
-<area shape="rect" id="node5" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a01851e94cd789600609c8aa3c3696241" title=" " alt="" coords="543,159,753,215"/>
+<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a6d28a8c3f063bde4cd98cfb209821bf5" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.do\l_request_feedback" alt="" coords="274,5,461,61"/>
+<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ab0ccbaba9de0874d235a2ce14dd8ead3" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.do\l_request_rating" alt="" coords="274,85,461,141"/>
+<area shape="rect" id="node4" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a876feb626f411fd0a18fbce66a886764" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.make_action" alt="" coords="244,166,491,207"/>
+<area shape="rect" id="node5" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#abb5225edea055887a8ec2da2d02b7463" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.make\l_feedback_request" alt="" coords="265,232,469,288"/>
+<area shape="rect" id="node6" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#abc842083fdfd34983ed64bd7dc8d8b4a" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.make\l_rating_request" alt="" coords="265,312,469,368"/>
+<area shape="rect" id="node7" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ab995d9cb7e699570a4179865ce7e09be" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.predict\l_satisfaction" alt="" coords="262,392,473,448"/>
 </map>

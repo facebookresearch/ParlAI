@@ -1,0 +1,5 @@
+<map id="interactive_retrieval.InteractiveRetrievalAgent.get_chosen_topic_passages" name="interactive_retrieval.InteractiveRetrievalAgent.get_chosen_topic_passages">
+<area shape="rect" id="node2" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#a07ae26123c56441549800bd116a86626" title="interactive_retrieval.Interactive\lRetrievalAgent.retriever_act" alt="" coords="268,13,468,54"/>
+<area shape="rect" id="node3" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ac8b7ac5b6dbc150f066995b25368d9bd" title="interactive_retrieval.Interactive\lRetrievalAgent.observe" alt="" coords="516,13,716,54"/>
+<area shape="rect" id="node4" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ad350c65cd9fc9393902f61cd77f1cc52" title="interactive_retrieval.Interactive\lRetrievalAgent.act" alt="" coords="764,42,964,83"/>
+</map>

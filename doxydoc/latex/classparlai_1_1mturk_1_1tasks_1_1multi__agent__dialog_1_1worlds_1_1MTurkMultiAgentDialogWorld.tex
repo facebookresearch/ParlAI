@@ -1,0 +1,176 @@
+\hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld}{}\section{parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World Class Reference}
+\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld}\index{parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+
+
+Inheritance diagram for parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=240pt]{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a185e26d6db072184496992b3bd580c57}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a97fe2748f07a131082c1be761d4d749a}{agents}=None, shared=None)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a68fbe9035c66bb74a1782be884860a7a}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a6d0019855df42d0a383b039368f17652}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a70cab1449b4b14d88003b075a1a9cd33}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a97fe2748f07a131082c1be761d4d749a}{agents}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_af92ab4ec8dc965e1b74dfc5904108983}{acts}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_aac2d2dcd27769554281ca4a8d29929ae}{episode\+Done}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Basic world where each agent gets a turn in a round-robin fashion,
+receiving as input the actions of all other agents since that agent last
+acted.
+\end{DoxyVerb}
+ 
+
+Definition at line 25 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a185e26d6db072184496992b3bd580c57}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a185e26d6db072184496992b3bd580c57}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 31 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a6d0019855df42d0a383b039368f17652}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a6d0019855df42d0a383b039368f17652}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 53 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, and parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a68fbe9035c66bb74a1782be884860a7a}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a68fbe9035c66bb74a1782be884860a7a}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}For each agent, get an observation of the last action each of the
+other agents took. Then take an action yourself.
+\end{DoxyVerb}
+ 
+
+Definition at line 37 of file worlds.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+acts, parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+acts, light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+acts, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+acts, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+acts, parlai.\+core.\+worlds.\+Batch\+World.\+acts, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done, and parlai.\+core.\+worlds.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a68fbe9035c66bb74a1782be884860a7a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a70cab1449b4b14d88003b075a1a9cd33}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a70cab1449b4b14d88003b075a1a9cd33}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shutdown all mturk agents in parallel, otherwise if one mturk agent
+is disconnected then it could prevent other mturk agents from
+completing.
+\end{DoxyVerb}
+ 
+
+Definition at line 56 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+agents.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_af92ab4ec8dc965e1b74dfc5904108983}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_af92ab4ec8dc965e1b74dfc5904108983}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!acts@{acts}}
+\index{acts@{acts}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{acts}{acts}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+acts}
+
+
+
+Definition at line 34 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+World.\+display(), parlai.\+core.\+worlds.\+World.\+get\+\_\+acts(), parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+parley(), and parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a97fe2748f07a131082c1be761d4d749a}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_a97fe2748f07a131082c1be761d4d749a}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!agents@{agents}}
+\index{agents@{agents}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{agents}{agents}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+agents}
+
+
+
+Definition at line 33 of file worlds.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+timeout\+\_\+all\+\_\+agents().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_aac2d2dcd27769554281ca4a8d29929ae}\label{classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld_aac2d2dcd27769554281ca4a8d29929ae}} 
+\index{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World@{parlai\+::mturk\+::tasks\+::multi\+\_\+agent\+\_\+dialog\+::worlds\+::\+M\+Turk\+Multi\+Agent\+Dialog\+World}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+episode\+Done}
+
+
+
+Definition at line 35 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/multi\+\_\+agent\+\_\+dialog/\hyperlink{parlai_2mturk_2tasks_2multi__agent__dialog_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

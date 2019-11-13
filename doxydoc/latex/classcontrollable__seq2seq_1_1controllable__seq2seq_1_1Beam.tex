@@ -1,0 +1,608 @@
+\hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam}{}\section{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam Class Reference}
+\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam}\index{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam@{controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam}}
+
+
+Inheritance diagram for controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a10dd7af39b66b89f4ef0181c204452a8}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4b977282ad9c275896a1a253bb5f40f7}{beam\+\_\+size}, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a0e26e14bd1c352f33464fab45ae39675}{min\+\_\+length}=3, padding\+\_\+token=0, bos\+\_\+token=1, eos\+\_\+token=2, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa76753baab725ffa547c5512653f537b}{min\+\_\+n\+\_\+best}=3, cuda=\textquotesingle{}cpu\textquotesingle{}, \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad43521d7231db0e76f0788d63a29486d}{block\+\_\+ngram}=0)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a45cfd3d054f6ec009e6916f01f8c3528}{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab391098d78edb7a48245bef1873b0df0}{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaabdc74d8e5ffec4cd92b7fd350aaaf4}{advance} (self, softmax\+\_\+probs)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_af40dafdaad342152b89d8c4f517c8d8b}{done} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5224a8abe07503fe549bc6e2140eb244}{get\+\_\+top\+\_\+hyp} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab4532f62a0428f5581680c9915b9c95e}{get\+\_\+hyp\+\_\+from\+\_\+finished} (self, hypothesis\+\_\+tail)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a18e46c4a301f453b669101bd539e2d53}{get\+\_\+rescored\+\_\+finished} (self, n\+\_\+best=None)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a44d2a312bb404a444f077a19a759cd77}{check\+\_\+finished} (self)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4d1acfa68e54ee73cc7fbcb7f334bf99}{get\+\_\+beam\+\_\+dot} (self, dictionary=None, n\+\_\+best=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a9c213fba3652f8490b9f80be89c9d7fc}{find\+\_\+ngrams} (input\+\_\+list, n)
+\item 
+def \hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa374348209046f9b74218729202f29ba}{get\+\_\+pretty\+\_\+hypothesis} (list\+\_\+of\+\_\+hypotails)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4b977282ad9c275896a1a253bb5f40f7}{beam\+\_\+size}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a0e26e14bd1c352f33464fab45ae39675}{min\+\_\+length}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a83f09b2b7fbc9c1ef064293ada1039ee}{eos}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a728f22303b7c97484fd9c8678c8e6853}{bos}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a2647f98520bc6581a5da7d4c3532abe8}{pad}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3d0d80fe29641e2faffbc03c5ef9f4ad}{device}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad53544456c857b36a11877f259ea2296}{scores}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaffa11af5164961dfc3d571e02de6124}{all\+\_\+scores}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4be9238fd13705d7cbfc1772ce3ade5e}{bookkeep}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3fb948fc95c894a000cf4c2d7359f8cb}{outputs}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a416e7afda25f83ce79f7881323c160cf}{finished}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a72c17a6ac37f6b0f800073958b76bbc4}{Hypothesis\+Tail}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a1e3b4d4919b0ac95ea751813bd603748}{eos\+\_\+top}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5056b77c9184170a6590ebb1d2ec8860}{eos\+\_\+top\+\_\+ts}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a529539147775bf332a9b9d266c5293ae}{n\+\_\+best\+\_\+counter}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa76753baab725ffa547c5512653f537b}{min\+\_\+n\+\_\+best}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad43521d7231db0e76f0788d63a29486d}{block\+\_\+ngram}
+\item 
+\hyperlink{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ac8bd05223ef3eb100250a34b98ec515c}{partial\+\_\+hyps}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Generic beam class. It keeps information about beam_size hypothesis.\end{DoxyVerb}
+ 
+
+Definition at line 1185 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a10dd7af39b66b89f4ef0181c204452a8}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a10dd7af39b66b89f4ef0181c204452a8}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{beam\+\_\+size,  }\item[{}]{min\+\_\+length = {\ttfamily 3},  }\item[{}]{padding\+\_\+token = {\ttfamily 0},  }\item[{}]{bos\+\_\+token = {\ttfamily 1},  }\item[{}]{eos\+\_\+token = {\ttfamily 2},  }\item[{}]{min\+\_\+n\+\_\+best = {\ttfamily 3},  }\item[{}]{cuda = {\ttfamily \textquotesingle{}cpu\textquotesingle{}},  }\item[{}]{block\+\_\+ngram = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate Beam object.
+:param beam_size:
+    number of hypothesis in the beam
+:param min_length:
+    minimum length of the predicted sequence
+:param padding_token:
+    Set to 0 as usual in ParlAI
+:param bos_token:
+    Set to 1 as usual in ParlAI
+:param eos_token:
+    Set to 2 as usual in ParlAI
+:param min_n_best:
+    Beam will not be done unless this amount of finished hypothesis
+    (with EOS) is done
+:param cuda:
+    What device to use for computations
+\end{DoxyVerb}
+ 
+
+Definition at line 1198 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaabdc74d8e5ffec4cd92b7fd350aaaf4}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaabdc74d8e5ffec4cd92b7fd350aaaf4}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!advance@{advance}}
+\index{advance@{advance}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{advance()}{advance()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{softmax\+\_\+probs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Advance the beam one step.\end{DoxyVerb}
+ 
+
+Definition at line 1258 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+all\+\_\+scores, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+beam\+\_\+size, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+block\+\_\+ngram, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+block\+\_\+ngram, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+bookkeep, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos\+\_\+top, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos\+\_\+top\+\_\+ts, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos\+\_\+top\+\_\+ts, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top\+\_\+ts, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos\+\_\+top\+\_\+ts, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+finished, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+min\+\_\+length, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+min\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+length, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+min\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+n\+\_\+best\+\_\+counter, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+n\+\_\+best\+\_\+counter, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+n\+\_\+best\+\_\+counter, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+n\+\_\+best\+\_\+counter, parlai.\+utils.\+misc.\+neginf(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+partial\+\_\+hyps, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+partial\+\_\+hyps, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+partial\+\_\+hyps, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+scores, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+scores, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+scores.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaabdc74d8e5ffec4cd92b7fd350aaaf4_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a44d2a312bb404a444f077a19a759cd77}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a44d2a312bb404a444f077a19a759cd77}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!check\+\_\+finished@{check\+\_\+finished}}
+\index{check\+\_\+finished@{check\+\_\+finished}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{check\+\_\+finished()}{check\_finished()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check if self.finished is empty and add hyptail in that case.
+This will be suboptimal hypothesis since the model did not get any EOS
+\end{DoxyVerb}
+ 
+
+Definition at line 1415 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+all\+\_\+scores, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+finished, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_af40dafdaad342152b89d8c4f517c8d8b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_af40dafdaad342152b89d8c4f517c8d8b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!done@{done}}
+\index{done@{done}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{done()}{done()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return whether beam search is complete.\end{DoxyVerb}
+ 
+
+Definition at line 1333 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos\+\_\+top, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+min\+\_\+n\+\_\+best, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+n\+\_\+best, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+min\+\_\+n\+\_\+best, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+n\+\_\+best\+\_\+counter, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+n\+\_\+best\+\_\+counter, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+n\+\_\+best\+\_\+counter, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+n\+\_\+best\+\_\+counter.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a9c213fba3652f8490b9f80be89c9d7fc}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a9c213fba3652f8490b9f80be89c9d7fc}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!find\+\_\+ngrams@{find\+\_\+ngrams}}
+\index{find\+\_\+ngrams@{find\+\_\+ngrams}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{find\+\_\+ngrams()}{find\_ngrams()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+find\+\_\+ngrams (\begin{DoxyParamCaption}\item[{}]{input\+\_\+list,  }\item[{}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Get list of ngrams with context length n-1.\end{DoxyVerb}
+ 
+
+Definition at line 1246 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab391098d78edb7a48245bef1873b0df0}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab391098d78edb7a48245bef1873b0df0}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step}}
+\index{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step()}{get\_backtrack\_from\_current\_step()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the backtrack at the current step.\end{DoxyVerb}
+ 
+
+Definition at line 1254 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+bookkeep, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bookkeep.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4d1acfa68e54ee73cc7fbcb7f334bf99}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4d1acfa68e54ee73cc7fbcb7f334bf99}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+beam\+\_\+dot@{get\+\_\+beam\+\_\+dot}}
+\index{get\+\_\+beam\+\_\+dot@{get\+\_\+beam\+\_\+dot}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+beam\+\_\+dot()}{get\_beam\_dot()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dictionary = {\ttfamily None},  }\item[{}]{n\+\_\+best = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create pydot graph representation of the beam.
+:param outputs:
+    self.outputs from the beam
+:param dictionary:
+    tok 2 word dict to save words in the tree nodes
+:returns:
+    pydot graph
+\end{DoxyVerb}
+ 
+
+Definition at line 1434 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+all\+\_\+scores, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+beam\+\_\+size, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+bookkeep, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bookkeep, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail, eval\+\_\+ppl.\+int, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4d1acfa68e54ee73cc7fbcb7f334bf99_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab4532f62a0428f5581680c9915b9c95e}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab4532f62a0428f5581680c9915b9c95e}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+hyp\+\_\+from\+\_\+finished@{get\+\_\+hyp\+\_\+from\+\_\+finished}}
+\index{get\+\_\+hyp\+\_\+from\+\_\+finished@{get\+\_\+hyp\+\_\+from\+\_\+finished}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+hyp\+\_\+from\+\_\+finished()}{get\_hyp\_from\_finished()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hypothesis\+\_\+tail }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extract hypothesis ending with EOS at timestep with hyp_id.
+:param timestep:
+    timestep with range up to len(self.outputs)-1
+:param hyp_id:
+    id with range up to beam_size-1
+:return:
+    hypothesis sequence
+\end{DoxyVerb}
+ 
+
+Definition at line 1348 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+all\+\_\+scores, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+bookkeep, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+eos, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+top\+\_\+hyp().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ab4532f62a0428f5581680c9915b9c95e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a45cfd3d054f6ec009e6916f01f8c3528}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a45cfd3d054f6ec009e6916f01f8c3528}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+output\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step}}
+\index{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step()}{get\_output\_from\_current\_step()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the outputput at the current step.\end{DoxyVerb}
+ 
+
+Definition at line 1250 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+outputs, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa374348209046f9b74218729202f29ba}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa374348209046f9b74218729202f29ba}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+pretty\+\_\+hypothesis@{get\+\_\+pretty\+\_\+hypothesis}}
+\index{get\+\_\+pretty\+\_\+hypothesis@{get\+\_\+pretty\+\_\+hypothesis}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+pretty\+\_\+hypothesis()}{get\_pretty\_hypothesis()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+pretty\+\_\+hypothesis (\begin{DoxyParamCaption}\item[{}]{list\+\_\+of\+\_\+hypotails }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Return prettier version of the hypotheses.\end{DoxyVerb}
+ 
+
+Definition at line 1376 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a18e46c4a301f453b669101bd539e2d53}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a18e46c4a301f453b669101bd539e2d53}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+rescored\+\_\+finished@{get\+\_\+rescored\+\_\+finished}}
+\index{get\+\_\+rescored\+\_\+finished@{get\+\_\+rescored\+\_\+finished}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+rescored\+\_\+finished()}{get\_rescored\_finished()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+best = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return finished hypotheses in rescored order.
+:param n_best:
+    how many n best hypothesis to return
+:return:
+    list with hypothesis
+\end{DoxyVerb}
+ 
+
+Definition at line 1386 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+finished, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+top\+\_\+hyp().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a18e46c4a301f453b669101bd539e2d53_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5224a8abe07503fe549bc6e2140eb244}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5224a8abe07503fe549bc6e2140eb244}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!get\+\_\+top\+\_\+hyp@{get\+\_\+top\+\_\+hyp}}
+\index{get\+\_\+top\+\_\+hyp@{get\+\_\+top\+\_\+hyp}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+top\+\_\+hyp()}{get\_top\_hyp()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+top\+\_\+hyp (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get single best hypothesis.
+:return: hypothesis sequence and the final score
+\end{DoxyVerb}
+ 
+
+Definition at line 1337 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5224a8abe07503fe549bc6e2140eb244_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaffa11af5164961dfc3d571e02de6124}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aaffa11af5164961dfc3d571e02de6124}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!all\+\_\+scores@{all\+\_\+scores}}
+\index{all\+\_\+scores@{all\+\_\+scores}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{all\+\_\+scores}{all\_scores}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+all\+\_\+scores}
+
+
+
+Definition at line 1226 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4b977282ad9c275896a1a253bb5f40f7}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4b977282ad9c275896a1a253bb5f40f7}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!beam\+\_\+size@{beam\+\_\+size}}
+\index{beam\+\_\+size@{beam\+\_\+size}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{beam\+\_\+size}{beam\_size}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+beam\+\_\+size}
+
+
+
+Definition at line 1217 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad43521d7231db0e76f0788d63a29486d}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad43521d7231db0e76f0788d63a29486d}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!block\+\_\+ngram@{block\+\_\+ngram}}
+\index{block\+\_\+ngram@{block\+\_\+ngram}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{block\+\_\+ngram}{block\_ngram}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+block\+\_\+ngram}
+
+
+
+Definition at line 1242 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4be9238fd13705d7cbfc1772ce3ade5e}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a4be9238fd13705d7cbfc1772ce3ade5e}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!bookkeep@{bookkeep}}
+\index{bookkeep@{bookkeep}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{bookkeep}{bookkeep}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bookkeep}
+
+
+
+Definition at line 1228 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a728f22303b7c97484fd9c8678c8e6853}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a728f22303b7c97484fd9c8678c8e6853}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!bos@{bos}}
+\index{bos@{bos}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{bos}{bos}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+bos}
+
+
+
+Definition at line 1220 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3d0d80fe29641e2faffbc03c5ef9f4ad}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3d0d80fe29641e2faffbc03c5ef9f4ad}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!device@{device}}
+\index{device@{device}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{device}{device}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+device}
+
+
+
+Definition at line 1222 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a83f09b2b7fbc9c1ef064293ada1039ee}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a83f09b2b7fbc9c1ef064293ada1039ee}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!eos@{eos}}
+\index{eos@{eos}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos}{eos}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos}
+
+
+
+Definition at line 1219 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a1e3b4d4919b0ac95ea751813bd603748}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a1e3b4d4919b0ac95ea751813bd603748}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!eos\+\_\+top@{eos\+\_\+top}}
+\index{eos\+\_\+top@{eos\+\_\+top}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos\+\_\+top}{eos\_top}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos\+\_\+top}
+
+
+
+Definition at line 1238 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5056b77c9184170a6590ebb1d2ec8860}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a5056b77c9184170a6590ebb1d2ec8860}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!eos\+\_\+top\+\_\+ts@{eos\+\_\+top\+\_\+ts}}
+\index{eos\+\_\+top\+\_\+ts@{eos\+\_\+top\+\_\+ts}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos\+\_\+top\+\_\+ts}{eos\_top\_ts}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+eos\+\_\+top\+\_\+ts}
+
+
+
+Definition at line 1239 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a416e7afda25f83ce79f7881323c160cf}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a416e7afda25f83ce79f7881323c160cf}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!finished@{finished}}
+\index{finished@{finished}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{finished}{finished}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+finished}
+
+
+
+Definition at line 1234 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a72c17a6ac37f6b0f800073958b76bbc4}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a72c17a6ac37f6b0f800073958b76bbc4}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!Hypothesis\+Tail@{Hypothesis\+Tail}}
+\index{Hypothesis\+Tail@{Hypothesis\+Tail}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{Hypothesis\+Tail}{HypothesisTail}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+Hypothesis\+Tail}
+
+
+
+Definition at line 1235 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a0e26e14bd1c352f33464fab45ae39675}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a0e26e14bd1c352f33464fab45ae39675}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!min\+\_\+length@{min\+\_\+length}}
+\index{min\+\_\+length@{min\+\_\+length}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{min\+\_\+length}{min\_length}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+min\+\_\+length}
+
+
+
+Definition at line 1218 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa76753baab725ffa547c5512653f537b}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_aa76753baab725ffa547c5512653f537b}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!min\+\_\+n\+\_\+best@{min\+\_\+n\+\_\+best}}
+\index{min\+\_\+n\+\_\+best@{min\+\_\+n\+\_\+best}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{min\+\_\+n\+\_\+best}{min\_n\_best}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+min\+\_\+n\+\_\+best}
+
+
+
+Definition at line 1241 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a529539147775bf332a9b9d266c5293ae}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a529539147775bf332a9b9d266c5293ae}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!n\+\_\+best\+\_\+counter@{n\+\_\+best\+\_\+counter}}
+\index{n\+\_\+best\+\_\+counter@{n\+\_\+best\+\_\+counter}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{n\+\_\+best\+\_\+counter}{n\_best\_counter}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+n\+\_\+best\+\_\+counter}
+
+
+
+Definition at line 1240 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3fb948fc95c894a000cf4c2d7359f8cb}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a3fb948fc95c894a000cf4c2d7359f8cb}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!outputs@{outputs}}
+\index{outputs@{outputs}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{outputs}{outputs}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+outputs}
+
+
+
+Definition at line 1230 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a2647f98520bc6581a5da7d4c3532abe8}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_a2647f98520bc6581a5da7d4c3532abe8}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!pad@{pad}}
+\index{pad@{pad}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{pad}{pad}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+pad}
+
+
+
+Definition at line 1221 of file controllable\+\_\+seq2seq.\+py.
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ac8bd05223ef3eb100250a34b98ec515c}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ac8bd05223ef3eb100250a34b98ec515c}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!partial\+\_\+hyps@{partial\+\_\+hyps}}
+\index{partial\+\_\+hyps@{partial\+\_\+hyps}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{partial\+\_\+hyps}{partial\_hyps}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+partial\+\_\+hyps}
+
+
+
+Definition at line 1243 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad53544456c857b36a11877f259ea2296}\label{classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam_ad53544456c857b36a11877f259ea2296}} 
+\index{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}!scores@{scores}}
+\index{scores@{scores}!controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam@{controllable\+\_\+seq2seq\+::controllable\+\_\+seq2seq\+::\+Beam}}
+\subsubsection{\texorpdfstring{scores}{scores}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+scores}
+
+
+
+Definition at line 1224 of file controllable\+\_\+seq2seq.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/controllable\+\_\+dialogue/controllable\+\_\+seq2seq/\hyperlink{controllable__seq2seq_8py}{controllable\+\_\+seq2seq.\+py}\end{DoxyCompactItemize}

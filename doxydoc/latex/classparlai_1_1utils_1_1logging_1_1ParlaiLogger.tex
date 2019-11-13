@@ -1,0 +1,325 @@
+\hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger}{}\section{parlai.\+utils.\+logging.\+Parlai\+Logger Class Reference}
+\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger}\index{parlai.\+utils.\+logging.\+Parlai\+Logger@{parlai.\+utils.\+logging.\+Parlai\+Logger}}
+
+
+Inheritance diagram for parlai.\+utils.\+logging.\+Parlai\+Logger\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1utils_1_1logging_1_1ParlaiLogger__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+logging.\+Parlai\+Logger\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1utils_1_1logging_1_1ParlaiLogger__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ade632e1d848beb962a35797c02f51407}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, name, console\+\_\+level=\hyperlink{namespaceparlai_1_1utils_1_1logging_ab324194e88a7aab20579ec176d8e47ed}{D\+E\+B\+UG}, console\+\_\+format=None, file\+\_\+format=None, file\+\_\+level=\hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO}, filename=None)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_aa545862a0e5c55d67989cc8ea7d545a1}{log} (self, msg, level=\hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO})
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_abaeed79f85f8b00792bcb3557f955e9e}{add\+\_\+file\+\_\+handler} (self, filename, level=\hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO}, format=None)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a160769d211d1700c2922c1ff65c83734}{add\+\_\+format\+\_\+prefix} (self, prefix)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a1066ef97668ebb94d3204ccac1bed8f6}{set\+\_\+format} (self, fmt)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a48e352dd5d21a2bb0637653b9bc7b354}{reset\+\_\+formatters} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a560f0cf26c3eaae2d785c4f35cae2c4b}{mute} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad00121b486f8553c45d9ab13e81567ab}{unmute} (self, level)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a22d5f670d10de4270b40bf3c683a9fd1}{redirect\+\_\+out} (self, stream)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad9b882180fc5cc0b81351f50d7fcd252}{stop\+\_\+redirect\+\_\+out} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a50c9155a1b765f79e15d64090ad0a236}{file\+Handler}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ae795816c275c3f3756f72d542a965748}{file\+Formatter}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a2c40840c6e6fa00eb4cdae9146907b78}{stream\+Handler}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ac973ab3558d792af0494970d14ee2c5e}{console\+Formatter}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a5b1bdad4c97a74ea4e38f678ae0edd2c}{alt\+Stream}
+\item 
+\hyperlink{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_acaf2a0925cad1af3df14b3776f900f55}{alt\+Stream\+Handler}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 21 of file logging.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ade632e1d848beb962a35797c02f51407}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ade632e1d848beb962a35797c02f51407}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{name,  }\item[{}]{console\+\_\+level = {\ttfamily \hyperlink{namespaceparlai_1_1utils_1_1logging_ab324194e88a7aab20579ec176d8e47ed}{D\+E\+B\+UG}},  }\item[{}]{console\+\_\+format = {\ttfamily None},  }\item[{}]{file\+\_\+format = {\ttfamily None},  }\item[{}]{file\+\_\+level = {\ttfamily \hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO}},  }\item[{}]{filename = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the logger object.
+:param name:
+    Name of the logger
+:param console_level:
+    min. Level of messages logged to console
+:param console_format:
+    The format of messages logged to the console.
+    Simple stdout is used if None specified
+:param file_format:
+    The format of messages logged to the file
+:param file_level:
+    min. Level of messages logged to the file
+:param filename:
+    The file the logs are written to
+\end{DoxyVerb}
+ 
+
+Definition at line 30 of file logging.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_abaeed79f85f8b00792bcb3557f955e9e}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_abaeed79f85f8b00792bcb3557f955e9e}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!add\+\_\+file\+\_\+handler@{add\+\_\+file\+\_\+handler}}
+\index{add\+\_\+file\+\_\+handler@{add\+\_\+file\+\_\+handler}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{add\+\_\+file\+\_\+handler()}{add\_file\_handler()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+file\+\_\+handler (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{filename,  }\item[{}]{level = {\ttfamily \hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO}},  }\item[{}]{format = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add a file handler to the logger object.
+Use case: When logging using the logger object instead of instantiating a new ParlaiLogger
+  this function might  be useful to add a filehandler on the go.
+Only does so if there is no file handler existing.
+\end{DoxyVerb}
+ 
+
+Definition at line 76 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Formatter, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a160769d211d1700c2922c1ff65c83734}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a160769d211d1700c2922c1ff65c83734}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!add\+\_\+format\+\_\+prefix@{add\+\_\+format\+\_\+prefix}}
+\index{add\+\_\+format\+\_\+prefix@{add\+\_\+format\+\_\+prefix}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{add\+\_\+format\+\_\+prefix()}{add\_format\_prefix()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+format\+\_\+prefix (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{prefix }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Include `prefix` in all future logging statements.\end{DoxyVerb}
+ 
+
+Definition at line 94 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+console\+Formatter, parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Formatter, parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Handler, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_aa545862a0e5c55d67989cc8ea7d545a1}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_aa545862a0e5c55d67989cc8ea7d545a1}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!log@{log}}
+\index{log@{log}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{log()}{log()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+log (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{msg,  }\item[{}]{level = {\ttfamily \hyperlink{namespaceparlai_1_1utils_1_1logging_a4bc2de74317465e5d1a8b5d7b913d48a}{I\+N\+FO}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Default Logging function.\end{DoxyVerb}
+ 
+
+Definition at line 72 of file logging.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a560f0cf26c3eaae2d785c4f35cae2c4b}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a560f0cf26c3eaae2d785c4f35cae2c4b}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!mute@{mute}}
+\index{mute@{mute}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{mute()}{mute()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+mute (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stop logging to stdout.\end{DoxyVerb}
+ 
+
+Definition at line 128 of file logging.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a22d5f670d10de4270b40bf3c683a9fd1}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a22d5f670d10de4270b40bf3c683a9fd1}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!redirect\+\_\+out@{redirect\+\_\+out}}
+\index{redirect\+\_\+out@{redirect\+\_\+out}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{redirect\+\_\+out()}{redirect\_out()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+redirect\+\_\+out (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{stream }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Redirect all logging output to `stream`.\end{DoxyVerb}
+ 
+
+Definition at line 138 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+alt\+Stream.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a48e352dd5d21a2bb0637653b9bc7b354}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a48e352dd5d21a2bb0637653b9bc7b354}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!reset\+\_\+formatters@{reset\+\_\+formatters}}
+\index{reset\+\_\+formatters@{reset\+\_\+formatters}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{reset\+\_\+formatters()}{reset\_formatters()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+reset\+\_\+formatters (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Resort back to initial formatting.\end{DoxyVerb}
+ 
+
+Definition at line 122 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+console\+Formatter, parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Formatter, parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Handler, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a1066ef97668ebb94d3204ccac1bed8f6}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a1066ef97668ebb94d3204ccac1bed8f6}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!set\+\_\+format@{set\+\_\+format}}
+\index{set\+\_\+format@{set\+\_\+format}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{set\+\_\+format()}{set\_format()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+set\+\_\+format (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{fmt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set format after instantiation\end{DoxyVerb}
+ 
+
+Definition at line 116 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Handler, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad9b882180fc5cc0b81351f50d7fcd252}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad9b882180fc5cc0b81351f50d7fcd252}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!stop\+\_\+redirect\+\_\+out@{stop\+\_\+redirect\+\_\+out}}
+\index{stop\+\_\+redirect\+\_\+out@{stop\+\_\+redirect\+\_\+out}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{stop\+\_\+redirect\+\_\+out()}{stop\_redirect\_out()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+stop\+\_\+redirect\+\_\+out (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Stop redirecting output to alternate stream.\end{DoxyVerb}
+ 
+
+Definition at line 144 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+alt\+Stream, and parlai.\+utils.\+logging.\+Parlai\+Logger.\+alt\+Stream\+Handler.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad00121b486f8553c45d9ab13e81567ab}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ad00121b486f8553c45d9ab13e81567ab}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!unmute@{unmute}}
+\index{unmute@{unmute}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{unmute()}{unmute()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+logging.\+Parlai\+Logger.\+unmute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{level }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Resume logging to stdout.\end{DoxyVerb}
+ 
+
+Definition at line 134 of file logging.\+py.
+
+
+
+References parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a5b1bdad4c97a74ea4e38f678ae0edd2c}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a5b1bdad4c97a74ea4e38f678ae0edd2c}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!alt\+Stream@{alt\+Stream}}
+\index{alt\+Stream@{alt\+Stream}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{alt\+Stream}{altStream}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+alt\+Stream}
+
+
+
+Definition at line 70 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+redirect\+\_\+out(), and parlai.\+utils.\+logging.\+Parlai\+Logger.\+stop\+\_\+redirect\+\_\+out().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_acaf2a0925cad1af3df14b3776f900f55}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_acaf2a0925cad1af3df14b3776f900f55}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!alt\+Stream\+Handler@{alt\+Stream\+Handler}}
+\index{alt\+Stream\+Handler@{alt\+Stream\+Handler}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{alt\+Stream\+Handler}{altStreamHandler}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+alt\+Stream\+Handler}
+
+
+
+Definition at line 141 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+stop\+\_\+redirect\+\_\+out().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ac973ab3558d792af0494970d14ee2c5e}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ac973ab3558d792af0494970d14ee2c5e}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!console\+Formatter@{console\+Formatter}}
+\index{console\+Formatter@{console\+Formatter}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{console\+Formatter}{consoleFormatter}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+console\+Formatter}
+
+
+
+Definition at line 65 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+format\+\_\+prefix(), and parlai.\+utils.\+logging.\+Parlai\+Logger.\+reset\+\_\+formatters().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ae795816c275c3f3756f72d542a965748}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_ae795816c275c3f3756f72d542a965748}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!file\+Formatter@{file\+Formatter}}
+\index{file\+Formatter@{file\+Formatter}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{file\+Formatter}{fileFormatter}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Formatter}
+
+
+
+Definition at line 57 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+file\+\_\+handler(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+format\+\_\+prefix(), and parlai.\+utils.\+logging.\+Parlai\+Logger.\+reset\+\_\+formatters().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a50c9155a1b765f79e15d64090ad0a236}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a50c9155a1b765f79e15d64090ad0a236}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!file\+Handler@{file\+Handler}}
+\index{file\+Handler@{file\+Handler}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{file\+Handler}{fileHandler}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+file\+Handler}
+
+
+
+Definition at line 54 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+file\+\_\+handler(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+format\+\_\+prefix(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+reset\+\_\+formatters(), and parlai.\+utils.\+logging.\+Parlai\+Logger.\+set\+\_\+format().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a2c40840c6e6fa00eb4cdae9146907b78}\label{classparlai_1_1utils_1_1logging_1_1ParlaiLogger_a2c40840c6e6fa00eb4cdae9146907b78}} 
+\index{parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}!stream\+Handler@{stream\+Handler}}
+\index{stream\+Handler@{stream\+Handler}!parlai\+::utils\+::logging\+::\+Parlai\+Logger@{parlai\+::utils\+::logging\+::\+Parlai\+Logger}}
+\subsubsection{\texorpdfstring{stream\+Handler}{streamHandler}}
+{\footnotesize\ttfamily parlai.\+utils.\+logging.\+Parlai\+Logger.\+stream\+Handler}
+
+
+
+Definition at line 62 of file logging.\+py.
+
+
+
+Referenced by parlai.\+utils.\+logging.\+Parlai\+Logger.\+add\+\_\+format\+\_\+prefix(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+mute(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+reset\+\_\+formatters(), parlai.\+utils.\+logging.\+Parlai\+Logger.\+set\+\_\+format(), and parlai.\+utils.\+logging.\+Parlai\+Logger.\+unmute().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{logging_8py}{logging.\+py}\end{DoxyCompactItemize}

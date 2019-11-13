@@ -1,0 +1,6 @@
+<map id="image_chat_collection.worlds.ExampleGenerator.pop_example" name="image_chat_collection.worlds.ExampleGenerator.pop_example">
+<area shape="rect" id="node2" href="$classimage__chat__collection_1_1worlds_1_1PersonalityGenerator.html#a53113dc205f282b68fb601bb4f1b094e" title="image_chat_collection.worlds.\lPersonalityGenerator.add\l_idx_stack" alt="" coords="305,5,502,61"/>
+<area shape="rect" id="node3" href="$classigc__evals_1_1worlds_1_1IGCExampleGenerator.html#aa0801aa3a53c7fd57a759c2080936174" title="igc_evals.worlds.IGCExample\lGenerator.add_idx_stack" alt="" coords="304,86,503,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1PersonasGenerator.html#aa6d41d88d84d5db2a35a759e137da157" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.PersonasGenerator.add\l_idx_stack" alt="" coords="264,152,543,208"/>
+<area shape="rect" id="node5" href="$classimage__chat__collection_1_1worlds_1_1ExampleGenerator.html#aa2cc3ca44d92a3aa6a75cb4a4194f4dd" title="image_chat_collection.worlds.\lExampleGenerator.add_idx_stack" alt="" coords="294,233,513,274"/>
+</map>

@@ -1,0 +1,1080 @@
+\hypertarget{classkvmemnn_1_1KvmemnnAgent}{}\section{kvmemnn.\+Kvmemnn\+Agent Class Reference}
+\label{classkvmemnn_1_1KvmemnnAgent}\index{kvmemnn.\+Kvmemnn\+Agent@{kvmemnn.\+Kvmemnn\+Agent}}
+
+
+Inheritance diagram for kvmemnn.\+Kvmemnn\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classkvmemnn_1_1KvmemnnAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for kvmemnn.\+Kvmemnn\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classkvmemnn_1_1KvmemnnAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a7a510bb5ac2444d5a30715c77bf55684}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classkvmemnn_1_1KvmemnnAgent_ab562f6f2d7ad624a9c76c59df5efcb6d}{opt}, shared=None)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ae0c109b266a7d5d1585dc9247334cf89}{override\+\_\+opt} (self, new\+\_\+opt)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ab29b337013bf1b4f5c33162c84f6528e}{parse} (self, text)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_adf2131a64c05d6d6538b431be1ea8531}{t2v} (self, text)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a781d63f517c888a8e64fedebed676d2b}{v2t} (self, vec)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ae907d1e9d3b1ce9708d40b905d4888f5}{zero\+\_\+grad} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_afaf2052da2fa6c4eb1278dd0bd78f2cf}{update\+\_\+params} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_aaa32e10a82350c998426e2731a4afb9e}{reset} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a2895b6a73d2c0661efce10ccc6bd9e85}{share} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a54b08c3fbe7f12d55a8ea6669b18726d}{observe} (self, \hyperlink{classkvmemnn_1_1KvmemnnAgent_a35de1b119d32bdc99bedbae205fd1555}{observation})
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_af8c3f5e8c17e1f1355eb2e416fd92e26}{report2} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a8d5a1f2f7e78582e5a75c85cbddfef39}{reset\+\_\+metrics} (self, keep\+\_\+total=False)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_aa7f07d5123c47f74f48ae395a66c9d73}{compute\+\_\+metrics} (self, loss, scores, mlp\+\_\+time, non\+\_\+mlp\+\_\+time)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a59c6078593c61e0adeda8487def4706e}{same} (self, y1, y2)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_aef9979d74efe7a62ac7d4dc8cc661e30}{get\+\_\+negs} (self, xs, ys)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a7bc63414bd5f081ad88caadcc5ec543d}{dict\+\_\+neighbors} (self, word, use\+R\+HS=False)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ac2b07b1455920e6a343271997b9c6207}{predict} (self, xs, ys=None, \hyperlink{classkvmemnn_1_1KvmemnnAgent_a30dfea4410f97b8a0cf44e0a374f3a62}{cands}=None, cands\+\_\+txt=None, obs=None)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ac7dba84c37dab7ef33f52d263fbdbdc7}{batchify} (self, observations)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a0326f13fa94d1e9156e761c14dbcb536}{add\+\_\+to\+\_\+ys\+\_\+cache} (self, ys)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a2a2c0f653125850d739b84e0c55e6796}{batch\+\_\+act} (self, observations)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a6f57723b871277392a3f3fd627c717d8}{act} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a78ec1dfcfa978743700d878d965d0195}{shutdown} (self)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_ad60947cc72e11489972472edbb1721fe}{save} (self, path=None)
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a4a7c16982a6d0364a6f7eca56734ee0b}{load} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a4df5874e77b946e8c92a61c14fc126b4}{dictionary\+\_\+class} ()
+\item 
+def \hyperlink{classkvmemnn_1_1KvmemnnAgent_a560f704744b9e1040eed00cd23fba59c}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_af916a421898a2fa6d5ce4f6b279635a4}{id}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_afdba3b0e989e4da5dac9024a911c8716}{N\+U\+L\+L\+\_\+\+I\+DX}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a186fc276d5d035c1b27349cf93bdbbfa}{start2}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a30dfea4410f97b8a0cf44e0a374f3a62}{cands}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_aa591b18b67874b89d945b898efff188c}{ys\+\_\+cache}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_af48143451b92d842a0cb5963f439f6e7}{ys\+\_\+cache\+\_\+sz}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a4c12d4c70d11ba9420c7104f95bea7e7}{truncate}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a732ab44660d83f2052b1440efbc2d5e2}{history}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a1014d9451e7d78217dae10ea1dcf9c1a}{threadindex}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a05d5080eba5a91b8ddd2aa42726e95d2}{dict}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a49f09374ce57503c219e8e872527332e}{model}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a08acbbc59ff955add282f0e502b94cfe}{fixedX}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a0d2db03a067bf5ec18a82946de160c34}{fixed\+Cands}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_af79f7f554e0f22bf2a039189118af007}{fixed\+Cands\+\_\+txt}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_ac40dc319e8e847332f7764291ce8f276}{fixed\+Cands2}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a530d6628bb7968857f175d6da15d791b}{fixed\+Cands\+\_\+txt2}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_abde299385d9ff9fbbebaa20de4ab371b}{criterion}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a9255f528569962cccc89c575e99b414a}{take\+\_\+next\+\_\+utt}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a175207a4d4e589e68d8a81e4d1390925}{cands\+\_\+done}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_aa5d6db7229e8767b9a41e85d17f4680e}{interactive\+Mode}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a35de1b119d32bdc99bedbae205fd1555}{observation}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a0019d193f96811c4968694326b11e98e}{episode\+\_\+done}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a2f5075b4d8503fe1fd0a230be9233a12}{optimizer}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_ac8fb83cab866022a264be22fca627193}{metrics}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a289b7cc75e8218d634de60309dce5dc0}{start}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a425dd495d980f380518376a470b35e46}{twohoputt}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_a990b47005f133ea823d46ab78baea437}{tricks}
+\item 
+\hyperlink{classkvmemnn_1_1KvmemnnAgent_ab562f6f2d7ad624a9c76c59df5efcb6d}{opt}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classkvmemnn_1_1KvmemnnAgent_a807ca275e7f9ba1135bd35fd92831dff}{O\+P\+T\+I\+M\+\_\+\+O\+P\+TS}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Simple implementation of the memnn algorithm with 1 hop
+\end{DoxyVerb}
+ 
+
+Definition at line 135 of file kvmemnn.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a7a510bb5ac2444d5a30715c77bf55684}\label{classkvmemnn_1_1KvmemnnAgent_a7a510bb5ac2444d5a30715c77bf55684}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set up model if shared params not set, otherwise no work to do.\end{DoxyVerb}
+ 
+
+Definition at line 282 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+reset\+\_\+metrics(), parlai.\+core.\+agents.\+Agent.\+reset\+\_\+metrics(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+reset\+\_\+metrics(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+reset\+\_\+metrics(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+reset\+\_\+metrics(), and parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+reset\+\_\+metrics().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a7a510bb5ac2444d5a30715c77bf55684_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a6f57723b871277392a3f3fd627c717d8}\label{classkvmemnn_1_1KvmemnnAgent_a6f57723b871277392a3f3fd627c717d8}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!act@{act}}
+\index{act@{act}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 879 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+batch\+\_\+act(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+batch\+\_\+act(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+batch\+\_\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+core.\+worlds.\+Batch\+World.\+batch\+\_\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+batch\+\_\+act(), kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batch\+\_\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batch\+\_\+act(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classkvmemnn_1_1KvmemnnAgent_a6f57723b871277392a3f3fd627c717d8_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a560f704744b9e1040eed00cd23fba59c}\label{classkvmemnn_1_1KvmemnnAgent_a560f704744b9e1040eed00cd23fba59c}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add command-line arguments specifically for this agent.\end{DoxyVerb}
+ 
+
+Definition at line 156 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a0326f13fa94d1e9156e761c14dbcb536}\label{classkvmemnn_1_1KvmemnnAgent_a0326f13fa94d1e9156e761c14dbcb536}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!add\+\_\+to\+\_\+ys\+\_\+cache@{add\+\_\+to\+\_\+ys\+\_\+cache}}
+\index{add\+\_\+to\+\_\+ys\+\_\+cache@{add\+\_\+to\+\_\+ys\+\_\+cache}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+to\+\_\+ys\+\_\+cache()}{add\_to\_ys\_cache()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+add\+\_\+to\+\_\+ys\+\_\+cache (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ys }\end{DoxyParamCaption})}
+
+
+
+Definition at line 853 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+ys\+\_\+cache, kvmemnn.\+Kvmemnn\+Agent.\+ys\+\_\+cache, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+ys\+\_\+cache\+\_\+sz, and kvmemnn.\+Kvmemnn\+Agent.\+ys\+\_\+cache\+\_\+sz.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a0326f13fa94d1e9156e761c14dbcb536_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a2a2c0f653125850d739b84e0c55e6796}\label{classkvmemnn_1_1KvmemnnAgent_a2a2c0f653125850d739b84e0c55e6796}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!batch\+\_\+act@{batch\+\_\+act}}
+\index{batch\+\_\+act@{batch\+\_\+act}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{batch\+\_\+act()}{batch\_act()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observations }\end{DoxyParamCaption})}
+
+
+
+Definition at line 862 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+add\+\_\+to\+\_\+ys\+\_\+cache(), kvmemnn.\+Kvmemnn\+Agent.\+add\+\_\+to\+\_\+ys\+\_\+cache(), parlai.\+agents.\+memnn.\+memnn.\+Memnn\+Agent.\+batchify(), parlai.\+agents.\+seq2seq.\+seq2seq.\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+batchify(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batchify(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+batchify(), kvmemnn.\+Kvmemnn\+Agent.\+batchify(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+batchify(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+get\+I\+D(), parlai.\+core.\+agents.\+Agent.\+get\+I\+D(), parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+predict(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+predict(), parlai.\+utils.\+misc.\+Predictor.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+predict(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+predict(), kvmemnn.\+Kvmemnn\+Agent.\+predict(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+predict().
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+act(), and kvmemnn.\+Kvmemnn\+Agent.\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classkvmemnn_1_1KvmemnnAgent_a2a2c0f653125850d739b84e0c55e6796_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a2a2c0f653125850d739b84e0c55e6796_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ac7dba84c37dab7ef33f52d263fbdbdc7}\label{classkvmemnn_1_1KvmemnnAgent_ac7dba84c37dab7ef33f52d263fbdbdc7}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!batchify@{batchify}}
+\index{batchify@{batchify}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{batchify()}{batchify()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+batchify (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observations }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert a list of observations into input & target tensors.\end{DoxyVerb}
+ 
+
+Definition at line 780 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, controllable\+\_\+seq2seq.\+modules.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, kvmemnn.\+Kvmemnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+doc\+\_\+ranker.\+Tfidf\+Doc\+Ranker.\+parse(), parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+parse(), parlai.\+core.\+torch\+\_\+agent.\+History.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+parse(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+parse(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+parse(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+parse(), parlai.\+core.\+dict.\+Dictionary\+Agent.\+parse(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse(), light\+\_\+chats.\+graph.\+Graph.\+parse(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+truncate, kvmemnn.\+Kvmemnn\+Agent.\+truncate, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+truncate, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+truncate, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+truncate.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_ac7dba84c37dab7ef33f52d263fbdbdc7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_ac7dba84c37dab7ef33f52d263fbdbdc7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_aa7f07d5123c47f74f48ae395a66c9d73}\label{classkvmemnn_1_1KvmemnnAgent_aa7f07d5123c47f74f48ae395a66c9d73}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!compute\+\_\+metrics@{compute\+\_\+metrics}}
+\index{compute\+\_\+metrics@{compute\+\_\+metrics}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{compute\+\_\+metrics()}{compute\_metrics()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+compute\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{loss,  }\item[{}]{scores,  }\item[{}]{mlp\+\_\+time,  }\item[{}]{non\+\_\+mlp\+\_\+time }\end{DoxyParamCaption})}
+
+
+
+Definition at line 537 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a7bc63414bd5f081ad88caadcc5ec543d}\label{classkvmemnn_1_1KvmemnnAgent_a7bc63414bd5f081ad88caadcc5ec543d}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!dict\+\_\+neighbors@{dict\+\_\+neighbors}}
+\index{dict\+\_\+neighbors@{dict\+\_\+neighbors}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{dict\+\_\+neighbors()}{dict\_neighbors()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{word,  }\item[{}]{use\+R\+HS = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 579 of file kvmemnn.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, kvmemnn.\+Kvmemnn\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+t2v(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+v2t(), kvmemnn.\+Kvmemnn\+Agent.\+v2t(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+v2t().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a7bc63414bd5f081ad88caadcc5ec543d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a4df5874e77b946e8c92a61c14fc126b4}\label{classkvmemnn_1_1KvmemnnAgent_a4df5874e77b946e8c92a61c14fc126b4}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 152 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_aef9979d74efe7a62ac7d4dc8cc661e30}\label{classkvmemnn_1_1KvmemnnAgent_aef9979d74efe7a62ac7d4dc8cc661e30}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!get\+\_\+negs@{get\+\_\+negs}}
+\index{get\+\_\+negs@{get\+\_\+negs}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{get\+\_\+negs()}{get\_negs()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{ys }\end{DoxyParamCaption})}
+
+
+
+Definition at line 558 of file kvmemnn.\+py.
+
+
+
+References transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, kvmemnn.\+Kvmemnn\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+same(), kvmemnn.\+Kvmemnn\+Agent.\+same(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+ys\+\_\+cache, and kvmemnn.\+Kvmemnn\+Agent.\+ys\+\_\+cache.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_aef9979d74efe7a62ac7d4dc8cc661e30_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a4a7c16982a6d0364a6f7eca56734ee0b}\label{classkvmemnn_1_1KvmemnnAgent_a4a7c16982a6d0364a6f7eca56734ee0b}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!load@{load}}
+\index{load@{load}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+load (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return opt and model states.\end{DoxyVerb}
+ 
+
+Definition at line 900 of file kvmemnn.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, kvmemnn.\+Kvmemnn\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, kvmemnn.\+Kvmemnn\+Agent.\+optimizer, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+reset(), parlai.\+core.\+agents.\+Agent.\+reset(), parlai.\+agents.\+drqa.\+utils.\+Average\+Meter.\+reset(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+reset(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+reset(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+reset(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+reset(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+reset(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+reset().
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+share().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a4a7c16982a6d0364a6f7eca56734ee0b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a4a7c16982a6d0364a6f7eca56734ee0b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a54b08c3fbe7f12d55a8ea6669b18726d}\label{classkvmemnn_1_1KvmemnnAgent_a54b08c3fbe7f12d55a8ea6669b18726d}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!observe@{observe}}
+\index{observe@{observe}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+
+
+Definition at line 474 of file kvmemnn.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, agent.\+modules.\+Decoder.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, kvmemnn.\+Kvmemnn\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, convai.\+convai\+\_\+bot.\+Conv\+A\+I\+Sample\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+World.\+episode\+\_\+done, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+episode\+\_\+done, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+episode\+\_\+done, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+episode\+\_\+done, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+episode\+\_\+done, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+episode\+\_\+done, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+episode\+\_\+done, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+episode\+\_\+done, kvmemnn.\+Kvmemnn\+Agent.\+episode\+\_\+done, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+episode\+\_\+done, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, kvmemnn.\+Kvmemnn\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, kvmemnn.\+maintain\+\_\+dialog\+\_\+history(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a54b08c3fbe7f12d55a8ea6669b18726d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ae0c109b266a7d5d1585dc9247334cf89}\label{classkvmemnn_1_1KvmemnnAgent_ae0c109b266a7d5d1585dc9247334cf89}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!override\+\_\+opt@{override\+\_\+opt}}
+\index{override\+\_\+opt@{override\+\_\+opt}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{override\+\_\+opt()}{override\_opt()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+override\+\_\+opt (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{new\+\_\+opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set overridable opts from loaded opt file.
+
+Print out each added key and each overriden key.
+Only override args specific to the model.
+\end{DoxyVerb}
+ 
+
+Definition at line 382 of file kvmemnn.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, and parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ab29b337013bf1b4f5c33162c84f6528e}\label{classkvmemnn_1_1KvmemnnAgent_ab29b337013bf1b4f5c33162c84f6528e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!parse@{parse}}
+\index{parse@{parse}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+parse (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert string to token indices.\end{DoxyVerb}
+ 
+
+Definition at line 415 of file kvmemnn.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, agent.\+modules.\+Decoder.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, kvmemnn.\+Kvmemnn\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batchify().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_ab29b337013bf1b4f5c33162c84f6528e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ac2b07b1455920e6a343271997b9c6207}\label{classkvmemnn_1_1KvmemnnAgent_ac2b07b1455920e6a343271997b9c6207}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!predict@{predict}}
+\index{predict@{predict}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{predict()}{predict()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+predict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{ys = {\ttfamily None},  }\item[{}]{cands = {\ttfamily None},  }\item[{}]{cands\+\_\+txt = {\ttfamily None},  }\item[{}]{obs = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Produce a prediction from our model.
+Update the model using the targets if available, otherwise rank
+candidates as well if they are available and param is set.
+\end{DoxyVerb}
+ 
+
+Definition at line 598 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_ac2b07b1455920e6a343271997b9c6207_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_af8c3f5e8c17e1f1355eb2e416fd92e26}\label{classkvmemnn_1_1KvmemnnAgent_af8c3f5e8c17e1f1355eb2e416fd92e26}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!report2@{report2}}
+\index{report2@{report2}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{report2()}{report2()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+report2 (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 489 of file kvmemnn.\+py.
+
+
+
+References generator.\+train\+\_\+end2end.\+clip, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+metrics, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, kvmemnn.\+Kvmemnn\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, kvmemnn.\+Kvmemnn\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_af8c3f5e8c17e1f1355eb2e416fd92e26_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_aaa32e10a82350c998426e2731a4afb9e}\label{classkvmemnn_1_1KvmemnnAgent_aaa32e10a82350c998426e2731a4afb9e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!reset@{reset}}
+\index{reset@{reset}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset observation and episode_done.\end{DoxyVerb}
+ 
+
+Definition at line 449 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a8d5a1f2f7e78582e5a75c85cbddfef39}\label{classkvmemnn_1_1KvmemnnAgent_a8d5a1f2f7e78582e5a75c85cbddfef39}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{keep\+\_\+total = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 513 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a59c6078593c61e0adeda8487def4706e}\label{classkvmemnn_1_1KvmemnnAgent_a59c6078593c61e0adeda8487def4706e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!same@{same}}
+\index{same@{same}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{same()}{same()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+same (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{y1,  }\item[{}]{y2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check if two tensors are the same, within small margin of error.\end{DoxyVerb}
+ 
+
+Definition at line 550 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a59c6078593c61e0adeda8487def4706e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ad60947cc72e11489972472edbb1721fe}\label{classkvmemnn_1_1KvmemnnAgent_ad60947cc72e11489972472edbb1721fe}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!save@{save}}
+\index{save@{save}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+save (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save model parameters if model_file is set.\end{DoxyVerb}
+ 
+
+Definition at line 887 of file kvmemnn.\+py.
+
+
+
+References parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, kvmemnn.\+Kvmemnn\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, kvmemnn.\+Kvmemnn\+Agent.\+optimizer, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a2895b6a73d2c0661efce10ccc6bd9e85}\label{classkvmemnn_1_1KvmemnnAgent_a2895b6a73d2c0661efce10ccc6bd9e85}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!share@{share}}
+\index{share@{share}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share internal states between parent and child instances.\end{DoxyVerb}
+ 
+
+Definition at line 461 of file kvmemnn.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, agent.\+modules.\+Decoder.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, kvmemnn.\+Kvmemnn\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+fixed\+Cands, kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands, kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands2, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+fixed\+Cands\+\_\+txt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+fixed\+Cands\+\_\+txt, kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands\+\_\+txt, kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands\+\_\+txt2, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+fixedX, kvmemnn.\+Kvmemnn\+Agent.\+fixedX, parlai.\+utils.\+safety.\+Offensive\+Language\+Classifier.\+model, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+model, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+model, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+model, kvmemnn.\+Kvmemnn\+Agent.\+model, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+model, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+model, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a78ec1dfcfa978743700d878d965d0195}\label{classkvmemnn_1_1KvmemnnAgent_a78ec1dfcfa978743700d878d965d0195}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 883 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_adf2131a64c05d6d6538b431be1ea8531}\label{classkvmemnn_1_1KvmemnnAgent_adf2131a64c05d6d6538b431be1ea8531}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!t2v@{t2v}}
+\index{t2v@{t2v}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{t2v()}{t2v()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+t2v (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+
+
+Definition at line 424 of file kvmemnn.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, agent.\+modules.\+Decoder.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, kvmemnn.\+Kvmemnn\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_adf2131a64c05d6d6538b431be1ea8531_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_afaf2052da2fa6c4eb1278dd0bd78f2cf}\label{classkvmemnn_1_1KvmemnnAgent_afaf2052da2fa6c4eb1278dd0bd78f2cf}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!update\+\_\+params@{update\+\_\+params}}
+\index{update\+\_\+params@{update\+\_\+params}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{update\+\_\+params()}{update\_params()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+update\+\_\+params (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Do one optimization step.\end{DoxyVerb}
+ 
+
+Definition at line 445 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, kvmemnn.\+Kvmemnn\+Agent.\+optimizer, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a781d63f517c888a8e64fedebed676d2b}\label{classkvmemnn_1_1KvmemnnAgent_a781d63f517c888a8e64fedebed676d2b}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!v2t@{v2t}}
+\index{v2t@{v2t}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{v2t()}{v2t()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+v2t (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{vec }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert token indices to string of tokens.\end{DoxyVerb}
+ 
+
+Definition at line 428 of file kvmemnn.\+py.
+
+
+
+References agent.\+modules.\+Mem\+N\+N.\+dict, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, agent.\+modules.\+Decoder.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, kvmemnn.\+Kvmemnn\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_a781d63f517c888a8e64fedebed676d2b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ae907d1e9d3b1ce9708d40b905d4888f5}\label{classkvmemnn_1_1KvmemnnAgent_ae907d1e9d3b1ce9708d40b905d4888f5}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!zero\+\_\+grad@{zero\+\_\+grad}}
+\index{zero\+\_\+grad@{zero\+\_\+grad}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{zero\+\_\+grad()}{zero\_grad()}}
+{\footnotesize\ttfamily def kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Zero out optimizer.\end{DoxyVerb}
+ 
+
+Definition at line 441 of file kvmemnn.\+py.
+
+
+
+References parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+optimizer, transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+optimizer, parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+optimizer, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+optimizer, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+optimizer, kvmemnn.\+Kvmemnn\+Agent.\+optimizer, mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+optimizer, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+optimizer, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+optimizer.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+evaluate\+\_\+one\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classkvmemnn_1_1KvmemnnAgent_ae907d1e9d3b1ce9708d40b905d4888f5_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a30dfea4410f97b8a0cf44e0a374f3a62}\label{classkvmemnn_1_1KvmemnnAgent_a30dfea4410f97b8a0cf44e0a374f3a62}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!cands@{cands}}
+\index{cands@{cands}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{cands}{cands}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+cands}
+
+
+
+Definition at line 297 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a175207a4d4e589e68d8a81e4d1390925}\label{classkvmemnn_1_1KvmemnnAgent_a175207a4d4e589e68d8a81e4d1390925}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!cands\+\_\+done@{cands\+\_\+done}}
+\index{cands\+\_\+done@{cands\+\_\+done}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{cands\+\_\+done}{cands\_done}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+cands\+\_\+done}
+
+
+
+Definition at line 374 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_abde299385d9ff9fbbebaa20de4ab371b}\label{classkvmemnn_1_1KvmemnnAgent_abde299385d9ff9fbbebaa20de4ab371b}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!criterion@{criterion}}
+\index{criterion@{criterion}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{criterion}{criterion}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+criterion}
+
+
+
+Definition at line 362 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a05d5080eba5a91b8ddd2aa42726e95d2}\label{classkvmemnn_1_1KvmemnnAgent_a05d5080eba5a91b8ddd2aa42726e95d2}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!dict@{dict}}
+\index{dict@{dict}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+dict}
+
+
+
+Definition at line 309 of file kvmemnn.\+py.
+
+
+
+Referenced by taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a0019d193f96811c4968694326b11e98e}\label{classkvmemnn_1_1KvmemnnAgent_a0019d193f96811c4968694326b11e98e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{episode\+\_\+done}{episode\_done}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+episode\+\_\+done}
+
+
+
+Definition at line 452 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Data\+World.\+prep\+\_\+save\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+prep\+\_\+save\+\_\+data(), self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+dict(), and self\+\_\+feeding.\+utils.\+Parley.\+to\+\_\+parlai().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a0d2db03a067bf5ec18a82946de160c34}\label{classkvmemnn_1_1KvmemnnAgent_a0d2db03a067bf5ec18a82946de160c34}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!fixed\+Cands@{fixed\+Cands}}
+\index{fixed\+Cands@{fixed\+Cands}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{fixed\+Cands}{fixedCands}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands}
+
+
+
+Definition at line 314 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+share().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ac40dc319e8e847332f7764291ce8f276}\label{classkvmemnn_1_1KvmemnnAgent_ac40dc319e8e847332f7764291ce8f276}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!fixed\+Cands2@{fixed\+Cands2}}
+\index{fixed\+Cands2@{fixed\+Cands2}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{fixed\+Cands2}{fixedCands2}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands2}
+
+
+
+Definition at line 316 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+share().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_af79f7f554e0f22bf2a039189118af007}\label{classkvmemnn_1_1KvmemnnAgent_af79f7f554e0f22bf2a039189118af007}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!fixed\+Cands\+\_\+txt@{fixed\+Cands\+\_\+txt}}
+\index{fixed\+Cands\+\_\+txt@{fixed\+Cands\+\_\+txt}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{fixed\+Cands\+\_\+txt}{fixedCands\_txt}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands\+\_\+txt}
+
+
+
+Definition at line 315 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+share().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a530d6628bb7968857f175d6da15d791b}\label{classkvmemnn_1_1KvmemnnAgent_a530d6628bb7968857f175d6da15d791b}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!fixed\+Cands\+\_\+txt2@{fixed\+Cands\+\_\+txt2}}
+\index{fixed\+Cands\+\_\+txt2@{fixed\+Cands\+\_\+txt2}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{fixed\+Cands\+\_\+txt2}{fixedCands\_txt2}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+fixed\+Cands\+\_\+txt2}
+
+
+
+Definition at line 317 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+share().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a08acbbc59ff955add282f0e502b94cfe}\label{classkvmemnn_1_1KvmemnnAgent_a08acbbc59ff955add282f0e502b94cfe}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!fixedX@{fixedX}}
+\index{fixedX@{fixedX}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{fixedX}{fixedX}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+fixedX}
+
+
+
+Definition at line 313 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+share().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a732ab44660d83f2052b1440efbc2d5e2}\label{classkvmemnn_1_1KvmemnnAgent_a732ab44660d83f2052b1440efbc2d5e2}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!history@{history}}
+\index{history@{history}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{history}{history}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+history}
+
+
+
+Definition at line 301 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs(), and kvmemnn.\+Kvmemnn\+Agent.\+observe().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_af916a421898a2fa6d5ce4f6b279635a4}\label{classkvmemnn_1_1KvmemnnAgent_af916a421898a2fa6d5ce4f6b279635a4}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!id@{id}}
+\index{id@{id}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+id}
+
+
+
+Definition at line 293 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_aa5d6db7229e8767b9a41e85d17f4680e}\label{classkvmemnn_1_1KvmemnnAgent_aa5d6db7229e8767b9a41e85d17f4680e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!interactive\+Mode@{interactive\+Mode}}
+\index{interactive\+Mode@{interactive\+Mode}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{interactive\+Mode}{interactiveMode}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+interactive\+Mode}
+
+
+
+Definition at line 376 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ac8fb83cab866022a264be22fca627193}\label{classkvmemnn_1_1KvmemnnAgent_ac8fb83cab866022a264be22fca627193}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!metrics@{metrics}}
+\index{metrics@{metrics}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{metrics}{metrics}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+metrics}
+
+
+
+Definition at line 515 of file kvmemnn.\+py.
+
+
+
+Referenced by transresnet.\+transresnet.\+Transresnet\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet.\+transresnet.\+Transresnet\+Agent.\+reset\+\_\+metrics(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a49f09374ce57503c219e8e872527332e}\label{classkvmemnn_1_1KvmemnnAgent_a49f09374ce57503c219e8e872527332e}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!model@{model}}
+\index{model@{model}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+model}
+
+
+
+Definition at line 311 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+dict\+\_\+neighbors(), transresnet.\+transresnet.\+Transresnet\+Agent.\+eval\+\_\+step(), transresnet.\+transresnet.\+Transresnet\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), transresnet.\+transresnet.\+Transresnet\+Agent.\+receive\+\_\+metrics(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+train\+\_\+step().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_afdba3b0e989e4da5dac9024a911c8716}\label{classkvmemnn_1_1KvmemnnAgent_afdba3b0e989e4da5dac9024a911c8716}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}}
+\index{N\+U\+L\+L\+\_\+\+I\+DX@{N\+U\+L\+L\+\_\+\+I\+DX}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{N\+U\+L\+L\+\_\+\+I\+DX}{NULL\_IDX}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX}
+
+
+
+Definition at line 294 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a35de1b119d32bdc99bedbae205fd1555}\label{classkvmemnn_1_1KvmemnnAgent_a35de1b119d32bdc99bedbae205fd1555}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!observation@{observation}}
+\index{observation@{observation}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+observation}
+
+
+
+Definition at line 451 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_ab562f6f2d7ad624a9c76c59df5efcb6d}\label{classkvmemnn_1_1KvmemnnAgent_ab562f6f2d7ad624a9c76c59df5efcb6d}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!opt@{opt}}
+\index{opt@{opt}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+opt}
+
+
+
+Definition at line 908 of file kvmemnn.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a807ca275e7f9ba1135bd35fd92831dff}\label{classkvmemnn_1_1KvmemnnAgent_a807ca275e7f9ba1135bd35fd92831dff}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!O\+P\+T\+I\+M\+\_\+\+O\+P\+TS@{O\+P\+T\+I\+M\+\_\+\+O\+P\+TS}}
+\index{O\+P\+T\+I\+M\+\_\+\+O\+P\+TS@{O\+P\+T\+I\+M\+\_\+\+O\+P\+TS}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{O\+P\+T\+I\+M\+\_\+\+O\+P\+TS}{OPTIM\_OPTS}}
+{\footnotesize\ttfamily dictionary kvmemnn.\+Kvmemnn\+Agent.\+O\+P\+T\+I\+M\+\_\+\+O\+P\+TS\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+=  \{
+        \textcolor{stringliteral}{'adadelta'}: optim.Adadelta,
+        \textcolor{stringliteral}{'adagrad'}: optim.Adagrad,
+        \textcolor{stringliteral}{'adam'}: optim.Adam,
+        \textcolor{stringliteral}{'adamax'}: optim.Adamax,
+        \textcolor{stringliteral}{'asgd'}: optim.ASGD,
+        \textcolor{stringliteral}{'lbfgs'}: optim.LBFGS,
+        \textcolor{stringliteral}{'rmsprop'}: optim.RMSprop,
+        \textcolor{stringliteral}{'rprop'}: optim.Rprop,
+        \textcolor{stringliteral}{'sgd'}: optim.SGD,
+    \}
+\end{DoxyCode}
+
+
+Definition at line 139 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a2f5075b4d8503fe1fd0a230be9233a12}\label{classkvmemnn_1_1KvmemnnAgent_a2f5075b4d8503fe1fd0a230be9233a12}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+optimizer}
+
+
+
+Definition at line 459 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+save(), transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch(), kvmemnn.\+Kvmemnn\+Agent.\+update\+\_\+params(), and kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a289b7cc75e8218d634de60309dce5dc0}\label{classkvmemnn_1_1KvmemnnAgent_a289b7cc75e8218d634de60309dce5dc0}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!start@{start}}
+\index{start@{start}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{start}{start}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+start}
+
+
+
+Definition at line 603 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a186fc276d5d035c1b27349cf93bdbbfa}\label{classkvmemnn_1_1KvmemnnAgent_a186fc276d5d035c1b27349cf93bdbbfa}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!start2@{start2}}
+\index{start2@{start2}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{start2}{start2}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+start2}
+
+
+
+Definition at line 295 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a9255f528569962cccc89c575e99b414a}\label{classkvmemnn_1_1KvmemnnAgent_a9255f528569962cccc89c575e99b414a}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!take\+\_\+next\+\_\+utt@{take\+\_\+next\+\_\+utt}}
+\index{take\+\_\+next\+\_\+utt@{take\+\_\+next\+\_\+utt}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{take\+\_\+next\+\_\+utt}{take\_next\_utt}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+take\+\_\+next\+\_\+utt}
+
+
+
+Definition at line 373 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a1014d9451e7d78217dae10ea1dcf9c1a}\label{classkvmemnn_1_1KvmemnnAgent_a1014d9451e7d78217dae10ea1dcf9c1a}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!threadindex@{threadindex}}
+\index{threadindex@{threadindex}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{threadindex}{threadindex}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+threadindex}
+
+
+
+Definition at line 305 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a990b47005f133ea823d46ab78baea437}\label{classkvmemnn_1_1KvmemnnAgent_a990b47005f133ea823d46ab78baea437}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!tricks@{tricks}}
+\index{tricks@{tricks}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{tricks}{tricks}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+tricks}
+
+
+
+Definition at line 640 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a4c12d4c70d11ba9420c7104f95bea7e7}\label{classkvmemnn_1_1KvmemnnAgent_a4c12d4c70d11ba9420c7104f95bea7e7}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!truncate@{truncate}}
+\index{truncate@{truncate}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{truncate}{truncate}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+truncate}
+
+
+
+Definition at line 300 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_a425dd495d980f380518376a470b35e46}\label{classkvmemnn_1_1KvmemnnAgent_a425dd495d980f380518376a470b35e46}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!twohoputt@{twohoputt}}
+\index{twohoputt@{twohoputt}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{twohoputt}{twohoputt}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+twohoputt}
+
+
+
+Definition at line 639 of file kvmemnn.\+py.
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_aa591b18b67874b89d945b898efff188c}\label{classkvmemnn_1_1KvmemnnAgent_aa591b18b67874b89d945b898efff188c}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!ys\+\_\+cache@{ys\+\_\+cache}}
+\index{ys\+\_\+cache@{ys\+\_\+cache}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{ys\+\_\+cache}{ys\_cache}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+ys\+\_\+cache}
+
+
+
+Definition at line 298 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+add\+\_\+to\+\_\+ys\+\_\+cache(), and kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs().
+
+\mbox{\Hypertarget{classkvmemnn_1_1KvmemnnAgent_af48143451b92d842a0cb5963f439f6e7}\label{classkvmemnn_1_1KvmemnnAgent_af48143451b92d842a0cb5963f439f6e7}} 
+\index{kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}!ys\+\_\+cache\+\_\+sz@{ys\+\_\+cache\+\_\+sz}}
+\index{ys\+\_\+cache\+\_\+sz@{ys\+\_\+cache\+\_\+sz}!kvmemnn\+::\+Kvmemnn\+Agent@{kvmemnn\+::\+Kvmemnn\+Agent}}
+\subsubsection{\texorpdfstring{ys\+\_\+cache\+\_\+sz}{ys\_cache\_sz}}
+{\footnotesize\ttfamily kvmemnn.\+Kvmemnn\+Agent.\+ys\+\_\+cache\+\_\+sz}
+
+
+
+Definition at line 299 of file kvmemnn.\+py.
+
+
+
+Referenced by kvmemnn.\+Kvmemnn\+Agent.\+add\+\_\+to\+\_\+ys\+\_\+cache().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/personachat/kvmemnn/\hyperlink{projects_2personachat_2kvmemnn_2kvmemnn_8py}{kvmemnn.\+py}\end{DoxyCompactItemize}

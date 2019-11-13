@@ -1,7 +1,4 @@
 <map id="parlai.mturk.core.socket_manager.SocketManager.packet_should_block" name="parlai.mturk.core.socket_manager.SocketManager.packet_should_block">
-<area shape="rect" id="node1" title=" " alt="" coords="807,39,1024,95"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a1518f69049fee8c6afb27120cdd6b1f3" title=" " alt="" coords="475,13,742,54"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager.html#ac141271b1df6f50a5bfee040d7904696" title=" " alt="" coords="459,78,759,119"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a65f1f7bf590ce6849bba6e743b73804c" title=" " alt="" coords="232,5,411,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#ad366f39cbef4d0d8307cf350cd088ff9" title=" " alt="" coords="5,5,184,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a1518f69049fee8c6afb27120cdd6b1f3" title="parlai.mturk.core.socket\l_manager.SocketManager.channel_thread" alt="" coords="287,5,554,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1StaticSocketManager.html#ac141271b1df6f50a5bfee040d7904696" title="parlai.mturk.core.socket\l_manager.StaticSocketManager.channel_thread" alt="" coords="271,71,571,112"/>
 </map>

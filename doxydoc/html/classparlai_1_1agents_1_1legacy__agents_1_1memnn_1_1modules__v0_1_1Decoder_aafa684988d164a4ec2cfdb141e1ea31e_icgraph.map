@@ -1,4 +1,10 @@
 <map id="parlai.agents.legacy_agents.memnn.modules_v0.Decoder.hidden_to_idx" name="parlai.agents.legacy_agents.memnn.modules_v0.Decoder.hidden_to_idx">
-<area shape="rect" id="node1" title=" " alt="" coords="256,29,436,85"/>
-<area shape="rect" id="node2" href="$classagent_1_1modules_1_1Decoder.html#ad0179be7c6224482204f3ce575894573" title=" " alt="" coords="5,37,208,78"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1Decoder.html#a1da4529bbaf122064ff7109fd88cd12a" title="parlai.agents.legacy\l_agents.memnn.modules\l_v0.Decoder.forward" alt="" coords="233,112,401,168"/>
+<area shape="rect" id="node9" href="$classagent_1_1modules_1_1Decoder.html#a4c609d3b51a4ef925c943c22a7a015e8" title="agent.modules.Decoder.forward" alt="" coords="1031,261,1237,288"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1300,82,1513,123"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1561,111,1775,153"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="449,112,684,168"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1300,199,1513,241"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="732,145,968,186"/>
+<area shape="rect" id="node7" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="1016,141,1252,182"/>
 </map>

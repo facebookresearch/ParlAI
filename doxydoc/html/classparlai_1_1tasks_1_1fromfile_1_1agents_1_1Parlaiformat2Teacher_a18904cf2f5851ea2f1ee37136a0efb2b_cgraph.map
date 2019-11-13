@@ -1,0 +1,4 @@
+<map id="parlai.tasks.fromfile.agents.Parlaiformat2Teacher.__init__" name="parlai.tasks.fromfile.agents.Parlaiformat2Teacher.__init__">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1ParlAIDataset.html#a870ebe1ff0f9c0a2188c60685ebb9c0d" title="parlai.core.pytorch\l_data_teacher.ParlAIDataset.\l_setup_data" alt="" coords="248,5,443,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html#a92fb71aa4e5d3a4751d78ecca202c608" title="parlai.core.teachers.Parl\lAIDialogTeacher._setup_data" alt="" coords="248,86,443,127"/>
+</map>

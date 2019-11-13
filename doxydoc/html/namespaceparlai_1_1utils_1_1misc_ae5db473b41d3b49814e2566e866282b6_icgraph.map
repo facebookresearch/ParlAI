@@ -1,0 +1,9 @@
+<map id="parlai.utils.misc.msg_to_str" name="parlai.utils.misc.msg_to_str">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1convert__data__to__parlai__format.html#a4ed2278a6a86b341d814edbef295124c" title="parlai.scripts.convert\l_data_to_parlai_format.dump_data" alt="" coords="196,5,419,47"/>
+<area shape="rect" id="node4" href="$namespacemake__control__dataset.html#ab015bf05433a8280052368fd2b16ec1b" title="make_control_dataset.make\l_dataset" alt="" coords="214,71,401,112"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a233ecce0ba4b1a0c023e855629986d69" title="parlai.tasks.light\l_dialog.builder.write\l_dialog" alt="" coords="239,137,376,193"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1scripts_1_1convert__data__to__parlai__format.html#a1cdf007fb0ed5951c0dfb135500d47cd" title="parlai.scripts.convert\l_data_to_parlai_format.main" alt="" coords="467,5,653,47"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#aeb144d0ebd2fd1727f73677e36f2c8b5" title="parlai.tasks.light\l_dialog.builder.write\l_alldata" alt="" coords="491,137,629,193"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a6a049254e487c29d008f875476ffd76f" title="parlai.tasks.light\l_dialog.builder.build\l_from_db" alt="" coords="701,137,837,193"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1build.html#ac8ebc5da2dd660257535226b26afb26e" title="parlai.tasks.light\l_dialog.build.build" alt="" coords="885,144,1011,185"/>
+</map>

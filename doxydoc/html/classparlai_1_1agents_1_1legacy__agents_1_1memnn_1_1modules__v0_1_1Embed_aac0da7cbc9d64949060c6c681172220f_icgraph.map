@@ -1,0 +1,9 @@
+<map id="parlai.agents.legacy_agents.memnn.modules_v0.Embed.position_matrix" name="parlai.agents.legacy_agents.memnn.modules_v0.Embed.position_matrix">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Embed.html#a03a7701e101296fbbf28dcc05039c248" title="parlai.agents.memnn.modules.\lEmbed.forward" alt="" coords="233,75,433,116"/>
+<area shape="rect" id="node3" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="481,100,716,156"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1332,50,1545,91"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1593,108,1807,150"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1332,167,1545,208"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="764,100,1000,142"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="1048,108,1284,150"/>
+</map>

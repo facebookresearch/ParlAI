@@ -1,7 +1,5 @@
 <map id="mturk.worlds.PersonaAssignWorld" name="mturk.worlds.PersonaAssignWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,195,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="17,244,183,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="17,155,183,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="19,80,181,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="71,5,129,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title="parlai.mturk.core.worlds.\lMTurkOnboardWorld" alt="" coords="17,244,183,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title="parlai.mturk.core.worlds.\lMTurkDataWorld" alt="" coords="17,155,183,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="19,80,181,107"/>
 </map>

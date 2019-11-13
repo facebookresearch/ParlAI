@@ -1,4 +1,4 @@
 <map id="parlai.core.dict.DictionaryAgent.nltk_tokenize" name="parlai.core.dict.DictionaryAgent.nltk_tokenize">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,176,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aca7e5edfd6502701277cb83b75ff4e96" title=" " alt="" coords="224,5,395,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aca7e5edfd6502701277cb83b75ff4e96" title="parlai.core.dict.Dictionary\lAgent.tokenize" alt="" coords="224,5,395,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1dict.html#a5e9eb43b6c0dce0b3aab7f3ea3717de6" title="parlai.core.dict.find\l_ngrams" alt="" coords="443,5,575,47"/>
 </map>

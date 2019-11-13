@@ -1,0 +1,394 @@
+\hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils}{}\section{parlai.\+mturk.\+core.\+server\+\_\+utils Namespace Reference}
+\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils}\index{parlai.\+mturk.\+core.\+server\+\_\+utils@{parlai.\+mturk.\+core.\+server\+\_\+utils}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_adff2f564896069e0b76ae1b007515a2b}{setup\+\_\+legacy\+\_\+heroku\+\_\+server} (task\+\_\+name, task\+\_\+files\+\_\+to\+\_\+copy=None, heroku\+\_\+team=None, use\+\_\+hobby=False, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af1c97e9b93a403e200ac75b87a51c3c1}{setup\+\_\+heroku\+\_\+server} (task\+\_\+name, task\+\_\+files\+\_\+to\+\_\+copy=None, heroku\+\_\+team=None, use\+\_\+hobby=False, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8dfde882f9d6ff492ca565ae2334fc70}{delete\+\_\+heroku\+\_\+server} (task\+\_\+name, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9d4c4937ea60bd74630a44739e825ebf}{setup\+\_\+local\+\_\+server} (task\+\_\+name, task\+\_\+files\+\_\+to\+\_\+copy=None)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9b4f4c3f696be001c2fa96b3690af83c}{delete\+\_\+local\+\_\+server} (task\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_afe9361009645f245de2a07c18cd485bb}{setup\+\_\+legacy\+\_\+server} (task\+\_\+name, task\+\_\+files\+\_\+to\+\_\+copy, local=False, heroku\+\_\+team=None, use\+\_\+hobby=False, legacy=True, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a154e8cbb18375ff8fd6730154d312bbc}{setup\+\_\+server} (task\+\_\+name, task\+\_\+files\+\_\+to\+\_\+copy, local=False, heroku\+\_\+team=None, use\+\_\+hobby=False, legacy=True, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\item 
+def \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3c7c1d82bd4d26eb98ce9711de3cca7c}{delete\+\_\+server} (task\+\_\+name, local=False, tmp\+\_\+dir=\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3148ed1b9fc26d850b7727c329ea1b73}{region\+\_\+name} = \textquotesingle{}us-\/east-\/1\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aab8bab9c0a550608566b493173c8fd28}{user\+\_\+name} = getpass.\+getuser()
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir} = \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1shared__utils_ac4e340ccc66c691fdd294c734dae0c5d}{shared\+\_\+utils.\+get\+\_\+core\+\_\+dir}()
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aaa35bdfa37d926080bd65c861ff2b33d}{legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name} = \textquotesingle{}server\+\_\+legacy\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8142bfb84ba54bd691b970ee7e23ebfd}{server\+\_\+source\+\_\+directory\+\_\+name} = \textquotesingle{}react\+\_\+server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8cb98cb11ecd7bf3367ee1bc905816d6}{heroku\+\_\+server\+\_\+directory\+\_\+name} = \textquotesingle{}heroku\+\_\+server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a92c5f0a1f865d92529a068b42fe34137}{local\+\_\+server\+\_\+directory\+\_\+name} = \textquotesingle{}local\+\_\+server\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af84647abb3c9095dc9329ac04f152932}{task\+\_\+directory\+\_\+name} = \textquotesingle{}task\textquotesingle{}
+\item 
+\hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a78acb12c579488b178c9815ce79f4018}{server\+\_\+process} = None
+\item 
+string \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a0be0b7cf4282e18d1db21267bfe1e5d9}{heroku\+\_\+url} = \textquotesingle{}https\+://cli-\/assets.\+heroku.\+com/heroku-\/cli/channels/stable/heroku-\/cli\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8dfde882f9d6ff492ca565ae2334fc70}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8dfde882f9d6ff492ca565ae2334fc70}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!delete\+\_\+heroku\+\_\+server@{delete\+\_\+heroku\+\_\+server}}
+\index{delete\+\_\+heroku\+\_\+server@{delete\+\_\+heroku\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+heroku\+\_\+server()}{delete\_heroku\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 479 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+server(), parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server(), and parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+heroku\+\_\+server().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8dfde882f9d6ff492ca565ae2334fc70_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9b4f4c3f696be001c2fa96b3690af83c}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9b4f4c3f696be001c2fa96b3690af83c}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!delete\+\_\+local\+\_\+server@{delete\+\_\+local\+\_\+server}}
+\index{delete\+\_\+local\+\_\+server@{delete\+\_\+local\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+local\+\_\+server()}{delete\_local\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+local\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 560 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+server().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9b4f4c3f696be001c2fa96b3690af83c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9b4f4c3f696be001c2fa96b3690af83c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3c7c1d82bd4d26eb98ce9711de3cca7c}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3c7c1d82bd4d26eb98ce9711de3cca7c}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!delete\+\_\+server@{delete\+\_\+server}}
+\index{delete\+\_\+server@{delete\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{delete\+\_\+server()}{delete\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{local = {\ttfamily False},  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 613 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server(), and parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+local\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3c7c1d82bd4d26eb98ce9711de3cca7c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af1c97e9b93a403e200ac75b87a51c3c1}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af1c97e9b93a403e200ac75b87a51c3c1}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!setup\+\_\+heroku\+\_\+server@{setup\+\_\+heroku\+\_\+server}}
+\index{setup\+\_\+heroku\+\_\+server@{setup\+\_\+heroku\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+heroku\+\_\+server()}{setup\_heroku\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{task\+\_\+files\+\_\+to\+\_\+copy = {\ttfamily None},  }\item[{}]{heroku\+\_\+team = {\ttfamily None},  }\item[{}]{use\+\_\+hobby = {\ttfamily False},  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 224 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server(), and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+heroku\+\_\+server(), and parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af1c97e9b93a403e200ac75b87a51c3c1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af1c97e9b93a403e200ac75b87a51c3c1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_adff2f564896069e0b76ae1b007515a2b}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_adff2f564896069e0b76ae1b007515a2b}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!setup\+\_\+legacy\+\_\+heroku\+\_\+server@{setup\+\_\+legacy\+\_\+heroku\+\_\+server}}
+\index{setup\+\_\+legacy\+\_\+heroku\+\_\+server@{setup\+\_\+legacy\+\_\+heroku\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+legacy\+\_\+heroku\+\_\+server()}{setup\_legacy\_heroku\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+heroku\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{task\+\_\+files\+\_\+to\+\_\+copy = {\ttfamily None},  }\item[{}]{heroku\+\_\+team = {\ttfamily None},  }\item[{}]{use\+\_\+hobby = {\ttfamily False},  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 41 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+heroku\+\_\+server(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_adff2f564896069e0b76ae1b007515a2b_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_adff2f564896069e0b76ae1b007515a2b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_afe9361009645f245de2a07c18cd485bb}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_afe9361009645f245de2a07c18cd485bb}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!setup\+\_\+legacy\+\_\+server@{setup\+\_\+legacy\+\_\+server}}
+\index{setup\+\_\+legacy\+\_\+server@{setup\+\_\+legacy\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+legacy\+\_\+server()}{setup\_legacy\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{task\+\_\+files\+\_\+to\+\_\+copy,  }\item[{}]{local = {\ttfamily False},  }\item[{}]{heroku\+\_\+team = {\ttfamily None},  }\item[{}]{use\+\_\+hobby = {\ttfamily False},  }\item[{}]{legacy = {\ttfamily True},  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 581 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+heroku\+\_\+server(), parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+local\+\_\+server(), and parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+server().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+delete\+\_\+local\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_afe9361009645f245de2a07c18cd485bb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_afe9361009645f245de2a07c18cd485bb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9d4c4937ea60bd74630a44739e825ebf}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9d4c4937ea60bd74630a44739e825ebf}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!setup\+\_\+local\+\_\+server@{setup\+\_\+local\+\_\+server}}
+\index{setup\+\_\+local\+\_\+server@{setup\+\_\+local\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+local\+\_\+server()}{setup\_local\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+local\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{task\+\_\+files\+\_\+to\+\_\+copy = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 507 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+input.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+server().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a9d4c4937ea60bd74630a44739e825ebf_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a154e8cbb18375ff8fd6730154d312bbc}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a154e8cbb18375ff8fd6730154d312bbc}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!setup\+\_\+server@{setup\+\_\+server}}
+\index{setup\+\_\+server@{setup\+\_\+server}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{setup\+\_\+server()}{setup\_server()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+server (\begin{DoxyParamCaption}\item[{}]{task\+\_\+name,  }\item[{}]{task\+\_\+files\+\_\+to\+\_\+copy,  }\item[{}]{local = {\ttfamily False},  }\item[{}]{heroku\+\_\+team = {\ttfamily None},  }\item[{}]{use\+\_\+hobby = {\ttfamily False},  }\item[{}]{legacy = {\ttfamily True},  }\item[{}]{tmp\+\_\+dir = {\ttfamily \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}{parent\+\_\+dir}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 601 of file server\+\_\+utils.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+heroku\+\_\+server().
+
+
+
+Referenced by parlai.\+mturk.\+core.\+server\+\_\+utils.\+setup\+\_\+legacy\+\_\+server().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a154e8cbb18375ff8fd6730154d312bbc_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a154e8cbb18375ff8fd6730154d312bbc_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8cb98cb11ecd7bf3367ee1bc905816d6}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8cb98cb11ecd7bf3367ee1bc905816d6}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!heroku\+\_\+server\+\_\+directory\+\_\+name@{heroku\+\_\+server\+\_\+directory\+\_\+name}}
+\index{heroku\+\_\+server\+\_\+directory\+\_\+name@{heroku\+\_\+server\+\_\+directory\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{heroku\+\_\+server\+\_\+directory\+\_\+name}{heroku\_server\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+heroku\+\_\+server\+\_\+directory\+\_\+name = \textquotesingle{}heroku\+\_\+server\textquotesingle{}}
+
+
+
+Definition at line 26 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a0be0b7cf4282e18d1db21267bfe1e5d9}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a0be0b7cf4282e18d1db21267bfe1e5d9}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!heroku\+\_\+url@{heroku\+\_\+url}}
+\index{heroku\+\_\+url@{heroku\+\_\+url}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{heroku\+\_\+url}{heroku\_url}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+heroku\+\_\+url = \textquotesingle{}https\+://cli-\/assets.\+heroku.\+com/heroku-\/cli/channels/stable/heroku-\/cli\textquotesingle{}}
+
+
+
+Definition at line 32 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aaa35bdfa37d926080bd65c861ff2b33d}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aaa35bdfa37d926080bd65c861ff2b33d}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name@{legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name}}
+\index{legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name@{legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name}{legacy\_server\_source\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+legacy\+\_\+server\+\_\+source\+\_\+directory\+\_\+name = \textquotesingle{}server\+\_\+legacy\textquotesingle{}}
+
+
+
+Definition at line 24 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a92c5f0a1f865d92529a068b42fe34137}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a92c5f0a1f865d92529a068b42fe34137}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!local\+\_\+server\+\_\+directory\+\_\+name@{local\+\_\+server\+\_\+directory\+\_\+name}}
+\index{local\+\_\+server\+\_\+directory\+\_\+name@{local\+\_\+server\+\_\+directory\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{local\+\_\+server\+\_\+directory\+\_\+name}{local\_server\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+local\+\_\+server\+\_\+directory\+\_\+name = \textquotesingle{}local\+\_\+server\textquotesingle{}}
+
+
+
+Definition at line 27 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a193439bdbc25a32b00f1a43e6f8532d8}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!parent\+\_\+dir@{parent\+\_\+dir}}
+\index{parent\+\_\+dir@{parent\+\_\+dir}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{parent\+\_\+dir}{parent\_dir}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+server\+\_\+utils.\+parent\+\_\+dir = \hyperlink{namespaceparlai_1_1mturk_1_1core_1_1shared__utils_ac4e340ccc66c691fdd294c734dae0c5d}{shared\+\_\+utils.\+get\+\_\+core\+\_\+dir}()}
+
+
+
+Definition at line 23 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3148ed1b9fc26d850b7727c329ea1b73}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a3148ed1b9fc26d850b7727c329ea1b73}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!region\+\_\+name@{region\+\_\+name}}
+\index{region\+\_\+name@{region\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{region\+\_\+name}{region\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+region\+\_\+name = \textquotesingle{}us-\/east-\/1\textquotesingle{}}
+
+
+
+Definition at line 20 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a78acb12c579488b178c9815ce79f4018}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a78acb12c579488b178c9815ce79f4018}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!server\+\_\+process@{server\+\_\+process}}
+\index{server\+\_\+process@{server\+\_\+process}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{server\+\_\+process}{server\_process}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+server\+\_\+utils.\+server\+\_\+process = None}
+
+
+
+Definition at line 30 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8142bfb84ba54bd691b970ee7e23ebfd}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_a8142bfb84ba54bd691b970ee7e23ebfd}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!server\+\_\+source\+\_\+directory\+\_\+name@{server\+\_\+source\+\_\+directory\+\_\+name}}
+\index{server\+\_\+source\+\_\+directory\+\_\+name@{server\+\_\+source\+\_\+directory\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{server\+\_\+source\+\_\+directory\+\_\+name}{server\_source\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+server\+\_\+source\+\_\+directory\+\_\+name = \textquotesingle{}react\+\_\+server\textquotesingle{}}
+
+
+
+Definition at line 25 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af84647abb3c9095dc9329ac04f152932}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_af84647abb3c9095dc9329ac04f152932}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!task\+\_\+directory\+\_\+name@{task\+\_\+directory\+\_\+name}}
+\index{task\+\_\+directory\+\_\+name@{task\+\_\+directory\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{task\+\_\+directory\+\_\+name}{task\_directory\_name}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+core.\+server\+\_\+utils.\+task\+\_\+directory\+\_\+name = \textquotesingle{}task\textquotesingle{}}
+
+
+
+Definition at line 28 of file server\+\_\+utils.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aab8bab9c0a550608566b493173c8fd28}\label{namespaceparlai_1_1mturk_1_1core_1_1server__utils_aab8bab9c0a550608566b493173c8fd28}} 
+\index{parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}!user\+\_\+name@{user\+\_\+name}}
+\index{user\+\_\+name@{user\+\_\+name}!parlai\+::mturk\+::core\+::server\+\_\+utils@{parlai\+::mturk\+::core\+::server\+\_\+utils}}
+\subsubsection{\texorpdfstring{user\+\_\+name}{user\_name}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+server\+\_\+utils.\+user\+\_\+name = getpass.\+getuser()}
+
+
+
+Definition at line 21 of file server\+\_\+utils.\+py.
+

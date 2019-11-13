@@ -1,0 +1,10 @@
+<map id="parlai.zoo.dialogue_safety.single_turn.download" name="parlai.zoo.dialogue_safety.single_turn.download">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1build__data.html#ab697f23f05d3e36d7979fe5e0ed7911e" title="parlai.core.build_data.download\l_models" alt="" coords="244,125,448,166"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1build__data.html#ad834e1a9be02e18a6c2de2b03b9a8f10" title="parlai.core.build_data.built" alt="" coords="516,5,689,32"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="501,56,705,83"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1build__data.html#a6ce042fedd4194bd016845bbe7a8facf" title="parlai.core.build_data.make_dir" alt="" coords="501,107,704,133"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1build__data.html#a2527e6d29b0ccb7b841182890ac36a59" title="parlai.core.build_data.mark_done" alt="" coords="496,157,709,184"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1core_1_1build__data.html#a24ab3b7e68e41adf774df058d330ff33" title="parlai.core.build_data.remove_dir" alt="" coords="496,208,709,235"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1core_1_1build__data.html#a4d33f97932682a8513904022d852f3cf" title="parlai.core.build_data.untar" alt="" coords="513,259,692,285"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="757,56,939,83"/>
+</map>

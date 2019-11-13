@@ -1,0 +1,7 @@
+<map id="parlai.core.metrics.aggregate_task_reports" name="parlai.core.metrics.aggregate_task_reports">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1eval__model.html#ade1dfda1be70776553a1fbd6a3450c40" title="parlai.scripts.eval\l_model.eval_model" alt="" coords="244,5,379,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1scripts_1_1train__model.html#a496dfe3bf04da9b55d261b4c8d6229a7" title="parlai.scripts.train\l_model.run_eval" alt="" coords="249,71,374,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a707bb03792ef7427f5ddbb66184a9756" title="parlai.scripts.train\l_model.TrainLoop.validate" alt="" coords="427,41,601,83"/>
+<area shape="rect" id="node5" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8c15c0d4490891fd3e61e57501474e40" title="parlai.scripts.train\l_model.TrainLoop.train" alt="" coords="649,71,804,112"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="852,71,1065,112"/>
+</map>

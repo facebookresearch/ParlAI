@@ -1,5 +1,4 @@
 <map id="parlai.tasks.wizard_of_wikipedia.agents.BasicdialogTeacher.get" name="parlai.tasks.wizard_of_wikipedia.agents.BasicdialogTeacher.get">
-<area shape="rect" id="node1" title=" " alt="" coords="5,57,220,113"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1WizardDialogKnowledgeTeacher.html#adc1c3fa619c8bffd25986d41fb6f4136" title=" " alt="" coords="280,5,471,76"/>
-<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1BasicdialogTeacher.html#a2557378cd9519f4596b2fcc713698056" title=" " alt="" coords="268,101,483,157"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1WizardDialogKnowledgeTeacher.html#adc1c3fa619c8bffd25986d41fb6f4136" title="parlai.tasks.wizard\l_of_wikipedia.agents.Wizard\lDialogKnowledgeTeacher.len\l_episode" alt="" coords="280,5,471,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1BasicdialogTeacher.html#a2557378cd9519f4596b2fcc713698056" title="parlai.tasks.wizard\l_of_wikipedia.agents.Basicdialog\lTeacher.len_episode" alt="" coords="268,101,483,157"/>
 </map>

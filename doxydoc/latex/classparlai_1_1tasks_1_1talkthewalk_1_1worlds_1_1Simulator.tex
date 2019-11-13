@@ -1,0 +1,385 @@
+\hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator}{}\section{parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator Class Reference}
+\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator}\index{parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator@{parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_af0dd9259b1847530dd06e97c004b4992}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_adde735badb8bd967efbc8e6a71378bac}{random\+\_\+init} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a0bd93cb7b6958af1795e6c0adf47cb4d}{init\+\_\+sim} (self, \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a79e2dd5fa3d217ff8e909ef731e38314}{neighborhood}=None, \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_afb9280ec4243b403e5b8d7cf694dddd2}{boundaries}=None, start\+\_\+location=None, \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a3d22320d10a2fea9c185be6a0e7bc1fb}{target\+\_\+location}=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae3cf085288804e12b1d8e70e22f1017e}{get\+\_\+agent\+\_\+location} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ac582ca2c2642272362fdaf7acd5b4b81}{get\+\_\+text\+\_\+map} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a5178f95389423f1ee1ad5440e60ad976}{get\+\_\+current\+\_\+view} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a7f1a6089e2650f3787e5493931a45570}{add\+\_\+view\+\_\+to\+\_\+text} (self, obs, action=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae196cf0b53564026703d3ebbd4e741eb}{execute\+\_\+and\+\_\+write} (self, obs, action)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a4e8af8db9b10c3e5c34fdb9004d13694}{execute} (self, text)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a2e496f42b19dac1ad35d9604f63dd8e0}{map}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_accbc4219f01217f9599c6560e34016fd}{feature\+\_\+loader}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_afb9280ec4243b403e5b8d7cf694dddd2}{boundaries} = None
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a79e2dd5fa3d217ff8e909ef731e38314}{neighborhood} = None
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a149433c72afebe5995a02d03133d4507}{agent\+\_\+location} = None
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a3d22320d10a2fea9c185be6a0e7bc1fb}{target\+\_\+location} = None
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a50902f5af0b1faf0225d13593436b393}{landmarks} = None
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 27 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_af0dd9259b1847530dd06e97c004b4992}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_af0dd9259b1847530dd06e97c004b4992}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 35 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a7f1a6089e2650f3787e5493931a45570}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a7f1a6089e2650f3787e5493931a45570}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!add\+\_\+view\+\_\+to\+\_\+text@{add\+\_\+view\+\_\+to\+\_\+text}}
+\index{add\+\_\+view\+\_\+to\+\_\+text@{add\+\_\+view\+\_\+to\+\_\+text}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{add\+\_\+view\+\_\+to\+\_\+text()}{add\_view\_to\_text()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+add\+\_\+view\+\_\+to\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs,  }\item[{}]{action = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 100 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+current\+\_\+view(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+is\+\_\+action().
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute\+\_\+and\+\_\+write().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a7f1a6089e2650f3787e5493931a45570_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a7f1a6089e2650f3787e5493931a45570_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a4e8af8db9b10c3e5c34fdb9004d13694}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a4e8af8db9b10c3e5c34fdb9004d13694}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!execute@{execute}}
+\index{execute@{execute}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{execute()}{execute()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}move the tourist\end{DoxyVerb}
+ 
+
+Definition at line 109 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+boundaries, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+boundaries, parlai.\+tasks.\+talkthewalk.\+worlds.\+is\+\_\+action(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+map.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute\+\_\+and\+\_\+write().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a4e8af8db9b10c3e5c34fdb9004d13694_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a4e8af8db9b10c3e5c34fdb9004d13694_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae196cf0b53564026703d3ebbd4e741eb}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae196cf0b53564026703d3ebbd4e741eb}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!execute\+\_\+and\+\_\+write@{execute\+\_\+and\+\_\+write}}
+\index{execute\+\_\+and\+\_\+write@{execute\+\_\+and\+\_\+write}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{execute\+\_\+and\+\_\+write()}{execute\_and\_write()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute\+\_\+and\+\_\+write (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs,  }\item[{}]{action }\end{DoxyParamCaption})}
+
+
+
+Definition at line 105 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+add\+\_\+view\+\_\+to\+\_\+text(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute(), and parlai.\+core.\+worlds.\+Executable\+World.\+execute().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae196cf0b53564026703d3ebbd4e741eb_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae3cf085288804e12b1d8e70e22f1017e}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ae3cf085288804e12b1d8e70e22f1017e}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!get\+\_\+agent\+\_\+location@{get\+\_\+agent\+\_\+location}}
+\index{get\+\_\+agent\+\_\+location@{get\+\_\+agent\+\_\+location}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+location()}{get\_agent\_location()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+agent\+\_\+location (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 75 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+boundaries, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+boundaries, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a5178f95389423f1ee1ad5440e60ad976}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a5178f95389423f1ee1ad5440e60ad976}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!get\+\_\+current\+\_\+view@{get\+\_\+current\+\_\+view}}
+\index{get\+\_\+current\+\_\+view@{get\+\_\+current\+\_\+view}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{get\+\_\+current\+\_\+view()}{get\_current\_view()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+current\+\_\+view (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 92 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+feature\+\_\+loader, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+neighborhood, and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+neighborhood.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+add\+\_\+view\+\_\+to\+\_\+text().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a5178f95389423f1ee1ad5440e60ad976_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ac582ca2c2642272362fdaf7acd5b4b81}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_ac582ca2c2642272362fdaf7acd5b4b81}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!get\+\_\+text\+\_\+map@{get\+\_\+text\+\_\+map}}
+\index{get\+\_\+text\+\_\+map@{get\+\_\+text\+\_\+map}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{get\+\_\+text\+\_\+map()}{get\_text\_map()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+text\+\_\+map (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 81 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+landmarks, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+landmarks, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+target\+\_\+location, and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+target\+\_\+location.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a0bd93cb7b6958af1795e6c0adf47cb4d}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a0bd93cb7b6958af1795e6c0adf47cb4d}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!init\+\_\+sim@{init\+\_\+sim}}
+\index{init\+\_\+sim@{init\+\_\+sim}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{init\+\_\+sim()}{init\_sim()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{neighborhood = {\ttfamily None},  }\item[{}]{boundaries = {\ttfamily None},  }\item[{}]{start\+\_\+location = {\ttfamily None},  }\item[{}]{target\+\_\+location = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 61 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+boundaries, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+boundaries, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+landmarks, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+landmarks, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+map, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+neighborhood, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+neighborhood, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+target\+\_\+location, and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+target\+\_\+location.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a0bd93cb7b6958af1795e6c0adf47cb4d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a0bd93cb7b6958af1795e6c0adf47cb4d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_adde735badb8bd967efbc8e6a71378bac}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_adde735badb8bd967efbc8e6a71378bac}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!random\+\_\+init@{random\+\_\+init}}
+\index{random\+\_\+init@{random\+\_\+init}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{random\+\_\+init()}{random\_init()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 46 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+\_\+get\+\_\+random\+\_\+location(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+boundaries, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+boundaries, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+neighborhood, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+neighborhood, parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+target\+\_\+location, and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+target\+\_\+location.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_adde735badb8bd967efbc8e6a71378bac_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_adde735badb8bd967efbc8e6a71378bac_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a149433c72afebe5995a02d03133d4507}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a149433c72afebe5995a02d03133d4507}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!agent\+\_\+location@{agent\+\_\+location}}
+\index{agent\+\_\+location@{agent\+\_\+location}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{agent\+\_\+location}{agent\_location}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+agent\+\_\+location = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 31 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+agent\+\_\+location(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+current\+\_\+view(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_afb9280ec4243b403e5b8d7cf694dddd2}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_afb9280ec4243b403e5b8d7cf694dddd2}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!boundaries@{boundaries}}
+\index{boundaries@{boundaries}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{boundaries}{boundaries}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+boundaries = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 29 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+agent\+\_\+location(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_accbc4219f01217f9599c6560e34016fd}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_accbc4219f01217f9599c6560e34016fd}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!feature\+\_\+loader@{feature\+\_\+loader}}
+\index{feature\+\_\+loader@{feature\+\_\+loader}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{feature\+\_\+loader}{feature\_loader}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+feature\+\_\+loader}
+
+
+
+Definition at line 37 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+current\+\_\+view().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a50902f5af0b1faf0225d13593436b393}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a50902f5af0b1faf0225d13593436b393}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!landmarks@{landmarks}}
+\index{landmarks@{landmarks}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{landmarks}{landmarks}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+landmarks = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 33 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+text\+\_\+map(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+unprocessed\+\_\+landmarks(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a2e496f42b19dac1ad35d9604f63dd8e0}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a2e496f42b19dac1ad35d9604f63dd8e0}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!map@{map}}
+\index{map@{map}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{map}{map}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+map}
+
+
+
+Definition at line 36 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+execute(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Goldstandard\+Features.\+get(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a79e2dd5fa3d217ff8e909ef731e38314}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a79e2dd5fa3d217ff8e909ef731e38314}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!neighborhood@{neighborhood}}
+\index{neighborhood@{neighborhood}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{neighborhood}{neighborhood}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+neighborhood = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 30 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+current\+\_\+view(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a3d22320d10a2fea9c185be6a0e7bc1fb}\label{classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator_a3d22320d10a2fea9c185be6a0e7bc1fb}} 
+\index{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}!target\+\_\+location@{target\+\_\+location}}
+\index{target\+\_\+location@{target\+\_\+location}!parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator@{parlai\+::tasks\+::talkthewalk\+::worlds\+::\+Simulator}}
+\subsubsection{\texorpdfstring{target\+\_\+location}{target\_location}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+target\+\_\+location = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 32 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+get\+\_\+text\+\_\+map(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+init\+\_\+sim(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulator.\+random\+\_\+init().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/talkthewalk/\hyperlink{parlai_2tasks_2talkthewalk_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

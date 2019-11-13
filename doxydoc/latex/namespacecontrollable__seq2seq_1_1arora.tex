@@ -1,0 +1,191 @@
+\hypertarget{namespacecontrollable__seq2seq_1_1arora}{}\section{controllable\+\_\+seq2seq.\+arora Namespace Reference}
+\label{namespacecontrollable__seq2seq_1_1arora}\index{controllable\+\_\+seq2seq.\+arora@{controllable\+\_\+seq2seq.\+arora}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1arora_1_1SentenceEmbedder}{Sentence\+Embedder}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1arora_a8bbb1ed9f1b86ebe8378d07931f3040d}{remove\+\_\+first\+\_\+sv} (emb, first\+\_\+sv)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1arora_aa75b304fb4087b1a9134d05f4bb6b3a7}{get\+\_\+word\+\_\+counts} (\hyperlink{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}{opt}, count\+\_\+inputs)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1arora_a02fe047a44dcee074e6157300bd61001}{learn\+\_\+arora} (\hyperlink{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}{opt})
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1arora_a576d45e4f9888847ff61af471423f47d}{load\+\_\+arora} (\hyperlink{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}{opt})
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespacecontrollable__seq2seq_1_1arora_a4ef18f50c7c948c2084d4284ed62eb0a}{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR} = \textquotesingle{}controllable\+\_\+dialogue\textquotesingle{}
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1arora_a0940ac1dead7a4c7c7ad297f73305bc6}{parser} = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}{opt} = parser.\+parse\+\_\+args()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_aa75b304fb4087b1a9134d05f4bb6b3a7}\label{namespacecontrollable__seq2seq_1_1arora_aa75b304fb4087b1a9134d05f4bb6b3a7}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!get\+\_\+word\+\_\+counts@{get\+\_\+word\+\_\+counts}}
+\index{get\+\_\+word\+\_\+counts@{get\+\_\+word\+\_\+counts}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{get\+\_\+word\+\_\+counts()}{get\_word\_counts()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+arora.\+get\+\_\+word\+\_\+counts (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{count\+\_\+inputs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Goes through the dataset specified in opt, returns word counts and all utterances
+
+Inputs:
+  count_inputs: If True, include both input and reply when counting words and
+    utterances. Otherwise, only include reply text.
+
+Returns:
+  word_counter: a Counter mapping each word to the total number of times it appears
+  total_count: int. total word count, i.e. the sum of the counts for each word
+  all_utts: list of strings. all the utterances that were used for counting words
+\end{DoxyVerb}
+ 
+
+Definition at line 241 of file arora.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+create\+\_\+task().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+arora.\+learn\+\_\+arora().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1arora_aa75b304fb4087b1a9134d05f4bb6b3a7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1arora_aa75b304fb4087b1a9134d05f4bb6b3a7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a02fe047a44dcee074e6157300bd61001}\label{namespacecontrollable__seq2seq_1_1arora_a02fe047a44dcee074e6157300bd61001}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!learn\+\_\+arora@{learn\+\_\+arora}}
+\index{learn\+\_\+arora@{learn\+\_\+arora}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{learn\+\_\+arora()}{learn\_arora()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+arora.\+learn\+\_\+arora (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Go through ConvAI2 data and collect word counts, thus compute the unigram
+probability distribution. Use those probs to compute weighted sentence embeddings
+for all utterances, thus compute first principal component.
+
+Save all info to arora.pkl file.
+\end{DoxyVerb}
+ 
+
+Definition at line 294 of file arora.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+arora.\+get\+\_\+word\+\_\+counts(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path(), and controllable\+\_\+seq2seq.\+arora.\+remove\+\_\+first\+\_\+sv().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1arora_a02fe047a44dcee074e6157300bd61001_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a576d45e4f9888847ff61af471423f47d}\label{namespacecontrollable__seq2seq_1_1arora_a576d45e4f9888847ff61af471423f47d}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!load\+\_\+arora@{load\+\_\+arora}}
+\index{load\+\_\+arora@{load\+\_\+arora}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{load\+\_\+arora()}{load\_arora()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+arora.\+load\+\_\+arora (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load the data in the arora.pkl file in data/controllable_dialogue.
+\end{DoxyVerb}
+ 
+
+Definition at line 400 of file arora.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1arora_a576d45e4f9888847ff61af471423f47d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a8bbb1ed9f1b86ebe8378d07931f3040d}\label{namespacecontrollable__seq2seq_1_1arora_a8bbb1ed9f1b86ebe8378d07931f3040d}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!remove\+\_\+first\+\_\+sv@{remove\+\_\+first\+\_\+sv}}
+\index{remove\+\_\+first\+\_\+sv@{remove\+\_\+first\+\_\+sv}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{remove\+\_\+first\+\_\+sv()}{remove\_first\_sv()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+arora.\+remove\+\_\+first\+\_\+sv (\begin{DoxyParamCaption}\item[{}]{emb,  }\item[{}]{first\+\_\+sv }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Projects out the first singular value (first_sv) from the embedding (emb).
+
+Inputs:
+  emb: torch Tensor shape (glove_dim)
+  first_sv: torch Tensor shape (glove_dim)
+
+Returns:
+  new emb: torch Tensor shape (glove_dim)
+\end{DoxyVerb}
+ 
+
+Definition at line 224 of file arora.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+arora.\+Sentence\+Embedder.\+embed\+\_\+sent(), and controllable\+\_\+seq2seq.\+arora.\+learn\+\_\+arora().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1arora_a8bbb1ed9f1b86ebe8378d07931f3040d_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a4ef18f50c7c948c2084d4284ed62eb0a}\label{namespacecontrollable__seq2seq_1_1arora_a4ef18f50c7c948c2084d4284ed62eb0a}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR@{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}}
+\index{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR@{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR}{CONTROLLABLE\_DIR}}
+{\footnotesize\ttfamily string controllable\+\_\+seq2seq.\+arora.\+C\+O\+N\+T\+R\+O\+L\+L\+A\+B\+L\+E\+\_\+\+D\+IR = \textquotesingle{}controllable\+\_\+dialogue\textquotesingle{}}
+
+
+
+Definition at line 24 of file arora.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}\label{namespacecontrollable__seq2seq_1_1arora_a79ced5bd43a82ae17d7e9513e9291781}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!opt@{opt}}
+\index{opt@{opt}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+arora.\+opt = parser.\+parse\+\_\+args()}
+
+
+
+Definition at line 414 of file arora.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1arora_a0940ac1dead7a4c7c7ad297f73305bc6}\label{namespacecontrollable__seq2seq_1_1arora_a0940ac1dead7a4c7c7ad297f73305bc6}} 
+\index{controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}!parser@{parser}}
+\index{parser@{parser}!controllable\+\_\+seq2seq\+::arora@{controllable\+\_\+seq2seq\+::arora}}
+\subsubsection{\texorpdfstring{parser}{parser}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+arora.\+parser = \hyperlink{classparlai_1_1core_1_1params_1_1ParlaiParser}{Parlai\+Parser}()}
+
+
+
+Definition at line 413 of file arora.\+py.
+

@@ -1,0 +1,150 @@
+\hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess}{}\section{parlai.\+core.\+worlds.\+Hogwild\+Process Class Reference}
+\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess}\index{parlai.\+core.\+worlds.\+Hogwild\+Process@{parlai.\+core.\+worlds.\+Hogwild\+Process}}
+
+
+Inheritance diagram for parlai.\+core.\+worlds.\+Hogwild\+Process\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1core_1_1worlds_1_1HogwildProcess__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+worlds.\+Hogwild\+Process\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1core_1_1worlds_1_1HogwildProcess__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a8356a8de17d41e86e4da0262fc5d36d7}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, tid, \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a640d8da3bcea07a0748b8973f390f125}{opt}, \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a614b61613d85c80764b8b68697697e13}{shared}, \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a7bf5f7806e93a6b1ecb02fd12fa4a01f}{sync})
+\item 
+def \hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a749caf3085cb7b373db66b6f92567290}{run} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a4266e7c47686cd9b4fa9d62ae84375c8}{numthreads}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a640d8da3bcea07a0748b8973f390f125}{opt}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a614b61613d85c80764b8b68697697e13}{shared}
+\item 
+\hyperlink{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a7bf5f7806e93a6b1ecb02fd12fa4a01f}{sync}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Process child used for ``HogwildWorld``.
+
+Each ``HogwildProcess`` contain its own unique ``World``.
+\end{DoxyVerb}
+ 
+
+Definition at line 845 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a8356a8de17d41e86e4da0262fc5d36d7}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a8356a8de17d41e86e4da0262fc5d36d7}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+Process.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tid,  }\item[{}]{opt,  }\item[{}]{shared,  }\item[{}]{sync }\end{DoxyParamCaption})}
+
+
+
+Definition at line 852 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a749caf3085cb7b373db66b6f92567290}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a749caf3085cb7b373db66b6f92567290}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!run@{run}}
+\index{run@{run}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily def parlai.\+core.\+worlds.\+Hogwild\+Process.\+run (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run a parley loop.
+
+Runs normal parley loop for as many examples as this thread can get
+ahold of via the semaphore ``queued_sem``.
+\end{DoxyVerb}
+ 
+
+Definition at line 865 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+Hogwild\+Process.\+numthreads, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, conf.\+release, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+shared, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+shared, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+shared, parlai.\+core.\+worlds.\+Hogwild\+Process.\+shared, and parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a4266e7c47686cd9b4fa9d62ae84375c8}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a4266e7c47686cd9b4fa9d62ae84375c8}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!numthreads@{numthreads}}
+\index{numthreads@{numthreads}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{numthreads}{numthreads}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+Process.\+numthreads}
+
+
+
+Definition at line 853 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+World.\+epoch\+\_\+done(), and parlai.\+core.\+worlds.\+Hogwild\+Process.\+run().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a640d8da3bcea07a0748b8973f390f125}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a640d8da3bcea07a0748b8973f390f125}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!opt@{opt}}
+\index{opt@{opt}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt}
+
+
+
+Definition at line 856 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a614b61613d85c80764b8b68697697e13}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a614b61613d85c80764b8b68697697e13}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!shared@{shared}}
+\index{shared@{shared}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{shared}{shared}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+Process.\+shared}
+
+
+
+Definition at line 857 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+Process.\+run().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a7bf5f7806e93a6b1ecb02fd12fa4a01f}\label{classparlai_1_1core_1_1worlds_1_1HogwildProcess_a7bf5f7806e93a6b1ecb02fd12fa4a01f}} 
+\index{parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}!sync@{sync}}
+\index{sync@{sync}!parlai\+::core\+::worlds\+::\+Hogwild\+Process@{parlai\+::core\+::worlds\+::\+Hogwild\+Process}}
+\subsubsection{\texorpdfstring{sync}{sync}}
+{\footnotesize\ttfamily parlai.\+core.\+worlds.\+Hogwild\+Process.\+sync}
+
+
+
+Definition at line 862 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+World.\+epoch\+\_\+done(), parlai.\+core.\+worlds.\+Hogwild\+World.\+parley(), parlai.\+core.\+worlds.\+Hogwild\+World.\+reset(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{parlai_2core_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

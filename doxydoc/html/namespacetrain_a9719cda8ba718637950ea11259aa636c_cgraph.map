@@ -1,0 +1,4 @@
+<map id="train.additional_validate" name="train.additional_validate">
+<area shape="rect" id="node2" href="$namespacetrain.html#a55c2b31c8e13b7aa621b3954392bdb93" title="train.get_accuracy" alt="" coords="212,5,341,32"/>
+<area shape="rect" id="node3" href="$namespacetrain.html#ad644487baaf3b94d8a6b32b0f6e88e15" title="train.get_metrics" alt="" coords="217,56,336,83"/>
+</map>

@@ -1,0 +1,106 @@
+\hypertarget{namespacetests_1_1suites}{}\section{tests.\+suites Namespace Reference}
+\label{namespacetests_1_1suites}\index{tests.\+suites@{tests.\+suites}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacetests_1_1suites_a1e7ee73a4d3645058850bc743ad6b668}{datatests} ()
+\item 
+def \hyperlink{namespacetests_1_1suites_ab1df665f54fccb5bbceb95cf8e4498b9}{nightly\+\_\+gpu} ()
+\item 
+def \hyperlink{namespacetests_1_1suites_a02a7d577493ceb024319292b96e13265}{unittests} ()
+\item 
+def \hyperlink{namespacetests_1_1suites_a5d5a0bb14f72dd9c86a97cc6ca6add87}{mturk} ()
+\item 
+def \hyperlink{namespacetests_1_1suites_aaa84dd961fb392c540b3a116119be21c}{internal\+\_\+tests} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacetests_1_1suites_a1e7ee73a4d3645058850bc743ad6b668}\label{namespacetests_1_1suites_a1e7ee73a4d3645058850bc743ad6b668}} 
+\index{tests\+::suites@{tests\+::suites}!datatests@{datatests}}
+\index{datatests@{datatests}!tests\+::suites@{tests\+::suites}}
+\subsubsection{\texorpdfstring{datatests()}{datatests()}}
+{\footnotesize\ttfamily def tests.\+suites.\+datatests (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test for data integrity.
+
+Runs on CircleCI. Separate to help distinguish failure reasons.
+\end{DoxyVerb}
+ 
+
+Definition at line 43 of file suites.\+py.
+
+\mbox{\Hypertarget{namespacetests_1_1suites_aaa84dd961fb392c540b3a116119be21c}\label{namespacetests_1_1suites_aaa84dd961fb392c540b3a116119be21c}} 
+\index{tests\+::suites@{tests\+::suites}!internal\+\_\+tests@{internal\+\_\+tests}}
+\index{internal\+\_\+tests@{internal\+\_\+tests}!tests\+::suites@{tests\+::suites}}
+\subsubsection{\texorpdfstring{internal\+\_\+tests()}{internal\_tests()}}
+{\footnotesize\ttfamily def tests.\+suites.\+internal\+\_\+tests (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Internal Tests\end{DoxyVerb}
+ 
+
+Definition at line 89 of file suites.\+py.
+
+
+
+References tests.\+suites.\+unittests().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=326pt]{namespacetests_1_1suites_aaa84dd961fb392c540b3a116119be21c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetests_1_1suites_a5d5a0bb14f72dd9c86a97cc6ca6add87}\label{namespacetests_1_1suites_a5d5a0bb14f72dd9c86a97cc6ca6add87}} 
+\index{tests\+::suites@{tests\+::suites}!mturk@{mturk}}
+\index{mturk@{mturk}!tests\+::suites@{tests\+::suites}}
+\subsubsection{\texorpdfstring{mturk()}{mturk()}}
+{\footnotesize\ttfamily def tests.\+suites.\+mturk (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mechanical Turk tests.\end{DoxyVerb}
+ 
+
+Definition at line 81 of file suites.\+py.
+
+\mbox{\Hypertarget{namespacetests_1_1suites_ab1df665f54fccb5bbceb95cf8e4498b9}\label{namespacetests_1_1suites_ab1df665f54fccb5bbceb95cf8e4498b9}} 
+\index{tests\+::suites@{tests\+::suites}!nightly\+\_\+gpu@{nightly\+\_\+gpu}}
+\index{nightly\+\_\+gpu@{nightly\+\_\+gpu}!tests\+::suites@{tests\+::suites}}
+\subsubsection{\texorpdfstring{nightly\+\_\+gpu()}{nightly\_gpu()}}
+{\footnotesize\ttfamily def tests.\+suites.\+nightly\+\_\+gpu (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Nightly GPU tests.
+
+Runs on CircleCI nightly, and when [gpu] or [long] appears in a commit string.
+\end{DoxyVerb}
+ 
+
+Definition at line 55 of file suites.\+py.
+
+\mbox{\Hypertarget{namespacetests_1_1suites_a02a7d577493ceb024319292b96e13265}\label{namespacetests_1_1suites_a02a7d577493ceb024319292b96e13265}} 
+\index{tests\+::suites@{tests\+::suites}!unittests@{unittests}}
+\index{unittests@{unittests}!tests\+::suites@{tests\+::suites}}
+\subsubsection{\texorpdfstring{unittests()}{unittests()}}
+{\footnotesize\ttfamily def tests.\+suites.\+unittests (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Short tests.
+
+Runs on CircleCI on every commit. Returns everything in the tests root directory.
+\end{DoxyVerb}
+ 
+
+Definition at line 68 of file suites.\+py.
+
+
+
+Referenced by tests.\+suites.\+internal\+\_\+tests().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=326pt]{namespacetests_1_1suites_a02a7d577493ceb024319292b96e13265_icgraph}
+\end{center}
+\end{figure}

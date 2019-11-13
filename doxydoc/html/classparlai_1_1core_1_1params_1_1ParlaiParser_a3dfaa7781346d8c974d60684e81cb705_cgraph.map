@@ -1,8 +1,6 @@
 <map id="parlai.core.params.ParlaiParser.add_parlai_args" name="parlai.core.params.ParlaiParser.add_parlai_args">
-<area shape="rect" id="node1" title=" " alt="" coords="5,63,172,104"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#aa6babcb28363f6d62f3f6182826157a6" title=" " alt="" coords="221,29,406,71"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a896033a34a5e5e1bbc081d99e9835d6b" title=" " alt="" coords="220,95,407,136"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a257122e28e48cb9c948837f0408ae48e" title=" " alt="" coords="455,29,641,71"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a3a75bdeee002ed5a50706f1a6c9797c8" title=" " alt="" coords="689,29,880,71"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title=" " alt="" coords="928,29,1101,71"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2855a5676bf638bfc9491577e603eee3" title="parlai.core.params.Parlai\lParser.add_argument_group" alt="" coords="221,37,406,79"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a896033a34a5e5e1bbc081d99e9835d6b" title="parlai.core.params.Parlai\lParser.add_parlai_data_path" alt="" coords="220,103,407,144"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a257122e28e48cb9c948837f0408ae48e" title="parlai.core.params.Parlai\lParser._handle_hidden_args" alt="" coords="455,5,641,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1params.html#afe2837a1dc21017be30cc7e3cb3696b8" title="parlai.core.params.fix\l_underscores" alt="" coords="475,71,621,112"/>
 </map>

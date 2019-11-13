@@ -1,5 +1,6 @@
 <map id="parlai.core.params.ParlaiParser.parse_and_process_known_args" name="parlai.core.params.ParlaiParser.parse_and_process_known_args">
-<area shape="rect" id="node1" title=" " alt="" coords="5,31,183,87"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a18290144fed76ec19b436b1342b6d27c" title=" " alt="" coords="231,5,429,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title=" " alt="" coords="243,71,417,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a8c688fb13b88a318c6dd51d0a50b0233" title="parlai.core.params.Parlai\lParser._process_args_to_opts" alt="" coords="231,5,429,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title="parlai.core.params.Parlai\lParser.parse_known_args" alt="" coords="243,71,417,112"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1params.html#afe2837a1dc21017be30cc7e3cb3696b8" title="parlai.core.params.fix\l_underscores" alt="" coords="477,37,624,79"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1misc.html#a7c97ef3250327bc549ac652a481be0cf" title="parlai.utils.misc.load\l_opt_file" alt="" coords="480,103,621,144"/>
 </map>

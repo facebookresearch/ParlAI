@@ -1,0 +1,4 @@
+<map id="parlai.tasks.dialogue_safety.agents.WikiToxicCommentsTeacher.build" name="parlai.tasks.dialogue_safety.agents.WikiToxicCommentsTeacher.build">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher.html#a4109c5a5c26df35ce247309589b70ada" title="parlai.tasks.dialogue\l_safety.agents.WikiToxicComments\lTeacher._get_data" alt="" coords="288,5,523,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1WikiToxicCommentsTeacher.html#ab05b135cb36558dab5a04b4b00167159" title="parlai.tasks.dialogue\l_safety.agents.WikiToxicComments\lTeacher.data_to_json" alt="" coords="288,85,523,141"/>
+</map>

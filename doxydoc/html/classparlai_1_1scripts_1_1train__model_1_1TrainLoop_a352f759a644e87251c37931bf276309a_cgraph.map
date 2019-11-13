@@ -1,4 +1,6 @@
 <map id="parlai.scripts.train_model.TrainLoop.save_model" name="parlai.scripts.train_model.TrainLoop.save_model">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,204,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8df2f7941dae8fd810292beed85a7634" title=" " alt="" coords="252,5,416,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8df2f7941dae8fd810292beed85a7634" title="parlai.scripts.train\l_model.TrainLoop._save\l_train_stats" alt="" coords="257,5,421,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1distributed.html#a9bb1dac198180590ef8c6b6c6f9fc2c4" title="parlai.utils.distributed.is\l_primary_worker" alt="" coords="260,86,419,127"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1distributed.html#a99b61b4756577c6542039c238d670dba" title="parlai.utils.distributed.num\l_workers" alt="" coords="252,151,427,193"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1distributed.html#a023acb5e3b66e1f27e21247c35661279" title="parlai.utils.distributed.is\l_distributed" alt="" coords="475,119,633,161"/>
 </map>

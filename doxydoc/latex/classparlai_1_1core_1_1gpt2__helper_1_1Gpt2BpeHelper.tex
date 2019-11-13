@@ -1,0 +1,301 @@
+\hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper}{}\section{parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper Class Reference}
+\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper}\index{parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper@{parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a5c9324bab66b00f6f977aef0241927bd}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a0ea9f7588f25a62eb6021a54ea8ca095}{errors}=\textquotesingle{}replace\textquotesingle{})
+\item 
+def \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac2bbb343b37bc277bf717b87ed675ff9}{bpe} (self, token)
+\item 
+def \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a7c5c94aa8d5acd15215cf3e45fc9f2c3}{encode} (self, text)
+\item 
+def \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a54e448f943687a8afe9bcc97741d06b9}{decode} (self, tokens)
+\item 
+def \hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a36f3a5cb4264010b4891605508147442}{list\+\_\+tokens} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a794ff2b9372acac9ab7c80b5c07ab60b}{encoder}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a26ab20eb1b181e46035f2164513d8fce}{decoder}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a0ea9f7588f25a62eb6021a54ea8ca095}{errors}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aa05888129c3d12eec57bc03e92390e4c}{byte\+\_\+encoder}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aaa6f9b57563422f3651ee240013ae9f4}{byte\+\_\+decoder}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a3138a0a7614de78ee773642fbe6ddaae}{bpe\+\_\+ranks}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a9362e804fcdf0565a640996285e85689}{cache}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac1ad446c51c26831655244d83350589a}{re}
+\item 
+\hyperlink{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_afbdbf5259b69f21f389eecaaada838d8}{pat}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 62 of file gpt2\+\_\+helper.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a5c9324bab66b00f6f977aef0241927bd}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a5c9324bab66b00f6f977aef0241927bd}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{errors = {\ttfamily \textquotesingle{}replace\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 63 of file gpt2\+\_\+helper.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download(), and parlai.\+core.\+build\+\_\+data.\+make\+\_\+dir().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a5c9324bab66b00f6f977aef0241927bd_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac2bbb343b37bc277bf717b87ed675ff9}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac2bbb343b37bc277bf717b87ed675ff9}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!bpe@{bpe}}
+\index{bpe@{bpe}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{bpe()}{bpe()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{token }\end{DoxyParamCaption})}
+
+
+
+Definition at line 103 of file gpt2\+\_\+helper.\+py.
+
+
+
+References parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe\+\_\+ranks, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+cache, make\+\_\+control\+\_\+dataset.\+float, and parlai.\+core.\+gpt2\+\_\+helper.\+get\+\_\+pairs().
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac2bbb343b37bc277bf717b87ed675ff9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac2bbb343b37bc277bf717b87ed675ff9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a54e448f943687a8afe9bcc97741d06b9}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a54e448f943687a8afe9bcc97741d06b9}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!decode@{decode}}
+\index{decode@{decode}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{decode()}{decode()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tokens }\end{DoxyParamCaption})}
+
+
+
+Definition at line 153 of file gpt2\+\_\+helper.\+py.
+
+
+
+References parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+byte\+\_\+decoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+decoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+decoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+decoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+decoder, and parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+errors.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a54e448f943687a8afe9bcc97741d06b9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a7c5c94aa8d5acd15215cf3e45fc9f2c3}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a7c5c94aa8d5acd15215cf3e45fc9f2c3}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!encode@{encode}}
+\index{encode@{encode}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{encode()}{encode()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{text }\end{DoxyParamCaption})}
+
+
+
+Definition at line 144 of file gpt2\+\_\+helper.\+py.
+
+
+
+References parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+core.\+dict.\+\_\+\+B\+P\+E\+Helper.\+bpe, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+byte\+\_\+encoder, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+encoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+encoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+pat, and parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+re.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a7c5c94aa8d5acd15215cf3e45fc9f2c3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a36f3a5cb4264010b4891605508147442}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a36f3a5cb4264010b4891605508147442}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!list\+\_\+tokens@{list\+\_\+tokens}}
+\index{list\+\_\+tokens@{list\+\_\+tokens}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{list\+\_\+tokens()}{list\_tokens()}}
+{\footnotesize\ttfamily def parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+list\+\_\+tokens (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 160 of file gpt2\+\_\+helper.\+py.
+
+
+
+References parlai.\+agents.\+starspace.\+modules.\+Starspace.\+encoder, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+encoder, parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+encoder, parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+encoder, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+encoder, and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a3138a0a7614de78ee773642fbe6ddaae}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a3138a0a7614de78ee773642fbe6ddaae}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!bpe\+\_\+ranks@{bpe\+\_\+ranks}}
+\index{bpe\+\_\+ranks@{bpe\+\_\+ranks}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{bpe\+\_\+ranks}{bpe\_ranks}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe\+\_\+ranks}
+
+
+
+Definition at line 89 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aaa6f9b57563422f3651ee240013ae9f4}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aaa6f9b57563422f3651ee240013ae9f4}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!byte\+\_\+decoder@{byte\+\_\+decoder}}
+\index{byte\+\_\+decoder@{byte\+\_\+decoder}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{byte\+\_\+decoder}{byte\_decoder}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+byte\+\_\+decoder}
+
+
+
+Definition at line 88 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aa05888129c3d12eec57bc03e92390e4c}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_aa05888129c3d12eec57bc03e92390e4c}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!byte\+\_\+encoder@{byte\+\_\+encoder}}
+\index{byte\+\_\+encoder@{byte\+\_\+encoder}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{byte\+\_\+encoder}{byte\_encoder}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+byte\+\_\+encoder}
+
+
+
+Definition at line 87 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a9362e804fcdf0565a640996285e85689}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a9362e804fcdf0565a640996285e85689}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!cache@{cache}}
+\index{cache@{cache}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{cache}{cache}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+cache}
+
+
+
+Definition at line 90 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+bpe().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a26ab20eb1b181e46035f2164513d8fce}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a26ab20eb1b181e46035f2164513d8fce}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!decoder@{decoder}}
+\index{decoder@{decoder}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{decoder}{decoder}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decoder}
+
+
+
+Definition at line 82 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a794ff2b9372acac9ab7c80b5c07ab60b}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a794ff2b9372acac9ab7c80b5c07ab60b}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!encoder@{encoder}}
+\index{encoder@{encoder}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encoder}
+
+
+
+Definition at line 74 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode(), modules.\+Kvmemnn.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), and parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+list\+\_\+tokens().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a0ea9f7588f25a62eb6021a54ea8ca095}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_a0ea9f7588f25a62eb6021a54ea8ca095}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!errors@{errors}}
+\index{errors@{errors}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{errors}{errors}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+errors}
+
+
+
+Definition at line 86 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_afbdbf5259b69f21f389eecaaada838d8}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_afbdbf5259b69f21f389eecaaada838d8}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!pat@{pat}}
+\index{pat@{pat}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{pat}{pat}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+pat}
+
+
+
+Definition at line 99 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac1ad446c51c26831655244d83350589a}\label{classparlai_1_1core_1_1gpt2__helper_1_1Gpt2BpeHelper_ac1ad446c51c26831655244d83350589a}} 
+\index{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}!re@{re}}
+\index{re@{re}!parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper@{parlai\+::core\+::gpt2\+\_\+helper\+::\+Gpt2\+Bpe\+Helper}}
+\subsubsection{\texorpdfstring{re}{re}}
+{\footnotesize\ttfamily parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+re}
+
+
+
+Definition at line 94 of file gpt2\+\_\+helper.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{gpt2__helper_8py}{gpt2\+\_\+helper.\+py}\end{DoxyCompactItemize}

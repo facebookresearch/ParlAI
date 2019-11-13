@@ -1,0 +1,4 @@
+<map id="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.greedy_search" name="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.greedy_search">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a15d473070cfc77894bf6d053e9dda68b" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent._build_cands" alt="" coords="276,5,488,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a58227903fd44e3d436710c06457c8f84" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent.beam_search" alt="" coords="275,85,489,141"/>
+</map>

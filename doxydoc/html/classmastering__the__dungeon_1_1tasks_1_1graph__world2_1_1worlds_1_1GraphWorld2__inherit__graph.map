@@ -1,7 +1,5 @@
 <map id="mastering_the_dungeon.tasks.graph_world2.worlds.GraphWorld2" name="mastering_the_dungeon.tasks.graph_world2.worlds.GraphWorld2">
-<area shape="rect" id="node1" title=" " alt="" coords="5,333,237,375"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title=" " alt="" coords="25,244,218,285"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="43,155,199,196"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="40,80,203,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="93,5,150,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title="parlai.core.worlds.Executable\lWorld" alt="" coords="25,244,218,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title="parlai.core.worlds.Multi\lAgentDialogWorld" alt="" coords="43,155,199,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="40,80,203,107"/>
 </map>

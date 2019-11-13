@@ -1,0 +1,9 @@
+<map id="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonasGenerator.add_idx_stack" name="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonasGenerator.add_idx_stack">
+<area shape="rect" id="node2" href="$classworlds_1_1PersonasGenerator.html#a8de0721e02fce900b4f3c15f6cf0e2e1" title="worlds.PersonasGenerator.\l__init__" alt="" coords="421,5,601,47"/>
+<area shape="rect" id="node3" href="$classpersonality__captions_1_1worlds_1_1ImageGenerator.html#a3ed9513ae59885f39f95a65d610b9b54" title="personality_captions.worlds.\lImageGenerator.pop_image" alt="" coords="417,71,604,112"/>
+<area shape="rect" id="node4" href="$classpersonality__captions_1_1worlds_1_1PersonalityAndImageGenerator.html#ade0cb023a2efc492a3eedea9c670ef51" title="personality_captions.worlds.\lPersonalityAndImageGenerator.pop_pair" alt="" coords="383,136,639,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1PersonasGenerator.html#a3af572bb691c40bcbb9df5fe5fdb318d" title="parlai.mturk.tasks.personachat.personachat\l_rephrase.worlds.PersonasGenerator.pop_persona" alt="" coords="353,201,668,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonasGenerator.html#a30fafb7faad8a5ad1c0c15bb2e1789f8" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonasGenerator.pop_persona" alt="" coords="365,267,656,308"/>
+<area shape="rect" id="node7" href="$classworlds_1_1PersonasGenerator.html#ada6f80abe6e9881a2ac225015531788c" title="worlds.PersonasGenerator.pop\l_persona" alt="" coords="410,356,611,397"/>
+<area shape="rect" id="node8" href="$classpersonality__captions_1_1worlds_1_1PersonalityGenerator.html#a5d77b6f2855f26f68832d81f4b84ba99" title="personality_captions.worlds.\lPersonalityGenerator.pop\l_personality" alt="" coords="417,422,604,478"/>
+</map>

@@ -1,7 +1,5 @@
 <map id="parlai.core.teachers.StreamDialogData.get" name="parlai.core.teachers.StreamDialogData.get">
-<area shape="rect" id="node1" title=" " alt="" coords="5,93,188,135"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="255,5,427,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="236,71,447,98"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title=" " alt="" coords="250,123,433,164"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1DialogData.html#a467bf261c35da2f5d2a34949281d2669" title=" " alt="" coords="253,188,430,229"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title="parlai.core.teachers.Fixed\lDialogTeacher._lock" alt="" coords="255,5,427,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title="parlai.core.metrics.Metrics._lock" alt="" coords="236,71,447,98"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title="parlai.core.teachers.Stream\lDialogData._lock" alt="" coords="250,123,433,164"/>
 </map>

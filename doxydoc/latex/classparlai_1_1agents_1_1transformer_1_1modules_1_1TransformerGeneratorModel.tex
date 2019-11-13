@@ -1,0 +1,215 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel}{}\section{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel}\index{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model@{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a17276e3090a132914c0adae133e60357}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, dictionary)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a9b9261bca59f10692c15cbaaa3ffce65}{reorder\+\_\+encoder\+\_\+states} (self, encoder\+\_\+states, indices)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a7ee3a87dd94d18353bca09990e8d5821}{reorder\+\_\+decoder\+\_\+incremental\+\_\+state} (self, incremental\+\_\+state, inds)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ae0f0d3d038cc12075501aae3a059c997}{output} (self, tensor)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_aefac02b3630ef361bb008b4f7973c55b}{pad\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a381b6d63e5aba194730c36d9fb93c6d6}{start\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ab2b8403205fcd407e47546dc56022d2f}{end\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a18411754103e8c8f4cd2e9338351b98d}{embeddings}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_af165b8ec1505f768c530aea02d68ae09}{encoder}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a6467f0fdec226329cb8efe77245996a5}{decoder}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Implements a full generator model, with one encoder and one decoder.\end{DoxyVerb}
+ 
+
+Definition at line 781 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a17276e3090a132914c0adae133e60357}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a17276e3090a132914c0adae133e60357}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 784 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ae0f0d3d038cc12075501aae3a059c997}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ae0f0d3d038cc12075501aae3a059c997}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!output@{output}}
+\index{output@{output}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{output()}{output()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+output (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{tensor }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute output logits.\end{DoxyVerb}
+ 
+
+Definition at line 846 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+embeddings, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+embeddings, and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+embeddings.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ae0f0d3d038cc12075501aae3a059c997_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a7ee3a87dd94d18353bca09990e8d5821}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a7ee3a87dd94d18353bca09990e8d5821}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}}
+\index{reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{reorder\+\_\+decoder\+\_\+incremental\+\_\+state()}{reorder\_decoder\_incremental\_state()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+reorder\+\_\+decoder\+\_\+incremental\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{incremental\+\_\+state,  }\item[{}]{inds }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder the decoder incremental state.
+
+Not implemented in Transformers, since ``incremental_state`` is always None.
+\end{DoxyVerb}
+ 
+
+Definition at line 837 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a9b9261bca59f10692c15cbaaa3ffce65}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a9b9261bca59f10692c15cbaaa3ffce65}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}}
+\index{reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{reorder\+\_\+encoder\+\_\+states()}{reorder\_encoder\_states()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+reorder\+\_\+encoder\+\_\+states (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{encoder\+\_\+states,  }\item[{}]{indices }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder the encoder states.
+
+See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
+\end{DoxyVerb}
+ 
+
+Definition at line 824 of file modules.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a6467f0fdec226329cb8efe77245996a5}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a6467f0fdec226329cb8efe77245996a5}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!decoder@{decoder}}
+\index{decoder@{decoder}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{decoder}{decoder}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+decoder}
+
+
+
+Definition at line 820 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a18411754103e8c8f4cd2e9338351b98d}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a18411754103e8c8f4cd2e9338351b98d}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!embeddings@{embeddings}}
+\index{embeddings@{embeddings}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{embeddings}{embeddings}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+embeddings}
+
+
+
+Definition at line 789 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+output().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_af165b8ec1505f768c530aea02d68ae09}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_af165b8ec1505f768c530aea02d68ae09}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!encoder@{encoder}}
+\index{encoder@{encoder}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+encoder}
+
+
+
+Definition at line 811 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode(), modules.\+Kvmemnn.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), and parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+list\+\_\+tokens().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ab2b8403205fcd407e47546dc56022d2f}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_ab2b8403205fcd407e47546dc56022d2f}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!end\+\_\+idx@{end\+\_\+idx}}
+\index{end\+\_\+idx@{end\+\_\+idx}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{end\+\_\+idx}{end\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+end\+\_\+idx}
+
+
+
+Definition at line 787 of file modules.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_aefac02b3630ef361bb008b4f7973c55b}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_aefac02b3630ef361bb008b4f7973c55b}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!pad\+\_\+idx@{pad\+\_\+idx}}
+\index{pad\+\_\+idx@{pad\+\_\+idx}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{pad\+\_\+idx}{pad\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+pad\+\_\+idx}
+
+
+
+Definition at line 785 of file modules.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+encoder(), and self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a381b6d63e5aba194730c36d9fb93c6d6}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel_a381b6d63e5aba194730c36d9fb93c6d6}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}!start\+\_\+idx@{start\+\_\+idx}}
+\index{start\+\_\+idx@{start\+\_\+idx}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Generator\+Model}}
+\subsubsection{\texorpdfstring{start\+\_\+idx}{start\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Generator\+Model.\+start\+\_\+idx}
+
+
+
+Definition at line 786 of file modules.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,204 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a961944a7bcebe7bee8c32967e505994d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a79479f805ef73bba4f52a676999e06da}{in\+\_\+features}, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add537bbe47b10f383ff20b4244c2a38a}{out\+\_\+features}, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add46cc133ca8a969cee42cef77c87466}{bias}=True, shared\+\_\+weight=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a1ec65604d05f105801a61de18d16caa1}{reset\+\_\+parameters} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a5114a45ac1b8e2a07c399da5bff760be}{forward} (self, input)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_aad59400f7c8edf9b07305749b928186b}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a79479f805ef73bba4f52a676999e06da}{in\+\_\+features}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add537bbe47b10f383ff20b4244c2a38a}{out\+\_\+features}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_afa722c4a409a6e2b981874a8a472e892}{shared}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_ab561a82edc15dcd7509618466d2f684f}{weight}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add46cc133ca8a969cee42cef77c87466}{bias}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Custom Linear layer which allows for sharing weights (e.g. with an
+nn.Embedding layer).
+\end{DoxyVerb}
+ 
+
+Definition at line 641 of file modules\+\_\+v0.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a961944a7bcebe7bee8c32967e505994d}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a961944a7bcebe7bee8c32967e505994d}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{in\+\_\+features,  }\item[{}]{out\+\_\+features,  }\item[{}]{bias = {\ttfamily True},  }\item[{}]{shared\+\_\+weight = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 646 of file modules\+\_\+v0.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_aad59400f7c8edf9b07305749b928186b}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_aad59400f7c8edf9b07305749b928186b}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 686 of file modules\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+in\+\_\+features, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+out\+\_\+features, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a5114a45ac1b8e2a07c399da5bff760be}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a5114a45ac1b8e2a07c399da5bff760be}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input }\end{DoxyParamCaption})}
+
+
+
+Definition at line 678 of file modules\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+shared, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+shared, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+weight.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a5114a45ac1b8e2a07c399da5bff760be_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a1ec65604d05f105801a61de18d16caa1}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a1ec65604d05f105801a61de18d16caa1}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!reset\+\_\+parameters@{reset\+\_\+parameters}}
+\index{reset\+\_\+parameters@{reset\+\_\+parameters}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{reset\+\_\+parameters()}{reset\_parameters()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+reset\+\_\+parameters (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 670 of file modules\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+shared, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+shared, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+weight.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add46cc133ca8a969cee42cef77c87466}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add46cc133ca8a969cee42cef77c87466}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!bias@{bias}}
+\index{bias@{bias}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{bias}{bias}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+bias}
+
+
+
+Definition at line 665 of file modules\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+reset\+\_\+parameters(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+reset\+\_\+parameters(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+reset\+\_\+parameters().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a79479f805ef73bba4f52a676999e06da}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_a79479f805ef73bba4f52a676999e06da}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!in\+\_\+features@{in\+\_\+features}}
+\index{in\+\_\+features@{in\+\_\+features}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{in\+\_\+features}{in\_features}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+in\+\_\+features}
+
+
+
+Definition at line 648 of file modules\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+\_\+\+\_\+repr\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add537bbe47b10f383ff20b4244c2a38a}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_add537bbe47b10f383ff20b4244c2a38a}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!out\+\_\+features@{out\+\_\+features}}
+\index{out\+\_\+features@{out\+\_\+features}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{out\+\_\+features}{out\_features}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+out\+\_\+features}
+
+
+
+Definition at line 649 of file modules\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+\_\+\+\_\+repr\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_afa722c4a409a6e2b981874a8a472e892}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_afa722c4a409a6e2b981874a8a472e892}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!shared@{shared}}
+\index{shared@{shared}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{shared}{shared}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+shared}
+
+
+
+Definition at line 650 of file modules\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+reset\+\_\+parameters(), and parlai.\+core.\+worlds.\+Hogwild\+Process.\+run().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_ab561a82edc15dcd7509618466d2f684f}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear_ab561a82edc15dcd7509618466d2f684f}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}!weight@{weight}}
+\index{weight@{weight}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::modules\+\_\+v0\+::\+Linear}}
+\subsubsection{\texorpdfstring{weight}{weight}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+weight}
+
+
+
+Definition at line 654 of file modules\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+reset\+\_\+parameters(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+reset\+\_\+parameters().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{seq2seq_2modules__v0_8py}{modules\+\_\+v0.\+py}\end{DoxyCompactItemize}

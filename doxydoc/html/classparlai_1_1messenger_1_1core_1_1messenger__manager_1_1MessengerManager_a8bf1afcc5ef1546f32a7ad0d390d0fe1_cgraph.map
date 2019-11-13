@@ -1,12 +1,9 @@
 <map id="parlai.messenger.core.messenger_manager.MessengerManager.start_task" name="parlai.messenger.core.messenger_manager.MessengerManager.start_task">
-<area shape="rect" id="node1" title=" " alt="" coords="5,222,264,263"/>
-<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a353706036e3eb7cc4968d6d728e76f2c" title=" " alt="" coords="321,19,539,75"/>
-<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a6cb0be22f4702d9849e8ddadeaa7530b" title=" " alt="" coords="321,99,539,155"/>
-<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#aad51f1633f4d56d2a8812562f0608e03" title=" " alt="" coords="640,165,859,221"/>
-<area shape="rect" id="node7" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a238fe5e22bbe928848709edade7ba06c" title=" " alt="" coords="636,245,863,301"/>
-<area shape="rect" id="node8" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1f17ccc47844361a32ca3da63ae1c3e" title=" " alt="" coords="312,331,548,387"/>
-<area shape="rect" id="node9" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a71506a682b9284d8ae4121576e6140db" title=" " alt="" coords="596,326,903,367"/>
-<area shape="rect" id="node10" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a39c02eecd48359b564bddc86897cae4c" title=" " alt="" coords="627,393,871,449"/>
-<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a6fc89f19fa9a212fb5ce30e0844fe912" title=" " alt="" coords="640,5,859,61"/>
-<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a99facae90edee81d9c76e6030dbaa92c" title=" " alt="" coords="640,85,859,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a353706036e3eb7cc4968d6d728e76f2c" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_create_agent" alt="" coords="321,5,539,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a6cb0be22f4702d9849e8ddadeaa7530b" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_get_unique_pool" alt="" coords="321,85,539,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a238fe5e22bbe928848709edade7ba06c" title="parlai.messenger.core.messenger\l_manager.MessengerManager.after\l_agent_removed" alt="" coords="636,156,863,212"/>
+<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1f17ccc47844361a32ca3da63ae1c3e" title="parlai.messenger.core.messenger\l_manager.MessengerManager.check\l_timeout_in_pool" alt="" coords="312,267,548,323"/>
+<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a71506a682b9284d8ae4121576e6140db" title="parlai.messenger.core.messenger\l_manager.MessengerManager.observe_message" alt="" coords="596,241,903,282"/>
+<area shape="rect" id="node7" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a39c02eecd48359b564bddc86897cae4c" title="parlai.messenger.core.messenger\l_manager.MessengerManager.remove\l_agent_from_pool" alt="" coords="627,315,871,371"/>
+<area shape="rect" id="node8" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#aad51f1633f4d56d2a8812562f0608e03" title="parlai.messenger.core.messenger\l_manager.MessengerManager.get\l_agent_state" alt="" coords="321,421,539,477"/>
 </map>

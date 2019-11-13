@@ -1,0 +1,7 @@
+<map id="personality_captions.worlds.MTurkPersonalityCaptionsWorld.check_timeout" name="personality_captions.worlds.MTurkPersonalityCaptionsWorld.check_timeout">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#accac4ee2dc51850f0af8fa43055023e7" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonaChatWorld.get\l_instruction" alt="" coords="303,5,579,61"/>
+<area shape="rect" id="node3" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title="image_chat_collection.worlds.\lMTurkImageChatWorld.get_instruction" alt="" coords="317,86,564,127"/>
+<area shape="rect" id="node4" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html#a4e9a57d65cc93af5741f56597a970618" title="personality_captions.worlds.\lMTurkPersonalityCaptionsWorld.get\l_instruction" alt="" coords="325,152,557,208"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.get\l_instruction" alt="" coords="305,232,576,288"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="354,312,527,339"/>
+</map>

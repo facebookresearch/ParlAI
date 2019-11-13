@@ -1,9 +1,6 @@
 <map id="parlai.core.torch_classifier_agent.TorchClassifierAgent" name="parlai.core.torch_classifier_agent.TorchClassifierAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="528,53,715,94"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html" title=" " alt="" coords="799,5,970,61"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent.html" title=" " alt="" coords="763,85,1007,141"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="321,53,480,94"/>
-<area shape="rect" id="node3" title=" " alt="" coords="167,35,217,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,85,273,112"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,85,63,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html" title="parlai.agents.bert\l_classifier.bert_classifier.\lBertClassifierAgent" alt="" coords="799,5,970,61"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent.html" title="parlai.agents.transformer\l_classifier.transformer\l_classifier.TransformerClassifierAgent" alt="" coords="763,85,1007,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="321,53,480,94"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="111,85,273,112"/>
 </map>

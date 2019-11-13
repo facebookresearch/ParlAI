@@ -1,8 +1,5 @@
 <map id="parlai.mturk.core.dev.worker_manager.WorkerManager.handle_agent_disconnect" name="parlai.mturk.core.dev.worker_manager.WorkerManager.handle_agent_disconnect">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,223,127"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#aa8dc23d5235286d2a3f66ad9f21d1968" title=" " alt="" coords="271,5,513,47"/>
-<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1a666de4fb865f51ef3e90b14880cdb" title=" " alt="" coords="283,71,501,127"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#ae527be446b326d4252304cf89850aff8" title=" " alt="" coords="283,151,501,207"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a1ebe6b52833ea022bd16737fab8085fa" title=" " alt="" coords="561,5,812,47"/>
-<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#aad51f1633f4d56d2a8812562f0608e03" title=" " alt="" coords="577,71,796,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#aa8dc23d5235286d2a3f66ad9f21d1968" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager._get_agent" alt="" coords="271,5,513,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1a666de4fb865f51ef3e90b14880cdb" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_get_agent" alt="" coords="283,71,501,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#ae527be446b326d4252304cf89850aff8" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager.handle\l_bad_disconnect" alt="" coords="283,151,501,207"/>
 </map>

@@ -1,0 +1,198 @@
+\hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq}{}\section{parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq Class Reference}
+\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq}\index{parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq@{parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq}}
+
+
+Inheritance diagram for parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8e8ad02405bcaf384e154a0e238fc10d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embeddingsize, hiddensize, numlayers=2, dropout=0, bidirectional=False, rnn\+\_\+class=\textquotesingle{}lstm\textquotesingle{}, lookuptable=\textquotesingle{}unique\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a832563fd770ab89f2ff6a9ddf025b5c0}{decoder}=\textquotesingle{}same\textquotesingle{}, numsoftmax=1, attention=\textquotesingle{}none\textquotesingle{}, attention\+\_\+length=48, attention\+\_\+time=\textquotesingle{}post\textquotesingle{}, padding\+\_\+idx=0, start\+\_\+idx=1, end\+\_\+idx=2, unknown\+\_\+idx=3, input\+\_\+dropout=0, \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel_a14dcf5ba14c4438bb4919565ebd30fa8}{longest\+\_\+label}=1)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8161e20a5368471c58ec73e74ba35f48}{reorder\+\_\+encoder\+\_\+states} (self, encoder\+\_\+states, indices)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8503e583661f0d824e0aa070b3d6ff42}{reorder\+\_\+decoder\+\_\+incremental\+\_\+state} (self, incremental\+\_\+state, inds)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8337117b93156343eac3948bed19d6b0}{attn\+\_\+type}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a832563fd770ab89f2ff6a9ddf025b5c0}{decoder}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_add3b14b89043ce0d8154810d082b0e52}{encoder}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_abccc59e50a65fe8e1b7ca9d3d29fd070}{output}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+dictionary \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a3962ff3f0654a2808f13d677c7192fa2}{R\+N\+N\+\_\+\+O\+P\+TS} = \{\textquotesingle{}rnn\textquotesingle{}\+: nn.\+R\+NN, \textquotesingle{}gru\textquotesingle{}\+: nn.\+G\+RU, \textquotesingle{}lstm\textquotesingle{}\+: nn.\+L\+S\+TM\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Sequence to sequence parent module.\end{DoxyVerb}
+ 
+
+Definition at line 58 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8e8ad02405bcaf384e154a0e238fc10d}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8e8ad02405bcaf384e154a0e238fc10d}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embeddingsize,  }\item[{}]{hiddensize,  }\item[{}]{numlayers = {\ttfamily 2},  }\item[{}]{dropout = {\ttfamily 0},  }\item[{}]{bidirectional = {\ttfamily False},  }\item[{}]{rnn\+\_\+class = {\ttfamily \textquotesingle{}lstm\textquotesingle{}},  }\item[{}]{lookuptable = {\ttfamily \textquotesingle{}unique\textquotesingle{}},  }\item[{}]{decoder = {\ttfamily \textquotesingle{}same\textquotesingle{}},  }\item[{}]{numsoftmax = {\ttfamily 1},  }\item[{}]{attention = {\ttfamily \textquotesingle{}none\textquotesingle{}},  }\item[{}]{attention\+\_\+length = {\ttfamily 48},  }\item[{}]{attention\+\_\+time = {\ttfamily \textquotesingle{}post\textquotesingle{}},  }\item[{}]{padding\+\_\+idx = {\ttfamily 0},  }\item[{}]{start\+\_\+idx = {\ttfamily 1},  }\item[{}]{end\+\_\+idx = {\ttfamily 2},  }\item[{}]{unknown\+\_\+idx = {\ttfamily 3},  }\item[{}]{input\+\_\+dropout = {\ttfamily 0},  }\item[{}]{longest\+\_\+label = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize seq2seq model.
+
+See cmdline args in Seq2seqAgent for description of arguments.
+\end{DoxyVerb}
+ 
+
+Definition at line 84 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8503e583661f0d824e0aa070b3d6ff42}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8503e583661f0d824e0aa070b3d6ff42}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}}
+\index{reorder\+\_\+decoder\+\_\+incremental\+\_\+state@{reorder\+\_\+decoder\+\_\+incremental\+\_\+state}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{reorder\+\_\+decoder\+\_\+incremental\+\_\+state()}{reorder\_decoder\_incremental\_state()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+decoder\+\_\+incremental\+\_\+state (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{incremental\+\_\+state,  }\item[{}]{inds }\end{DoxyParamCaption})}
+
+
+
+Definition at line 183 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+decoder\+\_\+incremental\+\_\+state().
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+decoder\+\_\+incremental\+\_\+state().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=290pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8503e583661f0d824e0aa070b3d6ff42_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=290pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8503e583661f0d824e0aa070b3d6ff42_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8161e20a5368471c58ec73e74ba35f48}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8161e20a5368471c58ec73e74ba35f48}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}}
+\index{reorder\+\_\+encoder\+\_\+states@{reorder\+\_\+encoder\+\_\+states}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{reorder\+\_\+encoder\+\_\+states()}{reorder\_encoder\_states()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+encoder\+\_\+states (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{encoder\+\_\+states,  }\item[{}]{indices }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reorder encoder states according to a new set of indices.\end{DoxyVerb}
+ 
+
+Definition at line 150 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+attn\+\_\+type, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+attn\+\_\+type, parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+attn\+\_\+type, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+attn\+\_\+type, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+attn\+\_\+type, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+attn\+\_\+type.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8337117b93156343eac3948bed19d6b0}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a8337117b93156343eac3948bed19d6b0}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!attn\+\_\+type@{attn\+\_\+type}}
+\index{attn\+\_\+type@{attn\+\_\+type}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{attn\+\_\+type}{attn\_type}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+attn\+\_\+type}
+
+
+
+Definition at line 97 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+reorder\+\_\+encoder\+\_\+states().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a832563fd770ab89f2ff6a9ddf025b5c0}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a832563fd770ab89f2ff6a9ddf025b5c0}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!decoder@{decoder}}
+\index{decoder@{decoder}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{decoder}{decoder}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+decoder}
+
+
+
+Definition at line 100 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+decode(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+load(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+save(), and agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_add3b14b89043ce0d8154810d082b0e52}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_add3b14b89043ce0d8154810d082b0e52}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!encoder@{encoder}}
+\index{encoder@{encoder}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{encoder}{encoder}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+encoder}
+
+
+
+Definition at line 120 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+encode(), parlai.\+agents.\+starspace.\+modules.\+Starspace.\+forward(), modules.\+Kvmemnn.\+forward(), parlai.\+agents.\+transformer.\+crossencoder.\+Cross\+Encoder\+Module.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), and parlai.\+core.\+gpt2\+\_\+helper.\+Gpt2\+Bpe\+Helper.\+list\+\_\+tokens().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_abccc59e50a65fe8e1b7ca9d3d29fd070}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_abccc59e50a65fe8e1b7ca9d3d29fd070}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!output@{output}}
+\index{output@{output}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{output}{output}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+output}
+
+
+
+Definition at line 140 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Model.\+decode\+\_\+forced().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a3962ff3f0654a2808f13d677c7192fa2}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq_a3962ff3f0654a2808f13d677c7192fa2}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}!R\+N\+N\+\_\+\+O\+P\+TS@{R\+N\+N\+\_\+\+O\+P\+TS}}
+\index{R\+N\+N\+\_\+\+O\+P\+TS@{R\+N\+N\+\_\+\+O\+P\+TS}!parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq@{parlai\+::agents\+::seq2seq\+::modules\+::\+Seq2seq}}
+\subsubsection{\texorpdfstring{R\+N\+N\+\_\+\+O\+P\+TS}{RNN\_OPTS}}
+{\footnotesize\ttfamily dictionary parlai.\+agents.\+seq2seq.\+modules.\+Seq2seq.\+R\+N\+N\+\_\+\+O\+P\+TS = \{\textquotesingle{}rnn\textquotesingle{}\+: nn.\+R\+NN, \textquotesingle{}gru\textquotesingle{}\+: nn.\+G\+RU, \textquotesingle{}lstm\textquotesingle{}\+: nn.\+L\+S\+TM\}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 61 of file modules.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/seq2seq/\hyperlink{parlai_2agents_2seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

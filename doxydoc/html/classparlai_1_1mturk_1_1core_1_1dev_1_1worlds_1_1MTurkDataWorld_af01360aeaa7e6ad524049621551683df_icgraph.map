@@ -1,9 +1,8 @@
 <map id="parlai.mturk.core.dev.worlds.MTurkDataWorld.get_custom_task_data" name="parlai.mturk.core.dev.worlds.MTurkDataWorld.get_custom_task_data">
-<area shape="rect" id="node1" title=" " alt="" coords="320,181,513,237"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkDataWorld.html#ab0fd2eeab0ed799e565c5e97694cd135" title=" " alt="" coords="23,5,254,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html#a13f5b85f9694627df2e181267588d4dc" title=" " alt="" coords="30,86,247,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#ab37222b5a1e607c5f8f301de880241f2" title=" " alt="" coords="30,151,247,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1StaticMTurkTaskWorld.html#a38d3d55c327426feb97d42c42c5cb49e" title=" " alt="" coords="46,217,231,273"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld.html#a7f263553ea616c3ae36124e5fcab4dc2" title=" " alt="" coords="5,297,272,353"/>
-<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html#a5eb7b6e957de17b89a2e24c3d6fef751" title=" " alt="" coords="43,377,234,433"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkDataWorld.html#ab0fd2eeab0ed799e565c5e97694cd135" title="parlai.mturk.core.legacy\l_2018.worlds.MTurkDataWorld.prep\l_save_data" alt="" coords="265,5,495,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html#a13f5b85f9694627df2e181267588d4dc" title="parlai.mturk.core.worlds.\lMTurkDataWorld.prep_save_data" alt="" coords="271,86,489,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html#ab37222b5a1e607c5f8f301de880241f2" title="parlai.mturk.core.dev.worlds.\lMTurkDataWorld.prep_save_data" alt="" coords="271,151,489,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1StaticMTurkTaskWorld.html#a38d3d55c327426feb97d42c42c5cb49e" title="parlai.mturk.core.worlds.\lStaticMTurkTaskWorld.prep\l_save_data" alt="" coords="287,217,473,273"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld.html#a7f263553ea616c3ae36124e5fcab4dc2" title="parlai.mturk.core.legacy\l_2018.worlds.StaticMTurkTaskWorld.prep\l_save_data" alt="" coords="247,297,513,353"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html#a5eb7b6e957de17b89a2e24c3d6fef751" title="parlai.mturk.core.dev.worlds.\lStaticMTurkTaskWorld.prep\l_save_data" alt="" coords="285,377,475,433"/>
 </map>

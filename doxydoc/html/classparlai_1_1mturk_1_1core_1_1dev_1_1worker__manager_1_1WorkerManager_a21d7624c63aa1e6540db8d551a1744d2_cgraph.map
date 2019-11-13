@@ -1,0 +1,6 @@
+<map id="parlai.mturk.core.dev.worker_manager.WorkerManager.get_complete_hits" name="parlai.mturk.core.dev.worker_manager.WorkerManager.get_complete_hits">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#aa8dc23d5235286d2a3f66ad9f21d1968" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager._get_agent" alt="" coords="251,5,493,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1a666de4fb865f51ef3e90b14880cdb" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_get_agent" alt="" coords="263,71,481,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a957d2697aeb639a0969e503696eac615" title="parlai.mturk.core.dev.worker\l_manager.WorkerManager._log\l_missing_agent" alt="" coords="271,151,473,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac3bf9a90fb8b91f6caa43117ca88329e" title="parlai.messenger.core.messenger\l_manager.MessengerManager.\l_log_missing_agent" alt="" coords="263,231,481,287"/>
+</map>

@@ -1,15 +1,8 @@
 <map id="parlai.mturk.core.socket_manager.SocketManager.close_all_channels" name="parlai.mturk.core.socket_manager.SocketManager.close_all_channels">
-<area shape="rect" id="node1" title=" " alt="" coords="5,272,215,328"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a89ccce497152c72c2a171ef348491d89" title=" " alt="" coords="301,192,511,248"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#ae079bc95ebedcab4e52325253db490cf" title=" " alt="" coords="301,272,511,328"/>
-<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#aba8ba15b13ecbf57b9bc9ef15d9ba620" title=" " alt="" coords="263,352,549,408"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#aac18e0a85d22aef890d83eaa9088a4cf" title=" " alt="" coords="597,359,856,401"/>
-<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#ac611676edd812fe957c189a628085237" title=" " alt="" coords="599,279,855,335"/>
-<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a4dc808a3e36eb8977728b6191470e84a" title=" " alt="" coords="637,199,816,255"/>
-<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket.html#a9493072cadd12d3a26641cb6358b6e17" title=" " alt="" coords="913,326,1151,367"/>
-<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a0a309096d83158652038119cb12da2a0" title=" " alt="" coords="909,391,1155,433"/>
-<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#a2659b0e59ac5ab03e0b4f5195820b098" title=" " alt="" coords="904,165,1160,221"/>
-<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#ab029996ac4ed9cb6608f8233299fe759" title=" " alt="" coords="904,245,1160,301"/>
-<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a889396517fd02cbd1c9e2c97b9132edd" title=" " alt="" coords="943,5,1121,61"/>
-<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a418dff25d3d9bbe7410bd05d9ddaa855" title=" " alt="" coords="943,85,1121,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a89ccce497152c72c2a171ef348491d89" title="parlai.mturk.core.dev.socket\l_manager.SocketManager.close\l_channel" alt="" coords="301,5,511,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#ae079bc95ebedcab4e52325253db490cf" title="parlai.mturk.core.socket\l_manager.SocketManager.close\l_channel" alt="" coords="301,165,511,221"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#aba8ba15b13ecbf57b9bc9ef15d9ba620" title="parlai.mturk.core.legacy\l_2018.socket_manager.SocketManager.close\l_channel" alt="" coords="263,85,549,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#aac18e0a85d22aef890d83eaa9088a4cf" title="parlai.mturk.core.dev.socket\l_manager.SocketManager._send_packet" alt="" coords="597,166,856,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#ac611676edd812fe957c189a628085237" title="parlai.mturk.core.legacy\l_2018.socket_manager.SocketManager.\l_send_packet" alt="" coords="599,85,855,141"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a4dc808a3e36eb8977728b6191470e84a" title="parlai.mturk.core.socket\l_manager.SocketManager.\l_send_packet" alt="" coords="637,232,816,288"/>
 </map>

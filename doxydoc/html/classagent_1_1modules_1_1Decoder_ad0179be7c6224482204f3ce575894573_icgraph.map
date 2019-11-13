@@ -1,3 +1,6 @@
 <map id="agent.modules.Decoder.hidden_to_idx" name="agent.modules.Decoder.hidden_to_idx">
-<area shape="rect" id="node1" title=" " alt="" coords="5,29,208,71"/>
+<area shape="rect" id="node2" href="$classagent_1_1modules_1_1Decoder.html#a4c609d3b51a4ef925c943c22a7a015e8" title="agent.modules.Decoder.forward" alt="" coords="256,71,463,98"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="511,5,724,47"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="772,35,985,76"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="511,123,724,164"/>
 </map>

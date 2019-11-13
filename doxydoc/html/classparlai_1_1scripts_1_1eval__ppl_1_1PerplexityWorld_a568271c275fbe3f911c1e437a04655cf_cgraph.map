@@ -1,7 +1,6 @@
 <map id="parlai.scripts.eval_ppl.PerplexityWorld.reset_metrics" name="parlai.scripts.eval_ppl.PerplexityWorld.reset_metrics">
-<area shape="rect" id="node1" title=" " alt="" coords="5,93,180,149"/>
-<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html#a14441a6ac10802e2ca328dc1d1debe75" title=" " alt="" coords="245,5,422,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="247,71,419,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="228,137,439,163"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title=" " alt="" coords="242,188,425,229"/>
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html#a14441a6ac10802e2ca328dc1d1debe75" title="parlai.scripts.eval\l_ppl.PerplexityWorld._lock" alt="" coords="245,5,422,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title="parlai.core.teachers.Fixed\lDialogTeacher._lock" alt="" coords="247,71,419,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title="parlai.core.metrics.Metrics._lock" alt="" coords="228,137,439,163"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title="parlai.core.teachers.Stream\lDialogData._lock" alt="" coords="242,188,425,229"/>
 </map>

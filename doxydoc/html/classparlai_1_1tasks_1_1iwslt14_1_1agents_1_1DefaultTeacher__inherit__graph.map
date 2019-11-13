@@ -1,10 +1,8 @@
 <map id="parlai.tasks.iwslt14.agents.DefaultTeacher" name="parlai.tasks.iwslt14.agents.DefaultTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="108,408,289,449"/>
-<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1iwslt14_1_1agents_1_1DeEnTeacher.html" title=" " alt="" coords="5,497,187,539"/>
-<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1iwslt14_1_1agents_1_1EnDeTeacher.html" title=" " alt="" coords="211,497,392,539"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="110,319,287,360"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="113,229,285,271"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="111,155,287,181"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="117,80,280,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="170,5,227,32"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1iwslt14_1_1agents_1_1DeEnTeacher.html" title="parlai.tasks.iwslt14.agents.\lDeEnTeacher" alt="" coords="5,497,187,539"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1iwslt14_1_1agents_1_1EnDeTeacher.html" title="parlai.tasks.iwslt14.agents.\lEnDeTeacher" alt="" coords="211,497,392,539"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title="parlai.core.teachers.Dialog\lTeacher" alt="" coords="110,319,287,360"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="113,229,285,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="111,155,287,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="117,80,280,107"/>
 </map>

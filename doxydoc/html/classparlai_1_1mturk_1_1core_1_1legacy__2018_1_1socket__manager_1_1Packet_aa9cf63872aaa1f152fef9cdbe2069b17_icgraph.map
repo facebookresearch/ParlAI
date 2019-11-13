@@ -1,5 +1,6 @@
 <map id="parlai.mturk.core.legacy_2018.socket_manager.Packet.as_dict" name="parlai.mturk.core.legacy_2018.socket_manager.Packet.as_dict">
-<area shape="rect" id="node1" title=" " alt="" coords="319,39,567,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1Packet.html#aabcd943398680a33c0a313da2ec1a767" title=" " alt="" coords="5,5,271,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a308912fbfb5d9423d882100db5c79756" title=" " alt="" coords="45,71,231,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1Packet.html#ab584329eae3598c36a1ae14a58be7e72" title="parlai.mturk.core.legacy\l_2018.socket_manager.Packet.\l__repr__" alt="" coords="331,5,537,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a140e38046a95501d5a7798f04b1553bb" title="parlai.mturk.core.socket\l_manager.Packet.__repr__" alt="" coords="345,86,523,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html#a308912fbfb5d9423d882100db5c79756" title="parlai.mturk.core.socket\l_manager.Packet.new_copy" alt="" coords="341,151,527,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1Packet.html#aabcd943398680a33c0a313da2ec1a767" title="parlai.mturk.core.legacy\l_2018.socket_manager.Packet.new_copy" alt="" coords="301,217,567,258"/>
 </map>

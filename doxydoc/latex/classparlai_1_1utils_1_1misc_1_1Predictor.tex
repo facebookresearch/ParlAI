@@ -1,0 +1,143 @@
+\hypertarget{classparlai_1_1utils_1_1misc_1_1Predictor}{}\section{parlai.\+utils.\+misc.\+Predictor Class Reference}
+\label{classparlai_1_1utils_1_1misc_1_1Predictor}\index{parlai.\+utils.\+misc.\+Predictor@{parlai.\+utils.\+misc.\+Predictor}}
+
+
+Inheritance diagram for parlai.\+utils.\+misc.\+Predictor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classparlai_1_1utils_1_1misc_1_1Predictor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+misc.\+Predictor\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=207pt]{classparlai_1_1utils_1_1misc_1_1Predictor__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor_a40aaf55870ba3c02fc2bff2ef5d2a9b7}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args=None, kwargs)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor_a7ff8a927bca43d09d3113dad20cb2a11}{predict} (self, observation)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor_a608b3d7f6722389f3a7eeed0ec5772b7}{opt}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1Predictor_a0ea35fd562c6edaa6affd03006f1bd08}{agent}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Wrapper to set up running version of model and request predictions.
+
+Note that this maintains no World state (does not use a World), merely
+providing the observation directly to the model and getting a response.
+
+This is limiting when it comes to certain use cases, but allows for quick
+model deployment.
+\end{DoxyVerb}
+ 
+
+Definition at line 249 of file misc.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Predictor_a40aaf55870ba3c02fc2bff2ef5d2a9b7}\label{classparlai_1_1utils_1_1misc_1_1Predictor_a40aaf55870ba3c02fc2bff2ef5d2a9b7}} 
+\index{parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Predictor.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args = {\ttfamily None},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the predictor, setting up opt automatically if needed.
+
+Args is expected to be in the same format as sys.argv: e.g. a list in
+the form ['--model', 'seq2seq', '-hs', 128, '-lr', 0.5].
+
+kwargs is interpreted by appending '--' to it and replacing underscores
+with hyphens, so 'dict_file=/tmp/dict.tsv' would be interpreted as
+'--dict-file /tmp/dict.tsv'.
+\end{DoxyVerb}
+ 
+
+Definition at line 260 of file misc.\+py.
+
+
+
+References generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Predictor_a7ff8a927bca43d09d3113dad20cb2a11}\label{classparlai_1_1utils_1_1misc_1_1Predictor_a7ff8a927bca43d09d3113dad20cb2a11}} 
+\index{parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}!predict@{predict}}
+\index{predict@{predict}!parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}}
+\subsubsection{\texorpdfstring{predict()}{predict()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Predictor.\+predict (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}From a ParlAI-standard message dict, get model prediction.\end{DoxyVerb}
+ 
+
+Definition at line 283 of file misc.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+agent, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+agent, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+agent, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+agent, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+agent, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+agent, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+agent, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+agent, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+agent, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+agent, parlai.\+utils.\+misc.\+Predictor.\+agent, and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+agent.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+batch\+\_\+act(), and kvmemnn.\+Kvmemnn\+Agent.\+batch\+\_\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1Predictor_a7ff8a927bca43d09d3113dad20cb2a11_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Predictor_a0ea35fd562c6edaa6affd03006f1bd08}\label{classparlai_1_1utils_1_1misc_1_1Predictor_a0ea35fd562c6edaa6affd03006f1bd08}} 
+\index{parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}!agent@{agent}}
+\index{agent@{agent}!parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}}
+\subsubsection{\texorpdfstring{agent}{agent}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Predictor.\+agent}
+
+
+
+Definition at line 281 of file misc.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), and parlai.\+utils.\+misc.\+Predictor.\+predict().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Predictor_a608b3d7f6722389f3a7eeed0ec5772b7}\label{classparlai_1_1utils_1_1misc_1_1Predictor_a608b3d7f6722389f3a7eeed0ec5772b7}} 
+\index{parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}!opt@{opt}}
+\index{opt@{opt}!parlai\+::utils\+::misc\+::\+Predictor@{parlai\+::utils\+::misc\+::\+Predictor}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Predictor.\+opt}
+
+
+
+Definition at line 280 of file misc.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{misc_8py}{misc.\+py}\end{DoxyCompactItemize}

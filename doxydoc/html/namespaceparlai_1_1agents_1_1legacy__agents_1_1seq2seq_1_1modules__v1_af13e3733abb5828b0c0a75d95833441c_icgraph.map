@@ -1,0 +1,5 @@
+<map id="parlai.agents.legacy_agents.seq2seq.modules_v1.opt_to_kwargs" name="parlai.agents.legacy_agents.seq2seq.modules_v1.opt_to_kwargs">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#aa5b5782548443a008c0502ec9ddedee2" title="parlai.agents.memnn.memnn.\lMemnnAgent.build_model" alt="" coords="285,5,480,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a43422bdf284bfc06a9bd2db434a7167c" title="parlai.agents.seq2seq.seq2seq.\lSeq2seqAgent.build_model" alt="" coords="279,71,486,112"/>
+<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a7341b7dedc7150c4dfa27254188360c1" title="controllable_seq2seq.controllable\l_seq2seq.ControllableSeq2seqAgent.build_model" alt="" coords="228,136,537,177"/>
+</map>

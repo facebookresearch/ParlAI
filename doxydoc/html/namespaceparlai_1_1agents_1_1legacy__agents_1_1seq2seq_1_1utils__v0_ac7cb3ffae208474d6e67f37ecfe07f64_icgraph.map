@@ -1,0 +1,8 @@
+<map id="parlai.agents.legacy_agents.seq2seq.utils_v0.maintain_dialog_history" name="parlai.agents.legacy_agents.seq2seq.utils_v0.maintain_dialog_history">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a0f15f5dc35437659d1ab17d4508d3abe" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.Beam.get_beam_dot" alt="" coords="268,5,435,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#a0f8358dd299ba6719f7354771938fd7b" title="parlai.agents.legacy\l_agents.memnn.memnn_v0.Memnn\lAgent.observe" alt="" coords="236,85,467,141"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a788b504ead65ec6af074717226cc07bb" title="parlai.agents.starspace.starspace.\lStarspaceAgent.observe" alt="" coords="240,166,463,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a8419a9652b14a16cedff86206a7bb613" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v0.Seq2seqAgent.observe" alt="" coords="260,232,443,288"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title="parlai.tasks.talkthewalk.worlds.\lSimulateWorld.parley" alt="" coords="515,134,720,175"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title="parlai.core.worlds.Executable\lWorld.parley" alt="" coords="521,199,714,241"/>
+</map>

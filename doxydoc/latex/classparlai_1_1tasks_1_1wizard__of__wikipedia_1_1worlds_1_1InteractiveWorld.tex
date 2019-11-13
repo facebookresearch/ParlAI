@@ -1,0 +1,250 @@
+\hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld}{}\section{parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World Class Reference}
+\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld}\index{parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World@{parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World}}
+
+
+Inheritance diagram for parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a17330f1fd256bd53eafea1c7e119d77d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld_a04185d1d55ca86c96c796f12f2226fc9}{agents}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af4efe25e565dbf73a46d1559eb425243}{load\+\_\+topics} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a01cde3e1317b31cf52024283f061fdf6}{get\+\_\+new\+\_\+topic} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_afcda29202fc3fd773522edbd3c40e4a4}{parley} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a32f2d277a7892c9e8c7c64c12a8f4ba7}{num\+\_\+topics}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ac89fdf4af0e037452e4e965560b68eea}{cnt}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a54ecd8d0f7c5dd064d0c2b511f9ac03b}{human\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_abc5413fa516f7fb0cc4e0c52d918d572}{model\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad323b2b928a31a0b048059a1569ae8f2}{topic\+\_\+list}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad248b70f56a67f58e7799eb126315169}{topic}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af926c611144cdc54b7f1c631286b388b}{acts}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a8a0ba61c930502f811dd033a6e52c327}{human\+\_\+first}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 24 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a17330f1fd256bd53eafea1c7e119d77d}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a17330f1fd256bd53eafea1c7e119d77d}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 25 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+load\+\_\+topics().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a17330f1fd256bd53eafea1c7e119d77d_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a01cde3e1317b31cf52024283f061fdf6}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a01cde3e1317b31cf52024283f061fdf6}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!get\+\_\+new\+\_\+topic@{get\+\_\+new\+\_\+topic}}
+\index{get\+\_\+new\+\_\+topic@{get\+\_\+new\+\_\+topic}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{get\+\_\+new\+\_\+topic()}{get\_new\_topic()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+get\+\_\+new\+\_\+topic (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 43 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+human\+\_\+agent, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+num\+\_\+topics, and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+topic\+\_\+list.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af4efe25e565dbf73a46d1559eb425243}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af4efe25e565dbf73a46d1559eb425243}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!load\+\_\+topics@{load\+\_\+topics}}
+\index{load\+\_\+topics@{load\+\_\+topics}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{load\+\_\+topics()}{load\_topics()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+load\+\_\+topics (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 34 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af4efe25e565dbf73a46d1559eb425243_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_afcda29202fc3fd773522edbd3c40e4a4}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_afcda29202fc3fd773522edbd3c40e4a4}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 72 of file worlds.\+py.
+
+
+
+References parlai.\+tasks.\+convai2.\+worlds.\+Interactive\+World.\+cnt, and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+cnt.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af926c611144cdc54b7f1c631286b388b}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_af926c611144cdc54b7f1c631286b388b}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!acts@{acts}}
+\index{acts@{acts}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{acts}{acts}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+acts}
+
+
+
+Definition at line 75 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+World.\+display(), and parlai.\+core.\+worlds.\+World.\+get\+\_\+acts().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ac89fdf4af0e037452e4e965560b68eea}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ac89fdf4af0e037452e4e965560b68eea}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!cnt@{cnt}}
+\index{cnt@{cnt}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{cnt}{cnt}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+cnt}
+
+
+
+Definition at line 30 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+parley().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a54ecd8d0f7c5dd064d0c2b511f9ac03b}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a54ecd8d0f7c5dd064d0c2b511f9ac03b}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!human\+\_\+agent@{human\+\_\+agent}}
+\index{human\+\_\+agent@{human\+\_\+agent}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{human\+\_\+agent}{human\_agent}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+human\+\_\+agent}
+
+
+
+Definition at line 31 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+get\+\_\+new\+\_\+topic().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a8a0ba61c930502f811dd033a6e52c327}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a8a0ba61c930502f811dd033a6e52c327}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!human\+\_\+first@{human\+\_\+first}}
+\index{human\+\_\+first@{human\+\_\+first}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{human\+\_\+first}{human\_first}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+human\+\_\+first}
+
+
+
+Definition at line 76 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_abc5413fa516f7fb0cc4e0c52d918d572}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_abc5413fa516f7fb0cc4e0c52d918d572}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!model\+\_\+agent@{model\+\_\+agent}}
+\index{model\+\_\+agent@{model\+\_\+agent}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{model\+\_\+agent}{model\_agent}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+model\+\_\+agent}
+
+
+
+Definition at line 32 of file worlds.\+py.
+
+
+
+Referenced by mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+evaluate\+\_\+persona(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+model\+\_\+observes\+\_\+itself(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+model\+\_\+observes\+\_\+itself(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+parallel\+\_\+eval\+\_\+mode(), mturk.\+worlds.\+Controllable\+Dialog\+Eval.\+parallel\+\_\+eval\+\_\+mode(), and worlds.\+Persona\+Chat\+Eval\+World.\+parley().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a32f2d277a7892c9e8c7c64c12a8f4ba7}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_a32f2d277a7892c9e8c7c64c12a8f4ba7}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!num\+\_\+topics@{num\+\_\+topics}}
+\index{num\+\_\+topics@{num\+\_\+topics}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+topics}{num\_topics}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+num\+\_\+topics}
+
+
+
+Definition at line 29 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+get\+\_\+new\+\_\+topic().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad248b70f56a67f58e7799eb126315169}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad248b70f56a67f58e7799eb126315169}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!topic@{topic}}
+\index{topic@{topic}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{topic}{topic}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+topic}
+
+
+
+Definition at line 74 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad323b2b928a31a0b048059a1569ae8f2}\label{classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld_ad323b2b928a31a0b048059a1569ae8f2}} 
+\index{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}!topic\+\_\+list@{topic\+\_\+list}}
+\index{topic\+\_\+list@{topic\+\_\+list}!parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World@{parlai\+::tasks\+::wizard\+\_\+of\+\_\+wikipedia\+::worlds\+::\+Interactive\+World}}
+\subsubsection{\texorpdfstring{topic\+\_\+list}{topic\_list}}
+{\footnotesize\ttfamily parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+topic\+\_\+list}
+
+
+
+Definition at line 41 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+worlds.\+Interactive\+World.\+get\+\_\+new\+\_\+topic().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/wizard\+\_\+of\+\_\+wikipedia/\hyperlink{parlai_2tasks_2wizard__of__wikipedia_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

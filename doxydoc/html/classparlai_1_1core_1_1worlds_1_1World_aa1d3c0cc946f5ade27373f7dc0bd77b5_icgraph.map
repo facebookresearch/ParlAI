@@ -1,4 +1,4 @@
 <map id="parlai.core.worlds.World.get_acts" name="parlai.core.worlds.World.get_acts">
-<area shape="rect" id="node1" title=" " alt="" coords="272,20,488,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld.html#a7d840b488712356ef04fd9c767f55797" title=" " alt="" coords="5,5,224,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1convai2_1_1worlds_1_1InteractiveWorld.html#acac91ca0d5cfc546437874e2f6d801a3" title="parlai.tasks.convai2.worlds.\lInteractiveWorld.get_new\l_personas" alt="" coords="287,5,471,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld.html#a7d840b488712356ef04fd9c767f55797" title="parlai.mturk.tasks.model\l_evaluator.worlds.ModelEvaluator\lWorld.parley" alt="" coords="269,85,488,141"/>
 </map>

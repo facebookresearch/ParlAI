@@ -1,0 +1,4 @@
+<map id="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher.batch_act" name="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher.batch_act">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1SelfFeedingMTLTeacher.html#ac4ee43a50c54d2033be6eb5731650ab3" title="parlai.tasks.self_feeding.agents.\lSelfFeedingMTLTeacher.act" alt="" coords="301,5,512,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1SelfFeedingMTLTeacher.html#a19777439481c688e85f355802ff4a791" title="parlai.tasks.self_feeding.agents.\lSelfFeedingMTLTeacher.get_task_index" alt="" coords="279,71,535,112"/>
+</map>

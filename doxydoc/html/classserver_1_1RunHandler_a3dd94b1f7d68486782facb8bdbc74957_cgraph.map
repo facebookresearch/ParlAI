@@ -1,0 +1,5 @@
+<map id="server.RunHandler.get" name="server.RunHandler.get">
+<area shape="rect" id="node2" href="$namespaceserver.html#a30d7f5eb7c84bbe9bc4c3100bd3be229" title="server.merge_assignments\l_with_pairings" alt="" coords="207,5,385,47"/>
+<area shape="rect" id="node3" href="$namespaceserver.html#a417f4d334a42b589c973649990ea52a8" title="server.row_to_dict" alt="" coords="433,42,563,69"/>
+<area shape="rect" id="node4" href="$classparlai_1_1utils_1_1testing_1_1TeeStringIO.html#af8c256be884cbcb0081768bc04738015" title="parlai.utils.testing.Tee\lStringIO.write" alt="" coords="221,123,371,164"/>
+</map>

@@ -1,0 +1,137 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a6d6f4af5d475bea076503cd83c5ce502}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent_a8e4926c0c0da6bd7d530c44aa5416731}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_ab6f67e52990f7cafdb7fbd2f6215e968}{next\+\_\+word\+\_\+probability} (self, partial\+\_\+out)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a9d8d7d7937f7a0b26ec79cfaf9384ec4}{prev\+\_\+enc}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_acfc0705eeae9f4b093da92b39f9d3bea}{last\+\_\+xs}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Subclass for doing standardized perplexity evaluation.
+
+This is designed to be used in conjunction with the PerplexityWorld at
+parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
+to calculate the probability of tokens one token at a time.
+\end{DoxyVerb}
+ 
+
+Definition at line 938 of file seq2seq\+\_\+v0.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a6d6f4af5d475bea076503cd83c5ce502}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a6d6f4af5d475bea076503cd83c5ce502}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 946 of file seq2seq\+\_\+v0.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_ab6f67e52990f7cafdb7fbd2f6215e968}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_ab6f67e52990f7cafdb7fbd2f6215e968}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}!next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}}
+\index{next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}}
+\subsubsection{\texorpdfstring{next\+\_\+word\+\_\+probability()}{next\_word\_probability()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{partial\+\_\+out }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return probability distribution over next words given an input and
+partial true output. This is used to calculate the per-word perplexity.
+
+Arguments:
+observation -- input observation dict
+partial_out -- list of previous "true" words
+
+Returns a dict, where each key is a word and each value is a probability
+score for that word. Unset keys assume a probability of zero.
+
+e.g.
+{'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
+\end{DoxyVerb}
+ 
+
+Definition at line 951 of file seq2seq\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+last\+\_\+xs, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+prev\+\_\+enc, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+vectorize(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+vectorize().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_ab6f67e52990f7cafdb7fbd2f6215e968_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_acfc0705eeae9f4b093da92b39f9d3bea}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_acfc0705eeae9f4b093da92b39f9d3bea}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}!last\+\_\+xs@{last\+\_\+xs}}
+\index{last\+\_\+xs@{last\+\_\+xs}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}}
+\subsubsection{\texorpdfstring{last\+\_\+xs}{last\_xs}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+last\+\_\+xs}
+
+
+
+Definition at line 949 of file seq2seq\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a9d8d7d7937f7a0b26ec79cfaf9384ec4}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1PerplexityEvaluatorAgent_a9d8d7d7937f7a0b26ec79cfaf9384ec4}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}!prev\+\_\+enc@{prev\+\_\+enc}}
+\index{prev\+\_\+enc@{prev\+\_\+enc}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::seq2seq\+\_\+v0\+::\+Perplexity\+Evaluator\+Agent}}
+\subsubsection{\texorpdfstring{prev\+\_\+enc}{prev\_enc}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+prev\+\_\+enc}
+
+
+
+Definition at line 948 of file seq2seq\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Perplexity\+Evaluator\+Agent.\+next\+\_\+word\+\_\+probability().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{seq2seq__v0_8py}{seq2seq\+\_\+v0.\+py}\end{DoxyCompactItemize}

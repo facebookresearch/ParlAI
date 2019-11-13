@@ -1,0 +1,394 @@
+\hypertarget{namespaceparlai_1_1core_1_1agents}{}\section{parlai.\+core.\+agents Namespace Reference}
+\label{namespaceparlai_1_1core_1_1agents}\index{parlai.\+core.\+agents@{parlai.\+core.\+agents}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1agents_1_1Agent}{Agent}
+\item 
+class \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher}{Multi\+Task\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher}{Teacher}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a7a5f5076b35ce376d8b46bfb362bfc53}{name\+\_\+to\+\_\+agent\+\_\+class} (name)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a7eb0ec391b94a2adc51acdf8d2a35a68}{compare\+\_\+init\+\_\+model\+\_\+opts} (opt, curr\+\_\+opt)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a213df46dd21144eb4c056bb58c294c5d}{load\+\_\+agent\+\_\+module} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a14a9d134d76ffd0509e50703d0f2c949}{get\+\_\+agent\+\_\+module} (dir\+\_\+name)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_ad0d54074d4bcc148bb415ab5515a53b5}{create\+\_\+agent} (opt, require\+Model\+Exists=False)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_aa5af5dd1d2f9da491b60348d479b849f}{create\+\_\+agent\+\_\+from\+\_\+shared} (shared\+\_\+agent)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a5600530545f5e60a79e2d657b5af1d8c}{create\+\_\+agents\+\_\+from\+\_\+shared} (shared)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_a530b987b67a802a8e9c5fa3c24ae942f}{get\+\_\+task\+\_\+module} (taskname)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1agents_ab4473fa54af02b5ab385b41b51dacd10}{create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname} (opt)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a7eb0ec391b94a2adc51acdf8d2a35a68}\label{namespaceparlai_1_1core_1_1agents_a7eb0ec391b94a2adc51acdf8d2a35a68}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!compare\+\_\+init\+\_\+model\+\_\+opts@{compare\+\_\+init\+\_\+model\+\_\+opts}}
+\index{compare\+\_\+init\+\_\+model\+\_\+opts@{compare\+\_\+init\+\_\+model\+\_\+opts}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{compare\+\_\+init\+\_\+model\+\_\+opts()}{compare\_init\_model\_opts()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{curr\+\_\+opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Print loud warning when `init_model` opts differ from previous configuration.\end{DoxyVerb}
+ 
+
+Definition at line 401 of file agents.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+utils.\+misc.\+load\+\_\+opt\+\_\+file(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+core.\+agents.\+create\+\_\+agent(), and parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a7eb0ec391b94a2adc51acdf8d2a35a68_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1agents_a7eb0ec391b94a2adc51acdf8d2a35a68_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_ad0d54074d4bcc148bb415ab5515a53b5}\label{namespaceparlai_1_1core_1_1agents_ad0d54074d4bcc148bb415ab5515a53b5}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!create\+\_\+agent@{create\+\_\+agent}}
+\index{create\+\_\+agent@{create\+\_\+agent}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{create\+\_\+agent()}{create\_agent()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+create\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{require\+Model\+Exists = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create an agent from the options ``model``, ``model_params`` and ``model_file``.
+
+The input is either of the form
+``parlai.agents.ir_baseline.agents:IrBaselineAgent`` (i.e. the path
+followed by the class name) or else just ``ir_baseline`` which
+assumes the path above, and a class name suffixed with 'Agent'.
+
+If ``model-file`` is available in the options this function can also
+attempt to load the model from that location instead. This avoids having to
+specify all the other options necessary to set up the model including its
+name as they are all loaded from the options file if it exists (the file
+opt['model_file'] + '.opt' must exist and contain a pickled or json dict
+containing the model's options).
+\end{DoxyVerb}
+ 
+
+Definition at line 643 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+core.\+agents.\+get\+\_\+agent\+\_\+module(), parlai.\+core.\+params.\+get\+\_\+model\+\_\+name(), parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path().
+
+
+
+Referenced by interactive\+\_\+end2end.\+interactive\+\_\+end2end.\+Interactive\+End2end\+Agent.\+add\+\_\+cmdline\+\_\+args(), interactive\+\_\+retrieval.\+Interactive\+Retrieval\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+scripts.\+build\+\_\+pytorch\+\_\+data.\+build\+\_\+data(), create\+\_\+synth\+\_\+supp.\+create\+\_\+supp(), parlai.\+scripts.\+detect\+\_\+offensive\+\_\+language.\+detect(), parlai.\+scripts.\+display\+\_\+model.\+display\+\_\+model(), parlai.\+scripts.\+eval\+\_\+model.\+eval\+\_\+model(), parlai.\+scripts.\+eval\+\_\+ppl.\+eval\+\_\+ppl(), parlai.\+scripts.\+eval\+\_\+wordstat.\+eval\+\_\+wordstat(), eval\+\_\+wordstat.\+eval\+\_\+wordstat(), self\+\_\+feeding.\+interactive.\+interactive(), convai2.\+interactive.\+interactive(), parlai.\+scripts.\+interactive.\+interactive(), parlai.\+scripts.\+interactive\+\_\+rank.\+interactive\+\_\+rank(), parlai.\+mturk.\+tasks.\+dealnodeal.\+run.\+main(), mturk\+\_\+evaluation\+\_\+task.\+run.\+main(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+run.\+main(), remote.\+main(), mturk.\+run.\+main(), interactive.\+My\+Handler.\+respond(), parlai.\+tasks.\+talkthewalk.\+run.\+run(), convai.\+convai\+\_\+bot.\+run\+\_\+convai\+\_\+bot(), parlai.\+scripts.\+interactive\+\_\+web.\+setup\+\_\+interactive(), interactive.\+setup\+\_\+interactive(), run.\+setup\+\_\+retriever(), tests.\+test\+\_\+tga.\+Test\+Upgrade\+Opt.\+test\+\_\+file\+\_\+inference(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pyt\+\_\+batchsort\+\_\+field(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pyt\+\_\+preprocess(), tests.\+test\+\_\+tfidf\+\_\+retriever.\+Test\+Tfidf\+Retriever.\+test\+\_\+sparse\+\_\+tfidf\+\_\+retriever(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+valid\+\_\+pyt\+\_\+batchsort(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_ad0d54074d4bcc148bb415ab5515a53b5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1agents_ad0d54074d4bcc148bb415ab5515a53b5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_aa5af5dd1d2f9da491b60348d479b849f}\label{namespaceparlai_1_1core_1_1agents_aa5af5dd1d2f9da491b60348d479b849f}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!create\+\_\+agent\+\_\+from\+\_\+shared@{create\+\_\+agent\+\_\+from\+\_\+shared}}
+\index{create\+\_\+agent\+\_\+from\+\_\+shared@{create\+\_\+agent\+\_\+from\+\_\+shared}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{create\+\_\+agent\+\_\+from\+\_\+shared()}{create\_agent\_from\_shared()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+create\+\_\+agent\+\_\+from\+\_\+shared (\begin{DoxyParamCaption}\item[{}]{shared\+\_\+agent }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate an agent from the default `shared` params.
+
+:param shared_agent:
+    should include an `opt` dictionary and agent `class`, along with
+    whatever other parameters the agent needs to instantiate.
+\end{DoxyVerb}
+ 
+
+Definition at line 705 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+create\+\_\+agents\+\_\+from\+\_\+shared(), parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+generate\+\_\+world(), parlai.\+scripts.\+train\+\_\+model.\+load\+\_\+eval\+\_\+worlds(), tests.\+test\+\_\+torch\+\_\+agent.\+Test\+Torch\+Agent.\+test\+\_\+interactive\+\_\+mode(), and tests.\+test\+\_\+torch\+\_\+agent.\+Test\+Torch\+Agent.\+test\+\_\+mturk\+\_\+racehistory().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_aa5af5dd1d2f9da491b60348d479b849f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a5600530545f5e60a79e2d657b5af1d8c}\label{namespaceparlai_1_1core_1_1agents_a5600530545f5e60a79e2d657b5af1d8c}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!create\+\_\+agents\+\_\+from\+\_\+shared@{create\+\_\+agents\+\_\+from\+\_\+shared}}
+\index{create\+\_\+agents\+\_\+from\+\_\+shared@{create\+\_\+agents\+\_\+from\+\_\+shared}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{create\+\_\+agents\+\_\+from\+\_\+shared()}{create\_agents\_from\_shared()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+create\+\_\+agents\+\_\+from\+\_\+shared (\begin{DoxyParamCaption}\item[{}]{shared }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create agents based on shared data.
+
+:param shared: `list` of `dict` objects created by calling e.g.
+    [a.share() for a in agents].
+
+Returns a list of instantiated agents.
+\end{DoxyVerb}
+ 
+
+Definition at line 718 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent\+\_\+from\+\_\+shared().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a5600530545f5e60a79e2d657b5af1d8c_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_ab4473fa54af02b5ab385b41b51dacd10}\label{namespaceparlai_1_1core_1_1agents_ab4473fa54af02b5ab385b41b51dacd10}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname@{create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname}}
+\index{create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname@{create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname()}{create\_task\_agent\_from\_taskname()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create task agent(s) assuming the input ``task_dir:teacher_class``.
+
+e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``
+or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,
+which essentially performs ``from parlai.tasks.babi import Task1kTeacher``
+with the parameter ``1`` in ``opt['task']`` to be used by the class
+``Task1kTeacher``.
+\end{DoxyVerb}
+ 
+
+Definition at line 806 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+get\+\_\+task\+\_\+module(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+scripts.\+interactive\+\_\+rank.\+interactive\+\_\+rank(), run.\+setup\+\_\+title\+\_\+to\+\_\+passage(), parlai.\+core.\+worlds.\+Hogwild\+World.\+shutdown(), parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+db.\+store\+\_\+contents(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pyt\+\_\+preprocess(), tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pytd\+\_\+teacher(), and tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+shuffle().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_ab4473fa54af02b5ab385b41b51dacd10_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_ab4473fa54af02b5ab385b41b51dacd10_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a14a9d134d76ffd0509e50703d0f2c949}\label{namespaceparlai_1_1core_1_1agents_a14a9d134d76ffd0509e50703d0f2c949}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!get\+\_\+agent\+\_\+module@{get\+\_\+agent\+\_\+module}}
+\index{get\+\_\+agent\+\_\+module@{get\+\_\+agent\+\_\+module}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+module()}{get\_agent\_module()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+get\+\_\+agent\+\_\+module (\begin{DoxyParamCaption}\item[{}]{dir\+\_\+name }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the module for an agent specified by ``--model``.
+
+Can be formatted in several different ways:
+
+* full: `-m parlai.agents.seq2seq.seq2seq:Seq2seqAgent`
+* shorthand: -m seq2seq, which will check both paths
+  ``parlai.agents.seq2seq.seq2seq:Seq2seqAgent`` and
+  ``parlai.agents.seq2seq.agents:Seq2seqAgent``
+* half-shorthand: ``-m seq2seq/variant``, which will check the path
+  `parlai.agents.seq2seq.variant:VariantAgent`
+* legacy models: ``-m legacy:seq2seq:0``, which will look for the deprecated
+  model at ``parlai.agents.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent``
+
+The base path to search when using shorthand formats can be changed from
+"parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
+"internal:seq2seq".
+
+To use legacy agent versions, you can prepend "legacy:" to model arguments,
+e.g. "legacy:seq2seq:0" will translate to ``legacy_agents/seq2seq/seq2seq_v0``.
+
+To use agents in projects, you can prepend "projects:" and the name of the
+project folder to model arguments, e.g. "projects:personachat:kvmemnn"
+will translate to ``projects/personachat/kvmemnn``.
+
+:param dir_name: path to model class in one of the above formats.
+\end{DoxyVerb}
+ 
+
+Definition at line 553 of file agents.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+core.\+agents.\+name\+\_\+to\+\_\+agent\+\_\+class().
+
+
+
+Referenced by parlai.\+core.\+params.\+Parlai\+Parser.\+add\+\_\+model\+\_\+subargs(), parlai.\+core.\+agents.\+create\+\_\+agent(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+get\+\_\+dataset\+\_\+classes(), and parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=347pt]{namespaceparlai_1_1core_1_1agents_a14a9d134d76ffd0509e50703d0f2c949_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a14a9d134d76ffd0509e50703d0f2c949_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a530b987b67a802a8e9c5fa3c24ae942f}\label{namespaceparlai_1_1core_1_1agents_a530b987b67a802a8e9c5fa3c24ae942f}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!get\+\_\+task\+\_\+module@{get\+\_\+task\+\_\+module}}
+\index{get\+\_\+task\+\_\+module@{get\+\_\+task\+\_\+module}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{get\+\_\+task\+\_\+module()}{get\_task\_module()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+get\+\_\+task\+\_\+module (\begin{DoxyParamCaption}\item[{}]{taskname }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the module of the task agent specified by `--task`.
+
+Can be formatted in several different ways:
+
+* full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
+* shorthand: ``-t babi``, which will check
+    ``parlai.tasks.babi.agents:DefaultTeacher``
+* shorthand specific: ``-t babi:task10k``, which will check
+    ``parlai.tasks.babi.agents:Task10kTeacher``
+
+The base path to search when using shorthand formats can be changed from
+"parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
+"internal:babi".
+
+Options can be sent to the teacher by adding an additional colon,
+for example ``-t babi:task10k:1`` directs the babi Task10kTeacher to use
+task number 1.
+
+:param taskname: path to task class in one of the above formats.
+\end{DoxyVerb}
+ 
+
+Definition at line 734 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+params.\+Parlai\+Parser.\+add\+\_\+task\+\_\+args(), and parlai.\+core.\+agents.\+create\+\_\+task\+\_\+agent\+\_\+from\+\_\+taskname().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a530b987b67a802a8e9c5fa3c24ae942f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a213df46dd21144eb4c056bb58c294c5d}\label{namespaceparlai_1_1core_1_1agents_a213df46dd21144eb4c056bb58c294c5d}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!load\+\_\+agent\+\_\+module@{load\+\_\+agent\+\_\+module}}
+\index{load\+\_\+agent\+\_\+module@{load\+\_\+agent\+\_\+module}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{load\+\_\+agent\+\_\+module()}{load\_agent\_module()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+load\+\_\+agent\+\_\+module (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Load agent options and module from file if opt file exists.
+
+Checks to see if file exists opt['model_file'] + ".opt"; if so, load up the
+options from the file and use that to create an agent, loading the model
+type from that file and overriding any options specified in that file when
+instantiating the agent.
+
+If that file does not exist, return None.
+\end{DoxyVerb}
+ 
+
+Definition at line 467 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+compare\+\_\+init\+\_\+model\+\_\+opts(), parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+core.\+agents.\+get\+\_\+agent\+\_\+module(), parlai.\+utils.\+misc.\+load\+\_\+opt\+\_\+file(), generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, and parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+
+
+Referenced by parlai.\+core.\+agents.\+create\+\_\+agent().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a213df46dd21144eb4c056bb58c294c5d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespaceparlai_1_1core_1_1agents_a213df46dd21144eb4c056bb58c294c5d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1agents_a7a5f5076b35ce376d8b46bfb362bfc53}\label{namespaceparlai_1_1core_1_1agents_a7a5f5076b35ce376d8b46bfb362bfc53}} 
+\index{parlai\+::core\+::agents@{parlai\+::core\+::agents}!name\+\_\+to\+\_\+agent\+\_\+class@{name\+\_\+to\+\_\+agent\+\_\+class}}
+\index{name\+\_\+to\+\_\+agent\+\_\+class@{name\+\_\+to\+\_\+agent\+\_\+class}!parlai\+::core\+::agents@{parlai\+::core\+::agents}}
+\subsubsection{\texorpdfstring{name\+\_\+to\+\_\+agent\+\_\+class()}{name\_to\_agent\_class()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+name\+\_\+to\+\_\+agent\+\_\+class (\begin{DoxyParamCaption}\item[{}]{name }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Convert agent name to class.
+
+This adds "Agent" to the end of the name and uppercases the first letter
+and the first letter appearing after each underscore (underscores are
+removed).
+
+:param name: name of agent, e.g. local_human
+
+Returns class of agent, e.g. LocalHumanAgent.
+\end{DoxyVerb}
+ 
+
+Definition at line 381 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+get\+\_\+agent\+\_\+module().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1agents_a7a5f5076b35ce376d8b46bfb362bfc53_icgraph}
+\end{center}
+\end{figure}

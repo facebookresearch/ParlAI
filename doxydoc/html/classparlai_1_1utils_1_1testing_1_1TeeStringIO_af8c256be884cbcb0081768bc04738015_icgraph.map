@@ -1,5 +1,16 @@
 <map id="parlai.utils.testing.TeeStringIO.write" name="parlai.utils.testing.TeeStringIO.write">
-<area shape="rect" id="node1" title=" " alt="" coords="243,23,393,65"/>
-<area shape="rect" id="node2" href="$classserver_1_1BonusHandler.html#a8bd13dda76f95db6e56f29d5a2e0a472" title=" " alt="" coords="13,5,187,32"/>
-<area shape="rect" id="node3" href="$classserver_1_1TaskRunHandler.html#aafdad98a65fe99f154621ec74b593d78" title=" " alt="" coords="5,56,195,83"/>
+<area shape="rect" id="node2" href="$classserver_1_1RunListHandler.html#a1d58f9257d63a959cd70d67aa7422747" title="server.RunListHandler.get" alt="" coords="216,5,391,32"/>
+<area shape="rect" id="node4" href="$classserver_1_1TaskListHandler.html#a137d4866bf8522230742085684e903c5" title="server.TaskListHandler.get" alt="" coords="214,56,393,83"/>
+<area shape="rect" id="node5" href="$classserver_1_1RunHandler.html#a3dd94b1f7d68486782facb8bdbc74957" title="server.RunHandler.get" alt="" coords="227,107,380,133"/>
+<area shape="rect" id="node6" href="$classserver_1_1WorkerListHandler.html#a96fc3c606b269d6f70a0c14b08bb4e0b" title="server.WorkerListHandler.get" alt="" coords="207,157,399,184"/>
+<area shape="rect" id="node7" href="$classserver_1_1WorkerHandler.html#a31d87eeea57f178ecf163cf53a18be93" title="server.WorkerHandler.get" alt="" coords="218,208,389,235"/>
+<area shape="rect" id="node8" href="$classserver_1_1AssignmentHandler.html#aafff6382132dfeb120d0fd1889ab079c" title="server.AssignmentHandler.get" alt="" coords="204,259,403,285"/>
+<area shape="rect" id="node9" href="$classserver_1_1RunListHandler.html#aeb0b280967eb942a9c24fc5a928c85e5" title="server.RunListHandler.post" alt="" coords="213,309,394,336"/>
+<area shape="rect" id="node10" href="$classserver_1_1ApprovalHandler.html#ac4bf954a99f21508d776129b209b1488" title="server.ApprovalHandler.post" alt="" coords="210,360,397,387"/>
+<area shape="rect" id="node11" href="$classserver_1_1ReverseHandler.html#a3a51f6fb8e9da913acf8bb9719bebbe2" title="server.ReverseHandler.post" alt="" coords="211,411,396,437"/>
+<area shape="rect" id="node12" href="$classserver_1_1RejectionHandler.html#ac442a5bf81064a282b5f2ff706ab5b6b" title="server.RejectionHandler.post" alt="" coords="208,461,399,488"/>
+<area shape="rect" id="node13" href="$classserver_1_1BlockHandler.html#a0c9197b9bce91acb74d1a2da95554d49" title="server.BlockHandler.post" alt="" coords="219,512,388,539"/>
+<area shape="rect" id="node14" href="$classserver_1_1BonusHandler.html#a8bd13dda76f95db6e56f29d5a2e0a472" title="server.BonusHandler.post" alt="" coords="217,563,390,589"/>
+<area shape="rect" id="node15" href="$classserver_1_1TaskRunHandler.html#aafdad98a65fe99f154621ec74b593d78" title="server.TaskRunHandler.post" alt="" coords="209,613,398,640"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="451,125,656,166"/>
 </map>

@@ -1,9 +1,5 @@
 <map id="parlai.agents.bert_ranker.bi_encoder_ranker.BiEncoderRankerAgent.vectorize_fixed_candidates" name="parlai.agents.bert_ranker.bi_encoder_ranker.BiEncoderRankerAgent.vectorize_fixed_candidates">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,220,141"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1biencoder_1_1BiencoderAgent.html#ac9fa75abc94cb2b53c429a4a3b5a133c" title=" " alt="" coords="268,5,499,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#ac698ff0226e4d22f8498a9d9e667a34c" title=" " alt="" coords="305,71,462,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a024c4a0801e7dddf54bf3222dc77eaf6" title=" " alt="" coords="292,165,475,207"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a1689490829a70677359cf4f49ccd46bb" title=" " alt="" coords="562,70,721,126"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a07964fbca57736f639fe4e9dd9d1459a" title=" " alt="" coords="563,151,720,221"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afb729d5d51ad91d4188fd1486a4a087f" title=" " alt="" coords="547,245,736,287"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1biencoder_1_1BiencoderAgent.html#a45aee31b546b6cc40f1308397c226a69" title="parlai.agents.transformer.biencoder.\lBiencoderAgent._vectorize_text" alt="" coords="268,5,499,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#ac698ff0226e4d22f8498a9d9e667a34c" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.\l_vectorize_text" alt="" coords="305,71,462,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a024c4a0801e7dddf54bf3222dc77eaf6" title="parlai.core.torch_agent.\lTorchAgent._vectorize_text" alt="" coords="292,165,475,207"/>
 </map>

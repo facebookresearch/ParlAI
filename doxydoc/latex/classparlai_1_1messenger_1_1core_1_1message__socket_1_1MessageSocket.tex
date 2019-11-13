@@ -1,0 +1,166 @@
+\hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket}{}\section{parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket Class Reference}
+\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket}\index{parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket@{parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ac0c78e003a2acf5c231bbc4aa42dfe98}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abf696f625e3373836dab38b71d0a74a8}{server\+\_\+url}, \hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ab84d7131041afc06174f38b5ffe86f91}{port}, \hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a890f6fc26ac81d4139629a7a71928ecb}{message\+\_\+callback})
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abf696f625e3373836dab38b71d0a74a8}{server\+\_\+url}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ab84d7131041afc06174f38b5ffe86f91}{port}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a890f6fc26ac81d4139629a7a71928ecb}{message\+\_\+callback}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abc18127d7b0032aca5f835a300554291}{ws}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ad7fbb8abac890b60ecab357727f7921b}{last\+\_\+pong}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a554397deec3d29f09e43c8c4fd526bec}{alive}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a66beeb65892320ead07b912db4a6eb70}{listen\+\_\+thread}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a5a966f25c782fd0310fd1cf753f41ecb}{keep\+\_\+running}
+\item 
+\hyperlink{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a3bf26d6295a0dc132500c936ada136d8}{use\+\_\+socket}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}MessageSocket is a wrapper around websocket to forward messages from the
+remote server to the MessengerManager.
+\end{DoxyVerb}
+ 
+
+Definition at line 19 of file message\+\_\+socket.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ac0c78e003a2acf5c231bbc4aa42dfe98}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ac0c78e003a2acf5c231bbc4aa42dfe98}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{server\+\_\+url,  }\item[{}]{port,  }\item[{}]{message\+\_\+callback }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}server_url:           url at which the server is to be run
+port:                 port for the socket to operate on
+message_callback:     function to be called on incoming message objects
+              format: message_callback(self, data)
+\end{DoxyVerb}
+ 
+
+Definition at line 24 of file message\+\_\+socket.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a554397deec3d29f09e43c8c4fd526bec}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a554397deec3d29f09e43c8c4fd526bec}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!alive@{alive}}
+\index{alive@{alive}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{alive}{alive}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+alive}
+
+
+
+Definition at line 37 of file message\+\_\+socket.\+py.
+
+
+
+Referenced by server.\+Task\+Socket\+Handler.\+check\+\_\+origin(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), and server.\+Task\+Socket\+Handler.\+on\+\_\+close().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a5a966f25c782fd0310fd1cf753f41ecb}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a5a966f25c782fd0310fd1cf753f41ecb}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!keep\+\_\+running@{keep\+\_\+running}}
+\index{keep\+\_\+running@{keep\+\_\+running}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{keep\+\_\+running}{keep\_running}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+keep\+\_\+running}
+
+
+
+Definition at line 43 of file message\+\_\+socket.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+shutdown().
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ad7fbb8abac890b60ecab357727f7921b}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ad7fbb8abac890b60ecab357727f7921b}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!last\+\_\+pong@{last\+\_\+pong}}
+\index{last\+\_\+pong@{last\+\_\+pong}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{last\+\_\+pong}{last\_pong}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+last\+\_\+pong}
+
+
+
+Definition at line 36 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a66beeb65892320ead07b912db4a6eb70}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a66beeb65892320ead07b912db4a6eb70}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!listen\+\_\+thread@{listen\+\_\+thread}}
+\index{listen\+\_\+thread@{listen\+\_\+thread}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{listen\+\_\+thread}{listen\_thread}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+listen\+\_\+thread}
+
+
+
+Definition at line 40 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a890f6fc26ac81d4139629a7a71928ecb}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a890f6fc26ac81d4139629a7a71928ecb}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!message\+\_\+callback@{message\+\_\+callback}}
+\index{message\+\_\+callback@{message\+\_\+callback}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{message\+\_\+callback}{message\_callback}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+message\+\_\+callback}
+
+
+
+Definition at line 33 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ab84d7131041afc06174f38b5ffe86f91}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_ab84d7131041afc06174f38b5ffe86f91}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!port@{port}}
+\index{port@{port}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+port}
+
+
+
+Definition at line 32 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abf696f625e3373836dab38b71d0a74a8}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abf696f625e3373836dab38b71d0a74a8}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!server\+\_\+url@{server\+\_\+url}}
+\index{server\+\_\+url@{server\+\_\+url}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{server\+\_\+url}{server\_url}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+server\+\_\+url}
+
+
+
+Definition at line 31 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a3bf26d6295a0dc132500c936ada136d8}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_a3bf26d6295a0dc132500c936ada136d8}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!use\+\_\+socket@{use\+\_\+socket}}
+\index{use\+\_\+socket@{use\+\_\+socket}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{use\+\_\+socket}{use\_socket}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+use\+\_\+socket}
+
+
+
+Definition at line 92 of file message\+\_\+socket.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abc18127d7b0032aca5f835a300554291}\label{classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket_abc18127d7b0032aca5f835a300554291}} 
+\index{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}!ws@{ws}}
+\index{ws@{ws}!parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket@{parlai\+::messenger\+::core\+::message\+\_\+socket\+::\+Message\+Socket}}
+\subsubsection{\texorpdfstring{ws}{ws}}
+{\footnotesize\ttfamily parlai.\+messenger.\+core.\+message\+\_\+socket.\+Message\+Socket.\+ws}
+
+
+
+Definition at line 35 of file message\+\_\+socket.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+channel\+\_\+thread(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+close(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Socket\+Manager.\+get\+\_\+my\+\_\+sender\+\_\+id(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Socket.\+send(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/messenger/core/\hyperlink{message__socket_8py}{message\+\_\+socket.\+py}\end{DoxyCompactItemize}

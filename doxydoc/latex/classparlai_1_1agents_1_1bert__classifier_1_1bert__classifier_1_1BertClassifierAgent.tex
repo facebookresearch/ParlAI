@@ -1,0 +1,285 @@
+\hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent}{}\section{parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent Class Reference}
+\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent}\index{parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent@{parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent}}
+
+
+Inheritance diagram for parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ac05f1d52c400de5b60284121b4a49746}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ad606525729dd0340fc98a0bb50e24187}{history\+\_\+class} (cls)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2eabac94b73fb53be7e7b05ccc788621}{upgrade\+\_\+opt} (cls, opt\+\_\+on\+\_\+disk)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a9bd6daeddde03212d67e452ef93118c4}{build\+\_\+model} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_aaf78ab1d312861ef4ba73bc7813e68aa}{init\+\_\+optim} (self, params, optim\+\_\+states=None, saved\+\_\+optim\+\_\+type=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2fa163d78b44698fa35a491e9a7a6207}{score} (self, batch)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a461c2531f3428f00804184df95dd6070}{add\+\_\+cmdline\+\_\+args} (parser)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_af568b5ebe0ada0e2823e9e2be2d70e9f}{dictionary\+\_\+class} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a27d04268a995c5f8aad0061dff4b2b13}{pretrained\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a23a9fab5a21c9ee44ab416476b7f0361}{add\+\_\+cls\+\_\+token}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a4cfb560c49609df56c6867623cfb06d2}{sep\+\_\+last\+\_\+utt}
+\item 
+\hyperlink{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a5cd45872525e6bd69c29f1cadfa675ed}{optimizer}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Classifier based on BERT implementation.\end{DoxyVerb}
+ 
+
+Definition at line 58 of file bert\+\_\+classifier.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ac05f1d52c400de5b60284121b4a49746}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ac05f1d52c400de5b60284121b4a49746}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 61 of file bert\+\_\+classifier.\+py.
+
+
+
+References parlai.\+core.\+build\+\_\+data.\+download().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ac05f1d52c400de5b60284121b4a49746_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a461c2531f3428f00804184df95dd6070}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a461c2531f3428f00804184df95dd6070}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Add CLI args.\end{DoxyVerb}
+ 
+
+Definition at line 78 of file bert\+\_\+classifier.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a9bd6daeddde03212d67e452ef93118c4}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a9bd6daeddde03212d67e452ef93118c4}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Construct the model.\end{DoxyVerb}
+ 
+
+Definition at line 129 of file bert\+\_\+classifier.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+class\+\_\+list, and parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+pretrained\+\_\+path.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_af568b5ebe0ada0e2823e9e2be2d70e9f}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_af568b5ebe0ada0e2823e9e2be2d70e9f}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!dictionary\+\_\+class@{dictionary\+\_\+class}}
+\index{dictionary\+\_\+class@{dictionary\+\_\+class}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{dictionary\+\_\+class()}{dictionary\_class()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+dictionary\+\_\+class (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Determine the dictionary class.\end{DoxyVerb}
+ 
+
+Definition at line 112 of file bert\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Generator\+Agent.\+add\+\_\+cmdline\+\_\+args(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+add\+\_\+cmdline\+\_\+args(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+dictionary().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_af568b5ebe0ada0e2823e9e2be2d70e9f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ad606525729dd0340fc98a0bb50e24187}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ad606525729dd0340fc98a0bb50e24187}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!history\+\_\+class@{history\+\_\+class}}
+\index{history\+\_\+class@{history\+\_\+class}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{history\+\_\+class()}{history\_class()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+history\+\_\+class (\begin{DoxyParamCaption}\item[{}]{cls }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine the history class.\end{DoxyVerb}
+ 
+
+Definition at line 73 of file bert\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+history().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_ad606525729dd0340fc98a0bb50e24187_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_aaf78ab1d312861ef4ba73bc7813e68aa}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_aaf78ab1d312861ef4ba73bc7813e68aa}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!init\+\_\+optim@{init\+\_\+optim}}
+\index{init\+\_\+optim@{init\+\_\+optim}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{init\+\_\+optim()}{init\_optim()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+init\+\_\+optim (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{params,  }\item[{}]{optim\+\_\+states = {\ttfamily None},  }\item[{}]{saved\+\_\+optim\+\_\+type = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize the optimizer.\end{DoxyVerb}
+ 
+
+Definition at line 134 of file bert\+\_\+classifier.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2fa163d78b44698fa35a491e9a7a6207}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2fa163d78b44698fa35a491e9a7a6207}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!score@{score}}
+\index{score@{score}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{score()}{score()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Score the batch.\end{DoxyVerb}
+ 
+
+Definition at line 154 of file bert\+\_\+classifier.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+transformer.\+crossencoder.\+Crossencoder\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Torch\+Agent.\+model, parlai.\+agents.\+transformer.\+polyencoder.\+Polyencoder\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+model, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+model, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+model, parlai.\+agents.\+transformer.\+transformer.\+Transformer\+Ranker\+Agent.\+model, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+model, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+model, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+model, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+model, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+History.\+sep\+\_\+last\+\_\+utt, and parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+sep\+\_\+last\+\_\+utt.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Encoder\+Module.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+predict(), and parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2fa163d78b44698fa35a491e9a7a6207_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2eabac94b73fb53be7e7b05ccc788621}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2eabac94b73fb53be7e7b05ccc788621}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!upgrade\+\_\+opt@{upgrade\+\_\+opt}}
+\index{upgrade\+\_\+opt@{upgrade\+\_\+opt}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{upgrade\+\_\+opt()}{upgrade\_opt()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+upgrade\+\_\+opt (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{opt\+\_\+on\+\_\+disk }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Upgrade opts from older model files.\end{DoxyVerb}
+ 
+
+Definition at line 117 of file bert\+\_\+classifier.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+warn\+\_\+once().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a2eabac94b73fb53be7e7b05ccc788621_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a23a9fab5a21c9ee44ab416476b7f0361}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a23a9fab5a21c9ee44ab416476b7f0361}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!add\+\_\+cls\+\_\+token@{add\+\_\+cls\+\_\+token}}
+\index{add\+\_\+cls\+\_\+token@{add\+\_\+cls\+\_\+token}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cls\+\_\+token}{add\_cls\_token}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+add\+\_\+cls\+\_\+token}
+
+
+
+Definition at line 68 of file bert\+\_\+classifier.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a5cd45872525e6bd69c29f1cadfa675ed}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a5cd45872525e6bd69c29f1cadfa675ed}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!optimizer@{optimizer}}
+\index{optimizer@{optimizer}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{optimizer}{optimizer}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+optimizer}
+
+
+
+Definition at line 136 of file bert\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+backward(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Object\+Checklist\+Model\+Agent.\+batch\+\_\+act(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Seq2\+Seq\+Model\+Agent.\+batch\+\_\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+build\+\_\+lr\+\_\+scheduler(), wizard\+\_\+transformer\+\_\+ranker.\+wizard\+\_\+transformer\+\_\+ranker.\+Wizard\+Transformer\+Ranker\+Agent.\+load(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+load(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+load(), kvmemnn.\+Kvmemnn\+Agent.\+load(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+load(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+predict(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+report(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+save(), kvmemnn.\+Kvmemnn\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+save(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+save(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+share(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+share(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+share(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+agents.\+Model\+Agent\+Base.\+share(), parlai.\+core.\+torch\+\_\+ranker\+\_\+agent.\+Torch\+Ranker\+Agent.\+share(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+state\+\_\+dict(), transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch(), parlai.\+core.\+torch\+\_\+classifier\+\_\+agent.\+Torch\+Classifier\+Agent.\+train\+\_\+step(), self\+\_\+feeding.\+self\+\_\+feeding\+\_\+agent.\+Self\+Feeding\+Agent.\+train\+\_\+step(), parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+update(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+update\+\_\+params(), kvmemnn.\+Kvmemnn\+Agent.\+update\+\_\+params(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+update\+\_\+params(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+update\+\_\+params(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+zero\+\_\+grad(), kvmemnn.\+Kvmemnn\+Agent.\+zero\+\_\+grad(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+zero\+\_\+grad(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+zero\+\_\+grad(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+zero\+\_\+grad().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a27d04268a995c5f8aad0061dff4b2b13}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a27d04268a995c5f8aad0061dff4b2b13}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!pretrained\+\_\+path@{pretrained\+\_\+path}}
+\index{pretrained\+\_\+path@{pretrained\+\_\+path}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{pretrained\+\_\+path}{pretrained\_path}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+pretrained\+\_\+path}
+
+
+
+Definition at line 64 of file bert\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+build\+\_\+model(), and parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+build\+\_\+model().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a4cfb560c49609df56c6867623cfb06d2}\label{classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent_a4cfb560c49609df56c6867623cfb06d2}} 
+\index{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}!sep\+\_\+last\+\_\+utt@{sep\+\_\+last\+\_\+utt}}
+\index{sep\+\_\+last\+\_\+utt@{sep\+\_\+last\+\_\+utt}!parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent@{parlai\+::agents\+::bert\+\_\+classifier\+::bert\+\_\+classifier\+::\+Bert\+Classifier\+Agent}}
+\subsubsection{\texorpdfstring{sep\+\_\+last\+\_\+utt}{sep\_last\_utt}}
+{\footnotesize\ttfamily parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+sep\+\_\+last\+\_\+utt}
+
+
+
+Definition at line 69 of file bert\+\_\+classifier.\+py.
+
+
+
+Referenced by parlai.\+agents.\+bert\+\_\+classifier.\+bert\+\_\+classifier.\+Bert\+Classifier\+Agent.\+score().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/bert\+\_\+classifier/\hyperlink{bert__classifier_8py}{bert\+\_\+classifier.\+py}\end{DoxyCompactItemize}

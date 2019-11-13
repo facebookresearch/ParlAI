@@ -1,0 +1,7 @@
+<map id="parlai.mturk.core.test.test_full_system.MockAgent.send_alive" name="parlai.mturk.core.test.test_full_system.MockAgent.send_alive">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__full__system_1_1MockAgent.html#a70db268b46d8495b81f2640e53bab891" title="parlai.mturk.core.legacy\l_2018.test.test_full_system.Mock\lAgent.build_and_send_packet" alt="" coords="289,5,508,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1test_1_1test__full__system_1_1MockAgent.html#aea4e710be39de9f90e3dd9b9b6882874" title="parlai.mturk.core.test.test\l_full_system.MockAgent.build\l_and_send_packet" alt="" coords="300,85,497,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__full__system_1_1MockAgent.html#a62cda90db92b3c458a48661f3a37be28" title="parlai.mturk.core.dev.test.test\l_full_system.MockAgent.build\l_and_send_packet" alt="" coords="300,165,497,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__socket__manager_1_1MockAgent.html#a2add2b3e4edb6587b92db6bb6fe5c069" title="parlai.mturk.core.dev.test.test\l_socket_manager.MockAgent.build\l_and_send_packet" alt="" coords="285,245,512,301"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1test_1_1test__socket__manager_1_1MockAgent.html#a92049431d43dcfefe8bea697f7c81aa4" title="parlai.mturk.core.legacy\l_2018.test.test_socket\l_manager.MockAgent.build\l_and_send_packet" alt="" coords="309,326,489,397"/>
+</map>

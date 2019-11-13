@@ -1,0 +1,196 @@
+\hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState}{}\section{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State Class Reference}
+\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState}\index{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State@{parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a1f84cd0e83112d5758bdb17b0793f309}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac69bbf7c4bfd34eb297ae091523f46b5}{worker\+\_\+id}, \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac510ecfdd12ff572cb5ad16629dbd36e}{disconnects}=0)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a0f22df8925f5461e6a55ddd6b2cc22b3}{active\+\_\+conversation\+\_\+count} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a22b3660299c3dd56fb396bf9d6672d2a}{add\+\_\+agent} (self, mturk\+\_\+agent)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_af5d8f601efd7223f5b2d91b2df3582e2}{get\+\_\+agent\+\_\+for\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71a385a16ef2f33d32cde9050350580c}{has\+\_\+assignment} (self, assign\+\_\+id)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a8ddde60a6054ad699818c749e310cb91}{completed\+\_\+assignments} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71b6e7fc9890824b62fc968e3c7559ce}{disconnected\+\_\+assignments} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac69bbf7c4bfd34eb297ae091523f46b5}{worker\+\_\+id}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a4165b5a0b9ffcbd8194fd10adeb02fdb}{agents}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac510ecfdd12ff572cb5ad16629dbd36e}{disconnects}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class for holding state information about an mturk worker\end{DoxyVerb}
+ 
+
+Definition at line 32 of file worker\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a1f84cd0e83112d5758bdb17b0793f309}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a1f84cd0e83112d5758bdb17b0793f309}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{disconnects = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a new worker state for the given worker_id. Number of
+prior disconnects is optional.
+\end{DoxyVerb}
+ 
+
+Definition at line 35 of file worker\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a0f22df8925f5461e6a55ddd6b2cc22b3}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a0f22df8925f5461e6a55ddd6b2cc22b3}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!active\+\_\+conversation\+\_\+count@{active\+\_\+conversation\+\_\+count}}
+\index{active\+\_\+conversation\+\_\+count@{active\+\_\+conversation\+\_\+count}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{active\+\_\+conversation\+\_\+count()}{active\_conversation\_count()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+active\+\_\+conversation\+\_\+count (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of conversations within this worker state
+that aren't in a final state
+\end{DoxyVerb}
+ 
+
+Definition at line 43 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a22b3660299c3dd56fb396bf9d6672d2a}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a22b3660299c3dd56fb396bf9d6672d2a}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!add\+\_\+agent@{add\+\_\+agent}}
+\index{add\+\_\+agent@{add\+\_\+agent}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{add\+\_\+agent()}{add\_agent()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+add\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{mturk\+\_\+agent }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add an assignment to this worker state with the given assign_it\end{DoxyVerb}
+ 
+
+Definition at line 53 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents, parlai.\+mturk.\+core.\+dev.\+agents.\+Absent\+Agent\+Error.\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+worker\+\_\+id, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+worker\+\_\+id, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+worker\+\_\+id, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+worker\+\_\+id, and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+worker\+\_\+id.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a8ddde60a6054ad699818c749e310cb91}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a8ddde60a6054ad699818c749e310cb91}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!completed\+\_\+assignments@{completed\+\_\+assignments}}
+\index{completed\+\_\+assignments@{completed\+\_\+assignments}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{completed\+\_\+assignments()}{completed\_assignments()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+completed\+\_\+assignments (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the number of assignments this worker has completed\end{DoxyVerb}
+ 
+
+Definition at line 67 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71b6e7fc9890824b62fc968e3c7559ce}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71b6e7fc9890824b62fc968e3c7559ce}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!disconnected\+\_\+assignments@{disconnected\+\_\+assignments}}
+\index{disconnected\+\_\+assignments@{disconnected\+\_\+assignments}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{disconnected\+\_\+assignments()}{disconnected\_assignments()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+disconnected\+\_\+assignments (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the number of assignments this worker has completed\end{DoxyVerb}
+ 
+
+Definition at line 75 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_af5d8f601efd7223f5b2d91b2df3582e2}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_af5d8f601efd7223f5b2d91b2df3582e2}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!get\+\_\+agent\+\_\+for\+\_\+assignment@{get\+\_\+agent\+\_\+for\+\_\+assignment}}
+\index{get\+\_\+agent\+\_\+for\+\_\+assignment@{get\+\_\+agent\+\_\+for\+\_\+assignment}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+for\+\_\+assignment()}{get\_agent\_for\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+get\+\_\+agent\+\_\+for\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 60 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71a385a16ef2f33d32cde9050350580c}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a71a385a16ef2f33d32cde9050350580c}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!has\+\_\+assignment@{has\+\_\+assignment}}
+\index{has\+\_\+assignment@{has\+\_\+assignment}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{has\+\_\+assignment()}{has\_assignment()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+has\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assign\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns true if this worker has an assignment for the given id\end{DoxyVerb}
+ 
+
+Definition at line 63 of file worker\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a4165b5a0b9ffcbd8194fd10adeb02fdb}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_a4165b5a0b9ffcbd8194fd10adeb02fdb}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!agents@{agents}}
+\index{agents@{agents}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{agents}{agents}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents}
+
+
+
+Definition at line 40 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+active\+\_\+conversation\+\_\+count(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+active\+\_\+conversation\+\_\+count(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+add\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+add\+\_\+agent(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+completed\+\_\+assignments(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+completed\+\_\+assignments(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+disconnected\+\_\+assignments(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+disconnected\+\_\+assignments(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+get\+\_\+agent\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+get\+\_\+agent\+\_\+for\+\_\+assignment(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+has\+\_\+assignment(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+has\+\_\+assignment(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+timeout\+\_\+all\+\_\+agents().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac510ecfdd12ff572cb5ad16629dbd36e}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac510ecfdd12ff572cb5ad16629dbd36e}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!disconnects@{disconnects}}
+\index{disconnects@{disconnects}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{disconnects}{disconnects}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+disconnects}
+
+
+
+Definition at line 41 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+save\+\_\+disconnects().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac69bbf7c4bfd34eb297ae091523f46b5}\label{classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerState_ac69bbf7c4bfd34eb297ae091523f46b5}} 
+\index{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}!worker\+\_\+id@{worker\+\_\+id}}
+\index{worker\+\_\+id@{worker\+\_\+id}!parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State@{parlai\+::mturk\+::core\+::legacy\+\_\+2018\+::worker\+\_\+manager\+::\+Worker\+State}}
+\subsubsection{\texorpdfstring{worker\+\_\+id}{worker\_id}}
+{\footnotesize\ttfamily parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+worker\+\_\+id}
+
+
+
+Definition at line 39 of file worker\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+add\+\_\+agent(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+add\+\_\+agent(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+build\+\_\+and\+\_\+send\+\_\+packet(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+alive(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+alive(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+heartbeat(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+wait\+\_\+for\+\_\+alive(), and parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+wait\+\_\+for\+\_\+alive().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/core/legacy\+\_\+2018/\hyperlink{legacy__2018_2worker__manager_8py}{worker\+\_\+manager.\+py}\end{DoxyCompactItemize}

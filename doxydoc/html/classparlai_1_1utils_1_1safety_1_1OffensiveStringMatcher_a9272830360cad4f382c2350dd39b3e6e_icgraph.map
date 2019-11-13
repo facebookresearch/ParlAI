@@ -1,5 +1,3 @@
 <map id="parlai.utils.safety.OffensiveStringMatcher.add_phrase" name="parlai.utils.safety.OffensiveStringMatcher.add_phrase">
-<area shape="rect" id="node1" title=" " alt="" coords="235,39,416,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a9e850e121799468d26c5720be21bf72c" title=" " alt="" coords="5,5,187,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#ab5ca96a02141190f747b03b761f18f98" title=" " alt="" coords="5,71,187,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#ab5ca96a02141190f747b03b761f18f98" title="parlai.utils.safety.Offensive\lStringMatcher.add_words" alt="" coords="235,5,416,47"/>
 </map>

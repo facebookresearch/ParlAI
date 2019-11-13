@@ -1,0 +1,190 @@
+\hypertarget{classagent_1_1modules_1_1Decoder}{}\section{agent.\+modules.\+Decoder Class Reference}
+\label{classagent_1_1modules_1_1Decoder}\index{agent.\+modules.\+Decoder@{agent.\+modules.\+Decoder}}
+
+
+Inheritance diagram for agent.\+modules.\+Decoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classagent_1_1modules_1_1Decoder__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for agent.\+modules.\+Decoder\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classagent_1_1modules_1_1Decoder__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classagent_1_1modules_1_1Decoder_ac77f95c38737d146d1f92c45d2de59dc}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, input\+\_\+size, hidden\+\_\+size, num\+\_\+layers, opt, dictionary)
+\item 
+def \hyperlink{classagent_1_1modules_1_1Decoder_ad0179be7c6224482204f3ce575894573}{hidden\+\_\+to\+\_\+idx} (self, hidden, \hyperlink{classagent_1_1modules_1_1Decoder_a9924bcfb8e8bd2c76f9d359d55df8c6b}{dropout}=False)
+\item 
+def \hyperlink{classagent_1_1modules_1_1Decoder_a4c609d3b51a4ef925c943c22a7a015e8}{forward} (self, input, state)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classagent_1_1modules_1_1Decoder_afa32bb09dc45397ab9ec963a6dd54cb7}{dict}
+\item 
+\hyperlink{classagent_1_1modules_1_1Decoder_acb96c900ec5ab64a366846e9e88ba7e8}{h2o}
+\item 
+\hyperlink{classagent_1_1modules_1_1Decoder_a9924bcfb8e8bd2c76f9d359d55df8c6b}{dropout}
+\item 
+\hyperlink{classagent_1_1modules_1_1Decoder_af53b07597d0aef5d51ac58af511fe053}{rnn}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 258 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_ac77f95c38737d146d1f92c45d2de59dc}\label{classagent_1_1modules_1_1Decoder_ac77f95c38737d146d1f92c45d2de59dc}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Decoder.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input\+\_\+size,  }\item[{}]{hidden\+\_\+size,  }\item[{}]{num\+\_\+layers,  }\item[{}]{opt,  }\item[{}]{dictionary }\end{DoxyParamCaption})}
+
+
+
+Definition at line 259 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_a4c609d3b51a4ef925c943c22a7a015e8}\label{classagent_1_1modules_1_1Decoder_a4c609d3b51a4ef925c943c22a7a015e8}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!forward@{forward}}
+\index{forward@{forward}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Decoder.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input,  }\item[{}]{state }\end{DoxyParamCaption})}
+
+
+
+Definition at line 277 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+hidden\+\_\+to\+\_\+idx(), agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx(), parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+rnn, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+rnn, agent.\+modules.\+Decoder.\+rnn, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+rnn, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+rnn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+rnn, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+rnn, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+training, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+training, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+training, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+training, parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+training, parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+training, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+training, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+training, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+training.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Decoder_a4c609d3b51a4ef925c943c22a7a015e8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Decoder_a4c609d3b51a4ef925c943c22a7a015e8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_ad0179be7c6224482204f3ce575894573}\label{classagent_1_1modules_1_1Decoder_ad0179be7c6224482204f3ce575894573}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!hidden\+\_\+to\+\_\+idx@{hidden\+\_\+to\+\_\+idx}}
+\index{hidden\+\_\+to\+\_\+idx@{hidden\+\_\+to\+\_\+idx}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{hidden\+\_\+to\+\_\+idx()}{hidden\_to\_idx()}}
+{\footnotesize\ttfamily def agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hidden,  }\item[{}]{dropout = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Converts hidden state vectors into indices into the dictionary.\end{DoxyVerb}
+ 
+
+Definition at line 266 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, agent.\+modules.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dropout, controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+dropout, controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+dropout, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+h2o, and agent.\+modules.\+Decoder.\+h2o.
+
+
+
+Referenced by agent.\+modules.\+Decoder.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classagent_1_1modules_1_1Decoder_ad0179be7c6224482204f3ce575894573_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_afa32bb09dc45397ab9ec963a6dd54cb7}\label{classagent_1_1modules_1_1Decoder_afa32bb09dc45397ab9ec963a6dd54cb7}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!dict@{dict}}
+\index{dict@{dict}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily agent.\+modules.\+Decoder.\+dict}
+
+
+
+Definition at line 261 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_a9924bcfb8e8bd2c76f9d359d55df8c6b}\label{classagent_1_1modules_1_1Decoder_a9924bcfb8e8bd2c76f9d359d55df8c6b}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!dropout@{dropout}}
+\index{dropout@{dropout}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily agent.\+modules.\+Decoder.\+dropout}
+
+
+
+Definition at line 263 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_acb96c900ec5ab64a366846e9e88ba7e8}\label{classagent_1_1modules_1_1Decoder_acb96c900ec5ab64a366846e9e88ba7e8}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!h2o@{h2o}}
+\index{h2o@{h2o}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{h2o}{h2o}}
+{\footnotesize\ttfamily agent.\+modules.\+Decoder.\+h2o}
+
+
+
+Definition at line 262 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classagent_1_1modules_1_1Decoder_af53b07597d0aef5d51ac58af511fe053}\label{classagent_1_1modules_1_1Decoder_af53b07597d0aef5d51ac58af511fe053}} 
+\index{agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}!rnn@{rnn}}
+\index{rnn@{rnn}!agent\+::modules\+::\+Decoder@{agent\+::modules\+::\+Decoder}}
+\subsubsection{\texorpdfstring{rnn}{rnn}}
+{\footnotesize\ttfamily agent.\+modules.\+Decoder.\+rnn}
+
+
+
+Definition at line 264 of file modules.\+py.
+
+
+
+Referenced by agent.\+modules.\+Decoder.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/memnn\+\_\+feedback/agent/\hyperlink{projects_2memnn__feedback_2agent_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

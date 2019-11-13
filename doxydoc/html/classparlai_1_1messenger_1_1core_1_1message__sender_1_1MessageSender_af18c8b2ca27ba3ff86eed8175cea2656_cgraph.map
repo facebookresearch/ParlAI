@@ -1,0 +1,10 @@
+<map id="parlai.messenger.core.message_sender.MessageSender.typing_on" name="parlai.messenger.core.message_sender.MessageSender.typing_on">
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#a8bc08e730c5d1fbe4c4cc0d96746b30a" title="parlai.messenger.core.message\l_sender.MessageSender.send\l_fb_payload" alt="" coords="280,105,487,161"/>
+<area shape="rect" id="node9" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#a58c876784f5800234ed341a160bcf1b5" title="parlai.messenger.core.message\l_sender.MessageSender.send\l_sender_action" alt="" coords="280,185,487,241"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#ae26a16d26bdd28795220ad9ef76c96fd" title="parlai.messenger.core.message\l_sender.create_attachment" alt="" coords="535,5,741,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a4359c421913c537e0003032b1d1b79b5" title="parlai.messenger.core.message\l_sender.create_compact_list\l_message" alt="" coords="535,71,741,127"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#ad1b8681b56d567251598624cf3efa587" title="parlai.messenger.core.message\l_sender.create_reply_option" alt="" coords="789,144,996,185"/>
+<area shape="rect" id="node7" href="$classparlai_1_1messenger_1_1core_1_1message__sender_1_1MessageSender.html#ac323160e9bbb201ed0c64b819f1c78ca" title="parlai.messenger.core.message\l_sender.MessageSender.send\l_fb_message" alt="" coords="535,202,741,258"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a0fb8b2849a9c5d3e0db470a399358b5b" title="parlai.messenger.core.message\l_sender.create_list_element" alt="" coords="789,79,996,120"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1messenger_1_1core_1_1message__sender.html#a5476d988fc16eb2cf726dc63e72fb0f5" title="parlai.messenger.core.message\l_sender.create_text_message" alt="" coords="789,209,996,251"/>
+</map>

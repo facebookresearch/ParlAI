@@ -1,0 +1,179 @@
+\hypertarget{namespaceself__feeding_1_1utils}{}\section{self\+\_\+feeding.\+utils Namespace Reference}
+\label{namespaceself__feeding_1_1utils}\index{self\+\_\+feeding.\+utils@{self\+\_\+feeding.\+utils}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classself__feeding_1_1utils_1_1Parley}{Parley}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceself__feeding_1_1utils_a6c6383b2b208a5cf7d3d043376411034}{sanitize\+\_\+parley} (parley)
+\item 
+def \hyperlink{namespaceself__feeding_1_1utils_ab55b6655be64ff265dbccaf4b59ccdfe}{add\+\_\+person\+\_\+tokens} (responses, first\+\_\+speaker=None, last\+\_\+speaker=1)
+\item 
+def \hyperlink{namespaceself__feeding_1_1utils_a578aab95575fe72eee6768341a257a05}{extract\+\_\+fb\+\_\+episodes} (datafile)
+\item 
+def \hyperlink{namespaceself__feeding_1_1utils_ab5320af5eed839794f63c16ab25ec8a8}{extract\+\_\+parlai\+\_\+episodes} (datafile)
+\item 
+def \hyperlink{namespaceself__feeding_1_1utils_a40d25d283be41f59e7167424691b4ba8}{episode\+\_\+to\+\_\+examples} (episode, histsz)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceself__feeding_1_1utils_ab55b6655be64ff265dbccaf4b59ccdfe}\label{namespaceself__feeding_1_1utils_ab55b6655be64ff265dbccaf4b59ccdfe}} 
+\index{self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}!add\+\_\+person\+\_\+tokens@{add\+\_\+person\+\_\+tokens}}
+\index{add\+\_\+person\+\_\+tokens@{add\+\_\+person\+\_\+tokens}!self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}}
+\subsubsection{\texorpdfstring{add\+\_\+person\+\_\+tokens()}{add\_person\_tokens()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+add\+\_\+person\+\_\+tokens (\begin{DoxyParamCaption}\item[{}]{responses,  }\item[{}]{first\+\_\+speaker = {\ttfamily None},  }\item[{}]{last\+\_\+speaker = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Converts a list of responses into a single tag-separated string
+Args:
+    responses: list of responses (strings)
+    first_speaker: either 1 or 2; the owner of the first response
+    last_speaker: either 1 or 2; the owner of the last response
+        NOTE: if first_speaker is provided, it overrides last_speaker
+Output:
+    text: the concatenated text
+
+e.g.,
+responses = ["How are you?", "I'm doing fine!", "I'm glad to hear it!"]
+result = add_person_tokens(responses)
+result: "__p1__ How are you? __p2__ I'm doing fine! __p1__ I'm glad to
+    hear it!"
+\end{DoxyVerb}
+ 
+
+Definition at line 102 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+episode\+\_\+to\+\_\+examples(), convert\+\_\+suggested\+\_\+to\+\_\+stitched.\+main(), convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+main(), convert\+\_\+sliced\+\_\+to\+\_\+identity.\+main(), convert\+\_\+chatted\+\_\+to\+\_\+identity.\+main(), convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+main(), convert\+\_\+rated\+\_\+to\+\_\+polarized.\+main(), and convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_ab55b6655be64ff265dbccaf4b59ccdfe_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceself__feeding_1_1utils_a40d25d283be41f59e7167424691b4ba8}\label{namespaceself__feeding_1_1utils_a40d25d283be41f59e7167424691b4ba8}} 
+\index{self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}!episode\+\_\+to\+\_\+examples@{episode\+\_\+to\+\_\+examples}}
+\index{episode\+\_\+to\+\_\+examples@{episode\+\_\+to\+\_\+examples}!self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}}
+\subsubsection{\texorpdfstring{episode\+\_\+to\+\_\+examples()}{episode\_to\_examples()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+episode\+\_\+to\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{episode,  }\item[{}]{histsz }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Converts an episode (list of Parleys) into self-feeding compatible examples
+
+WARNING: we no longer require a histz when making a self-feeding file. Shortening of
+the history is typically done in the teacher file or in interactive mode.
+\end{DoxyVerb}
+ 
+
+Definition at line 156 of file utils.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+add\+\_\+person\+\_\+tokens().
+
+
+
+Referenced by convert\+\_\+fb\+\_\+to\+\_\+meta.\+main(), and split\+\_\+convai2\+\_\+topics.\+main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_a40d25d283be41f59e7167424691b4ba8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_a40d25d283be41f59e7167424691b4ba8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceself__feeding_1_1utils_a578aab95575fe72eee6768341a257a05}\label{namespaceself__feeding_1_1utils_a578aab95575fe72eee6768341a257a05}} 
+\index{self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}!extract\+\_\+fb\+\_\+episodes@{extract\+\_\+fb\+\_\+episodes}}
+\index{extract\+\_\+fb\+\_\+episodes@{extract\+\_\+fb\+\_\+episodes}!self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}}
+\subsubsection{\texorpdfstring{extract\+\_\+fb\+\_\+episodes()}{extract\_fb\_episodes()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+extract\+\_\+fb\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{datafile }\end{DoxyParamCaption})}
+
+
+
+Definition at line 129 of file utils.\+py.
+
+
+
+References self\+\_\+feeding.\+utils.\+sanitize\+\_\+parley(), and parlai.\+tasks.\+aqua.\+agents.\+setup\+\_\+data().
+
+
+
+Referenced by convert\+\_\+fb\+\_\+to\+\_\+meta.\+main(), and split\+\_\+convai2\+\_\+topics.\+main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_a578aab95575fe72eee6768341a257a05_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_a578aab95575fe72eee6768341a257a05_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceself__feeding_1_1utils_ab5320af5eed839794f63c16ab25ec8a8}\label{namespaceself__feeding_1_1utils_ab5320af5eed839794f63c16ab25ec8a8}} 
+\index{self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}!extract\+\_\+parlai\+\_\+episodes@{extract\+\_\+parlai\+\_\+episodes}}
+\index{extract\+\_\+parlai\+\_\+episodes@{extract\+\_\+parlai\+\_\+episodes}!self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}}
+\subsubsection{\texorpdfstring{extract\+\_\+parlai\+\_\+episodes()}{extract\_parlai\_episodes()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+extract\+\_\+parlai\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{datafile }\end{DoxyParamCaption})}
+
+
+
+Definition at line 144 of file utils.\+py.
+
+
+
+Referenced by convert\+\_\+sliced\+\_\+to\+\_\+identity.\+main(), convert\+\_\+suggested\+\_\+to\+\_\+stitched.\+main(), convert\+\_\+sliced\+\_\+to\+\_\+unfiltered.\+main(), convert\+\_\+rated\+\_\+to\+\_\+sliced.\+main(), convert\+\_\+chatted\+\_\+to\+\_\+polarized.\+main(), convert\+\_\+chatted\+\_\+to\+\_\+identity.\+main(), convert\+\_\+rated\+\_\+to\+\_\+polarized.\+main(), and convert\+\_\+chatted\+\_\+to\+\_\+unfiltered.\+main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_ab5320af5eed839794f63c16ab25ec8a8_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceself__feeding_1_1utils_a6c6383b2b208a5cf7d3d043376411034}\label{namespaceself__feeding_1_1utils_a6c6383b2b208a5cf7d3d043376411034}} 
+\index{self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}!sanitize\+\_\+parley@{sanitize\+\_\+parley}}
+\index{sanitize\+\_\+parley@{sanitize\+\_\+parley}!self\+\_\+feeding\+::utils@{self\+\_\+feeding\+::utils}}
+\subsubsection{\texorpdfstring{sanitize\+\_\+parley()}{sanitize\_parley()}}
+{\footnotesize\ttfamily def self\+\_\+feeding.\+utils.\+sanitize\+\_\+parley (\begin{DoxyParamCaption}\item[{}]{parley }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Separate memories from context, pull out response, split context/memories lists
+\end{DoxyVerb}
+ 
+
+Definition at line 87 of file utils.\+py.
+
+
+
+Referenced by self\+\_\+feeding.\+utils.\+extract\+\_\+fb\+\_\+episodes().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceself__feeding_1_1utils_a6c6383b2b208a5cf7d3d043376411034_icgraph}
+\end{center}
+\end{figure}

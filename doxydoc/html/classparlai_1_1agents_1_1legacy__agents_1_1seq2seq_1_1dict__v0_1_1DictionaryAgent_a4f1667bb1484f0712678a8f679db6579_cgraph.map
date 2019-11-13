@@ -1,9 +1,10 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.parse" name="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.parse">
-<area shape="rect" id="node1" title=" " alt="" coords="5,125,181,181"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a407dcd1aa927f8065334a825b2d099d9" title=" " alt="" coords="231,5,414,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a5d89ed4dcebcd41853bd0614d30337e7" title=" " alt="" coords="229,85,416,141"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a6269b15dc01bfaac5dd1b5da995f2f0f" title=" " alt="" coords="231,165,414,221"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a87de974ecf69da7412e777220c29ba39" title=" " alt="" coords="229,245,416,301"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aca7e5edfd6502701277cb83b75ff4e96" title=" " alt="" coords="475,13,646,54"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#aa551af633278b71b0a8da65180b79202" title=" " alt="" coords="464,85,657,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a407dcd1aa927f8065334a825b2d099d9" title="parlai.agents.bert\l_ranker.bert_dictionary.Bert\lDictionaryAgent.txt2vec" alt="" coords="231,5,414,61"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a5d89ed4dcebcd41853bd0614d30337e7" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.txt2vec" alt="" coords="229,85,416,141"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a6269b15dc01bfaac5dd1b5da995f2f0f" title="parlai.agents.bert\l_ranker.bert_dictionary.Bert\lDictionaryAgent.vec2txt" alt="" coords="231,165,414,221"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a87de974ecf69da7412e777220c29ba39" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.vec2txt" alt="" coords="229,245,416,301"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aca7e5edfd6502701277cb83b75ff4e96" title="parlai.core.dict.Dictionary\lAgent.tokenize" alt="" coords="475,13,646,54"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1core_1_1dict.html#a5e9eb43b6c0dce0b3aab7f3ea3717de6" title="parlai.core.dict.find\l_ngrams" alt="" coords="713,13,845,54"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#aa551af633278b71b0a8da65180b79202" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.tokenize" alt="" coords="464,85,657,141"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0.html#aa7398720bbf0f8e82c5b1495313f4f8b" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.find_ngrams" alt="" coords="705,85,852,141"/>
 </map>

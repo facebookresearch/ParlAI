@@ -1,0 +1,102 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae7f9ca3d9fd7dd823895a28af6cae34f}{pad\+\_\+text} (cls, observations, dictionary, end\+\_\+idx=None, null\+\_\+idx=0, dq=False, eval\+\_\+labels=True, truncate=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae2c46f2f424e4301873e1c5bc201646c}{map\+\_\+predictions} (cls, predictions, valid\+\_\+inds, batch\+\_\+reply, observations, dictionary, end\+\_\+idx, report\+\_\+freq=0.\+1, labels=None, answers=None, ys=None)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class that contains functions that help with padding input and target tensors.
+\end{DoxyVerb}
+ 
+
+Definition at line 402 of file utils\+\_\+v0.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae2c46f2f424e4301873e1c5bc201646c}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae2c46f2f424e4301873e1c5bc201646c}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils}!map\+\_\+predictions@{map\+\_\+predictions}}
+\index{map\+\_\+predictions@{map\+\_\+predictions}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils}}
+\subsubsection{\texorpdfstring{map\+\_\+predictions()}{map\_predictions()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils.\+map\+\_\+predictions (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{predictions,  }\item[{}]{valid\+\_\+inds,  }\item[{}]{batch\+\_\+reply,  }\item[{}]{observations,  }\item[{}]{dictionary,  }\item[{}]{end\+\_\+idx,  }\item[{}]{report\+\_\+freq = {\ttfamily 0.1},  }\item[{}]{labels = {\ttfamily None},  }\item[{}]{answers = {\ttfamily None},  }\item[{}]{ys = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Predictions are mapped back to appropriate indices in the batch_reply
+   using valid_inds.
+   report_freq -- how often we report predictions
+\end{DoxyVerb}
+ 
+
+Definition at line 538 of file utils\+\_\+v0.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils.\+pad\+\_\+text().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae2c46f2f424e4301873e1c5bc201646c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae7f9ca3d9fd7dd823895a28af6cae34f}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae7f9ca3d9fd7dd823895a28af6cae34f}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils}!pad\+\_\+text@{pad\+\_\+text}}
+\index{pad\+\_\+text@{pad\+\_\+text}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::utils\+\_\+v0\+::\+Padding\+Utils}}
+\subsubsection{\texorpdfstring{pad\+\_\+text()}{pad\_text()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils.\+pad\+\_\+text (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{observations,  }\item[{}]{dictionary,  }\item[{}]{end\+\_\+idx = {\ttfamily None},  }\item[{}]{null\+\_\+idx = {\ttfamily 0},  }\item[{}]{dq = {\ttfamily False},  }\item[{}]{eval\+\_\+labels = {\ttfamily True},  }\item[{}]{truncate = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}We check that examples are valid, pad with zeros, and sort by length
+   so that we can use the pack_padded function. The list valid_inds
+   keeps track of which indices are valid and the order in which we sort
+   the examples.
+   dq -- whether we should use deque or list
+   eval_labels -- whether or not we want to consider eval labels
+   truncate -- truncate input and output lengths
+\end{DoxyVerb}
+ 
+
+Definition at line 417 of file utils\+\_\+v0.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Padding\+Utils.\+map\+\_\+predictions().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1PaddingUtils_ae7f9ca3d9fd7dd823895a28af6cae34f_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{utils__v0_8py}{utils\+\_\+v0.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,37 @@
+<map id="parlai.core.agents.load_agent_module" name="parlai.core.agents.load_agent_module">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1agents.html#ad0d54074d4bcc148bb415ab5515a53b5" title="parlai.core.agents.create\l_agent" alt="" coords="207,923,372,965"/>
+<area shape="rect" id="node3" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html#ad6712805a88e2999f531f764022f2de4" title="interactive_end2end.interactive\l_end2end.InteractiveEnd2endAgent.add\l_cmdline_args" alt="" coords="420,5,673,61"/>
+<area shape="rect" id="node4" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#aee00317227b637f9ef4240369575f7ac" title="interactive_retrieval.Interactive\lRetrievalAgent.add_cmdline_args" alt="" coords="438,86,655,127"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1scripts_1_1build__pytorch__data.html#a50d93b1dec37499085b9eafc6e425a1a" title="parlai.scripts.build\l_pytorch_data.build_data" alt="" coords="463,151,630,193"/>
+<area shape="rect" id="node6" href="$namespacecreate__synth__supp.html#a4ab3a83853f9e0e6a13b9db0d4aa79f0" title="create_synth_supp.create_supp" alt="" coords="443,217,650,244"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1scripts_1_1detect__offensive__language.html#aecc66ec4441e506a93d25964889c185f" title="parlai.scripts.detect\l_offensive_language.detect" alt="" coords="456,269,637,310"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1scripts_1_1display__model.html#a25488b354b0b8cbaee28b146b17c26f1" title="parlai.scripts.display\l_model.display_model" alt="" coords="471,334,622,375"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1scripts_1_1eval__model.html#ade1dfda1be70776553a1fbd6a3450c40" title="parlai.scripts.eval\l_model.eval_model" alt="" coords="479,399,614,441"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1scripts_1_1eval__ppl.html#ad1a8a8891f276136e82edc906ea58340" title="parlai.scripts.eval\l_ppl.eval_ppl" alt="" coords="485,465,609,506"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1scripts_1_1eval__wordstat.html#abdad0c3df5ffa1768c0d5822d3668ba0" title="parlai.scripts.eval\l_wordstat.eval_wordstat" alt="" coords="465,530,629,571"/>
+<area shape="rect" id="node12" href="$namespaceeval__wordstat.html#aeb6ae646e7e2bede292baff78ca1bd83" title="eval_wordstat.eval\l_wordstat" alt="" coords="481,595,612,637"/>
+<area shape="rect" id="node13" href="$namespaceself__feeding_1_1interactive.html#ab6a36a59956d8f1381be1f0bf62dbb32" title="self_feeding.interactive.interactive" alt="" coords="437,661,657,688"/>
+<area shape="rect" id="node14" href="$namespaceconvai2_1_1interactive.html#a47ad778728ed55d570bc4b8dd426e884" title="convai2.interactive.interactive" alt="" coords="449,712,644,739"/>
+<area shape="rect" id="node15" href="$namespaceparlai_1_1scripts_1_1interactive.html#aae322ec752aa32b1304870833db25f13" title="parlai.scripts.interactive.interactive" alt="" coords="435,763,659,789"/>
+<area shape="rect" id="node16" href="$namespaceparlai_1_1scripts_1_1interactive__rank.html#a9997f1d0eba4a72a45a773ec05874af3" title="parlai.scripts.interactive\l_rank.interactive_rank" alt="" coords="467,814,627,855"/>
+<area shape="rect" id="node17" href="$namespaceparlai_1_1mturk_1_1tasks_1_1dealnodeal_1_1run.html#aafb6d1c8bf3b37bc874ee8d8dcbecce8" title="parlai.mturk.tasks.dealnodeal.run.main" alt="" coords="423,880,670,907"/>
+<area shape="rect" id="node18" href="$namespacemturk__evaluation__task_1_1run.html#abf2de8d01fae9d5ced027d42bd2104ec" title="mturk_evaluation_task.run.main" alt="" coords="443,931,650,957"/>
+<area shape="rect" id="node19" href="$namespaceparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1run.html#a1624989606bd5fc34368102c32217178" title="parlai.mturk.tasks.convai2\l_model_eval.run.main" alt="" coords="459,982,634,1023"/>
+<area shape="rect" id="node20" href="$namespaceremote.html#aa8eb15effdae452b1fde3639cd9bc267" title="remote.main" alt="" coords="499,1048,594,1075"/>
+<area shape="rect" id="node21" href="$namespacemturk_1_1run.html#a742d6dfa1609938f250301a87485462a" title="mturk.run.main" alt="" coords="492,1099,601,1125"/>
+<area shape="rect" id="node22" href="$classinteractive_1_1MyHandler.html#a90d22dc71dcfeeedcb3c6d4ce61cccf1" title="interactive.MyHandler.respond" alt="" coords="729,1200,927,1227"/>
+<area shape="rect" id="node23" href="$namespaceparlai_1_1tasks_1_1talkthewalk_1_1run.html#a0a1ec08b8196cb008e4df83468c67e5b" title="parlai.tasks.talkthewalk.run.run" alt="" coords="445,1200,648,1227"/>
+<area shape="rect" id="node24" href="$namespaceconvai_1_1convai__bot.html#aa48fc69074ce03959653a0122c4a0b67" title="convai.convai_bot.run\l_convai_bot" alt="" coords="472,1367,621,1409"/>
+<area shape="rect" id="node26" href="$namespaceparlai_1_1scripts_1_1interactive__web.html#abeab09cab4f9e60077ffd5050bff36ef" title="parlai.scripts.interactive\l_web.setup_interactive" alt="" coords="467,1302,627,1343"/>
+<area shape="rect" id="node27" href="$namespaceinteractive.html#a14d7f7e00e2fd76924efb506379c5c30" title="interactive.setup_interactive" alt="" coords="454,1149,639,1176"/>
+<area shape="rect" id="node28" href="$namespacerun.html#af213d4a09b8048dcf1e76b0cb75dcace" title="run.setup_retriever" alt="" coords="481,1433,612,1460"/>
+<area shape="rect" id="node30" href="$classtests_1_1test__tga_1_1TestUpgradeOpt.html#a8ba19a5f6b229d7f34a3a8ac022e211b" title="tests.test_tga.TestUpgrade\lOpt.test_file_inference" alt="" coords="456,1485,637,1526"/>
+<area shape="rect" id="node31" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a1c96927436b550513d6656564ec0c5fe" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pyt_batchsort_field" alt="" coords="441,1551,653,1607"/>
+<area shape="rect" id="node32" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#ad9d9065300215a4afeb0589192b5ba05" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_pyt_preprocess" alt="" coords="443,1631,650,1687"/>
+<area shape="rect" id="node33" href="$classtests_1_1test__tfidf__retriever_1_1TestTfidfRetriever.html#ad323cddfeb021a3b38a7eb4810d6ecdd" title="tests.test_tfidf_retriever.\lTestTfidfRetriever.test\l_sparse_tfidf_retriever" alt="" coords="465,1711,629,1767"/>
+<area shape="rect" id="node34" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a2c83da3833b551a1e15e6cec4a8589eb" title="tests.test_pytorch\l_data_teacher.TestPytorchData\lTeacher.test_valid_pyt_batchsort" alt="" coords="439,1791,654,1847"/>
+<area shape="rect" id="node35" href="$classparlai_1_1scripts_1_1train__model_1_1TrainLoop.html#a8c15c0d4490891fd3e61e57501474e40" title="parlai.scripts.train\l_model.TrainLoop.train" alt="" coords="469,1871,624,1913"/>
+<area shape="rect" id="node25" href="$namespaceconvai_1_1convai__bot.html#abdce1d79f12edc77b5ff6c02b00d1219" title="convai.convai_bot.main" alt="" coords="749,1375,907,1401"/>
+<area shape="rect" id="node29" href="$namespacerun.html#aa82b870a20fb0f19feebf9c895b0cfd9" title="run.main" alt="" coords="792,1433,864,1460"/>
+<area shape="rect" id="node36" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="721,1871,935,1913"/>
+</map>

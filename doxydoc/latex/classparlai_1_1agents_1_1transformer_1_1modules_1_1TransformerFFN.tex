@@ -1,0 +1,155 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN}{}\section{parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+FN Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN}\index{parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+FN@{parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+FN}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+FN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+FN\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a89cffa1831968953cdd7dfdfa7867944}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, dim, dim\+\_\+hidden, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a22f7891e6b991a8ee6b58f08c12cf4ae}{relu\+\_\+dropout}=0, activation=\textquotesingle{}relu\textquotesingle{})
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a54f8d1ec7c0c4228f78a3be843ab3003}{forward} (self, x)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a22f7891e6b991a8ee6b58f08c12cf4ae}{relu\+\_\+dropout}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a234566d2ffaffe67f04c4592cfc84265}{nonlinear}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_addc959c81b7c0ba87a47415af7f07e16}{lin1}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_ae0ee11939e782034e2d9809f18ed4708}{lin2}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Implements the FFN part of the transformer.\end{DoxyVerb}
+ 
+
+Definition at line 1002 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a89cffa1831968953cdd7dfdfa7867944}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a89cffa1831968953cdd7dfdfa7867944}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dim,  }\item[{}]{dim\+\_\+hidden,  }\item[{}]{relu\+\_\+dropout = {\ttfamily 0},  }\item[{}]{activation = {\ttfamily \textquotesingle{}relu\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1005 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a54f8d1ec7c0c4228f78a3be843ab3003}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a54f8d1ec7c0c4228f78a3be843ab3003}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.\end{DoxyVerb}
+ 
+
+Definition at line 1022 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+lin1, parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+lin2, parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+nonlinear, and parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+relu\+\_\+dropout.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a54f8d1ec7c0c4228f78a3be843ab3003_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_addc959c81b7c0ba87a47415af7f07e16}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_addc959c81b7c0ba87a47415af7f07e16}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!lin1@{lin1}}
+\index{lin1@{lin1}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{lin1}{lin1}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+lin1}
+
+
+
+Definition at line 1016 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_ae0ee11939e782034e2d9809f18ed4708}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_ae0ee11939e782034e2d9809f18ed4708}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!lin2@{lin2}}
+\index{lin2@{lin2}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{lin2}{lin2}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+lin2}
+
+
+
+Definition at line 1017 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a234566d2ffaffe67f04c4592cfc84265}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a234566d2ffaffe67f04c4592cfc84265}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!nonlinear@{nonlinear}}
+\index{nonlinear@{nonlinear}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{nonlinear}{nonlinear}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+nonlinear}
+
+
+
+Definition at line 1009 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a22f7891e6b991a8ee6b58f08c12cf4ae}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerFFN_a22f7891e6b991a8ee6b58f08c12cf4ae}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}!relu\+\_\+dropout@{relu\+\_\+dropout}}
+\index{relu\+\_\+dropout@{relu\+\_\+dropout}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+F\+FN}}
+\subsubsection{\texorpdfstring{relu\+\_\+dropout}{relu\_dropout}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+relu\+\_\+dropout}
+
+
+
+Definition at line 1007 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+F\+F\+N.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

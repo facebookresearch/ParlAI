@@ -1,0 +1,9 @@
+<map id="parlai.utils.testing.capture_output" name="parlai.utils.testing.capture_output">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1testing.html#a30c532f112f9beddd873382e649b3ecd" title="parlai.utils.testing.display_data" alt="" coords="241,5,442,32"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1testing.html#a1b41200277931b2e4e684dc9452889a9" title="parlai.utils.testing.display\l_model" alt="" coords="257,57,426,98"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1testing.html#ae0c93fc8f4c3e079333dba0065fa4dd2" title="parlai.utils.testing.download\l_unittest_models" alt="" coords="250,122,433,163"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1testing.html#a6fb595d4398ee27f4d183911419a222a" title="parlai.utils.testing.eval\l_model" alt="" coords="265,187,417,229"/>
+<area shape="rect" id="node6" href="$classtests_1_1test__torch__agent_1_1TestLegacyVersioning.html#ab1faa8a34d7089006cfa5746b0ada62f" title="tests.test_torch_agent.Test\lLegacyVersioning.test_legacy\l_version" alt="" coords="243,253,439,309"/>
+<area shape="rect" id="node7" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html#a7135ee3421b1d0fc98f0202718910482" title="tests.test_torch_agent.Test\lTorchAgent.test_resume_checkpoint" alt="" coords="224,334,459,375"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1utils_1_1testing.html#a005734981469efed8a992bf5edc3ca8a" title="parlai.utils.testing.train\l_model" alt="" coords="265,399,418,441"/>
+</map>

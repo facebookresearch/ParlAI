@@ -1,0 +1,8 @@
+<map id="parlai.tasks.insuranceqa.build.ParseInsuranceQA.build" name="parlai.tasks.insuranceqa.build.ParseInsuranceQA.build">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#a24c20a520141dbc602a242780281ee6d" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.read_label2answer" alt="" coords="252,37,496,79"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#ade9a2ccdc949872bb85c31c9440d5e82" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.read_vocab" alt="" coords="273,103,475,144"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#abd3ae5efba9775554d68e911fd36c840" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.write_data_files" alt="" coords="261,168,487,209"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#af8b1135c593e04b80b602d717a3b30d3" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.readlines" alt="" coords="544,5,743,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#afb5e7fdf077dea815bdd256c5a750069" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.wids2sent" alt="" coords="544,71,743,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1insuranceqa_1_1build_1_1ParseInsuranceQA.html#a3f2322d59e42f329387912bd3d03c888" title="parlai.tasks.insuranceqa.build.\lParseInsuranceQA.read_gz" alt="" coords="791,5,989,47"/>
+</map>

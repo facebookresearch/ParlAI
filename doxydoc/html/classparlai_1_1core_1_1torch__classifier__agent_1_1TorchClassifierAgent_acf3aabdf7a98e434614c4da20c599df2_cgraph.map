@@ -1,4 +1,4 @@
 <map id="parlai.core.torch_classifier_agent.TorchClassifierAgent.report" name="parlai.core.torch_classifier_agent.TorchClassifierAgent.report">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,229,54"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a821e7c1faaf4c4ab8ad0b994cae658e7" title=" " alt="" coords="277,5,468,61"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a821e7c1faaf4c4ab8ad0b994cae658e7" title="parlai.core.torch_classifier\l_agent.TorchClassifierAgent.\l_report_prec_recall_metrics" alt="" coords="277,5,468,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#af377ec61bfc0423461e7b409ffc883b9" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.round_sigfigs" alt="" coords="298,85,447,141"/>
 </map>

@@ -1,6 +1,4 @@
 <map id="mastering_the_dungeon.agents.graph_world2.agents.Seq2SeqDataAgent" name="mastering_the_dungeon.agents.graph_world2.agents.Seq2SeqDataAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,244,244,285"/>
-<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1DataAgentBase.html" title=" " alt="" coords="5,155,244,196"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="43,80,206,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="96,5,153,32"/>
+<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1DataAgentBase.html" title="mastering_the_dungeon.agents.graph\l_world2.agents.DataAgentBase" alt="" coords="5,155,244,196"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="43,80,206,107"/>
 </map>

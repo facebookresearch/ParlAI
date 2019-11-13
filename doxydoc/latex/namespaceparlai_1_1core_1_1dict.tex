@@ -1,0 +1,140 @@
+\hypertarget{namespaceparlai_1_1core_1_1dict}{}\section{parlai.\+core.\+dict Namespace Reference}
+\label{namespaceparlai_1_1core_1_1dict}\index{parlai.\+core.\+dict@{parlai.\+core.\+dict}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1dict_1_1__BPEHelper}{\+\_\+\+B\+P\+E\+Helper}
+\item 
+class \hyperlink{classparlai_1_1core_1_1dict_1_1DictionaryAgent}{Dictionary\+Agent}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1dict_ae44fe4a2be005a4023a758a58f656495}{escape} (s)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1dict_a4d8952ff127b540967c707a58e8ebb48}{unescape} (s)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1dict_a5e9eb43b6c0dce0b3aab7f3ea3717de6}{find\+\_\+ngrams} (token\+\_\+dict, text, n)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespaceparlai_1_1core_1_1dict_a9adf6ecd08289a0b0faa90fd2a507e91}{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED} = True
+\item 
+\hyperlink{namespaceparlai_1_1core_1_1dict_acc80030514561837c1010293fd1010f4}{R\+E\+T\+OK} = re.\+compile(r\textquotesingle{}\textbackslash{}w+$\vert$\mbox{[}$^\wedge$\textbackslash{}w\textbackslash{}s\mbox{]}$\vert$\textbackslash{}n\textquotesingle{}, re.\+U\+N\+I\+C\+O\+DE)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1dict_ae44fe4a2be005a4023a758a58f656495}\label{namespaceparlai_1_1core_1_1dict_ae44fe4a2be005a4023a758a58f656495}} 
+\index{parlai\+::core\+::dict@{parlai\+::core\+::dict}!escape@{escape}}
+\index{escape@{escape}!parlai\+::core\+::dict@{parlai\+::core\+::dict}}
+\subsubsection{\texorpdfstring{escape()}{escape()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+escape (\begin{DoxyParamCaption}\item[{}]{s }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Replace potential special characters with escaped version.
+
+For example, \n => \\n and \t => \\t
+
+:param s:
+    string to escape
+\end{DoxyVerb}
+ 
+
+Definition at line 31 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+save().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1dict_ae44fe4a2be005a4023a758a58f656495_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1dict_a5e9eb43b6c0dce0b3aab7f3ea3717de6}\label{namespaceparlai_1_1core_1_1dict_a5e9eb43b6c0dce0b3aab7f3ea3717de6}} 
+\index{parlai\+::core\+::dict@{parlai\+::core\+::dict}!find\+\_\+ngrams@{find\+\_\+ngrams}}
+\index{find\+\_\+ngrams@{find\+\_\+ngrams}!parlai\+::core\+::dict@{parlai\+::core\+::dict}}
+\subsubsection{\texorpdfstring{find\+\_\+ngrams()}{find\_ngrams()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+find\+\_\+ngrams (\begin{DoxyParamCaption}\item[{}]{token\+\_\+dict,  }\item[{}]{text,  }\item[{}]{n }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Break text into ngrams that appear in ``token_dict``.
+
+:param token_dict:
+    ``dict`` to check for ngrams
+:param text:
+    ``str`` to look for ngrams in
+:param n:
+    ``int`` max size of ngrams
+\end{DoxyVerb}
+ 
+
+Definition at line 55 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+tokenize().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1dict_a5e9eb43b6c0dce0b3aab7f3ea3717de6_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1dict_a4d8952ff127b540967c707a58e8ebb48}\label{namespaceparlai_1_1core_1_1dict_a4d8952ff127b540967c707a58e8ebb48}} 
+\index{parlai\+::core\+::dict@{parlai\+::core\+::dict}!unescape@{unescape}}
+\index{unescape@{unescape}!parlai\+::core\+::dict@{parlai\+::core\+::dict}}
+\subsubsection{\texorpdfstring{unescape()}{unescape()}}
+{\footnotesize\ttfamily def parlai.\+core.\+dict.\+unescape (\begin{DoxyParamCaption}\item[{}]{s }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Revert escaped characters back to their special version.
+
+For example, \\n => \n and \\t => \t
+
+:param s:
+    string to unescape
+\end{DoxyVerb}
+ 
+
+Definition at line 43 of file dict.\+py.
+
+
+
+Referenced by parlai.\+core.\+dict.\+Dictionary\+Agent.\+load().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1dict_a4d8952ff127b540967c707a58e8ebb48_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1dict_a9adf6ecd08289a0b0faa90fd2a507e91}\label{namespaceparlai_1_1core_1_1dict_a9adf6ecd08289a0b0faa90fd2a507e91}} 
+\index{parlai\+::core\+::dict@{parlai\+::core\+::dict}!B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED@{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}}
+\index{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED@{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}!parlai\+::core\+::dict@{parlai\+::core\+::dict}}
+\subsubsection{\texorpdfstring{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}{BPE\_INSTALLED}}
+{\footnotesize\ttfamily bool parlai.\+core.\+dict.\+B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED = True}
+
+
+
+Definition at line 24 of file dict.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1dict_acc80030514561837c1010293fd1010f4}\label{namespaceparlai_1_1core_1_1dict_acc80030514561837c1010293fd1010f4}} 
+\index{parlai\+::core\+::dict@{parlai\+::core\+::dict}!R\+E\+T\+OK@{R\+E\+T\+OK}}
+\index{R\+E\+T\+OK@{R\+E\+T\+OK}!parlai\+::core\+::dict@{parlai\+::core\+::dict}}
+\subsubsection{\texorpdfstring{R\+E\+T\+OK}{RETOK}}
+{\footnotesize\ttfamily parlai.\+core.\+dict.\+R\+E\+T\+OK = re.\+compile(r\textquotesingle{}\textbackslash{}w+$\vert$\mbox{[}$^\wedge$\textbackslash{}w\textbackslash{}s\mbox{]}$\vert$\textbackslash{}n\textquotesingle{}, re.\+U\+N\+I\+C\+O\+DE)}
+
+
+
+Definition at line 28 of file dict.\+py.
+

@@ -1,0 +1,6 @@
+<map id="parlai.tasks.light_dialog.builder.get_no_affordance_actions" name="parlai.tasks.light_dialog.builder.get_no_affordance_actions">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a537e075c89058b67eb0db786f98491de" title="parlai.tasks.light\l_dialog.builder.gen\l_no_affordance_actions\l_for_dialogue" alt="" coords="213,5,373,76"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a25aca9f28e4406290624e1d0c5cce0d6" title="parlai.tasks.light\l_dialog.builder.write\l_out_candidates" alt="" coords="421,13,559,69"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a6a049254e487c29d008f875476ffd76f" title="parlai.tasks.light\l_dialog.builder.build\l_from_db" alt="" coords="607,13,743,69"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1build.html#ac8ebc5da2dd660257535226b26afb26e" title="parlai.tasks.light\l_dialog.build.build" alt="" coords="791,20,916,61"/>
+</map>

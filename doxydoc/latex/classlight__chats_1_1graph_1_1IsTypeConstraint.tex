@@ -1,0 +1,115 @@
+\hypertarget{classlight__chats_1_1graph_1_1IsTypeConstraint}{}\section{light\+\_\+chats.\+graph.\+Is\+Type\+Constraint Class Reference}
+\label{classlight__chats_1_1graph_1_1IsTypeConstraint}\index{light\+\_\+chats.\+graph.\+Is\+Type\+Constraint@{light\+\_\+chats.\+graph.\+Is\+Type\+Constraint}}
+
+
+Inheritance diagram for light\+\_\+chats.\+graph.\+Is\+Type\+Constraint\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=245pt]{classlight__chats_1_1graph_1_1IsTypeConstraint__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for light\+\_\+chats.\+graph.\+Is\+Type\+Constraint\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{classlight__chats_1_1graph_1_1IsTypeConstraint__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1IsTypeConstraint_a0d16b081fd2f7d73ed7e0414cd518f1e}{get\+\_\+failure\+\_\+action} (self, graph, args, spec\+\_\+fail=\textquotesingle{}failed\textquotesingle{})
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1IsTypeConstraint_a1443cca8a343b530929093446b1b914f}{get\+\_\+action\+\_\+observation\+\_\+format} (self, action, descs)
+\item 
+def \hyperlink{classlight__chats_1_1graph_1_1IsTypeConstraint_aad886d877405c19204a37f2f7cf34db9}{evaluate\+\_\+constraint} (self, graph, args)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classlight__chats_1_1graph_1_1IsTypeConstraint_a16c20673b33e67aea11487a9bb8b3b24}{name} = \textquotesingle{}is\+\_\+type\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Determining if an object has inherited a particular type\end{DoxyVerb}
+ 
+
+Definition at line 2325 of file graph.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1IsTypeConstraint_aad886d877405c19204a37f2f7cf34db9}\label{classlight__chats_1_1graph_1_1IsTypeConstraint_aad886d877405c19204a37f2f7cf34db9}} 
+\index{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}!evaluate\+\_\+constraint@{evaluate\+\_\+constraint}}
+\index{evaluate\+\_\+constraint@{evaluate\+\_\+constraint}!light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}}
+\subsubsection{\texorpdfstring{evaluate\+\_\+constraint()}{evaluate\_constraint()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+evaluate\+\_\+constraint (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return true or false for whether the object has any wanted class
+
+args are:
+    0 => actor_id
+    1 => found_id
+    2 => expected_class/es
+    3 => alternate failure text
+\end{DoxyVerb}
+ 
+
+Definition at line 2349 of file graph.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1IsTypeConstraint_a1443cca8a343b530929093446b1b914f}\label{classlight__chats_1_1graph_1_1IsTypeConstraint_a1443cca8a343b530929093446b1b914f}} 
+\index{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}!get\+\_\+action\+\_\+observation\+\_\+format@{get\+\_\+action\+\_\+observation\+\_\+format}}
+\index{get\+\_\+action\+\_\+observation\+\_\+format@{get\+\_\+action\+\_\+observation\+\_\+format}!light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}}
+\subsubsection{\texorpdfstring{get\+\_\+action\+\_\+observation\+\_\+format()}{get\_action\_observation\_format()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+get\+\_\+action\+\_\+observation\+\_\+format (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{action,  }\item[{}]{descs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2341 of file graph.\+py.
+
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1IsTypeConstraint_a0d16b081fd2f7d73ed7e0414cd518f1e}\label{classlight__chats_1_1graph_1_1IsTypeConstraint_a0d16b081fd2f7d73ed7e0414cd518f1e}} 
+\index{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}!get\+\_\+failure\+\_\+action@{get\+\_\+failure\+\_\+action}}
+\index{get\+\_\+failure\+\_\+action@{get\+\_\+failure\+\_\+action}!light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}}
+\subsubsection{\texorpdfstring{get\+\_\+failure\+\_\+action()}{get\_failure\_action()}}
+{\footnotesize\ttfamily def light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+get\+\_\+failure\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{graph,  }\item[{}]{args,  }\item[{}]{spec\+\_\+fail = {\ttfamily \textquotesingle{}failed\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 2330 of file graph.\+py.
+
+
+
+References light\+\_\+chats.\+graph.\+Graph\+Function.\+name, light\+\_\+chats.\+graph.\+Fits\+Constraint.\+name, and light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+name.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classlight__chats_1_1graph_1_1IsTypeConstraint_a16c20673b33e67aea11487a9bb8b3b24}\label{classlight__chats_1_1graph_1_1IsTypeConstraint_a16c20673b33e67aea11487a9bb8b3b24}} 
+\index{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}!name@{name}}
+\index{name@{name}!light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint@{light\+\_\+chats\+::graph\+::\+Is\+Type\+Constraint}}
+\subsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily string light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+name = \textquotesingle{}is\+\_\+type\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 2328 of file graph.\+py.
+
+
+
+Referenced by light\+\_\+chats.\+graph.\+Is\+Type\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+Not\+Type\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+Has\+Prop\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+No\+Prop\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+Lockable\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+Locked\+Constraint.\+get\+\_\+failure\+\_\+action(), light\+\_\+chats.\+graph.\+Locked\+With\+Constraint.\+get\+\_\+failure\+\_\+action(), and light\+\_\+chats.\+graph.\+Not\+Location\+Of\+Constraint.\+get\+\_\+failure\+\_\+action().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/light/light\+\_\+chats/\hyperlink{parlai_2mturk_2tasks_2light_2light__chats_2graph_8py}{graph.\+py}\end{DoxyCompactItemize}

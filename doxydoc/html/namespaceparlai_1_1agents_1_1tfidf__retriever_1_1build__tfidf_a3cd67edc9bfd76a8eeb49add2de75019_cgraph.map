@@ -1,0 +1,4 @@
+<map id="parlai.agents.tfidf_retriever.build_tfidf.get_tfidf_matrix_t" name="parlai.agents.tfidf_retriever.build_tfidf.get_tfidf_matrix_t">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a284d006ecb031c337c64d7debe1407d3" title="parlai.agents.tfidf\l_retriever.build_tfidf.get\l_doc_freqs_t" alt="" coords="241,5,400,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1agents_1_1tfidf__retriever_1_1build__tfidf.html#a89650718966a5b0d1114e8b06b8c0dcc" title="parlai.agents.tfidf\l_retriever.build_tfidf.sparse_log1p" alt="" coords="212,86,429,127"/>
+</map>

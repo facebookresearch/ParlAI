@@ -1,13 +1,6 @@
 <map id="parlai.core.torch_agent.TorchAgent.state_dict" name="parlai.core.torch_agent.TorchAgent.state_dict">
-<area shape="rect" id="node1" title=" " alt="" coords="656,323,815,365"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a3784f1ddaa6ffad009716910f3f36dd4" title=" " alt="" coords="395,163,553,205"/>
-<area shape="rect" id="node7" href="$classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent.html#a0dc84b46e7df927db8235f2f2a48f5b0" title=" " alt="" coords="363,229,585,299"/>
-<area shape="rect" id="node9" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a50e6f81560e522b6178f913bb3f1258a" title=" " alt="" coords="376,323,572,365"/>
-<area shape="rect" id="node10" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#abc818803e27d99525704db33cd4dd928" title=" " alt="" coords="340,389,608,430"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#adac7ee3db855786e8414e9f35fcb6e46" title=" " alt="" coords="395,454,553,495"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,5,244,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,85,238,141"/>
-<area shape="rect" id="node5" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="6,166,291,207"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="52,232,245,288"/>
-<area shape="rect" id="node8" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#ae30fd68376b12a3264e95c8e607df102" title="Initialization and argument parsers." alt="" coords="5,313,292,369"/>
+<area shape="rect" id="node2" href="$classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent.html#a0dc84b46e7df927db8235f2f2a48f5b0" title="wizard_transformer\l_ranker.wizard_transformer\l_ranker.WizardTransformerRanker\lAgent.load" alt="" coords="235,5,457,76"/>
+<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a50e6f81560e522b6178f913bb3f1258a" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.load" alt="" coords="248,100,444,141"/>
+<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#abc818803e27d99525704db33cd4dd928" title="controllable_seq2seq.controllable\l_seq2seq.ControllableSeq2seqAgent.save" alt="" coords="212,165,480,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#adac7ee3db855786e8414e9f35fcb6e46" title="parlai.core.torch_agent.\lTorchAgent.save" alt="" coords="267,231,425,272"/>
 </map>

@@ -1,0 +1,4 @@
+<map id="parlai.mturk.tasks.dealnodeal.worlds.MTurkDealNoDealDialogWorld.parley" name="parlai.mturk.tasks.dealnodeal.worlds.MTurkDealNoDealDialogWorld.parley">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1dealnodeal_1_1agents.html#a7a1e5d8435af234bbf07491e866bb1fd" title="parlai.tasks.dealnodeal.agents.get_tag" alt="" coords="293,5,539,32"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="329,56,503,83"/>
+</map>

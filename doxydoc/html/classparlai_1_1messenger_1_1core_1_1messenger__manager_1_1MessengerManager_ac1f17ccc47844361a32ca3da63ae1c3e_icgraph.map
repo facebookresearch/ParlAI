@@ -1,4 +1,3 @@
 <map id="parlai.messenger.core.messenger_manager.MessengerManager.check_timeout_in_pool" name="parlai.messenger.core.messenger_manager.MessengerManager.check_timeout_in_pool">
-<area shape="rect" id="node1" title=" " alt="" coords="312,5,548,61"/>
-<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a8bf1afcc5ef1546f32a7ad0d390d0fe1" title=" " alt="" coords="5,13,264,54"/>
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#a8bf1afcc5ef1546f32a7ad0d390d0fe1" title="parlai.messenger.core.messenger\l_manager.MessengerManager.start_task" alt="" coords="289,13,548,54"/>
 </map>

@@ -1,5 +1,8 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.sort" name="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.sort">
-<area shape="rect" id="node1" title=" " alt="" coords="5,49,172,105"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#accabae63114f30e336e560ee1b7420da" title=" " alt="" coords="220,5,431,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#ab5351c542cbfdeeb9a2bc24227253fb3" title=" " alt="" coords="236,86,415,157"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#accabae63114f30e336e560ee1b7420da" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.remove_tail" alt="" coords="220,49,431,105"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#ab5351c542cbfdeeb9a2bc24227253fb3" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.resize\l_to_max" alt="" coords="236,130,415,201"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#abd9065c5c2862e81e3a1edb221ec7491" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.add_token" alt="" coords="479,5,683,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a7ccda0fb5cabe49fc68551da6fe03bff" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.bpe\l_tokenize" alt="" coords="498,86,663,157"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#aa551af633278b71b0a8da65180b79202" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.tokenize" alt="" coords="731,93,924,149"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0.html#aa7398720bbf0f8e82c5b1495313f4f8b" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.find_ngrams" alt="" coords="972,93,1119,149"/>
 </map>

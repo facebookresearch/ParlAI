@@ -1,0 +1,296 @@
+\hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld}{}\section{parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World Class Reference}
+\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld}\index{parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World@{parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World}}
+
+
+Inheritance diagram for parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a28918c916f0ee900c655359388411f84}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ad1145d0be0d157d7cbfee7664cf1dd48}{agents}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a9040f1a4e0d541a36970ca7c73f5591b}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6308290f51351f01a0457b586d552a1c}{epoch\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a13673a4d9cb9a57fbc219336bea1f510}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aed2ab6313608418defd2b167c1893e96}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a2326b854872d6df841070d9d8076a9ff}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a568271c275fbe3f911c1e437a04655cf}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ae3b38df8869d22000b5bb570de883c1f}{report} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aef6a413e96d7276e3d39acad0f543a95}{dict}
+\item 
+\hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a22875b8c503fb611cb253c69f88a2a31}{metrics}
+\item 
+\hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ad1145d0be0d157d7cbfee7664cf1dd48}{agents}
+\item 
+\hyperlink{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6dc6a22aeefb747f50fd2f861667b1f3}{acts}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Instead of just calling act/observe on each agent, this world just calls
+act on the teacher and then calls `next_word_probability` on the agent.
+
+The label for each example is parsed by the provided tokenizer, and then
+for each word in the parsed label the model is given the input and all of
+the tokens up to the current word and asked to predict the current word.
+
+The model must return a probability of any words it thinks are likely in
+the form of a dict mapping words to scores. If the scores do not sum to 1,
+they are normalized to do so. If the correct word is not present or has a
+probablity of zero, it will be assigned a probability of 1e-8.
+
+The API of the next_word_probability function which agents must implement
+is mentioned in the documentation for this file.
+\end{DoxyVerb}
+ 
+
+Definition at line 54 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a28918c916f0ee900c655359388411f84}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a28918c916f0ee900c655359388411f84}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{agents,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 71 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6308290f51351f01a0457b586d552a1c}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6308290f51351f01a0457b586d552a1c}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!epoch\+\_\+done@{epoch\+\_\+done}}
+\index{epoch\+\_\+done@{epoch\+\_\+done}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{epoch\+\_\+done()}{epoch\_done()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+epoch\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 143 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+task, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+task, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+task, parlai.\+tasks.\+moviedialog.\+agents.\+Task\+Teacher.\+task, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+task, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+task.
+
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aed2ab6313608418defd2b167c1893e96}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aed2ab6313608418defd2b167c1893e96}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 149 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+task, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+task, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+task, parlai.\+tasks.\+moviedialog.\+agents.\+Task\+Teacher.\+task, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+task, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+task.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aed2ab6313608418defd2b167c1893e96_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a13673a4d9cb9a57fbc219336bea1f510}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a13673a4d9cb9a57fbc219336bea1f510}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 146 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+task, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+task, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+task, parlai.\+tasks.\+moviedialog.\+agents.\+Task\+Teacher.\+task, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+task, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+task.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), and parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a13673a4d9cb9a57fbc219336bea1f510_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a9040f1a4e0d541a36970ca7c73f5591b}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a9040f1a4e0d541a36970ca7c73f5591b}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 106 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+\_\+lock(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+\_\+lock(), parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+acts, parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+acts, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+acts, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+acts, light\+\_\+chats.\+worlds.\+Light\+Chat\+Task\+World.\+acts, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+acts, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+acts, parlai.\+core.\+worlds.\+Batch\+World.\+acts, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+agent, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+agent, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+agent, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+agent, convai.\+convai\+\_\+world.\+Conv\+A\+I\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+agent, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+agent, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+agent, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+agent, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+agent, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+agent, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+agent, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+agent, parlai.\+utils.\+misc.\+Predictor.\+agent, parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+agent, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, make\+\_\+control\+\_\+dataset.\+float, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+task, parlai.\+mturk.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+World.\+task, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+task, parlai.\+tasks.\+moviedialog.\+agents.\+Task\+Teacher.\+task, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+task, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+task, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a9040f1a4e0d541a36970ca7c73f5591b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ae3b38df8869d22000b5bb570de883c1f}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ae3b38df8869d22000b5bb570de883c1f}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!report@{report}}
+\index{report@{report}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 164 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+\_\+lock(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+\_\+lock(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ae3b38df8869d22000b5bb570de883c1f_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a568271c275fbe3f911c1e437a04655cf}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a568271c275fbe3f911c1e437a04655cf}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 157 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+\_\+lock(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+\_\+lock(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a568271c275fbe3f911c1e437a04655cf_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a2326b854872d6df841070d9d8076a9ff}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a2326b854872d6df841070d9d8076a9ff}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!share@{share}}
+\index{share@{share}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 152 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6dc6a22aeefb747f50fd2f861667b1f3}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a6dc6a22aeefb747f50fd2f861667b1f3}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!acts@{acts}}
+\index{acts@{acts}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{acts}{acts}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+acts}
+
+
+
+Definition at line 96 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+World.\+display(), parlai.\+core.\+worlds.\+World.\+get\+\_\+acts(), and parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley().
+
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ad1145d0be0d157d7cbfee7664cf1dd48}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_ad1145d0be0d157d7cbfee7664cf1dd48}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!agents@{agents}}
+\index{agents@{agents}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{agents}{agents}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+agents}
+
+
+
+Definition at line 95 of file eval\+\_\+ppl.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aef6a413e96d7276e3d39acad0f543a95}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_aef6a413e96d7276e3d39acad0f543a95}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!dict@{dict}}
+\index{dict@{dict}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict}
+
+
+
+Definition at line 75 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse\+\_\+cands(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a22875b8c503fb611cb253c69f88a2a31}\label{classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld_a22875b8c503fb611cb253c69f88a2a31}} 
+\index{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}!metrics@{metrics}}
+\index{metrics@{metrics}!parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World@{parlai\+::scripts\+::eval\+\_\+ppl\+::\+Perplexity\+World}}
+\subsubsection{\texorpdfstring{metrics}{metrics}}
+{\footnotesize\ttfamily parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+metrics}
+
+
+
+Definition at line 78 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+parley(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+report(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+report(), transresnet.\+transresnet.\+Transresnet\+Agent.\+report(), kvmemnn.\+Kvmemnn\+Agent.\+report2(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+reset\+\_\+metrics(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+reset\+\_\+metrics(), transresnet.\+transresnet.\+Transresnet\+Agent.\+reset\+\_\+metrics(), parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+share(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+update\+\_\+metrics(), and transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/scripts/\hyperlink{parlai_2scripts_2eval__ppl_8py}{eval\+\_\+ppl.\+py}\end{DoxyCompactItemize}

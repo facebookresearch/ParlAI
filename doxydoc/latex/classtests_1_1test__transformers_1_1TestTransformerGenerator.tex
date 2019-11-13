@@ -1,0 +1,166 @@
+\hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator}{}\section{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator Class Reference}
+\label{classtests_1_1test__transformers_1_1TestTransformerGenerator}\index{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator@{tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator}}
+
+
+Inheritance diagram for tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classtests_1_1test__transformers_1_1TestTransformerGenerator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classtests_1_1test__transformers_1_1TestTransformerGenerator__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a46ea25442100b52add258989e9aa9860}{test\+\_\+greedysearch} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_af16ba00a7a4c07df6bed84c8aad2635c}{test\+\_\+beamsearch} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_ab1e05d5384de2fcd880f515108de9b4a}{test\+\_\+nucleus} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a571dff6d213773d3590419d84f0b088f}{test\+\_\+topk} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a5eb4d78c39c3b525e3254789c2101072}{test\+\_\+generator\+\_\+backcomp} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a6a21a74b697b8918bc38625e443e24d1}{test\+\_\+badinput} (self)
+\item 
+def \hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a42e386425e0e497ccb97a73409192990}{test\+\_\+xlm} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtests_1_1test__transformers_1_1TestTransformerGenerator_a1555f81fb11a5497f644e99607c3d17d}{ntries}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Checks that the generative transformer can learn basic tasks.\end{DoxyVerb}
+ 
+
+Definition at line 245 of file test\+\_\+transformers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a6a21a74b697b8918bc38625e443e24d1}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a6a21a74b697b8918bc38625e443e24d1}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+badinput@{test\+\_\+badinput}}
+\index{test\+\_\+badinput@{test\+\_\+badinput}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+badinput()}{test\_badinput()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+badinput (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ensures model doesn't crash on malformed inputs.\end{DoxyVerb}
+ 
+
+Definition at line 408 of file test\+\_\+transformers.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_af16ba00a7a4c07df6bed84c8aad2635c}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_af16ba00a7a4c07df6bed84c8aad2635c}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+beamsearch@{test\+\_\+beamsearch}}
+\index{test\+\_\+beamsearch@{test\+\_\+beamsearch}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+beamsearch()}{test\_beamsearch()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+beamsearch (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test beamsearch.\end{DoxyVerb}
+ 
+
+Definition at line 284 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a5eb4d78c39c3b525e3254789c2101072}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a5eb4d78c39c3b525e3254789c2101072}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+generator\+\_\+backcomp@{test\+\_\+generator\+\_\+backcomp}}
+\index{test\+\_\+generator\+\_\+backcomp@{test\+\_\+generator\+\_\+backcomp}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+generator\+\_\+backcomp()}{test\_generator\_backcomp()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+generator\+\_\+backcomp (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Tests that the generator model files work over time.\end{DoxyVerb}
+ 
+
+Definition at line 360 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a46ea25442100b52add258989e9aa9860}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a46ea25442100b52add258989e9aa9860}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+greedysearch@{test\+\_\+greedysearch}}
+\index{test\+\_\+greedysearch@{test\+\_\+greedysearch}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+greedysearch()}{test\_greedysearch()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+greedysearch (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test greedy search.\end{DoxyVerb}
+ 
+
+Definition at line 249 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_ab1e05d5384de2fcd880f515108de9b4a}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_ab1e05d5384de2fcd880f515108de9b4a}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+nucleus@{test\+\_\+nucleus}}
+\index{test\+\_\+nucleus@{test\+\_\+nucleus}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+nucleus()}{test\_nucleus()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+nucleus (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test nucleus generation.\end{DoxyVerb}
+ 
+
+Definition at line 318 of file test\+\_\+transformers.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a571dff6d213773d3590419d84f0b088f}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a571dff6d213773d3590419d84f0b088f}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+topk@{test\+\_\+topk}}
+\index{test\+\_\+topk@{test\+\_\+topk}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+topk()}{test\_topk()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+topk (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test topk generation.\end{DoxyVerb}
+ 
+
+Definition at line 339 of file test\+\_\+transformers.\+py.
+
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a42e386425e0e497ccb97a73409192990}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a42e386425e0e497ccb97a73409192990}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!test\+\_\+xlm@{test\+\_\+xlm}}
+\index{test\+\_\+xlm@{test\+\_\+xlm}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{test\+\_\+xlm()}{test\_xlm()}}
+{\footnotesize\ttfamily def tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+test\+\_\+xlm (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Test --variant xlm.\end{DoxyVerb}
+ 
+
+Definition at line 427 of file test\+\_\+transformers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtests_1_1test__transformers_1_1TestTransformerGenerator_a1555f81fb11a5497f644e99607c3d17d}\label{classtests_1_1test__transformers_1_1TestTransformerGenerator_a1555f81fb11a5497f644e99607c3d17d}} 
+\index{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}!ntries@{ntries}}
+\index{ntries@{ntries}!tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator@{tests\+::test\+\_\+transformers\+::\+Test\+Transformer\+Generator}}
+\subsubsection{\texorpdfstring{ntries}{ntries}}
+{\footnotesize\ttfamily tests.\+test\+\_\+transformers.\+Test\+Transformer\+Generator.\+ntries\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 248 of file test\+\_\+transformers.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+tests/\hyperlink{test__transformers_8py}{test\+\_\+transformers.\+py}\end{DoxyCompactItemize}

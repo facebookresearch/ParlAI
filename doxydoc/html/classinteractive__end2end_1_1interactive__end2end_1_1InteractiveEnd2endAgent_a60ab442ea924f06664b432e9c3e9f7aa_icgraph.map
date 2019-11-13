@@ -1,8 +1,7 @@
 <map id="interactive_end2end.interactive_end2end.InteractiveEnd2endAgent.retriever_act" name="interactive_end2end.interactive_end2end.InteractiveEnd2endAgent.retriever_act">
-<area shape="rect" id="node1" title=" " alt="" coords="879,35,1183,76"/>
-<area shape="rect" id="node2" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html#a582ae9a8c09b4e0287c79748054eb956" title=" " alt="" coords="552,5,831,47"/>
-<area shape="rect" id="node4" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ac8b7ac5b6dbc150f066995b25368d9bd" title=" " alt="" coords="591,132,791,173"/>
-<area shape="rect" id="node3" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html#a20a0561cd5fc7008644d4cc18adc8f42" title=" " alt="" coords="253,5,504,47"/>
-<area shape="rect" id="node5" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ad350c65cd9fc9393902f61cd77f1cc52" title=" " alt="" coords="279,71,479,112"/>
-<area shape="rect" id="node6" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#a07ae26123c56441549800bd116a86626" title=" " alt="" coords="5,141,205,183"/>
+<area shape="rect" id="node2" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html#a582ae9a8c09b4e0287c79748054eb956" title="interactive_end2end.interactive\l_end2end.InteractiveEnd2endAgent.observe" alt="" coords="357,5,636,47"/>
+<area shape="rect" id="node4" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ac8b7ac5b6dbc150f066995b25368d9bd" title="interactive_retrieval.Interactive\lRetrievalAgent.observe" alt="" coords="397,123,597,164"/>
+<area shape="rect" id="node3" href="$classinteractive__end2end_1_1interactive__end2end_1_1InteractiveEnd2endAgent.html#a20a0561cd5fc7008644d4cc18adc8f42" title="interactive_end2end.interactive\l_end2end.InteractiveEnd2endAgent.act" alt="" coords="684,28,935,69"/>
+<area shape="rect" id="node5" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#a07ae26123c56441549800bd116a86626" title="interactive_retrieval.Interactive\lRetrievalAgent.retriever_act" alt="" coords="983,123,1183,164"/>
+<area shape="rect" id="node6" href="$classinteractive__retrieval_1_1InteractiveRetrievalAgent.html#ad350c65cd9fc9393902f61cd77f1cc52" title="interactive_retrieval.Interactive\lRetrievalAgent.act" alt="" coords="709,193,909,235"/>
 </map>

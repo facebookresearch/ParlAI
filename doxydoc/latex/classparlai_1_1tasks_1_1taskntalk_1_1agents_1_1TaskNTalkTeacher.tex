@@ -1,0 +1,200 @@
+\hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher}{}\section{parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher}\index{parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher@{parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=225pt]{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aa81863451740657e6bc1a7ba619f178d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aab9351c1b025ee7376cc29e275d38edf}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a620b08d2d0ac05d0941ed79b4c8a708d}{\+\_\+\+\_\+len\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a7c57cabccc60e4d52f2d73667006a3b3}{observe} (self, \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a6a60fc70d05b417e7b3ead11d032d976}{observation})
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a56446edc110472e01536e12f5c6eac3c}{act} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a67ca089abef04a7399904ebe79a1a7e6}{id}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_ac5d7a2f765aaef625b2ec990298f3886}{data}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a1d30c88b02b11387a200b435b568f42a}{task\+\_\+defn}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_acbb45bff370bad783084168e46522bf5}{task\+\_\+index}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a6a60fc70d05b417e7b3ead11d032d976}{observation}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}TaskNTalk basic teacher, it picks a random image and associates
+a random task with it. Metric updates and observation are to be
+implemented.
+\end{DoxyVerb}
+ 
+
+Definition at line 34 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aa81863451740657e6bc1a7ba619f178d}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aa81863451740657e6bc1a7ba619f178d}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 40 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a620b08d2d0ac05d0941ed79b4c8a708d}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a620b08d2d0ac05d0941ed79b4c8a708d}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+len\+\_\+\+\_\+()}{\_\_len\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 69 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a56446edc110472e01536e12f5c6eac3c}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a56446edc110472e01536e12f5c6eac3c}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!act@{act}}
+\index{act@{act}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Select random image and associate random task with it.\end{DoxyVerb}
+ 
+
+Definition at line 78 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+defn, and parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+index.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a7c57cabccc60e4d52f2d73667006a3b3}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a7c57cabccc60e4d52f2d73667006a3b3}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!observe@{observe}}
+\index{observe@{observe}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Process observation for metrics.\end{DoxyVerb}
+ 
+
+Definition at line 72 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aab9351c1b025ee7376cc29e275d38edf}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_aab9351c1b025ee7376cc29e275d38edf}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share images and task definitions with other teachers.\end{DoxyVerb}
+ 
+
+Definition at line 61 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+defn, and parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+index.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_ac5d7a2f765aaef625b2ec990298f3886}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_ac5d7a2f765aaef625b2ec990298f3886}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!data@{data}}
+\index{data@{data}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+data}
+
+
+
+Definition at line 46 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+share(), and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a67ca089abef04a7399904ebe79a1a7e6}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a67ca089abef04a7399904ebe79a1a7e6}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+id}
+
+
+
+Definition at line 42 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a6a60fc70d05b417e7b3ead11d032d976}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a6a60fc70d05b417e7b3ead11d032d976}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!observation@{observation}}
+\index{observation@{observation}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{observation}{observation}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+observation}
+
+
+
+Definition at line 74 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a1d30c88b02b11387a200b435b568f42a}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_a1d30c88b02b11387a200b435b568f42a}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!task\+\_\+defn@{task\+\_\+defn}}
+\index{task\+\_\+defn@{task\+\_\+defn}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{task\+\_\+defn}{task\_defn}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+defn}
+
+
+
+Definition at line 47 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), and parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_acbb45bff370bad783084168e46522bf5}\label{classparlai_1_1tasks_1_1taskntalk_1_1agents_1_1TaskNTalkTeacher_acbb45bff370bad783084168e46522bf5}} 
+\index{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}!task\+\_\+index@{task\+\_\+index}}
+\index{task\+\_\+index@{task\+\_\+index}!parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher@{parlai\+::tasks\+::taskntalk\+::agents\+::\+Task\+N\+Talk\+Teacher}}
+\subsubsection{\texorpdfstring{task\+\_\+index}{task\_index}}
+{\footnotesize\ttfamily parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+task\+\_\+index}
+
+
+
+Definition at line 48 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), and parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/taskntalk/\hyperlink{parlai_2tasks_2taskntalk_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

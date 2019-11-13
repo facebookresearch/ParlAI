@@ -1,0 +1,4 @@
+<map id="self_feeding.self_feeding_agent.SelfFeedingAgent.batchify" name="self_feeding.self_feeding_agent.SelfFeedingAgent.batchify">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a07964fbca57736f639fe4e9dd9d1459a" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.\l_check_truncate" alt="" coords="288,5,445,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afb729d5d51ad91d4188fd1486a4a087f" title="parlai.core.torch_agent.\lTorchAgent._check_truncate" alt="" coords="272,100,461,141"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="self_feeding.self_feeding_agent.SelfFeedingAgent.feedback_step" name="self_feeding.self_feeding_agent.SelfFeedingAgent.feedback_step">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#ac09793435e7b982a8b658411ca0b4502" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.\l_build_candidates" alt="" coords="327,5,505,61"/>
+<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a4a3059142c34335e709642a333cfd0a2" title="self_feeding.self_feeding\l_agent.SelfFeedingAgent.update\l_fee_metrics" alt="" coords="311,85,521,141"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="326,165,506,192"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="569,158,712,199"/>
+</map>

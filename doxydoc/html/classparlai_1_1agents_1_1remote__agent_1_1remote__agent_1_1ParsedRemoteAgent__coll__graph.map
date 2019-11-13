@@ -1,6 +1,4 @@
 <map id="parlai.agents.remote_agent.remote_agent.ParsedRemoteAgent" name="parlai.agents.remote_agent.remote_agent.ParsedRemoteAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,259,240,315"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent.html" title=" " alt="" coords="9,155,237,211"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="41,80,204,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="94,5,151,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1RemoteAgentAgent.html" title="parlai.agents.remote\l_agent.remote_agent.RemoteAgent\lAgent" alt="" coords="9,155,237,211"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="41,80,204,107"/>
 </map>

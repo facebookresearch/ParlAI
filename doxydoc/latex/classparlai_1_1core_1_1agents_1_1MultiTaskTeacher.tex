@@ -1,0 +1,506 @@
+\hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher}{}\section{parlai.\+core.\+agents.\+Multi\+Task\+Teacher Class Reference}
+\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher}\index{parlai.\+core.\+agents.\+Multi\+Task\+Teacher@{parlai.\+core.\+agents.\+Multi\+Task\+Teacher}}
+
+
+Inheritance diagram for parlai.\+core.\+agents.\+Multi\+Task\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+agents.\+Multi\+Task\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a986db56e2967759e65b3c1bdb975057d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a116b724be9c512d36f1d43cb9be86b78}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a21fa6d0565bd35e54a74806ecca62e34}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac292d1cb86a3769c352e2d3658f324d2}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a42290221cabd0f1ca21cb87a2228af10}{observe} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Agent_aedbecc4b4aa7af7413882a0429e0f1db}{observation})
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a29a2c8f7679aafd2d67b4b0db54d58a3}{act} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a17444e342ab19c23cee28bba08a64df9}{epoch\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac93a499c6438ee1b57d0ad6a702851ae}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae4eeda38c4164498018ee6515050ae43}{reset} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a78eb3c163a158deda3bb6bd9000fcee2}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_abb082dd4c5be92b7ce7683b16d0abd2c}{save} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_adbd1854cad9eb58ba1c7736b44bf5e96}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a259dd3bec3f24669e835d8fbac657c3b}{shutdown} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a5d284137aebeea42719984d60d3d72f6}{tasks}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a116b724be9c512d36f1d43cb9be86b78}{opt}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a875d7474eb3fcb0ff1b302db284ebf7b}{id}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_aff3455bc2af79f632214a4de2bad3d11}{task\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a3a4f918f0ae0014eaae5cd2c6b14bc2e}{new\+\_\+task}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a4bf83cc6d6e942b257ac249745bae007}{random}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a1060c15dbbbe7fedfb89ba94969c5b99}{cum\+\_\+task\+\_\+weights}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae142e91e45c96fabf73d73639db3ab18}{task\+\_\+choices}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac4287538dada130117c19347765ac654}{num\+\_\+exs}
+\item 
+\hyperlink{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ad3cdb9945ee238eff22fcbf5be5dfb16}{num\+\_\+eps}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}MultiTaskTeacher which teaches multiple tasks.
+
+Creates a teacher that is actually a set of teachers each based on a task
+string -- each of these teachers will get called in turn,
+either randomly or in order.  They are all in the same world (they are the
+same agent switching tasks).
+
+The task string format is described for the ``create_task_agents()``
+function above.
+\end{DoxyVerb}
+ 
+
+Definition at line 246 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a986db56e2967759e65b3c1bdb975057d}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a986db56e2967759e65b3c1bdb975057d}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 259 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a29a2c8f7679aafd2d67b4b0db54d58a3}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a29a2c8f7679aafd2d67b4b0db54d58a3}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!act@{act}}
+\index{act@{act}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{act()}{act()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Act on the previous observation.\end{DoxyVerb}
+ 
+
+Definition at line 316 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+cum\+\_\+task\+\_\+weights, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+epoch\+\_\+done(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+new\+\_\+task, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+random, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+random, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+choices, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+idx, and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a29a2c8f7679aafd2d67b4b0db54d58a3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a17444e342ab19c23cee28bba08a64df9}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a17444e342ab19c23cee28bba08a64df9}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!epoch\+\_\+done@{epoch\+\_\+done}}
+\index{epoch\+\_\+done@{epoch\+\_\+done}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{epoch\+\_\+done()}{epoch\_done()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+epoch\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return whether all subtasks are completed.\end{DoxyVerb}
+ 
+
+Definition at line 340 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a17444e342ab19c23cee28bba08a64df9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac292d1cb86a3769c352e2d3658f324d2}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac292d1cb86a3769c352e2d3658f324d2}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of episodes.\end{DoxyVerb}
+ 
+
+Definition at line 301 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac292d1cb86a3769c352e2d3658f324d2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a21fa6d0565bd35e54a74806ecca62e34}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a21fa6d0565bd35e54a74806ecca62e34}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of examples.\end{DoxyVerb}
+ 
+
+Definition at line 290 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), and parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+images().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a21fa6d0565bd35e54a74806ecca62e34_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a42290221cabd0f1ca21cb87a2228af10}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a42290221cabd0f1ca21cb87a2228af10}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!observe@{observe}}
+\index{observe@{observe}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{observe()}{observe()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+observe (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{observation }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Make an observation.\end{DoxyVerb}
+ 
+
+Definition at line 312 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+idx, and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+parley(), and parlai.\+core.\+worlds.\+Executable\+World.\+parley().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a42290221cabd0f1ca21cb87a2228af10_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac93a499c6438ee1b57d0ad6a702851ae}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac93a499c6438ee1b57d0ad6a702851ae}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!report@{report}}
+\index{report@{report}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Report aggregated metrics across all subtasks.\end{DoxyVerb}
+ 
+
+Definition at line 348 of file agents.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+aggregate\+\_\+metrics(), and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac93a499c6438ee1b57d0ad6a702851ae_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae4eeda38c4164498018ee6515050ae43}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae4eeda38c4164498018ee6515050ae43}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!reset@{reset}}
+\index{reset@{reset}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset all subtasks.\end{DoxyVerb}
+ 
+
+Definition at line 352 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae4eeda38c4164498018ee6515050ae43_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a78eb3c163a158deda3bb6bd9000fcee2}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a78eb3c163a158deda3bb6bd9000fcee2}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset metrics for each subtask.\end{DoxyVerb}
+ 
+
+Definition at line 357 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_abb082dd4c5be92b7ce7683b16d0abd2c}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_abb082dd4c5be92b7ce7683b16d0abd2c}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!save@{save}}
+\index{save@{save}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+save (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Save each subtask.\end{DoxyVerb}
+ 
+
+Definition at line 362 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_adbd1854cad9eb58ba1c7736b44bf5e96}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_adbd1854cad9eb58ba1c7736b44bf5e96}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!share@{share}}
+\index{share@{share}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shares this teacher by sharing each subtask.\end{DoxyVerb}
+ 
+
+Definition at line 367 of file agents.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a259dd3bec3f24669e835d8fbac657c3b}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a259dd3bec3f24669e835d8fbac657c3b}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Shutdown each agent.\end{DoxyVerb}
+ 
+
+Definition at line 375 of file agents.\+py.
+
+
+
+References parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+World.\+\_\+\+\_\+exit\+\_\+\+\_\+(), parlai.\+core.\+worlds.\+Hogwild\+World.\+display(), and parlai.\+core.\+worlds.\+Hogwild\+World.\+episode\+\_\+done().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a259dd3bec3f24669e835d8fbac657c3b_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a1060c15dbbbe7fedfb89ba94969c5b99}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a1060c15dbbbe7fedfb89ba94969c5b99}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!cum\+\_\+task\+\_\+weights@{cum\+\_\+task\+\_\+weights}}
+\index{cum\+\_\+task\+\_\+weights@{cum\+\_\+task\+\_\+weights}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{cum\+\_\+task\+\_\+weights}{cum\_task\_weights}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+cum\+\_\+task\+\_\+weights}
+
+
+
+Definition at line 278 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act(), and parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a875d7474eb3fcb0ff1b302db284ebf7b}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a875d7474eb3fcb0ff1b302db284ebf7b}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+id}
+
+
+
+Definition at line 263 of file agents.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+get\+\_\+ack(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+on\+\_\+msg(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+register\+\_\+to\+\_\+socket(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), parlai.\+mturk.\+core.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message(), and parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+socket\+\_\+manager.\+Mock\+Agent.\+send\+\_\+message().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a3a4f918f0ae0014eaae5cd2c6b14bc2e}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a3a4f918f0ae0014eaae5cd2c6b14bc2e}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!new\+\_\+task@{new\+\_\+task}}
+\index{new\+\_\+task@{new\+\_\+task}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{new\+\_\+task}{new\_task}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+new\+\_\+task}
+
+
+
+Definition at line 275 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ad3cdb9945ee238eff22fcbf5be5dfb16}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ad3cdb9945ee238eff22fcbf5be5dfb16}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!num\+\_\+eps@{num\+\_\+eps}}
+\index{num\+\_\+eps@{num\+\_\+eps}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+eps}{num\_eps}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+eps}
+
+
+
+Definition at line 307 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+episodes(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+episodes(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+episodes(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac4287538dada130117c19347765ac654}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ac4287538dada130117c19347765ac654}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!num\+\_\+exs@{num\+\_\+exs}}
+\index{num\+\_\+exs@{num\+\_\+exs}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+exs}{num\_exs}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+exs}
+
+
+
+Definition at line 296 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+get(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+examples(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples(), and parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a116b724be9c512d36f1d43cb9be86b78}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a116b724be9c512d36f1d43cb9be86b78}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!opt@{opt}}
+\index{opt@{opt}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt}
+
+
+
+Definition at line 261 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+check\+\_\+wizard\+\_\+quality(), parlai.\+core.\+worlds.\+World.\+display(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+extract(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+get\+\_\+app\+\_\+token(), light\+\_\+chats.\+run.\+Graph\+Generator.\+get\+\_\+room(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+get\+\_\+worker\+\_\+data\+\_\+package(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+handle\+\_\+bad\+\_\+disconnect(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+load(), parlai.\+tasks.\+convai2.\+worlds.\+Interactive\+World.\+load\+\_\+personas(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+parley(), parlai.\+core.\+params.\+Parlai\+Parser.\+parse\+\_\+and\+\_\+process\+\_\+known\+\_\+args(), parlai.\+core.\+params.\+Parlai\+Parser.\+print\+\_\+args(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+route\+\_\+packet(), parlai.\+core.\+worlds.\+Hogwild\+Process.\+run(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+save(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+save\+\_\+data(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+save\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+save\+\_\+data(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Wizard\+Eval.\+save\+\_\+data(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+save\+\_\+data(), worlds.\+Persona\+Chat\+Eval\+World.\+save\+\_\+data(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+save\+\_\+data(), parlai.\+mturk.\+tasks.\+convai2\+\_\+model\+\_\+eval.\+worlds.\+Convai2\+Eval\+World.\+save\+\_\+data(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+setup\+\_\+server(), parlai.\+core.\+worlds.\+World.\+share(), parlai.\+core.\+worlds.\+Multi\+World.\+share(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+sufficient\+\_\+overlap(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+test\+\_\+disconnect\+\_\+management(), parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+test\+\_\+init(), parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+test\+\_\+worker\+\_\+state\+\_\+agent\+\_\+management(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a4bf83cc6d6e942b257ac249745bae007}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a4bf83cc6d6e942b257ac249745bae007}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!random@{random}}
+\index{random@{random}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{random}{random}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+random}
+
+
+
+Definition at line 276 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+dealnodeal.\+agents.\+Negotiation\+Teacher.\+act(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act(), parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+last\+\_\+reply(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+next\+\_\+batch(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+next\+\_\+episode\+\_\+idx(), parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report(), and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae142e91e45c96fabf73d73639db3ab18}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_ae142e91e45c96fabf73d73639db3ab18}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!task\+\_\+choices@{task\+\_\+choices}}
+\index{task\+\_\+choices@{task\+\_\+choices}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{task\+\_\+choices}{task\_choices}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+choices}
+
+
+
+Definition at line 279 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act(), and parlai.\+core.\+worlds.\+Multi\+World.\+parley\+\_\+init().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_aff3455bc2af79f632214a4de2bad3d11}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_aff3455bc2af79f632214a4de2bad3d11}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!task\+\_\+idx@{task\+\_\+idx}}
+\index{task\+\_\+idx@{task\+\_\+idx}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{task\+\_\+idx}{task\_idx}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+task\+\_\+idx}
+
+
+
+Definition at line 274 of file agents.\+py.
+
+
+
+Referenced by parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+observe(), and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+observe().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a5d284137aebeea42719984d60d3d72f6}\label{classparlai_1_1core_1_1agents_1_1MultiTaskTeacher_a5d284137aebeea42719984d60d3d72f6}} 
+\index{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}!tasks@{tasks}}
+\index{tasks@{tasks}!parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher@{parlai\+::core\+::agents\+::\+Multi\+Task\+Teacher}}
+\subsubsection{\texorpdfstring{tasks}{tasks}}
+{\footnotesize\ttfamily parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+tasks}
+
+
+
+Definition at line 260 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+act(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+batch\+\_\+act(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+epoch\+\_\+done(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+overworld(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+launch\+\_\+task\+\_\+world(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+episodes(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+observe(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+observe(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+report(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+report(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset\+\_\+metrics(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+save(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+share(), parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+shutdown(), and parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+shutdown().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{parlai_2core_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

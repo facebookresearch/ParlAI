@@ -1,0 +1,267 @@
+\hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache}{}\section{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache Class Reference}
+\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache}\index{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache@{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache}}
+
+
+Inheritance diagram for parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=233pt]{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=233pt]{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a272dbfe6529aa39066b4ad8504f40f5d}{create} (cls)
+\item 
+def \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a115f5df4f4fafa087f592e9a0ab48d9c}{destroy} (cls)
+\item 
+def \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ae97120b4fec464f79c7d0d9cd54c101d}{batch\+\_\+cache} (cls, function)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a68076c873c29c3752c391937c2fe6adc}{length\+\_\+to\+\_\+eps}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a85c90f8ae87edc9a122c8cdea6854857}{ep\+\_\+indices}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a892022928bc71b59225d16eefbbfdf60}{batches}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a50725d8fc600b792cd856d1ff4bdaca3}{load\+\_\+complete}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a535808bc8ccedb06dd0a09d9306ed84c}{batches\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a3b85c080ff697ef4454ca452837b5107}{cache\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a668f1a87f3c5c4776bf06c884ef344d5}{fill\+\_\+cache\+\_\+lock}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_aee6ea11fd9febb0d4178127cffd63561}{add\+\_\+to\+\_\+cache\+\_\+cv}
+\item 
+\hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ad35a73a670bf0aab8f9b9bf7caffe207}{cache\+\_\+filled\+\_\+cv}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Object that encapsulates the functionality of the batch sort cache.
+
+Maps episode length to dictionary with following keys:
+
+- ``current_idx``: which episode in the list are we at (if simply indexing
+  into list)
+- ``ep_list``: list of episodes of the length of the key
+- ``bucket_complete``: if there are no more episodes left to consider in the
+  bucket
+\end{DoxyVerb}
+ 
+
+Definition at line 44 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ae97120b4fec464f79c7d0d9cd54c101d}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ae97120b4fec464f79c7d0d9cd54c101d}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!batch\+\_\+cache@{batch\+\_\+cache}}
+\index{batch\+\_\+cache@{batch\+\_\+cache}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{batch\+\_\+cache()}{batch\_cache()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{function }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create the cache of batches.\end{DoxyVerb}
+ 
+
+Definition at line 95 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+add\+\_\+to\+\_\+cache\+\_\+cv, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches\+\_\+lock, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+filled\+\_\+cv, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+lock, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+ep\+\_\+indices, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+ep\+\_\+length(), controllable\+\_\+seq2seq.\+controls.\+flatten(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+length\+\_\+to\+\_\+eps, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+load\+\_\+complete, and parlai.\+mturk.\+scripts.\+auto\+\_\+complete\+\_\+hit.\+wait.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ae97120b4fec464f79c7d0d9cd54c101d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a272dbfe6529aa39066b4ad8504f40f5d}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a272dbfe6529aa39066b4ad8504f40f5d}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!create@{create}}
+\index{create@{create}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+create (\begin{DoxyParamCaption}\item[{}]{cls }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Singleton factory.\end{DoxyVerb}
+ 
+
+Definition at line 58 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+graph.\+Graph.\+parse\+\_\+exec().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a272dbfe6529aa39066b4ad8504f40f5d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a115f5df4f4fafa087f592e9a0ab48d9c}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a115f5df4f4fafa087f592e9a0ab48d9c}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!destroy@{destroy}}
+\index{destroy@{destroy}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{destroy()}{destroy()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy (\begin{DoxyParamCaption}\item[{}]{cls }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Singleton destroyer.\end{DoxyVerb}
+ 
+
+Definition at line 81 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+add\+\_\+to\+\_\+cache\+\_\+cv, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches\+\_\+lock, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+filled\+\_\+cv, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+lock, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+ep\+\_\+indices, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+fill\+\_\+cache\+\_\+lock, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+length\+\_\+to\+\_\+eps, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+load\+\_\+complete.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_aee6ea11fd9febb0d4178127cffd63561}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_aee6ea11fd9febb0d4178127cffd63561}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!add\+\_\+to\+\_\+cache\+\_\+cv@{add\+\_\+to\+\_\+cache\+\_\+cv}}
+\index{add\+\_\+to\+\_\+cache\+\_\+cv@{add\+\_\+to\+\_\+cache\+\_\+cv}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{add\+\_\+to\+\_\+cache\+\_\+cv}{add\_to\_cache\_cv}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+add\+\_\+to\+\_\+cache\+\_\+cv}
+
+
+
+Definition at line 76 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a892022928bc71b59225d16eefbbfdf60}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a892022928bc71b59225d16eefbbfdf60}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!batches@{batches}}
+\index{batches@{batches}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{batches}{batches}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches}
+
+
+
+Definition at line 66 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy(), and parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+next\+\_\+batch().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a535808bc8ccedb06dd0a09d9306ed84c}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a535808bc8ccedb06dd0a09d9306ed84c}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!batches\+\_\+lock@{batches\+\_\+lock}}
+\index{batches\+\_\+lock@{batches\+\_\+lock}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{batches\+\_\+lock}{batches\_lock}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batches\+\_\+lock}
+
+
+
+Definition at line 70 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ad35a73a670bf0aab8f9b9bf7caffe207}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_ad35a73a670bf0aab8f9b9bf7caffe207}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!cache\+\_\+filled\+\_\+cv@{cache\+\_\+filled\+\_\+cv}}
+\index{cache\+\_\+filled\+\_\+cv@{cache\+\_\+filled\+\_\+cv}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{cache\+\_\+filled\+\_\+cv}{cache\_filled\_cv}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+filled\+\_\+cv}
+
+
+
+Definition at line 78 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a3b85c080ff697ef4454ca452837b5107}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a3b85c080ff697ef4454ca452837b5107}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!cache\+\_\+lock@{cache\+\_\+lock}}
+\index{cache\+\_\+lock@{cache\+\_\+lock}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{cache\+\_\+lock}{cache\_lock}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+cache\+\_\+lock}
+
+
+
+Definition at line 72 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a85c90f8ae87edc9a122c8cdea6854857}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a85c90f8ae87edc9a122c8cdea6854857}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!ep\+\_\+indices@{ep\+\_\+indices}}
+\index{ep\+\_\+indices@{ep\+\_\+indices}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{ep\+\_\+indices}{ep\_indices}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+ep\+\_\+indices}
+
+
+
+Definition at line 64 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a668f1a87f3c5c4776bf06c884ef344d5}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a668f1a87f3c5c4776bf06c884ef344d5}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!fill\+\_\+cache\+\_\+lock@{fill\+\_\+cache\+\_\+lock}}
+\index{fill\+\_\+cache\+\_\+lock@{fill\+\_\+cache\+\_\+lock}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{fill\+\_\+cache\+\_\+lock}{fill\_cache\_lock}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+fill\+\_\+cache\+\_\+lock}
+
+
+
+Definition at line 74 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a68076c873c29c3752c391937c2fe6adc}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a68076c873c29c3752c391937c2fe6adc}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!length\+\_\+to\+\_\+eps@{length\+\_\+to\+\_\+eps}}
+\index{length\+\_\+to\+\_\+eps@{length\+\_\+to\+\_\+eps}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{length\+\_\+to\+\_\+eps}{length\_to\_eps}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+length\+\_\+to\+\_\+eps}
+
+
+
+Definition at line 62 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a50725d8fc600b792cd856d1ff4bdaca3}\label{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache_a50725d8fc600b792cd856d1ff4bdaca3}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}!load\+\_\+complete@{load\+\_\+complete}}
+\index{load\+\_\+complete@{load\+\_\+complete}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher\+::\+Batch\+Sort\+Cache}}
+\subsubsection{\texorpdfstring{load\+\_\+complete}{load\_complete}}
+{\footnotesize\ttfamily parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+load\+\_\+complete}
+
+
+
+Definition at line 68 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+destroy().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{pytorch__data__teacher_8py}{pytorch\+\_\+data\+\_\+teacher.\+py}\end{DoxyCompactItemize}

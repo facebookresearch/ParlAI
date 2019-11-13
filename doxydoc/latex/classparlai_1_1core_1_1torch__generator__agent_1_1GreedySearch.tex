@@ -1,0 +1,77 @@
+\hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch}{}\section{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search Class Reference}
+\label{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch}\index{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search@{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_a3d82930c25aa494772148c51f67d5f0d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_aa201e7824f50e2830cede9adc4bffcd6}{select\+\_\+paths} (self, logprobs, prior\+\_\+scores)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Greedy search.
+
+Picks the highest probability utterance at each step.  Only works with
+--beam-size 1.
+\end{DoxyVerb}
+ 
+
+Definition at line 981 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_a3d82930c25aa494772148c51f67d5f0d}\label{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_a3d82930c25aa494772148c51f67d5f0d}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 989 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+beam\+\_\+size, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_aa201e7824f50e2830cede9adc4bffcd6}\label{classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch_aa201e7824f50e2830cede9adc4bffcd6}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search}!select\+\_\+paths@{select\+\_\+paths}}
+\index{select\+\_\+paths@{select\+\_\+paths}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Greedy\+Search}}
+\subsubsection{\texorpdfstring{select\+\_\+paths()}{select\_paths()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search.\+select\+\_\+paths (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{logprobs,  }\item[{}]{prior\+\_\+scores }\end{DoxyParamCaption})}
+
+
+
+Definition at line 994 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__generator__agent_8py}{torch\+\_\+generator\+\_\+agent.\+py}\end{DoxyCompactItemize}

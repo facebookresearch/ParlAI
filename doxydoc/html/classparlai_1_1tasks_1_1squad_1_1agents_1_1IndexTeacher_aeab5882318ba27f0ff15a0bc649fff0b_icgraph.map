@@ -1,4 +1,5 @@
 <map id="parlai.tasks.squad.agents.IndexTeacher.num_episodes" name="parlai.tasks.squad.agents.IndexTeacher.num_episodes">
-<area shape="rect" id="node1" title=" " alt="" coords="267,5,456,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#a37e408e3dd862d0312dde8fdbfad0a06" title=" " alt="" coords="5,5,219,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#a2212cb2961827b893bc0d3354c305f66" title="parlai.tasks.vqa_v1.agents.\lVQADataset.__getitem__" alt="" coords="245,5,428,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#af309d827a13fba8f616f8608821f5543" title="parlai.tasks.vqa_v1.agents.\lVQADataset.__len__" alt="" coords="245,71,428,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#aa020148e5e52ba91fcedcb3aaf129643" title="parlai.tasks.vqa_v1.agents.\lVQADataset.num_examples" alt="" coords="243,136,431,177"/>
 </map>

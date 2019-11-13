@@ -1,0 +1,609 @@
+\hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam}{}\section{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam Class Reference}
+\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam}\index{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam@{parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam}}
+
+
+Inheritance diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af0f9f1c8fc21c9a00932129c2239b6a9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3e3407eeb8dd25ede9950524146f9403}{beam\+\_\+size}, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a9c3bd0baa9376a027dabbbe43c6aac5e}{min\+\_\+length}=3, padding\+\_\+token=0, bos\+\_\+token=1, eos\+\_\+token=2, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a65b34839f24c68fa76df61cff22e177e}{min\+\_\+n\+\_\+best}=3, cuda=\textquotesingle{}cpu\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aa2ba93350ee7aa9ab2ae5ba01c1c0c1e}{block\+\_\+ngram}=0)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a4f7299716e2ca82b0f8759ea11fec60a}{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab714337648fc40cffa481985b382fcc4}{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6c6cf89b73830b99bba0420c720c50d8}{advance} (self, softmax\+\_\+probs)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a8b62a64897663062c4e3cf9cf85fce50}{done} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_abd7ea96a6f890297fc526e31e143a018}{get\+\_\+top\+\_\+hyp} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5ae82a3d567dd8f282678d0ee40aa41e}{get\+\_\+hyp\+\_\+from\+\_\+finished} (self, hypothesis\+\_\+tail)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a94a3638f18c959a5a9223061ea9af77e}{get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail} (self, ts, hypid)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3dbc095780f560a02bfafc0e0f646ebc}{get\+\_\+rescored\+\_\+finished} (self, n\+\_\+best=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6d43c0169b15e4d6a754a91a25137709}{check\+\_\+finished} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af4d7c9fd1fd93f59148fe7ab90c58da9}{get\+\_\+beam\+\_\+dot} (self, dictionary=None, n\+\_\+best=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb6aafacc0ad6d28539fe1406468ae66}{find\+\_\+ngrams} (input\+\_\+list, n)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb4e5fd2e6a13e7b64fa00d2336e5e14}{get\+\_\+pretty\+\_\+hypothesis} (list\+\_\+of\+\_\+hypotails)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3e3407eeb8dd25ede9950524146f9403}{beam\+\_\+size}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a9c3bd0baa9376a027dabbbe43c6aac5e}{min\+\_\+length}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a53606067a92569a4fa3603f07f067a5c}{eos}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a09f679ae508459a7c45863856ec7d413}{bos}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aadd5d9795e5d7ac5c5339d6136eb7ba4}{pad}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afda1961fd241c49dadf623abb81b688d}{device}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ad7e21da35d537a09f23973b415e62660}{scores}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a2be10cea5a3cbf664ec9a9a9d283e7a9}{all\+\_\+scores}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a673dd5c13cababb5d04b5af72a740222}{bookkeep}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a13bd578395eeca81c0d1712e220c4b37}{outputs}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5e2cb2f6be6aa0d1a6ff971d271356b1}{finished}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aebe8a3e030fba84dd31dc9d68731038e}{Hypothesis\+Tail}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab9e04c7385dd553a6a8a8c76650d60b7}{eos\+\_\+top}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab1d9fb1a27a4a96ea9293720eb812487}{eos\+\_\+top\+\_\+ts}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a44a03facdc6259db57720fcae9f9a6ed}{n\+\_\+best\+\_\+counter}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a65b34839f24c68fa76df61cff22e177e}{min\+\_\+n\+\_\+best}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aa2ba93350ee7aa9ab2ae5ba01c1c0c1e}{block\+\_\+ngram}
+\item 
+\hyperlink{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a35c45bf55c21713f720fffdaafc68081}{partial\+\_\+hyps}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Generic beam class. It keeps information about beam_size hypothesis.\end{DoxyVerb}
+ 
+
+Definition at line 1032 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af0f9f1c8fc21c9a00932129c2239b6a9}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af0f9f1c8fc21c9a00932129c2239b6a9}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{beam\+\_\+size,  }\item[{}]{min\+\_\+length = {\ttfamily 3},  }\item[{}]{padding\+\_\+token = {\ttfamily 0},  }\item[{}]{bos\+\_\+token = {\ttfamily 1},  }\item[{}]{eos\+\_\+token = {\ttfamily 2},  }\item[{}]{min\+\_\+n\+\_\+best = {\ttfamily 3},  }\item[{}]{cuda = {\ttfamily \textquotesingle{}cpu\textquotesingle{}},  }\item[{}]{block\+\_\+ngram = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Instantiate Beam object.
+
+:param beam_size: number of hypothesis in the beam
+:param min_length: minimum length of the predicted sequence
+:param padding_token: Set to 0 as usual in ParlAI
+:param bos_token: Set to 1 as usual in ParlAI
+:param eos_token: Set to 2 as usual in ParlAI
+:param min_n_best: Beam will not be done unless this amount of finished
+           hypothesis (with EOS) is done
+:param cuda: What device to use for computations
+\end{DoxyVerb}
+ 
+
+Definition at line 1045 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6c6cf89b73830b99bba0420c720c50d8}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6c6cf89b73830b99bba0420c720c50d8}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!advance@{advance}}
+\index{advance@{advance}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{advance()}{advance()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{softmax\+\_\+probs }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Advance the beam one step.\end{DoxyVerb}
+ 
+
+Definition at line 1098 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+block\+\_\+ngram, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top\+\_\+ts, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+length, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+n\+\_\+best\+\_\+counter, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+partial\+\_\+hyps, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+scores.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6d43c0169b15e4d6a754a91a25137709}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a6d43c0169b15e4d6a754a91a25137709}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!check\+\_\+finished@{check\+\_\+finished}}
+\index{check\+\_\+finished@{check\+\_\+finished}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{check\+\_\+finished()}{check\_finished()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check if self.finished is empty and add hyptail in that case.
+
+This will be suboptimal hypothesis since the model did not get any EOS
+
+:returns: None
+\end{DoxyVerb}
+ 
+
+Definition at line 1272 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a8b62a64897663062c4e3cf9cf85fce50}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a8b62a64897663062c4e3cf9cf85fce50}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!done@{done}}
+\index{done@{done}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{done()}{done()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return whether beam search is complete.\end{DoxyVerb}
+ 
+
+Definition at line 1173 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+n\+\_\+best, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+n\+\_\+best\+\_\+counter.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb6aafacc0ad6d28539fe1406468ae66}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb6aafacc0ad6d28539fe1406468ae66}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!find\+\_\+ngrams@{find\+\_\+ngrams}}
+\index{find\+\_\+ngrams@{find\+\_\+ngrams}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{find\+\_\+ngrams()}{find\_ngrams()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+find\+\_\+ngrams (\begin{DoxyParamCaption}\item[{}]{input\+\_\+list,  }\item[{}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Get list of ngrams with context length n-1\end{DoxyVerb}
+ 
+
+Definition at line 1086 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab714337648fc40cffa481985b382fcc4}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab714337648fc40cffa481985b382fcc4}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step}}
+\index{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step()}{get\_backtrack\_from\_current\_step()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the backtrack at the current step.\end{DoxyVerb}
+ 
+
+Definition at line 1094 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af4d7c9fd1fd93f59148fe7ab90c58da9}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af4d7c9fd1fd93f59148fe7ab90c58da9}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+beam\+\_\+dot@{get\+\_\+beam\+\_\+dot}}
+\index{get\+\_\+beam\+\_\+dot@{get\+\_\+beam\+\_\+dot}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+beam\+\_\+dot()}{get\_beam\_dot()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dictionary = {\ttfamily None},  }\item[{}]{n\+\_\+best = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create pydot graph representation of the beam.
+
+:param outputs: self.outputs from the beam
+:param dictionary: tok 2 word dict to save words in the tree nodes
+:returns: pydot graph
+\end{DoxyVerb}
+ 
+
+Definition at line 1293 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, eval\+\_\+ppl.\+int, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_af4d7c9fd1fd93f59148fe7ab90c58da9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5ae82a3d567dd8f282678d0ee40aa41e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5ae82a3d567dd8f282678d0ee40aa41e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+hyp\+\_\+from\+\_\+finished@{get\+\_\+hyp\+\_\+from\+\_\+finished}}
+\index{get\+\_\+hyp\+\_\+from\+\_\+finished@{get\+\_\+hyp\+\_\+from\+\_\+finished}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+hyp\+\_\+from\+\_\+finished()}{get\_hyp\_from\_finished()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hypothesis\+\_\+tail }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extract hypothesis ending with EOS at timestep with hyp_id.
+
+:param timestep: timestep with range up to len(self.outputs)-1
+:param hyp_id: id with range up to beam_size-1
+:return: hypothesis sequence
+\end{DoxyVerb}
+ 
+
+Definition at line 1188 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+top\+\_\+hyp(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+top\+\_\+hyp(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+top\+\_\+hyp().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5ae82a3d567dd8f282678d0ee40aa41e_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a4f7299716e2ca82b0f8759ea11fec60a}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a4f7299716e2ca82b0f8759ea11fec60a}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+output\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step}}
+\index{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step@{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+output\+\_\+from\+\_\+current\+\_\+step()}{get\_output\_from\_current\_step()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the outputput at the current step.\end{DoxyVerb}
+ 
+
+Definition at line 1090 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a94a3638f18c959a5a9223061ea9af77e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a94a3638f18c959a5a9223061ea9af77e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail@{get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail}}
+\index{get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail@{get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail()}{get\_partial\_hyp\_from\_tail()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{ts,  }\item[{}]{hypid }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1223 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb4e5fd2e6a13e7b64fa00d2336e5e14}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afb4e5fd2e6a13e7b64fa00d2336e5e14}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+pretty\+\_\+hypothesis@{get\+\_\+pretty\+\_\+hypothesis}}
+\index{get\+\_\+pretty\+\_\+hypothesis@{get\+\_\+pretty\+\_\+hypothesis}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+pretty\+\_\+hypothesis()}{get\_pretty\_hypothesis()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+pretty\+\_\+hypothesis (\begin{DoxyParamCaption}\item[{}]{list\+\_\+of\+\_\+hypotails }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyVerb}Return prettier version of the hypotheses.\end{DoxyVerb}
+ 
+
+Definition at line 1213 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3dbc095780f560a02bfafc0e0f646ebc}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3dbc095780f560a02bfafc0e0f646ebc}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+rescored\+\_\+finished@{get\+\_\+rescored\+\_\+finished}}
+\index{get\+\_\+rescored\+\_\+finished@{get\+\_\+rescored\+\_\+finished}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+rescored\+\_\+finished()}{get\_rescored\_finished()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{n\+\_\+best = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return finished hypotheses in rescored order.
+
+:param n_best: how many n best hypothesis to return
+:return: list with hypothesis
+\end{DoxyVerb}
+ 
+
+Definition at line 1245 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+top\+\_\+hyp(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+top\+\_\+hyp(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+top\+\_\+hyp().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3dbc095780f560a02bfafc0e0f646ebc_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_abd7ea96a6f890297fc526e31e143a018}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_abd7ea96a6f890297fc526e31e143a018}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!get\+\_\+top\+\_\+hyp@{get\+\_\+top\+\_\+hyp}}
+\index{get\+\_\+top\+\_\+hyp@{get\+\_\+top\+\_\+hyp}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{get\+\_\+top\+\_\+hyp()}{get\_top\_hyp()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+top\+\_\+hyp (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get single best hypothesis.
+
+:return: hypothesis sequence and the final score
+\end{DoxyVerb}
+ 
+
+Definition at line 1177 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_abd7ea96a6f890297fc526e31e143a018_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a2be10cea5a3cbf664ec9a9a9d283e7a9}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a2be10cea5a3cbf664ec9a9a9d283e7a9}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!all\+\_\+scores@{all\+\_\+scores}}
+\index{all\+\_\+scores@{all\+\_\+scores}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{all\+\_\+scores}{all\_scores}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+all\+\_\+scores}
+
+
+
+Definition at line 1066 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3e3407eeb8dd25ede9950524146f9403}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a3e3407eeb8dd25ede9950524146f9403}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!beam\+\_\+size@{beam\+\_\+size}}
+\index{beam\+\_\+size@{beam\+\_\+size}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{beam\+\_\+size}{beam\_size}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+beam\+\_\+size}
+
+
+
+Definition at line 1057 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Greedy\+Search.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Torch\+Generator\+Agent.\+eval\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+eval\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Beam\+Search.\+select\+\_\+paths().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aa2ba93350ee7aa9ab2ae5ba01c1c0c1e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aa2ba93350ee7aa9ab2ae5ba01c1c0c1e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!block\+\_\+ngram@{block\+\_\+ngram}}
+\index{block\+\_\+ngram@{block\+\_\+ngram}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{block\+\_\+ngram}{block\_ngram}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+block\+\_\+ngram}
+
+
+
+Definition at line 1082 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a673dd5c13cababb5d04b5af72a740222}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a673dd5c13cababb5d04b5af72a740222}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!bookkeep@{bookkeep}}
+\index{bookkeep@{bookkeep}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{bookkeep}{bookkeep}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bookkeep}
+
+
+
+Definition at line 1068 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+backtrack\+\_\+from\+\_\+current\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a09f679ae508459a7c45863856ec7d413}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a09f679ae508459a7c45863856ec7d413}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!bos@{bos}}
+\index{bos@{bos}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{bos}{bos}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+bos}
+
+
+
+Definition at line 1060 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afda1961fd241c49dadf623abb81b688d}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_afda1961fd241c49dadf623abb81b688d}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!device@{device}}
+\index{device@{device}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{device}{device}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+device}
+
+
+
+Definition at line 1062 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a53606067a92569a4fa3603f07f067a5c}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a53606067a92569a4fa3603f07f067a5c}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!eos@{eos}}
+\index{eos@{eos}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos}{eos}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos}
+
+
+
+Definition at line 1059 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab9e04c7385dd553a6a8a8c76650d60b7}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab9e04c7385dd553a6a8a8c76650d60b7}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!eos\+\_\+top@{eos\+\_\+top}}
+\index{eos\+\_\+top@{eos\+\_\+top}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos\+\_\+top}{eos\_top}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top}
+
+
+
+Definition at line 1078 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+done(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+done(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab1d9fb1a27a4a96ea9293720eb812487}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ab1d9fb1a27a4a96ea9293720eb812487}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!eos\+\_\+top\+\_\+ts@{eos\+\_\+top\+\_\+ts}}
+\index{eos\+\_\+top\+\_\+ts@{eos\+\_\+top\+\_\+ts}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{eos\+\_\+top\+\_\+ts}{eos\_top\_ts}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+eos\+\_\+top\+\_\+ts}
+
+
+
+Definition at line 1079 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5e2cb2f6be6aa0d1a6ff971d271356b1}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a5e2cb2f6be6aa0d1a6ff971d271356b1}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!finished@{finished}}
+\index{finished@{finished}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{finished}{finished}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+finished}
+
+
+
+Definition at line 1074 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aebe8a3e030fba84dd31dc9d68731038e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aebe8a3e030fba84dd31dc9d68731038e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!Hypothesis\+Tail@{Hypothesis\+Tail}}
+\index{Hypothesis\+Tail@{Hypothesis\+Tail}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{Hypothesis\+Tail}{HypothesisTail}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+Hypothesis\+Tail}
+
+
+
+Definition at line 1075 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+rescored\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+rescored\+\_\+finished(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+rescored\+\_\+finished().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a9c3bd0baa9376a027dabbbe43c6aac5e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a9c3bd0baa9376a027dabbbe43c6aac5e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!min\+\_\+length@{min\+\_\+length}}
+\index{min\+\_\+length@{min\+\_\+length}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{min\+\_\+length}{min\_length}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+length}
+
+
+
+Definition at line 1058 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a65b34839f24c68fa76df61cff22e177e}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a65b34839f24c68fa76df61cff22e177e}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!min\+\_\+n\+\_\+best@{min\+\_\+n\+\_\+best}}
+\index{min\+\_\+n\+\_\+best@{min\+\_\+n\+\_\+best}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{min\+\_\+n\+\_\+best}{min\_n\_best}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+min\+\_\+n\+\_\+best}
+
+
+
+Definition at line 1081 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+done(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+done(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a44a03facdc6259db57720fcae9f9a6ed}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a44a03facdc6259db57720fcae9f9a6ed}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!n\+\_\+best\+\_\+counter@{n\+\_\+best\+\_\+counter}}
+\index{n\+\_\+best\+\_\+counter@{n\+\_\+best\+\_\+counter}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{n\+\_\+best\+\_\+counter}{n\_best\_counter}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+n\+\_\+best\+\_\+counter}
+
+
+
+Definition at line 1080 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+done(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+done(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+done(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a13bd578395eeca81c0d1712e220c4b37}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a13bd578395eeca81c0d1712e220c4b37}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!outputs@{outputs}}
+\index{outputs@{outputs}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{outputs}{outputs}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+outputs}
+
+
+
+Definition at line 1070 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+check\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+check\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+beam\+\_\+dot(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+beam\+\_\+dot(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+hyp\+\_\+from\+\_\+finished(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step(), controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+get\+\_\+output\+\_\+from\+\_\+current\+\_\+step(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+get\+\_\+partial\+\_\+hyp\+\_\+from\+\_\+tail(), parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+get\+\_\+rescored\+\_\+finished(), and parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Tree\+Search.\+is\+\_\+done().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aadd5d9795e5d7ac5c5339d6136eb7ba4}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_aadd5d9795e5d7ac5c5339d6136eb7ba4}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!pad@{pad}}
+\index{pad@{pad}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{pad}{pad}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+pad}
+
+
+
+Definition at line 1061 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a35c45bf55c21713f720fffdaafc68081}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_a35c45bf55c21713f720fffdaafc68081}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!partial\+\_\+hyps@{partial\+\_\+hyps}}
+\index{partial\+\_\+hyps@{partial\+\_\+hyps}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{partial\+\_\+hyps}{partial\_hyps}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+partial\+\_\+hyps}
+
+
+
+Definition at line 1083 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ad7e21da35d537a09f23973b415e62660}\label{classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam_ad7e21da35d537a09f23973b415e62660}} 
+\index{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}!scores@{scores}}
+\index{scores@{scores}!parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam@{parlai\+::agents\+::legacy\+\_\+agents\+::seq2seq\+::torch\+\_\+agent\+\_\+v1\+::\+Beam}}
+\subsubsection{\texorpdfstring{scores}{scores}}
+{\footnotesize\ttfamily parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+scores}
+
+
+
+Definition at line 1064 of file torch\+\_\+agent\+\_\+v1.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Beam.\+advance(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Beam.\+advance(), and controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Beam.\+advance().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/legacy\+\_\+agents/seq2seq/\hyperlink{torch__agent__v1_8py}{torch\+\_\+agent\+\_\+v1.\+py}\end{DoxyCompactItemize}

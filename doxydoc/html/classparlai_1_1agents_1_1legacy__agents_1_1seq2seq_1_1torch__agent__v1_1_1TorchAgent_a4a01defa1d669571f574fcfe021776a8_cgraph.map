@@ -1,7 +1,6 @@
 <map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.save" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.save">
-<area shape="rect" id="node1" title=" " alt="" coords="5,103,191,159"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#ae6e06364ccf919d70064d5966e5c1cf3" title=" " alt="" coords="303,5,498,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#aba4b52b4f15795eeda202cb303525483" title=" " alt="" coords="297,71,504,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a3838eb2d88b4e9f80c9c234e6742fa30" title=" " alt="" coords="313,136,488,207"/>
-<area shape="rect" id="node5" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a8995fe4b50a61a5b6c139d26dbb57ca2" title=" " alt="" coords="239,231,563,272"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#ae6e06364ccf919d70064d5966e5c1cf3" title="parlai.agents.memnn.memnn.\lMemnnAgent.model_version" alt="" coords="303,5,498,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#aba4b52b4f15795eeda202cb303525483" title="parlai.agents.seq2seq.seq2seq.\lSeq2seqAgent.model_version" alt="" coords="297,71,504,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a3838eb2d88b4e9f80c9c234e6742fa30" title="parlai.agents.legacy\l_agents.seq2seq.seq2seq\l_v1.Seq2seqAgent.model\l_version" alt="" coords="313,136,488,207"/>
+<area shape="rect" id="node5" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a8995fe4b50a61a5b6c139d26dbb57ca2" title="controllable_seq2seq.controllable\l_seq2seq.ControllableSeq2seqAgent.model_version" alt="" coords="239,231,563,272"/>
 </map>

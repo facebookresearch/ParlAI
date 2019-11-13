@@ -1,5 +1,7 @@
 <map id="parlai.mturk.core.dev.mturk_data_handler.MTurkDataHandler.log_hit_status" name="parlai.mturk.core.dev.mturk_data_handler.MTurkDataHandler.log_hit_status">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,244,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title=" " alt="" coords="292,5,513,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title=" " alt="" coords="292,85,513,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#af830408243e4fba7cb239311d6240f53" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_force_task_group_id" alt="" coords="1152,187,1373,243"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a70d2a2d7ada5a3ed8f05b8633f2dbd58" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.\l_get_connection" alt="" coords="1152,5,1373,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7b7b243f1ae901dce38b639fb9dcde22" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.log\l_worker_accept_assignment" alt="" coords="292,96,531,152"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a07f6dfb250fe119f1fdd44c58e6c05aa" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.log\l_complete_assignment" alt="" coords="579,96,817,152"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1mturk__data__handler_1_1MTurkDataHandler.html#a42409b508f2b135f6d02c80f39aee466" title="parlai.mturk.core.dev.mturk\l_data_handler.MTurkDataHandler.log\l_disconnect_assignment" alt="" coords="865,96,1104,152"/>
 </map>

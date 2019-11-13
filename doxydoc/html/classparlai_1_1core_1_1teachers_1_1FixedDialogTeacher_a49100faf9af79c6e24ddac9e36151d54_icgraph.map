@@ -1,10 +1,9 @@
 <map id="parlai.core.teachers.FixedDialogTeacher.next_batch" name="parlai.core.teachers.FixedDialogTeacher.next_batch">
-<area shape="rect" id="node1" title=" " alt="" coords="512,165,687,207"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#afa75426a7578e8aad5b74964219345be" title=" " alt="" coords="292,165,464,207"/>
-<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="45,5,205,47"/>
-<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="5,71,244,112"/>
-<area shape="rect" id="node5" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="21,136,229,177"/>
-<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="25,202,224,229"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title=" " alt="" coords="45,253,204,295"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title=" " alt="" coords="43,319,206,360"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#afa75426a7578e8aad5b74964219345be" title="parlai.core.teachers.Fixed\lDialogTeacher.batch_act" alt="" coords="228,165,400,207"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="487,5,647,47"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="448,71,687,112"/>
+<area shape="rect" id="node5" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="463,136,671,177"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="468,202,667,229"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title="parlai.core.torch_agent.\lTorchAgent.act" alt="" coords="488,253,647,295"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title="parlai.core.worlds.Batch\lWorld.parley" alt="" coords="486,319,649,360"/>
 </map>

@@ -1,0 +1,309 @@
+\hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer}{}\section{parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer Class Reference}
+\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer}\index{parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer@{parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer}}
+
+
+Inheritance diagram for parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ae79d593ea8038932fc431369de1fa91d}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, num\+\_\+features, embeddingsize, hiddensize, \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa9bb2d06eae7ebeb2fc1d2d0a27e0c3b}{dropout}=0, \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a1a08bf54424b676bb5f35aa2ca8dc096}{numsoftmax}=1, shared\+\_\+weight=None, \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_acc82ef26b2a162662c729fc325d39b54}{padding\+\_\+idx}=-\/1)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a730001f010633b53df7f7d96a75d8812}{forward} (self, input)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa9bb2d06eae7ebeb2fc1d2d0a27e0c3b}{dropout}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_acc82ef26b2a162662c729fc325d39b54}{padding\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_af9588423b3853ca292927fc37a24a674}{bias}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a83aa3c50706ed16f09ee44423dbb73ad}{shared}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a7a1a9304974964821e1d4d73bdccec0a}{weight}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a1a08bf54424b676bb5f35aa2ca8dc096}{numsoftmax}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a8764480c3d69166a1bc8b80886c16a97}{esz}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ab2922db72cff29a3c4853dd25a464a93}{softmax}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa727b98d848c1dcdee4149255d2d30ed}{prior}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ace91a61ce9d1afaf8e69c8891dc37de4}{latent}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0654abd36d1e9fc9425ac366ded9d624}{activation}
+\item 
+\hyperlink{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0d76edf5fb553c45e025103b154b34a1}{o2e}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Takes in final states and returns distribution over candidates.\end{DoxyVerb}
+ 
+
+Definition at line 441 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ae79d593ea8038932fc431369de1fa91d}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ae79d593ea8038932fc431369de1fa91d}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+features,  }\item[{}]{embeddingsize,  }\item[{}]{hiddensize,  }\item[{}]{dropout = {\ttfamily 0},  }\item[{}]{numsoftmax = {\ttfamily 1},  }\item[{}]{shared\+\_\+weight = {\ttfamily None},  }\item[{}]{padding\+\_\+idx = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize output layer.
+
+:param num_features:  number of candidates to rank
+:param hiddensize:    (last) dimension of the input vectors
+:param embeddingsize: (last) dimension of the candidate vectors
+:param numsoftmax:   (default 1) number of softmaxes to calculate.
+              see arxiv.org/abs/1711.03953 for more info.
+              increasing this slows down computation but can
+              add more expressivity to the embeddings.
+:param shared_weight: (num_features x esz) vector of weights to use as
+              the final linear layer's weight matrix. default
+              None starts with a new linear layer.
+:param padding_idx:   model should output a large negative number for
+              score at this index. if set to -1 (default),
+              this is disabled. if >= 0, subtracts one from
+              num_features and always outputs -1e20 at this
+              index. only used when shared_weight is not None.
+              setting this param helps protect gradient from
+              entering shared embedding matrices.
+\end{DoxyVerb}
+ 
+
+Definition at line 453 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a730001f010633b53df7f7d96a75d8812}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a730001f010633b53df7f7d96a75d8812}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute scores from inputs.
+
+:param input: (bsz x seq_len x num_directions * hiddensize) tensor of
+       states, e.g. the output states of an RNN
+
+:returns: (bsz x seqlen x num_cands) scores for each candidate
+\end{DoxyVerb}
+ 
+
+Definition at line 509 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+activation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+activation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+activation, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+bias, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Encoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+dropout, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+dropout, parlai.\+agents.\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+esz, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+R\+N\+N\+Decoder.\+esz, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+esz, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+latent, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+latent, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+latent, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+numsoftmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+o2e, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+o2e, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+o2e, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+padding\+\_\+idx, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+prior, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+prior, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+prior, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+weight, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+weight, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Linear.\+weight, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Random\+Projection.\+weight.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a730001f010633b53df7f7d96a75d8812_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0654abd36d1e9fc9425ac366ded9d624}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0654abd36d1e9fc9425ac366ded9d624}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!activation@{activation}}
+\index{activation@{activation}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{activation}{activation}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+activation}
+
+
+
+Definition at line 499 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_af9588423b3853ca292927fc37a24a674}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_af9588423b3853ca292927fc37a24a674}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!bias@{bias}}
+\index{bias@{bias}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{bias}{bias}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+bias}
+
+
+
+Definition at line 479 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+reset\+\_\+parameters().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa9bb2d06eae7ebeb2fc1d2d0a27e0c3b}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa9bb2d06eae7ebeb2fc1d2d0a27e0c3b}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!dropout@{dropout}}
+\index{dropout@{dropout}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{dropout}{dropout}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+dropout}
+
+
+
+Definition at line 475 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+R\+N\+N\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+forward(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Generator\+Teacher.\+get(), and agent.\+modules.\+Decoder.\+hidden\+\_\+to\+\_\+idx().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a8764480c3d69166a1bc8b80886c16a97}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a8764480c3d69166a1bc8b80886c16a97}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!esz@{esz}}
+\index{esz@{esz}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{esz}{esz}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+esz}
+
+
+
+Definition at line 495 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ace91a61ce9d1afaf8e69c8891dc37de4}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ace91a61ce9d1afaf8e69c8891dc37de4}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!latent@{latent}}
+\index{latent@{latent}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{latent}{latent}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+latent}
+
+
+
+Definition at line 498 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a1a08bf54424b676bb5f35aa2ca8dc096}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a1a08bf54424b676bb5f35aa2ca8dc096}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!numsoftmax@{numsoftmax}}
+\index{numsoftmax@{numsoftmax}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{numsoftmax}{numsoftmax}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+numsoftmax}
+
+
+
+Definition at line 493 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0d76edf5fb553c45e025103b154b34a1}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a0d76edf5fb553c45e025103b154b34a1}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!o2e@{o2e}}
+\index{o2e@{o2e}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{o2e}{o2e}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+o2e}
+
+
+
+Definition at line 504 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_acc82ef26b2a162662c729fc325d39b54}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_acc82ef26b2a162662c729fc325d39b54}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!padding\+\_\+idx@{padding\+\_\+idx}}
+\index{padding\+\_\+idx@{padding\+\_\+idx}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{padding\+\_\+idx}{padding\_idx}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+padding\+\_\+idx}
+
+
+
+Definition at line 477 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Embed.\+forward(), agent.\+modules.\+Embed.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa727b98d848c1dcdee4149255d2d30ed}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_aa727b98d848c1dcdee4149255d2d30ed}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!prior@{prior}}
+\index{prior@{prior}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{prior}{prior}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+prior}
+
+
+
+Definition at line 497 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a83aa3c50706ed16f09ee44423dbb73ad}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a83aa3c50706ed16f09ee44423dbb73ad}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!shared@{shared}}
+\index{shared@{shared}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{shared}{shared}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+shared}
+
+
+
+Definition at line 484 of file modules.\+py.
+
+
+
+Referenced by parlai.\+core.\+worlds.\+Hogwild\+Process.\+run().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ab2922db72cff29a3c4853dd25a464a93}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_ab2922db72cff29a3c4853dd25a464a93}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!softmax@{softmax}}
+\index{softmax@{softmax}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax}
+
+
+
+Definition at line 496 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), taskntalk.\+modules.\+Predict\+Net.\+forward(), parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a7a1a9304974964821e1d4d73bdccec0a}\label{classparlai_1_1agents_1_1seq2seq_1_1modules_1_1OutputLayer_a7a1a9304974964821e1d4d73bdccec0a}} 
+\index{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}!weight@{weight}}
+\index{weight@{weight}!parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer@{parlai\+::agents\+::seq2seq\+::modules\+::\+Output\+Layer}}
+\subsubsection{\texorpdfstring{weight}{weight}}
+{\footnotesize\ttfamily parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+weight}
+
+
+
+Definition at line 485 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/seq2seq/\hyperlink{parlai_2agents_2seq2seq_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,5 @@
+<map id="parlai.scripts.multiprocessing_train.main" name="parlai.scripts.multiprocessing_train.main">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1scripts_1_1multiprocessing__train.html#a5dc8df166f1c025b54f7420a1ab2f812" title="parlai.scripts.multiprocessing\l_train.launch_and_train" alt="" coords="244,5,435,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1scripts_1_1multiprocessing__train.html#a1ee26bddeb470040cfbceb5ee7a9fa08" title="parlai.scripts.multiprocessing\l_train.setup_args" alt="" coords="244,71,435,112"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1scripts_1_1multiprocessing__train.html#aa979267c9eb44bbdfcd25a6d69a58cc4" title="parlai.scripts.multiprocessing\l_train.multiprocess_train" alt="" coords="483,5,673,47"/>
+</map>

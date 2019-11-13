@@ -1,9 +1,6 @@
 <map id="wizard_transformer_ranker.wizard_transformer_ranker.WizardTransformerRankerAgent" name="wizard_transformer_ranker.wizard_transformer_ranker.WizardTransformerRankerAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,423,261,479"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html" title=" " alt="" coords="13,333,253,375"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="46,244,221,285"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="54,155,213,196"/>
-<area shape="rect" id="node5" title=" " alt="" coords="43,80,93,107"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="117,80,280,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="170,5,227,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent" alt="" coords="13,333,253,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent" alt="" coords="46,244,221,285"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="54,155,213,196"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="117,80,280,107"/>
 </map>

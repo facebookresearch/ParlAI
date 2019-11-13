@@ -1,5 +1,5 @@
 <map id="parlai.agents.legacy_agents.seq2seq.dict_v1.DictionaryAgent.load" name="parlai.agents.legacy_agents.seq2seq.dict_v1.DictionaryAgent.load">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,173,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#abd9065c5c2862e81e3a1edb221ec7491" title=" " alt="" coords="221,5,425,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a35a084bb500ce45aa52786cdeddc49d7" title=" " alt="" coords="221,85,425,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#abd9065c5c2862e81e3a1edb221ec7491" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v0.DictionaryAgent.add_token" alt="" coords="221,5,425,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a35a084bb500ce45aa52786cdeddc49d7" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.DictionaryAgent.add_token" alt="" coords="221,85,425,141"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1.html#affad139ddec76996dc9a93f6123d545e" title="parlai.agents.legacy\l_agents.seq2seq.dict\l_v1.unescape" alt="" coords="250,165,397,221"/>
 </map>

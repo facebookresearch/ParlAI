@@ -1,9 +1,6 @@
 <map id="controllable_seq2seq.controllable_seq2seq.ControllableSeq2seqAgent.zero_grad" name="controllable_seq2seq.controllable_seq2seq.ControllableSeq2seqAgent.zero_grad">
-<area shape="rect" id="node1" title=" " alt="" coords="808,117,1105,159"/>
-<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a2cce905d8e06109ae23cf4910386526d" title=" " alt="" coords="544,59,757,100"/>
-<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title=" " alt="" coords="5,71,219,112"/>
-<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#ac2b07b1455920e6a343271997b9c6207" title=" " alt="" coords="541,187,760,214"/>
-<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a1cd91f1cd051b1545683b465f7a74e12" title=" " alt="" coords="273,8,487,49"/>
-<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title=" " alt="" coords="5,5,219,47"/>
-<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="267,199,493,226"/>
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a2cce905d8e06109ae23cf4910386526d" title="transresnet.modules.Transresnet\lModel.evaluate_one_batch" alt="" coords="351,59,564,100"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="873,71,1087,112"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a1cd91f1cd051b1545683b465f7a74e12" title="transresnet.modules.Transresnet\lModel.eval_batch_of_100" alt="" coords="612,8,825,49"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="873,5,1087,47"/>
 </map>

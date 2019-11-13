@@ -1,0 +1,4 @@
+<map id="parlai.tasks.flickr30k.agents.FlickrDataset.__getitem__" name="parlai.tasks.flickr30k.agents.FlickrDataset.__getitem__">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1FlickrDataset.html#af2517dc3b4a7670305ad9a517a8d49c1" title="parlai.tasks.flickr30k.agents.\lFlickrDataset.get_image" alt="" coords="257,5,446,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultDataset.html#ae769cbe2c9a42fc0ecc817a2baeffb77" title="parlai.tasks.coco_caption.agents.\lDefaultDataset.get_image" alt="" coords="243,71,460,112"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="parlai.tasks.vqa_v1.agents.unescape" name="parlai.tasks.vqa_v1.agents.unescape">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#ac84980d21c96740bb94d4215256937ac" title="parlai.tasks.vqa_v1.agents.\lVqaDictionaryAgent.load" alt="" coords="292,5,475,47"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title="transresnet.transresnet.\lTransresnetAgent.share" alt="" coords="523,5,684,47"/>
+</map>

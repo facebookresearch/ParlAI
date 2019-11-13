@@ -1,5 +1,4 @@
 <map id="parlai.core.torch_generator_agent.TreeSearch.get_rescored_finished" name="parlai.core.torch_generator_agent.TreeSearch.get_rescored_finished">
-<area shape="rect" id="node1" title=" " alt="" coords="5,45,216,101"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title=" " alt="" coords="270,5,459,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title=" " alt="" coords="264,85,465,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title="parlai.core.torch_generator\l_agent.TreeSearch._get_hyp\l_from_finished" alt="" coords="270,5,459,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title="parlai.core.torch_generator\l_agent.TreeSearch._get_pretty\l_hypothesis" alt="" coords="264,85,465,141"/>
 </map>

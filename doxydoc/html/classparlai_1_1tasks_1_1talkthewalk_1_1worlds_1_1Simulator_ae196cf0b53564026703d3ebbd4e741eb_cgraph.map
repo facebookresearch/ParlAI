@@ -1,0 +1,7 @@
+<map id="parlai.tasks.talkthewalk.worlds.Simulator.execute_and_write" name="parlai.tasks.talkthewalk.worlds.Simulator.execute_and_write">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator.html#a7f1a6089e2650f3787e5493931a45570" title="parlai.tasks.talkthewalk.worlds.\lSimulator.add_view_to_text" alt="" coords="259,5,464,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator.html#a4e8af8db9b10c3e5c34fdb9004d13694" title="parlai.tasks.talkthewalk.worlds.\lSimulator.execute" alt="" coords="259,71,464,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a318fbf7c75178f62a6d46647f1a063fa" title="parlai.core.worlds.Executable\lWorld.execute" alt="" coords="265,136,458,177"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Simulator.html#a5178f95389423f1ee1ad5440e60ad976" title="parlai.tasks.talkthewalk.worlds.\lSimulator.get_current_view" alt="" coords="517,5,722,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1talkthewalk_1_1worlds.html#aa28536df060005c301225d766f91cb13" title="parlai.tasks.talkthewalk.worlds.is\l_action" alt="" coords="512,71,727,112"/>
+</map>

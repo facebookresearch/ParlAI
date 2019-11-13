@@ -1,11 +1,8 @@
 <map id="generator.agents._GenericWizardAgent" name="generator.agents._GenericWizardAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="114,423,289,464"/>
-<area shape="rect" id="node8" href="$classgenerator_1_1agents_1_1EndToEndAgent.html" title=" " alt="" coords="5,512,189,553"/>
-<area shape="rect" id="node9" href="$classgenerator_1_1agents_1_1TwoStageAgent.html" title=" " alt="" coords="214,512,397,553"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html" title=" " alt="" coords="81,333,321,375"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title=" " alt="" coords="107,244,296,285"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="122,155,281,196"/>
-<area shape="rect" id="node5" title=" " alt="" coords="111,80,161,107"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="185,80,348,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="238,5,295,32"/>
+<area shape="rect" id="node8" href="$classgenerator_1_1agents_1_1EndToEndAgent.html" title="generator.agents.EndToEnd\lAgent" alt="" coords="5,512,189,553"/>
+<area shape="rect" id="node9" href="$classgenerator_1_1agents_1_1TwoStageAgent.html" title="generator.agents.TwoStage\lAgent" alt="" coords="214,512,397,553"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html" title="parlai.agents.transformer.transformer.\lTransformerGeneratorAgent" alt="" coords="81,333,321,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title="parlai.core.torch_generator\l_agent.TorchGeneratorAgent" alt="" coords="107,244,296,285"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="122,155,281,196"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="185,80,348,107"/>
 </map>

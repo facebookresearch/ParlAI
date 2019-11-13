@@ -1,5 +1,4 @@
 <map id="dbll_babi.agents.TaskTeacher.setup_data_with_feedback" name="dbll_babi.agents.TaskTeacher.setup_data_with_feedback">
-<area shape="rect" id="node1" title=" " alt="" coords="317,23,549,65"/>
-<area shape="rect" id="node2" href="$classdbll__babi_1_1agents_1_1TaskTeacher.html#adcbc1c54716e7b631e4a496f59df1f33" title=" " alt="" coords="5,5,269,32"/>
-<area shape="rect" id="node3" href="$classagents_1_1TaskTeacher.html#aa4657ff478d0f6241272311b3e79351e" title=" " alt="" coords="33,56,242,83"/>
+<area shape="rect" id="node2" href="$classdbll__babi_1_1agents_1_1TaskTeacher.html#adcbc1c54716e7b631e4a496f59df1f33" title="dbll_babi.agents.TaskTeacher.setup_data" alt="" coords="285,5,549,32"/>
+<area shape="rect" id="node3" href="$classagents_1_1TaskTeacher.html#aa4657ff478d0f6241272311b3e79351e" title="agents.TaskTeacher.setup_data" alt="" coords="313,56,522,83"/>
 </map>

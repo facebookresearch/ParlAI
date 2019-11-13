@@ -1,0 +1,228 @@
+\hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher}{}\section{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher Namespace Reference}
+\label{namespaceparlai_1_1core_1_1pytorch__data__teacher}\index{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher@{parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1BatchSortCache}{Batch\+Sort\+Cache}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1DefaultTeacher}{Default\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1LoaderProcess}{Loader\+Process}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1ParlAIConcatDataset}{Parl\+A\+I\+Concat\+Dataset}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1ParlAIDataset}{Parl\+A\+I\+Dataset}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher}{Pytorch\+Data\+Teacher}
+\item 
+class \hyperlink{classparlai_1_1core_1_1pytorch__data__teacher_1_1StreamDataset}{Stream\+Dataset}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_afbd22acd239efcdb6afb94db83ee3493}{ep\+\_\+length} (val)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_acd56d9ac5d68831c1e91690f26eb2328}{get\+\_\+dataset\+\_\+classes} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7236aa20497f2a598df9b85909901184}{default\+\_\+collate} (batch)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a0c6f08553514c14d037da194f9d112ae}{deserialize} (obj)
+\item 
+def \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7b71207eb86027bc93809c1e4d57f641}{process} (ex\+\_\+or\+\_\+batch)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a70d3594b63522c1d2596bd15f1fb89e0}{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}
+\item 
+dictionary \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a34008e5ea53ba69d5da10b59d55abef4}{S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE} = \{str(d)\+: d for d in \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a70d3594b63522c1d2596bd15f1fb89e0}{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}\}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7236aa20497f2a598df9b85909901184}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7236aa20497f2a598df9b85909901184}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!default\+\_\+collate@{default\+\_\+collate}}
+\index{default\+\_\+collate@{default\+\_\+collate}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{default\+\_\+collate()}{default\_collate()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+default\+\_\+collate (\begin{DoxyParamCaption}\item[{}]{batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Collate a batch.
+
+Default collate function, used for ParlAIDataset and StreamDataset.
+\end{DoxyVerb}
+ 
+
+Definition at line 431 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_a0c6f08553514c14d037da194f9d112ae}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_a0c6f08553514c14d037da194f9d112ae}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!deserialize@{deserialize}}
+\index{deserialize@{deserialize}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{deserialize()}{deserialize()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+deserialize (\begin{DoxyParamCaption}\item[{}]{obj }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Deserializes lists into Tensors.\end{DoxyVerb}
+ 
+
+Definition at line 448 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+process().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_a0c6f08553514c14d037da194f9d112ae_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_afbd22acd239efcdb6afb94db83ee3493}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_afbd22acd239efcdb6afb94db83ee3493}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!ep\+\_\+length@{ep\+\_\+length}}
+\index{ep\+\_\+length@{ep\+\_\+length}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{ep\+\_\+length()}{ep\_length()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+ep\+\_\+length (\begin{DoxyParamCaption}\item[{}]{val }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Determine the length of an episode, given the specified value.\end{DoxyVerb}
+ 
+
+Definition at line 281 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), and tests.\+test\+\_\+pytorch\+\_\+data\+\_\+teacher.\+Test\+Pytorch\+Data\+Teacher.\+test\+\_\+pyt\+\_\+batchsort\+\_\+field().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_afbd22acd239efcdb6afb94db83ee3493_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_acd56d9ac5d68831c1e91690f26eb2328}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_acd56d9ac5d68831c1e91690f26eb2328}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!get\+\_\+dataset\+\_\+classes@{get\+\_\+dataset\+\_\+classes}}
+\index{get\+\_\+dataset\+\_\+classes@{get\+\_\+dataset\+\_\+classes}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{get\+\_\+dataset\+\_\+classes()}{get\_dataset\_classes()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+get\+\_\+dataset\+\_\+classes (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get datasets from the options.
+
+To use a custom dataset (as opposed to the StreamDataset or ParlAIDataset),
+you can subclass the pytorch Dataset class and specify its location on the
+command line.
+
+For example, the VQA v1 task provides a custom dataset, which can
+be specified on the command line as follows: ``-pytd vqa_v1:VQADataset``
+
+Note that if the dataset is named ``DefaultDataset``, then you do
+not need to specify its name following the colon; e.g., it
+would just be: ``-pytd vqa_v1``
+\end{DoxyVerb}
+ 
+
+Definition at line 295 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, and parlai.\+core.\+agents.\+get\+\_\+agent\+\_\+module().
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+\_\+\+\_\+init\+\_\+\+\_\+(), and parlai.\+core.\+params.\+Parlai\+Parser.\+add\+\_\+pyt\+\_\+dataset\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_acd56d9ac5d68831c1e91690f26eb2328_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_acd56d9ac5d68831c1e91690f26eb2328_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7b71207eb86027bc93809c1e4d57f641}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7b71207eb86027bc93809c1e4d57f641}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!process@{process}}
+\index{process@{process}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{process()}{process()}}
+{\footnotesize\ttfamily def parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+process (\begin{DoxyParamCaption}\item[{}]{ex\+\_\+or\+\_\+batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Process examples/batches, i.e. deserialize if necessary.\end{DoxyVerb}
+ 
+
+Definition at line 460 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+
+
+References parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+deserialize(), and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+next\+\_\+batch(), and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+next\+\_\+example().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7b71207eb86027bc93809c1e4d57f641_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1core_1_1pytorch__data__teacher_a7b71207eb86027bc93809c1e4d57f641_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_a34008e5ea53ba69d5da10b59d55abef4}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_a34008e5ea53ba69d5da10b59d55abef4}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE@{S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE}}
+\index{S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE@{S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE}{STR\_TO\_TORCH\_DTYPE}}
+{\footnotesize\ttfamily dictionary parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+S\+T\+R\+\_\+\+T\+O\+\_\+\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+PE = \{str(d)\+: d for d in \hyperlink{namespaceparlai_1_1core_1_1pytorch__data__teacher_a70d3594b63522c1d2596bd15f1fb89e0}{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}\}}
+
+
+
+Definition at line 428 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1core_1_1pytorch__data__teacher_a70d3594b63522c1d2596bd15f1fb89e0}\label{namespaceparlai_1_1core_1_1pytorch__data__teacher_a70d3594b63522c1d2596bd15f1fb89e0}} 
+\index{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}!T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES@{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}}
+\index{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES@{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}!parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher@{parlai\+::core\+::pytorch\+\_\+data\+\_\+teacher}}
+\subsubsection{\texorpdfstring{T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}{TORCH\_DTYPES}}
+{\footnotesize\ttfamily list parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+T\+O\+R\+C\+H\+\_\+\+D\+T\+Y\+P\+ES}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+1 =  [
+2     torch.float32,
+3     torch.float64,
+4     torch.float16,
+5     torch.uint8,
+6     torch.int8,
+7     torch.int16,
+8     torch.int32,
+9     torch.int64,
+10 ]
+\end{DoxyCode}
+
+
+Definition at line 418 of file pytorch\+\_\+data\+\_\+teacher.\+py.
+

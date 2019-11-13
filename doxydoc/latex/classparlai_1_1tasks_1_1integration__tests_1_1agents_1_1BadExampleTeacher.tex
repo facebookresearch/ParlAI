@@ -1,0 +1,104 @@
+\hypertarget{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher}{}\section{parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher}\index{parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher@{parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=250pt]{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=250pt]{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_a977f478a2379e0f40525f3dd5408a87c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher_abd333c4cd21fdfb819cae9fe9d56c78c}{opt}, shared=None)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_aa13107dbd3fd1bbff91491e2860ea6dc}{N\+U\+M\+\_\+\+C\+A\+S\+ES} = 8
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Teacher which produces a variety of examples that upset verify_data.py.
+
+Useful for checking how models respond when the following assumptions are
+violated:
+
+    0. text is empty string
+    1. missing text
+    2. label is empty string
+    3. missing label
+    4. label candidates is empty
+    5. label candidates contains an empty string
+    6. label isn't in the candidates
+    7. missing label candidates
+
+Note: this test may come to outlive its purpose in the future. When failing
+this test, one should consider who is really at fault: the test, or the code.
+\end{DoxyVerb}
+ 
+
+Definition at line 298 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_a977f478a2379e0f40525f3dd5408a87c}\label{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_a977f478a2379e0f40525f3dd5408a87c}} 
+\index{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher@{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher@{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 320 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher.\+\_\+wrapperfn(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, and parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher.\+N\+U\+M\+\_\+\+C\+A\+S\+ES.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_a977f478a2379e0f40525f3dd5408a87c_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_aa13107dbd3fd1bbff91491e2860ea6dc}\label{classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1BadExampleTeacher_aa13107dbd3fd1bbff91491e2860ea6dc}} 
+\index{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher@{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher}!N\+U\+M\+\_\+\+C\+A\+S\+ES@{N\+U\+M\+\_\+\+C\+A\+S\+ES}}
+\index{N\+U\+M\+\_\+\+C\+A\+S\+ES@{N\+U\+M\+\_\+\+C\+A\+S\+ES}!parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher@{parlai\+::tasks\+::integration\+\_\+tests\+::agents\+::\+Bad\+Example\+Teacher}}
+\subsubsection{\texorpdfstring{N\+U\+M\+\_\+\+C\+A\+S\+ES}{NUM\_CASES}}
+{\footnotesize\ttfamily int parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher.\+N\+U\+M\+\_\+\+C\+A\+S\+ES = 8\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 318 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Bad\+Example\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/integration\+\_\+tests/\hyperlink{parlai_2tasks_2integration__tests_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,197 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention}{}\section{parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention}\index{parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention@{parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_afa25129ca6ce9851053205f44f090fd6}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_ad0beb8f8b3e4514139b08555cf739d55}{dim}=1, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a04d74d5efbfdf47d36aff30331775368}{attn}=\textquotesingle{}\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_abed26e42fa2293f14cbbcf51c090794c}{cosine}\textquotesingle{}, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98c0f263db25cf305c333e04f8a0843d}{residual}=False, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98d54b38fac0a88d46eba7adf6ac542c}{get\+\_\+weights}=True)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_adb18b6c2564672c1820b3c72583dc0c0}{forward} (self, xs, ys, mask\+\_\+ys=None, values=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a669fa3f4cd988703371fc127a4943f07}{softmax}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_abed26e42fa2293f14cbbcf51c090794c}{cosine}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a04d74d5efbfdf47d36aff30331775368}{attn}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_ad0beb8f8b3e4514139b08555cf739d55}{dim}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98d54b38fac0a88d46eba7adf6ac542c}{get\+\_\+weights}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98c0f263db25cf305c333e04f8a0843d}{residual}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Implements simple/classical attention.\end{DoxyVerb}
+ 
+
+Definition at line 853 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_afa25129ca6ce9851053205f44f090fd6}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_afa25129ca6ce9851053205f44f090fd6}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dim = {\ttfamily 1},  }\item[{}]{attn = {\ttfamily \textquotesingle{}\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_abed26e42fa2293f14cbbcf51c090794c}{cosine}\textquotesingle{}},  }\item[{}]{residual = {\ttfamily False},  }\item[{}]{get\+\_\+weights = {\ttfamily True} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 856 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_adb18b6c2564672c1820b3c72583dc0c0}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_adb18b6c2564672c1820b3c72583dc0c0}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{xs,  }\item[{}]{ys,  }\item[{}]{mask\+\_\+ys = {\ttfamily None},  }\item[{}]{values = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Compute attention.
+
+Attend over ys with query xs to obtain weights, then apply weights to
+values (ys if yalues is None)
+
+Args:
+    xs: B x query_len x dim (queries)
+    ys: B x key_len x dim (keys)
+    mask_ys: B x key_len (mask)
+    values: B x value_len x dim (values); if None, default to ys
+\end{DoxyVerb}
+ 
+
+Definition at line 866 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+seq2seq.\+modules.\+Attention\+Layer.\+attn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Attention\+Layer.\+attn, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Attention\+Layer.\+attn, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+attn, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+cosine, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Encoder\+Layer.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder.\+dim, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Decoder\+Layer.\+dim, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+dim, make\+\_\+control\+\_\+dataset.\+float, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+get\+\_\+weights, parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+residual, parlai.\+agents.\+memnn.\+modules.\+Hop.\+softmax, parlai.\+agents.\+seq2seq.\+modules.\+Output\+Layer.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Decoder.\+softmax, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Output\+Layer.\+softmax, and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+softmax.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_adb18b6c2564672c1820b3c72583dc0c0_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a04d74d5efbfdf47d36aff30331775368}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a04d74d5efbfdf47d36aff30331775368}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!attn@{attn}}
+\index{attn@{attn}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{attn}{attn}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+attn}
+
+
+
+Definition at line 861 of file modules.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+modules.\+Attention\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_abed26e42fa2293f14cbbcf51c090794c}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_abed26e42fa2293f14cbbcf51c090794c}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!cosine@{cosine}}
+\index{cosine@{cosine}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{cosine}{cosine}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+cosine}
+
+
+
+Definition at line 860 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_ad0beb8f8b3e4514139b08555cf739d55}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_ad0beb8f8b3e4514139b08555cf739d55}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!dim@{dim}}
+\index{dim@{dim}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{dim}{dim}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+dim}
+
+
+
+Definition at line 862 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+polyencoder.\+Poly\+Basic\+Attention.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Multi\+Head\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98d54b38fac0a88d46eba7adf6ac542c}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98d54b38fac0a88d46eba7adf6ac542c}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!get\+\_\+weights@{get\+\_\+weights}}
+\index{get\+\_\+weights@{get\+\_\+weights}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{get\+\_\+weights}{get\_weights}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+get\+\_\+weights}
+
+
+
+Definition at line 863 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98c0f263db25cf305c333e04f8a0843d}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a98c0f263db25cf305c333e04f8a0843d}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!residual@{residual}}
+\index{residual@{residual}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{residual}{residual}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+residual}
+
+
+
+Definition at line 864 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a669fa3f4cd988703371fc127a4943f07}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1BasicAttention_a669fa3f4cd988703371fc127a4943f07}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}!softmax@{softmax}}
+\index{softmax@{softmax}!parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention@{parlai\+::agents\+::transformer\+::modules\+::\+Basic\+Attention}}
+\subsubsection{\texorpdfstring{softmax}{softmax}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+softmax}
+
+
+
+Definition at line 858 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+Speak\+Net.\+forward(), taskntalk.\+modules.\+Predict\+Net.\+forward(), controllable\+\_\+seq2seq.\+modules.\+Output\+Layer.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Basic\+Attention.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

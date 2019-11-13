@@ -1,0 +1,6 @@
+<map id="parlai.mturk.tasks.talkthewalk.worlds.TalkTheWalkWorld.evaluate_location" name="parlai.mturk.tasks.talkthewalk.worlds.TalkTheWalkWorld.evaluate_location">
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#ae43f66ea3849c1b8015132e53d1a617b" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.is_world_success" alt="" coords="296,5,539,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a9e6fdd57358e381a4b47163eb6176569" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.parley" alt="" coords="587,96,829,137"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#a2d73f3c22c536a60d65166b3ebd55e75" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.replay_actions" alt="" coords="296,123,539,164"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html#aed8d5a0a3e3457f2334b33726912586c" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld.load_world" alt="" coords="587,5,829,47"/>
+</map>

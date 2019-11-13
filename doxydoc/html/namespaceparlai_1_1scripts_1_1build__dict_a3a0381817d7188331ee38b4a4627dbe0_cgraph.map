@@ -1,0 +1,9 @@
+<map id="parlai.scripts.build_dict.build_dict" name="parlai.scripts.build_dict.build_dict">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="180,49,376,75"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1utils_1_1distributed.html#a023acb5e3b66e1f27e21247c35661279" title="parlai.utils.distributed.is\l_distributed" alt="" coords="199,100,357,141"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1scripts_1_1build__dict.html#a01e78707ace903aa772ada53fafe7067" title="parlai.scripts.build\l_dict.setup_args" alt="" coords="215,217,341,259"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1params.html#aa6083a72ad328d26016bd5f805a0b1c8" title="parlai.core.params.str2class" alt="" coords="425,166,612,193"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="437,5,601,47"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="445,71,592,112"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1agents_1_1drqa_1_1config.html#a62fdd5554f1da6be0cba185271058320" title="parlai.agents.drqa.config.add\l_cmdline_args" alt="" coords="424,217,613,259"/>
+</map>

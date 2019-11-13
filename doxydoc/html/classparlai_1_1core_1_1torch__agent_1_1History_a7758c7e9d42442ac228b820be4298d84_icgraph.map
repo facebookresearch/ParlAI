@@ -1,13 +1,18 @@
 <map id="parlai.core.torch_agent.History.parse" name="parlai.core.torch_agent.History.parse">
-<area shape="rect" id="node1" title=" " alt="" coords="564,241,723,283"/>
-<area shape="rect" id="node2" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="311,5,491,47"/>
-<area shape="rect" id="node3" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="297,95,505,136"/>
-<area shape="rect" id="node4" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="8,161,235,187"/>
-<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title=" " alt="" coords="309,212,492,253"/>
-<area shape="rect" id="node6" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title=" " alt="" coords="5,313,237,355"/>
-<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title=" " alt="" coords="285,379,516,406"/>
-<area shape="rect" id="node9" href="$classkvmemnn_1_1KvmemnnAgent.html#ac2b07b1455920e6a343271997b9c6207" title=" " alt="" coords="291,278,510,305"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title=" " alt="" coords="321,433,480,475"/>
-<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title=" " alt="" coords="20,379,223,420"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title=" " alt="" coords="42,444,201,485"/>
+<area shape="rect" id="node2" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batchify" alt="" coords="224,129,432,171"/>
+<area shape="rect" id="node9" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title="kvmemnn.KvmemnnAgent.batchify" alt="" coords="215,78,441,105"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title="light_chats.graph.Graph.get\l_reverse_action" alt="" coords="237,195,419,236"/>
+<area shape="rect" id="node11" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="212,260,444,301"/>
+<area shape="rect" id="node13" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title="light_chats.graph.Graph.parse_exec" alt="" coords="213,326,443,353"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title="parlai.core.torch_agent.\lHistory.reset" alt="" coords="249,377,407,419"/>
+<area shape="rect" id="node17" href="$classlight__chats_1_1graph_1_1Graph.html#accd7dfd84e4f2bee3fc3fbac8d8577cd" title="light_chats.graph.Graph.valid_exec" alt="" coords="215,443,441,470"/>
+<area shape="rect" id="node3" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a0988c186c27ab70d318ea30e39a0a5cc" title="agent.memnn_feedback.Memnn\lFeedbackAgent.batch_act" alt="" coords="507,129,715,171"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html#a2a2c0f653125850d739b84e0c55e6796" title="kvmemnn.KvmemnnAgent.batch_act" alt="" coords="492,78,729,105"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="817,5,977,47"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="777,71,1016,112"/>
+<area shape="rect" id="node6" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="793,188,1001,229"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="797,137,996,163"/>
+<area shape="rect" id="node12" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="495,256,727,297"/>
+<area shape="rect" id="node14" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title="light_chats.graph.Graph.update\l_world" alt="" coords="509,321,712,363"/>
+<area shape="rect" id="node16" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title="parlai.core.torch_agent.\lHistory.update_history" alt="" coords="531,387,690,428"/>
 </map>

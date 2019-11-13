@@ -1,0 +1,242 @@
+\hypertarget{classgenerator_1_1agents_1_1EndToEndAgent}{}\section{generator.\+agents.\+End\+To\+End\+Agent Class Reference}
+\label{classgenerator_1_1agents_1_1EndToEndAgent}\index{generator.\+agents.\+End\+To\+End\+Agent@{generator.\+agents.\+End\+To\+End\+Agent}}
+
+
+Inheritance diagram for generator.\+agents.\+End\+To\+End\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{classgenerator_1_1agents_1_1EndToEndAgent__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for generator.\+agents.\+End\+To\+End\+Agent\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{classgenerator_1_1agents_1_1EndToEndAgent__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_ac507fb4579c82550b60656fe5ed055f3}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__agent_1_1TorchAgent_a785bb920cf8c8afc3e9bf6a8b77e335a}{opt}, shared=None)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_ae74fbbaf5e134c46d83a89ffe0e00dc1}{compute\+\_\+loss} (self, batch, return\+\_\+output=False)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_ac63595362de55d7c700d1362af372cd3}{reset\+\_\+metrics} (self)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_a761044b6ad7410f5feb13e4231f60ce3}{report} (self)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_a91da888e366d029cb5efa373d4858e15}{batchify} (self, obs\+\_\+batch)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_af5a701f3af1cee9ac9ebf42ee108b63b}{add\+\_\+cmdline\+\_\+args} (cls, argparser)
+\item 
+def \hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_a4350bfc0d04bf47814db2d14b95ac3bb}{build\+\_\+model} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_aac7481a637d9b04a437dcc5ce3f46e17}{knowledge\+\_\+truncate}
+\item 
+\hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_aa93b8d6bb5abf0e840e51aaef52f1256}{max\+\_\+knowledge}
+\item 
+\hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_a4102dc419ed9e709b2fa4561f2f58ac7}{knowledge\+\_\+alpha}
+\item 
+\hyperlink{classgenerator_1_1agents_1_1EndToEndAgent_aa5a6b4060a634d775055e2a1f830f07c}{model}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 97 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_ac507fb4579c82550b60656fe5ed055f3}\label{classgenerator_1_1agents_1_1EndToEndAgent_ac507fb4579c82550b60656fe5ed055f3}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 98 of file agents.\+py.
+
+
+
+References generator.\+agents.\+End\+To\+End\+Agent.\+\_\+vectorize\+\_\+text, and eval\+\_\+ppl.\+int.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_af5a701f3af1cee9ac9ebf42ee108b63b}\label{classgenerator_1_1agents_1_1EndToEndAgent_af5a701f3af1cee9ac9ebf42ee108b63b}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{cls,  }\item[{}]{argparser }\end{DoxyParamCaption})}
+
+
+
+Definition at line 285 of file agents.\+py.
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_a91da888e366d029cb5efa373d4858e15}\label{classgenerator_1_1agents_1_1EndToEndAgent_a91da888e366d029cb5efa373d4858e15}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!batchify@{batchify}}
+\index{batchify@{batchify}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{batchify()}{batchify()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+batchify (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{obs\+\_\+batch }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Wizard custom batchify, which passes along the knowledge/title.
+
+Following the docstring of TorchAgent.batchify, it calls super, then
+uses an extended version of the torch_agent.Batch namedtuple.
+
+The purpose of extending the info is to keep track of some custom
+metrics.
+\end{DoxyVerb}
+ 
+
+Definition at line 202 of file agents.\+py.
+
+
+
+References generator.\+agents.\+End\+To\+End\+Agent.\+\_\+parse\+\_\+knowledge(), generator.\+agents.\+End\+To\+End\+Agent.\+\_\+vectorize\+\_\+text, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+E\+N\+D\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+E\+N\+D\+\_\+\+I\+DX, generator.\+agents.\+End\+To\+End\+Agent.\+knowledge\+\_\+truncate, generator.\+agents.\+End\+To\+End\+Agent.\+max\+\_\+knowledge, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v1.\+padded\+\_\+tensor(), parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+use\+\_\+cuda, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+use\+\_\+cuda, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+use\+\_\+cuda.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classgenerator_1_1agents_1_1EndToEndAgent_a91da888e366d029cb5efa373d4858e15_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_a4350bfc0d04bf47814db2d14b95ac3bb}\label{classgenerator_1_1agents_1_1EndToEndAgent_a4350bfc0d04bf47814db2d14b95ac3bb}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!build\+\_\+model@{build\+\_\+model}}
+\index{build\+\_\+model@{build\+\_\+model}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{build\+\_\+model()}{build\_model()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+build\+\_\+model (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 321 of file agents.\+py.
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_ae74fbbaf5e134c46d83a89ffe0e00dc1}\label{classgenerator_1_1agents_1_1EndToEndAgent_ae74fbbaf5e134c46d83a89ffe0e00dc1}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!compute\+\_\+loss@{compute\+\_\+loss}}
+\index{compute\+\_\+loss@{compute\+\_\+loss}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{compute\+\_\+loss()}{compute\_loss()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+compute\+\_\+loss (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{batch,  }\item[{}]{return\+\_\+output = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 119 of file agents.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, generator.\+agents.\+End\+To\+End\+Agent.\+knowledge\+\_\+alpha, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, parlai.\+agents.\+test\+\_\+agents.\+dummy\+\_\+torch\+\_\+agent.\+Mock\+Dict.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+bi\+\_\+encoder\+\_\+ranker.\+Bi\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+both\+\_\+encoder\+\_\+ranker.\+Both\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+bert\+\_\+ranker.\+cross\+\_\+encoder\+\_\+ranker.\+Cross\+Encoder\+Ranker\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v1.\+Seq2seq.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Ranker.\+N\+U\+L\+L\+\_\+\+I\+DX, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+N\+U\+L\+L\+\_\+\+I\+DX.
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_a761044b6ad7410f5feb13e4231f60ce3}\label{classgenerator_1_1agents_1_1EndToEndAgent_a761044b6ad7410f5feb13e4231f60ce3}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!report@{report}}
+\index{report@{report}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 159 of file agents.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics, and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+round\+\_\+sigfigs().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classgenerator_1_1agents_1_1EndToEndAgent_a761044b6ad7410f5feb13e4231f60ce3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_ac63595362de55d7c700d1362af372cd3}\label{classgenerator_1_1agents_1_1EndToEndAgent_ac63595362de55d7c700d1362af372cd3}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!reset\+\_\+metrics@{reset\+\_\+metrics}}
+\index{reset\+\_\+metrics@{reset\+\_\+metrics}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{reset\+\_\+metrics()}{reset\_metrics()}}
+{\footnotesize\ttfamily def generator.\+agents.\+End\+To\+End\+Agent.\+reset\+\_\+metrics (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 152 of file agents.\+py.
+
+
+
+References parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+metrics, parlai.\+core.\+agents.\+Teacher.\+metrics, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v1.\+Seq2seq\+Agent.\+metrics, parlai.\+core.\+metrics.\+Metrics.\+metrics, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+metrics, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+metrics.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_a4102dc419ed9e709b2fa4561f2f58ac7}\label{classgenerator_1_1agents_1_1EndToEndAgent_a4102dc419ed9e709b2fa4561f2f58ac7}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!knowledge\+\_\+alpha@{knowledge\+\_\+alpha}}
+\index{knowledge\+\_\+alpha@{knowledge\+\_\+alpha}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{knowledge\+\_\+alpha}{knowledge\_alpha}}
+{\footnotesize\ttfamily generator.\+agents.\+End\+To\+End\+Agent.\+knowledge\+\_\+alpha}
+
+
+
+Definition at line 107 of file agents.\+py.
+
+
+
+Referenced by generator.\+agents.\+End\+To\+End\+Agent.\+compute\+\_\+loss().
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_aac7481a637d9b04a437dcc5ce3f46e17}\label{classgenerator_1_1agents_1_1EndToEndAgent_aac7481a637d9b04a437dcc5ce3f46e17}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!knowledge\+\_\+truncate@{knowledge\+\_\+truncate}}
+\index{knowledge\+\_\+truncate@{knowledge\+\_\+truncate}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{knowledge\+\_\+truncate}{knowledge\_truncate}}
+{\footnotesize\ttfamily generator.\+agents.\+End\+To\+End\+Agent.\+knowledge\+\_\+truncate}
+
+
+
+Definition at line 103 of file agents.\+py.
+
+
+
+Referenced by generator.\+agents.\+End\+To\+End\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_aa93b8d6bb5abf0e840e51aaef52f1256}\label{classgenerator_1_1agents_1_1EndToEndAgent_aa93b8d6bb5abf0e840e51aaef52f1256}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!max\+\_\+knowledge@{max\+\_\+knowledge}}
+\index{max\+\_\+knowledge@{max\+\_\+knowledge}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{max\+\_\+knowledge}{max\_knowledge}}
+{\footnotesize\ttfamily generator.\+agents.\+End\+To\+End\+Agent.\+max\+\_\+knowledge}
+
+
+
+Definition at line 106 of file agents.\+py.
+
+
+
+Referenced by generator.\+agents.\+End\+To\+End\+Agent.\+batchify().
+
+\mbox{\Hypertarget{classgenerator_1_1agents_1_1EndToEndAgent_aa5a6b4060a634d775055e2a1f830f07c}\label{classgenerator_1_1agents_1_1EndToEndAgent_aa5a6b4060a634d775055e2a1f830f07c}} 
+\index{generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}!model@{model}}
+\index{model@{model}!generator\+::agents\+::\+End\+To\+End\+Agent@{generator\+::agents\+::\+End\+To\+End\+Agent}}
+\subsubsection{\texorpdfstring{model}{model}}
+{\footnotesize\ttfamily generator.\+agents.\+End\+To\+End\+Agent.\+model}
+
+
+
+Definition at line 322 of file agents.\+py.
+
+
+
+Referenced by parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+load(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+save().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/wizard\+\_\+of\+\_\+wikipedia/generator/\hyperlink{projects_2wizard__of__wikipedia_2generator_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

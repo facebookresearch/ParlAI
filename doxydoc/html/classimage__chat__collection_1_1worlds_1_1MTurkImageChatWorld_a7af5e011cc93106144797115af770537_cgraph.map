@@ -1,7 +1,8 @@
 <map id="image_chat_collection.worlds.MTurkImageChatWorld.parley" name="image_chat_collection.worlds.MTurkImageChatWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,116,203,157"/>
-<area shape="rect" id="node2" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title=" " alt="" coords="281,5,491,47"/>
-<area shape="rect" id="node3" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#a333c8d7353ed7fba417461177035c209" title=" " alt="" coords="287,71,485,127"/>
-<area shape="rect" id="node4" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title=" " alt="" coords="263,152,509,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title=" " alt="" coords="251,218,521,274"/>
+<area shape="rect" id="node2" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title="igc_evals.worlds.MTurkIGCEval\lWorld.check_timeout" alt="" coords="256,41,467,83"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="569,49,742,75"/>
+<area shape="rect" id="node4" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#a333c8d7353ed7fba417461177035c209" title="image_chat_collection.worlds.\lMTurkImageChatWorld.check\l_timeout" alt="" coords="263,107,460,163"/>
+<area shape="rect" id="node5" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title="image_chat_collection.worlds.\lMTurkImageChatWorld.get_instruction" alt="" coords="532,136,779,177"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.get\l_instruction" alt="" coords="520,213,791,269"/>
+<area shape="rect" id="node7" href="$namespaceimage__chat__collection_1_1worlds.html#aa028ae9a4f66d727036827410f5483ec" title="image_chat_collection.worlds.load\l_image" alt="" coords="251,289,472,331"/>
 </map>

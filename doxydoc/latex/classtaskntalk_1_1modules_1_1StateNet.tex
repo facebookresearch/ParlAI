@@ -1,0 +1,96 @@
+\hypertarget{classtaskntalk_1_1modules_1_1StateNet}{}\section{taskntalk.\+modules.\+State\+Net Class Reference}
+\label{classtaskntalk_1_1modules_1_1StateNet}\index{taskntalk.\+modules.\+State\+Net@{taskntalk.\+modules.\+State\+Net}}
+
+
+Inheritance diagram for taskntalk.\+modules.\+State\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=218pt]{classtaskntalk_1_1modules_1_1StateNet__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for taskntalk.\+modules.\+State\+Net\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=218pt]{classtaskntalk_1_1modules_1_1StateNet__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1StateNet_a632af0c7095036fbf34848bb8f930f3a}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, embed\+\_\+size, state\+\_\+size)
+\item 
+def \hyperlink{classtaskntalk_1_1modules_1_1StateNet_a174496bd7384bf033ccc667174f3be4c}{forward} (self, states, embeds)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtaskntalk_1_1modules_1_1StateNet_a778b5aa25d2564cdd5dafc5e3e4a3999}{net}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Module for containing the state update mechanism for an agent. In
+``forward``: Update states by passing the embeddings through LSTMCell.
+\end{DoxyVerb}
+ 
+
+Definition at line 60 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1StateNet_a632af0c7095036fbf34848bb8f930f3a}\label{classtaskntalk_1_1modules_1_1StateNet_a632af0c7095036fbf34848bb8f930f3a}} 
+\index{taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+State\+Net.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{embed\+\_\+size,  }\item[{}]{state\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Definition at line 65 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1StateNet_a174496bd7384bf033ccc667174f3be4c}\label{classtaskntalk_1_1modules_1_1StateNet_a174496bd7384bf033ccc667174f3be4c}} 
+\index{taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}!forward@{forward}}
+\index{forward@{forward}!taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def taskntalk.\+modules.\+State\+Net.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{states,  }\item[{}]{embeds }\end{DoxyParamCaption})}
+
+
+
+Definition at line 70 of file modules.\+py.
+
+
+
+References taskntalk.\+modules.\+Img\+Net.\+net, taskntalk.\+modules.\+Listen\+Net.\+net, and taskntalk.\+modules.\+State\+Net.\+net.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classtaskntalk_1_1modules_1_1StateNet_a778b5aa25d2564cdd5dafc5e3e4a3999}\label{classtaskntalk_1_1modules_1_1StateNet_a778b5aa25d2564cdd5dafc5e3e4a3999}} 
+\index{taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}!net@{net}}
+\index{net@{net}!taskntalk\+::modules\+::\+State\+Net@{taskntalk\+::modules\+::\+State\+Net}}
+\subsubsection{\texorpdfstring{net}{net}}
+{\footnotesize\ttfamily taskntalk.\+modules.\+State\+Net.\+net}
+
+
+
+Definition at line 67 of file modules.\+py.
+
+
+
+Referenced by taskntalk.\+modules.\+State\+Net.\+forward(), and taskntalk.\+modules.\+Speak\+Net.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/taskntalk/\hyperlink{projects_2taskntalk_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,134 @@
+\hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build}{}\section{parlai.\+tasks.\+hotpotqa.\+build Namespace Reference}
+\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build}\index{parlai.\+tasks.\+hotpotqa.\+build@{parlai.\+tasks.\+hotpotqa.\+build}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a11cd6bdcce0c267fa7bebb496d930b44}{make\+\_\+parlai\+\_\+format} (outpath, dtype, data)
+\item 
+def \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a98853aa474b04fb50fa49cec3f1c3882}{build} (opt)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON} = \textquotesingle{}1\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a8987e1381df8f7e74c98455c4af7d1e8}{T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME} = \textquotesingle{}hotpot\+\_\+train\+\_\+v\{\}.\+1.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a86adac1f9e9da2911e21beaafefc2cee}{D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME} = \textquotesingle{}hotpot\+\_\+dev\+\_\+distractor\+\_\+v\{\}.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_aabcca98f76be2304d8393dcf7ddc6648}{D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME} = \textquotesingle{}hotpot\+\_\+dev\+\_\+fullwiki\+\_\+v\{\}.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a2438adc99c7352b4e33e6153b45e24e7}{U\+RL} = \textquotesingle{}http\+://curtis.\+ml.\+cmu.\+edu/datasets/hotpot/\textquotesingle{}
+\item 
+string \hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a48edb524c1cd509f9b1707f70aed4003}{O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT} = \textquotesingle{}text\+:\{context\+\_\+question\}\textbackslash{}t\textquotesingle{} \textquotesingle{}labels\+:\{answer\}\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a98853aa474b04fb50fa49cec3f1c3882}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a98853aa474b04fb50fa49cec3f1c3882}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!build@{build}}
+\index{build@{build}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+hotpotqa.\+build.\+build (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+
+
+Definition at line 45 of file build.\+py.
+
+
+
+References parlai.\+tasks.\+hotpotqa.\+build.\+make\+\_\+parlai\+\_\+format().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a98853aa474b04fb50fa49cec3f1c3882_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a11cd6bdcce0c267fa7bebb496d930b44}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a11cd6bdcce0c267fa7bebb496d930b44}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!make\+\_\+parlai\+\_\+format@{make\+\_\+parlai\+\_\+format}}
+\index{make\+\_\+parlai\+\_\+format@{make\+\_\+parlai\+\_\+format}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{make\+\_\+parlai\+\_\+format()}{make\_parlai\_format()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+hotpotqa.\+build.\+make\+\_\+parlai\+\_\+format (\begin{DoxyParamCaption}\item[{}]{outpath,  }\item[{}]{dtype,  }\item[{}]{data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 38 of file build.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+hotpotqa.\+build.\+build().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a11cd6bdcce0c267fa7bebb496d930b44_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a86adac1f9e9da2911e21beaafefc2cee}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a86adac1f9e9da2911e21beaafefc2cee}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME}}
+\index{D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME}{DEV\_DISTRACTOR\_FILENAME}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+D\+E\+V\+\_\+\+D\+I\+S\+T\+R\+A\+C\+T\+O\+R\+\_\+\+F\+I\+L\+E\+N\+A\+ME = \textquotesingle{}hotpot\+\_\+dev\+\_\+distractor\+\_\+v\{\}.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})}
+
+
+
+Definition at line 14 of file build.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_aabcca98f76be2304d8393dcf7ddc6648}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_aabcca98f76be2304d8393dcf7ddc6648}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME}}
+\index{D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME}{DEV\_FULLWIKI\_FILENAME}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+D\+E\+V\+\_\+\+F\+U\+L\+L\+W\+I\+K\+I\+\_\+\+F\+I\+L\+E\+N\+A\+ME = \textquotesingle{}hotpot\+\_\+dev\+\_\+fullwiki\+\_\+v\{\}.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})}
+
+
+
+Definition at line 15 of file build.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a48edb524c1cd509f9b1707f70aed4003}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a48edb524c1cd509f9b1707f70aed4003}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT@{O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT}}
+\index{O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT@{O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT}{OUTPUT\_FORMAT}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+O\+U\+T\+P\+U\+T\+\_\+\+F\+O\+R\+M\+AT = \textquotesingle{}text\+:\{context\+\_\+question\}\textbackslash{}t\textquotesingle{} \textquotesingle{}labels\+:\{answer\}\textquotesingle{}}
+
+
+
+Definition at line 19 of file build.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a8987e1381df8f7e74c98455c4af7d1e8}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a8987e1381df8f7e74c98455c4af7d1e8}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME}}
+\index{T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME@{T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME}{TRAIN\_FILENAME}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+T\+R\+A\+I\+N\+\_\+\+F\+I\+L\+E\+N\+A\+ME = \textquotesingle{}hotpot\+\_\+train\+\_\+v\{\}.\+1.json\textquotesingle{}.format(\hyperlink{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}{V\+E\+R\+S\+I\+ON})}
+
+
+
+Definition at line 13 of file build.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a2438adc99c7352b4e33e6153b45e24e7}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a2438adc99c7352b4e33e6153b45e24e7}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!U\+RL@{U\+RL}}
+\index{U\+RL@{U\+RL}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{U\+RL}{URL}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+U\+RL = \textquotesingle{}http\+://curtis.\+ml.\+cmu.\+edu/datasets/hotpot/\textquotesingle{}}
+
+
+
+Definition at line 17 of file build.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}\label{namespaceparlai_1_1tasks_1_1hotpotqa_1_1build_a57a5627d2111821eb32c42f113773b1a}} 
+\index{parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}!V\+E\+R\+S\+I\+ON@{V\+E\+R\+S\+I\+ON}}
+\index{V\+E\+R\+S\+I\+ON@{V\+E\+R\+S\+I\+ON}!parlai\+::tasks\+::hotpotqa\+::build@{parlai\+::tasks\+::hotpotqa\+::build}}
+\subsubsection{\texorpdfstring{V\+E\+R\+S\+I\+ON}{VERSION}}
+{\footnotesize\ttfamily string parlai.\+tasks.\+hotpotqa.\+build.\+V\+E\+R\+S\+I\+ON = \textquotesingle{}1\textquotesingle{}}
+
+
+
+Definition at line 12 of file build.\+py.
+

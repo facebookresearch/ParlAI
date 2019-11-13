@@ -1,6 +1,3 @@
 <map id="parlai.agents.tfidf_retriever.tokenizers.regexp_tokenizer.RegexpTokenizer" name="parlai.agents.tfidf_retriever.tokenizers.regexp_tokenizer.RegexpTokenizer">
-<area shape="rect" id="node1" title=" " alt="" coords="125,347,313,403"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1tokenizer_1_1Tokenizer.html" title=" " alt="" coords="5,81,207,137"/>
-<area shape="rect" id="node3" title=" " alt="" coords="77,5,135,32"/>
-<area shape="rect" id="node4" title=" " alt="" coords="231,96,285,123"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1tokenizer_1_1Tokenizer.html" title="parlai.agents.tfidf\l_retriever.tokenizers.tokenizer.\lTokenizer" alt="" coords="5,81,207,137"/>
 </map>

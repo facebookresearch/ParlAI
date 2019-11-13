@@ -1,7 +1,5 @@
 <map id="parlai.mturk.core.dev.agents.AbsentAgentError" name="parlai.mturk.core.dev.agents.AbsentAgentError">
-<area shape="rect" id="node1" title=" " alt="" coords="133,71,324,112"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentDisconnectedError.html" title=" " alt="" coords="372,5,563,47"/>
-<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentReturnedError.html" title=" " alt="" coords="372,71,563,112"/>
-<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentTimeoutError.html" title=" " alt="" coords="372,136,563,177"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,78,85,105"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentDisconnectedError.html" title="parlai.mturk.core.dev.agents.\lAgentDisconnectedError" alt="" coords="372,5,563,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentReturnedError.html" title="parlai.mturk.core.dev.agents.\lAgentReturnedError" alt="" coords="372,71,563,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AgentTimeoutError.html" title="parlai.mturk.core.dev.agents.\lAgentTimeoutError" alt="" coords="372,136,563,177"/>
 </map>

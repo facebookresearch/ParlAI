@@ -1,8 +1,7 @@
 <map id="parlai.core.torch_agent.TorchAgent.dictionary_class" name="parlai.core.torch_agent.TorchAgent.dictionary_class">
-<area shape="rect" id="node1" title=" " alt="" coords="537,116,724,157"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6836668a4c2394d7217631fed533a7ac" title=" " alt="" coords="212,5,489,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a496b5ccc5efe17f290c37dc094ff74e8" title=" " alt="" coords="231,71,471,127"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a4a72bdd07d2cb5ce402d0058140cad0d" title=" " alt="" coords="251,152,450,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a233316f9ec2805dd6a08fbf07f3a078a" title=" " alt="" coords="259,217,442,259"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#ad0a00ada1fcd5b7ceec27b1a6cbdc281" title=" " alt="" coords="5,217,164,259"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6836668a4c2394d7217631fed533a7ac" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent.add_cmdline_args" alt="" coords="240,5,517,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a496b5ccc5efe17f290c37dc094ff74e8" title="parlai.agents.transformer.transformer.\lTransformerGeneratorAgent.add\l_cmdline_args" alt="" coords="259,71,499,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a4a72bdd07d2cb5ce402d0058140cad0d" title="parlai.core.torch_agent.\lTorchAgent.add_cmdline_args" alt="" coords="279,152,478,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a233316f9ec2805dd6a08fbf07f3a078a" title="parlai.core.torch_agent.\lTorchAgent.build_dictionary" alt="" coords="287,217,470,259"/>
+<area shape="rect" id="node6" href="$classtests_1_1test__ta__inheritence_1_1SubClassA.html#aa01b5f43121b539c377b9b1d50f93d0c" title="tests.test_ta_inheritence.\lSubClassA.dictionary_class" alt="" coords="285,283,472,324"/>
 </map>

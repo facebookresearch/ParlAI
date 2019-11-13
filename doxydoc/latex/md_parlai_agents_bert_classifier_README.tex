@@ -1,0 +1,10 @@
+This directory contains an implementations of a classifier based on a pretrained language model B\+E\+RT (Devlin et al. \href{https://arxiv.org/abs/1810.04805}{\tt https\+://arxiv.\+org/abs/1810.\+04805}). It relies on the pytorch implementation provided by Hugging Face (\href{https://github.com/huggingface/pytorch-pretrained-BERT}{\tt https\+://github.\+com/huggingface/pytorch-\/pretrained-\/\+B\+E\+RT}).
+
+\subsection*{Basic Examples}
+
+Train a classifier on the S\+N\+LI tas. 
+\begin{DoxyCode}
+python examples/train\_model.py -m bert\_classifier -t snli --classes 'entailment' 'contradiction' 'neutral'
+       -mf /tmp/BERT\_snli -bs 20
+\end{DoxyCode}
+ 

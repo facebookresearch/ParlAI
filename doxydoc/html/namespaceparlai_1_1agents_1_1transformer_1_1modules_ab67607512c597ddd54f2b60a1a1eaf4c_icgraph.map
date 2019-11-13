@@ -1,0 +1,4 @@
+<map id="parlai.agents.transformer.modules.get_n_positions_from_options" name="parlai.agents.transformer.modules.get_n_positions_from_options">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1crossencoder_1_1CrossEncoderModule.html#ad002e8a3432930432430e2b4c435cc3e" title="parlai.agents.transformer.crossencoder.\lCrossEncoderModule.__init__" alt="" coords="295,5,547,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#acd213717123d2f2f24e6f03270c3db14" title="parlai.agents.transformer.polyencoder.\lPolyEncoderModule.get_encoder" alt="" coords="299,71,543,112"/>
+</map>

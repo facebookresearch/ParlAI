@@ -1,0 +1,66 @@
+\hypertarget{namespaceigc__evals_1_1run}{}\section{igc\+\_\+evals.\+run Namespace Reference}
+\label{namespaceigc__evals_1_1run}\index{igc\+\_\+evals.\+run@{igc\+\_\+evals.\+run}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceigc__evals_1_1run_ac45cf85723a667c904378dacaee81ed7}{main} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespaceigc__evals_1_1run_ae97b39ec3dea2c6577e9207f48f2e969}{round\+\_\+choices} = \mbox{[}\textquotesingle{}questions\textquotesingle{}, \textquotesingle{}responses\textquotesingle{}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceigc__evals_1_1run_ac45cf85723a667c904378dacaee81ed7}\label{namespaceigc__evals_1_1run_ac45cf85723a667c904378dacaee81ed7}} 
+\index{igc\+\_\+evals\+::run@{igc\+\_\+evals\+::run}!main@{main}}
+\index{main@{main}!igc\+\_\+evals\+::run@{igc\+\_\+evals\+::run}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def igc\+\_\+evals.\+run.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}    IGC Human Evaluation.
+
+    Specify the `--eval-data-path` to load examples for evaluation.
+
+    The data in `--eval-data-path` should be formatted as a dictionary
+    mapping IGC image ids to dicts with the following fields:
+    {
+        'questions': list of (<generator_name>, <generated_question>) tuples,
+        'responses': list of (<generator_name>, <generated_response>) tuples,
+        'question': question to use when evaluating responses,
+        'context': context for the image
+    }
+
+    If not data path specified, loads a demo_example specified in worlds.py
+
+    Specify `--image-path` for the path to the IGC images, where each example
+    is saved as <image_id>.jpg
+
+
+    NOTE: You can download the IGC Test Set from
+        https://www.microsoft.com/en-us/download/details.aspx?id=55324
+
+    And you can use the `download_igc_images.py` script to download the images
+    (please put the IGC_crowd_test.csv file in this directory to use the script)\end{DoxyVerb}
+ 
+
+Definition at line 15 of file run.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceigc__evals_1_1run_ae97b39ec3dea2c6577e9207f48f2e969}\label{namespaceigc__evals_1_1run_ae97b39ec3dea2c6577e9207f48f2e969}} 
+\index{igc\+\_\+evals\+::run@{igc\+\_\+evals\+::run}!round\+\_\+choices@{round\+\_\+choices}}
+\index{round\+\_\+choices@{round\+\_\+choices}!igc\+\_\+evals\+::run@{igc\+\_\+evals\+::run}}
+\subsubsection{\texorpdfstring{round\+\_\+choices}{round\_choices}}
+{\footnotesize\ttfamily list igc\+\_\+evals.\+run.\+round\+\_\+choices = \mbox{[}\textquotesingle{}questions\textquotesingle{}, \textquotesingle{}responses\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 12 of file run.\+py.
+

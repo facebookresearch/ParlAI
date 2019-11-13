@@ -1,0 +1,5 @@
+<map id="parlai.mturk.core.test.test_mturk_manager.TestMTurkManagerConnectedFunctions.test_qualification_management" name="parlai.mturk.core.test.test_mturk_manager.TestMTurkManagerConnectedFunctions.test_qualification_management">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils.html#acd636315cbbf11cc5d9d641173e51586" title="parlai.mturk.core.dev.mturk\l_utils.find_qualification" alt="" coords="297,20,479,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils.html#ab4c0dfc58f9fe37c28c9d23628d1de4e" title="parlai.mturk.core.dev.mturk\l_utils.find_or_create_qualification" alt="" coords="527,20,741,61"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1mturk_1_1core_1_1dev_1_1mturk__utils.html#ad9e4ecfca00663796f26ca16a2778f29" title="parlai.mturk.core.dev.mturk\l_utils.get_mturk_client" alt="" coords="789,49,971,91"/>
+</map>

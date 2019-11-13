@@ -1,0 +1,134 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1multiprocessing__train}{}\section{parlai.\+scripts.\+multiprocessing\+\_\+train Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1multiprocessing__train}\index{parlai.\+scripts.\+multiprocessing\+\_\+train@{parlai.\+scripts.\+multiprocessing\+\_\+train}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa979267c9eb44bbdfcd25a6d69a58cc4}{multiprocess\+\_\+train} (rank, opt, port=61337, rank\+\_\+offset=0, gpu=None, hostname=\textquotesingle{}localhost\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1multiprocessing__train_a5dc8df166f1c025b54f7420a1ab2f812}{launch\+\_\+and\+\_\+train} (opt, port)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1multiprocessing__train_a1ee26bddeb470040cfbceb5ee7a9fa08}{setup\+\_\+args} ()
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa7b2a133561ac5212f3ee9814a645522}{main} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1multiprocessing__train_a5dc8df166f1c025b54f7420a1ab2f812}\label{namespaceparlai_1_1scripts_1_1multiprocessing__train_a5dc8df166f1c025b54f7420a1ab2f812}} 
+\index{parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}!launch\+\_\+and\+\_\+train@{launch\+\_\+and\+\_\+train}}
+\index{launch\+\_\+and\+\_\+train@{launch\+\_\+and\+\_\+train}!parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}}
+\subsubsection{\texorpdfstring{launch\+\_\+and\+\_\+train()}{launch\_and\_train()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+multiprocessing\+\_\+train.\+launch\+\_\+and\+\_\+train (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{port }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform a fork() to many processes.\end{DoxyVerb}
+ 
+
+Definition at line 97 of file multiprocessing\+\_\+train.\+py.
+
+
+
+References parlai.\+scripts.\+multiprocessing\+\_\+train.\+multiprocess\+\_\+train().
+
+
+
+Referenced by parlai.\+scripts.\+multiprocessing\+\_\+train.\+main().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1multiprocessing__train_a5dc8df166f1c025b54f7420a1ab2f812_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1multiprocessing__train_a5dc8df166f1c025b54f7420a1ab2f812_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa7b2a133561ac5212f3ee9814a645522}\label{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa7b2a133561ac5212f3ee9814a645522}} 
+\index{parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}!main@{main}}
+\index{main@{main}!parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+multiprocessing\+\_\+train.\+main (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 128 of file multiprocessing\+\_\+train.\+py.
+
+
+
+References parlai.\+scripts.\+multiprocessing\+\_\+train.\+launch\+\_\+and\+\_\+train(), and parlai.\+scripts.\+multiprocessing\+\_\+train.\+setup\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa7b2a133561ac5212f3ee9814a645522_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa979267c9eb44bbdfcd25a6d69a58cc4}\label{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa979267c9eb44bbdfcd25a6d69a58cc4}} 
+\index{parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}!multiprocess\+\_\+train@{multiprocess\+\_\+train}}
+\index{multiprocess\+\_\+train@{multiprocess\+\_\+train}!parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}}
+\subsubsection{\texorpdfstring{multiprocess\+\_\+train()}{multiprocess\_train()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+multiprocessing\+\_\+train.\+multiprocess\+\_\+train (\begin{DoxyParamCaption}\item[{}]{rank,  }\item[{}]{opt,  }\item[{}]{port = {\ttfamily 61337},  }\item[{}]{rank\+\_\+offset = {\ttfamily 0},  }\item[{}]{gpu = {\ttfamily None},  }\item[{}]{hostname = {\ttfamily \textquotesingle{}localhost\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Subprocess which initializes distributed training, and begins training.
+
+This should be launched n times for n GPUs; this is handled either in main
+or via srun.
+
+:param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
+:param opt: command line options
+:param int port: A TCP port to use. This will need to be changed to run
+    multiple distributed training setups on the same machine.
+:param int gpu: Which GPU to use. Defaults to using rank and local devices,
+    but must be manually specified when using many-hosts.
+:param str hostname: Hostname of the main server.
+\end{DoxyVerb}
+ 
+
+Definition at line 38 of file multiprocessing\+\_\+train.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+Referenced by parlai.\+scripts.\+multiprocessing\+\_\+train.\+launch\+\_\+and\+\_\+train(), and parlai.\+scripts.\+distributed\+\_\+train.\+main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1multiprocessing__train_aa979267c9eb44bbdfcd25a6d69a58cc4_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1multiprocessing__train_a1ee26bddeb470040cfbceb5ee7a9fa08}\label{namespaceparlai_1_1scripts_1_1multiprocessing__train_a1ee26bddeb470040cfbceb5ee7a9fa08}} 
+\index{parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::multiprocessing\+\_\+train@{parlai\+::scripts\+::multiprocessing\+\_\+train}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+multiprocessing\+\_\+train.\+setup\+\_\+args (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 121 of file multiprocessing\+\_\+train.\+py.
+
+
+
+Referenced by parlai.\+scripts.\+multiprocessing\+\_\+train.\+main().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1multiprocessing__train_a1ee26bddeb470040cfbceb5ee7a9fa08_icgraph}
+\end{center}
+\end{figure}

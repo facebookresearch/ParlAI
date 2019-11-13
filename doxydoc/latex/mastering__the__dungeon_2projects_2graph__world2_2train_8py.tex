@@ -1,0 +1,61 @@
+\hypertarget{mastering__the__dungeon_2projects_2graph__world2_2train_8py}{}\section{projects/mastering\+\_\+the\+\_\+dungeon/projects/graph\+\_\+world2/train.py File Reference}
+\label{mastering__the__dungeon_2projects_2graph__world2_2train_8py}\index{projects/mastering\+\_\+the\+\_\+dungeon/projects/graph\+\_\+world2/train.\+py@{projects/mastering\+\_\+the\+\_\+dungeon/projects/graph\+\_\+world2/train.\+py}}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacetrain}{train}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacetrain_a69347e6c50429f5076c376b70b1d8a27}{train.\+prepro} (opt)
+\item 
+def \hyperlink{namespacetrain_a339ec8fa7ecbd096bb08716bd0b2aa94}{train.\+validate} (opt, agent)
+\item 
+def \hyperlink{namespacetrain_ad644487baaf3b94d8a6b32b0f6e88e15}{train.\+get\+\_\+metrics} (actions, gt\+\_\+actions)
+\item 
+def \hyperlink{namespacetrain_a55c2b31c8e13b7aa621b3954392bdb93}{train.\+get\+\_\+accuracy} (actions, gt\+\_\+actions, graph)
+\item 
+def \hyperlink{namespacetrain_a9719cda8ba718637950ea11259aa636c}{train.\+additional\+\_\+validate} (opt, model, data\+\_\+agent, valid\+\_\+data\+\_\+file, constrain\+\_\+=True, no\+\_\+hits=False)
+\item 
+def \hyperlink{namespacetrain_a2322df3364c6be0dfcbd3d13d9a4745e}{train.\+log\+\_\+print} (s, out\+\_\+file)
+\item 
+def \hyperlink{namespacetrain_a6e1c17af3a14f1cd1b54ee54ccf5a77b}{train.\+main} (opt, return\+\_\+full=False, out\+\_\+file=None)
+\item 
+def \hyperlink{namespacetrain_ae2ba29fb97dfcb37d81039ba8e7d8580}{train.\+online\+\_\+exp} (opt, log\+\_\+file=None)
+\item 
+def \hyperlink{namespacetrain_a425ccbcfa57820b4ad788f4c71772f0f}{train.\+ablation\+\_\+exp} (opt)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespacetrain_a674f48668d3e343c9b06b0b72ca8c458}{train.\+argparser} = Parlai\+Parser()
+\item 
+\hyperlink{namespacetrain_ad99775ad96e0996a8be4782b30a28c2e}{train.\+type}
+\item 
+\hyperlink{namespacetrain_af5de906790efe7cea370f1a69e020d52}{train.\+int}
+\item 
+\hyperlink{namespacetrain_abfb9b8d0ebf72bafd04e084791275553}{train.\+default}
+\item 
+\hyperlink{namespacetrain_a366f6877ee8e22a2c2aa569859925e34}{train.\+bool}
+\item 
+\hyperlink{namespacetrain_af6ce307b1ddd4745a96b7834bc0232dc}{train.\+float}
+\item 
+\hyperlink{namespacetrain_aaa59b213583fa39039d4c2a897f9009c}{train.\+str}
+\item 
+\hyperlink{namespacetrain_a8ce47f3ce85e34ed945573b80e08aaf6}{train.\+opt} = argparser.\+parse\+\_\+args()
+\item 
+\hyperlink{namespacetrain_aa21180e9a522633e69afac0c0e608b85}{train.\+job\+\_\+num} = opt\mbox{[}\textquotesingle{}job\+\_\+num\textquotesingle{}\mbox{]}
+\item 
+string \hyperlink{namespacetrain_a647c4fb1786c78fdc94676ae8e99581d}{train.\+input\+\_\+file} = \textquotesingle{}job-\/in-\/\{\}.pkl\textquotesingle{}.format(job\+\_\+num)
+\item 
+string \hyperlink{namespacetrain_aeaa702306f07912976fe68c59b1a1bcd}{train.\+output\+\_\+file} = \textquotesingle{}job-\/out-\/\{\}.txt\textquotesingle{}.format(job\+\_\+num)
+\item 
+string \hyperlink{namespacetrain_a30cb844466eb30a5ba783789c8c0f43f}{train.\+log\+\_\+file} = \textquotesingle{}job-\/log-\/\{\}.txt\textquotesingle{}.format(job\+\_\+num)
+\item 
+\hyperlink{namespacetrain_a09cea1b757e4ebbba308040736f37c4f}{train.\+job\+\_\+in\+\_\+opt} = pickle.\+load(f\+\_\+in)
+\item 
+\hyperlink{namespacetrain_a251b9c809d918f9575e8fac22c744b56}{train.\+new\+\_\+opt} = deepcopy(opt)
+\item 
+\hyperlink{namespacetrain_a824aa8f7a68ad5e626aed978e756e005}{train.\+fout} = open(output\+\_\+file, \textquotesingle{}w\textquotesingle{})
+\end{DoxyCompactItemize}

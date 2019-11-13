@@ -1,0 +1,5 @@
+<map id="parlai.tasks.dealnodeal.agents.get_tag" name="parlai.tasks.dealnodeal.agents.get_tag">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dealnodeal_1_1agents_1_1NegotiationTeacher.html#a87d200e80614ec6ac4b7611d698f22f5" title="parlai.tasks.dealnodeal.agents.\lNegotiationTeacher.num_examples" alt="" coords="305,13,532,54"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1dealnodeal_1_1worlds_1_1MTurkDealNoDealDialogWorld.html#af7190231afe42d1e3a8eefaf4ef16b19" title="parlai.mturk.tasks.dealnodeal.worlds.\lMTurkDealNoDealDialogWorld.parley" alt="" coords="299,78,539,119"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacherDataset.html#af21b0729758b7ee550cb28f15b637edf" title="parlai.tasks.integration\l_tests.agents.CandidateTeacher\lDataset.__len__" alt="" coords="587,5,797,61"/>
+</map>

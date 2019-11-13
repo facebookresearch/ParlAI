@@ -1,0 +1,10 @@
+This agent is a wrapper for Facebook AI Research\textquotesingle{}s fairseq so it can be used an agent in Parl\+AI. Read more about fairseq \href{https://github.com/facebookresearch/fairseq}{\tt here}.
+
+\subsection*{Basic Examples}
+
+Train a fairseq transformer model on the Open\+Subtitles task. ({\itshape N\+O\+TE\+:} You will be prompted to install fairseq if you have not already.) 
+\begin{DoxyCode}
+python examples/train\_model.py -m fairseq --arch transformer -t opensubtitles -mf
+       /tmp/fairseq\_opensubtitles.mdl
+\end{DoxyCode}
+ 

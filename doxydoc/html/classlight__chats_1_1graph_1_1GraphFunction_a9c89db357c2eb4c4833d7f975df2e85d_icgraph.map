@@ -1,4 +1,8 @@
 <map id="light_chats.graph.GraphFunction.get_find_fail_text" name="light_chats.graph.GraphFunction.get_find_fail_text">
-<area shape="rect" id="node1" title=" " alt="" coords="300,5,532,47"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a3b6764b365baf7471e53651adf83706b" title=" " alt="" coords="5,5,252,47"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a33a25a071385ffbd0a222cab65c543d4" title="light_chats.graph.GraphFunction.parse\l_descs_to_args_helper" alt="" coords="285,86,532,127"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a8b76e8a8bb07f75abd081e220683dbd4" title="light_chats.graph.GraphFunction.parse\l_descs_to_args" alt="" coords="580,86,827,127"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a8ac297dcadb1e5ec360f55f293dcbfcb" title="light_chats.graph.GraphFunction.valid_args" alt="" coords="875,5,1148,32"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a3b6764b365baf7471e53651adf83706b" title="light_chats.graph.GraphFunction.parse\l_text_to_args" alt="" coords="888,57,1135,98"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1TellFunction.html#a86e8534217b3d10cb4daf5cc080d624e" title="light_chats.graph.TellFunction.valid_args" alt="" coords="882,123,1141,149"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1TellFunction.html#a88ac4115a6cca664cd220fb0b8852629" title="light_chats.graph.TellFunction.parse\l_text_to_args" alt="" coords="895,174,1127,215"/>
 </map>

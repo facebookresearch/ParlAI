@@ -1,0 +1,17 @@
+<map id="mastering_the_dungeon.mturk.tasks.MTD.run.overall_ablation" name="mastering_the_dungeon.mturk.tasks.MTD.run.overall_ablation">
+<area shape="rect" id="node2" href="$namespacetrain.html#a425ccbcfa57820b4ad788f4c71772f0f" title="train.ablation_exp" alt="" coords="347,217,471,244"/>
+<area shape="rect" id="node13" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#af11196d8dedb6354bfadb6fe86276a04" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.get_init_data" alt="" coords="291,334,528,375"/>
+<area shape="rect" id="node16" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a7d8855ab1a7622d4b811085a733b8483" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.get_rest_data" alt="" coords="291,269,528,310"/>
+<area shape="rect" id="node3" href="$namespacetrain.html#a6e1c17af3a14f1cd1b54ee54ccf5a77b" title="train.main" alt="" coords="655,107,734,133"/>
+<area shape="rect" id="node10" href="$namespacetrain.html#a9719cda8ba718637950ea11259aa636c" title="train.additional_validate" alt="" coords="615,233,774,260"/>
+<area shape="rect" id="node4" href="$namespacetrain.html#a69347e6c50429f5076c376b70b1d8a27" title="train.prepro" alt="" coords="883,5,969,32"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="1039,56,1235,83"/>
+<area shape="rect" id="node8" href="$namespacetrain.html#a339ec8fa7ecbd096bb08716bd0b2aa94" title="train.validate" alt="" coords="878,107,974,133"/>
+<area shape="rect" id="node9" href="$namespacetrain.html#a2322df3364c6be0dfcbd3d13d9a4745e" title="train.log_print" alt="" coords="876,157,976,184"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="1291,15,1438,57"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="1283,81,1447,122"/>
+<area shape="rect" id="node11" href="$namespacetrain.html#ad644487baaf3b94d8a6b32b0f6e88e15" title="train.get_metrics" alt="" coords="867,208,985,235"/>
+<area shape="rect" id="node12" href="$namespacetrain.html#a55c2b31c8e13b7aa621b3954392bdb93" title="train.get_accuracy" alt="" coords="861,259,991,285"/>
+<area shape="rect" id="node14" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a62781f44b43636ee721e462700efeeac" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.get_output_dir" alt="" coords="576,317,813,358"/>
+<area shape="rect" id="node15" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#ae9470c6f4c17df22c645c66d61556c8f" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.print_and_log" alt="" coords="576,382,813,423"/>
+</map>

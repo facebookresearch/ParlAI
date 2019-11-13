@@ -1,20 +1,18 @@
 <map id="parlai.core.worlds.MultiAgentDialogWorld" name="parlai.core.worlds.MultiAgentDialogWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="321,397,477,439"/>
-<area shape="rect" id="node4" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html" title=" " alt="" coords="558,5,769,47"/>
-<area shape="rect" id="node5" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html" title=" " alt="" coords="565,71,762,112"/>
-<area shape="rect" id="node6" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html" title=" " alt="" coords="578,136,749,177"/>
-<area shape="rect" id="node7" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html" title=" " alt="" coords="564,201,763,243"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title=" " alt="" coords="567,267,760,308"/>
-<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html" title=" " alt="" coords="539,332,788,373"/>
-<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html" title=" " alt="" coords="525,397,801,439"/>
-<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html" title=" " alt="" coords="542,463,785,504"/>
-<area shape="rect" id="node14" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html" title=" " alt="" coords="558,528,769,569"/>
-<area shape="rect" id="node15" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html" title=" " alt="" coords="552,593,775,635"/>
-<area shape="rect" id="node16" href="$classstack__rank__evals_1_1worlds_1_1MTurkPersonalityCaptionsStackRankWorld.html" title=" " alt="" coords="558,659,769,715"/>
-<area shape="rect" id="node17" href="$classworlds_1_1MTurkWizardOfWikipediaWorld.html" title=" " alt="" coords="557,740,770,781"/>
-<area shape="rect" id="node18" href="$classworlds_1_1PersonaChatEvalWorld.html" title=" " alt="" coords="563,806,763,833"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,405,273,431"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,405,63,431"/>
-<area shape="rect" id="node9" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1worlds_1_1GraphWorld2.html" title=" " alt="" coords="849,235,1081,276"/>
-<area shape="rect" id="node10" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html" title=" " alt="" coords="863,300,1068,341"/>
+<area shape="rect" id="node4" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html" title="igc_evals.worlds.MTurkIGCEval\lWorld" alt="" coords="558,5,769,47"/>
+<area shape="rect" id="node5" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html" title="image_chat_collection.worlds.\lMTurkImageChatWorld" alt="" coords="565,71,762,112"/>
+<area shape="rect" id="node6" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html" title="mturk.worlds.Controllable\lDialogEval" alt="" coords="578,136,749,177"/>
+<area shape="rect" id="node7" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html" title="mturk_evaluation_task.worlds.\lWizardEval" alt="" coords="564,201,763,243"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title="parlai.core.worlds.Executable\lWorld" alt="" coords="567,267,760,308"/>
+<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld" alt="" coords="539,332,788,373"/>
+<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonaChatWorld" alt="" coords="525,397,801,439"/>
+<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html" title="parlai.mturk.tasks.talkthewalk.worlds.\lTalkTheWalkWorld" alt="" coords="542,463,785,504"/>
+<area shape="rect" id="node14" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html" title="personality_captions.worlds.\lMTurkPersonalityCaptionsWorld" alt="" coords="558,528,769,569"/>
+<area shape="rect" id="node15" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html" title="stack_rank_evals.worlds.\lMTurkImageChatStackRankWorld" alt="" coords="552,593,775,635"/>
+<area shape="rect" id="node16" href="$classstack__rank__evals_1_1worlds_1_1MTurkPersonalityCaptionsStackRankWorld.html" title="stack_rank_evals.worlds.\lMTurkPersonalityCaptionsStack\lRankWorld" alt="" coords="558,659,769,715"/>
+<area shape="rect" id="node17" href="$classworlds_1_1MTurkWizardOfWikipediaWorld.html" title="worlds.MTurkWizardOfWikipedia\lWorld" alt="" coords="557,740,770,781"/>
+<area shape="rect" id="node18" href="$classworlds_1_1PersonaChatEvalWorld.html" title="worlds.PersonaChatEvalWorld" alt="" coords="563,806,763,833"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title="parlai.core.worlds.World" alt="" coords="111,405,273,431"/>
+<area shape="rect" id="node9" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1worlds_1_1GraphWorld2.html" title="mastering_the_dungeon.tasks.graph\l_world2.worlds.GraphWorld2" alt="" coords="849,235,1081,276"/>
+<area shape="rect" id="node10" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html" title="parlai.tasks.talkthewalk.worlds.\lSimulateWorld" alt="" coords="863,300,1068,341"/>
 </map>

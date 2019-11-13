@@ -1,0 +1,95 @@
+\hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay}{}\section{parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay Class Reference}
+\label{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay}\index{parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay@{parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay}}
+
+
+Inheritance diagram for parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_a23ec68b6a5fa73936194b9d1acde8557}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, params, lr=required, b1=0.\+9, b2=0.\+999, e=1e-\/6, weight\+\_\+decay=0.\+01, max\+\_\+grad\+\_\+norm=1.\+0)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_aeb41188377c1a61b4638228abd6c3e64}{step} (self, closure=None)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Adam with decay; mirror's HF's implementation.
+
+:param lr:
+    learning rate
+:param b1:
+    Adams b1. Default: 0.9
+:param b2:
+    Adams b2. Default: 0.999
+:param e:
+    Adams epsilon. Default: 1e-6
+:param weight_decay:
+    Weight decay. Default: 0.01
+:param max_grad_norm:
+    Maximum norm for the gradients (-1 means no clipping).  Default: 1.0
+\end{DoxyVerb}
+ 
+
+Definition at line 231 of file helpers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_a23ec68b6a5fa73936194b9d1acde8557}\label{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_a23ec68b6a5fa73936194b9d1acde8557}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{params,  }\item[{}]{lr = {\ttfamily required},  }\item[{}]{b1 = {\ttfamily 0.9},  }\item[{}]{b2 = {\ttfamily 0.999},  }\item[{}]{e = {\ttfamily 1e-\/6},  }\item[{}]{weight\+\_\+decay = {\ttfamily 0.01},  }\item[{}]{max\+\_\+grad\+\_\+norm = {\ttfamily 1.0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 258 of file helpers.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_aeb41188377c1a61b4638228abd6c3e64}\label{classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1AdamWithDecay_aeb41188377c1a61b4638228abd6c3e64}} 
+\index{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay}!step@{step}}
+\index{step@{step}!parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay@{parlai\+::agents\+::bert\+\_\+ranker\+::helpers\+::\+Adam\+With\+Decay}}
+\subsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+bert\+\_\+ranker.\+helpers.\+Adam\+With\+Decay.\+step (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{closure = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform a single optimization step.
+
+:param closure:
+    A closure that reevaluates the model and returns the loss.
+\end{DoxyVerb}
+ 
+
+Definition at line 281 of file helpers.\+py.
+
+
+
+References server.\+Application.\+state, parlai.\+mturk.\+core.\+dev.\+agents.\+M\+Turk\+Agent.\+state, parlai.\+mturk.\+core.\+agents.\+M\+Turk\+Agent.\+state, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+agents.\+M\+Turk\+Agent.\+state, server.\+App\+Handler.\+state, server.\+Run\+List\+Handler.\+state, server.\+Task\+List\+Handler.\+state, server.\+Run\+Handler.\+state, server.\+Worker\+List\+Handler.\+state, server.\+Worker\+Handler.\+state, and server.\+Assignment\+Handler.\+state.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/bert\+\_\+ranker/\hyperlink{helpers_8py}{helpers.\+py}\end{DoxyCompactItemize}

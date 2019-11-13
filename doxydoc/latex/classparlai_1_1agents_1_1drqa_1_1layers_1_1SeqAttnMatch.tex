@@ -1,0 +1,116 @@
+\hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch}{}\section{parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match Class Reference}
+\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch}\index{parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match@{parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match}}
+
+
+Inheritance diagram for parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_abd3be7cddadf751a880aab03c55b0a6c}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, input\+\_\+size, identity=False)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_ade14c6394d52f566a64da6573e8c913b}{forward} (self, x, y, y\+\_\+mask)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_a6332862a9596fe3e4cb3c323b818a42f}{linear}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Given sequences X and Y, match sequence Y to each element in X.
+* o_i = sum(alpha_j * y_j) for i in X
+* alpha_j = softmax(y_j * x_i)
+\end{DoxyVerb}
+ 
+
+Definition at line 144 of file layers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_abd3be7cddadf751a880aab03c55b0a6c}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_abd3be7cddadf751a880aab03c55b0a6c}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{input\+\_\+size,  }\item[{}]{identity = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 150 of file layers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_ade14c6394d52f566a64da6573e8c913b}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_ade14c6394d52f566a64da6573e8c913b}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{y,  }\item[{}]{y\+\_\+mask }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Input shapes:
+    x = batch * len1 * h
+    y = batch * len2 * h
+    y_mask = batch * len2
+Output shapes:
+    matched_seq = batch * len1 * h
+\end{DoxyVerb}
+ 
+
+Definition at line 157 of file layers.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float, and parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+linear.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_ade14c6394d52f566a64da6573e8c913b_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_a6332862a9596fe3e4cb3c323b818a42f}\label{classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch_a6332862a9596fe3e4cb3c323b818a42f}} 
+\index{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}!linear@{linear}}
+\index{linear@{linear}!parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match@{parlai\+::agents\+::drqa\+::layers\+::\+Seq\+Attn\+Match}}
+\subsubsection{\texorpdfstring{linear}{linear}}
+{\footnotesize\ttfamily parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+linear}
+
+
+
+Definition at line 153 of file layers.\+py.
+
+
+
+Referenced by agent.\+modules.\+Mem\+N\+N.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Seq\+Attn\+Match.\+forward(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Hop.\+forward(), parlai.\+agents.\+drqa.\+layers.\+Bilinear\+Seq\+Attn.\+forward(), agent.\+modules.\+Hop.\+forward(), and parlai.\+agents.\+drqa.\+layers.\+Linear\+Seq\+Attn.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/drqa/\hyperlink{layers_8py}{layers.\+py}\end{DoxyCompactItemize}

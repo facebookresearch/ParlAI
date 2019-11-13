@@ -1,0 +1,56 @@
+\hypertarget{namespacegenerator_1_1modules}{}\section{generator.\+modules Namespace Reference}
+\label{namespacegenerator_1_1modules}\index{generator.\+modules@{generator.\+modules}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeDecoder}{Context\+Knowledge\+Decoder}
+\item 
+class \hyperlink{classgenerator_1_1modules_1_1ContextKnowledgeEncoder}{Context\+Knowledge\+Encoder}
+\item 
+class \hyperlink{classgenerator_1_1modules_1_1EndToEndModel}{End\+To\+End\+Model}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacegenerator_1_1modules_ad34b3a76c4bcf6de5e890a2102d3254d}{universal\+\_\+sentence\+\_\+embedding} (sentences, mask, sqrt=True)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacegenerator_1_1modules_ad34b3a76c4bcf6de5e890a2102d3254d}\label{namespacegenerator_1_1modules_ad34b3a76c4bcf6de5e890a2102d3254d}} 
+\index{generator\+::modules@{generator\+::modules}!universal\+\_\+sentence\+\_\+embedding@{universal\+\_\+sentence\+\_\+embedding}}
+\index{universal\+\_\+sentence\+\_\+embedding@{universal\+\_\+sentence\+\_\+embedding}!generator\+::modules@{generator\+::modules}}
+\subsubsection{\texorpdfstring{universal\+\_\+sentence\+\_\+embedding()}{universal\_sentence\_embedding()}}
+{\footnotesize\ttfamily def generator.\+modules.\+universal\+\_\+sentence\+\_\+embedding (\begin{DoxyParamCaption}\item[{}]{sentences,  }\item[{}]{mask,  }\item[{}]{sqrt = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Perform Universal Sentence Encoder averaging (https://arxiv.org/abs/1803.11175).
+
+This is really just sum / sqrt(len).
+
+:param Tensor sentences: an N x T x D of Transformer outputs. Note this is
+    the exact output of TransformerEncoder, but has the time axis first
+:param ByteTensor: an N x T binary matrix of paddings
+
+:return: an N x D matrix of sentence embeddings
+:rtype Tensor:
+\end{DoxyVerb}
+ 
+
+Definition at line 15 of file modules.\+py.
+
+
+
+References make\+\_\+control\+\_\+dataset.\+float.
+
+
+
+Referenced by generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacegenerator_1_1modules_ad34b3a76c4bcf6de5e890a2102d3254d_icgraph}
+\end{center}
+\end{figure}

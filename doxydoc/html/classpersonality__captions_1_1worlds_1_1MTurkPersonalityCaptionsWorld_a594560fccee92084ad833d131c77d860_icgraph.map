@@ -1,0 +1,15 @@
+<map id="personality_captions.worlds.MTurkPersonalityCaptionsWorld.check_timeout" name="personality_captions.worlds.MTurkPersonalityCaptionsWorld.check_timeout">
+<area shape="rect" id="node2" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#ac91833b4ab4b602e102cef3d7a605536" title="mturk.worlds.Controllable\lDialogEval.evaluate_consistency" alt="" coords="320,5,535,47"/>
+<area shape="rect" id="node4" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a0cf75a08d4164e2b351a4ebf11e3bb53" title="mturk.worlds.Controllable\lDialogEval.evaluate_engagingness" alt="" coords="315,71,540,112"/>
+<area shape="rect" id="node5" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a6208c058cb87f311f1362f597af72130" title="mturk.worlds.Controllable\lDialogEval.evaluate_fluency" alt="" coords="334,136,521,177"/>
+<area shape="rect" id="node6" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#aced8844b17899e1cc4c920a72cb490a4" title="mturk.worlds.Controllable\lDialogEval.evaluate_persona" alt="" coords="332,201,523,243"/>
+<area shape="rect" id="node7" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06569ce7ce50e5bc930bf699c4a70167" title="mturk.worlds.Controllable\lDialogEval.evaluate_repetitiveness" alt="" coords="314,267,541,308"/>
+<area shape="rect" id="node8" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a63d88c9aa26eb8886eb2928d920017cb" title="mturk_evaluation_task.worlds.\lWizardEval.parallel_eval_mode" alt="" coords="325,332,529,373"/>
+<area shape="rect" id="node9" href="$classmturk__evaluation__task_1_1worlds_1_1TopicChooseWorld.html#ad31279b796eee33dd196a4f0990a3969" title="mturk_evaluation_task.worlds.\lTopicChooseWorld.parley" alt="" coords="328,397,527,439"/>
+<area shape="rect" id="node10" href="$classstack__rank__evals_1_1worlds_1_1MTurkPersonalityCaptionsStackRankWorld.html#a41817ec1f909df958b73f3b5d810299e" title="stack_rank_evals.worlds.\lMTurkPersonalityCaptionsStack\lRankWorld.parley" alt="" coords="322,463,533,519"/>
+<area shape="rect" id="node11" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="308,543,547,570"/>
+<area shape="rect" id="node12" href="$classmturk_1_1worlds_1_1PersonaAssignWorld.html#a591fad7aeb3d2938543a669b0ac0dc15" title="mturk.worlds.PersonaAssign\lWorld.parley" alt="" coords="333,595,522,636"/>
+<area shape="rect" id="node13" href="$classworlds_1_1MTurkWizardOfWikipediaWorld.html#ad49b2e40a83896f6d0e67928f661d1c1" title="worlds.MTurkWizardOfWikipedia\lWorld.parley" alt="" coords="321,660,534,701"/>
+<area shape="rect" id="node14" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html#ab682688b0f65bc5162cb77f3d96fafc4" title="personality_captions.worlds.\lMTurkPersonalityCaptionsWorld.parley" alt="" coords="303,725,552,767"/>
+<area shape="rect" id="node3" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a06c86b010d4db36333eb3f520dfc926b" title="mturk.worlds.Controllable\lDialogEval.parallel_eval_mode" alt="" coords="600,136,800,177"/>
+</map>

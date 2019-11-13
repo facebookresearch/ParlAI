@@ -1,0 +1,4 @@
+<map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.match_batch" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.match_batch">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a8984452b8b4e6194625530aeae49b243" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.get\l_dialog_history" alt="" coords="285,5,460,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a69a72e46d8385ce508bf2df1290db6b8" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.\l_add_person_tokens" alt="" coords="508,5,665,76"/>
+</map>

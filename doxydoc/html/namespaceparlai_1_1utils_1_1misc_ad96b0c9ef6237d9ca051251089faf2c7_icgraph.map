@@ -1,0 +1,13 @@
+<map id="parlai.utils.misc.padded_3d" name="parlai.utils.misc.padded_3d">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a628050d71339298baafbaf678f94207d" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.block\l_repeats" alt="" coords="249,13,458,69"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a353991d201d8889c453bf72c15ec78a9" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.load\l_candidates" alt="" coords="252,173,455,229"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#af1af764f534c04a7bc98f11b3fe8f6ca" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent.score\l_candidates" alt="" coords="233,93,473,149"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a65bca7841123e4c3df1e09f8c4eb397f" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.eval_step" alt="" coords="521,35,756,76"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#a057eb1109f5c2ea467539083e2f7e7f6" title="transresnet_multimodal.transresnet\l_multimodal.TransresnetMultimodalAgent.batch_act" alt="" coords="804,100,1127,141"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a5eadf6ccc4b1d15a520a70d111bff493" title="transresnet.transresnet.\lTransresnetAgent.batch_act" alt="" coords="872,35,1059,76"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title="mastering_the_dungeon.agents.graph\l_world2.agents.ModelAgentBase.act" alt="" coords="1175,5,1413,47"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title="kvmemnn.KvmemnnAgent.act" alt="" coords="1195,137,1393,163"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title="transresnet.transresnet.\lTransresnetAgent.act" alt="" coords="1214,71,1374,112"/>
+<area shape="rect" id="node8" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title="agent.memnn_feedback.Memnn\lFeedbackAgent.act" alt="" coords="1190,188,1398,229"/>
+<area shape="rect" id="node12" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a05ddf921f386f21116ec0ef50796987a" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent.train_step" alt="" coords="521,100,756,141"/>
+</map>

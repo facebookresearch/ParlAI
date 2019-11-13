@@ -1,0 +1,19 @@
+<map id="parlai.scripts.eval_wordstat.eval_wordstat" name="parlai.scripts.eval_wordstat.eval_wordstat">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1core_1_1agents.html#ad0d54074d4bcc148bb415ab5515a53b5" title="parlai.core.agents.create\l_agent" alt="" coords="233,208,398,249"/>
+<area shape="rect" id="node14" href="$namespaceparlai_1_1core_1_1worlds.html#a11923c10b545c7ecc1b08fe2242d9c2c" title="parlai.core.worlds.create_task" alt="" coords="217,366,413,393"/>
+<area shape="rect" id="node17" href="$namespaceparlai_1_1scripts_1_1eval__wordstat.html#ab2d96b5ac07c988934a0320739fc3c60" title="parlai.scripts.eval\l_wordstat.get_word_stats" alt="" coords="229,417,401,459"/>
+<area shape="rect" id="node18" href="$namespaceparlai_1_1core_1_1metrics.html#ae7769a6b628f41081e0f43043d52031a" title="parlai.core.metrics.normalize\l_answer" alt="" coords="221,483,410,524"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1agents.html#a7eb0ec391b94a2adc51acdf8d2a35a68" title="parlai.core.agents.compare\l_init_model_opts" alt="" coords="674,176,853,217"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="907,238,1057,294"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1core_1_1agents.html#a14a9d134d76ffd0509e50703d0f2c949" title="parlai.core.agents.get\l_agent_module" alt="" coords="690,8,837,49"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1core_1_1params.html#a6d160324f6af84562334fd0698141074" title="parlai.core.params.get\l_model_name" alt="" coords="688,241,839,283"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1core_1_1agents.html#a213df46dd21144eb4c056bb58c294c5d" title="parlai.core.agents.load\l_agent_module" alt="" coords="467,117,620,159"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1utils_1_1misc.html#a7c97ef3250327bc549ac652a481be0cf" title="parlai.utils.misc.load\l_opt_file" alt="" coords="911,172,1053,213"/>
+<area shape="rect" id="node6" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="1111,253,1315,279"/>
+<area shape="rect" id="node7" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="1363,253,1544,279"/>
+<area shape="rect" id="node9" href="$namespaceparlai_1_1core_1_1agents.html#a7a5f5076b35ce376d8b46bfb362bfc53" title="parlai.core.agents.name\l_to_agent_class" alt="" coords="901,5,1063,47"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1utils_1_1misc.html#acf146e70ea7f6867969a7c2b545d4b4b" title="parlai.utils.misc.warn_once" alt="" coords="673,74,853,101"/>
+<area shape="rect" id="node13" href="$namespaceparlai_1_1utils_1_1misc.html#a7836ac7469dc5744e0ad9e5e54da2396" title="parlai.utils.misc.fp16\l_optimizer_wrapper" alt="" coords="911,71,1053,112"/>
+<area shape="rect" id="node15" href="$namespaceparlai_1_1core_1_1worlds.html#a055ee493c9ed03ecff4832f52b408f8c" title="parlai.core.worlds.create\l_task_world" alt="" coords="461,424,625,465"/>
+<area shape="rect" id="node16" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="470,359,617,400"/>
+</map>

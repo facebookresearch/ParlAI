@@ -1,0 +1,156 @@
+\hypertarget{namespaceparlai_1_1scripts_1_1train__model}{}\section{parlai.\+scripts.\+train\+\_\+model Namespace Reference}
+\label{namespaceparlai_1_1scripts_1_1train__model}\index{parlai.\+scripts.\+train\+\_\+model@{parlai.\+scripts.\+train\+\_\+model}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1scripts_1_1train__model_1_1TrainLoop}{Train\+Loop}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1train__model_a5130cce2fb2a33694a2537d800ad9e9e}{setup\+\_\+args} (parser=None)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1train__model_a70da71a6f4f9ad144666e6353d9278e3}{load\+\_\+eval\+\_\+worlds} (agent, opt, datatype)
+\item 
+def \hyperlink{namespaceparlai_1_1scripts_1_1train__model_a496dfe3bf04da9b55d261b4c8d6229a7}{run\+\_\+eval} (valid\+\_\+worlds, opt, datatype, max\+\_\+exs=-\/1, write\+\_\+log=False)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1train__model_a70da71a6f4f9ad144666e6353d9278e3}\label{namespaceparlai_1_1scripts_1_1train__model_a70da71a6f4f9ad144666e6353d9278e3}} 
+\index{parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}!load\+\_\+eval\+\_\+worlds@{load\+\_\+eval\+\_\+worlds}}
+\index{load\+\_\+eval\+\_\+worlds@{load\+\_\+eval\+\_\+worlds}!parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}}
+\subsubsection{\texorpdfstring{load\+\_\+eval\+\_\+worlds()}{load\_eval\_worlds()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+train\+\_\+model.\+load\+\_\+eval\+\_\+worlds (\begin{DoxyParamCaption}\item[{}]{agent,  }\item[{}]{opt,  }\item[{}]{datatype }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a new eval world for the agent and the given opt.
+
+Overrides the datatype options for doing this.  Handles some magic
+overrides of other special options for the training script.
+
+:param Agent agent:
+    The model being trained.
+
+:param Opt opt:
+    The global CLI opts.
+
+:param string datatype:
+    The new datatype.
+\end{DoxyVerb}
+ 
+
+Definition at line 206 of file train\+\_\+model.\+py.
+
+
+
+References parlai.\+core.\+agents.\+create\+\_\+agent\+\_\+from\+\_\+shared(), parlai.\+core.\+worlds.\+create\+\_\+task(), and make\+\_\+control\+\_\+dataset.\+float.
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+setup\+\_\+args().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a70da71a6f4f9ad144666e6353d9278e3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a70da71a6f4f9ad144666e6353d9278e3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1train__model_a496dfe3bf04da9b55d261b4c8d6229a7}\label{namespaceparlai_1_1scripts_1_1train__model_a496dfe3bf04da9b55d261b4c8d6229a7}} 
+\index{parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}!run\+\_\+eval@{run\+\_\+eval}}
+\index{run\+\_\+eval@{run\+\_\+eval}!parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}}
+\subsubsection{\texorpdfstring{run\+\_\+eval()}{run\_eval()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+train\+\_\+model.\+run\+\_\+eval (\begin{DoxyParamCaption}\item[{}]{valid\+\_\+worlds,  }\item[{}]{opt,  }\item[{}]{datatype,  }\item[{}]{max\+\_\+exs = {\ttfamily -\/1},  }\item[{}]{write\+\_\+log = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Eval on validation/test data.
+
+:param valid_world:
+    list of the pre-created validation worlds.
+:param opt:
+    the options that specific the task, eval_task, etc
+:param datatype:
+    the datatype to use, such as "valid" or "test"
+:param bool write_log:
+    specifies to write metrics to file if the model_file is set
+:param int max_exs:
+    limits the number of examples if max_exs > 0
+\end{DoxyVerb}
+ 
+
+Definition at line 274 of file train\+\_\+model.\+py.
+
+
+
+References parlai.\+core.\+metrics.\+aggregate\+\_\+task\+\_\+reports(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a496dfe3bf04da9b55d261b4c8d6229a7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a496dfe3bf04da9b55d261b4c8d6229a7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1scripts_1_1train__model_a5130cce2fb2a33694a2537d800ad9e9e}\label{namespaceparlai_1_1scripts_1_1train__model_a5130cce2fb2a33694a2537d800ad9e9e}} 
+\index{parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}!setup\+\_\+args@{setup\+\_\+args}}
+\index{setup\+\_\+args@{setup\+\_\+args}!parlai\+::scripts\+::train\+\_\+model@{parlai\+::scripts\+::train\+\_\+model}}
+\subsubsection{\texorpdfstring{setup\+\_\+args()}{setup\_args()}}
+{\footnotesize\ttfamily def parlai.\+scripts.\+train\+\_\+model.\+setup\+\_\+args (\begin{DoxyParamCaption}\item[{}]{parser = {\ttfamily None},  }\item[{}]{Parlai\+Parser }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Build the ParlAI parser, adding command line args if necessary.
+
+:param ParlaiParser parser:
+    Preexisting parser to append options to. Will be created if needed.
+
+:returns:
+    the ParlaiParser with CLI options added.
+\end{DoxyVerb}
+ 
+
+Definition at line 51 of file train\+\_\+model.\+py.
+
+
+
+References parlai.\+utils.\+distributed.\+is\+\_\+primary\+\_\+worker(), and parlai.\+scripts.\+train\+\_\+model.\+load\+\_\+eval\+\_\+worlds().
+
+
+
+Referenced by parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a5130cce2fb2a33694a2537d800ad9e9e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1scripts_1_1train__model_a5130cce2fb2a33694a2537d800ad9e9e_icgraph}
+\end{center}
+\end{figure}

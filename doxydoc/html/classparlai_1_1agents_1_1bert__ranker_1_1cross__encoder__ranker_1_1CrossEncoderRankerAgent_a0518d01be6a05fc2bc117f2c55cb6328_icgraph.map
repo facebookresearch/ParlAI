@@ -1,12 +1,8 @@
 <map id="parlai.agents.bert_ranker.cross_encoder_ranker.CrossEncoderRankerAgent.dictionary_class" name="parlai.agents.bert_ranker.cross_encoder_ranker.CrossEncoderRankerAgent.dictionary_class">
-<area shape="rect" id="node1" title=" " alt="" coords="537,263,864,319"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent.html#a8e406a0b849d5f823b66329c5285c29c" title=" " alt="" coords="251,5,451,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a1c4eb91757ee23e75edfa957d05db338" title=" " alt="" coords="272,71,429,141"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent.html#a975b292cb31540e198a220d3c9bd7ea5" title=" " alt="" coords="243,165,458,207"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6836668a4c2394d7217631fed533a7ac" title=" " alt="" coords="212,231,489,272"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a00701a40d62943dbd887525bf8e8002d" title=" " alt="" coords="261,296,440,367"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a496b5ccc5efe17f290c37dc094ff74e8" title=" " alt="" coords="231,391,471,447"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a4a72bdd07d2cb5ce402d0058140cad0d" title=" " alt="" coords="251,472,450,513"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a233316f9ec2805dd6a08fbf07f3a078a" title=" " alt="" coords="259,537,442,579"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#ad0a00ada1fcd5b7ceec27b1a6cbdc281" title=" " alt="" coords="5,537,164,579"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1unigram_1_1unigram_1_1UnigramAgent.html#a975b292cb31540e198a220d3c9bd7ea5" title="parlai.agents.unigram.unigram.\lUnigramAgent.add_cmdline_args" alt="" coords="411,5,626,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6836668a4c2394d7217631fed533a7ac" title="parlai.agents.transformer.transformer.\lTransformerRankerAgent.add_cmdline_args" alt="" coords="380,71,657,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a00701a40d62943dbd887525bf8e8002d" title="parlai.agents.legacy\l_agents.seq2seq.torch\l_agent_v1.TorchAgent.add\l_cmdline_args" alt="" coords="429,136,608,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a496b5ccc5efe17f290c37dc094ff74e8" title="parlai.agents.transformer.transformer.\lTransformerGeneratorAgent.add\l_cmdline_args" alt="" coords="399,231,639,287"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a4a72bdd07d2cb5ce402d0058140cad0d" title="parlai.core.torch_agent.\lTorchAgent.add_cmdline_args" alt="" coords="419,312,618,353"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a233316f9ec2805dd6a08fbf07f3a078a" title="parlai.core.torch_agent.\lTorchAgent.build_dictionary" alt="" coords="427,377,610,419"/>
 </map>

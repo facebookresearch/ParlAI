@@ -1,0 +1,140 @@
+\hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry}{}\section{convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry Class Reference}
+\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry}\index{convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry@{convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry}}
+
+
+Inheritance diagram for convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a06a52444ed965dc724864f5a6503a410}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Agent_ab3b45d2754244608c75d4068b90cd051}{opt}, shared=None)
+\item 
+def \hyperlink{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a7c5da99b28c3c7e03eaac7079d7d608c}{share} (self)
+\item 
+def \hyperlink{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a8dace8d727764609e2cc305e79fab2a5}{next\+\_\+word\+\_\+probability} (self, partial\+\_\+out)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_aaffbcedf94769977f77c38e9587b980c}{dict}
+\item 
+\hyperlink{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a6afe352975394701e253b6c7c9980774}{freqs}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This is an example entry which tries to use the RepeatLabelAgent.
+Since no labels are given to the model, it will guess something useless.
+
+It builds the official dictionary first, so that it can provide a minimum
+probablity for each word as well as use the official tokenizer.
+\end{DoxyVerb}
+ 
+
+Definition at line 58 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a06a52444ed965dc724864f5a6503a410}\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a06a52444ed965dc724864f5a6503a410}} 
+\index{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file eval\+\_\+ppl.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a8dace8d727764609e2cc305e79fab2a5}\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a8dace8d727764609e2cc305e79fab2a5}} 
+\index{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}!next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}}
+\index{next\+\_\+word\+\_\+probability@{next\+\_\+word\+\_\+probability}!convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}}
+\subsubsection{\texorpdfstring{next\+\_\+word\+\_\+probability()}{next\_word\_probability()}}
+{\footnotesize\ttfamily def convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{partial\+\_\+out }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Example implementation of next word probability.\end{DoxyVerb}
+ 
+
+Definition at line 85 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict, parlai.\+agents.\+starspace.\+modules.\+Encoder.\+freqs, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+freqs, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+observation, parlai.\+agents.\+retriever\+\_\+reader.\+retriever\+\_\+reader.\+Retriever\+Reader\+Agent.\+observation, parlai.\+core.\+agents.\+Agent.\+observation, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+observation, parlai.\+agents.\+drqa.\+drqa.\+Drqa\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+observation, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+observation, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+observation, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+observation, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+observation, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+tokenize().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a8dace8d727764609e2cc305e79fab2a5_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a7c5da99b28c3c7e03eaac7079d7d608c}\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a7c5da99b28c3c7e03eaac7079d7d608c}} 
+\index{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}!share@{share}}
+\index{share@{share}!convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 79 of file eval\+\_\+ppl.\+py.
+
+
+
+References parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+dict, convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict, parlai.\+scripts.\+eval\+\_\+ppl.\+Perplexity\+World.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+dict, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Parsed\+Remote\+Agent.\+dict, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+dict, parlai.\+core.\+torch\+\_\+agent.\+History.\+dict, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Decoder.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+\_\+\+Parlai\+Task.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+dict, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+dict, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+dict, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+dict.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_aaffbcedf94769977f77c38e9587b980c}\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_aaffbcedf94769977f77c38e9587b980c}} 
+\index{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}!dict@{dict}}
+\index{dict@{dict}!convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}}
+\subsubsection{\texorpdfstring{dict}{dict}}
+{\footnotesize\ttfamily convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+dict}
+
+
+
+Definition at line 70 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+decode(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+detokenize(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+generated\+\_\+predictions(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), kvmemnn.\+Kvmemnn\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+parse\+\_\+cands(), transresnet.\+transresnet.\+Transresnet\+Agent.\+save(), convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+share(), transresnet.\+transresnet.\+Transresnet\+Agent.\+share(), agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+share(), kvmemnn.\+Kvmemnn\+Agent.\+t2v(), taskntalk.\+coopgame\+\_\+agent.\+Cooperative\+Game\+Agent.\+tokenize(), transresnet.\+transresnet.\+Transresnet\+Agent.\+update\+\_\+metrics(), and kvmemnn.\+Kvmemnn\+Agent.\+v2t().
+
+\mbox{\Hypertarget{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a6afe352975394701e253b6c7c9980774}\label{classconvai2_1_1eval__ppl_1_1WordFrequencyEntry_a6afe352975394701e253b6c7c9980774}} 
+\index{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}!freqs@{freqs}}
+\index{freqs@{freqs}!convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry@{convai2\+::eval\+\_\+ppl\+::\+Word\+Frequency\+Entry}}
+\subsubsection{\texorpdfstring{freqs}{freqs}}
+{\footnotesize\ttfamily convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+freqs}
+
+
+
+Definition at line 77 of file eval\+\_\+ppl.\+py.
+
+
+
+Referenced by modules.\+Encoder.\+forward(), and convai2.\+eval\+\_\+ppl.\+Word\+Frequency\+Entry.\+next\+\_\+word\+\_\+probability().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+projects/convai2/\hyperlink{projects_2convai2_2eval__ppl_8py}{eval\+\_\+ppl.\+py}\end{DoxyCompactItemize}

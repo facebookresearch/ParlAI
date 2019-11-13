@@ -1,0 +1,103 @@
+\subsection*{Paper information}
+
+Emily Dinan, Samuel Humeau, Bharath Chintagunta, Jason Weston. {\itshape \href{https://arxiv.org/abs/1908.06083}{\tt Build it Break it Fix it for Dialogue Safety\+: Robustness from Adversarial Human Attack}}. To appear at E\+M\+N\+LP 2019.
+
+
+
+\subsection*{Abstract}
+
+The detection of offensive language in the context of a dialogue has become an increasingly important application of natural language processing. The detection of trolls in public forums (Galán-\/\+García et al., 2016), and the deployment of chatbots in the public domain (Wolf et al., 2017) are two examples that show the necessity of guarding against adversarially offensive behavior on the part of humans. In this work, we develop a training scheme for a model to become robust to such human attacks by an iterative build it, break it, fix it strategy with humans and models in the loop. In detailed experiments we show this approach is considerably more robust than previous systems. Further, we show that offensive language used within a conversation critically depends on the dialogue context, and cannot be viewed as a single sentence offensive detection task as in most previous work. Our newly collected tasks and methods will be made open source and publicly available.
+
+\subsection*{Data examples}
+
+To view the data for round 1 of the single turn {\bfseries adversarial} data, try running\+: 
+\begin{DoxyCode}
+python examples/display\_data.py -t dialogue\_safety:adversarial --round 1
+\end{DoxyCode}
+
+
+To view the data for rounds 1-\/3 of the single turn {\bfseries standard} data, try running\+: 
+\begin{DoxyCode}
+python examples/display\_data.py -t dialogue\_safety:standard --round 3
+\end{DoxyCode}
+
+
+To view the data for {\itshape only} rounds 2 of the single turn {\bfseries adversarial} data, try running\+: 
+\begin{DoxyCode}
+python examples/display\_data.py -t dialogue\_safety:adversarial --round 2 --round-only True
+\end{DoxyCode}
+
+
+To view the data from the {\bfseries multi-\/turn adversarial} setting, try running\+: 
+\begin{DoxyCode}
+python examples/display\_data.py -t dialogue\_safety:multiturn
+\end{DoxyCode}
+
+
+To view the same data (the {\bfseries multi-\/turn adversarial} data), but without the context text provided, try running\+: 
+\begin{DoxyCode}
+python examples/display\_data.py -t dialogue\_safety:multiturn --single-turn True
+\end{DoxyCode}
+
+
+\subsection*{Pre-\/trained models}
+
+Evaluate a pre-\/trained Transformer-\/based model on the test sets of rounds 1-\/3 or the {\bfseries adversarial} task\+: 
+\begin{DoxyCode}
+python examples/eval\_model.py -t dialogue\_safety:adversarial --round 3 -dt test -mf
+       zoo:dialogue\_safety/single\_turn/model -bs 40
+\end{DoxyCode}
+
+
+Evaluate the same pre-\/trained Transformer-\/based model on the test sets of rounds 1-\/3 or the {\bfseries standard} task\+: 
+\begin{DoxyCode}
+python examples/eval\_model.py -t dialogue\_safety:standard --round 3 -dt test -mf
+       zoo:dialogue\_safety/single\_turn/model -bs 40
+\end{DoxyCode}
+
+
+Interact with the single-\/turn model to see its classifications of your input in real time\+: 
+\begin{DoxyCode}
+python examples/interactive.py -mf zoo:dialogue\_safety/single\_turn/model --print-scores True --single-turn
+       True
+\end{DoxyCode}
+ Here are some example outputs from the above script\+: 
+\begin{DoxyCode}
+Enter Your Message: hi how are you?
+[TransformerClassifier]: Predicted class: \_\_ok\_\_
+with probability: 0.9996
+Enter Your Message: i hate you
+[TransformerClassifier]: Predicted class: \_\_notok\_\_
+with probability: 0.9995
+\end{DoxyCode}
+
+
+Evaluate a B\+E\+R\+T-\/based model (using {\itshape segments} to distinguish the context from the utterance to be classified, as described in the paper) on the test set of the {\bfseries multi-\/turn adversarial} task\+: 
+\begin{DoxyCode}
+python examples/eval\_model.py -t dialogue\_safety:multiturn -dt test -mf
+       zoo:dialogue\_safety/multi\_turn/model --split-lines True -bs 40
+\end{DoxyCode}
+
+
+\subsection*{Training examples}
+
+Multi-\/task a model on the Wikipedia Toxic Comments dataset in addition to rounds 1-\/3 the adversarial and standard tasks, fine-\/tuning on top of a pretrained transformer model\+: 
+\begin{DoxyCode}
+python examples/train\_model.py -t
+       dialogue\_safety:WikiToxicComments,dialogue\_safety:adversarial,dialogue\_safety:adversarial --load-from-pretrained-ranker True --init-model
+       zoo:pretrained\_transformers/bi\_model\_huge\_reddit/model --dict-file zoo:pretrained\_transformers/bi\_model\_huge\_reddit/model.dict --history-size 20
+       --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling
+       0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True
+       --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions
+       1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True
+       --share-word-embeddings False --dict-endtoken \_\_start\_\_ --classes \_\_notok\_\_ \_\_ok\_\_ --round 3 --use-test-set
+       True --model transformer\_classifier --multitask-weights 0.6,0.2,0.2 -lr 5e-05 --shuffle True -bs 20
+       --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3
+       --lr-scheduler-decay 0.9 --warmup\_updates 1000 --validation-metric class\_\_\_notok\_\_\_f1 --validation-metric-mode max
+       --save-after-valid True --model-file /tmp/safety\_model\_example
+\end{DoxyCode}
+
+
+\subsection*{Acknowledgments}
+
+{\itshape The emoji image in the diagram is by \href{https://github.com/twitter/twemoji}{\tt Twemoji}, and is licensed under CC B\+Y-\/4.\+0.} 

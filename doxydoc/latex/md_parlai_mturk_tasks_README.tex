@@ -1,0 +1,31 @@
+{\ttfamily parlai/mturk/tasks} contains various M\+Turk tasks for inspiration and help on creating new experiments or for reproducing existing experiments\+:
+
+\subsubsection*{Tasks}
+
+No actual tasks have been created on the new frontend yet
+
+\subsubsection*{Demo Tasks}
+
+
+\begin{DoxyItemize}
+\item {\bfseries multi\+\_\+agent\+\_\+dialog/}\+: Demo task where two agents on M\+Turk communicate in a world with another agent, in this case a local agent that sends messages from the command line.
+\item {\bfseries qa\+\_\+data\+\_\+collection/}\+: Demo task that replicates the collection process of typical question-\/answer datasets (such as S\+Qu\+AD) in the Parl\+A\+I-\/\+M\+Turk environment.
+\item {\bfseries react\+\_\+task\+\_\+demo/}\+: Demo task that leverages the custom component development process for the react frontend to create 3 separate roles each with their own components. Comes in two varieties, {\ttfamily react\+\_\+custom\+\_\+no\+\_\+extra\+\_\+deps} uses the same dependencies that are specified in {\ttfamily parlai/mturk/core/react\+\_\+server/package.\+json} and {\ttfamily react\+\_\+custom\+\_\+with\+\_\+deps} specifies its own build process to be able to use custom dependencies. {\itshape These are a great starting point for working using the react frontend.}
+\end{DoxyItemize}
+
+\subsubsection*{Legacy Tasks}
+
+These tasks were created using the old frontend and may or may not be ported to the new version in the frontend. They generally exist for reproducibility, but the newer frontend version should be preferred as the legacy version is no longer maintained or updated with any of the new functionality.
+
+
+\begin{DoxyItemize}
+\item {\bfseries convai2\+\_\+model\+\_\+eval/}\+: a task used to evaluate models used in the \hyperlink{namespaceconvai2}{convai2} dialogue competition.
+\item {\bfseries dealnodeal/}\+: contains a negotiation task that asks agents to divide a set of objects with differing values to each agent between the two of them.
+\item {\bfseries image\+\_\+chat/}\+: a task that largely follows the steps of the {\ttfamily \hyperlink{namespacepersonality__captions}{personality\+\_\+captions}} task, in having agents assume a personality trait and make comments and responses for an image.
+\item {\bfseries model\+\_\+evaluator/}\+: baseline code used for evaluating a model\textquotesingle{}s perfomance based on workers\textquotesingle{} ratings.
+\item {\bfseries personachat/}\+: chit-\/chat task where two agents are given personalities and asked to have a conversation.
+\item {\bfseries personality\+\_\+captions/}\+: an image captioning task where agents are asked to give an engaging caption based on a provided personality trait.
+\item {\bfseries qualification\+\_\+flow\+\_\+example/}\+: Demo task that leverages the qualification setup along with storing local state in the {\ttfamily run.\+py} file in order to demonstrate how initial tasks can be set up as \textquotesingle{}tests\textquotesingle{} that workers must pass to work on the real task.
+\item {\bfseries talkthewalk/}\+: a navigation task where one agent has a map of an area and another agent has a street view, and the navigator and tourist have to work together to get the tourist to the correct location using only dialogue.
+\item {\bfseries wizard\+\_\+of\+\_\+wikipedia/}\+: chit-\/chat task where two agents have a dialogue; one chats freely, perhaps based on a persona, while the other is the \textquotesingle{}wizard\textquotesingle{}, who bases his/her responses on documents (i.\+e. sentences) retrieved based on what the other agent says. 
+\end{DoxyItemize}

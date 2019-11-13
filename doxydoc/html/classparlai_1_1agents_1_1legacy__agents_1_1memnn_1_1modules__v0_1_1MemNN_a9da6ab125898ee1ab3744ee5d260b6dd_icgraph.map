@@ -1,0 +1,11 @@
+<map id="parlai.agents.legacy_agents.memnn.modules_v0.MemNN.update_memories_with_extra_features_" name="parlai.agents.legacy_agents.memnn.modules_v0.MemNN.update_memories_with_extra_features_">
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1MemNN.html#ada4f6a93ff12e96bd84ccdefc40535bd" title="parlai.agents.legacy\l_agents.memnn.modules\l_v0.MemNN.forward" alt="" coords="256,146,424,202"/>
+<area shape="rect" id="node9" href="$classagent_1_1modules_1_1MemNN.html#aa4fbd692135afd7ec2fa94afafe34b73" title="agent.modules.MemNN.forward" alt="" coords="1053,262,1260,289"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1323,189,1536,231"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1584,128,1797,169"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="472,81,707,137"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1323,124,1536,165"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="755,44,991,85"/>
+<area shape="rect" id="node7" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="1039,95,1275,136"/>
+<area shape="rect" id="node10" href="$classagent_1_1modules_1_1MemNN.html#a830d84e09fae11dac5df4cbf8225bd26" title="agent.modules.MemNN.get\l_score" alt="" coords="1338,255,1521,296"/>
+</map>

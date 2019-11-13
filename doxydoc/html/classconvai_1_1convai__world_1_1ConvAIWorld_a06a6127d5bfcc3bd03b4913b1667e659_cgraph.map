@@ -1,10 +1,8 @@
 <map id="convai.convai_world.ConvAIWorld.pull_new_messages" name="convai.convai_world.ConvAIWorld.pull_new_messages">
-<area shape="rect" id="node1" title=" " alt="" coords="5,169,196,211"/>
-<area shape="rect" id="node2" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a5e4872bafc844385351c95b2f32dbe09" title=" " alt="" coords="270,5,445,47"/>
-<area shape="rect" id="node3" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a6513303a0f24542546bdd6ad64f12973" title=" " alt="" coords="264,71,451,112"/>
-<area shape="rect" id="node4" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#aa0e1693cb6b06a72e1deb6307fe06988" title=" " alt="" coords="270,136,445,177"/>
-<area shape="rect" id="node6" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a3a20203592479073ba1718ae07a82149" title=" " alt="" coords="270,201,445,243"/>
-<area shape="rect" id="node7" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a03b8cf89df308dc5d67ca290d53d385f" title=" " alt="" coords="244,267,471,308"/>
-<area shape="rect" id="node8" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#ad1ea156864de6f2d4c933dee1e883335" title=" " alt="" coords="258,332,457,373"/>
-<area shape="rect" id="node5" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a119df9f51a106449beb7b26ffcd4b355" title=" " alt="" coords="519,136,693,177"/>
+<area shape="rect" id="node2" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a5e4872bafc844385351c95b2f32dbe09" title="convai.convai_world.Conv\lAIWorld._get_chat_id" alt="" coords="270,5,445,47"/>
+<area shape="rect" id="node3" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a6513303a0f24542546bdd6ad64f12973" title="convai.convai_world.Conv\lAIWorld._get_message_text" alt="" coords="264,71,451,112"/>
+<area shape="rect" id="node4" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#aa0e1693cb6b06a72e1deb6307fe06988" title="convai.convai_world.Conv\lAIWorld._get_updates" alt="" coords="270,136,445,177"/>
+<area shape="rect" id="node5" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a3a20203592479073ba1718ae07a82149" title="convai.convai_world.Conv\lAIWorld._init_chat" alt="" coords="270,201,445,243"/>
+<area shape="rect" id="node6" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#a03b8cf89df308dc5d67ca290d53d385f" title="convai.convai_world.Conv\lAIWorld._is_begin_of_conversation" alt="" coords="244,267,471,308"/>
+<area shape="rect" id="node7" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html#ad1ea156864de6f2d4c933dee1e883335" title="convai.convai_world.Conv\lAIWorld._strip_start_message" alt="" coords="258,332,457,373"/>
 </map>

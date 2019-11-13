@@ -1,0 +1,7 @@
+<map id="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaChatWorld.is_msg_tooshortlong" name="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaChatWorld.is_msg_tooshortlong">
+<area shape="rect" id="node2" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#a8d951acf0577bb2cfbfe77f49c9147da" title="mturk_evaluation_task.worlds.\lWizardEval.get_human_agent_act" alt="" coords="370,5,591,47"/>
+<area shape="rect" id="node3" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#af81be6365b8b4be98cb300aa51f1de9c" title="mturk.worlds.Controllable\lDialogEval.get_human_agent_act" alt="" coords="372,71,589,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html#a534d1775b3a45b3765ea0ee65c5cc201" title="parlai.mturk.tasks.personachat.personachat\l_rephrase.worlds.RephrasePersonaWorld.parley" alt="" coords="329,136,632,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#af1504dbfbf076f8e3dad5f8ac823f761" title="parlai.mturk.tasks.personachat.personachat\l_chat.worlds.PersonaChatWorld.parley" alt="" coords="343,201,619,243"/>
+<area shape="rect" id="node6" href="$classworlds_1_1PersonaChatEvalWorld.html#ac72940bb2474528d1cc51661d4db3b85" title="worlds.PersonaChatEvalWorld.parley" alt="" coords="361,267,600,294"/>
+</map>

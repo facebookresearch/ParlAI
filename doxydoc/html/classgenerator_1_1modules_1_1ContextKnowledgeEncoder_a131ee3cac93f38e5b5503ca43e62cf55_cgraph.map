@@ -1,0 +1,5 @@
+<map id="generator.modules.ContextKnowledgeEncoder.forward" name="generator.modules.ContextKnowledgeEncoder.forward">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1misc.html#a68c44ca571de7149b683539db659c330" title="parlai.utils.misc.neginf" alt="" coords="251,13,403,39"/>
+<area shape="rect" id="node4" href="$namespacegenerator_1_1modules.html#ad34b3a76c4bcf6de5e890a2102d3254d" title="generator.modules.universal\l_sentence_embedding" alt="" coords="235,64,420,105"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1utils_1_1misc.html#ac8ca45e62ca906d9b6e5026588a5d2a2" title="parlai.utils.misc.maintain\l_dialog_history" alt="" coords="468,5,635,47"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="parlai.core.pytorch_data_teacher.StreamDataset.__len__" name="parlai.core.pytorch_data_teacher.StreamDataset.__len__">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#aa35e171610f8dd8e6a2fd5a87ad91e10" title="parlai.core.agents.Teacher.num\l_episodes" alt="" coords="263,5,469,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html#ac292d1cb86a3769c352e2d3658f324d2" title="parlai.core.agents.Multi\lTaskTeacher.num_episodes" alt="" coords="273,71,459,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1StreamDataset.html#affcb2b9a39beb9c5504bb1051652d1e7" title="parlai.core.pytorch\l_data_teacher.StreamDataset.num\l_episodes" alt="" coords="253,137,479,193"/>
+</map>

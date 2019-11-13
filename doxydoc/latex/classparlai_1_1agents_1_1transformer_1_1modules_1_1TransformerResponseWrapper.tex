@@ -1,0 +1,126 @@
+\hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper}{}\section{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper Class Reference}
+\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper}\index{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper@{parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper}}
+
+
+Inheritance diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=247pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ab078bf40bb275ebd56b4e205923ab827}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ae757bd573993a3ca4a31e9d65b1a7e9a}{transformer}, hdim)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ad716cb3a5874f46b1aa4beb45ba1b944}{forward} (self, args)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ae757bd573993a3ca4a31e9d65b1a7e9a}{transformer}
+\item 
+\hyperlink{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_a11ccb5cd5d1b5236b08c904bdeb9e041}{mlp}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Wrap transformer response.
+
+Pushes input through transformer and MLP.
+\end{DoxyVerb}
+ 
+
+Definition at line 287 of file modules.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ab078bf40bb275ebd56b4e205923ab827}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ab078bf40bb275ebd56b4e205923ab827}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{transformer,  }\item[{}]{hdim }\end{DoxyParamCaption})}
+
+
+
+Definition at line 294 of file modules.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ad716cb3a5874f46b1aa4beb45ba1b944}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ad716cb3a5874f46b1aa4beb45ba1b944}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}!forward@{forward}}
+\index{forward@{forward}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}}
+\subsubsection{\texorpdfstring{forward()}{forward()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Forward pass.\end{DoxyVerb}
+ 
+
+Definition at line 304 of file modules.\+py.
+
+
+
+References parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+mlp, and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+transformer.
+
+
+
+Referenced by transresnet.\+modules.\+Transresnet\+Model.\+choose\+\_\+best\+\_\+caption(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+choose\+\_\+best\+\_\+response(), transresnet.\+modules.\+Transresnet\+Model.\+eval\+\_\+batch(), and transresnet.\+modules.\+Transresnet\+Model.\+train\+\_\+batch().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ad716cb3a5874f46b1aa4beb45ba1b944_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_a11ccb5cd5d1b5236b08c904bdeb9e041}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_a11ccb5cd5d1b5236b08c904bdeb9e041}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}!mlp@{mlp}}
+\index{mlp@{mlp}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}}
+\subsubsection{\texorpdfstring{mlp}{mlp}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+mlp}
+
+
+
+Definition at line 298 of file modules.\+py.
+
+
+
+Referenced by parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ae757bd573993a3ca4a31e9d65b1a7e9a}\label{classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerResponseWrapper_ae757bd573993a3ca4a31e9d65b1a7e9a}} 
+\index{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}!transformer@{transformer}}
+\index{transformer@{transformer}!parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper@{parlai\+::agents\+::transformer\+::modules\+::\+Transformer\+Response\+Wrapper}}
+\subsubsection{\texorpdfstring{transformer}{transformer}}
+{\footnotesize\ttfamily parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+transformer}
+
+
+
+Definition at line 297 of file modules.\+py.
+
+
+
+Referenced by generator.\+modules.\+Context\+Knowledge\+Encoder.\+forward(), generator.\+modules.\+Context\+Knowledge\+Decoder.\+forward(), parlai.\+agents.\+transformer.\+modules.\+Transformer\+Response\+Wrapper.\+forward(), and parlai.\+agents.\+transformer.\+modules.\+Transformer\+Linear\+Wrapper.\+forward().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/transformer/\hyperlink{parlai_2agents_2transformer_2modules_8py}{modules.\+py}\end{DoxyCompactItemize}

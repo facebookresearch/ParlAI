@@ -1,7 +1,9 @@
 <map id="parlai.agents.legacy_agents.seq2seq.modules_v0.Seq2seq.forward" name="parlai.agents.legacy_agents.seq2seq.modules_v0.Seq2seq.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="288,109,463,165"/>
-<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title=" " alt="" coords="16,5,229,47"/>
-<area shape="rect" id="node3" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title=" " alt="" coords="5,71,240,127"/>
-<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title=" " alt="" coords="16,152,229,193"/>
-<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title=" " alt="" coords="16,217,229,259"/>
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1079,53,1292,94"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1340,112,1553,153"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="228,106,463,162"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1079,170,1292,212"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Seq2seq.html#a0c0270e1e4c3f72bca49d3752d90baab" title="parlai.agents.legacy\l_agents.seq2seq.modules\l_v0.Seq2seq.unbeamize_enc_out" alt="" coords="236,287,455,343"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="511,69,747,110"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="795,112,1031,153"/>
 </map>

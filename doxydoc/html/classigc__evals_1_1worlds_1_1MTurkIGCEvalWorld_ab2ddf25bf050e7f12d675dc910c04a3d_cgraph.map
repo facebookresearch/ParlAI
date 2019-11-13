@@ -1,6 +1,6 @@
 <map id="igc_evals.worlds.MTurkIGCEvalWorld.parley" name="igc_evals.worlds.MTurkIGCEvalWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,216,112"/>
-<area shape="rect" id="node2" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title=" " alt="" coords="264,5,475,47"/>
-<area shape="rect" id="node3" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a93a8b179951ffcfac7c07da5da696e39" title=" " alt="" coords="264,71,475,112"/>
-<area shape="rect" id="node4" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#af15ae6901cfd80ff6b3253294f0f46c6" title=" " alt="" coords="264,136,475,177"/>
+<area shape="rect" id="node2" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title="igc_evals.worlds.MTurkIGCEval\lWorld.check_timeout" alt="" coords="264,5,475,47"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="523,42,696,69"/>
+<area shape="rect" id="node4" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a93a8b179951ffcfac7c07da5da696e39" title="igc_evals.worlds.MTurkIGCEval\lWorld.filter_option_duplicates" alt="" coords="264,123,475,164"/>
+<area shape="rect" id="node5" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#af15ae6901cfd80ff6b3253294f0f46c6" title="igc_evals.worlds.MTurkIGCEval\lWorld.image_id_to_path" alt="" coords="264,188,475,229"/>
 </map>

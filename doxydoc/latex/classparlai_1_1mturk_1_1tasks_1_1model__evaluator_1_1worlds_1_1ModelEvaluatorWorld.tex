@@ -1,0 +1,212 @@
+\hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld}{}\section{parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World Class Reference}
+\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld}\index{parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World@{parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World}}
+
+
+Inheritance diagram for parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=269pt]{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=305pt]{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aeb81d4953ba69b9b837d7af56cfd4fed}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1worlds_1_1World_a3640d92718acd3e6942a28c1ab3678bd}{opt}, model\+\_\+agent, task\+\_\+opt, \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a66ed0a06df4c22cfb67c4e92ef99c56b}{mturk\+\_\+agent})
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a7d840b488712356ef04fd9c767f55797}{parley} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_af970226e22092b48371d34168f09f39a}{episode\+\_\+done} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a4795df492ce6d443379cd5f28671d3bf}{report} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a5a6662072c9b4eb6e2fd4b4d520bafde}{shutdown} (self)
+\item 
+def \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a3e83e897cee394c9a11376b8625dff2c}{review\+\_\+work} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_ad6bfdd83c43e1eb139f67bdf3816f939}{task\+\_\+world}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a66ed0a06df4c22cfb67c4e92ef99c56b}{mturk\+\_\+agent}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a607bbf834b8145a55dee4200d5fb52b6}{episode\+Done}
+\item 
+\hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a73d88197d0e7992db9726159dc8282fe}{rating}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \hyperlink{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aea1910aa8c33f072484f2328d1172c60}{evaluator\+\_\+agent\+\_\+id} = \textquotesingle{}Model Evaluator\textquotesingle{}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}World for letting Turkers evaluate a dialog model's performance given a
+context. Assumes the context is a context from a given task, e.g.
+from SQuAD, CBT, etc.
+\end{DoxyVerb}
+ 
+
+Definition at line 20 of file worlds.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aeb81d4953ba69b9b837d7af56cfd4fed}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aeb81d4953ba69b9b837d7af56cfd4fed}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{model\+\_\+agent,  }\item[{}]{task\+\_\+opt,  }\item[{}]{mturk\+\_\+agent }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file worlds.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_af970226e22092b48371d34168f09f39a}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_af970226e22092b48371d34168f09f39a}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!episode\+\_\+done@{episode\+\_\+done}}
+\index{episode\+\_\+done@{episode\+\_\+done}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{episode\+\_\+done()}{episode\_done()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+episode\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 56 of file worlds.\+py.
+
+
+
+References parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Bot\+Chat\+Task\+World.\+episode\+Done, parlai.\+messenger.\+core.\+worlds.\+Onboard\+World.\+episode\+Done, parlai.\+agents.\+local\+\_\+human.\+local\+\_\+human.\+Local\+Human\+Agent.\+episode\+Done, parlai.\+messenger.\+tasks.\+qa\+\_\+data\+\_\+collection.\+worlds.\+Q\+A\+Data\+Collection\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Echo\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+episode\+Done, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+episode\+Done, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+episode\+Done, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+episode\+Done, and parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+episode\+Done.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a7d840b488712356ef04fd9c767f55797}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a7d840b488712356ef04fd9c767f55797}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!parley@{parley}}
+\index{parley@{parley}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{parley()}{parley()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+parley (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file worlds.\+py.
+
+
+
+References parlai.\+core.\+worlds.\+World.\+get\+\_\+acts(), parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Onboard\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+core.\+dev.\+worlds.\+Static\+M\+Turk\+Task\+World.\+mturk\+\_\+agent, parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+task\+\_\+world, and parlai.\+core.\+worlds.\+validate().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a7d840b488712356ef04fd9c767f55797_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a4795df492ce6d443379cd5f28671d3bf}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a4795df492ce6d443379cd5f28671d3bf}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!report@{report}}
+\index{report@{report}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{report()}{report()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+report (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 59 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a3e83e897cee394c9a11376b8625dff2c}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a3e83e897cee394c9a11376b8625dff2c}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!review\+\_\+work@{review\+\_\+work}}
+\index{review\+\_\+work@{review\+\_\+work}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{review\+\_\+work()}{review\_work()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+review\+\_\+work (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 66 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a5a6662072c9b4eb6e2fd4b4d520bafde}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a5a6662072c9b4eb6e2fd4b4d520bafde}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 62 of file worlds.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a607bbf834b8145a55dee4200d5fb52b6}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a607bbf834b8145a55dee4200d5fb52b6}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!episode\+Done@{episode\+Done}}
+\index{episode\+Done@{episode\+Done}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{episode\+Done}{episodeDone}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+episode\+Done}
+
+
+
+Definition at line 31 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+episode\+\_\+done(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+parley(), and parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+replay\+\_\+actions().
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aea1910aa8c33f072484f2328d1172c60}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_aea1910aa8c33f072484f2328d1172c60}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!evaluator\+\_\+agent\+\_\+id@{evaluator\+\_\+agent\+\_\+id}}
+\index{evaluator\+\_\+agent\+\_\+id@{evaluator\+\_\+agent\+\_\+id}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{evaluator\+\_\+agent\+\_\+id}{evaluator\_agent\_id}}
+{\footnotesize\ttfamily string parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+evaluator\+\_\+agent\+\_\+id = \textquotesingle{}Model Evaluator\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 26 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a66ed0a06df4c22cfb67c4e92ef99c56b}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a66ed0a06df4c22cfb67c4e92ef99c56b}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!mturk\+\_\+agent@{mturk\+\_\+agent}}
+\index{mturk\+\_\+agent@{mturk\+\_\+agent}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{mturk\+\_\+agent}{mturk\_agent}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+mturk\+\_\+agent}
+
+
+
+Definition at line 30 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a73d88197d0e7992db9726159dc8282fe}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_a73d88197d0e7992db9726159dc8282fe}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!rating@{rating}}
+\index{rating@{rating}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{rating}{rating}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+rating}
+
+
+
+Definition at line 52 of file worlds.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_ad6bfdd83c43e1eb139f67bdf3816f939}\label{classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld_ad6bfdd83c43e1eb139f67bdf3816f939}} 
+\index{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}!task\+\_\+world@{task\+\_\+world}}
+\index{task\+\_\+world@{task\+\_\+world}!parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World@{parlai\+::mturk\+::tasks\+::model\+\_\+evaluator\+::worlds\+::\+Model\+Evaluator\+World}}
+\subsubsection{\texorpdfstring{task\+\_\+world}{task\_world}}
+{\footnotesize\ttfamily parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+task\+\_\+world}
+
+
+
+Definition at line 29 of file worlds.\+py.
+
+
+
+Referenced by parlai.\+mturk.\+tasks.\+model\+\_\+evaluator.\+worlds.\+Model\+Evaluator\+World.\+parley().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/tasks/model\+\_\+evaluator/\hyperlink{parlai_2mturk_2tasks_2model__evaluator_2worlds_8py}{worlds.\+py}\end{DoxyCompactItemize}

@@ -1,10 +1,8 @@
 <map id="parlai.tasks.cornell_movie.agents.DoubleTeacher" name="parlai.tasks.cornell_movie.agents.DoubleTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="6,587,205,628"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="5,497,205,539"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title=" " alt="" coords="9,408,201,449"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="17,319,194,360"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="19,229,191,271"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="17,155,193,181"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="24,80,187,107"/>
-<area shape="rect" id="node8" title=" " alt="" coords="77,5,134,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1cornell__movie_1_1agents_1_1DefaultTeacher.html" title="parlai.tasks.cornell\l_movie.agents.DefaultTeacher" alt="" coords="5,497,205,539"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title="parlai.core.teachers.FbDialog\lTeacher" alt="" coords="9,408,201,449"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title="parlai.core.teachers.Dialog\lTeacher" alt="" coords="17,319,194,360"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="19,229,191,271"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="17,155,193,181"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="24,80,187,107"/>
 </map>

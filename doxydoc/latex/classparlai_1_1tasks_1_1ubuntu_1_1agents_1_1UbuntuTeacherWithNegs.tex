@@ -1,0 +1,208 @@
+\hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs}{}\section{parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs Class Reference}
+\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs}\index{parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs@{parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs}}
+
+
+Inheritance diagram for parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a10a49844810d11e7aecf4b7854c81787}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aca16cfaf6d38cfc93ace8445811863c3}{add\+\_\+candidates} (self, sample, seed)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a47304c2339835e7942ae190d4b17fc2d}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx}=0)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aef77d69155c1215eb64ec5c1ba895bdf}{next\+\_\+example} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aacac8ac1f8b79287b943b85ed21b081b}{share} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a93d31fab305d4b58d377ea9e6d5b7e39}{datatype}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a66c8920874a95611d27a7d5b21c1c128}{num\+\_\+seen}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_ab4625f39fc5003fb1ea94be95c8e8ef9}{all\+\_\+candidates}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Output the exact same data as the default teacher, except for the
+    trainset where it provides negatives in label_candidates.
+    (It does not affect valid and test set)
+\end{DoxyVerb}
+ 
+
+Definition at line 116 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a10a49844810d11e7aecf4b7854c81787}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a10a49844810d11e7aecf4b7854c81787}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 122 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aca16cfaf6d38cfc93ace8445811863c3}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aca16cfaf6d38cfc93ace8445811863c3}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!add\+\_\+candidates@{add\+\_\+candidates}}
+\index{add\+\_\+candidates@{add\+\_\+candidates}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{add\+\_\+candidates()}{add\_candidates()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+add\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{sample,  }\item[{}]{seed }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add 16 candidates. Should be called only at train time.
+\end{DoxyVerb}
+ 
+
+Definition at line 141 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+all\+\_\+candidates.
+
+
+
+Referenced by parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+get(), and parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+next\+\_\+example().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aca16cfaf6d38cfc93ace8445811863c3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a47304c2339835e7942ae190d4b17fc2d}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a47304c2339835e7942ae190d4b17fc2d}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 156 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+add\+\_\+candidates(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a47304c2339835e7942ae190d4b17fc2d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aef77d69155c1215eb64ec5c1ba895bdf}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aef77d69155c1215eb64ec5c1ba895bdf}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!next\+\_\+example@{next\+\_\+example}}
+\index{next\+\_\+example@{next\+\_\+example}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{next\+\_\+example()}{next\_example()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+next\+\_\+example (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 162 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+add\+\_\+candidates(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype, and parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+num\+\_\+seen.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aef77d69155c1215eb64ec5c1ba895bdf_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aacac8ac1f8b79287b943b85ed21b081b}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_aacac8ac1f8b79287b943b85ed21b081b}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 169 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+all\+\_\+candidates, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+datatype, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datatype, and parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datatype.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_ab4625f39fc5003fb1ea94be95c8e8ef9}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_ab4625f39fc5003fb1ea94be95c8e8ef9}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!all\+\_\+candidates@{all\+\_\+candidates}}
+\index{all\+\_\+candidates@{all\+\_\+candidates}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{all\+\_\+candidates}{all\_candidates}}
+{\footnotesize\ttfamily parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+all\+\_\+candidates}
+
+
+
+Definition at line 129 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+add\+\_\+candidates(), and parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a93d31fab305d4b58d377ea9e6d5b7e39}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a93d31fab305d4b58d377ea9e6d5b7e39}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!datatype@{datatype}}
+\index{datatype@{datatype}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{datatype}{datatype}}
+{\footnotesize\ttfamily parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+datatype}
+
+
+
+Definition at line 124 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a66c8920874a95611d27a7d5b21c1c128}\label{classparlai_1_1tasks_1_1ubuntu_1_1agents_1_1UbuntuTeacherWithNegs_a66c8920874a95611d27a7d5b21c1c128}} 
+\index{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}!num\+\_\+seen@{num\+\_\+seen}}
+\index{num\+\_\+seen@{num\+\_\+seen}!parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs@{parlai\+::tasks\+::ubuntu\+::agents\+::\+Ubuntu\+Teacher\+With\+Negs}}
+\subsubsection{\texorpdfstring{num\+\_\+seen}{num\_seen}}
+{\footnotesize\ttfamily parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+num\+\_\+seen}
+
+
+
+Definition at line 125 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+ubuntu.\+agents.\+Ubuntu\+Teacher\+With\+Negs.\+next\+\_\+example().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/ubuntu/\hyperlink{parlai_2tasks_2ubuntu_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,6 @@
+<map id="mastering_the_dungeon.mturk.tasks.MTD.run.batch_valid" name="mastering_the_dungeon.mturk.tasks.MTD.run.batch_valid">
+<area shape="rect" id="node2" href="$namespacetrain.html#a9719cda8ba718637950ea11259aa636c" title="train.additional_validate" alt="" coords="576,56,735,83"/>
+<area shape="rect" id="node5" href="$namespacemastering__the__dungeon_1_1mturk_1_1tasks_1_1MTD_1_1run.html#a3952413e8c53e750ab43a0098c646d39" title="mastering_the_dungeon.mturk.tasks.\lMTD.run.batch_valid_with_data" alt="" coords="291,78,528,119"/>
+<area shape="rect" id="node3" href="$namespacetrain.html#ad644487baaf3b94d8a6b32b0f6e88e15" title="train.get_metrics" alt="" coords="788,5,907,32"/>
+<area shape="rect" id="node4" href="$namespacetrain.html#a55c2b31c8e13b7aa621b3954392bdb93" title="train.get_accuracy" alt="" coords="783,56,912,83"/>
+</map>

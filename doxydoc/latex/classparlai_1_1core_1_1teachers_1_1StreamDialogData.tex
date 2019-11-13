@@ -1,0 +1,488 @@
+\hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData}{}\section{parlai.\+core.\+teachers.\+Stream\+Dialog\+Data Class Reference}
+\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData}\index{parlai.\+core.\+teachers.\+Stream\+Dialog\+Data@{parlai.\+core.\+teachers.\+Stream\+Dialog\+Data}}
+
+
+Inheritance diagram for parlai.\+core.\+teachers.\+Stream\+Dialog\+Data\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=234pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+teachers.\+Stream\+Dialog\+Data\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=234pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a72324ec2775d16b31d1d18287a8f84e9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, opt, \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a35ddb652bb3255dba53d5fd69046ebb7}{data\+\_\+loader}=None, \hyperlink{classparlai_1_1core_1_1teachers_1_1DialogData_a21822d2d86e26a27bdc8326b48ebc9b9}{cands}=None, shared=None, kwargs)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6bb0ef8ed4a3360184f715e8fab9b3aa}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a5f3e6484038cefcc177a635148f0b492}{load\+\_\+length} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ada385b7a8f549f4d65eb910b668c77e5}{num\+\_\+examples} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a05f4816d029700a4bf9fd1eeafcb527c}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a34ba92f60661471fee4eedb5ee2b9eda}{get} (self)
+\item 
+def \hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6375bd13d685da4b3449caaafcc5ec13}{reset} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af41dd0f335bb24f499376f0b55ebea93}{cycle}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae054596c459b22bbeacf622a5208b785}{reset\+\_\+data}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a4c7f45ba690d0533d6a8c5c0235155b2}{datafile}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a35ddb652bb3255dba53d5fd69046ebb7}{data\+\_\+loader}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_adcc1f5f967652688ec8dbcfb3abbcaa6}{lock}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a30ca966ffb33e7cbc8f97e9b8837cbc1}{is\+\_\+reset}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af239ccfb38c42707c97eb8575fb82f10}{entry\+\_\+idx}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a40ac215e58913119b1406b1d440a55f4}{next\+\_\+episode}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a8f5807d28b1b0a4d7eb09ae287b2c01b}{num\+\_\+eps}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6aa5dc9644a792b801bc7cf69a194ae6}{num\+\_\+exs}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ab015e93ae59c4b98f3f9dd883f6f07b2}{data}
+\item 
+\hyperlink{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae045cda37bbe4fd67fdca7f902de8862}{cur\+\_\+episode}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Provides a data structure for streaming textual dialog data.
+
+This can be used whenever the dialog data follows the format described in
+DialogData but cannot fit entirely into memory.
+
+Additional keyword-argument cycle defines if the stream should restart from
+the beginning after an epoch is finished (defaults to True).
+
+:param opt:
+    options to initialize the class
+:param data_loader:
+    an iterable with each call returning a tuple in the form
+    ``((x, y, r, c, i), new_episode?)`` where the ``x`` and ``new_episode``
+    fields are mandatory and other fields may be omitted or ``None``.
+:param cands:
+    can be set to provide a list of candidate labels for every example in
+    this dataset, which the agent can choose from (the correct answer
+    should be in this set).
+:param random:
+    tells the data class whether or not to visit episodes sequentially or
+    randomly when returning examples to the caller.
+:param cycle:
+    (default True) whether to restart at beginning when end of stream
+    reached without reset being called.
+\end{DoxyVerb}
+ 
+
+Definition at line 751 of file teachers.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a72324ec2775d16b31d1d18287a8f84e9}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a72324ec2775d16b31d1d18287a8f84e9}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{data\+\_\+loader = {\ttfamily None},  }\item[{}]{cands = {\ttfamily None},  }\item[{}]{shared = {\ttfamily None},  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 779 of file teachers.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a34ba92f60661471fee4eedb5ee2b9eda}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a34ba92f60661471fee4eedb5ee2b9eda}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!get@{get}}
+\index{get@{get}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+get (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get the next entry from the stream.
+
+When episode is done returns first entry of next episode.
+\end{DoxyVerb}
+ 
+
+Definition at line 875 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+\_\+lock(), parlai.\+core.\+metrics.\+Metrics.\+\_\+lock(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+\_\+lock(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+entry\+\_\+idx, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+entry\+\_\+idx, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+entry\+\_\+idx, and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+next\+\_\+episode.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a34ba92f60661471fee4eedb5ee2b9eda_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a34ba92f60661471fee4eedb5ee2b9eda_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a5f3e6484038cefcc177a635148f0b492}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a5f3e6484038cefcc177a635148f0b492}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!load\+\_\+length@{load\+\_\+length}}
+\index{load\+\_\+length@{load\+\_\+length}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{load\+\_\+length()}{load\_length()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+load\+\_\+length (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Calculate the length of the dataset and caches it in a file.
+
+Note that this can take some time for large datasets. Episode and entry
+indexes cannot be specified during streaming.
+\end{DoxyVerb}
+ 
+
+Definition at line 835 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+\_\+read\+\_\+episode(), parlai.\+core.\+teachers.\+Dialog\+Data.\+\_\+read\+\_\+episode(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datafile, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+datafile, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, eval\+\_\+ppl.\+int, and parlai.\+agents.\+tfidf\+\_\+retriever.\+build\+\_\+tfidf.\+type.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a5f3e6484038cefcc177a635148f0b492_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a5f3e6484038cefcc177a635148f0b492_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a05f4816d029700a4bf9fd1eeafcb527c}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a05f4816d029700a4bf9fd1eeafcb527c}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of episodes in the data.\end{DoxyVerb}
+ 
+
+Definition at line 863 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+load\+\_\+length(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+lock, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+lock, parlai.\+utils.\+misc.\+no\+\_\+lock(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+eps, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+eps, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+eps, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+eps, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+exs, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+exs, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+exs, and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+exs.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+examples(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples(), and parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+images().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a05f4816d029700a4bf9fd1eeafcb527c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a05f4816d029700a4bf9fd1eeafcb527c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ada385b7a8f549f4d65eb910b668c77e5}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ada385b7a8f549f4d65eb910b668c77e5}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the number of examples in the data.\end{DoxyVerb}
+ 
+
+Definition at line 857 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+load\+\_\+length(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+eps, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+eps, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+eps, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+eps, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+num\+\_\+exs, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+num\+\_\+exs, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+num\+\_\+exs, and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+exs.
+
+
+
+Referenced by parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+core.\+worlds.\+Hogwild\+World.\+get\+\_\+total\+\_\+epochs(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), and parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+num\+\_\+images().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ada385b7a8f549f4d65eb910b668c77e5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ada385b7a8f549f4d65eb910b668c77e5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6375bd13d685da4b3449caaafcc5ec13}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6375bd13d685da4b3449caaafcc5ec13}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!reset@{reset}}
+\index{reset@{reset}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reset the datastream to its beginning.\end{DoxyVerb}
+ 
+
+Definition at line 911 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Dialog\+Data.\+\_\+load(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datafile, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+datafile, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+entry\+\_\+idx, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+entry\+\_\+idx, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+entry\+\_\+idx, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+is\+\_\+reset, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+next\+\_\+episode, and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset\+\_\+data.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share(), and parlai.\+core.\+torch\+\_\+agent.\+History.\+update\+\_\+history().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6375bd13d685da4b3449caaafcc5ec13_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6375bd13d685da4b3449caaafcc5ec13_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6bb0ef8ed4a3360184f715e8fab9b3aa}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6bb0ef8ed4a3360184f715e8fab9b3aa}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!share@{share}}
+\index{share@{share}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Share the stream.\end{DoxyVerb}
+ 
+
+Definition at line 808 of file teachers.\+py.
+
+
+
+References parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data\+\_\+loader, parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+datafile, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+datafile, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+datafile, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+Shared\+Table.\+lock, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+lock, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+reset(), parlai.\+core.\+agents.\+Agent.\+reset(), parlai.\+agents.\+drqa.\+utils.\+Average\+Meter.\+reset(), parlai.\+core.\+teachers.\+Fixed\+Dialog\+Teacher.\+reset(), parlai.\+agents.\+tfidf\+\_\+retriever.\+tfidf\+\_\+retriever.\+Tfidf\+Retriever\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+reset(), parlai.\+core.\+agents.\+Teacher.\+reset(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+reset(), parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+reset(), parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+reset(), parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+reset(), parlai.\+core.\+teachers.\+Dialog\+Teacher.\+reset(), parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+reset(), parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+reset(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+reset(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+reset().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6bb0ef8ed4a3360184f715e8fab9b3aa_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae045cda37bbe4fd67fdca7f902de8862}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae045cda37bbe4fd67fdca7f902de8862}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!cur\+\_\+episode@{cur\+\_\+episode}}
+\index{cur\+\_\+episode@{cur\+\_\+episode}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{cur\+\_\+episode}{cur\_episode}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+cur\+\_\+episode}
+
+
+
+Definition at line 887 of file teachers.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af41dd0f335bb24f499376f0b55ebea93}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af41dd0f335bb24f499376f0b55ebea93}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!cycle@{cycle}}
+\index{cycle@{cycle}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{cycle}{cycle}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+cycle}
+
+
+
+Definition at line 782 of file teachers.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ab015e93ae59c4b98f3f9dd883f6f07b2}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ab015e93ae59c4b98f3f9dd883f6f07b2}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!data@{data}}
+\index{data@{data}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data}
+
+
+
+Definition at line 823 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+add\+\_\+cmdline\+\_\+args(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+add\+\_\+cmdline\+\_\+args(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+add\+\_\+idx\+\_\+stack(), igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+add\+\_\+idx\+\_\+stack(), image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+add\+\_\+idx\+\_\+stack(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+as\+\_\+dict(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+get(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+get(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+dailydialog.\+agents.\+No\+Start\+Teacher.\+get(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+get(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+get(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+get(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+get(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+get(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+get(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Test\+Teacher.\+get(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Test\+Teacher.\+get(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+len\+\_\+episode(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+load\+\_\+data(), parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+load\+\_\+world(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+episodes(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+num\+\_\+episodes(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+num\+\_\+examples(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+parley(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+parley(), parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+parley(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+parley(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+parley(), stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+pop\+\_\+example(), igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+pop\+\_\+example(), image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+pop\+\_\+example(), parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+put\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+review\+\_\+work(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+review\+\_\+work(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+save\+\_\+data(), stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+save\+\_\+data(), igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+save\+\_\+data(), image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+save\+\_\+data(), personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+save\+\_\+data(), parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+set\+\_\+data(), parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+set\+\_\+data(), parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+set\+\_\+data(), parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+setup\+\_\+image\+\_\+features(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+share(), parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+share(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+share(), parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+share(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+share(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+share(), parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+share(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+share(), parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+share(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+share(), parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+share(), and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a35ddb652bb3255dba53d5fd69046ebb7}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a35ddb652bb3255dba53d5fd69046ebb7}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!data\+\_\+loader@{data\+\_\+loader}}
+\index{data\+\_\+loader@{data\+\_\+loader}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{data\+\_\+loader}{data\_loader}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data\+\_\+loader}
+
+
+
+Definition at line 788 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+load\+\_\+length(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a4c7f45ba690d0533d6a8c5c0235155b2}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a4c7f45ba690d0533d6a8c5c0235155b2}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!datafile@{datafile}}
+\index{datafile@{datafile}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{datafile}{datafile}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+datafile}
+
+
+
+Definition at line 787 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+load\+\_\+length(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af239ccfb38c42707c97eb8575fb82f10}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_af239ccfb38c42707c97eb8575fb82f10}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!entry\+\_\+idx@{entry\+\_\+idx}}
+\index{entry\+\_\+idx@{entry\+\_\+idx}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{entry\+\_\+idx}{entry\_idx}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+entry\+\_\+idx}
+
+
+
+Definition at line 803 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+get(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a30ca966ffb33e7cbc8f97e9b8837cbc1}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a30ca966ffb33e7cbc8f97e9b8837cbc1}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!is\+\_\+reset@{is\+\_\+reset}}
+\index{is\+\_\+reset@{is\+\_\+reset}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{is\+\_\+reset}{is\_reset}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+is\+\_\+reset}
+
+
+
+Definition at line 796 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_adcc1f5f967652688ec8dbcfb3abbcaa6}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_adcc1f5f967652688ec8dbcfb3abbcaa6}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!lock@{lock}}
+\index{lock@{lock}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{lock}{lock}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+lock}
+
+
+
+Definition at line 790 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+utils.\+thread.\+Shared\+Table.\+get\+\_\+lock(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a40ac215e58913119b1406b1d440a55f4}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a40ac215e58913119b1406b1d440a55f4}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!next\+\_\+episode@{next\+\_\+episode}}
+\index{next\+\_\+episode@{next\+\_\+episode}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{next\+\_\+episode}{next\_episode}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+next\+\_\+episode}
+
+
+
+Definition at line 804 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+get(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a8f5807d28b1b0a4d7eb09ae287b2c01b}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a8f5807d28b1b0a4d7eb09ae287b2c01b}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!num\+\_\+eps@{num\+\_\+eps}}
+\index{num\+\_\+eps@{num\+\_\+eps}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{num\+\_\+eps}{num\_eps}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+eps}
+
+
+
+Definition at line 805 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+episodes(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6aa5dc9644a792b801bc7cf69a194ae6}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_a6aa5dc9644a792b801bc7cf69a194ae6}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!num\+\_\+exs@{num\+\_\+exs}}
+\index{num\+\_\+exs@{num\+\_\+exs}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{num\+\_\+exs}{num\_exs}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+exs}
+
+
+
+Definition at line 806 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+get(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+episodes(), parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+num\+\_\+examples(), parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+num\+\_\+examples(), and parlai.\+core.\+teachers.\+Parl\+A\+I\+Dialog\+Teacher.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae054596c459b22bbeacf622a5208b785}\label{classparlai_1_1core_1_1teachers_1_1StreamDialogData_ae054596c459b22bbeacf622a5208b785}} 
+\index{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}!reset\+\_\+data@{reset\+\_\+data}}
+\index{reset\+\_\+data@{reset\+\_\+data}!parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data@{parlai\+::core\+::teachers\+::\+Stream\+Dialog\+Data}}
+\subsubsection{\texorpdfstring{reset\+\_\+data}{reset\_data}}
+{\footnotesize\ttfamily parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset\+\_\+data}
+
+
+
+Definition at line 785 of file teachers.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+next\+\_\+batch(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+next\+\_\+example(), parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+reset(), and parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+reset().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{teachers_8py}{teachers.\+py}\end{DoxyCompactItemize}

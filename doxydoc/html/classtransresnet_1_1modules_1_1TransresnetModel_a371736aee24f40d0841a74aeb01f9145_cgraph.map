@@ -1,10 +1,9 @@
 <map id="transresnet.modules.TransresnetModel.forward" name="transresnet.modules.TransresnetModel.forward">
-<area shape="rect" id="node1" title=" " alt="" coords="5,173,219,215"/>
-<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a6d8ed65c210d4ab0a665ba305257c3d6" title=" " alt="" coords="299,5,513,47"/>
-<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a578be5b044ee4d34d48541fdeb3ee947" title=" " alt="" coords="299,71,513,112"/>
-<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#aec98b66974021d37e0e256be86aa16f2" title=" " alt="" coords="267,136,545,177"/>
-<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a50a29d40246542bad1cf6fc380d66327" title=" " alt="" coords="288,202,524,258"/>
-<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aa3f65819701999860b414e1bb6bf74cb" title=" " alt="" coords="299,283,513,324"/>
-<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad510db9128829888d74b02e520cad7b9" title=" " alt="" coords="299,348,513,389"/>
-<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a850b8d781e749d3242788dc8e344b8fe" title=" " alt="" coords="593,283,807,324"/>
+<area shape="rect" id="node2" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a6d8ed65c210d4ab0a665ba305257c3d6" title="transresnet.modules.Transresnet\lModel.captions_to_tensor" alt="" coords="299,5,513,47"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a578be5b044ee4d34d48541fdeb3ee947" title="transresnet.modules.Transresnet\lModel.forward_image" alt="" coords="299,71,513,112"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#aec98b66974021d37e0e256be86aa16f2" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward_image" alt="" coords="267,136,545,177"/>
+<area shape="rect" id="node5" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a50a29d40246542bad1cf6fc380d66327" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward\l_personality" alt="" coords="288,202,524,258"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aa3f65819701999860b414e1bb6bf74cb" title="transresnet.modules.Transresnet\lModel.forward_personality" alt="" coords="299,283,513,324"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad510db9128829888d74b02e520cad7b9" title="transresnet.modules.Transresnet\lModel.sum_encodings" alt="" coords="299,348,513,389"/>
+<area shape="rect" id="node7" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a850b8d781e749d3242788dc8e344b8fe" title="transresnet.modules.Transresnet\lModel.personalities_to_index" alt="" coords="593,283,807,324"/>
 </map>

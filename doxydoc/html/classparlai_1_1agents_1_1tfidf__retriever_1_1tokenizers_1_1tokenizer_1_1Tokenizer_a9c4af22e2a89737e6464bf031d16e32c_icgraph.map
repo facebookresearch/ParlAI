@@ -1,0 +1,5 @@
+<map id="parlai.agents.tfidf_retriever.tokenizers.tokenizer.Tokenizer.shutdown" name="parlai.agents.tfidf_retriever.tokenizers.tokenizer.Tokenizer.shutdown">
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html#ae2b8ea006564cbefbe8520f45fb71040" title="parlai.core.worlds.World.\l__exit__" alt="" coords="259,5,425,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a1b7aed0a7b56712f22ee8b04c65d7c00" title="parlai.core.worlds.Hogwild\lWorld.display" alt="" coords="255,71,429,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a0425099fbc33cb97d6fbe67dbd2e8a1f" title="parlai.core.worlds.Hogwild\lWorld.episode_done" alt="" coords="255,136,429,177"/>
+</map>

@@ -1,9 +1,5 @@
 <map id="parlai.agents.transformer.crossencoder.CrossencoderAgent" name="parlai.agents.transformer.crossencoder.CrossencoderAgent">
-<area shape="rect" id="node1" title=" " alt="" coords="35,367,287,408"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="74,276,249,317"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="82,185,241,227"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,81,56,108"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="80,81,243,108"/>
-<area shape="rect" id="node6" title=" " alt="" coords="133,5,190,32"/>
-<area shape="rect" id="node7" title=" " alt="" coords="267,81,322,108"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title="parlai.core.torch_ranker\l_agent.TorchRankerAgent" alt="" coords="74,276,249,317"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title="parlai.core.torch_agent.\lTorchAgent" alt="" coords="82,185,241,227"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="80,81,243,108"/>
 </map>

@@ -1,17 +1,24 @@
 <map id="parlai.core.params.ParlaiParser.parse_args" name="parlai.core.params.ParlaiParser.parse_args">
-<area shape="rect" id="node1" title=" " alt="" coords="5,252,172,293"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a18290144fed76ec19b436b1342b6d27c" title=" " alt="" coords="220,153,419,195"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ade9c068595c2b1110d019f3dedeb79ba" title=" " alt="" coords="236,219,403,260"/>
-<area shape="rect" id="node15" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#adb1dec3d3433b40209bb2c24722df335" title=" " alt="" coords="236,284,403,325"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a282ccba298220566b24beb7e94caffca" title=" " alt="" coords="479,29,646,71"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a99c48385d561ea22de742343871a50a6" title=" " alt="" coords="477,95,649,136"/>
-<area shape="rect" id="node7" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a33d186a0cd665df88726b96f1bc3d88e" title=" " alt="" coords="479,160,646,201"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title=" " alt="" coords="1413,189,1587,231"/>
-<area shape="rect" id="node12" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a46c57cd479d8780c4c22aecb3135d5fe" title=" " alt="" coords="473,277,653,319"/>
-<area shape="rect" id="node13" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a7d85a5e2fac2c1e8f0f75a4255850b9b" title=" " alt="" coords="467,343,659,384"/>
-<area shape="rect" id="node14" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a61ff766a70bd11365cbcbf71431ce527" title=" " alt="" coords="479,408,646,449"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a1ee92bbce0531f8269e1afe46bc18a41" title=" " alt="" coords="716,29,883,71"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#aa6babcb28363f6d62f3f6182826157a6" title=" " alt="" coords="707,160,892,201"/>
-<area shape="rect" id="node9" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a257122e28e48cb9c948837f0408ae48e" title=" " alt="" coords="940,160,1127,201"/>
-<area shape="rect" id="node10" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a3a75bdeee002ed5a50706f1a6c9797c8" title=" " alt="" coords="1175,160,1365,201"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#ade9c068595c2b1110d019f3dedeb79ba" title="parlai.core.params.Parlai\lParser.add_extra_args" alt="" coords="220,235,387,276"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a282ccba298220566b24beb7e94caffca" title="parlai.core.params.Parlai\lParser._infer_datapath" alt="" coords="447,5,614,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a99c48385d561ea22de742343871a50a6" title="parlai.core.params.Parlai\lParser._load_known_opts" alt="" coords="445,71,617,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a33d186a0cd665df88726b96f1bc3d88e" title="parlai.core.params.Parlai\lParser.add_image_args" alt="" coords="447,136,614,177"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a46c57cd479d8780c4c22aecb3135d5fe" title="parlai.core.params.Parlai\lParser.add_model_subargs" alt="" coords="441,336,621,377"/>
+<area shape="rect" id="node13" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a7d85a5e2fac2c1e8f0f75a4255850b9b" title="parlai.core.params.Parlai\lParser.add_pyt_dataset_args" alt="" coords="435,427,627,468"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a61ff766a70bd11365cbcbf71431ce527" title="parlai.core.params.Parlai\lParser.add_task_args" alt="" coords="447,525,614,567"/>
+<area shape="rect" id="node18" href="$namespaceparlai_1_1core_1_1params.html#a6d160324f6af84562334fd0698141074" title="parlai.core.params.get\l_model_name" alt="" coords="455,267,606,308"/>
+<area shape="rect" id="node23" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2a98c07f7393108ad67773951038f191" title="parlai.core.params.Parlai\lParser.parse_known_args" alt="" coords="444,201,617,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a2855a5676bf638bfc9491577e603eee3" title="parlai.core.params.Parlai\lParser.add_argument_group" alt="" coords="675,80,861,121"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1params_1_1ParlaiParser.html#a257122e28e48cb9c948837f0408ae48e" title="parlai.core.params.Parlai\lParser._handle_hidden_args" alt="" coords="918,73,1105,115"/>
+<area shape="rect" id="node8" href="$namespaceparlai_1_1core_1_1params.html#afe2837a1dc21017be30cc7e3cb3696b8" title="parlai.core.params.fix\l_underscores" alt="" coords="938,139,1085,180"/>
+<area shape="rect" id="node10" href="$namespaceparlai_1_1core_1_1params.html#a4abab85fb7a745de31fcc73de5840a60" title="parlai.core.params.class2str" alt="" coords="675,343,861,370"/>
+<area shape="rect" id="node11" href="$namespaceparlai_1_1core_1_1agents.html#a14a9d134d76ffd0509e50703d0f2c949" title="parlai.core.agents.get\l_agent_module" alt="" coords="938,419,1085,460"/>
+<area shape="rect" id="node12" href="$namespaceparlai_1_1core_1_1agents.html#a7a5f5076b35ce376d8b46bfb362bfc53" title="parlai.core.agents.name\l_to_agent_class" alt="" coords="1171,419,1333,460"/>
+<area shape="rect" id="node14" href="$namespaceparlai_1_1core_1_1pytorch__data__teacher.html#acd56d9ac5d68831c1e91690f26eb2328" title="parlai.core.pytorch\l_data_teacher.get_dataset\l_classes" alt="" coords="680,445,856,501"/>
+<area shape="rect" id="node16" href="$namespaceparlai_1_1core_1_1agents.html#a530b987b67a802a8e9c5fa3c24ae942f" title="parlai.core.agents.get\l_task_module" alt="" coords="695,525,841,567"/>
+<area shape="rect" id="node17" href="$namespaceparlai_1_1tasks_1_1tasks.html#ad536d1295ca5ba2ecf3a48635b482087" title="parlai.tasks.tasks.ids\l_to_tasks" alt="" coords="695,591,841,632"/>
+<area shape="rect" id="node19" href="$namespaceparlai_1_1utils_1_1misc.html#a7c97ef3250327bc549ac652a481be0cf" title="parlai.utils.misc.load\l_opt_file" alt="" coords="697,197,839,239"/>
+<area shape="rect" id="node20" href="$namespaceparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0.html#a5fbd3301b67f00d6d146fb01c7cd7626" title="parlai.agents.legacy\l_agents.seq2seq.utils\l_v0.modelzoo_path" alt="" coords="693,263,843,319"/>
+<area shape="rect" id="node21" href="$namespaceparlai_1_1core_1_1build__data.html#ab74f0e428f05e5d91fa93c8afb367622" title="parlai.core.build_data.download" alt="" coords="909,278,1113,305"/>
+<area shape="rect" id="node22" href="$namespaceparlai_1_1core_1_1build__data.html#a1678b8a042eeb9d9c8e9de08f52e496b" title="parlai.core.build_data.move" alt="" coords="1161,278,1343,305"/>
 </map>

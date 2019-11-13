@@ -1,0 +1,183 @@
+\hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher}{}\section{parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher Class Reference}
+\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher}\index{parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher@{parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher}}
+
+
+Inheritance diagram for parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=221pt]{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=221pt]{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a6ef124a2cc6ff3edc13291768fafbe29}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1agents_1_1Teacher_a3ce6243860ce978a897922863ed32fa4}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ab00955aa62e9056a3b3a3f712a07fa93}{label\+\_\+candidates} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ae7f02d6dd1340c5120431d0df6440352}{setup\+\_\+data} (self, path)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a813aa1c2a680e44e88ecb2832d99d51f}{datatype}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a7c93f12d922a5f35699379983acfd5f0}{image\+\_\+path}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a5f5642ab4593624e0f9a0a633deebf40}{id}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aaee79511f7f1ec89e8701435e5b95036}{num\+\_\+strs}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aa6621e4f56e5cdb9cb5d24bc439e2083}{labels}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a79fbc5e429e1ee91b592fc6da4675c54}{question}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This version of MNIST inherits from the core Dialog Teacher, which just
+requires it to define an iterator over its data `setup_data` in order to
+inherit basic metrics, a `act` function, and enables
+Hogwild training with shared memory with no extra work.
+\end{DoxyVerb}
+ 
+
+Definition at line 30 of file agents.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a6ef124a2cc6ff3edc13291768fafbe29}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a6ef124a2cc6ff3edc13291768fafbe29}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 38 of file agents.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ab00955aa62e9056a3b3a3f712a07fa93}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ab00955aa62e9056a3b3a3f712a07fa93}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!label\+\_\+candidates@{label\+\_\+candidates}}
+\index{label\+\_\+candidates@{label\+\_\+candidates}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{label\+\_\+candidates()}{label\_candidates()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+label\+\_\+candidates (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 58 of file agents.\+py.
+
+
+
+References parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+num\+\_\+strs, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ae7f02d6dd1340c5120431d0df6440352}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_ae7f02d6dd1340c5120431d0df6440352}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!setup\+\_\+data@{setup\+\_\+data}}
+\index{setup\+\_\+data@{setup\+\_\+data}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{setup\+\_\+data()}{setup\_data()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+setup\+\_\+data (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{path }\end{DoxyParamCaption})}
+
+
+
+Definition at line 61 of file agents.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a813aa1c2a680e44e88ecb2832d99d51f}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a813aa1c2a680e44e88ecb2832d99d51f}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!datatype@{datatype}}
+\index{datatype@{datatype}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{datatype}{datatype}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+datatype}
+
+
+
+Definition at line 39 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), and mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+report().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a5f5642ab4593624e0f9a0a633deebf40}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a5f5642ab4593624e0f9a0a633deebf40}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!id@{id}}
+\index{id@{id}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+id}
+
+
+
+Definition at line 42 of file agents.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a7c93f12d922a5f35699379983acfd5f0}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a7c93f12d922a5f35699379983acfd5f0}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!image\+\_\+path@{image\+\_\+path}}
+\index{image\+\_\+path@{image\+\_\+path}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{image\+\_\+path}{image\_path}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+image\+\_\+path}
+
+
+
+Definition at line 40 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+get\+\_\+image(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+get\+\_\+image(), parlai.\+tasks.\+vqa\+\_\+v2.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+submit\+\_\+load\+\_\+request(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+Oe\+Teacher.\+submit\+\_\+load\+\_\+request().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aa6621e4f56e5cdb9cb5d24bc439e2083}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aa6621e4f56e5cdb9cb5d24bc439e2083}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!labels@{labels}}
+\index{labels@{labels}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{labels}{labels}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+labels}
+
+
+
+Definition at line 64 of file agents.\+py.
+
+
+
+Referenced by agent.\+memnn\+\_\+feedback.\+Memnn\+Feedback\+Agent.\+predict().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aaee79511f7f1ec89e8701435e5b95036}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_aaee79511f7f1ec89e8701435e5b95036}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!num\+\_\+strs@{num\+\_\+strs}}
+\index{num\+\_\+strs@{num\+\_\+strs}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{num\+\_\+strs}{num\_strs}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+num\+\_\+strs}
+
+
+
+Definition at line 43 of file agents.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+label\+\_\+candidates().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a79fbc5e429e1ee91b592fc6da4675c54}\label{classparlai_1_1tasks_1_1mnist__qa_1_1agents_1_1MnistQATeacher_a79fbc5e429e1ee91b592fc6da4675c54}} 
+\index{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}!question@{question}}
+\index{question@{question}!parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher@{parlai\+::tasks\+::mnist\+\_\+qa\+::agents\+::\+Mnist\+Q\+A\+Teacher}}
+\subsubsection{\texorpdfstring{question}{question}}
+{\footnotesize\ttfamily parlai.\+tasks.\+mnist\+\_\+qa.\+agents.\+Mnist\+Q\+A\+Teacher.\+question}
+
+
+
+Definition at line 66 of file agents.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/mnist\+\_\+qa/\hyperlink{parlai_2tasks_2mnist__qa_2agents_8py}{agents.\+py}\end{DoxyCompactItemize}

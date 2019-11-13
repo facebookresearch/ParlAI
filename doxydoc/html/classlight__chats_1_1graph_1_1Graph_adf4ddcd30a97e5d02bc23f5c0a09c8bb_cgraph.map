@@ -1,6 +1,5 @@
 <map id="light_chats.graph.Graph.get_path_ex_desc" name="light_chats.graph.Graph.get_path_ex_desc">
-<area shape="rect" id="node1" title=" " alt="" coords="5,28,188,69"/>
-<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title=" " alt="" coords="499,40,703,81"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a33e205ecb0e7d4d2626162250ef585f1" title=" " alt="" coords="252,28,435,69"/>
-<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title=" " alt="" coords="236,118,451,144"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1Graph.html#a4b2f6d6d7714ea3b82ff7a01f3199123" title="light_chats.graph.Graph.extract\l_classed_from_dict" alt="" coords="467,24,671,65"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1Graph.html#a30483d3bbb88924bb7b98fb72b2e23fe" title="light_chats.graph.Graph.get_prop" alt="" coords="719,31,933,58"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1Graph.html#a33e205ecb0e7d4d2626162250ef585f1" title="light_chats.graph.Graph.get\l_classed_prop" alt="" coords="236,79,419,120"/>
 </map>

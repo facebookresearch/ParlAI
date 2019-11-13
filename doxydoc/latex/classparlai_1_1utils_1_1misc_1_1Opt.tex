@@ -1,0 +1,241 @@
+\hypertarget{classparlai_1_1utils_1_1misc_1_1Opt}{}\section{parlai.\+utils.\+misc.\+Opt Class Reference}
+\label{classparlai_1_1utils_1_1misc_1_1Opt}\index{parlai.\+utils.\+misc.\+Opt@{parlai.\+utils.\+misc.\+Opt}}
+
+
+Inheritance diagram for parlai.\+utils.\+misc.\+Opt\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{classparlai_1_1utils_1_1misc_1_1Opt__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+utils.\+misc.\+Opt\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{classparlai_1_1utils_1_1misc_1_1Opt__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_aa47125b32a0e6388def87e4542f92432}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a479b52d2a5f00e4b9aac417ee4990915}{\+\_\+\+\_\+setitem\+\_\+\+\_\+} (self, key, val)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a7fae2d1b6ffb48970e59923787adb905}{\+\_\+\+\_\+getstate\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_ab9abc2aba6c09db1d6e65744dacb6090}{\+\_\+\+\_\+setstate\+\_\+\+\_\+} (self, state)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a1304900ba795187adb8bd4a564a435a8}{\+\_\+\+\_\+reduce\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a62062801645aec9a868f063e4ddb6407}{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+} (self, memo)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_aef6b123f77613b7e3ecc45716de89ee2}{display\+\_\+deepcopies} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_aee1d325bb2691ce4c007075d6f8abffc}{display\+\_\+history} (self, key)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a24659f7fa7a137ccd60a139a60d64da2}{history}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1Opt_a2bf9d8a08183cd0f988b7a116ae9b396}{deepcopies}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class for tracking options.
+
+Functions like a dict, but allows us to track the history of arguments
+as they are set.
+\end{DoxyVerb}
+ 
+
+Definition at line 183 of file misc.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_aa47125b32a0e6388def87e4542f92432}\label{classparlai_1_1utils_1_1misc_1_1Opt_aa47125b32a0e6388def87e4542f92432}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 191 of file misc.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a62062801645aec9a868f063e4ddb6407}\label{classparlai_1_1utils_1_1misc_1_1Opt_a62062801645aec9a868f063e4ddb6407}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+deepcopy\+\_\+\+\_\+@{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+@{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+deepcopy\+\_\+\+\_\+()}{\_\_deepcopy\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{memo }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Override deepcopy so that history is copied over to new object.\end{DoxyVerb}
+ 
+
+Definition at line 211 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Opt.\+deepcopies, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a7fae2d1b6ffb48970e59923787adb905}\label{classparlai_1_1utils_1_1misc_1_1Opt_a7fae2d1b6ffb48970e59923787adb905}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+getstate\+\_\+\+\_\+@{\+\_\+\+\_\+getstate\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+getstate\+\_\+\+\_\+@{\+\_\+\+\_\+getstate\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+getstate\+\_\+\+\_\+()}{\_\_getstate\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+getstate\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 201 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Opt.\+deepcopies, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+reduce\+\_\+\+\_\+().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{classparlai_1_1utils_1_1misc_1_1Opt_a7fae2d1b6ffb48970e59923787adb905_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a1304900ba795187adb8bd4a564a435a8}\label{classparlai_1_1utils_1_1misc_1_1Opt_a1304900ba795187adb8bd4a564a435a8}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+reduce\+\_\+\+\_\+@{\+\_\+\+\_\+reduce\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+reduce\+\_\+\+\_\+@{\+\_\+\+\_\+reduce\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+reduce\+\_\+\+\_\+()}{\_\_reduce\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+reduce\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 208 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+getstate\+\_\+\+\_\+().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{classparlai_1_1utils_1_1misc_1_1Opt_a1304900ba795187adb8bd4a564a435a8_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a479b52d2a5f00e4b9aac417ee4990915}\label{classparlai_1_1utils_1_1misc_1_1Opt_a479b52d2a5f00e4b9aac417ee4990915}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+setitem\+\_\+\+\_\+@{\+\_\+\+\_\+setitem\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+setitem\+\_\+\+\_\+()}{\_\_setitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key,  }\item[{}]{val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 196 of file misc.\+py.
+
+
+
+References parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_ab9abc2aba6c09db1d6e65744dacb6090}\label{classparlai_1_1utils_1_1misc_1_1Opt_ab9abc2aba6c09db1d6e65744dacb6090}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!\+\_\+\+\_\+setstate\+\_\+\+\_\+@{\+\_\+\+\_\+setstate\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+setstate\+\_\+\+\_\+@{\+\_\+\+\_\+setstate\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+setstate\+\_\+\+\_\+()}{\_\_setstate\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setstate\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state }\end{DoxyParamCaption})}
+
+
+
+Definition at line 204 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Opt.\+deepcopies, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+update(), parlai.\+agents.\+drqa.\+utils.\+Average\+Meter.\+update(), and parlai.\+core.\+metrics.\+Metrics.\+update().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1Opt_ab9abc2aba6c09db1d6e65744dacb6090_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_aef6b123f77613b7e3ecc45716de89ee2}\label{classparlai_1_1utils_1_1misc_1_1Opt_aef6b123f77613b7e3ecc45716de89ee2}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!display\+\_\+deepcopies@{display\+\_\+deepcopies}}
+\index{display\+\_\+deepcopies@{display\+\_\+deepcopies}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{display\+\_\+deepcopies()}{display\_deepcopies()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+display\+\_\+deepcopies (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Display all deepcopies.\end{DoxyVerb}
+ 
+
+Definition at line 226 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Opt.\+deepcopies, and parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_aee1d325bb2691ce4c007075d6f8abffc}\label{classparlai_1_1utils_1_1misc_1_1Opt_aee1d325bb2691ce4c007075d6f8abffc}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!display\+\_\+history@{display\+\_\+history}}
+\index{display\+\_\+history@{display\+\_\+history}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{display\+\_\+history()}{display\_history()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Opt.\+display\+\_\+history (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Display the history for an item in the dict.\end{DoxyVerb}
+ 
+
+Definition at line 235 of file misc.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+history, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+history, parlai.\+utils.\+misc.\+Opt.\+history, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+history, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+history, and parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+history.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a2bf9d8a08183cd0f988b7a116ae9b396}\label{classparlai_1_1utils_1_1misc_1_1Opt_a2bf9d8a08183cd0f988b7a116ae9b396}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!deepcopies@{deepcopies}}
+\index{deepcopies@{deepcopies}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{deepcopies}{deepcopies}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Opt.\+deepcopies}
+
+
+
+Definition at line 194 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+getstate\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setstate\+\_\+\+\_\+(), and parlai.\+utils.\+misc.\+Opt.\+display\+\_\+deepcopies().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1Opt_a24659f7fa7a137ccd60a139a60d64da2}\label{classparlai_1_1utils_1_1misc_1_1Opt_a24659f7fa7a137ccd60a139a60d64da2}} 
+\index{parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}!history@{history}}
+\index{history@{history}!parlai\+::utils\+::misc\+::\+Opt@{parlai\+::utils\+::misc\+::\+Opt}}
+\subsubsection{\texorpdfstring{history}{history}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Opt.\+history}
+
+
+
+Definition at line 193 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+deepcopy\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+getstate\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setitem\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+\_\+\+\_\+setstate\+\_\+\+\_\+(), parlai.\+utils.\+misc.\+Opt.\+display\+\_\+history(), transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+get\+\_\+dialogue\+\_\+history(), kvmemnn.\+Kvmemnn\+Agent.\+get\+\_\+negs(), kvmemnn.\+Kvmemnn\+Agent.\+observe(), and transresnet\+\_\+multimodal.\+transresnet\+\_\+multimodal.\+Transresnet\+Multimodal\+Agent.\+reset().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{misc_8py}{misc.\+py}\end{DoxyCompactItemize}

@@ -1,0 +1,6 @@
+<map id="parlai.tasks.personality_captions.agents.DefaultDataset.__getitem__" name="parlai.tasks.personality_captions.agents.DefaultDataset.__getitem__">
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1FlickrDataset.html#af2517dc3b4a7670305ad9a517a8d49c1" title="parlai.tasks.flickr30k.agents.\lFlickrDataset.get_image" alt="" coords="315,5,504,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#a1af0abcddf51525898da67e2e796c525" title="parlai.tasks.personality\l_captions.agents.DefaultDataset.get_image" alt="" coords="271,71,548,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1DefaultDataset.html#ad06939ed5ac1393185d8e4eb1cf1706e" title="parlai.tasks.image\l_chat.agents.DefaultDataset.get_image" alt="" coords="283,136,536,177"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultDataset.html#ae769cbe2c9a42fc0ecc817a2baeffb77" title="parlai.tasks.coco_caption.agents.\lDefaultDataset.get_image" alt="" coords="301,201,518,243"/>
+</map>

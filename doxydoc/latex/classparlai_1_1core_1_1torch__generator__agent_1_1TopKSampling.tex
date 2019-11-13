@@ -1,0 +1,102 @@
+\hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling}{}\section{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling Class Reference}
+\label{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling}\index{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling@{parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling}}
+
+
+Inheritance diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_aa45e1c1fe90c563bf8057969417545e4}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a69d2f8e711e51151aa6649a4889e8243}{k}, args, kwargs)
+\item 
+def \hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a3ca83b8ee8aff13c05afbb973f948b6f}{select\+\_\+paths} (self, logprobs, prior\+\_\+scores)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a69d2f8e711e51151aa6649a4889e8243}{k}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Top-K sampling (Fan et al., 2018).
+
+Samples from a truncated distribution where only the most probable K words
+are considered at each time.
+
+Typical values of k are 2, 10, 50.
+
+See https://arxiv.org/abs/1805.04833 for details.
+\end{DoxyVerb}
+ 
+
+Definition at line 1024 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_aa45e1c1fe90c563bf8057969417545e4}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_aa45e1c1fe90c563bf8057969417545e4}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{k,  }\item[{}]{args,  }\item[{}]{kwargs }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1036 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a3ca83b8ee8aff13c05afbb973f948b6f}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a3ca83b8ee8aff13c05afbb973f948b6f}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}!select\+\_\+paths@{select\+\_\+paths}}
+\index{select\+\_\+paths@{select\+\_\+paths}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}}
+\subsubsection{\texorpdfstring{select\+\_\+paths()}{select\_paths()}}
+{\footnotesize\ttfamily def parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling.\+select\+\_\+paths (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{logprobs,  }\item[{}]{prior\+\_\+scores }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1040 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+References parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling.\+k.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a69d2f8e711e51151aa6649a4889e8243}\label{classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling_a69d2f8e711e51151aa6649a4889e8243}} 
+\index{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}!k@{k}}
+\index{k@{k}!parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling@{parlai\+::core\+::torch\+\_\+generator\+\_\+agent\+::\+Top\+K\+Sampling}}
+\subsubsection{\texorpdfstring{k}{k}}
+{\footnotesize\ttfamily parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling.\+k}
+
+
+
+Definition at line 1038 of file torch\+\_\+generator\+\_\+agent.\+py.
+
+
+
+Referenced by parlai.\+core.\+torch\+\_\+generator\+\_\+agent.\+Top\+K\+Sampling.\+select\+\_\+paths().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/core/\hyperlink{torch__generator__agent_8py}{torch\+\_\+generator\+\_\+agent.\+py}\end{DoxyCompactItemize}

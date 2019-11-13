@@ -1,4 +1,4 @@
 <map id="parlai.core.teachers.AbstractImageTeacher.get" name="parlai.core.teachers.AbstractImageTeacher.get">
-<area shape="rect" id="node1" title=" " alt="" coords="244,5,433,47"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae519608a207d86bd7801f3043ff0ebf5" title=" " alt="" coords="5,5,196,47"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1Map.html#af080964b1e6043ad8d6e1634932c82ca" title="parlai.tasks.talkthewalk.worlds.\lMap.get_landmarks" alt="" coords="243,5,448,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae519608a207d86bd7801f3043ff0ebf5" title="parlai.core.teachers.Abstract\lImageTeacher.next_example" alt="" coords="250,71,441,112"/>
 </map>

@@ -1,0 +1,196 @@
+\hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue}{}\section{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue Class Reference}
+\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue}\index{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue@{parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue}}
+
+
+Inheritance diagram for parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=219pt]{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a33145693ab371c9f96cb8339fd4a39c3}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, max\+\_\+size)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_ad55d735d26bc038f7a552b1789036033}{add} (self, item, priority=None)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7830895ac98617df15af4ba0fb991a05}{\+\_\+\+\_\+getitem\+\_\+\+\_\+} (self, key)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7b1b8f3a2f17a0d4bd3c202bc3bdee78}{\+\_\+\+\_\+len\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a16e80c3c0f52236d14e5e1813a7c9c52}{\+\_\+\+\_\+str\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a0d0d7db0cf816039ca69cba4bf481f01}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7d35dfdbd0e65d15b701e1b3275e6d89}{capacity}
+\item 
+\hyperlink{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a9e5cc3e3c70101f251f2d19cf936aa4e}{lst}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Fixed-size priority queue keeping the max_size largest items.\end{DoxyVerb}
+ 
+
+Definition at line 33 of file ir\+\_\+baseline.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a33145693ab371c9f96cb8339fd4a39c3}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a33145693ab371c9f96cb8339fd4a39c3}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{max\+\_\+size }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize priority queue.
+
+:param max_size: maximum capacity of priority queue.
+\end{DoxyVerb}
+ 
+
+Definition at line 36 of file ir\+\_\+baseline.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7830895ac98617df15af4ba0fb991a05}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7830895ac98617df15af4ba0fb991a05}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+getitem\+\_\+\+\_\+@{\+\_\+\+\_\+getitem\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+getitem\+\_\+\+\_\+()}{\_\_getitem\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+getitem\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{key }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Get item at specified index.
+
+:param key: integer index into priority queue, 0 <= index < max_size.
+
+:returns: item stored at the specified index.
+\end{DoxyVerb}
+ 
+
+Definition at line 61 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7b1b8f3a2f17a0d4bd3c202bc3bdee78}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7b1b8f3a2f17a0d4bd3c202bc3bdee78}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+len\+\_\+\+\_\+@{\+\_\+\+\_\+len\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+len\+\_\+\+\_\+()}{\_\_len\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+len\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return length of priority queue.\end{DoxyVerb}
+ 
+
+Definition at line 70 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a0d0d7db0cf816039ca69cba4bf481f01}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a0d0d7db0cf816039ca69cba4bf481f01}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return repr representation of the priority queue in list form.\end{DoxyVerb}
+ 
+
+Definition at line 78 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a16e80c3c0f52236d14e5e1813a7c9c52}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a16e80c3c0f52236d14e5e1813a7c9c52}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+str\+\_\+\+\_\+@{\+\_\+\+\_\+str\+\_\+\+\_\+}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+str\+\_\+\+\_\+()}{\_\_str\_\_()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+str\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return str representation of the priority queue in list form.\end{DoxyVerb}
+ 
+
+Definition at line 74 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst, and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_ad55d735d26bc038f7a552b1789036033}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_ad55d735d26bc038f7a552b1789036033}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!add@{add}}
+\index{add@{add}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{add()}{add()}}
+{\footnotesize\ttfamily def parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+add (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{item,  }\item[{}]{priority = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Add element to the queue, with a separate priority if desired.
+
+Element will not be added if the queue is at capacity and the element
+has lower priority than the lowest currently in the queue.
+
+:param item: item to add to queue.
+:param priority: priority to use for item. if None (default), will use
+         the item itself to calculate its own priority.
+\end{DoxyVerb}
+ 
+
+Definition at line 44 of file ir\+\_\+baseline.\+py.
+
+
+
+References parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+capacity, and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7d35dfdbd0e65d15b701e1b3275e6d89}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a7d35dfdbd0e65d15b701e1b3275e6d89}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!capacity@{capacity}}
+\index{capacity@{capacity}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{capacity}{capacity}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+capacity}
+
+
+
+Definition at line 41 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+add().
+
+\mbox{\Hypertarget{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a9e5cc3e3c70101f251f2d19cf936aa4e}\label{classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1MaxPriorityQueue_a9e5cc3e3c70101f251f2d19cf936aa4e}} 
+\index{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}!lst@{lst}}
+\index{lst@{lst}!parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue@{parlai\+::agents\+::ir\+\_\+baseline\+::ir\+\_\+baseline\+::\+Max\+Priority\+Queue}}
+\subsubsection{\texorpdfstring{lst}{lst}}
+{\footnotesize\ttfamily parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+lst}
+
+
+
+Definition at line 42 of file ir\+\_\+baseline.\+py.
+
+
+
+Referenced by parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+repr\+\_\+\+\_\+(), parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+\_\+\+\_\+str\+\_\+\+\_\+(), and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Max\+Priority\+Queue.\+add().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/agents/ir\+\_\+baseline/\hyperlink{ir__baseline_8py}{ir\+\_\+baseline.\+py}\end{DoxyCompactItemize}

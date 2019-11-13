@@ -1,5 +1,3 @@
 <map id="parlai.core.torch_generator_agent.TopKSampling" name="parlai.core.torch_generator_agent.TopKSampling">
-<area shape="rect" id="node1" title=" " alt="" coords="5,169,181,211"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html" title=" " alt="" coords="5,80,181,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="65,5,122,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html" title="parlai.core.torch_generator\l_agent.TreeSearch" alt="" coords="5,80,181,121"/>
 </map>

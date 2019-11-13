@@ -1,0 +1,518 @@
+\hypertarget{namespacecontrollable__seq2seq_1_1controls}{}\section{controllable\+\_\+seq2seq.\+controls Namespace Reference}
+\label{namespacecontrollable__seq2seq_1_1controls}\index{controllable\+\_\+seq2seq.\+controls@{controllable\+\_\+seq2seq.\+controls}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classcontrollable__seq2seq_1_1controls_1_1NIDFFeats}{N\+I\+D\+F\+Feats}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a7c6540f026d763dbf534f1a3e60500a3}{initialize\+\_\+control\+\_\+information} (opt, build\+\_\+task=True)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a7c34984d4b5df8732e5e8176bf1663e3}{flatten} (list\+\_\+of\+\_\+lists)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a311eb502ed6cb93b69800a8a00ebc5e9}{intrep\+\_\+frac} (lst)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_ab7554c2785504a4bd181168ad30ba9e0}{extrep\+\_\+frac} (lst1, lst2)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a3fad33534b785e9e43e2145199347e05}{get\+\_\+ngrams} (text, n)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a4c775d3518037c2505c0bb4a69bb1dd5}{matching\+\_\+ngram\+\_\+completions} (comparison\+\_\+seq, hypothesis, n)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_af7cfe0f401279ee7fa767d05fcb81286}{intrep\+\_\+word\+\_\+used\+\_\+before} (dict, hypothesis, history, wt, feat, remove\+\_\+stopwords)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_ae0245f482c87ad27a92efebe1d95d607}{intrep\+\_\+ngram\+\_\+used\+\_\+before} (dict, hypothesis, history, wt, feat, n)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_ae434171bae1e0ae82095b6d54ad4cadd}{extrep\+\_\+word\+\_\+used\+\_\+before} (dict, hypothesis, history, wt, feat, remove\+\_\+stopwords, person)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_acce6374d8291de7af1df375285d65054}{extrep\+\_\+ngram\+\_\+used\+\_\+before} (dict, hypothesis, history, wt, feat, n, person)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a06371a18df2fc3cc43efbbbacc94a0d5}{nidf} (dict, hypothesis, history, wt, feat)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_a2abfb0ac45f5c1d4a05c638ea1e354c1}{qn\+\_\+words} (dict, hypothesis, history, wt, feat)
+\item 
+def \hyperlink{namespacecontrollable__seq2seq_1_1controls_ae87a6983e2e8bfd8a5eaa33973c6acc3}{lastutt\+\_\+sim\+\_\+arora\+\_\+word} (dict, hypothesis, history, wt, feat)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+list \hyperlink{namespacecontrollable__seq2seq_1_1controls_a5535e0663f09c5061245904e0aaf436a}{Q\+N\+\_\+\+W\+O\+R\+DS} = \mbox{[}\textquotesingle{}who\textquotesingle{}, \textquotesingle{}what\textquotesingle{}, \textquotesingle{}where\textquotesingle{}, \textquotesingle{}why\textquotesingle{}, \textquotesingle{}when\textquotesingle{}, \textquotesingle{}how\textquotesingle{}, \textquotesingle{}which\textquotesingle{}, \textquotesingle{}whom\textquotesingle{}, \textquotesingle{}whose\textquotesingle{}, \textquotesingle{}?\textquotesingle{}\mbox{]}
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1controls_af2d340f78bb7909b7b83d5885c73cc74}{word2nidf} = None
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1controls_a83011dc734f822639cf3380a3a3849ff}{nidf\+\_\+feats} = None
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1controls_a0695071a22dc75dfdc169d714b4ecf87}{arora\+\_\+data} = None
+\item 
+\hyperlink{namespacecontrollable__seq2seq_1_1controls_affa5fc3ee0e93bf66f941cfdf112d887}{sent\+\_\+embedder} = None
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_ab7554c2785504a4bd181168ad30ba9e0}\label{namespacecontrollable__seq2seq_1_1controls_ab7554c2785504a4bd181168ad30ba9e0}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!extrep\+\_\+frac@{extrep\+\_\+frac}}
+\index{extrep\+\_\+frac@{extrep\+\_\+frac}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{extrep\+\_\+frac()}{extrep\_frac()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+frac (\begin{DoxyParamCaption}\item[{}]{lst1,  }\item[{}]{lst2 }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the fraction of items in lst1 that are in lst2\end{DoxyVerb}
+ 
+
+Definition at line 132 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ab7554c2785504a4bd181168ad30ba9e0_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_acce6374d8291de7af1df375285d65054}\label{namespacecontrollable__seq2seq_1_1controls_acce6374d8291de7af1df375285d65054}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!extrep\+\_\+ngram\+\_\+used\+\_\+before@{extrep\+\_\+ngram\+\_\+used\+\_\+before}}
+\index{extrep\+\_\+ngram\+\_\+used\+\_\+before@{extrep\+\_\+ngram\+\_\+used\+\_\+before}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{extrep\+\_\+ngram\+\_\+used\+\_\+before()}{extrep\_ngram\_used\_before()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+ngram\+\_\+used\+\_\+before (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat,  }\item[{}]{n,  }\item[{}]{person }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is 1 for words that, if added to hypothesis, would create a n-gram that
+has already been used earlier in the conversation; otherwise 0.
+
+Additional inputs:
+  n: int, the size of the n-grams considered.
+  person: If 'self', identify n-grams that have already been used by self (bot).
+    If 'partner', identify n-grams that have already been used by partner (human).
+\end{DoxyVerb}
+ 
+
+Definition at line 270 of file controls.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+controls.\+flatten(), and controllable\+\_\+seq2seq.\+controls.\+matching\+\_\+ngram\+\_\+completions().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_acce6374d8291de7af1df375285d65054_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_acce6374d8291de7af1df375285d65054_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_ae434171bae1e0ae82095b6d54ad4cadd}\label{namespacecontrollable__seq2seq_1_1controls_ae434171bae1e0ae82095b6d54ad4cadd}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!extrep\+\_\+word\+\_\+used\+\_\+before@{extrep\+\_\+word\+\_\+used\+\_\+before}}
+\index{extrep\+\_\+word\+\_\+used\+\_\+before@{extrep\+\_\+word\+\_\+used\+\_\+before}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{extrep\+\_\+word\+\_\+used\+\_\+before()}{extrep\_word\_used\_before()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+word\+\_\+used\+\_\+before (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat,  }\item[{}]{remove\+\_\+stopwords,  }\item[{}]{person }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is 1 for words that have already been used earlier in the conversation;
+otherwise 0.
+
+Additional inputs:
+  remove_stopwords: bool. If True, stopwords are not included when identifying words
+    that have already appeared.
+  person: If 'self', identify words that have already been used by self (bot).
+    If 'partner', identify words that have already been used by partner (human).
+\end{DoxyVerb}
+ 
+
+Definition at line 241 of file controls.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+controls.\+flatten().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+ngram\+\_\+used\+\_\+before(), and controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ae434171bae1e0ae82095b6d54ad4cadd_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ae434171bae1e0ae82095b6d54ad4cadd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a7c34984d4b5df8732e5e8176bf1663e3}\label{namespacecontrollable__seq2seq_1_1controls_a7c34984d4b5df8732e5e8176bf1663e3}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!flatten@{flatten}}
+\index{flatten@{flatten}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{flatten()}{flatten()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+flatten (\begin{DoxyParamCaption}\item[{}]{list\+\_\+of\+\_\+lists }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Flatten a list of lists\end{DoxyVerb}
+ 
+
+Definition at line 116 of file controls.\+py.
+
+
+
+Referenced by parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Batch\+Sort\+Cache.\+batch\+\_\+cache(), controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+ngram\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+word\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word(), and mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+overall\+\_\+split().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a7c34984d4b5df8732e5e8176bf1663e3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a3fad33534b785e9e43e2145199347e05}\label{namespacecontrollable__seq2seq_1_1controls_a3fad33534b785e9e43e2145199347e05}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!get\+\_\+ngrams@{get\+\_\+ngrams}}
+\index{get\+\_\+ngrams@{get\+\_\+ngrams}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{get\+\_\+ngrams()}{get\_ngrams()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+get\+\_\+ngrams (\begin{DoxyParamCaption}\item[{}]{text,  }\item[{}]{n }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns all ngrams that are in the text.
+Inputs:
+    text: string
+    n: int
+Returns:
+    list of strings (each is a ngram)
+\end{DoxyVerb}
+ 
+
+Definition at line 140 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a3fad33534b785e9e43e2145199347e05_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a7c6540f026d763dbf534f1a3e60500a3}\label{namespacecontrollable__seq2seq_1_1controls_a7c6540f026d763dbf534f1a3e60500a3}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!initialize\+\_\+control\+\_\+information@{initialize\+\_\+control\+\_\+information}}
+\index{initialize\+\_\+control\+\_\+information@{initialize\+\_\+control\+\_\+information}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{initialize\+\_\+control\+\_\+information()}{initialize\_control\_information()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+initialize\+\_\+control\+\_\+information (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{build\+\_\+task = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Loads information from word2count.pkl, arora.pkl in data/controllable_dialogue, and
+uses it to initialize objects for computing NIDF and response-relatedness controls.
+
+By default (build_task=True) we will also build the controllable_dialogue task i.e.
+download data/controllable_dialogue if necessary.
+\end{DoxyVerb}
+ 
+
+Definition at line 79 of file controls.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+arora.\+load\+\_\+arora(), controllable\+\_\+seq2seq.\+nidf.\+load\+\_\+word2nidf(), and parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+utils\+\_\+v0.\+modelzoo\+\_\+path().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controllable\+\_\+seq2seq.\+Controllable\+Seq2seq\+Agent.\+\_\+\+\_\+init\+\_\+\+\_\+(), eval\+\_\+wordstat.\+eval\+\_\+wordstat(), and make\+\_\+control\+\_\+dataset.\+make\+\_\+dataset().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a7c6540f026d763dbf534f1a3e60500a3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a7c6540f026d763dbf534f1a3e60500a3_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a311eb502ed6cb93b69800a8a00ebc5e9}\label{namespacecontrollable__seq2seq_1_1controls_a311eb502ed6cb93b69800a8a00ebc5e9}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!intrep\+\_\+frac@{intrep\+\_\+frac}}
+\index{intrep\+\_\+frac@{intrep\+\_\+frac}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{intrep\+\_\+frac()}{intrep\_frac()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+frac (\begin{DoxyParamCaption}\item[{}]{lst }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns the fraction of items in the list that are repeated\end{DoxyVerb}
+ 
+
+Definition at line 121 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a311eb502ed6cb93b69800a8a00ebc5e9_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_ae0245f482c87ad27a92efebe1d95d607}\label{namespacecontrollable__seq2seq_1_1controls_ae0245f482c87ad27a92efebe1d95d607}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!intrep\+\_\+ngram\+\_\+used\+\_\+before@{intrep\+\_\+ngram\+\_\+used\+\_\+before}}
+\index{intrep\+\_\+ngram\+\_\+used\+\_\+before@{intrep\+\_\+ngram\+\_\+used\+\_\+before}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{intrep\+\_\+ngram\+\_\+used\+\_\+before()}{intrep\_ngram\_used\_before()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+ngram\+\_\+used\+\_\+before (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat,  }\item[{}]{n }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is 1 for words that, if added to the hypothesis, will create a n-gram
+that has already appeared in the hypothesis; otherwise 0.
+
+Additional inputs:
+  n: int, the size of the n-grams considered.
+\end{DoxyVerb}
+ 
+
+Definition at line 223 of file controls.\+py.
+
+
+
+References controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+word\+\_\+used\+\_\+before(), and controllable\+\_\+seq2seq.\+controls.\+matching\+\_\+ngram\+\_\+completions().
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ae0245f482c87ad27a92efebe1d95d607_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ae0245f482c87ad27a92efebe1d95d607_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_af7cfe0f401279ee7fa767d05fcb81286}\label{namespacecontrollable__seq2seq_1_1controls_af7cfe0f401279ee7fa767d05fcb81286}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!intrep\+\_\+word\+\_\+used\+\_\+before@{intrep\+\_\+word\+\_\+used\+\_\+before}}
+\index{intrep\+\_\+word\+\_\+used\+\_\+before@{intrep\+\_\+word\+\_\+used\+\_\+before}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{intrep\+\_\+word\+\_\+used\+\_\+before()}{intrep\_word\_used\_before()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+word\+\_\+used\+\_\+before (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat,  }\item[{}]{remove\+\_\+stopwords }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is 1 for words that have already appeared within the hypothesis,
+0 otherwise.
+
+Additional inputs:
+  remove_stopwords: bool. If True, stopwords are not included when identifying words
+    that have already appeared.
+\end{DoxyVerb}
+ 
+
+Definition at line 205 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_af7cfe0f401279ee7fa767d05fcb81286_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_ae87a6983e2e8bfd8a5eaa33973c6acc3}\label{namespacecontrollable__seq2seq_1_1controls_ae87a6983e2e8bfd8a5eaa33973c6acc3}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!lastutt\+\_\+sim\+\_\+arora\+\_\+word@{lastutt\+\_\+sim\+\_\+arora\+\_\+word}}
+\index{lastutt\+\_\+sim\+\_\+arora\+\_\+word@{lastutt\+\_\+sim\+\_\+arora\+\_\+word}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{lastutt\+\_\+sim\+\_\+arora\+\_\+word()}{lastutt\_sim\_arora\_word()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+Given a word w, this feature is equal to
+  cos_sim(word_emb(w), sent_emb(l))
+the cosine similarity between the GloVe vector for word w, and the Arora-style
+sentence embedding for the partner's last utterance l.
+\end{DoxyVerb}
+ 
+
+Definition at line 322 of file controls.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+bool, controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+frac(), controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+ngram\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+word\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+flatten(), make\+\_\+control\+\_\+dataset.\+float, controllable\+\_\+seq2seq.\+controls.\+get\+\_\+ngrams(), eval\+\_\+ppl.\+int, controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+frac(), controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+ngram\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+word\+\_\+used\+\_\+before(), controllable\+\_\+seq2seq.\+controls.\+nidf(), controllable\+\_\+seq2seq.\+controls.\+qn\+\_\+words(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_ae87a6983e2e8bfd8a5eaa33973c6acc3_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a4c775d3518037c2505c0bb4a69bb1dd5}\label{namespacecontrollable__seq2seq_1_1controls_a4c775d3518037c2505c0bb4a69bb1dd5}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!matching\+\_\+ngram\+\_\+completions@{matching\+\_\+ngram\+\_\+completions}}
+\index{matching\+\_\+ngram\+\_\+completions@{matching\+\_\+ngram\+\_\+completions}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{matching\+\_\+ngram\+\_\+completions()}{matching\_ngram\_completions()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+matching\+\_\+ngram\+\_\+completions (\begin{DoxyParamCaption}\item[{}]{comparison\+\_\+seq,  }\item[{}]{hypothesis,  }\item[{}]{n }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return the list of words that if appended to hypothesis, would create a n-gram that
+already exists in comparison_seq. For efficiency, this function represents words
+as integers not strings.
+
+Inputs:
+    comparison_seq: list of integers
+    hypothesis: list of integers or None
+    n: integer
+
+Output:
+    bad_words: list of integers
+\end{DoxyVerb}
+ 
+
+Definition at line 154 of file controls.\+py.
+
+
+
+References eval\+\_\+ppl.\+int.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+extrep\+\_\+ngram\+\_\+used\+\_\+before(), and controllable\+\_\+seq2seq.\+controls.\+intrep\+\_\+ngram\+\_\+used\+\_\+before().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a4c775d3518037c2505c0bb4a69bb1dd5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a06371a18df2fc3cc43efbbbacc94a0d5}\label{namespacecontrollable__seq2seq_1_1controls_a06371a18df2fc3cc43efbbbacc94a0d5}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!nidf@{nidf}}
+\index{nidf@{nidf}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{nidf()}{nidf()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+nidf (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is equal to the NIDF (normalized inverse document frequency) score for
+each word. The score is always between 0 and 1.
+\end{DoxyVerb}
+ 
+
+Definition at line 302 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a06371a18df2fc3cc43efbbbacc94a0d5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a2abfb0ac45f5c1d4a05c638ea1e354c1}\label{namespacecontrollable__seq2seq_1_1controls_a2abfb0ac45f5c1d4a05c638ea1e354c1}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!qn\+\_\+words@{qn\+\_\+words}}
+\index{qn\+\_\+words@{qn\+\_\+words}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{qn\+\_\+words()}{qn\_words()}}
+{\footnotesize\ttfamily def controllable\+\_\+seq2seq.\+controls.\+qn\+\_\+words (\begin{DoxyParamCaption}\item[{}]{dict,  }\item[{}]{hypothesis,  }\item[{}]{history,  }\item[{}]{wt,  }\item[{}]{feat }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Weighted decoding feature function. See explanation above.
+This feature is 1 for 'interrogative words', 0 otherwise.
+\end{DoxyVerb}
+ 
+
+Definition at line 312 of file controls.\+py.
+
+
+
+Referenced by controllable\+\_\+seq2seq.\+controls.\+lastutt\+\_\+sim\+\_\+arora\+\_\+word().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecontrollable__seq2seq_1_1controls_a2abfb0ac45f5c1d4a05c638ea1e354c1_icgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a0695071a22dc75dfdc169d714b4ecf87}\label{namespacecontrollable__seq2seq_1_1controls_a0695071a22dc75dfdc169d714b4ecf87}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!arora\+\_\+data@{arora\+\_\+data}}
+\index{arora\+\_\+data@{arora\+\_\+data}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{arora\+\_\+data}{arora\_data}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controls.\+arora\+\_\+data = None}
+
+
+
+Definition at line 75 of file controls.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a83011dc734f822639cf3380a3a3849ff}\label{namespacecontrollable__seq2seq_1_1controls_a83011dc734f822639cf3380a3a3849ff}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!nidf\+\_\+feats@{nidf\+\_\+feats}}
+\index{nidf\+\_\+feats@{nidf\+\_\+feats}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{nidf\+\_\+feats}{nidf\_feats}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controls.\+nidf\+\_\+feats = None}
+
+
+
+Definition at line 74 of file controls.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_a5535e0663f09c5061245904e0aaf436a}\label{namespacecontrollable__seq2seq_1_1controls_a5535e0663f09c5061245904e0aaf436a}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!Q\+N\+\_\+\+W\+O\+R\+DS@{Q\+N\+\_\+\+W\+O\+R\+DS}}
+\index{Q\+N\+\_\+\+W\+O\+R\+DS@{Q\+N\+\_\+\+W\+O\+R\+DS}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{Q\+N\+\_\+\+W\+O\+R\+DS}{QN\_WORDS}}
+{\footnotesize\ttfamily list controllable\+\_\+seq2seq.\+controls.\+Q\+N\+\_\+\+W\+O\+R\+DS = \mbox{[}\textquotesingle{}who\textquotesingle{}, \textquotesingle{}what\textquotesingle{}, \textquotesingle{}where\textquotesingle{}, \textquotesingle{}why\textquotesingle{}, \textquotesingle{}when\textquotesingle{}, \textquotesingle{}how\textquotesingle{}, \textquotesingle{}which\textquotesingle{}, \textquotesingle{}whom\textquotesingle{}, \textquotesingle{}whose\textquotesingle{}, \textquotesingle{}?\textquotesingle{}\mbox{]}}
+
+
+
+Definition at line 22 of file controls.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_affa5fc3ee0e93bf66f941cfdf112d887}\label{namespacecontrollable__seq2seq_1_1controls_affa5fc3ee0e93bf66f941cfdf112d887}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!sent\+\_\+embedder@{sent\+\_\+embedder}}
+\index{sent\+\_\+embedder@{sent\+\_\+embedder}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{sent\+\_\+embedder}{sent\_embedder}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controls.\+sent\+\_\+embedder = None}
+
+
+
+Definition at line 76 of file controls.\+py.
+
+\mbox{\Hypertarget{namespacecontrollable__seq2seq_1_1controls_af2d340f78bb7909b7b83d5885c73cc74}\label{namespacecontrollable__seq2seq_1_1controls_af2d340f78bb7909b7b83d5885c73cc74}} 
+\index{controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}!word2nidf@{word2nidf}}
+\index{word2nidf@{word2nidf}!controllable\+\_\+seq2seq\+::controls@{controllable\+\_\+seq2seq\+::controls}}
+\subsubsection{\texorpdfstring{word2nidf}{word2nidf}}
+{\footnotesize\ttfamily controllable\+\_\+seq2seq.\+controls.\+word2nidf = None}
+
+
+
+Definition at line 73 of file controls.\+py.
+

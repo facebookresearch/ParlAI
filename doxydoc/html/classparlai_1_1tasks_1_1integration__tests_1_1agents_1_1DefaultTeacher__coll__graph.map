@@ -1,9 +1,7 @@
 <map id="parlai.tasks.integration_tests.agents.DefaultTeacher" name="parlai.tasks.integration_tests.agents.DefaultTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="13,497,208,539"/>
-<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher.html" title=" " alt="" coords="5,408,216,449"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="22,319,199,360"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="25,229,197,271"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="23,155,199,181"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="29,80,192,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="82,5,139,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher.html" title="parlai.tasks.integration\l_tests.agents.CandidateTeacher" alt="" coords="5,408,216,449"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title="parlai.core.teachers.Dialog\lTeacher" alt="" coords="22,319,199,360"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title="parlai.core.teachers.Fixed\lDialogTeacher" alt="" coords="25,229,197,271"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="23,155,199,181"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="29,80,192,107"/>
 </map>

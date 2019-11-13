@@ -1,6 +1,9 @@
 <map id="stack_rank_evals.worlds.MTurkImageChatStackRankWorld.parley" name="stack_rank_evals.worlds.MTurkImageChatStackRankWorld.parley">
-<area shape="rect" id="node1" title=" " alt="" coords="5,86,267,127"/>
-<area shape="rect" id="node2" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html#a9c6f889227e1aec6ad1dbaa4150b1625" title=" " alt="" coords="315,5,576,61"/>
-<area shape="rect" id="node3" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title=" " alt="" coords="340,86,551,127"/>
-<area shape="rect" id="node4" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#a333c8d7353ed7fba417461177035c209" title=" " alt="" coords="347,152,544,208"/>
+<area shape="rect" id="node2" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html#a9c6f889227e1aec6ad1dbaa4150b1625" title="stack_rank_evals.worlds.\lMTurkImageChatStackRankWorld.check\l_timeout" alt="" coords="315,5,576,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1core_1_1worlds.html#afc3fad603b7bce41dbdc9cdc04a9c794" title="parlai.core.worlds.validate" alt="" coords="673,104,846,131"/>
+<area shape="rect" id="node4" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title="igc_evals.worlds.MTurkIGCEval\lWorld.check_timeout" alt="" coords="340,137,551,178"/>
+<area shape="rect" id="node5" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#a333c8d7353ed7fba417461177035c209" title="image_chat_collection.worlds.\lMTurkImageChatWorld.check\l_timeout" alt="" coords="347,203,544,259"/>
+<area shape="rect" id="node8" href="$namespacestack__rank__evals_1_1worlds.html#a0174c3e372a345f192cef824e4c5528d" title="stack_rank_evals.worlds.load\l_image" alt="" coords="348,283,543,325"/>
+<area shape="rect" id="node6" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title="image_chat_collection.worlds.\lMTurkImageChatWorld.get_instruction" alt="" coords="636,191,883,233"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title="parlai.mturk.tasks.convai2\l_model_eval.worlds.Convai2EvalWorld.get\l_instruction" alt="" coords="624,257,895,313"/>
 </map>

@@ -1,0 +1,140 @@
+This project contains the code we used in our paper\+:
+
+\href{https://arxiv.org/abs/1711.07950}{\tt Mastering the Dungeon\+: Grounded Language Learning by Mechanical Turker Descent}
+
+Zhilin Yang, Saizheng Zhang, Jack Urbanek, Will Feng, Alexander H. Miller, Arthur Szlam, Douwe Kiela, Jason Weston
+
+\subsection*{Requirements}
+
+Python 3.\+6, Py\+Torch 0.\+2, spacy
+
+To install {\ttfamily spacy} and download related packages\+: 
+\begin{DoxyCode}
+python -m pip install spacy
+python -m spacy.en.download all
+\end{DoxyCode}
+
+
+\subsection*{Get the Data}
+
+Go to the Parl\+AI root directory. Create a data directory if it does not exist. 
+\begin{DoxyCode}
+mkdir data
+\end{DoxyCode}
+
+
+Then we can download the data 
+\begin{DoxyCode}
+cd data
+wget http://parl.ai/downloads/mastering\_the\_dungeon/mastering\_the\_dungeon.tgz
+tar -xvzf mastering\_the\_dungeon.tgz
+\end{DoxyCode}
+
+
+\subsubsection*{Data Organization}
+
+The dataset is organized as follows. {\ttfamily data/graph\+\_\+world2} contains the pilot study data, where each file ending with {\ttfamily .pkl} is a pickle file of an example. {\ttfamily data/graph\+\_\+world2\+\_\+v$\ast$\+\_\+r$\ast$} contains a pickle file {\ttfamily filtered\+\_\+data\+\_\+list.\+pkl} storing the data collected in a specific round of a specific setting. The number after {\ttfamily r} indicates the round index. The number after {\ttfamily v} indicates the setting, where {\ttfamily v13} means {\ttfamily M\+TD limit}, {\ttfamily v14} means {\ttfamily M\+TD}, {\ttfamily v15} means {\ttfamily M\+TD limit w/o model}, and {\ttfamily B\+A\+S\+E\+L\+I\+N\+E\+\_\+2} means the baseline. For example, {\ttfamily data/graph\+\_\+world2\+\_\+v15\+\_\+r2/filtered\+\_\+data\+\_\+list.\+pkl} contains the data collected in the second round of the setting {\ttfamily M\+TD limit w/o model}.
+
+\subsubsection*{Splitting the Data}
+
+We split the dataset before doing training and evaluation. Assuming you are under the Parl\+AI root directory, 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --split
+\end{DoxyCode}
+
+
+This will split the data from different rounds under different settings into training and test sets, while ensuring the number of training examples to be the same.
+
+\subsection*{Training and Evaluation}
+
+There are three steps\+: 1) start a G\+PU placeholder; 2) run the training and evaluation jobs; 3) terminate the G\+PU placeholder. We will illustrate the usage first on one single G\+PU, and later on a cluster with Slurm installed.
+
+\subsubsection*{Start G\+PU Placeholder}
+
+Open a new window (e.\+g. a screen session), and go to the Parl\+AI root directory. 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/projects/graph\_world2
+python train.py --job\_num 0
+\end{DoxyCode}
+
+
+This will start a G\+PU placeholder that accepts new training jobs on the fly.
+
+\subsubsection*{Run Training Jobs}
+
+Open another window (e.\+g. another screen session), and go to the Parl\+AI root directory.
+
+\#\#\#\# Training 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --train [--seq2seq]
+\end{DoxyCode}
+
+
+This will train the models using A\+C-\/\+Seq2\+Seq (by default) or Seq2\+Seq (when seq2seq is specified).
+
+\#\#\#\# Evaluation 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --eval [--seq2seq] [--constrain]
+\end{DoxyCode}
+
+
+This will evaluate the models just trained. The option {\ttfamily constrain} indicates using constrained decoding or not; turning it on is recommended.
+
+\#\#\#\# Breakdown by Round 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --rounds\_breakdown [--seq2seq]
+\end{DoxyCode}
+
+
+In this experiment, we will see the performance of agents in different rounds.
+
+\#\#\#\# Breakdown by Dataset 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --data\_breakdown [--seq2seq]
+\end{DoxyCode}
+
+
+In this experiment, we will see the performance of agents trained on one dataset and evaluated on another dataset.
+
+\#\#\#\# Ablation Study 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --ablation
+\end{DoxyCode}
+
+
+This will do the ablation study by considering removing the counter feature and the room embeddings.
+
+\subsubsection*{Terminate G\+PU Placeholder}
+
+After all training and evaluation jobs are finished, we can now terminate the placeholders. Go back to the placeholder window, and press {\ttfamily Ctrl+C} to terminate the process.
+
+\subsubsection*{Running on G\+PU Cluster}
+
+There are a few changes to be made when running on a G\+PU cluster. In this section we assume \href{https://slurm.schedmd.com/}{\tt Slurm} is installed on the cluster.
+
+When creating the G\+PU placeholder, we use the following commands\+: 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/projects/graph\_world2
+python gen\_sbatch\_script.py --num\_gpus <num\_gpus> --slurm
+./batch\_holder.sh
+\end{DoxyCode}
+ where {\ttfamily num\+\_\+gpus} is the number of G\+P\+Us to use.
+
+For training and evaluation, we need to add an additional option {\ttfamily -\/-\/num\+\_\+machines} to every command. For example, training now becomes\+: 
+\begin{DoxyCode}
+cd projects/mastering\_the\_dungeon/mturk/tasks/MTD
+python run.py --train --num\_machines <num\_gpus> [--seq2seq]
+\end{DoxyCode}
+
+
+To terminate the G\+PU placeholder, simply cancel all jobs (this assumes you are not running other jobs using Slurm) 
+\begin{DoxyCode}
+scancel -u <my\_username\_on\_slurm>
+\end{DoxyCode}
+ 

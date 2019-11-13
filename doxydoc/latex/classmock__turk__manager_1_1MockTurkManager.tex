@@ -1,0 +1,779 @@
+\hypertarget{classmock__turk__manager_1_1MockTurkManager}{}\section{mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager Class Reference}
+\label{classmock__turk__manager_1_1MockTurkManager}\index{mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a8f6158c2e7ad659f0d4a1f54865dd766}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classmock__turk__manager_1_1MockTurkManager_a90215b4e820f59dd4772d5444a109b78}{opt}, \hyperlink{classmock__turk__manager_1_1MockTurkManager_a30a18776790f60114b54602b715ed77a}{mturk\+\_\+agent\+\_\+ids}, is\+\_\+test=False, use\+\_\+db=False)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a7248f732e7b06f31b128c12829ae8081}{setup\+\_\+server} (self, task\+\_\+directory\+\_\+path=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a7fb2641391d46226f50211cc2413b5b6}{start\+\_\+new\+\_\+run} (self)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a24f972e7c54d6eb8a7c2dbe906018353}{ready\+\_\+to\+\_\+accept\+\_\+workers} (self, timeout\+\_\+seconds=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a1becae520bdd1de25632adeadf0f67c5}{set\+\_\+onboard\+\_\+function} (self, \hyperlink{classmock__turk__manager_1_1MockTurkManager_a6e25bcd225d478f6dd719860f0b85499}{onboard\+\_\+function})
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aff5cae911d5177b4e8739ecac21ae3ac}{start\+\_\+task} (self, eligibility\+\_\+function, assign\+\_\+role\+\_\+function, task\+\_\+function)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a033685772118f2d5b9cfde68f48d7bce}{shutdown} (self, force=False)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a7e29a2707b002fbf2d18cc94e075f0a1}{move\+\_\+agents\+\_\+to\+\_\+waiting} (self, \hyperlink{classmock__turk__manager_1_1MockTurkManager_a7657aa553cb22b0eed025bd6ede834ed}{agents})
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_acbbf88a9423e37ee24ffb34f4ae4dd23}{disconnect\+\_\+agent} (self, worker\+\_\+id, assignment\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a617657d87cfb41c503404845b5c116c7}{worker\+\_\+alive} (self, worker\+\_\+id, hit\+\_\+id, assign\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_af42c5f9de299e35fd89cd2508b88fbca}{on\+\_\+new\+\_\+message} (self, worker\+\_\+id, msg)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aa71ab452422b7871d2fc2ae2b2b8af0d}{onboard\+\_\+new\+\_\+agent} (self, agent)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a06ee464221ed467a72172cb19352e6eb}{send\+\_\+message} (self, receiver\+\_\+id, assignment\+\_\+id, data, blocking=True, ack\+\_\+func=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a449a0fd9facd766c52565185f2f26054}{send\+\_\+command} (self, receiver\+\_\+id, assignment\+\_\+id, data, blocking=True, ack\+\_\+func=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a71af67cf6b49970649e8fe697d7fef77}{timeout\+\_\+all\+\_\+agents} (self)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a3d50ad06215dcfca8933bbe721e08cf4}{mark\+\_\+workers\+\_\+done} (self, workers)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_ad9f704e4d51b553552719888124f0d30}{free\+\_\+workers} (self, workers)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aca873103221a5278f8ae5f8817f5c2fa}{get\+\_\+agent\+\_\+work\+\_\+status} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aeeba2b664e85ee8792421d476971685d}{get\+\_\+qualification\+\_\+list} (self, qualifications=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a3644780737b7f268c9b431e6f9f36e91}{create\+\_\+additional\+\_\+hits} (self, num\+\_\+hits, qualifications=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a9cffef620da3856cd60016846883cd75}{create\+\_\+hits} (self, qualifications=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aff78eef002bb331207efb61f57d98301}{get\+\_\+hit} (self, hit\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a9a1bcaedfdee07356cbd66fc706f069b}{get\+\_\+assignment} (self, assignment\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a11222027946a80475ca787398616c551}{get\+\_\+assignments\+\_\+for\+\_\+hit} (self, hit\+\_\+id)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a22a47326192ac03f4c822df56e5fb581}{expire\+\_\+all\+\_\+unassigned\+\_\+hits} (self)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a887de780aa18882ef07c1bdfe8af822c}{approve\+\_\+work} (self, assignment\+\_\+id, override\+\_\+rejection=False)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a9042a50ac1a0e858872e3e1f3ea85af5}{reject\+\_\+work} (self, assignment\+\_\+id, reason)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_ac0b9a9e6fc6e216dd7217ef34ccebf64}{approve\+\_\+assignments\+\_\+for\+\_\+hit} (self, hit\+\_\+id, override\+\_\+rejection=False)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a81f46373be1a6dce31b54efb6f84dd08}{block\+\_\+worker} (self, worker\+\_\+id, reason)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a3a03c892540501e2fa506c6c7118c07f}{soft\+\_\+block\+\_\+worker} (self, worker\+\_\+id, qual=\textquotesingle{}block\+\_\+qualification\textquotesingle{})
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_ae7d3ae75de08b2e3d74413418a6d9602}{un\+\_\+soft\+\_\+block\+\_\+worker} (self, worker\+\_\+id, qual=\textquotesingle{}block\+\_\+qualification\textquotesingle{})
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a55364f9864ca6f6b395cf1e261e016a5}{give\+\_\+worker\+\_\+qualification} (self, worker\+\_\+id, qual\+\_\+name, qual\+\_\+value=None)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a3fe1f5b71470e63e9c4339bed5f8486f}{remove\+\_\+worker\+\_\+qualification} (self, worker\+\_\+id, qual\+\_\+name, reason=\textquotesingle{}\textquotesingle{})
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_aa2c8071714fa539d1da018c03703db50}{create\+\_\+qualification} (self, qualification\+\_\+name, description, can\+\_\+exist=True)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_a9e702137ceefe881570593bf45cd091d}{pay\+\_\+bonus} (self, worker\+\_\+id, bonus\+\_\+amount, assignment\+\_\+id, reason, unique\+\_\+request\+\_\+token)
+\item 
+def \hyperlink{classmock__turk__manager_1_1MockTurkManager_ac64f7ad4e2570f5f20a93cd080dc13c4}{email\+\_\+worker} (self, worker\+\_\+id, subject, message\+\_\+text)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a90215b4e820f59dd4772d5444a109b78}{opt}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a30a18776790f60114b54602b715ed77a}{mturk\+\_\+agent\+\_\+ids}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a8cc5a64c1f570db4b9fb075faf761b46}{has\+\_\+run}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a378fb06550699871ca3156c1b4b025db}{sandbox}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_afdf814e9c806fb5ebbaf9d74561e5c05}{db\+\_\+logger}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a3a83d86a8a3f1f1bbd7869b24793e3ba}{run\+\_\+id}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a785dd09ccdbaa49e62b083a00f84164c}{task\+\_\+group\+\_\+id}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_af059906f05b261ab7f54b79e4651a5d5}{id\+\_\+to\+\_\+agent}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a7657aa553cb22b0eed025bd6ede834ed}{agents}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_a6e25bcd225d478f6dd719860f0b85499}{onboard\+\_\+function}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmock__turk__manager_1_1MockTurkManager_aac57eebbadfaf965b4ad9305a20f88b8}{current\+\_\+manager} = None
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Manages interactions between MTurk agents as well as direct interactions
+between a world and the MTurk server.
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a8f6158c2e7ad659f0d4a1f54865dd766}\label{classmock__turk__manager_1_1MockTurkManager_a8f6158c2e7ad659f0d4a1f54865dd766}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{mturk\+\_\+agent\+\_\+ids,  }\item[{}]{is\+\_\+test = {\ttfamily False},  }\item[{}]{use\+\_\+db = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Fake an MTurk manager that has the functionality to run a task,
+but not on mturk
+\end{DoxyVerb}
+ 
+
+Definition at line 29 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_ac0b9a9e6fc6e216dd7217ef34ccebf64}\label{classmock__turk__manager_1_1MockTurkManager_ac0b9a9e6fc6e216dd7217ef34ccebf64}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!approve\+\_\+assignments\+\_\+for\+\_\+hit@{approve\+\_\+assignments\+\_\+for\+\_\+hit}}
+\index{approve\+\_\+assignments\+\_\+for\+\_\+hit@{approve\+\_\+assignments\+\_\+for\+\_\+hit}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{approve\+\_\+assignments\+\_\+for\+\_\+hit()}{approve\_assignments\_for\_hit()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+approve\+\_\+assignments\+\_\+for\+\_\+hit (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hit\+\_\+id,  }\item[{}]{override\+\_\+rejection = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 302 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a887de780aa18882ef07c1bdfe8af822c}\label{classmock__turk__manager_1_1MockTurkManager_a887de780aa18882ef07c1bdfe8af822c}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!approve\+\_\+work@{approve\+\_\+work}}
+\index{approve\+\_\+work@{approve\+\_\+work}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{approve\+\_\+work()}{approve\_work()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+approve\+\_\+work (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{override\+\_\+rejection = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 296 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a81f46373be1a6dce31b54efb6f84dd08}\label{classmock__turk__manager_1_1MockTurkManager_a81f46373be1a6dce31b54efb6f84dd08}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!block\+\_\+worker@{block\+\_\+worker}}
+\index{block\+\_\+worker@{block\+\_\+worker}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{block\+\_\+worker()}{block\_worker()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+block\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{reason }\end{DoxyParamCaption})}
+
+
+
+Definition at line 305 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a3644780737b7f268c9b431e6f9f36e91}\label{classmock__turk__manager_1_1MockTurkManager_a3644780737b7f268c9b431e6f9f36e91}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!create\+\_\+additional\+\_\+hits@{create\+\_\+additional\+\_\+hits}}
+\index{create\+\_\+additional\+\_\+hits@{create\+\_\+additional\+\_\+hits}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{create\+\_\+additional\+\_\+hits()}{create\_additional\_hits()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+create\+\_\+additional\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{num\+\_\+hits,  }\item[{}]{qualifications = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 278 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a9cffef620da3856cd60016846883cd75}\label{classmock__turk__manager_1_1MockTurkManager_a9cffef620da3856cd60016846883cd75}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!create\+\_\+hits@{create\+\_\+hits}}
+\index{create\+\_\+hits@{create\+\_\+hits}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{create\+\_\+hits()}{create\_hits()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+create\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{qualifications = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 281 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aa2c8071714fa539d1da018c03703db50}\label{classmock__turk__manager_1_1MockTurkManager_aa2c8071714fa539d1da018c03703db50}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!create\+\_\+qualification@{create\+\_\+qualification}}
+\index{create\+\_\+qualification@{create\+\_\+qualification}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{create\+\_\+qualification()}{create\_qualification()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+create\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{qualification\+\_\+name,  }\item[{}]{description,  }\item[{}]{can\+\_\+exist = {\ttfamily True} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 320 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_acbbf88a9423e37ee24ffb34f4ae4dd23}\label{classmock__turk__manager_1_1MockTurkManager_acbbf88a9423e37ee24ffb34f4ae4dd23}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!disconnect\+\_\+agent@{disconnect\+\_\+agent}}
+\index{disconnect\+\_\+agent@{disconnect\+\_\+agent}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{disconnect\+\_\+agent()}{disconnect\_agent()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set an agent to status disconnect, and all other agents to
+partner disconnect. send them the correct message. Mocks
+MTurkManager._handle_agent_disconnect
+\end{DoxyVerb}
+ 
+
+Definition at line 148 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+agents, parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+agents, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+agents, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+agents, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+agents, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+agents, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents, and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+id\+\_\+to\+\_\+agent.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_ac64f7ad4e2570f5f20a93cd080dc13c4}\label{classmock__turk__manager_1_1MockTurkManager_ac64f7ad4e2570f5f20a93cd080dc13c4}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!email\+\_\+worker@{email\+\_\+worker}}
+\index{email\+\_\+worker@{email\+\_\+worker}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{email\+\_\+worker()}{email\_worker()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+email\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{subject,  }\item[{}]{message\+\_\+text }\end{DoxyParamCaption})}
+
+
+
+Definition at line 328 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a22a47326192ac03f4c822df56e5fb581}\label{classmock__turk__manager_1_1MockTurkManager_a22a47326192ac03f4c822df56e5fb581}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!expire\+\_\+all\+\_\+unassigned\+\_\+hits@{expire\+\_\+all\+\_\+unassigned\+\_\+hits}}
+\index{expire\+\_\+all\+\_\+unassigned\+\_\+hits@{expire\+\_\+all\+\_\+unassigned\+\_\+hits}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{expire\+\_\+all\+\_\+unassigned\+\_\+hits()}{expire\_all\_unassigned\_hits()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+expire\+\_\+all\+\_\+unassigned\+\_\+hits (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 293 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_ad9f704e4d51b553552719888124f0d30}\label{classmock__turk__manager_1_1MockTurkManager_ad9f704e4d51b553552719888124f0d30}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!free\+\_\+workers@{free\+\_\+workers}}
+\index{free\+\_\+workers@{free\+\_\+workers}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{free\+\_\+workers()}{free\_workers()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+free\+\_\+workers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{workers }\end{DoxyParamCaption})}
+
+
+
+Definition at line 269 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aca873103221a5278f8ae5f8817f5c2fa}\label{classmock__turk__manager_1_1MockTurkManager_aca873103221a5278f8ae5f8817f5c2fa}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!get\+\_\+agent\+\_\+work\+\_\+status@{get\+\_\+agent\+\_\+work\+\_\+status}}
+\index{get\+\_\+agent\+\_\+work\+\_\+status@{get\+\_\+agent\+\_\+work\+\_\+status}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+agent\+\_\+work\+\_\+status()}{get\_agent\_work\_status()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+get\+\_\+agent\+\_\+work\+\_\+status (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 272 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a9a1bcaedfdee07356cbd66fc706f069b}\label{classmock__turk__manager_1_1MockTurkManager_a9a1bcaedfdee07356cbd66fc706f069b}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!get\+\_\+assignment@{get\+\_\+assignment}}
+\index{get\+\_\+assignment@{get\+\_\+assignment}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+assignment()}{get\_assignment()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+get\+\_\+assignment (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 287 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a11222027946a80475ca787398616c551}\label{classmock__turk__manager_1_1MockTurkManager_a11222027946a80475ca787398616c551}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!get\+\_\+assignments\+\_\+for\+\_\+hit@{get\+\_\+assignments\+\_\+for\+\_\+hit}}
+\index{get\+\_\+assignments\+\_\+for\+\_\+hit@{get\+\_\+assignments\+\_\+for\+\_\+hit}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+assignments\+\_\+for\+\_\+hit()}{get\_assignments\_for\_hit()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+get\+\_\+assignments\+\_\+for\+\_\+hit (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hit\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 290 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aff78eef002bb331207efb61f57d98301}\label{classmock__turk__manager_1_1MockTurkManager_aff78eef002bb331207efb61f57d98301}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!get\+\_\+hit@{get\+\_\+hit}}
+\index{get\+\_\+hit@{get\+\_\+hit}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+hit()}{get\_hit()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+get\+\_\+hit (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{hit\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Definition at line 284 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aeeba2b664e85ee8792421d476971685d}\label{classmock__turk__manager_1_1MockTurkManager_aeeba2b664e85ee8792421d476971685d}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!get\+\_\+qualification\+\_\+list@{get\+\_\+qualification\+\_\+list}}
+\index{get\+\_\+qualification\+\_\+list@{get\+\_\+qualification\+\_\+list}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{get\+\_\+qualification\+\_\+list()}{get\_qualification\_list()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+get\+\_\+qualification\+\_\+list (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{qualifications = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 275 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a55364f9864ca6f6b395cf1e261e016a5}\label{classmock__turk__manager_1_1MockTurkManager_a55364f9864ca6f6b395cf1e261e016a5}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!give\+\_\+worker\+\_\+qualification@{give\+\_\+worker\+\_\+qualification}}
+\index{give\+\_\+worker\+\_\+qualification@{give\+\_\+worker\+\_\+qualification}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{give\+\_\+worker\+\_\+qualification()}{give\_worker\_qualification()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+give\+\_\+worker\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{qual\+\_\+name,  }\item[{}]{qual\+\_\+value = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 314 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a3d50ad06215dcfca8933bbe721e08cf4}\label{classmock__turk__manager_1_1MockTurkManager_a3d50ad06215dcfca8933bbe721e08cf4}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!mark\+\_\+workers\+\_\+done@{mark\+\_\+workers\+\_\+done}}
+\index{mark\+\_\+workers\+\_\+done@{mark\+\_\+workers\+\_\+done}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{mark\+\_\+workers\+\_\+done()}{mark\_workers\_done()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+mark\+\_\+workers\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{workers }\end{DoxyParamCaption})}
+
+
+
+Definition at line 266 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a7e29a2707b002fbf2d18cc94e075f0a1}\label{classmock__turk__manager_1_1MockTurkManager_a7e29a2707b002fbf2d18cc94e075f0a1}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!move\+\_\+agents\+\_\+to\+\_\+waiting@{move\+\_\+agents\+\_\+to\+\_\+waiting}}
+\index{move\+\_\+agents\+\_\+to\+\_\+waiting@{move\+\_\+agents\+\_\+to\+\_\+waiting}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{move\+\_\+agents\+\_\+to\+\_\+waiting()}{move\_agents\_to\_waiting()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+move\+\_\+agents\+\_\+to\+\_\+waiting (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agents }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mock moving to a waiting world\end{DoxyVerb}
+ 
+
+Definition at line 141 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+new\+\_\+agent().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_a7e29a2707b002fbf2d18cc94e075f0a1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_af42c5f9de299e35fd89cd2508b88fbca}\label{classmock__turk__manager_1_1MockTurkManager_af42c5f9de299e35fd89cd2508b88fbca}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!on\+\_\+new\+\_\+message@{on\+\_\+new\+\_\+message}}
+\index{on\+\_\+new\+\_\+message@{on\+\_\+new\+\_\+message}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{on\+\_\+new\+\_\+message()}{on\_new\_message()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+on\+\_\+new\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{msg }\end{DoxyParamCaption})}
+
+
+
+Definition at line 183 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+id\+\_\+to\+\_\+agent.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aa71ab452422b7871d2fc2ae2b2b8af0d}\label{classmock__turk__manager_1_1MockTurkManager_aa71ab452422b7871d2fc2ae2b2b8af0d}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!onboard\+\_\+new\+\_\+agent@{onboard\+\_\+new\+\_\+agent}}
+\index{onboard\+\_\+new\+\_\+agent@{onboard\+\_\+new\+\_\+agent}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{onboard\+\_\+new\+\_\+agent()}{onboard\_new\_agent()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+new\+\_\+agent (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{agent }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates an onboarding thread for the given agent\end{DoxyVerb}
+ 
+
+Definition at line 188 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+move\+\_\+agents\+\_\+to\+\_\+waiting(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+function, and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message().
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+worker\+\_\+alive().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_aa71ab452422b7871d2fc2ae2b2b8af0d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_aa71ab452422b7871d2fc2ae2b2b8af0d_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a9e702137ceefe881570593bf45cd091d}\label{classmock__turk__manager_1_1MockTurkManager_a9e702137ceefe881570593bf45cd091d}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!pay\+\_\+bonus@{pay\+\_\+bonus}}
+\index{pay\+\_\+bonus@{pay\+\_\+bonus}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{pay\+\_\+bonus()}{pay\_bonus()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+pay\+\_\+bonus (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{bonus\+\_\+amount,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{reason,  }\item[{}]{unique\+\_\+request\+\_\+token }\end{DoxyParamCaption})}
+
+
+
+Definition at line 325 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a24f972e7c54d6eb8a7c2dbe906018353}\label{classmock__turk__manager_1_1MockTurkManager_a24f972e7c54d6eb8a7c2dbe906018353}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!ready\+\_\+to\+\_\+accept\+\_\+workers@{ready\+\_\+to\+\_\+accept\+\_\+workers}}
+\index{ready\+\_\+to\+\_\+accept\+\_\+workers@{ready\+\_\+to\+\_\+accept\+\_\+workers}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{ready\+\_\+to\+\_\+accept\+\_\+workers()}{ready\_to\_accept\_workers()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+ready\+\_\+to\+\_\+accept\+\_\+workers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{timeout\+\_\+seconds = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}No threads, as there is no sustained worker pool. Instead
+we instantiate x MockTurkAgents in onboarding\end{DoxyVerb}
+ 
+
+Definition at line 50 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a9042a50ac1a0e858872e3e1f3ea85af5}\label{classmock__turk__manager_1_1MockTurkManager_a9042a50ac1a0e858872e3e1f3ea85af5}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!reject\+\_\+work@{reject\+\_\+work}}
+\index{reject\+\_\+work@{reject\+\_\+work}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{reject\+\_\+work()}{reject\_work()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+reject\+\_\+work (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{reason }\end{DoxyParamCaption})}
+
+
+
+Definition at line 299 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a3fe1f5b71470e63e9c4339bed5f8486f}\label{classmock__turk__manager_1_1MockTurkManager_a3fe1f5b71470e63e9c4339bed5f8486f}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!remove\+\_\+worker\+\_\+qualification@{remove\+\_\+worker\+\_\+qualification}}
+\index{remove\+\_\+worker\+\_\+qualification@{remove\+\_\+worker\+\_\+qualification}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{remove\+\_\+worker\+\_\+qualification()}{remove\_worker\_qualification()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+remove\+\_\+worker\+\_\+qualification (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{qual\+\_\+name,  }\item[{}]{reason = {\ttfamily \textquotesingle{}\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 317 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a449a0fd9facd766c52565185f2f26054}\label{classmock__turk__manager_1_1MockTurkManager_a449a0fd9facd766c52565185f2f26054}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!send\+\_\+command@{send\+\_\+command}}
+\index{send\+\_\+command@{send\+\_\+command}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{send\+\_\+command()}{send\_command()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+command (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{data,  }\item[{}]{blocking = {\ttfamily True},  }\item[{}]{ack\+\_\+func = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Commands aren't actually sent this way, as state updates are read\end{DoxyVerb}
+ 
+
+Definition at line 254 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+worker\+\_\+alive().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_a449a0fd9facd766c52565185f2f26054_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a06ee464221ed467a72172cb19352e6eb}\label{classmock__turk__manager_1_1MockTurkManager_a06ee464221ed467a72172cb19352e6eb}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!send\+\_\+message@{send\+\_\+message}}
+\index{send\+\_\+message@{send\+\_\+message}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{send\+\_\+message()}{send\_message()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{receiver\+\_\+id,  }\item[{}]{assignment\+\_\+id,  }\item[{}]{data,  }\item[{}]{blocking = {\ttfamily True},  }\item[{}]{ack\+\_\+func = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}'Send' a message directly by updating the queue of messages not
+yet recieved that the agent can pull from
+\end{DoxyVerb}
+ 
+
+Definition at line 217 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+id\+\_\+to\+\_\+agent, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+command(), and generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+new\+\_\+agent().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_a06ee464221ed467a72172cb19352e6eb_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_a06ee464221ed467a72172cb19352e6eb_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a1becae520bdd1de25632adeadf0f67c5}\label{classmock__turk__manager_1_1MockTurkManager_a1becae520bdd1de25632adeadf0f67c5}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!set\+\_\+onboard\+\_\+function@{set\+\_\+onboard\+\_\+function}}
+\index{set\+\_\+onboard\+\_\+function@{set\+\_\+onboard\+\_\+function}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{set\+\_\+onboard\+\_\+function()}{set\_onboard\_function()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+set\+\_\+onboard\+\_\+function (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{onboard\+\_\+function }\end{DoxyParamCaption})}
+
+
+
+Definition at line 67 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a7248f732e7b06f31b128c12829ae8081}\label{classmock__turk__manager_1_1MockTurkManager_a7248f732e7b06f31b128c12829ae8081}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!setup\+\_\+server@{setup\+\_\+server}}
+\index{setup\+\_\+server@{setup\+\_\+server}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{setup\+\_\+server()}{setup\_server()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+setup\+\_\+server (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{task\+\_\+directory\+\_\+path = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Noop, we aren't connecting to a server\end{DoxyVerb}
+ 
+
+Definition at line 40 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a033685772118f2d5b9cfde68f48d7bce}\label{classmock__turk__manager_1_1MockTurkManager_a033685772118f2d5b9cfde68f48d7bce}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!shutdown@{shutdown}}
+\index{shutdown@{shutdown}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{shutdown()}{shutdown()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+shutdown (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{force = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}No servers, nothing to clean up\end{DoxyVerb}
+ 
+
+Definition at line 137 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a3a03c892540501e2fa506c6c7118c07f}\label{classmock__turk__manager_1_1MockTurkManager_a3a03c892540501e2fa506c6c7118c07f}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!soft\+\_\+block\+\_\+worker@{soft\+\_\+block\+\_\+worker}}
+\index{soft\+\_\+block\+\_\+worker@{soft\+\_\+block\+\_\+worker}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{soft\+\_\+block\+\_\+worker()}{soft\_block\_worker()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+soft\+\_\+block\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{qual = {\ttfamily \textquotesingle{}block\+\_\+qualification\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 308 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a7fb2641391d46226f50211cc2413b5b6}\label{classmock__turk__manager_1_1MockTurkManager_a7fb2641391d46226f50211cc2413b5b6}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!start\+\_\+new\+\_\+run@{start\+\_\+new\+\_\+run}}
+\index{start\+\_\+new\+\_\+run@{start\+\_\+new\+\_\+run}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{start\+\_\+new\+\_\+run()}{start\_new\_run()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+new\+\_\+run (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initialize expected state to not cause crashes\end{DoxyVerb}
+ 
+
+Definition at line 44 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aff5cae911d5177b4e8739ecac21ae3ac}\label{classmock__turk__manager_1_1MockTurkManager_aff5cae911d5177b4e8739ecac21ae3ac}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!start\+\_\+task@{start\+\_\+task}}
+\index{start\+\_\+task@{start\+\_\+task}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{start\+\_\+task()}{start\_task()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{eligibility\+\_\+function,  }\item[{}]{assign\+\_\+role\+\_\+function,  }\item[{}]{task\+\_\+function }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Handle running a task by checking to see when enough agents are
+in the pool to start an instance of the task. Continue doing this
+until the desired number of conversations is had.
+\end{DoxyVerb}
+ 
+
+Definition at line 71 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+agents, parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+agents, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+agents, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+agents, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+agents, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+agents, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+mturk\+\_\+agent\+\_\+ids, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+modules\+\_\+v0.\+Mem\+N\+N.\+opt, parlai.\+agents.\+language\+\_\+model.\+modules.\+R\+N\+N\+Model.\+opt, parlai.\+messenger.\+core.\+worlds.\+Simple\+Messenger\+Overworld.\+opt, parlai.\+agents.\+drqa.\+rnn\+\_\+reader.\+Rnn\+Doc\+Reader.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+collect\+\_\+personas.\+worlds.\+Persona\+Profile\+World.\+opt, parlai.\+core.\+image\+\_\+featurizers.\+Image\+Loader.\+opt, parlai.\+agents.\+drqa.\+model.\+Doc\+Reader\+Model.\+opt, light\+\_\+chats.\+run.\+Graph\+Generator.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Agent.\+opt, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt, parlai.\+messenger.\+core.\+world\+\_\+runner.\+Messenger\+World\+Runner.\+opt, parlai.\+agents.\+starspace.\+modules.\+Starspace.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+modules\+\_\+v0.\+Seq2seq.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+State.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+opt, parlai.\+agents.\+unigram.\+unigram.\+Unigram\+Agent.\+opt, parlai.\+core.\+agents.\+Agent.\+opt, parlai.\+agents.\+remote\+\_\+agent.\+remote\+\_\+agent.\+Remote\+Agent\+Agent.\+opt, parlai.\+mturk.\+tasks.\+qualification\+\_\+flow\+\_\+example.\+worlds.\+Qualification\+Flow\+Solo\+World.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, light\+\_\+chat\+\_\+eval.\+worlds.\+Light\+Eval\+Test\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+Assign\+State.\+opt, parlai.\+core.\+worlds.\+World.\+opt, parlai.\+messenger.\+tasks.\+chatbot.\+worlds.\+Messenger\+Overworld.\+opt, stack\+\_\+rank\+\_\+evals.\+worlds.\+Role\+Onboard\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+Manager.\+opt, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+rephrase.\+worlds.\+Rephrase\+Persona\+World.\+opt, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+opt, parlai.\+messenger.\+core.\+messenger\+\_\+manager.\+Messenger\+Manager.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+memnn.\+memnn\+\_\+v0.\+Memnn\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+agents.\+transformer.\+modules.\+Transformer\+Mem\+Net\+Model.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+worker\+\_\+manager.\+Test\+Worker\+Manager.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Init\+Test\+M\+Turk\+Manager.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+agent.\+Test\+M\+Turk\+Agent.\+opt, parlai.\+agents.\+language\+\_\+model.\+language\+\_\+model.\+Language\+Model\+Agent.\+opt, parlai.\+core.\+agents.\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v0.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+dict\+\_\+v1.\+Dictionary\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Unit\+Functions.\+opt, parlai.\+core.\+dict.\+Dictionary\+Agent.\+opt, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+opt, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Overworld.\+opt, parlai.\+core.\+agents.\+Multi\+Task\+Teacher.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+torch\+\_\+agent\+\_\+v1.\+Torch\+Agent.\+opt, parlai.\+agents.\+fairseq.\+fairseq.\+Fairseq\+Agent.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+agents.\+legacy\+\_\+agents.\+seq2seq.\+seq2seq\+\_\+v0.\+Seq2seq\+Agent.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+full\+\_\+system.\+Test\+M\+Turk\+Manager\+Workflows.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Stream\+Dataset.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+opt, parlai.\+agents.\+starspace.\+starspace.\+Starspace\+Agent.\+opt, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+opt, parlai.\+core.\+worlds.\+Batch\+World.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+torch\+\_\+agent.\+Torch\+Agent.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+core.\+worlds.\+Hogwild\+Process.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+core.\+params.\+Parlai\+Parser.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Pool\+Handling.\+opt, parlai.\+core.\+teachers.\+Fb\+Dialog\+Teacher.\+opt, parlai.\+mturk.\+core.\+dev.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Time\+Handling.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Lifecycle\+Functions.\+opt, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, parlai.\+mturk.\+core.\+test.\+test\+\_\+mturk\+\_\+manager.\+Test\+M\+Turk\+Manager\+Connected\+Functions.\+opt, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+opt.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a71af67cf6b49970649e8fe697d7fef77}\label{classmock__turk__manager_1_1MockTurkManager_a71af67cf6b49970649e8fe697d7fef77}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!timeout\+\_\+all\+\_\+agents@{timeout\+\_\+all\+\_\+agents}}
+\index{timeout\+\_\+all\+\_\+agents@{timeout\+\_\+all\+\_\+agents}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{timeout\+\_\+all\+\_\+agents()}{timeout\_all\_agents()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+timeout\+\_\+all\+\_\+agents (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set all agent statuses to disconnect to kill the world\end{DoxyVerb}
+ 
+
+Definition at line 258 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+mturk.\+tasks.\+dealnodeal.\+worlds.\+M\+Turk\+Deal\+No\+Deal\+Dialog\+World.\+agents, parlai.\+mturk.\+tasks.\+multi\+\_\+agent\+\_\+dialog.\+worlds.\+M\+Turk\+Multi\+Agent\+Dialog\+World.\+agents, parlai.\+mturk.\+core.\+dev.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+worker\+\_\+manager.\+Worker\+State.\+agents, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+worker\+\_\+manager.\+Worker\+State.\+agents, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+agents, parlai.\+messenger.\+core.\+shared\+\_\+utils.\+Task\+State.\+agents, parlai.\+core.\+worlds.\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+agents, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+agents, parlai.\+mturk.\+tasks.\+personachat.\+personachat\+\_\+chat.\+worlds.\+Persona\+Chat\+World.\+agents, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+agents, worlds.\+M\+Turk\+Wizard\+Of\+Wikipedia\+World.\+agents, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+agents, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Task\+World.\+agents, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+agents, parlai.\+core.\+worlds.\+Dialog\+Partner\+World.\+agents, and parlai.\+core.\+worlds.\+Multi\+Agent\+Dialog\+World.\+agents.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_ae7d3ae75de08b2e3d74413418a6d9602}\label{classmock__turk__manager_1_1MockTurkManager_ae7d3ae75de08b2e3d74413418a6d9602}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!un\+\_\+soft\+\_\+block\+\_\+worker@{un\+\_\+soft\+\_\+block\+\_\+worker}}
+\index{un\+\_\+soft\+\_\+block\+\_\+worker@{un\+\_\+soft\+\_\+block\+\_\+worker}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{un\+\_\+soft\+\_\+block\+\_\+worker()}{un\_soft\_block\_worker()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+un\+\_\+soft\+\_\+block\+\_\+worker (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{qual = {\ttfamily \textquotesingle{}block\+\_\+qualification\textquotesingle{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 311 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References parlai.\+messenger.\+core.\+shared\+\_\+utils.\+format.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a617657d87cfb41c503404845b5c116c7}\label{classmock__turk__manager_1_1MockTurkManager_a617657d87cfb41c503404845b5c116c7}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!worker\+\_\+alive@{worker\+\_\+alive}}
+\index{worker\+\_\+alive@{worker\+\_\+alive}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{worker\+\_\+alive()}{worker\_alive()}}
+{\footnotesize\ttfamily def mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+worker\+\_\+alive (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{worker\+\_\+id,  }\item[{}]{hit\+\_\+id,  }\item[{}]{assign\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Mocks baseline worker_alive status changes for mock agents\end{DoxyVerb}
+ 
+
+Definition at line 159 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+References mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+id\+\_\+to\+\_\+agent, mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+new\+\_\+agent(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+command().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmock__turk__manager_1_1MockTurkManager_a617657d87cfb41c503404845b5c116c7_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a7657aa553cb22b0eed025bd6ede834ed}\label{classmock__turk__manager_1_1MockTurkManager_a7657aa553cb22b0eed025bd6ede834ed}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!agents@{agents}}
+\index{agents@{agents}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{agents}{agents}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+agents}
+
+
+
+Definition at line 63 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+timeout\+\_\+all\+\_\+agents().
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_aac57eebbadfaf965b4ad9305a20f88b8}\label{classmock__turk__manager_1_1MockTurkManager_aac57eebbadfaf965b4ad9305a20f88b8}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!current\+\_\+manager@{current\+\_\+manager}}
+\index{current\+\_\+manager@{current\+\_\+manager}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{current\+\_\+manager}{current\_manager}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+current\+\_\+manager = None\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 27 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_afdf814e9c806fb5ebbaf9d74561e5c05}\label{classmock__turk__manager_1_1MockTurkManager_afdf814e9c806fb5ebbaf9d74561e5c05}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!db\+\_\+logger@{db\+\_\+logger}}
+\index{db\+\_\+logger@{db\+\_\+logger}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{db\+\_\+logger}{db\_logger}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+db\+\_\+logger}
+
+
+
+Definition at line 37 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a8cc5a64c1f570db4b9fb075faf761b46}\label{classmock__turk__manager_1_1MockTurkManager_a8cc5a64c1f570db4b9fb075faf761b46}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!has\+\_\+run@{has\+\_\+run}}
+\index{has\+\_\+run@{has\+\_\+run}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{has\+\_\+run}{has\_run}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+has\+\_\+run}
+
+
+
+Definition at line 35 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_af059906f05b261ab7f54b79e4651a5d5}\label{classmock__turk__manager_1_1MockTurkManager_af059906f05b261ab7f54b79e4651a5d5}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!id\+\_\+to\+\_\+agent@{id\+\_\+to\+\_\+agent}}
+\index{id\+\_\+to\+\_\+agent@{id\+\_\+to\+\_\+agent}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{id\+\_\+to\+\_\+agent}{id\_to\_agent}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+id\+\_\+to\+\_\+agent}
+
+
+
+Definition at line 53 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+disconnect\+\_\+agent(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+on\+\_\+new\+\_\+message(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), and mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+worker\+\_\+alive().
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a30a18776790f60114b54602b715ed77a}\label{classmock__turk__manager_1_1MockTurkManager_a30a18776790f60114b54602b715ed77a}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!mturk\+\_\+agent\+\_\+ids@{mturk\+\_\+agent\+\_\+ids}}
+\index{mturk\+\_\+agent\+\_\+ids@{mturk\+\_\+agent\+\_\+ids}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{mturk\+\_\+agent\+\_\+ids}{mturk\_agent\_ids}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+mturk\+\_\+agent\+\_\+ids}
+
+
+
+Definition at line 34 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task().
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a6e25bcd225d478f6dd719860f0b85499}\label{classmock__turk__manager_1_1MockTurkManager_a6e25bcd225d478f6dd719860f0b85499}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!onboard\+\_\+function@{onboard\+\_\+function}}
+\index{onboard\+\_\+function@{onboard\+\_\+function}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{onboard\+\_\+function}{onboard\_function}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+function}
+
+
+
+Definition at line 68 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+onboard\+\_\+new\+\_\+agent().
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a90215b4e820f59dd4772d5444a109b78}\label{classmock__turk__manager_1_1MockTurkManager_a90215b4e820f59dd4772d5444a109b78}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!opt@{opt}}
+\index{opt@{opt}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+opt}
+
+
+
+Definition at line 33 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+coco\+\_\+caption.\+agents.\+Default\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+log(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+save\+\_\+model(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+send\+\_\+message(), mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+start\+\_\+task(), parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+train(), agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+(), and parlai.\+scripts.\+train\+\_\+model.\+Train\+Loop.\+validate().
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a3a83d86a8a3f1f1bbd7869b24793e3ba}\label{classmock__turk__manager_1_1MockTurkManager_a3a83d86a8a3f1f1bbd7869b24793e3ba}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!run\+\_\+id@{run\+\_\+id}}
+\index{run\+\_\+id@{run\+\_\+id}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{run\+\_\+id}{run\_id}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+run\+\_\+id}
+
+
+
+Definition at line 46 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a378fb06550699871ca3156c1b4b025db}\label{classmock__turk__manager_1_1MockTurkManager_a378fb06550699871ca3156c1b4b025db}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!sandbox@{sandbox}}
+\index{sandbox@{sandbox}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{sandbox}{sandbox}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+sandbox}
+
+
+
+Definition at line 36 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+\mbox{\Hypertarget{classmock__turk__manager_1_1MockTurkManager_a785dd09ccdbaa49e62b083a00f84164c}\label{classmock__turk__manager_1_1MockTurkManager_a785dd09ccdbaa49e62b083a00f84164c}} 
+\index{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}!task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}}
+\index{task\+\_\+group\+\_\+id@{task\+\_\+group\+\_\+id}!mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager@{mock\+\_\+turk\+\_\+manager\+::\+Mock\+Turk\+Manager}}
+\subsubsection{\texorpdfstring{task\+\_\+group\+\_\+id}{task\_group\_id}}
+{\footnotesize\ttfamily mock\+\_\+turk\+\_\+manager.\+Mock\+Turk\+Manager.\+task\+\_\+group\+\_\+id}
+
+
+
+Definition at line 47 of file mock\+\_\+turk\+\_\+manager.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/mturk/webapp/run\+\_\+mocks/\hyperlink{mock__turk__manager_8py}{mock\+\_\+turk\+\_\+manager.\+py}\end{DoxyCompactItemize}

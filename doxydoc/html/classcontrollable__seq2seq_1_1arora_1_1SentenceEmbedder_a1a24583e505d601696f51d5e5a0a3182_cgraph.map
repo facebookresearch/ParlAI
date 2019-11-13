@@ -1,4 +1,4 @@
 <map id="controllable_seq2seq.arora.SentenceEmbedder.embed_sent" name="controllable_seq2seq.arora.SentenceEmbedder.embed_sent">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,216,47"/>
-<area shape="rect" id="node2" href="$classcontrollable__seq2seq_1_1arora_1_1SentenceEmbedder.html#aa53ecb589f5fe43fe92d326511491e98" title=" " alt="" coords="264,5,499,47"/>
+<area shape="rect" id="node2" href="$classcontrollable__seq2seq_1_1arora_1_1SentenceEmbedder.html#aa53ecb589f5fe43fe92d326511491e98" title="controllable_seq2seq.arora.\lSentenceEmbedder.get_glove_embs" alt="" coords="264,5,499,47"/>
+<area shape="rect" id="node3" href="$namespacecontrollable__seq2seq_1_1arora.html#a8bbb1ed9f1b86ebe8378d07931f3040d" title="controllable_seq2seq.arora.remove\l_first_sv" alt="" coords="269,71,493,112"/>
 </map>

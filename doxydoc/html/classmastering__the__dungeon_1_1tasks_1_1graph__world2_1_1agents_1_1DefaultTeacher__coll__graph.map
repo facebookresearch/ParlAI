@@ -1,6 +1,4 @@
 <map id="mastering_the_dungeon.tasks.graph_world2.agents.DefaultTeacher" name="mastering_the_dungeon.tasks.graph_world2.agents.DefaultTeacher">
-<area shape="rect" id="node1" title=" " alt="" coords="5,229,237,271"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="33,155,209,181"/>
-<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="40,80,203,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="93,5,150,32"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title="parlai.core.agents.Teacher" alt="" coords="33,155,209,181"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title="parlai.core.agents.Agent" alt="" coords="40,80,203,107"/>
 </map>

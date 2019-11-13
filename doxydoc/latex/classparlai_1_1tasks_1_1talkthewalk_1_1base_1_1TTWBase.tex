@@ -1,0 +1,257 @@
+\hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase}{}\section{parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base Class Reference}
+\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase}\index{parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base@{parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base}}
+
+
+Inheritance diagram for parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_abde7fa2ca98467601795e5873285d8a0}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_aa716b1fde5dd6d0409ff111df962067e}{opt}, shared=None)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ac8cfd853c90d3dbc0ee6ada6dbc23726}{share} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_adda57628371cdbb1afef6f297dab7c54}{get} (self, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_afd4ebab8063eb42d182d30a1a41f133e}{episode\+\_\+idx}, \hyperlink{classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher_ae3201b15f3c3b46a2f3511bad9b43e7d}{entry\+\_\+idx}=0)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ab4890c4569ff31724718ed8c684e1a76}{num\+\_\+episodes} (self)
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a691d7f4a22c6ea032489ea70fe5d6b35}{num\+\_\+examples} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a58e285e5ba5843219867ad14512bde8a}{add\+\_\+cmdline\+\_\+args} (argparser)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_aa716b1fde5dd6d0409ff111df962067e}{opt}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a66874e232187d869705096b64775448e}{label\+\_\+candidates}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a3080a626f294ef819e26aedb322ee99a}{data}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a723ca7277cb3040cbfef0d9ef3161df3}{sim}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a0c6f24b6c2fa6e69d28606ac2cabab01}{episodes}
+\item 
+\hyperlink{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a6d2d68b1aba27c50ce67efc0c0f07dc4}{examples\+\_\+count}
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 21 of file base.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_abde7fa2ca98467601795e5873285d8a0}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_abde7fa2ca98467601795e5873285d8a0}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{opt,  }\item[{}]{shared = {\ttfamily None} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file base.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a58e285e5ba5843219867ad14512bde8a}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a58e285e5ba5843219867ad14512bde8a}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}}
+\index{add\+\_\+cmdline\+\_\+args@{add\+\_\+cmdline\+\_\+args}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{add\+\_\+cmdline\+\_\+args()}{add\_cmdline\_args()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+add\+\_\+cmdline\+\_\+args (\begin{DoxyParamCaption}\item[{}]{argparser }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 23 of file base.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_adda57628371cdbb1afef6f297dab7c54}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_adda57628371cdbb1afef6f297dab7c54}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!get@{get}}
+\index{get@{get}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{episode\+\_\+idx,  }\item[{}]{entry\+\_\+idx = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 89 of file base.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+label\+\_\+candidates, parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+label\+\_\+candidates, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+label\+\_\+candidates, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+label\+\_\+candidates, and parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+label\+\_\+candidates.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Map.\+get\+\_\+landmarks().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_adda57628371cdbb1afef6f297dab7c54_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ab4890c4569ff31724718ed8c684e1a76}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ab4890c4569ff31724718ed8c684e1a76}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!num\+\_\+episodes@{num\+\_\+episodes}}
+\index{num\+\_\+episodes@{num\+\_\+episodes}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{num\+\_\+episodes()}{num\_episodes()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+episodes (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 95 of file base.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, and parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+len\+\_\+\+\_\+(), and parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+num\+\_\+examples().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ab4890c4569ff31724718ed8c684e1a76_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a691d7f4a22c6ea032489ea70fe5d6b35}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a691d7f4a22c6ea032489ea70fe5d6b35}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!num\+\_\+examples@{num\+\_\+examples}}
+\index{num\+\_\+examples@{num\+\_\+examples}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{num\+\_\+examples()}{num\_examples()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+examples (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 98 of file base.\+py.
+
+
+
+References parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+examples\+\_\+count.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ac8cfd853c90d3dbc0ee6ada6dbc23726}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_ac8cfd853c90d3dbc0ee6ada6dbc23726}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!share@{share}}
+\index{share@{share}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{share()}{share()}}
+{\footnotesize\ttfamily def parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+Definition at line 48 of file base.\+py.
+
+
+
+References parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Empathetic\+Dialogue\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+All\+Teacher.\+data, parlai.\+messenger.\+core.\+agents.\+Messenger\+Agent.\+data, parlai.\+agents.\+tfidf\+\_\+retriever.\+tokenizers.\+tokenizer.\+Tokens.\+data, parlai.\+tasks.\+squad2.\+agents.\+Index\+Teacher.\+data, parlai.\+tasks.\+dstc7.\+agents.\+D\+S\+T\+C7\+Teacher.\+data, parlai.\+tasks.\+dailydialog.\+agents.\+Convai2\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data, parlai.\+tasks.\+squad.\+agents.\+Index\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+data, parlai.\+mturk.\+core.\+dev.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+dialogue\+\_\+nli.\+agents.\+Dialogue\+Nli\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+I\+G\+C\+Example\+Generator.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Default\+Dataset.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Flickr\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Onboard\+Data\+Onboard\+World.\+data, parlai.\+mturk.\+core.\+legacy\+\_\+2018.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+core.\+socket\+\_\+manager.\+Packet.\+data, parlai.\+mturk.\+tasks.\+talkthewalk.\+worlds.\+Talk\+The\+Walk\+World.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Multiturn\+Teacher.\+data, server.\+Packet\+Wrap.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+Example\+Generator.\+data, parlai.\+tasks.\+flickr30k.\+agents.\+Default\+Teacher.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Image\+Chat\+Stack\+Rank\+World.\+data, stack\+\_\+rank\+\_\+evals.\+worlds.\+M\+Turk\+Personality\+Captions\+Stack\+Rank\+World.\+data, parlai.\+tasks.\+image\+\_\+chat.\+agents.\+Image\+Chat\+Teacher.\+data, igc\+\_\+evals.\+worlds.\+M\+Turk\+I\+G\+C\+Eval\+World.\+data, parlai.\+tasks.\+personality\+\_\+captions.\+agents.\+Personality\+Captions\+Teacher.\+data, parlai.\+tasks.\+ccpe.\+agents.\+C\+C\+P\+E\+Assistant\+Teacher.\+data, parlai.\+tasks.\+integration\+\_\+tests.\+agents.\+Candidate\+Teacher\+Dataset.\+data, parlai.\+messenger.\+tasks.\+overworld\+\_\+demo.\+worlds.\+Messenger\+Chat\+Onboard\+World.\+data, parlai.\+tasks.\+empathetic\+\_\+dialogues.\+agents.\+Emotion\+Classification\+Teacher.\+data, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+data, image\+\_\+chat\+\_\+collection.\+worlds.\+M\+Turk\+Image\+Chat\+World.\+data, personality\+\_\+captions.\+worlds.\+M\+Turk\+Personality\+Captions\+World.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Loader\+Process.\+data, parlai.\+core.\+teachers.\+Dialog\+Teacher.\+data, parlai.\+core.\+teachers.\+Dialog\+Data.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Parl\+A\+I\+Dataset.\+data, parlai.\+core.\+pytorch\+\_\+data\+\_\+teacher.\+Pytorch\+Data\+Teacher.\+data, parlai.\+core.\+teachers.\+Stream\+Dialog\+Data.\+data, parlai.\+core.\+teachers.\+Abstract\+Image\+Teacher.\+data, parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+label\+\_\+candidates, parlai.\+agents.\+random\+\_\+candidate.\+random\+\_\+candidate.\+Random\+Candidate\+Agent.\+label\+\_\+candidates, parlai.\+tasks.\+dialogue\+\_\+safety.\+base\+\_\+agent.\+\_\+\+Base\+Safety\+Teacher.\+label\+\_\+candidates, parlai.\+tasks.\+dialogue\+\_\+safety.\+agents.\+Wiki\+Toxic\+Comments\+Teacher.\+label\+\_\+candidates, parlai.\+agents.\+ir\+\_\+baseline.\+ir\+\_\+baseline.\+Ir\+Baseline\+Agent.\+label\+\_\+candidates, and parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+sim.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a3080a626f294ef819e26aedb322ee99a}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a3080a626f294ef819e26aedb322ee99a}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!data@{data}}
+\index{data@{data}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+data}
+
+
+
+Definition at line 40 of file base.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+\_\+\+\_\+len\+\_\+\+\_\+(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+act(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Docreader\+Teacher.\+get(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Dialog\+Knowledge\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Basicdialog\+Teacher.\+len\+\_\+episode(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+episodes(), parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+num\+\_\+episodes(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+num\+\_\+examples(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share(), mastering\+\_\+the\+\_\+dungeon.\+tasks.\+graph\+\_\+world2.\+agents.\+Default\+Teacher.\+share(), parlai.\+tasks.\+taskntalk.\+agents.\+Task\+N\+Talk\+Teacher.\+share(), parlai.\+tasks.\+ubuntu.\+agents.\+Multiturn\+Teacher.\+share(), and parlai.\+tasks.\+wizard\+\_\+of\+\_\+wikipedia.\+agents.\+Wizard\+Of\+Wikipedia\+Teacher.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a0c6f24b6c2fa6e69d28606ac2cabab01}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a0c6f24b6c2fa6e69d28606ac2cabab01}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!episodes@{episodes}}
+\index{episodes@{episodes}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{episodes}{episodes}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+episodes}
+
+
+
+Definition at line 60 of file base.\+py.
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a6d2d68b1aba27c50ce67efc0c0f07dc4}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a6d2d68b1aba27c50ce67efc0c0f07dc4}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!examples\+\_\+count@{examples\+\_\+count}}
+\index{examples\+\_\+count@{examples\+\_\+count}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{examples\+\_\+count}{examples\_count}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+examples\+\_\+count}
+
+
+
+Definition at line 62 of file base.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+num\+\_\+examples().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a66874e232187d869705096b64775448e}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a66874e232187d869705096b64775448e}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!label\+\_\+candidates@{label\+\_\+candidates}}
+\index{label\+\_\+candidates@{label\+\_\+candidates}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{label\+\_\+candidates}{label\_candidates}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+label\+\_\+candidates}
+
+
+
+Definition at line 37 of file base.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+get(), and parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_aa716b1fde5dd6d0409ff111df962067e}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_aa716b1fde5dd6d0409ff111df962067e}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!opt@{opt}}
+\index{opt@{opt}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{opt}{opt}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+opt}
+
+
+
+Definition at line 35 of file base.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+vqa\+\_\+v1.\+agents.\+V\+Q\+A\+Dataset.\+\_\+\+\_\+getitem\+\_\+\+\_\+(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+build\+\_\+head(), transresnet.\+modules.\+Transresnet\+Model.\+captions\+\_\+to\+\_\+tensor(), transresnet\+\_\+multimodal.\+modules.\+Transresnet\+Multimodal\+Model.\+cat\+\_\+encodings(), agent.\+modules.\+Mem\+N\+N.\+forward(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+loss(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Object\+Checklist\+Model.\+forward\+\_\+predict(), mastering\+\_\+the\+\_\+dungeon.\+agents.\+graph\+\_\+world2.\+models.\+Seq2\+Seq\+Model.\+forward\+\_\+predict(), agent.\+modules.\+Mem\+N\+N.\+get\+\_\+score(), parlai.\+tasks.\+self\+\_\+feeding.\+agents.\+Self\+Feeding\+M\+T\+L\+Teacher.\+get\+\_\+task\+\_\+index(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+init\+\_\+embeddings(), mturk\+\_\+evaluation\+\_\+task.\+worlds.\+Topics\+Generator.\+load\+\_\+topics(), self\+\_\+feeding.\+modules.\+Self\+Feeding\+Model.\+score\+\_\+similarity(), and agent.\+modules.\+Mem\+N\+N.\+update\+\_\+memories\+\_\+with\+\_\+extra\+\_\+features\+\_\+().
+
+\mbox{\Hypertarget{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a723ca7277cb3040cbfef0d9ef3161df3}\label{classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase_a723ca7277cb3040cbfef0d9ef3161df3}} 
+\index{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}!sim@{sim}}
+\index{sim@{sim}!parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base@{parlai\+::tasks\+::talkthewalk\+::base\+::\+T\+T\+W\+Base}}
+\subsubsection{\texorpdfstring{sim}{sim}}
+{\footnotesize\ttfamily parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+sim}
+
+
+
+Definition at line 41 of file base.\+py.
+
+
+
+Referenced by parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+execute(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+observe(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+send\+\_\+map(), parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+send\+\_\+view(), parlai.\+tasks.\+talkthewalk.\+base.\+T\+T\+W\+Base.\+share(), and parlai.\+tasks.\+talkthewalk.\+worlds.\+Simulate\+World.\+share().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/tasks/talkthewalk/\hyperlink{base_8py}{base.\+py}\end{DoxyCompactItemize}

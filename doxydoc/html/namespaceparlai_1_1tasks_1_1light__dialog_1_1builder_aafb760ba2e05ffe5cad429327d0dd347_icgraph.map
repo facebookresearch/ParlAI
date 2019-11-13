@@ -1,0 +1,6 @@
+<map id="parlai.tasks.light_dialog.builder.fix_labels" name="parlai.tasks.light_dialog.builder.fix_labels">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a233ecce0ba4b1a0c023e855629986d69" title="parlai.tasks.light\l_dialog.builder.write\l_dialog" alt="" coords="176,5,313,61"/>
+<area shape="rect" id="node3" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#aeb144d0ebd2fd1727f73677e36f2c8b5" title="parlai.tasks.light\l_dialog.builder.write\l_alldata" alt="" coords="361,5,499,61"/>
+<area shape="rect" id="node4" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1builder.html#a6a049254e487c29d008f875476ffd76f" title="parlai.tasks.light\l_dialog.builder.build\l_from_db" alt="" coords="547,5,683,61"/>
+<area shape="rect" id="node5" href="$namespaceparlai_1_1tasks_1_1light__dialog_1_1build.html#ac8ebc5da2dd660257535226b26afb26e" title="parlai.tasks.light\l_dialog.build.build" alt="" coords="731,13,856,54"/>
+</map>

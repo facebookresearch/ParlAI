@@ -1,0 +1,158 @@
+\hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger}{}\section{parlai.\+utils.\+misc.\+Time\+Logger Class Reference}
+\label{classparlai_1_1utils_1_1misc_1_1TimeLogger}\index{parlai.\+utils.\+misc.\+Time\+Logger@{parlai.\+utils.\+misc.\+Time\+Logger}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_a11aae5a0adf1f9081b5a454b79c89b89}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_a18d3faec4442ed5b313c88d566f43b2d}{total\+\_\+time} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_aa8e859dc10c12159501bbf545ca62a51}{time} (self)
+\item 
+def \hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_a52458d882781ad6a6cbcea479ff495de}{log} (self, done, total, report=None)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_a7592e5ebb754f91e73b66b409fda2d77}{timer}
+\item 
+\hyperlink{classparlai_1_1utils_1_1misc_1_1TimeLogger_a831849f16f6779f8b77289c3caa65689}{tot\+\_\+time}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}Class for logging time progress against a goal.\end{DoxyVerb}
+ 
+
+Definition at line 329 of file misc.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_a11aae5a0adf1f9081b5a454b79c89b89}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_a11aae5a0adf1f9081b5a454b79c89b89}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Time\+Logger.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Set up timer.\end{DoxyVerb}
+ 
+
+Definition at line 332 of file misc.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_a52458d882781ad6a6cbcea479ff495de}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_a52458d882781ad6a6cbcea479ff495de}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!log@{log}}
+\index{log@{log}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{log()}{log()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Time\+Logger.\+log (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{done,  }\item[{}]{total,  }\item[{}]{report = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Log report, time elapsed, and percentage progress towards goal.
+
+:param done: number of examples completed so far
+:param total: total number of elements to be completed. if total > 0,
+      calculates the time remaining and percentage complete.
+:param report: dict of pairs to log
+
+:returns: tuple log string, log dict
+    log string contains time elapsed and string representation of
+    the log dict
+    log dict contains pairs of all items to log, which includes
+    percentage complete and projected time left if total > 0
+\end{DoxyVerb}
+ 
+
+Definition at line 345 of file misc.\+py.
+
+
+
+References eval\+\_\+ppl.\+int, generate\+\_\+task\+\_\+\+R\+E\+A\+D\+M\+Es.\+str, parlai.\+utils.\+misc.\+Time\+Logger.\+time(), parlai.\+utils.\+misc.\+Time\+Logger.\+timer, and parlai.\+utils.\+misc.\+Time\+Logger.\+tot\+\_\+time.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1TimeLogger_a52458d882781ad6a6cbcea479ff495de_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_aa8e859dc10c12159501bbf545ca62a51}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_aa8e859dc10c12159501bbf545ca62a51}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!time@{time}}
+\index{time@{time}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{time()}{time()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Time\+Logger.\+time (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return current timer time.\end{DoxyVerb}
+ 
+
+Definition at line 341 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Time\+Logger.\+timer.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Time\+Logger.\+log().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classparlai_1_1utils_1_1misc_1_1TimeLogger_aa8e859dc10c12159501bbf545ca62a51_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_a18d3faec4442ed5b313c88d566f43b2d}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_a18d3faec4442ed5b313c88d566f43b2d}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!total\+\_\+time@{total\+\_\+time}}
+\index{total\+\_\+time@{total\+\_\+time}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{total\+\_\+time()}{total\_time()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+misc.\+Time\+Logger.\+total\+\_\+time (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return time elapsed at last log call.\end{DoxyVerb}
+ 
+
+Definition at line 337 of file misc.\+py.
+
+
+
+References parlai.\+utils.\+misc.\+Time\+Logger.\+tot\+\_\+time.
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_a7592e5ebb754f91e73b66b409fda2d77}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_a7592e5ebb754f91e73b66b409fda2d77}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!timer@{timer}}
+\index{timer@{timer}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{timer}{timer}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Time\+Logger.\+timer}
+
+
+
+Definition at line 334 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Time\+Logger.\+log(), and parlai.\+utils.\+misc.\+Time\+Logger.\+time().
+
+\mbox{\Hypertarget{classparlai_1_1utils_1_1misc_1_1TimeLogger_a831849f16f6779f8b77289c3caa65689}\label{classparlai_1_1utils_1_1misc_1_1TimeLogger_a831849f16f6779f8b77289c3caa65689}} 
+\index{parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}!tot\+\_\+time@{tot\+\_\+time}}
+\index{tot\+\_\+time@{tot\+\_\+time}!parlai\+::utils\+::misc\+::\+Time\+Logger@{parlai\+::utils\+::misc\+::\+Time\+Logger}}
+\subsubsection{\texorpdfstring{tot\+\_\+time}{tot\_time}}
+{\footnotesize\ttfamily parlai.\+utils.\+misc.\+Time\+Logger.\+tot\+\_\+time}
+
+
+
+Definition at line 335 of file misc.\+py.
+
+
+
+Referenced by parlai.\+utils.\+misc.\+Time\+Logger.\+log(), and parlai.\+utils.\+misc.\+Time\+Logger.\+total\+\_\+time().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+parlai/utils/\hyperlink{misc_8py}{misc.\+py}\end{DoxyCompactItemize}

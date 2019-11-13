@@ -1,5 +1,4 @@
 <map id="parlai.mturk.core.dev.agents.MTurkAgent.pay_bonus" name="parlai.mturk.core.dev.agents.MTurkAgent.pay_bonus">
-<area shape="rect" id="node1" title=" " alt="" coords="5,39,196,80"/>
-<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aa9f920ced47551568be25b0a943f15b1" title=" " alt="" coords="244,5,479,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab9ae84c11537bf24f2f269b1221be1ed" title=" " alt="" coords="244,71,479,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#aa9f920ced47551568be25b0a943f15b1" title="parlai.mturk.core.dev.agents.\lMTurkAgent._print_not_available_for" alt="" coords="244,5,479,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#ab9ae84c11537bf24f2f269b1221be1ed" title="parlai.mturk.core.agents.\lMTurkAgent._print_not_available_for" alt="" coords="244,71,479,112"/>
 </map>

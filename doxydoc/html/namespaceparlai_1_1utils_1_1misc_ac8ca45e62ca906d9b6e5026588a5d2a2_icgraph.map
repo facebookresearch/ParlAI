@@ -1,0 +1,14 @@
+<map id="parlai.utils.misc.maintain_dialog_history" name="parlai.utils.misc.maintain_dialog_history">
+<area shape="rect" id="node2" href="$namespaceparlai_1_1utils_1_1misc.html#a68c44ca571de7149b683539db659c330" title="parlai.utils.misc.neginf" alt="" coords="220,311,372,337"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1helpers_1_1BertWrapper.html#a29a138ccda9ff978a641e5f6e0949009" title="parlai.agents.bert\l_ranker.helpers.BertWrapper.forward" alt="" coords="420,238,655,279"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1memnn_1_1modules_1_1Hop.html#ad4e6c91364efc31ac3f0239d7a7c1376" title="parlai.agents.memnn.modules.\lHop.forward" alt="" coords="437,303,637,345"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1MultiHeadAttention.html#a0685acda3d791bccfb9a6f4ff2c3680f" title="parlai.agents.transformer.modules.\lMultiHeadAttention.forward" alt="" coords="426,137,649,178"/>
+<area shape="rect" id="node12" href="$classgenerator_1_1modules_1_1ContextKnowledgeEncoder.html#a131ee3cac93f38e5b5503ca43e62cf55" title="generator.modules.Context\lKnowledgeEncoder.forward" alt="" coords="447,369,628,410"/>
+<area shape="rect" id="node13" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#aaabdc74d8e5ffec4cd92b7fd350aaaf4" title="controllable_seq2seq.controllable\l_seq2seq.Beam.advance" alt="" coords="430,434,645,475"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title="transresnet.modules.Transresnet\lModel.choose_best_caption" alt="" coords="1553,355,1767,397"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title="transresnet.modules.Transresnet\lModel.eval_batch" alt="" coords="1815,297,2028,338"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.choose\l_best_response" alt="" coords="703,296,937,352"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title="transresnet.modules.Transresnet\lModel.train_batch" alt="" coords="1553,213,1767,254"/>
+<area shape="rect" id="node7" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.get_rep" alt="" coords="985,347,1221,389"/>
+<area shape="rect" id="node8" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title="transresnet_multimodal.modules.\lTransresnetMultimodalModel.forward" alt="" coords="1269,297,1505,338"/>
+</map>

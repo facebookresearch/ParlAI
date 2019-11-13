@@ -1,0 +1,517 @@
+\hypertarget{namespaceparlai_1_1utils_1_1testing}{}\section{parlai.\+utils.\+testing Namespace Reference}
+\label{namespaceparlai_1_1utils_1_1testing}\index{parlai.\+utils.\+testing@{parlai.\+utils.\+testing}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1testing_1_1retry}{retry}
+\item 
+class \hyperlink{classparlai_1_1utils_1_1testing_1_1TeeStringIO}{Tee\+String\+IO}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2b1aba8cb2afc498691840f4b8999420}{is\+\_\+this\+\_\+circleci} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a7b182622aebc6cdc41ee3b99ebe47432}{skip\+Unless\+Torch} (testfn, reason=\textquotesingle{}pytorch is not installed\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2d3bb5013e210bf866032aedc812859b}{skip\+If\+G\+PU} (testfn, reason=\textquotesingle{}Test is C\+PU-\/only\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2773d8b6d4631fa1f639dde415eb3e2b}{skip\+Unless\+G\+PU} (testfn, reason=\textquotesingle{}Test requires a G\+PU\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ab04af7a525a569f29b936b54b32899b7}{skip\+Unless\+B\+PE} (testfn, reason=\textquotesingle{}Test requires a G\+PU\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a056ab7a9ad687500924a29001a7d9264}{skip\+If\+Circle\+CI} (testfn, reason=\textquotesingle{}Test disabled in Circle\+CI\textquotesingle{})
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a50b91b6f209eeedd93ae7ec0e790b121}{git\+\_\+ls\+\_\+files} (root=None, skip\+\_\+nonexisting=True)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a767a8ac6ea27697e6f782d7375d94933}{git\+\_\+ls\+\_\+dirs} (root=None)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a2e61f8f35b8ccf518e3561a224781ced}{git\+\_\+changed\+\_\+files} (skip\+\_\+nonexisting=True)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_aa9971204bea89f174596698b2e736214}{git\+\_\+commit\+\_\+messages} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a18092382f94848a52ef19248aa39f7ca}{is\+\_\+new\+\_\+task\+\_\+filename} (filename)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ab00d4d693202afab92c06387aa50699b}{capture\+\_\+output} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a0945b769a10c0c844b29c02ff26445a5}{tempdir} ()
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a005734981469efed8a992bf5edc3ca8a}{train\+\_\+model} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a6fb595d4398ee27f4d183911419a222a}{eval\+\_\+model} (opt, skip\+\_\+valid=False, skip\+\_\+test=False)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a30c532f112f9beddd873382e649b3ecd}{display\+\_\+data} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_a1b41200277931b2e4e684dc9452889a9}{display\+\_\+model} (opt)
+\item 
+def \hyperlink{namespaceparlai_1_1utils_1_1testing_ae0c93fc8f4c3e079333dba0065fa4dd2}{download\+\_\+unittest\+\_\+models} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a0f879f699b5616ca0bd1360324ac3d77}{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = True
+\item 
+int \hyperlink{namespaceparlai_1_1utils_1_1testing_acb64cdbe57c68a7d568900062681e0c5}{G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = torch.\+cuda.\+device\+\_\+count() $>$ 0
+\item 
+\hyperlink{namespaceparlai_1_1utils_1_1testing_aee12f734544cd8a3dcb1c823aa51b2f0}{git\+\_\+} = git.\+Git()
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a7084c71931b4958c640b38285e89cd87}{G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE} = True
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_a54ab3fcb6f56b6b83d27ed5aa62148da}{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED} = True
+\item 
+bool \hyperlink{namespaceparlai_1_1utils_1_1testing_aca36857f73d37ca56704f812c05a3b13}{D\+E\+B\+UG} = False
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_ab00d4d693202afab92c06387aa50699b}\label{namespaceparlai_1_1utils_1_1testing_ab00d4d693202afab92c06387aa50699b}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!capture\+\_\+output@{capture\+\_\+output}}
+\index{capture\+\_\+output@{capture\+\_\+output}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{capture\+\_\+output()}{capture\_output()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+capture\+\_\+output (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Suppress all logging output into a single buffer.
+
+Use as a context manager.
+
+>>> with capture_output() as output:
+...     print('hello')
+>>> output.getvalue()
+'hello'
+\end{DoxyVerb}
+ 
+
+Definition at line 187 of file testing.\+py.
+
+
+
+Referenced by parlai.\+utils.\+testing.\+display\+\_\+data(), parlai.\+utils.\+testing.\+display\+\_\+model(), parlai.\+utils.\+testing.\+download\+\_\+unittest\+\_\+models(), parlai.\+utils.\+testing.\+eval\+\_\+model(), tests.\+test\+\_\+torch\+\_\+agent.\+Test\+Legacy\+Versioning.\+test\+\_\+legacy\+\_\+version(), tests.\+test\+\_\+torch\+\_\+agent.\+Test\+Torch\+Agent.\+test\+\_\+resume\+\_\+checkpoint(), and parlai.\+utils.\+testing.\+train\+\_\+model().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_ab00d4d693202afab92c06387aa50699b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a30c532f112f9beddd873382e649b3ecd}\label{namespaceparlai_1_1utils_1_1testing_a30c532f112f9beddd873382e649b3ecd}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!display\+\_\+data@{display\+\_\+data}}
+\index{display\+\_\+data@{display\+\_\+data}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{display\+\_\+data()}{display\_data()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+display\+\_\+data (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run through a display data run.
+
+:return: (stdout_train, stdout_valid, stdout_test)
+:rtype: (str, str, str)
+\end{DoxyVerb}
+ 
+
+Definition at line 289 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+capture\+\_\+output().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_a30c532f112f9beddd873382e649b3ecd_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a1b41200277931b2e4e684dc9452889a9}\label{namespaceparlai_1_1utils_1_1testing_a1b41200277931b2e4e684dc9452889a9}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!display\+\_\+model@{display\+\_\+model}}
+\index{display\+\_\+model@{display\+\_\+model}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{display\+\_\+model()}{display\_model()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+display\+\_\+model (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{Tuple,  }\item[{}]{str,  }\item[{}]{str }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run display_model.py.
+
+:return: (stdout_valid, stdout_test)
+\end{DoxyVerb}
+ 
+
+Definition at line 315 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+capture\+\_\+output().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_a1b41200277931b2e4e684dc9452889a9_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_ae0c93fc8f4c3e079333dba0065fa4dd2}\label{namespaceparlai_1_1utils_1_1testing_ae0c93fc8f4c3e079333dba0065fa4dd2}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!download\+\_\+unittest\+\_\+models@{download\+\_\+unittest\+\_\+models}}
+\index{download\+\_\+unittest\+\_\+models@{download\+\_\+unittest\+\_\+models}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{download\+\_\+unittest\+\_\+models()}{download\_unittest\_models()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+download\+\_\+unittest\+\_\+models (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Download the unittest pretrained models.\end{DoxyVerb}
+ 
+
+Definition at line 339 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+capture\+\_\+output(), and parlai.\+core.\+build\+\_\+data.\+download\+\_\+models().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_ae0c93fc8f4c3e079333dba0065fa4dd2_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a6fb595d4398ee27f4d183911419a222a}\label{namespaceparlai_1_1utils_1_1testing_a6fb595d4398ee27f4d183911419a222a}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!eval\+\_\+model@{eval\+\_\+model}}
+\index{eval\+\_\+model@{eval\+\_\+model}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{eval\+\_\+model()}{eval\_model()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+eval\+\_\+model (\begin{DoxyParamCaption}\item[{}]{opt,  }\item[{}]{skip\+\_\+valid = {\ttfamily False},  }\item[{}]{skip\+\_\+test = {\ttfamily False} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run through an evaluation loop.
+
+:param opt:
+    Any non-default options you wish to set.
+:param bool skip_valid:
+    If true skips the valid evaluation, and the second return value will be None.
+:param bool skip_test:
+    If true skips the test evaluation, and the third return value will be None.
+
+:return: (stdout, valid_results, test_results)
+:rtype: (str, dict, dict)
+
+If model_file is not in opt, then this helper will create a temporary directory
+to store the model files, and clean up afterwards. You can keep the directory
+by disabling autocleanup
+\end{DoxyVerb}
+ 
+
+Definition at line 252 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+capture\+\_\+output().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_a6fb595d4398ee27f4d183911419a222a_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a2e61f8f35b8ccf518e3561a224781ced}\label{namespaceparlai_1_1utils_1_1testing_a2e61f8f35b8ccf518e3561a224781ced}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!git\+\_\+changed\+\_\+files@{git\+\_\+changed\+\_\+files}}
+\index{git\+\_\+changed\+\_\+files@{git\+\_\+changed\+\_\+files}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{git\+\_\+changed\+\_\+files()}{git\_changed\_files()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+git\+\_\+changed\+\_\+files (\begin{DoxyParamCaption}\item[{}]{skip\+\_\+nonexisting = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}List all the changed files in the git repository.
+
+:param bool skip_nonexisting:
+    If true, ignore files that don't exist on disk. This is useful for
+    disregarding files created in master, but don't exist in HEAD.
+\end{DoxyVerb}
+ 
+
+Definition at line 130 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_aa9971204bea89f174596698b2e736214}\label{namespaceparlai_1_1utils_1_1testing_aa9971204bea89f174596698b2e736214}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!git\+\_\+commit\+\_\+messages@{git\+\_\+commit\+\_\+messages}}
+\index{git\+\_\+commit\+\_\+messages@{git\+\_\+commit\+\_\+messages}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{git\+\_\+commit\+\_\+messages()}{git\_commit\_messages()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+git\+\_\+commit\+\_\+messages (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Output each commit message between here and master.\end{DoxyVerb}
+ 
+
+Definition at line 145 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a767a8ac6ea27697e6f782d7375d94933}\label{namespaceparlai_1_1utils_1_1testing_a767a8ac6ea27697e6f782d7375d94933}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!git\+\_\+ls\+\_\+dirs@{git\+\_\+ls\+\_\+dirs}}
+\index{git\+\_\+ls\+\_\+dirs@{git\+\_\+ls\+\_\+dirs}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{git\+\_\+ls\+\_\+dirs()}{git\_ls\_dirs()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+dirs (\begin{DoxyParamCaption}\item[{}]{root = {\ttfamily None} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}List all folders tracked by git.\end{DoxyVerb}
+ 
+
+Definition at line 122 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+files().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{namespaceparlai_1_1utils_1_1testing_a767a8ac6ea27697e6f782d7375d94933_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a50b91b6f209eeedd93ae7ec0e790b121}\label{namespaceparlai_1_1utils_1_1testing_a50b91b6f209eeedd93ae7ec0e790b121}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!git\+\_\+ls\+\_\+files@{git\+\_\+ls\+\_\+files}}
+\index{git\+\_\+ls\+\_\+files@{git\+\_\+ls\+\_\+files}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{git\+\_\+ls\+\_\+files()}{git\_ls\_files()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+files (\begin{DoxyParamCaption}\item[{}]{root = {\ttfamily None},  }\item[{}]{skip\+\_\+nonexisting = {\ttfamily True} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}List all files tracked by git.\end{DoxyVerb}
+ 
+
+Definition at line 114 of file testing.\+py.
+
+
+
+Referenced by parlai.\+utils.\+testing.\+git\+\_\+ls\+\_\+dirs().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{namespaceparlai_1_1utils_1_1testing_a50b91b6f209eeedd93ae7ec0e790b121_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a18092382f94848a52ef19248aa39f7ca}\label{namespaceparlai_1_1utils_1_1testing_a18092382f94848a52ef19248aa39f7ca}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!is\+\_\+new\+\_\+task\+\_\+filename@{is\+\_\+new\+\_\+task\+\_\+filename}}
+\index{is\+\_\+new\+\_\+task\+\_\+filename@{is\+\_\+new\+\_\+task\+\_\+filename}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{is\+\_\+new\+\_\+task\+\_\+filename()}{is\_new\_task\_filename()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+is\+\_\+new\+\_\+task\+\_\+filename (\begin{DoxyParamCaption}\item[{}]{filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Check if a given filename counts as a new task.
+
+Used in tests and test triggers, and only here to avoid redundancy.
+\end{DoxyVerb}
+ 
+
+Definition at line 152 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a2b1aba8cb2afc498691840f4b8999420}\label{namespaceparlai_1_1utils_1_1testing_a2b1aba8cb2afc498691840f4b8999420}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!is\+\_\+this\+\_\+circleci@{is\+\_\+this\+\_\+circleci}}
+\index{is\+\_\+this\+\_\+circleci@{is\+\_\+this\+\_\+circleci}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{is\+\_\+this\+\_\+circleci()}{is\_this\_circleci()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+is\+\_\+this\+\_\+circleci (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Return if we are currently running in CircleCI.\end{DoxyVerb}
+ 
+
+Definition at line 48 of file testing.\+py.
+
+
+
+References mastering\+\_\+the\+\_\+dungeon.\+mturk.\+tasks.\+M\+T\+D.\+run.\+bool.
+
+
+
+Referenced by parlai.\+utils.\+testing.\+skip\+If\+Circle\+C\+I().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{namespaceparlai_1_1utils_1_1testing_a2b1aba8cb2afc498691840f4b8999420_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a056ab7a9ad687500924a29001a7d9264}\label{namespaceparlai_1_1utils_1_1testing_a056ab7a9ad687500924a29001a7d9264}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!skip\+If\+Circle\+CI@{skip\+If\+Circle\+CI}}
+\index{skip\+If\+Circle\+CI@{skip\+If\+Circle\+CI}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{skip\+If\+Circle\+C\+I()}{skipIfCircleCI()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+skip\+If\+Circle\+CI (\begin{DoxyParamCaption}\item[{}]{testfn,  }\item[{}]{reason = {\ttfamily \textquotesingle{}Test~disabled~in~CircleCI\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decorate a test to skip if running on CircleCI.\end{DoxyVerb}
+ 
+
+Definition at line 77 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+is\+\_\+this\+\_\+circleci().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{namespaceparlai_1_1utils_1_1testing_a056ab7a9ad687500924a29001a7d9264_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a2d3bb5013e210bf866032aedc812859b}\label{namespaceparlai_1_1utils_1_1testing_a2d3bb5013e210bf866032aedc812859b}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!skip\+If\+G\+PU@{skip\+If\+G\+PU}}
+\index{skip\+If\+G\+PU@{skip\+If\+G\+PU}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{skip\+If\+G\+P\+U()}{skipIfGPU()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+skip\+If\+G\+PU (\begin{DoxyParamCaption}\item[{}]{testfn,  }\item[{}]{reason = {\ttfamily \textquotesingle{}Test~is~CPU-\/only\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decorate a test to skip if a GPU is available.
+
+Useful for disabling hogwild tests.
+\end{DoxyVerb}
+ 
+
+Definition at line 58 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_ab04af7a525a569f29b936b54b32899b7}\label{namespaceparlai_1_1utils_1_1testing_ab04af7a525a569f29b936b54b32899b7}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!skip\+Unless\+B\+PE@{skip\+Unless\+B\+PE}}
+\index{skip\+Unless\+B\+PE@{skip\+Unless\+B\+PE}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{skip\+Unless\+B\+P\+E()}{skipUnlessBPE()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+skip\+Unless\+B\+PE (\begin{DoxyParamCaption}\item[{}]{testfn,  }\item[{}]{reason = {\ttfamily \textquotesingle{}Test~requires~a~GPU\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decorate a test to skip if BPE is not installed.\end{DoxyVerb}
+ 
+
+Definition at line 72 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a2773d8b6d4631fa1f639dde415eb3e2b}\label{namespaceparlai_1_1utils_1_1testing_a2773d8b6d4631fa1f639dde415eb3e2b}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!skip\+Unless\+G\+PU@{skip\+Unless\+G\+PU}}
+\index{skip\+Unless\+G\+PU@{skip\+Unless\+G\+PU}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{skip\+Unless\+G\+P\+U()}{skipUnlessGPU()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+skip\+Unless\+G\+PU (\begin{DoxyParamCaption}\item[{}]{testfn,  }\item[{}]{reason = {\ttfamily \textquotesingle{}Test~requires~a~GPU\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decorate a test to skip if no GPU is available.\end{DoxyVerb}
+ 
+
+Definition at line 67 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a7b182622aebc6cdc41ee3b99ebe47432}\label{namespaceparlai_1_1utils_1_1testing_a7b182622aebc6cdc41ee3b99ebe47432}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!skip\+Unless\+Torch@{skip\+Unless\+Torch}}
+\index{skip\+Unless\+Torch@{skip\+Unless\+Torch}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{skip\+Unless\+Torch()}{skipUnlessTorch()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+skip\+Unless\+Torch (\begin{DoxyParamCaption}\item[{}]{testfn,  }\item[{}]{reason = {\ttfamily \textquotesingle{}pytorch~is~not~installed\textquotesingle{}} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Decorate a test to skip if torch is not installed.\end{DoxyVerb}
+ 
+
+Definition at line 53 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a0945b769a10c0c844b29c02ff26445a5}\label{namespaceparlai_1_1utils_1_1testing_a0945b769a10c0c844b29c02ff26445a5}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!tempdir@{tempdir}}
+\index{tempdir@{tempdir}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{tempdir()}{tempdir()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+tempdir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Create a temporary directory.
+
+Use as a context manager so the directory is automatically cleaned up.
+
+>>> with tempdir() as tmpdir:
+...    print(tmpdir)  # prints a folder like /tmp/randomname
+\end{DoxyVerb}
+ 
+
+Definition at line 204 of file testing.\+py.
+
+
+
+Referenced by tests.\+test\+\_\+torch\+\_\+agent.\+Test\+Torch\+Agent.\+test\+\_\+resume\+\_\+checkpoint(), and parlai.\+utils.\+testing.\+train\+\_\+model().
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_a0945b769a10c0c844b29c02ff26445a5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a005734981469efed8a992bf5edc3ca8a}\label{namespaceparlai_1_1utils_1_1testing_a005734981469efed8a992bf5edc3ca8a}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!train\+\_\+model@{train\+\_\+model}}
+\index{train\+\_\+model@{train\+\_\+model}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{train\+\_\+model()}{train\_model()}}
+{\footnotesize\ttfamily def parlai.\+utils.\+testing.\+train\+\_\+model (\begin{DoxyParamCaption}\item[{}]{opt }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Run through a TrainLoop.
+
+If model_file is not in opt, then this helper will create a temporary
+directory to store the model, dict, etc.
+
+:return: (stdout, valid_results, test_results)
+:rtype: (str, dict, dict)
+\end{DoxyVerb}
+ 
+
+Definition at line 218 of file testing.\+py.
+
+
+
+References parlai.\+utils.\+testing.\+capture\+\_\+output(), and parlai.\+utils.\+testing.\+tempdir().
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceparlai_1_1utils_1_1testing_a005734981469efed8a992bf5edc3ca8a_cgraph}
+\end{center}
+\end{figure}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a54ab3fcb6f56b6b83d27ed5aa62148da}\label{namespaceparlai_1_1utils_1_1testing_a54ab3fcb6f56b6b83d27ed5aa62148da}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED@{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}}
+\index{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED@{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED}{BPE\_INSTALLED}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+testing.\+B\+P\+E\+\_\+\+I\+N\+S\+T\+A\+L\+L\+ED = True}
+
+
+
+Definition at line 40 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_aca36857f73d37ca56704f812c05a3b13}\label{namespaceparlai_1_1utils_1_1testing_aca36857f73d37ca56704f812c05a3b13}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!D\+E\+B\+UG@{D\+E\+B\+UG}}
+\index{D\+E\+B\+UG@{D\+E\+B\+UG}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{D\+E\+B\+UG}{DEBUG}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+testing.\+D\+E\+B\+UG = False}
+
+
+
+Definition at line 45 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_aee12f734544cd8a3dcb1c823aa51b2f0}\label{namespaceparlai_1_1utils_1_1testing_aee12f734544cd8a3dcb1c823aa51b2f0}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!git\+\_\+@{git\+\_\+}}
+\index{git\+\_\+@{git\+\_\+}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{git\+\_\+}{git\_}}
+{\footnotesize\ttfamily parlai.\+utils.\+testing.\+git\+\_\+ = git.\+Git()}
+
+
+
+Definition at line 31 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a7084c71931b4958c640b38285e89cd87}\label{namespaceparlai_1_1utils_1_1testing_a7084c71931b4958c640b38285e89cd87}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}}
+\index{G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}{GIT\_AVAILABLE}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+testing.\+G\+I\+T\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE = True}
+
+
+
+Definition at line 32 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_acb64cdbe57c68a7d568900062681e0c5}\label{namespaceparlai_1_1utils_1_1testing_acb64cdbe57c68a7d568900062681e0c5}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}}
+\index{G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}{GPU\_AVAILABLE}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+testing.\+G\+P\+U\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE = torch.\+cuda.\+device\+\_\+count() $>$ 0}
+
+
+
+Definition at line 23 of file testing.\+py.
+
+\mbox{\Hypertarget{namespaceparlai_1_1utils_1_1testing_a0f879f699b5616ca0bd1360324ac3d77}\label{namespaceparlai_1_1utils_1_1testing_a0f879f699b5616ca0bd1360324ac3d77}} 
+\index{parlai\+::utils\+::testing@{parlai\+::utils\+::testing}!T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}}
+\index{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE@{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}!parlai\+::utils\+::testing@{parlai\+::utils\+::testing}}
+\subsubsection{\texorpdfstring{T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE}{TORCH\_AVAILABLE}}
+{\footnotesize\ttfamily bool parlai.\+utils.\+testing.\+T\+O\+R\+C\+H\+\_\+\+A\+V\+A\+I\+L\+A\+B\+LE = True}
+
+
+
+Definition at line 22 of file testing.\+py.
+

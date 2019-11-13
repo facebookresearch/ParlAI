@@ -1,0 +1,38 @@
+This directory contains a variety of different agents which use Parl\+AI\textquotesingle{}s interface.
+
+\subsection*{Utility}
+
+
+\begin{DoxyItemize}
+\item {\bfseries local\+\_\+human}\+: receives human input from the terminal. used for interactive mode, e.\+g. {\ttfamily \hyperlink{parlai_2scripts_2interactive_8py}{parlai/scripts/interactive.\+py}}.
+\item {\bfseries legacy\+\_\+agents}\+: contains deprecated agent code for posterity
+\item {\bfseries random\+\_\+candidate}\+: returns a random candidate, if candidates are available. simple baseline agent.
+\item {\bfseries remote\+\_\+agent}\+: uses Z\+MQ to communicate with a different process, either on the local machine or on a remote host.
+\item {\bfseries repeat\+\_\+label}\+: sends back the label if available. good for sanity checks such as checking statistics of the base dataset.
+\item {\bfseries repeat\+\_\+query}\+: repeats whatever is said to it. simple baseline agent.
+\end{DoxyItemize}
+
+\subsection*{Non-\/neural agents}
+
+
+\begin{DoxyItemize}
+\item {\bfseries ir\+\_\+baseline}\+: chooses response based on simple word overlap
+\item {\bfseries retriever\+\_\+reader}\+: used primarily for Open\+Squad evaluation. retrieves documents from database and reads them back
+\item {\bfseries tfidf\+\_\+retriever}\+: returns candidate responses based on tfidf overlap
+\item {\bfseries unigram}\+: returns top unigrams
+\end{DoxyItemize}
+
+\subsection*{Text-\/based neural networks}
+
+
+\begin{DoxyItemize}
+\item {\bfseries bert\+\_\+ranker}\+: B\+E\+R\+T-\/based bi-\/ranker and cross-\/ranker retrieval models
+\item {\bfseries drqa}\+: context-\/based question answering system
+\item {\bfseries fairseq}\+: provides access to models from F\+A\+IR\textquotesingle{}s Fair\+Seq library (github.\+com/facebookresearch/fairseq)
+\item {\bfseries language\+\_\+model}\+: simple R\+N\+N-\/based language model
+\item {\bfseries memnn}\+: memory network
+\item {\bfseries ibm\+\_\+seq2seq}\+: I\+BM\textquotesingle{}s R\+N\+N-\/based sequence to sequence model
+\item {\bfseries seq2seq}\+: our R\+N\+N-\/based sequence to sequence model
+\item {\bfseries starspace}\+: embedding model
+\item {\bfseries transformer}\+: both generative and retrieval-\/based transformer models 
+\end{DoxyItemize}

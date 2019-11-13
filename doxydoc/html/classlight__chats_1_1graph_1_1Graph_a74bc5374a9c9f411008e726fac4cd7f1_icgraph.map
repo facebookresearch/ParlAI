@@ -1,5 +1,6 @@
 <map id="light_chats.graph.Graph.die" name="light_chats.graph.Graph.die">
-<area shape="rect" id="node1" title=" " alt="" coords="495,66,676,93"/>
-<area shape="rect" id="node2" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3c6ce42eda8759a82bba26bd2f4d1822" title=" " alt="" coords="215,29,447,71"/>
-<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1IngestFunction.html#acf3afc20e4e55a9bd2783d2bad592a88" title=" " alt="" coords="5,59,167,100"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1IngestFunction.html#acf3afc20e4e55a9bd2783d2bad592a88" title="light_chats.graph.Ingest\lFunction.func" alt="" coords="270,5,431,47"/>
+<area shape="rect" id="node3" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a044b163ff53309b39883977585ae7434" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.hit_agent" alt="" coords="235,71,467,112"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.parse_exec" alt="" coords="515,71,747,112"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a062ee34ffc89612a75b281a024f74c55" title="mastering_the_dungeon.tasks.graph\l_world2.graph.Graph.update_world" alt="" coords="795,71,1027,112"/>
 </map>
