@@ -427,7 +427,7 @@ class TrainLoop:
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
 
-        if opt['tensorboard_log'] is True:
+        if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
