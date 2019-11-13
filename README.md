@@ -87,7 +87,7 @@ The code is set up into several main directories:
 - [**examples**](./parlai/examples): contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
 - [**tasks**](./parlai/tasks): contains code for the different tasks available from within ParlAI
 - [**mturk**](./parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
-- [**messenger**](./parlai/messenger): contains code for interfacing with Facebook Messenger
+- [**messenger**](./parlai/chat_service/services/messenger): contains code for interfacing with Facebook Messenger
 - [**zoo**](./parlai/zoo): contains code to directly download and use pretrained models from our model zoo
 
 ## Support

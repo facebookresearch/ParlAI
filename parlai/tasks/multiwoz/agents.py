@@ -56,21 +56,21 @@ class MultiWozTeacher(FixedDialogTeacher):
         valid_path = os.path.join(jsons_path, 'valListFile.json')
         if self.datatype.startswith('test'):
             with open(test_path) as f:
-                test_data = {self.messages[line] for line in f}
+                test_data = {line.strip(): self.messages[line.strip()] for line in f}
                 self.messages = test_data
         elif self.datatype.startswith('valid'):
             with open(valid_path) as f:
-                valid_data = {self.messages[line] for line in f}
+                valid_data = {line.strip(): self.messages[line.strip()] for line in f}
                 self.messages = valid_data
         else:
             with open(test_path) as f:
                 for line in f:
-                    if line in self.messages:
-                        del self.messages[line]
+                    if line.strip() in self.messages:
+                        del self.messages[line.strip()]
             with open(valid_path) as f:
                 for line in f:
-                    if line in self.messages:
-                        del self.messages[line]
+                    if line.strip() in self.messages:
+                        del self.messages[line.strip()]
         self.messages = list(self.messages.values())
 
     def num_examples(self):

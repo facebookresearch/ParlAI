@@ -26,7 +26,7 @@ Messenger tasks can be grouped together within an ``Overworld`` which can spawn 
 
 The task definition resides in a config file, ``config.yml``, in which you specify all the available worlds, and any additional command line arguments.
 
-Finally, to run a task, simple run the following command from the ``parlai/messenger/core`` directory:
+Finally, to run a task, simple run the following command from the ``parlai/chat_service/messenger`` directory:
 
 .. code-block:: bash
 
@@ -37,9 +37,9 @@ Example Tasks
 
 We provide three examples of using Facebook Messenger with ParlAI:
 
-- `Generic Chatbot <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/chatbot/>`__: Allow messenger conversations with any ParlAI models, for instance the `PersonaChat <https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat>`__ model.
-- `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/qa_data_collection/>`__: collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
-- `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__: let people select between three different subtasks, namely an echo bot, a demo of onboarding data collection, and a random chat.
+- `Generic Chatbot <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/chatbot/>`__: Allow messenger conversations with any ParlAI models, for instance the `PersonaChat <https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat>`__ model.
+- `QA Data Collection <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/qa_data_collection/>`__: collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
+- `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/>`__: let people select between three different subtasks, namely an echo bot, a demo of onboarding data collection, and a random chat.
 
 Task 1: Testing a Model
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,7 +59,7 @@ For instance, one can try testing a model trained on the ConvAI2 dataset with th
       timeout: 1800
       agents_required: 1
   task_name: chatbot
-  world_module: parlai.messenger.tasks.chatbot.worlds
+  world_module: parlai.chat_service.tasks.chatbot.worlds
   overworld: MessengerOverworld
   page_id: 1 # Configure Your Own Page
   max_workers: 30
@@ -71,11 +71,11 @@ For instance, one can try testing a model trained on the ConvAI2 dataset with th
       model: legacy:seq2seq:0
 
 
-Then, you would simply run the world via the following command (while in ``parlai/messenger/core``):
+Then, you would simply run the world via the following command (while in ``parlai/chat_service/services/messenger``):
 
 .. code-block:: bash
 
-  python run.py --config-path ../tasks/chatbot/config.yml
+  python run.py --config-path ../../tasks/chatbot/config.yml
 
 This code will allow users to talk with a bot in conversations like the one displayed above.
 
@@ -84,7 +84,7 @@ Task 2: Collecting Training Data
 
 One of the biggest use cases of Messenger in ParlAI is to connect people and collect natural language data.
 
-As an example, the `QA Data Collection task <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/qa_data_collection/>`__ does the following:
+As an example, the `QA Data Collection task <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/qa_data_collection/>`__ does the following:
 
 1. Pick a random Wikipedia paragraph from SQuAD dataset.
 2. Ask a person to provide a question given the paragraph.
@@ -102,7 +102,7 @@ Task 3: Exposing People to Multiple Tasks
 
 ParlAI messenger can also be used to create a multi-function world that users can choose multiple tasks or variations for. This can be used to expose multiple versions of a chatbot you want to test, to allow users to choose what kinds of tasks they do, amongst other things.
 
-As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
+As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/>`__ displays three separate tasks connected together by an overworld.
 
 .. figure:: _static/img/messenger-example.png
    :align: center
@@ -121,7 +121,7 @@ A few things to keep in mind:
 
 1. A conversation ends when a call between ``parley`` calls to ``episode_done`` returns True.
 2. Your world can utilize the complete set of `Facebook Messenger Templates <https://developers.facebook.com/docs/messenger-platform/send-messages/templates>`__ by putting the formatted data in the 'payload' field of the observed action.
-3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/messenger/tasks/overworld_demo/>`__ displays this functionality.
+3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/>`__ displays this functionality.
 4. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
 5. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via ``episode_done``).
 6. To collect the conversation, data should be collected during every ``parley`` and saved during the ``world.shutdown`` call. You must inform the user of the fact that the data is being collected as well as your intended use.
@@ -137,7 +137,7 @@ Running a Task
 
 - When the guide asks you to configure your webhook URL, you're ready to run the task. This can be done by running the ``run.py`` file in with python.
 
-- After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``.
+- After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``. This URL should be added in the Webhook section. The webhook subscription fields should also be edited to subscribe to the ``messages`` field.
 
 - On the first run, the page will ask you for a "Page Access Token," which is also referred to on the messenger setup page. Paste this in to finish the setup. You should now be able to communicate with your ParlAI world by messaging your page.
 

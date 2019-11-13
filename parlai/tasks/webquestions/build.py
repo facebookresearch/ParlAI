@@ -9,6 +9,23 @@ import parlai.core.build_data as build_data
 import json
 import os
 import re
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://worksheets.codalab.org/rest/bundles/0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/',
+        'train.json',
+        'fb1797e4554a1b1be642388367de1379f8c0d5afc609ac171492c67f7b70cb1e',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://worksheets.codalab.org/rest/bundles/0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/',
+        'test.json',
+        'e3d4550e90660aaabe18458ba34b59f2624857273f375af7353273ce8b84ce6e',
+        zipped=False,
+    ),
+]
+
 
 STRIP_CHARS = ' ()"()'
 
@@ -47,17 +64,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = (
-            'https://worksheets.codalab.org/rest/bundles/'
-            + '0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/'
-        )
-        build_data.download(url, dpath, 'train.json')
-
-        url = (
-            'https://worksheets.codalab.org/rest/bundles/'
-            + '0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/'
-        )
-        build_data.download(url, dpath, 'test.json')
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'train.json'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'train.json'))
