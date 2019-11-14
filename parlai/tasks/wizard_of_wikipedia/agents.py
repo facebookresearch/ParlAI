@@ -345,6 +345,8 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         super().__init__(opt, shared)
         self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
         self.wizard_dialog = opt.get('wizard_dialog', False)
+        self.apprentice_dialog = opt.get('apprentice_dialog', False)
+        assert not (self.wizard_dialog and self.apprentice_dialog)
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -353,7 +355,13 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             '--wizard-dialog',
             type='bool',
             default=False,
-            help='If true, ensures that wizard response ' 'is always the label',
+            help='If true, ensures that wizard response is always the label',
+        )
+        agent.add_argument(
+            '--apprentice-dialog',
+            type='bool',
+            default=False,
+            help='If true, ensures that apprentice response is always the label'
         )
 
     def num_examples(self):
@@ -361,7 +369,10 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def len_episode(self, ep):
         d = self.data[ep]
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
+        first_speaker = d['dialog'][0]['speaker']
+        if self.wizard_dialog and 'Wizard' in first_speaker:
+            return (len(d['dialog']) - 1) // 2
+        elif self.apprentice_dialog and 'Apprentice' in first_speaker:
             return (len(d['dialog']) - 1) // 2
         return len(d['dialog']) // 2
 
@@ -370,7 +381,10 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         episode_done = entry_idx == (self.len_episode(episode_idx) - 1)
 
         idx = entry_idx * 2
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
+        first_speaker = d['dialog'][0]['speaker']
+        if self.wizard_dialog and 'Wizard' in first_speaker:
+            idx += 1
+        elif self.apprentice_dialog and 'Apprentice' in first_speaker:
             idx += 1
 
         dialog_entry_1 = d['dialog'][idx]
