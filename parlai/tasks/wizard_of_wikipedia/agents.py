@@ -362,12 +362,9 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def len_episode(self, ep):
         d = self.data[ep]
-        if self.speaker_label != 'both':
-            first_speaker = d['dialog'][0]['speaker']
-            if self.speaker_label == 'wizard' and 'Wizard' in first_speaker:
-                return (len(d['dialog']) - 1) // 2
-            elif self.speaker_label == 'apprentice' and 'Apprentice' in first_speaker:
-                return (len(d['dialog']) - 1) // 2
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
+            return (len(d['dialog']) - 1) // 2
         return len(d['dialog']) // 2
 
     def get(self, episode_idx, entry_idx=0):
@@ -375,10 +372,8 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         episode_done = entry_idx == (self.len_episode(episode_idx) - 1)
 
         idx = entry_idx * 2
-        first_speaker = d['dialog'][0]['speaker']
-        if self.speaker_label == 'wizard' and 'Wizard' in first_speaker:
-            idx += 1
-        elif self.speaker_label == 'apprentice' and 'Apprentice' in first_speaker:
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
             idx += 1
 
         dialog_entry_1 = d['dialog'][idx]
