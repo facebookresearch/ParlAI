@@ -650,7 +650,6 @@ class TorchRankerAgent(TorchAgent):
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
-
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
@@ -662,6 +661,10 @@ class TorchRankerAgent(TorchAgent):
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[batch_idx] == -1:
+                        # Can happen when classifier categorizes dataset wrongly
+                        # Then the actual next utterance won't be in the fixed
+                        # candidate set for that model
+                        # print(f'EXAMMPLE label not in label_candidates - label_vecs: {label_vecs}')
                         bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
@@ -818,20 +821,24 @@ class TorchRankerAgent(TorchAgent):
                 with open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
                 # Load or create candidate vectors
-                if os.path.isfile(self.opt['fixed_candidate_vecs']):
-                    vecs_path = opt['fixed_candidate_vecs']
-                    vecs = self.load_candidates(vecs_path)
+                vecs_param = self.opt['fixed_candidate_vecs']
+                if os.path.isfile(vecs_param):
+                    vecs = self.load_candidates(vecs_param)                    
                 else:
-                    setting = self.opt['fixed_candidate_vecs']
                     model_dir, model_file = os.path.split(self.opt['model_file'])
                     model_name = os.path.splitext(model_file)[0]
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]
-                    vecs_path = os.path.join(
-                        model_dir, '.'.join([model_name, cands_name, 'vecs'])
-                    )
-                    if setting == 'reuse' and os.path.isfile(vecs_path):
+                    if vecs_param != 'reuse' and vecs_param != 'replace':
+                        # User specified a file for the candidate vectors but it
+                        # doesn't exist yet - need to create it
+                        vecs_path = vecs_param
+                    else:
+                        vecs_path = os.path.join(
+                            model_dir, '.'.join([model_name, cands_name, 'vecs'])
+                        )
+                    if (vecs_param == 'reuse' and os.path.isfile(vecs_path)) or (vecs_param != 'reuse' and vecs_param != 'replace' and os.path.isfile(vecs_path)):
                         vecs = self.load_candidates(vecs_path)
-                    else:  # setting == 'replace' OR generating for the first time
+                    else:  # vecs_param == 'replace' OR generating for first time
                         vecs = self._make_candidate_vecs(cands)
                         self._save_candidates(vecs, vecs_path)
 
@@ -842,10 +849,14 @@ class TorchRankerAgent(TorchAgent):
 
                 if self.encode_candidate_vecs:
                     # candidate encodings are fixed so set them up now
-                    enc_path = os.path.join(
-                        model_dir, '.'.join([model_name, cands_name, 'encs'])
-                    )
-                    if setting == 'reuse' and os.path.isfile(enc_path):
+                    if vecs_param != 'reuse' and vecs_param != 'replace':
+                        # As above, user has specified a file for the encodings 
+                        enc_path = vecs_param + '.encs'
+                    else:
+                        enc_path = os.path.join(
+                            model_dir, '.'.join([model_name, cands_name, 'encs'])
+                        )
+                    if (vecs_param == 'reuse' and os.path.isfile(enc_path)) or (vecs_param != 'reuse' and vecs_param != 'replace' and os.path.isfile(enc_path)):
                         encs = self.load_candidates(enc_path, cand_type='encodings')
                     else:
                         encs = self._make_candidate_encs(self.fixed_candidate_vecs)
