@@ -35,7 +35,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
             os.makedirs(os.path.join(data_path, 'ImageTeacher'))
 
             opt = {'task': 'integration_tests:ImageTeacher', 'datapath': data_path}
-            for image_mode in ['resnet152', 'none']:
+            for image_mode in ['resnet152', 'no_image_model']:
                 opt['image_mode'] = image_mode
                 _test_display_output(opt)
 

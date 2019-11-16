@@ -830,7 +830,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
-        if image_mode is not None and image_mode != 'none':
+        if image_mode is not None and image_mode != 'no_image_model':
             self.add_image_args(image_mode)
 
         # find which task specified if any, and add its specific arguments
