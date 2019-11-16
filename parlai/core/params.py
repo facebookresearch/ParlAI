@@ -1071,8 +1071,16 @@ class ParlaiParser(argparse.ArgumentParser):
                 kwargs['help'] = argparse.SUPPRESS
         return kwargs
 
+    def add_recommended_to_help(self, kwargs):
+        """Add recommended value to help string if recommended exists"""
+        if 'recommended' in kwargs:
+            kwargs['help'] += " Recommended: " + kwargs['recommended']
+            del kwargs['recommended']
+        return kwargs
+
     def add_argument(self, *args, **kwargs):
         """Override to convert underscores to hyphens for consistency."""
+        kwargs = self.add_recommended_to_help(kwargs)
         return super().add_argument(
             *fix_underscores(args), **self._handle_hidden_args(kwargs)
         )
