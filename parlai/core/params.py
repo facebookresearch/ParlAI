@@ -1073,8 +1073,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_recommended_to_help(self, kwargs):
         """Add recommended value to help string if recommended exists"""
-        if 'recommended' in kwargs:
-            kwargs['help'] += " Recommended: " + kwargs['recommended']
+        if 'help' in kwargs and 'recommended' in kwargs:
+            kwargs['help'] += " Recommended: " + str(kwargs['recommended'])
             del kwargs['recommended']
         return kwargs
 
@@ -1091,6 +1091,7 @@ class ParlaiParser(argparse.ArgumentParser):
         original_add_arg = arg_group.add_argument
 
         def ag_add_argument(*args, **kwargs):
+            kwargs = self.add_recommended_to_help(kwargs)
             return original_add_arg(
                 *fix_underscores(args), **self._handle_hidden_args(kwargs)
             )
