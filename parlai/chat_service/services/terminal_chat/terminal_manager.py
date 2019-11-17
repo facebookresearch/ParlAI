@@ -5,9 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
+from parlai.chat_service.core.chat_service_manager import ChatServiceMessageSender
+
 
 class TerminalManager(ChatServiceManager):
-    
     class TerminalMessageSender(ChatServiceMessageSender):
         def send_read(self, receiver_id):
             raise NotImplementedError
@@ -33,7 +34,7 @@ class TerminalManager(ChatServiceManager):
     def _load_model(self):
         """Load model if necessary."""
         raise NotImplementedError
-    
+
     def restructure_message(self):
         """Use this function to restructure the message into the provided format."""
         raise NotImplementedError
@@ -41,11 +42,11 @@ class TerminalManager(ChatServiceManager):
     def _handle_bot_read(self, agent_id):
         """Use this function to handle/execute events once the bot has observed the message."""
         raise NotImplementedError
-    
+
     def _confirm_message_delivery(self, event):
         """A callback for when messages are marked as delivered"""
         raise NotImplementedError
-    
+
     def setup_server(self):
         """Prepare the Chat Service server for handling messages."""
         raise NotImplementedError

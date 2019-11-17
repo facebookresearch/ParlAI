@@ -6,11 +6,11 @@
 
 from parlai.chat_service.core.agents import ChatServiceAgent
 
+
 class TerminalAgents(ChatServiceAgent):
-    
     def __init__(self, opt, manager, receiver_id, task_id):
         super().__init__(opt, manager, receiver_id, task_id)
-    
+
     def observe(self, act):
         raise NotImplementedError
 
