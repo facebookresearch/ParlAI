@@ -708,9 +708,8 @@ class TrainLoop:
                     world.parley()
                 except StopTrainException:
                     if is_distributed():
-                        raise Error(
-                            "StopTrainException not supported for " "distributed mode"
-                        )
+                        raise RuntimeError("StopTrainException not supported for "
+                                            "distributed mode")
                     break
 
                 self.last_valid_epoch = self._total_epochs
@@ -757,10 +756,8 @@ class TrainLoop:
                         stop_training = self.validate()
                     except StopTrainException:
                         if is_distributed():
-                            raise Error(
-                                "StopTrainException not supported for "
-                                "distributed mode"
-                            )
+                            raise RuntimeError("StopTrainException not "
+                                            "supported for distributed mode")
                         break
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:

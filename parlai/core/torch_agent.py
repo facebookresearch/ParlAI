@@ -47,8 +47,7 @@ except ImportError:
 
 
 class StopTrainException(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
+    pass
 
 
 class Batch(AttrDict):
