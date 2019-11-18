@@ -55,6 +55,9 @@ class MessengerWorldRunner:
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print("{} DEBUG: {}".format(time, text))
 
+    def is_initialized(self):
+        return self.initialized
+
     def shutdown(self):
         """Shutdown the world runner."""
         for _, task in self.tasks.items():

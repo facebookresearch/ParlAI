@@ -319,7 +319,7 @@ class ChatServiceManager(ABC):
             message to put on queue
         """
         agent_id = message['sender']['id']
-        if not self.world_runner.initialized:
+        if not self.world_runner.is_initialized():
             self.observe_message(
                 agent_id, 'Please wait while the worlds are initializing...'
             )
