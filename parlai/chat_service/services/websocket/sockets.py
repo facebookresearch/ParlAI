@@ -54,7 +54,6 @@ class MessageSocketHandler(WebSocketHandler):
         message = {
             'text': message.get('text', ''),
             'attachment': message.get('attachment'),
-
             'sender': {'id': self.sid},
             'recipient': {'id': 0},
         }
