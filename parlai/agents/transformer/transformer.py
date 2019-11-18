@@ -71,6 +71,7 @@ def add_common_cmdline_args(argparser):
         choices={'aiayn', 'xlm'},
         default='aiayn',
         help='Chooses locations of layer norms, etc.',
+        recommended='xlm',
     )
     argparser.add_argument(
         '--activation',
