@@ -15,20 +15,22 @@ print('connecting to {} port {}'.format(*server_address))
 sock.connect(server_address)
 
 try:
+    while True:
+        # Send data
+        message = input("Enter message here: ").encode()
+        if message.decode() == "EXIT":
+            break
+        print('sending {!r}'.format(message.decode()))
+        sock.sendall(message)
 
-    # Send data
-    message = b'This is the message.  It will be repeated.'
-    print('sending {!r}'.format(message))
-    sock.sendall(message)
+        # Look for the response
+        amount_received = 0
+        amount_expected = len(message)
 
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
-
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print('received {!r}'.format(data))
+        while amount_received < amount_expected:
+            data = sock.recv(1024)
+            amount_received += len(data)
+            print('received {!r}'.format(data))
 
 finally:
     print('closing socket')
