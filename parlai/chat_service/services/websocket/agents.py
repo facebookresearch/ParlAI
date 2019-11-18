@@ -23,43 +23,41 @@ class WebsocketAgent(ChatServiceAgent):
     def observe(self, act):
         """Send an agent a message through the websocket manager
 
-        The message sent to the WebsocketManager is a string or dict for a payload.
-
-        Payloads have the following fields:
-            `type`: similar to the `act` payload below
-            `body`: where Base 64 encoded content should be provided
-            `mime_type`: where the mime type of the payload should be specified
-
         Only payloads of type 'image' are currently supported. In the case of
-        images, the resultant message will have a `body` field which will be a
+        images, the resultant message will have a `text` field which will be a
         base 64 encoded image and `mime_type` which will be an image mime type.
 
+        Returned payloads have a 'image' boolean field, a 'text' field for the
+        message contents, and a 'mime_type' field for the message content type.
+
         Args:
-            act: dict. See the `chat_services` README for more details on the
-                format of this argument. For the `payload`, this agent expects
-                a 'type' key, where the value 'image' is the only type currently
-                supported. If the payload is an image, either a `path` key must be
-                specified for the path to the image, or an 'image' key holding a
-                PIL Image.
+            act: dict. If act contains a payload, then a dict should be provided.
+                Otherwise, act should be a dict with the `text` key for the content.
+                For the 'payload' dict, this agent expects an 'image' key, which
+                specifies whether or not the payload is an image.
+                If the payload is an image, either a 'path' key must be specified
+                for the path to the image, or a 'data' key holding a PIL Image.
+                A `quick_replies` key can be provided with a list of string quick
+                replies for both payload and text messages.
         """
         logging.info(f"Sending new message: {act}")
+        quick_replies = act.get('quick_replies', None)
         if 'payload' in act:
             payload = act['payload']
-            if payload['type'] == 'image':
+            if payload['image']:
                 if 'path' in payload:
                     image = Image.open(payload['path'])
                     msg = self._get_message_from_image(image)
-                elif 'image' in payload:
-                    msg = self._get_message_from_image(payload['image'])
+                elif 'data' in payload:
+                    msg = self._get_message_from_image(payload['data'])
                 else:
                     raise ValueError("Invalid payload for type 'image'")
             else:
                 raise ValueError(f"Payload type {payload['type']} not supported")
-        else:
-            msg = act['text']
 
-        quick_replies = act.get('quick_replies', None)
-        self.manager.observe_message(self.id, msg, quick_replies)
+            self.manager.observe_payload(self.id, msg, quick_replies)
+        else:
+            self.manager.observe_message(self.id, act['text'], quick_replies)
 
     def _get_message_from_image(self, image):
         """Gets the message dict for sending the provided image
@@ -67,23 +65,32 @@ class WebsocketAgent(ChatServiceAgent):
         Args:
             image: PIL Image. Image to be sent in the message
 
-        Returns a message struct with the fields `type`, `body` and `mime_type`.
+        Returns a message struct with the fields `image`, `text` and `mime_type`.
         See `observe` for more information
         """
         buffered = BytesIO()
         image.save(buffered, format=image.format)
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-        msg = {'type': 'image', 'body': img_str, 'mime_type': Image.MIME[image.format]}
+        msg = {'image': True, 'text': img_str, 'mime_type': Image.MIME[image.format]}
         return msg
 
     def put_data(self, message):
-        """Put data into the message queue"""
+        """Put data into the message queue
+
+        Args:
+            message: dict. An incoming websocket message, where the message content
+                is in the 'text' field. The message content is expected to be
+                stringified JSON. See `observe` for usable keys of the JSON
+                content. `See MessageSocketHandler.on_message` for more
+                information about the message structure.
+        """
         logging.info(f"Received new message: {message}")
         message = json.loads(message['text'])
         action = {
             'episode_done': False,
-            'image': message['image'],
-            'text': message['body'],
+            'image': message.get('image', False),
+            'text': message.get('text', ''),
+            'mime_type': message.get('mime_type')
         }
         self._queue_action(action, self.action_id)
         self.action_id += 1

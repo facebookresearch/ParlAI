@@ -229,28 +229,40 @@ class WebsocketManager(ChatServiceManager):
         :param socket_id:
             int identifier for agent socket to send message to
         :param message:
-            string text to send
-        """
-        if type(message) == str:
-            image = False
-            mime_type = 'text/plain'
-            body = message
-        else:
-            image = message['type'] == 'image'
-            mime_type = message['mime_type']
-            body = message['body']
+            (dict) message to send through the socket. The keys should be:
+                'image': (True/False) whether the message is an image
+                'mime_type': str. Mime type of the message
+                'text': str. base64 encoded content
 
-        message = json.dumps(
-            {
-                'image': image,
-                'body': body.replace('\n', '<br />'),
-                'mime_type': mime_type,
-                'quick_replies': quick_replies,
-            }
-        )
+        Returns a tornado future for tracking the `write_message` action.
+        """
+        message = json.dumps({
+            'text': message.replace('\n', '<br />'),
+            'quick_replies': quick_replies
+        })
 
         asyncio.set_event_loop(asyncio.new_event_loop())
         return MessageSocketHandler.subs[socket_id].write_message(message)
+
+    def observe_payload(self, socket_id, payload, quick_replies=None):
+        """Send a message through the message manager.
+
+        :param socket_id:
+            int identifier for agent socket to send message to
+        :param payload:
+            (dict) payload to send through the socket. The keys should be:
+                'image': (True/False) whether the message is an image
+                'mime_type': str. Mime type of the message
+                'text': str. base64 encoded content
+
+        Returns a tornado future for tracking the `write_message` action.
+        """
+        payload['text'] = payload['text'].replace('\n', '<br />')
+        payload['quick_replies'] = quick_replies
+        payload = json.dumps(payload)
+
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        return MessageSocketHandler.subs[socket_id].write_message(payload)
 
     def restructure_message(self):
         pass

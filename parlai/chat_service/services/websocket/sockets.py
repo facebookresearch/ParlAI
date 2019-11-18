@@ -39,7 +39,9 @@ class MessageSocketHandler(WebSocketHandler):
         del self.subs[self.sid]
 
     def on_message(self, message_text):
-        """Callback that runs when a new message is received from a client"""
+        """Callback that runs when a new message is received from a client
+        See the chat_service README for the message structure.
+        """
         logging.info('websocket message from client: {}'.format(message_text))
         message = {
             'text': message_text,
