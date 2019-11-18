@@ -13,8 +13,9 @@ import copy
 
 
 class FbformatTeacher(FbDialogTeacher):
-    """This task simply loads the specified file: useful for quick tests without
-    setting up a new task.
+    """
+    This task simply loads the specified file: useful for quick tests without setting up
+    a new task.
     """
 
     @staticmethod
@@ -31,8 +32,11 @@ class FbformatTeacher(FbDialogTeacher):
 
 
 class Fbformat2Teacher(FbDialogTeacher):
-    """This task simply loads the specified file: useful for quick tests without
-    setting up a new task. Used to set up a second task.
+    """
+    This task simply loads the specified file: useful for quick tests without setting up
+    a new task.
+
+    Used to set up a second task.
     """
 
     @staticmethod
@@ -49,7 +53,9 @@ class Fbformat2Teacher(FbDialogTeacher):
 
 
 class ParlaiformatTeacher(ParlAIDialogTeacher):
-    """This module provides access to data in the ParlAI Text Dialog format.
+    """
+    This module provides access to data in the ParlAI Text Dialog format.
+
     See core/teachers.py for more info about the format.
     """
 

@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Evaluate pre-trained model trained for ppl metric.
+"""
+Evaluate pre-trained model trained for ppl metric.
+
 This seq2seq model was trained on convai2:self.
 """
 from parlai.core.build_data import download_models

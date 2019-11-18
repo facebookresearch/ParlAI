@@ -32,7 +32,8 @@ import sqlite3
 
 
 class TfidfRetrieverAgent(Agent):
-    """TFIDF-based retriever agent.
+    """
+    TFIDF-based retriever agent.
 
     If given a task to specify, will first store entries of that task into
     a SQLite database and then build a sparse tfidf matrix of those entries.

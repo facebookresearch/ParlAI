@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Simple agent which chooses a random label.
+"""
+Simple agent which chooses a random label.
 
-Chooses from the label candidates if they are available.
-If candidates are not available, it repeats the label.
+Chooses from the label candidates if they are available. If candidates are not
+available, it repeats the label.
 """
 
 import random
@@ -15,11 +16,15 @@ from parlai.core.agents import Agent
 
 
 class RandomCandidateAgent(Agent):
-    """Agent returns random candidate if available or repeats the label."""
+    """
+    Agent returns random candidate if available or repeats the label.
+    """
 
     @staticmethod
     def add_cmdline_args(parser):
-        """Add command line arguments for this agent."""
+        """
+        Add command line arguments for this agent.
+        """
         parser = parser.add_argument_group('RandomCandidateAgent Arguments')
         parser.add_argument(
             '--label_candidates_file',
@@ -29,7 +34,9 @@ class RandomCandidateAgent(Agent):
         )
 
     def __init__(self, opt, shared=None):
-        """Initialize this agent."""
+        """
+        Initialize this agent.
+        """
         super().__init__(opt)
         self.id = 'RandomCandidateAgent'
         random.seed(42)
@@ -38,7 +45,8 @@ class RandomCandidateAgent(Agent):
             self.label_candidates = f.read().split('\n')
 
     def act(self):
-        """Generate response to last seen observation.
+        """
+        Generate response to last seen observation.
 
         Replies with a randomly selected candidate if label_candidates or a
         candidate file are available.

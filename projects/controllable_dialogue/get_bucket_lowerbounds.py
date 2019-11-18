@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-For a given (continuous) control variable in the dataset, bucket the data and return
-the lower bounds for those buckets.
+For a given (continuous) control variable in the dataset, bucket the data and return the
+lower bounds for those buckets.
 """
 
 from parlai.core.params import ParlaiParser

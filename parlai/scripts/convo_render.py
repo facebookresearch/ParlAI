@@ -23,6 +23,7 @@ HUMAN_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/th
 def gen_convo_ul(conversations):
     """
     Generate the ul section of the HTML for the conversations.
+
     :param conversation: The conversation to be rendered (after pre-processing)
 
     :return: The string generating the list in HTML
@@ -60,6 +61,7 @@ def gen_html(
 ):
     """
     Generate HTML string for the given conversation.
+
     :param conversation:
         The conversation to be rendered (after pre-processing)
     :param height:
@@ -154,6 +156,7 @@ def gen_html(
 def pre_process(fname, num_ex, alt_speaker):
     """
     Pre-process the given file to bring the conversation in a certain format.
+
     :param fname: File name to be processed
     :param num_ex: Number of conversations to be used
     :param alt_speaker: Name of other speaker to be used
@@ -182,6 +185,7 @@ def pre_process(fname, num_ex, alt_speaker):
 def prBlueBG(text):
     """
     Print given in text with a blue background.
+
     :param text: The text to be printed
     """
     print("\033[44m{}\033[0m".format(text), sep="")
@@ -190,6 +194,7 @@ def prBlueBG(text):
 def display_cli(conversations, alt_speaker, human_speaker):
     """
     Display the conversations on the Command Line.
+
     :param conversations: The dialogs to be displayed
     :param alt_speaker: Name of other speaker to be used
     :param human_speaker: Name of human speaker to be used
@@ -204,7 +209,9 @@ def display_cli(conversations, alt_speaker, human_speaker):
 
 
 def create_parser():
-    """Creates a parser object with some pre-determined arguments."""
+    """
+    Creates a parser object with some pre-determined arguments.
+    """
     parser = argparse.ArgumentParser(
         description="Process Conversation Rendering arguments"
     )
@@ -245,7 +252,8 @@ def create_parser():
 
 def check_icon_arg(src, default):
     """
-    Checks if icon arguments are valid: either a URL or an absolute path
+    Checks if icon arguments are valid: either a URL or an absolute path.
+
     :param src: Source of the icon
     :param default: default value of the icon
 
@@ -266,7 +274,8 @@ def check_icon_arg(src, default):
 
 def validate_args(args):
     """
-    Validate the cmdline args passed into the script
+    Validate the cmdline args passed into the script.
+
     :param args: The arguments of te parser
 
     :return: Returns extension of output file. None if no output file

@@ -23,7 +23,8 @@ def setup_args():
 
 
 def main(config):
-    """Creates .identity files from .sliced files
+    """
+    Creates .identity files from .sliced files.
 
     input: a .sliced file of logs (in ParlaiDialog format) from Mturk task 1, each of
         which starts with an initial prompt or topic request, and ends with a y_exp

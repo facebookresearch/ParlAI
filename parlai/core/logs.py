@@ -25,11 +25,15 @@ except ImportError:
 
 
 class TensorboardLogger(object):
-    """Log objects to tensorboard."""
+    """
+    Log objects to tensorboard.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add tensorboard CLI args."""
+        """
+        Add tensorboard CLI args.
+        """
         logger = argparser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog',

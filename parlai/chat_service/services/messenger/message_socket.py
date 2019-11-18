@@ -17,8 +17,9 @@ SOCKET_TIMEOUT = 6
 
 # Socket handler
 class MessageSocket:
-    """MessageSocket is a wrapper around websocket to forward messages from the
-    remote server to the MessengerManager.
+    """
+    MessageSocket is a wrapper around websocket to forward messages from the remote
+    server to the MessengerManager.
     """
 
     def __init__(self, server_url, port, message_callback):
@@ -67,7 +68,9 @@ class MessageSocket:
             pass
 
     def _send_world_alive(self):
-        """Registers world with the passthrough server"""
+        """
+        Registers world with the passthrough server.
+        """
         self._safe_send(
             json.dumps(
                 {
@@ -79,7 +82,9 @@ class MessageSocket:
         )
 
     def _setup_socket(self):
-        """Create socket handlers and registers the socket"""
+        """
+        Create socket handlers and registers the socket.
+        """
 
         def on_socket_open(*args):
             shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
@@ -105,8 +110,10 @@ class MessageSocket:
                 self._ensure_closed()
 
         def on_disconnect(*args):
-            """Disconnect event is a no-op for us, as the server reconnects
-            automatically on a retry"""
+            """
+            Disconnect event is a no-op for us, as the server reconnects automatically
+            on a retry.
+            """
             shared_utils.print_and_log(
                 logging.INFO, 'World server disconnected: {}'.format(args)
             )
@@ -114,7 +121,9 @@ class MessageSocket:
             self._ensure_closed()
 
         def on_message(*args):
-            """Incoming message handler for messages from the FB user"""
+            """
+            Incoming message handler for messages from the FB user.
+            """
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':
                 self.alive = True
