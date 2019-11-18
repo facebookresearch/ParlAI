@@ -1303,14 +1303,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self._validate_image_mode_name(opt.get('image_mode'))
 
         # IMPORTANT NOTE: this teacher will be instantiated twice. The first
-        # by build_dict in which case the image_mode is to 'none' to avoid
-        # calculating image features twice. We should change 'none' to
-        # 'no_image_model'
+        # by build_dict in which case the image_mode is to 'no_image_model' to
+        # avoid calculating image features twice.
         self.image_mode = opt.get('image_mode')
 
         # Not using default image_mode paramater b/c there is a normalization
         # (or bug) somewhere in build_dict that is setting it to none
-        self.include_image = opt.get('image_mode') != 'none'
+        self.include_image = opt.get('image_mode') != 'no_image_model'
 
         self.image_path = self.get_image_path(opt)
         self.image_loader = None
@@ -1347,7 +1346,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         """
         available_model_names = ImageLoader.get_available_model_names()
-        return ['none'] + available_model_names
+        return ['no_image_model'] + available_model_names
 
     def _validate_image_mode_name(self, a):
         """
@@ -1534,7 +1533,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 # TODO: will refactor this at some point soon most likely
                 image_loader_opt = self.opt.copy()
                 image_loader_opt['image_mode'] = (
-                    self.image_mode if self.include_image else 'none'
+                    self.image_mode if self.include_image else 'no_image_model'
                 )
 
                 image_loader_opt['image_size'] = 256

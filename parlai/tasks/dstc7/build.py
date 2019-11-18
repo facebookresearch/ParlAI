@@ -3,23 +3,26 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-# Download and build the data if it does not exist.
 
+import os
 from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
-import os
+
+URLS = ['http://parl.ai/downloads/dstc7/dstc7.tar.gz']
+FILE_NAMES = ['dstc7.tar.gz']
+SHA256 = ['aa3acec0aedb660f1549cdd802f01e5bc9c5b9dc06f10764c5e20686aa4d5571']
 
 RESOURCES = [
     DownloadableFile(
-        'http://parl.ai/downloads/dialog_babi/dialog_babi.tar.gz',
-        'dialog_babi.tar.gz',
-        'bb36155ccd41eac91f806446c5728ee90374e5596156a9f7c1b86f8342cfc383',
+        'http://parl.ai/downloads/dstc7/dstc7.tar.gz',
+        'dstc7.tar.gz',
+        'aa3acec0aedb660f1549cdd802f01e5bc9c5b9dc06f10764c5e20686aa4d5571',
     )
 ]
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'dialog-bAbI')
+    dpath = os.path.join(opt['datapath'], 'dstc7')
     version = None
 
     if not build_data.built(dpath, version_string=version):

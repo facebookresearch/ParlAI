@@ -1,6 +1,6 @@
 ## Don’t Say _That_! Making Inconsistent Dialogue Unlikely with Unlikelihood Training
 
-
+Margaret Li, Stephen Roller, Ilia Kulikov, Sean Welleck, Y-Lan Boureau, Kyunghyun Cho, Jason Weston
 
 ## Abstract
 
@@ -16,5 +16,7 @@ We demonstrate the efficacy of our approach across several dialogue tasks.
 
 ## Paper
 
-Link coming soon.
+[Link](https://drive.google.com/open?id=1Du-FhnApmH_72gqWnnQyjigKDpmN9mBI)
+
+
  

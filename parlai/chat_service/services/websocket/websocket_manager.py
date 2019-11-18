@@ -70,6 +70,10 @@ class WebsocketManager(ChatServiceManager):
             self.opt['shared_bot_params'] = create_agent(self.opt).share()
 
     def _handle_message_read(self, event):
+        """Send read receipt back to user who sent message
+        This function is left empty as it is not applicable to websockets since
+        read receipts are not supported
+        """
         pass
 
     def _manager_loop_fn(self):
@@ -273,6 +277,9 @@ class WebsocketManager(ChatServiceManager):
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def restructure_message(self):
+        """This is to restructure a new message to conform to the message structure
+        defined in the `chat_service` README
+        """
         pass
 
     def _handle_bot_read(self, agent_id):

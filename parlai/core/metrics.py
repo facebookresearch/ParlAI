@@ -261,12 +261,12 @@ class Metrics(object):
                 pass
             else:
                 self.metrics_list.add(each_m)
-        metrics_list = (
+        self._print_metrics_list = (
             self.metrics_list
             if 'rouge' not in self.metrics_list
             else self.metrics_list | ROUGE_METRICS
         )
-        for k in metrics_list:
+        for k in self._print_metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
         self.eval_pr = [1, 5, 10, 100]
@@ -421,7 +421,7 @@ class Metrics(object):
                         / max(1, self.metrics['hits@_cnt']),
                         3,
                     )
-            for k in self.metrics_list:
+            for k in self._print_metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(
                         self.metrics[k] / max(1, self.metrics[k + '_cnt']), 4

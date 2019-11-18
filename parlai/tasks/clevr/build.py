@@ -5,8 +5,18 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
+
+
+RESOURCES = [
+    DownloadableFile(
+        'https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip',
+        'CLEVR_v1.0.zip',
+        '5cd61cf1096ed20944df93c9adb31e74d189b8459a94f54ba00090e5c59936d1',
+    )
+]
 
 
 def build(opt):
@@ -21,11 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'CLEVR_v1.0.zip'
-        url = 'https://dl.fbaipublicfiles.com/clevr/'
-
-        build_data.download(url + fname, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

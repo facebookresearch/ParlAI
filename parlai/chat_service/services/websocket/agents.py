@@ -85,5 +85,6 @@ class WebsocketAgent(ChatServiceAgent):
             'text': message.get('text', ''),
             'attachment': message.get('attachment'),
         }
+
         self._queue_action(action, self.action_id)
         self.action_id += 1
