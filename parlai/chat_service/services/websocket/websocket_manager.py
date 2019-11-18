@@ -104,6 +104,7 @@ class WebsocketManager(ChatServiceManager):
                 agent_state = self.get_agent_state(agent.id)
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
 
+        # Monitor for crashed overworld futures
         for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
             if overworld_fut.done():
                 try:
@@ -241,10 +242,9 @@ class WebsocketManager(ChatServiceManager):
         if quick_replies is not None:
             quick_replies = list(quick_replies)
 
-        message = json.dumps({
-            'text': message.replace('\n', '<br />'),
-            'quick_replies': quick_replies,
-        })
+        message = json.dumps(
+            {'text': message.replace('\n', '<br />'), 'quick_replies': quick_replies}
+        )
 
         asyncio.set_event_loop(asyncio.new_event_loop())
         if socket_id not in MessageSocketHandler.subs:
@@ -266,11 +266,7 @@ class WebsocketManager(ChatServiceManager):
         Returns a tornado future for tracking the `write_message` action.
         """
         payload['text'] = payload['text'].replace('\n', '<br />')
-        message = {
-            'text': '',
-            'attachment': payload,
-            'quick_replies': quick_replies
-        }
+        message = {'text': '', 'attachment': payload, 'quick_replies': quick_replies}
         payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())

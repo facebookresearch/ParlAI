@@ -216,12 +216,7 @@ class Opt(dict):
         loc = traceback.format_stack()[-3]
         self.deepcopies.append(loc)
         # deepcopy the dict
-        dict_memo = dict(self)
-        for k in dict_memo.keys():
-            if k.startswith('__'):
-                del dict_memo[k]
-
-        memo = deepcopy(dict_memo)
+        memo = deepcopy(dict(self))
         # make into Opt object
         memo = Opt(memo)
         # deepcopy the history

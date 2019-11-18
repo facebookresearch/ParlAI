@@ -23,22 +23,20 @@ class WebsocketAgent(ChatServiceAgent):
     def observe(self, act):
         """Send an agent a message through the websocket manager
 
-        Only attachments of type 'image' are currently supported. In the case of
+        Only attachments of type `image` are currently supported. In the case of
         images, the resultant message will have a `text` field which will be a
         base 64 encoded image and `mime_type` which will be an image mime type.
 
-        Returned attachments have a 'image' boolean field, a 'text' field for the
-        message contents, and a 'mime_type' field for the message content type.
-
         Args:
-            act: dict. If act contains an attachments then a dict should be provided.
-                Otherwise, act should be a dict with the `text` key for the content.
-                For the 'attachment' dict, this agent expects an 'image' key, which
-                specifies whether or not the attachment is an image.
-                If the attachment is an image, either a 'path' key must be specified
-                for the path to the image, or a 'data' key holding a PIL Image.
+            act: dict. If act contains an `attachment` key, then a dict should be
+                provided for the value in `attachment`. Otherwise, act should be
+                a dict with the key `text` for the message.
+                For the `attachment` dict, this agent expects a `type` key, which
+                specifies whether or not the attachment is an image. If the
+                attachment is an image, either a `path` key must be specified
+                for the path to the image, or a `data` key holding a PIL Image.
                 A `quick_replies` key can be provided with a list of string quick
-                replies for both payload and text messages.
+                replies for any message
         """
         logging.info(f"Sending new message: {act}")
         quick_replies = act.get('quick_replies', None)
@@ -65,7 +63,7 @@ class WebsocketAgent(ChatServiceAgent):
         Args:
             image: PIL Image. Image to be sent in the message
 
-        Returns a message struct with the fields `image`, `text` and `mime_type`.
+        Returns a message struct with the fields `type`, `text` and `mime_type`.
         See `observe` for more information
         """
         buffered = BytesIO()
