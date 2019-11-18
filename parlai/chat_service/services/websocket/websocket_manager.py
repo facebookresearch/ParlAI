@@ -233,15 +233,23 @@ class WebsocketManager(ChatServiceManager):
                 'image': (True/False) whether the message is an image
                 'mime_type': str. Mime type of the message
                 'text': str. base64 encoded content
+        :param quick_replies:
+            (list) list of strings to send as quick replies.
 
         Returns a tornado future for tracking the `write_message` action.
         """
+        if quick_replies is not None:
+            quick_replies = list(quick_replies)
+
         message = json.dumps({
             'text': message.replace('\n', '<br />'),
-            'quick_replies': quick_replies
+            'quick_replies': quick_replies,
         })
 
         asyncio.set_event_loop(asyncio.new_event_loop())
+        if socket_id not in MessageSocketHandler.subs:
+            self.agent_id_to_overworld_future[socket_id].cancel()
+            return
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def observe_payload(self, socket_id, payload, quick_replies=None):
@@ -258,11 +266,15 @@ class WebsocketManager(ChatServiceManager):
         Returns a tornado future for tracking the `write_message` action.
         """
         payload['text'] = payload['text'].replace('\n', '<br />')
-        payload['quick_replies'] = quick_replies
-        payload = json.dumps(payload)
+        message = {
+            'text': '',
+            'attachment': payload,
+            'quick_replies': quick_replies
+        }
+        payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())
-        return MessageSocketHandler.subs[socket_id].write_message(payload)
+        return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def restructure_message(self):
         pass

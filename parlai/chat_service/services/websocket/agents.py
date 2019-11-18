@@ -23,37 +23,37 @@ class WebsocketAgent(ChatServiceAgent):
     def observe(self, act):
         """Send an agent a message through the websocket manager
 
-        Only payloads of type 'image' are currently supported. In the case of
+        Only attachments of type 'image' are currently supported. In the case of
         images, the resultant message will have a `text` field which will be a
         base 64 encoded image and `mime_type` which will be an image mime type.
 
-        Returned payloads have a 'image' boolean field, a 'text' field for the
+        Returned attachments have a 'image' boolean field, a 'text' field for the
         message contents, and a 'mime_type' field for the message content type.
 
         Args:
-            act: dict. If act contains a payload, then a dict should be provided.
+            act: dict. If act contains an attachments then a dict should be provided.
                 Otherwise, act should be a dict with the `text` key for the content.
-                For the 'payload' dict, this agent expects an 'image' key, which
-                specifies whether or not the payload is an image.
-                If the payload is an image, either a 'path' key must be specified
+                For the 'attachment' dict, this agent expects an 'image' key, which
+                specifies whether or not the attachment is an image.
+                If the attachment is an image, either a 'path' key must be specified
                 for the path to the image, or a 'data' key holding a PIL Image.
                 A `quick_replies` key can be provided with a list of string quick
                 replies for both payload and text messages.
         """
         logging.info(f"Sending new message: {act}")
         quick_replies = act.get('quick_replies', None)
-        if 'payload' in act:
-            payload = act['payload']
-            if payload['image']:
-                if 'path' in payload:
-                    image = Image.open(payload['path'])
+        if act.get('attachment', None) is not None:
+            attachment = act['attachment']
+            if attachment['type'] == 'image':
+                if 'path' in attachment:
+                    image = Image.open(attachment['path'])
                     msg = self._get_message_from_image(image)
-                elif 'data' in payload:
-                    msg = self._get_message_from_image(payload['data'])
+                elif 'data' in attachment:
+                    msg = self._get_message_from_image(attachment['data'])
                 else:
-                    raise ValueError("Invalid payload for type 'image'")
+                    raise ValueError("Invalid attachment format for type 'image'")
             else:
-                raise ValueError(f"Payload type {payload['type']} not supported")
+                raise ValueError(f"Attachment type {attachment['type']} not supported")
 
             self.manager.observe_payload(self.id, msg, quick_replies)
         else:
@@ -71,26 +71,21 @@ class WebsocketAgent(ChatServiceAgent):
         buffered = BytesIO()
         image.save(buffered, format=image.format)
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-        msg = {'image': True, 'text': img_str, 'mime_type': Image.MIME[image.format]}
+        msg = {'type': 'image', 'text': img_str, 'mime_type': Image.MIME[image.format]}
         return msg
 
     def put_data(self, message):
         """Put data into the message queue
 
         Args:
-            message: dict. An incoming websocket message, where the message content
-                is in the 'text' field. The message content is expected to be
-                stringified JSON. See `observe` for usable keys of the JSON
-                content. `See MessageSocketHandler.on_message` for more
-                information about the message structure.
+            message: dict. An incoming websocket message. See the chat_services
+                README for the message structure.
         """
         logging.info(f"Received new message: {message}")
-        message = json.loads(message['text'])
         action = {
             'episode_done': False,
-            'image': message.get('image', False),
             'text': message.get('text', ''),
-            'mime_type': message.get('mime_type')
+            'attachment': message.get('attachment'),
         }
         self._queue_action(action, self.action_id)
         self.action_id += 1

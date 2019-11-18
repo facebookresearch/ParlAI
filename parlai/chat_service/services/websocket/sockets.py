@@ -7,6 +7,7 @@
 from tornado.websocket import WebSocketHandler
 import uuid
 import logging
+import json
 
 
 def get_rand_id():
@@ -43,8 +44,10 @@ class MessageSocketHandler(WebSocketHandler):
         See the chat_service README for the message structure.
         """
         logging.info('websocket message from client: {}'.format(message_text))
+        message = json.loads(message_text)
         message = {
-            'text': message_text,
+            'text': message.get('text'),
+            'attachment': message.get('attachment'),
             'sender': {'id': self.sid},
             'recipient': {'id': 0},
         }
