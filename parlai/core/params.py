@@ -470,13 +470,6 @@ class ParlaiParser(argparse.ArgumentParser):
         websockets.add_argument(
             '--port', default=35496, type=int, help='Port to run the websocket handler'
         )
-        websockets.add_argument(
-            '--password',
-            dest='password',
-            type=str,
-            default=None,
-            help='Require a password for entry to the bot',
-        )
 
     def add_messenger_args(self):
         """Add Facebook Messenger arguments."""
