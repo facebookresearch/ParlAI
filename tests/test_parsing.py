@@ -6,6 +6,7 @@
 from examples.eval_model import setup_args
 import unittest
 
+
 class TestRecommended(unittest.TestCase):
     """Basic tests on the eval_model.py example."""
 
@@ -19,7 +20,8 @@ class TestRecommended(unittest.TestCase):
             num_examples=5,
             display_examples=False,
         )
-        help_str = parser.format_help()
+        parser.format_help()
+
 
 if __name__ == '__main__':
     unittest.main()
