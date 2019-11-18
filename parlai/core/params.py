@@ -440,34 +440,41 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
-    def add_websockets_args(self):
-        """Add websocket arguments."""
-        websockets = self.add_argument_group('Websockets')
-        websockets.add_argument(
+    def add_chatservice_args(self):
+        """Arguments for all chat services"""
+        args = self.add_argument_group('Chat Services')
+        args.add_argument(
             '--debug',
             dest='is_debug',
             action='store_true',
             help='print and log all server interactions and messages',
         )
-        websockets.add_argument(
+        args.add_argument(
             '--config-path',
             default=None,
             type=str,
             help='/path/to/config/file for a given task.',
         )
+        args.add_argument(
+            '--password',
+            dest='password',
+            type=str,
+            default=None,
+            help='Require a password for entry to the bot',
+        )
+
+    def add_websockets_args(self):
+        """Add websocket arguments."""
+        self.add_chatservice_args()
+        websockets = self.add_argument_group('Websockets')
         websockets.add_argument(
             '--port', default=35496, type=int, help='Port to run the websocket handler'
         )
 
     def add_messenger_args(self):
         """Add Facebook Messenger arguments."""
+        self.add_chatservice_args()
         messenger = self.add_argument_group('Facebook Messenger')
-        messenger.add_argument(
-            '--debug',
-            dest='is_debug',
-            action='store_true',
-            help='print and log all server interactions and messages',
-        )
         messenger.add_argument(
             '--verbose',
             dest='verbose',
@@ -489,13 +496,6 @@ class ParlaiParser(argparse.ArgumentParser):
             help='override the page token stored in the cache for a new one',
         )
         messenger.add_argument(
-            '--password',
-            dest='password',
-            type=str,
-            default=None,
-            help='Require a password for entry to the bot',
-        )
-        messenger.add_argument(
             '--bypass-server-setup',
             dest='bypass_server_setup',
             action='store_true',
@@ -509,12 +509,6 @@ class ParlaiParser(argparse.ArgumentParser):
             default=False,
             help='Run the server locally on this server rather than setting up'
             ' a heroku server.',
-        )
-        messenger.add_argument(
-            '--config-path',
-            default=None,
-            type=str,
-            help='/path/to/config/file for a given task.',
         )
 
         messenger.set_defaults(is_debug=False)
