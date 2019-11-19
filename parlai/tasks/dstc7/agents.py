@@ -5,15 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 """ The Ubuntu dataset used for dstc 7 """
 
-import parlai.core.build_data as build_data
 from parlai.core.teachers import FixedDialogTeacher
+from .build import build
 
-import copy
 import json
 import os
-import zipfile
 import random
-from collections import defaultdict
 
 
 class DSTC7Teacher(FixedDialogTeacher):
@@ -27,7 +24,7 @@ class DSTC7Teacher(FixedDialogTeacher):
             self.split = 'dev'
         if 'test' in opt['datatype']:
             self.split = 'test'
-        self.build(opt)
+        build(opt)
 
         basedir = os.path.join(opt['datapath'], 'dstc7')
         filepath = os.path.join(
@@ -58,26 +55,6 @@ class DSTC7Teacher(FixedDialogTeacher):
 
     def get_suffix(self):
         return ""
-
-    def build(self, opt):
-        dpath = os.path.join(opt['datapath'], 'dstc7')
-        version = None
-
-        if not build_data.built(dpath, version_string=version):
-            print('[building data: ' + dpath + ']')
-            if build_data.built(dpath):
-                # An older version exists, so remove these outdated files.
-                build_data.remove_dir(dpath)
-            build_data.make_dir(dpath)
-
-            # Download the data.
-            fname = 'dstc7.tar.gz'
-            url = 'http://parl.ai/downloads/dstc7/' + fname
-            build_data.download(url, dpath, fname)
-            build_data.untar(dpath, fname)
-
-            # Mark the data as built.
-            build_data.mark_done(dpath, version_string=version)
 
     def _setup_data(self, datatype):
         pass

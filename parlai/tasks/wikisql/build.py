@@ -8,6 +8,21 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/salesforce/WikiSQL/raw/master/data.tar.bz2',
+        'data.tar.bz2',
+        '755c728ab188e364575705c8641f3fafd86fb089cb8b08e8c03f01832aae0881',
+    ),
+    DownloadableFile(
+        'https://github.com/salesforce/WikiSQL/raw/master/lib/query.py',
+        'query.py',
+        'f539150bea6cd07a5dca226abcced6f9d356d216f5c3d70107693613f1fbeb25',
+        zipped=False,
+    ),
+]
 
 
 def build(opt):
@@ -22,16 +37,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        data_fname = 'data.tar.bz2'
-        query_fname = 'query.py'
-
-        url = 'https://github.com/salesforce/WikiSQL/raw/master/' + data_fname
-        build_data.download(url, dpath, data_fname)
-
-        url = 'https://github.com/salesforce/WikiSQL/raw/master/lib/' + query_fname
-        build_data.download(url, dpath, query_fname)
-
-        build_data.untar(dpath, data_fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

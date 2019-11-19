@@ -9,19 +9,12 @@ websockets
 """
 
 import asyncio
-import time
-import datetime
 import logging
-import threading
 import traceback
 import sys
 from parlai.core.agents import create_agent
+from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
-# TODO: Use generalized module (Issue #2079)
-from parlai.chat_service.services.messenger.messenger_manager import AgentState
-
-# TODO: Use a generalized World Runner module (Issue #2079)
-from parlai.chat_service.services.messenger.world_runner import MessengerWorldRunner
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
 from parlai.chat_service.services.websocket.sockets import MessageSocketHandler
 from agents import WebsocketAgent
@@ -29,213 +22,58 @@ import tornado
 from tornado.options import options
 
 
-class WebsocketManager:
+class WebsocketManager(ChatServiceManager):
     """
     Manages interactions between agents on a websocket as well as direct interactions
     between agents and an overworld.
     """
 
+    class MessageSender(ChatServiceManager.ChatServiceMessageSender):
+        def send_read(self, receiver_id):
+            pass
+
+        def typing_on(self, receiver_id, persona_id=None):
+            pass
+
     def __init__(self, opt):
         """Create a WebsocketManager using the given setup options"""
-        self.subs = []
-        self.port = opt.get('port')
+        super().__init__(opt)
         self.opt = opt
+        self.port = opt.get('port')
+        self.subs = []
+
         self.app = None
         self.debug = opt.get('debug', True)
-        # TODO: Rename when using a generalized AgentState module (Issue #2079)
+
+        self.message_sender = WebsocketManager.MessageSender()
+
+        self.service_reference_id = None
+
+        self._parse_config(opt)
+        self._complete_setup()
+
+    def parse_additional_args(self, opt):
+        pass
+
+    def _complete_setup(self):
+        """Complete necessary setup items."""
         self.agent_pool = {}
         self.messenger_agent_states = {}
         self.agent_id_to_overworld_future = {}
         self.task_to_agent_ids = {}
-        self.conversation_index = 0
-        self.shutting_down = False
-        self.agent_pool_change_condition = threading.Condition()
-        self.active_worlds = {}
-        self._parse_config(opt)
-        self._complete_setup()
-
-    def _parse_config(self, opt):
-        """Parse config for task."""
-        self.config = opt['config']
-        self.overworld = self.config['overworld']
-        self.world_path = self.config['world_path']
-        self.world_module = shared_utils.get_world_module(self.world_path)
-        self.max_workers = self.config['max_workers']
-        self.task_configs = self.config['configs']
-        self.opt['task'] = self.config['task_name']
-        self.world_runner = MessengerWorldRunner(
-            opt, self.world_path, self.max_workers, self, opt['is_debug']
-        )
-        self.max_agents_for = {
-            task: cfg.agents_required for task, cfg in self.task_configs.items()
-        }
-        self.onboard_map = {
-            task: cfg.onboarding_name for task, cfg in self.task_configs.items()
-        }
-        self.taskworld_map = {
-            task: cfg.task_name for task, cfg in self.task_configs.items()
-        }
-
-    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
-        """Check for timed-out agents in pool.
-
-        :param world_type:
-            string world type
-        :param agent_pool:
-            list of ``AgentState``s
-        :param max_time_in_pool:
-            int maximum time allowed for agent to be in pool
-        """
-        for agent_state in agent_pool:
-            time_in_pool = agent_state.time_in_pool.get(world_type)
-            if time_in_pool and time.time() - time_in_pool > max_time_in_pool:
-                # remove agent from agent_pool
-                self.remove_agent_from_pool(agent_state, world_type)
-                # put agent back in overworld
-                agent_state.set_active_agent(agent_state.get_overworld_agent())
-
-                agent_state.stored_data['removed_after_timeout'] = True
-
-                # reset wait message state
-                agent_state.stored_data['seen_wait_message'] = False
-
-            elif time_in_pool and time.time() - time_in_pool > 30:
-                # tell agent that a match is taking longer than
-                # expected
-                if (
-                    not agent_state.stored_data.get('seen_wait_message')
-                    or not agent_state.stored_data['seen_wait_message']
-                ):
-                    self.observe_message(
-                        agent_state.messenger_id,
-                        'Pairing is taking longer than expected. '
-                        'If you wish to exit, type *EXIT*.',
-                    )
-                    agent_state.stored_data['seen_wait_message'] = True
-
-    def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
-        """Remove agent from the pool.
-
-        :param agent:
-            MessengerAgent object
-        :param world_type:
-            string, world name
-        :param mark_removed:
-            bool, whether to mark an agent as removed from the pool
-        """
-        with self.agent_pool_change_condition:
-            self._log_debug('Removing agent {} from pool...'.format(agent.messenger_id))
-            if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
-                self.agent_pool[world_type].remove(agent)
-                # reset agent's time_in_pool
-                if world_type in agent.time_in_pool:
-                    del agent.time_in_pool[world_type]
-                # maybe mark agent as removed
-                if mark_removed:
-                    agent.stored_data['removed_from_pool'] = True
-
-    def add_agent_to_pool(self, agent, world_type='default'):
-        """Add the agent to pool.
-
-        :param agent:
-            MessengerAgent object
-        :param world_type:
-            Name of world whose pool should now contain agent
-        """
-        with self.agent_pool_change_condition:
-            self._log_debug('Adding agent {} to pool...'.format(agent.messenger_id))
-            # time agent entered agent_pool
-            agent.time_in_pool.setdefault(world_type, time.time())
-            # add agent to pool
-            self.agent_pool.setdefault(world_type, []).append(agent)
-
-    def _expire_all_conversations(self):
-        """Iterate through all sub-worlds and shut them down."""
-        self.running = False
-        for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
-            self.observe_message(
-                agent_id,
-                'System: The conversation bot going to go offline soon, '
-                'finish any active conversations in the next 5 minutes.',
-            )
-            overworld_fut.cancel()
-
-        # 5 minute grace period for conversations to finish
-        time_passed = 0
-        while time_passed < 5 * 60:
-            any_alive = False
-            for task_fut in self.active_worlds.values():
-                if task_fut is not None:
-                    any_alive = any_alive or task_fut.running()
-            if not any_alive:
-                break
-            time.sleep(1)
-
-        # Tell the worlds that they should be shutting down at this point,
-        # agents will refer to this value
-        self.shutting_down = True
-
-    def _get_unique_pool(self):
-        """Return unique pool.
-
-        Returns a filtered version of the agent pool where each agent is
-        only listed a maximum of one time.
-
-        :return:
-            a dictionary mapping world_types to agent pools
-        """
-        valid_pools = {}
-        for world_type, agent_pool in self.agent_pool.items():
-            eligibility_function = shared_utils.get_eligibility_fn(
-                self.world_module, world_type
-            )
-            if eligibility_function is not None:
-                valid_pools[world_type] = [
-                    w for w in agent_pool if eligibility_function(w)
-                ]
-            else:
-                valid_pools[world_type] = self.agent_pool[world_type]
-        return valid_pools
-
-    def get_agent_state(self, agent_id):
-        """Return agent state.
-
-        :param agent_id:
-            int agent identifier
-
-        :return:
-            AgentState object if agent_id is being tracked, else None
-        """
-        if agent_id in self.messenger_agent_states:
-            return self.messenger_agent_states[agent_id]
-        return None
-
-    def _get_agent(self, agent_id, task_id):
-        """Return agent object for given agent ID and task ID.
-
-        :param agent_id:
-            int agent identifier
-        :param task_id:
-            string task name
-
-        :return:
-            MessengerAgent object associated with given agent ID and task ID if
-            possible, else None
-        """
-        agent_state = self.get_agent_state(agent_id)
-        if agent_state is not None:
-            if agent_state.has_task(task_id):
-                return agent_state.get_agent_for_task(task_id)
-        return None
-
-    def _complete_setup(self):
-        """Complete necessary setup items."""
         self._load_model()
 
     def _load_model(self):
         """Load model if necessary"""
         if 'model_file' in self.opt or 'model' in self.opt:
             self.opt['shared_bot_params'] = create_agent(self.opt).share()
+
+    def _handle_message_read(self, event):
+        """Send read receipt back to user who sent message
+        This function is left empty as it is not applicable to websockets since
+        read receipts are not supported
+        """
+        pass
 
     def _manager_loop_fn(self):
         """An iteration of the manager's main loop to launch worlds.
@@ -340,73 +178,12 @@ class WebsocketManager:
 
     def shutdown(self):
         """Defined to shutown the tornado application"""
+        try:
+            self.world_runner.shutdown()
+            self._expire_all_conversations()
+        finally:
+            pass
         tornado.ioloop.IOLoop.current().stop()
-
-    def _on_new_message(self, message, socketID):
-        """Callback when a new message is received
-        Args:
-            message: string. Message from client
-            socketID: UUID. UUID of message sender socket
-        """
-        logging.info("Manager got new message!")
-        if socketID not in self.messenger_agent_states:
-            self._on_first_message(message, socketID)
-            return
-
-        agent_state = self.get_agent_state(socketID)
-        if agent_state.get_active_agent() is None:
-            # return agent to overworld
-            if message.upper() == 'EXIT':
-                # remove agent from agent_pool
-                to_remove = []
-                for world_type, _time in agent_state.time_in_pool.items():
-                    to_remove.append(world_type)
-                for world_type in to_remove:
-                    self.remove_agent_from_pool(
-                        agent_state, world_type, mark_removed=False
-                    )
-                agent_state.stored_data['seen_wait_message'] = False
-                agent_state.set_active_agent(agent_state.get_overworld_agent())
-            else:
-                self.observe_message(
-                    socketID,
-                    'Please wait while we pair you with another person. '
-                    'If you wish to exit, type *EXIT*.',
-                )
-        else:
-            agent = agent_state.get_active_agent()
-            agent.put_data(message)
-
-    def _on_first_message(self, message, socketID):
-        """Handle first message from player.
-
-        Run when a socketID is given that is not paired with any assignment yet.
-        Launch an overworld, complete onboarding, etc.
-
-        :param message:
-            string message sent from agent
-        :param socketID:
-            int socket ID of the message sender
-        """
-        task_id = 'overworld-{}-{}'.format(socketID, time.time())
-        agent = self._create_agent(task_id, socketID)
-        agent_state = AgentState(socketID, agent)
-        self.messenger_agent_states[socketID] = agent_state
-
-        future = self.world_runner.launch_overworld(
-            task_id, self.overworld, self.onboard_map, agent
-        )
-
-        def _done_callback(fut):
-            """Log and raise exception of overworld (if there is one)."""
-            e = fut.exception()
-            if e is not None:
-                self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
-                if self.debug:
-                    raise e
-
-        future.add_done_callback(_done_callback)
-        self.agent_id_to_overworld_future[socketID] = future
 
     def _create_agent(self, task_id, socketID):
         """Initialize an agent and return it.
@@ -418,7 +195,7 @@ class WebsocketManager:
         :param agent_id:
             int agent id
         """
-        return WebsocketAgent(self.opt, self, task_id, socketID)
+        return WebsocketAgent(self.opt, self, socketID, task_id)
 
     def _make_app(self):
         """
@@ -451,6 +228,20 @@ class WebsocketManager:
         asyncio.set_event_loop(asyncio.new_event_loop())
         return MessageSocketHandler.subs[socket_id].write_message(text)
 
-    def _log_debug(self, text):
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
+    def restructure_message():
+        """This is to restructure a new message to conform to the message structure
+        defined in the `chat_service` README
+        """
+        pass
+
+    def _handle_bot_read(self, agent_id):
+        pass
+
+    def _confirm_message_delivery(self, event):
+        pass
+
+    def setup_server(self):
+        pass
+
+    def setup_socket(self):
+        pass

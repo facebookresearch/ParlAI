@@ -8,6 +8,28 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://dada.cs.washington.edu/qasrl/data/wiki1.train.qa',
+        'wiki1.train.qa',
+        'f927417e94e67b7ae17e33dd882989a5556d7ff37376f8bf5c78ece7d17a6c64',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://dada.cs.washington.edu/qasrl/data/wiki1.dev.qa',
+        'wiki1.dev.qa',
+        'caa94beaaf22304422cdc1a2fd8732b1a47401c9555a81e1f4da81e0a7557a8b',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://dada.cs.washington.edu/qasrl/data/wiki1.test.qa',
+        'wiki1.test.qa',
+        'b43a998344fbd520955fb8f0f7b3691ace363daa8628552cf5cf5c8d84df6cca',
+        zipped=False,
+    ),
+]
 
 
 def build(opt):
@@ -22,10 +44,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fnames = ['wiki1.train.qa', 'wiki1.dev.qa', 'wiki1.test.qa']
-        for fname in fnames:
-            url = 'https://dada.cs.washington.edu/qasrl/data/' + fname
-            build_data.download(url, dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

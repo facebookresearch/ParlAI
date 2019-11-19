@@ -110,7 +110,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.use_intro = opt.get('use_intro', False)
         self.num_cands = opt.get('num_cands', -1)
         data_path, self.image_path = _path(opt)
@@ -194,14 +194,14 @@ class DefaultTeacher(FixedDialogTeacher):
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none' and 'image_id' in self.example:
+            if self.image_mode != 'no_image_model' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)

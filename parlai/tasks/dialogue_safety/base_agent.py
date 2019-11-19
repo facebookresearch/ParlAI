@@ -4,15 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from abc import ABC, abstractmethod
-import copy
 import os
-import json
 import random
 
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
-from .build import build, SINGLE_TURN_DATA
+from .build import build
+
+SINGLE_TURN_DATA = 'single_turn_safety.json'
 
 
 OK_CLASS = '__ok__'
