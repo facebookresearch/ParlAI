@@ -36,17 +36,13 @@ LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
 
 def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm.
-    """
+    """Broadcast layer norm."""
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
-    """
-    Create and initialize word embeddings.
-    """
+    """Create and initialize word embeddings."""
     e = nn.Embedding(len(dictionary), embedding_size, padding_idx)
     nn.init.normal_(e.weight, mean=0, std=embedding_size ** -0.5)
     nn.init.constant_(e.weight[padding_idx], 0)
@@ -117,9 +113,7 @@ def gelu(tensor):
 
 
 def get_n_positions_from_options(opt):
-    """
-    Determine n_positions from options dict.
-    """
+    """Determine n_positions from options dict."""
     if opt.get('n_positions'):
         # if the number of positions is explicitly provided, use that
         n_positions = opt['n_positions']
@@ -136,9 +130,7 @@ def get_n_positions_from_options(opt):
 
 
 class TransformerMemNetModel(nn.Module):
-    """
-    Model which takes context, memories, candidates and encodes them.
-    """
+    """Model which takes context, memories, candidates and encodes them."""
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -211,9 +203,7 @@ class TransformerMemNetModel(nn.Module):
         )
 
     def encode_cand(self, words):
-        """
-        Encode the candidates.
-        """
+        """Encode the candidates."""
         if words is None:
             return None
 
@@ -232,9 +222,7 @@ class TransformerMemNetModel(nn.Module):
         return encoded
 
     def encode_context_memory(self, context_w, memories_w, context_segments=None):
-        """
-        Encode the context and memories.
-        """
+        """Encode the context and memories."""
         # [batch, d]
         if context_w is None:
             # it's possible that only candidates were passed into the
@@ -282,9 +270,7 @@ class TransformerMemNetModel(nn.Module):
 
 
 def create_position_codes(n_pos, dim, out):
-    """
-    Create positional codes and store them in ``out``.
-    """
+    """Create positional codes and store them in ``out``."""
     position_enc = np.array(
         [
             [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
@@ -316,16 +302,12 @@ class TransformerResponseWrapper(nn.Module):
         )
 
     def forward(self, *args):
-        """
-        Forward pass.
-        """
+        """Forward pass."""
         return self.mlp(self.transformer(*args))
 
 
 class TransformerLinearWrapper(nn.Module):
-    """
-    Wrap a transformer in a linear layer.
-    """
+    """Wrap a transformer in a linear layer."""
 
     def __init__(self, transformer, output_dim):
         super().__init__()
@@ -334,8 +316,7 @@ class TransformerLinearWrapper(nn.Module):
         self.additional_linear_layer = nn.Linear(input_dim, output_dim)
 
     def forward(self, *args):
-        """
-        Forward pass.
+        """Forward pass.
 
         Apply transformer, then additional linear layer.
         """
@@ -542,9 +523,7 @@ class TransformerEncoder(nn.Module):
 
 
 class TransformerEncoderLayer(nn.Module):
-    """
-    Implements a single Transformer encoder layer.
-    """
+    """Implements a single Transformer encoder layer."""
 
     def __init__(
         self,
@@ -576,9 +555,7 @@ class TransformerEncoderLayer(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
-        """
-        Forward pass.
-        """
+        """Forward pass."""
         tensor = tensor + self.dropout(self.attention(tensor, mask=mask))
         tensor = _normalize(tensor, self.norm1)
         tensor = tensor + self.dropout(self.ffn(tensor))
@@ -763,9 +740,7 @@ class TransformerDecoderLayer(nn.Module):
         self.norm3 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
     def forward(self, x, encoder_output, encoder_mask):
-        """
-        Forward pass.
-        """
+        """Forward pass."""
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
@@ -804,9 +779,7 @@ class TransformerDecoderLayer(nn.Module):
 
 
 class TransformerGeneratorModel(TorchGeneratorModel):
-    """
-    Implements a full generator model, with one encoder and one decoder.
-    """
+    """Implements a full generator model, with one encoder and one decoder."""
 
     def __init__(self, opt, dictionary):
         self.pad_idx = dictionary[dictionary.null_token]
@@ -871,18 +844,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         return None
 
     def output(self, tensor):
-        """
-        Compute output logits.
-        """
+        """Compute output logits."""
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
         return output
 
 
 class BasicAttention(nn.Module):
-    """
-    Implements simple/classical attention.
-    """
+    """Implements simple/classical attention."""
 
     def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
@@ -895,8 +864,7 @@ class BasicAttention(nn.Module):
         self.residual = residual
 
     def forward(self, xs, ys, mask_ys=None, values=None):
-        """
-        Compute attention.
+        """Compute attention.
 
         Attend over ys with query xs to obtain weights, then apply weights to
         values (ys if yalues is None)
@@ -962,9 +930,7 @@ class MultiHeadAttention(nn.Module):
         nn.init.xavier_normal_(self.out_lin.weight)
 
     def forward(self, query, key=None, value=None, mask=None):
-        """
-        Forward pass.
-        """
+        """Forward pass."""
         # TODO: there are a lot of parameters to document here.
 
         # Input is [B, query_len, dim]
@@ -1034,9 +1000,7 @@ class MultiHeadAttention(nn.Module):
 
 
 class TransformerFFN(nn.Module):
-    """
-    Implements the FFN part of the transformer.
-    """
+    """Implements the FFN part of the transformer."""
 
     def __init__(self, dim, dim_hidden, relu_dropout=0, activation='relu'):
         super(TransformerFFN, self).__init__()
@@ -1056,9 +1020,7 @@ class TransformerFFN(nn.Module):
         # TODO: initialize biases to 0
 
     def forward(self, x):
-        """
-        Forward pass.
-        """
+        """Forward pass."""
         x = self.nonlinear(self.lin1(x))
         x = self.relu_dropout(x)  # --relu-dropout
         x = self.lin2(x)

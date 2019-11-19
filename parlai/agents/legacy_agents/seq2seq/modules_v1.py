@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Module files as torch.nn.Module subclasses for Seq2seqAgent.
-"""
+"""Module files as torch.nn.Module subclasses for Seq2seqAgent."""
 
 import math
 
@@ -19,9 +17,7 @@ from parlai.utils.misc import NEAR_INF
 
 
 def opt_to_kwargs(opt):
-    """
-    Get kwargs for seq2seq from opt.
-    """
+    """Get kwargs for seq2seq from opt."""
     kwargs = {}
     for k in [
         'numlayers',
@@ -42,8 +38,7 @@ def opt_to_kwargs(opt):
 
 
 def pad(tensor, length, dim=0, pad=0):
-    """
-    Pad tensor to a specific length.
+    """Pad tensor to a specific length.
 
     :param tensor: vector to pad
     :param length: new length
@@ -68,9 +63,7 @@ def pad(tensor, length, dim=0, pad=0):
 
 
 class Seq2seq(nn.Module):
-    """
-    Sequence to sequence parent module.
-    """
+    """Sequence to sequence parent module."""
 
     RNN_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
 
@@ -95,8 +88,7 @@ class Seq2seq(nn.Module):
         input_dropout=0,
         longest_label=1,
     ):
-        """
-        Initialize seq2seq model.
+        """Initialize seq2seq model.
 
         See cmdline args in Seq2seqAgent for description of arguments.
         """
@@ -159,24 +151,18 @@ class Seq2seq(nn.Module):
         )
 
     def _encode(self, xs, prev_enc=None):
-        """
-        Encode the input or return cached encoder state.
-        """
+        """Encode the input or return cached encoder state."""
         if prev_enc is not None:
             return prev_enc
         else:
             return self.encoder(xs)
 
     def _starts(self, bsz):
-        """
-        Return bsz start tokens.
-        """
+        """Return bsz start tokens."""
         return self.START.detach().expand(bsz, 1)
 
     def _decode_forced(self, ys, encoder_states):
-        """
-        Decode with teacher forcing.
-        """
+        """Decode with teacher forcing."""
         bsz = ys.size(0)
         seqlen = ys.size(1)
 
@@ -207,9 +193,7 @@ class Seq2seq(nn.Module):
         return scores
 
     def _decode(self, encoder_states, maxlen):
-        """
-        Decode maxlen tokens.
-        """
+        """Decode maxlen tokens."""
         hidden = encoder_states[1]
         attn_params = (encoder_states[0], encoder_states[2])
         bsz = encoder_states[0].size(0)
@@ -228,9 +212,7 @@ class Seq2seq(nn.Module):
         return scores
 
     def _align_inds(self, encoder_states, cand_inds):
-        """
-        Select the encoder states relevant to valid candidates.
-        """
+        """Select the encoder states relevant to valid candidates."""
         enc_out, hidden, attn_mask = encoder_states
 
         # LSTM or GRU/RNN hidden state?
@@ -257,9 +239,7 @@ class Seq2seq(nn.Module):
         return enc_out, hidden, attn_mask
 
     def _extract_cur(self, encoder_states, index, num_cands):
-        """
-        Extract encoder states at current index and expand them.
-        """
+        """Extract encoder states at current index and expand them."""
         enc_out, hidden, attn_mask = encoder_states
         if isinstance(hidden, torch.Tensor):
             cur_hid = hidden.select(1, index).unsqueeze(1).expand(-1, num_cands, -1)
@@ -284,9 +264,7 @@ class Seq2seq(nn.Module):
         return cur_enc, cur_hid, cur_mask
 
     def _rank(self, cands, cand_inds, encoder_states):
-        """
-        Rank each cand by the average log-probability of the sequence.
-        """
+        """Rank each cand by the average log-probability of the sequence."""
         if cands is None:
             return None
         encoder_states = self._align_inds(encoder_states, cand_inds)
@@ -317,8 +295,7 @@ class Seq2seq(nn.Module):
     def forward(
         self, xs, ys=None, cands=None, prev_enc=None, maxlen=None, seq_len=None
     ):
-        """
-        Get output predictions from the model.
+        """Get output predictions from the model.
 
         :param xs:          (bsz x seqlen) LongTensor input to the encoder
         :param ys:          expected output from the decoder. used for teacher
@@ -380,16 +357,14 @@ class Seq2seq(nn.Module):
 
 
 class UnknownDropout(nn.Module):
-    """
-    With set frequency, replaces tokens with unknown token.
+    """With set frequency, replaces tokens with unknown token.
 
-    This layer can be used right before an embedding layer to make the model more robust
-    to unknown words at test time.
+    This layer can be used right before an embedding layer to make the model
+    more robust to unknown words at test time.
     """
 
     def __init__(self, unknown_idx, probability):
-        """
-        Initialize layer.
+        """Initialize layer.
 
         :param unknown_idx: index of unknown token, replace tokens with this
         :param probability: during training, replaces tokens with unknown token
@@ -400,9 +375,7 @@ class UnknownDropout(nn.Module):
         self.prob = probability
 
     def forward(self, input):
-        """
-        If training and dropout rate > 0, masks input with unknown token.
-        """
+        """If training and dropout rate > 0, masks input with unknown token."""
         if self.training and self.prob > 0:
             mask = input.new(input.size()).float().uniform_(0, 1) < self.prob
             input.masked_fill_(mask, self.unknown_idx)
@@ -410,9 +383,7 @@ class UnknownDropout(nn.Module):
 
 
 class RNNEncoder(nn.Module):
-    """
-    RNN Encoder.
-    """
+    """RNN Encoder."""
 
     def __init__(
         self,
@@ -430,9 +401,7 @@ class RNNEncoder(nn.Module):
         unknown_idx=None,
         sparse=False,
     ):
-        """
-        Initialize recurrent encoder.
-        """
+        """Initialize recurrent encoder."""
         super().__init__()
 
         self.dropout = nn.Dropout(p=dropout)
@@ -466,8 +435,7 @@ class RNNEncoder(nn.Module):
             self.rnn = shared_rnn
 
     def forward(self, xs):
-        """
-        Encode sequence.
+        """Encode sequence.
 
         :param xs: (bsz x seqlen) LongTensor of input token indices
 
@@ -507,8 +475,7 @@ class RNNEncoder(nn.Module):
 
 
 class RNNDecoder(nn.Module):
-    """
-    Recurrent decoder module.
+    """Recurrent decoder module.
 
     Can be used as a standalone language model or paired with an encoder.
     """
@@ -528,9 +495,7 @@ class RNNDecoder(nn.Module):
         attn_length=-1,
         sparse=False,
     ):
-        """
-        Initialize recurrent decoder.
-        """
+        """Initialize recurrent decoder."""
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
         self.layers = numlayers
@@ -560,8 +525,7 @@ class RNNDecoder(nn.Module):
         )
 
     def forward(self, xs, hidden=None, attn_params=None):
-        """
-        Decode from input tokens.
+        """Decode from input tokens.
 
         :param xs:          (bsz x seqlen) LongTensor of input token indices
         :param hidden:      hidden state to feed into decoder. default (None)
@@ -595,9 +559,7 @@ class RNNDecoder(nn.Module):
 
 
 class OutputLayer(nn.Module):
-    """
-    Takes in final states and returns distribution over candidates.
-    """
+    """Takes in final states and returns distribution over candidates."""
 
     def __init__(
         self,
@@ -609,8 +571,7 @@ class OutputLayer(nn.Module):
         shared_weight=None,
         padding_idx=-1,
     ):
-        """
-        Initialize output layer.
+        """Initialize output layer.
 
         :param num_features:  number of candidates to rank
         :param hiddensize:    (last) dimension of the input vectors
@@ -668,16 +629,13 @@ class OutputLayer(nn.Module):
                 self.o2e = lambda x: x
 
     def reset_parameters(self):
-        """
-        Reset bias param.
-        """
+        """Reset bias param."""
         if hasattr(self, 'bias'):
             stdv = 1.0 / math.sqrt(self.bias.size(0))
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, input):
-        """
-        Compute scores from inputs.
+        """Compute scores from inputs.
 
         :param input: (bsz x seq_len x num_directions * hiddensize) tensor of
                        states, e.g. the output states of an RNN
@@ -720,8 +678,7 @@ class OutputLayer(nn.Module):
 
 
 class AttentionLayer(nn.Module):
-    """
-    Computes attention between hidden and encoder states.
+    """Computes attention between hidden and encoder states.
 
     See arxiv.org/abs/1508.04025 for more info on each attention type.
     """
@@ -735,9 +692,7 @@ class AttentionLayer(nn.Module):
         attn_length=-1,
         attn_time='pre',
     ):
-        """
-        Initialize attention layer.
-        """
+        """Initialize attention layer."""
         super().__init__()
         self.attention = attn_type
 
@@ -772,8 +727,7 @@ class AttentionLayer(nn.Module):
                 self.attn = nn.Linear(hsz, hszXdirs, bias=False)
 
     def forward(self, xes, hidden, attn_params):
-        """
-        Compute attention over attn_params given input and hidden states.
+        """Compute attention over attn_params given input and hidden states.
 
         :param xes:         input state. will be combined with applied
                             attention.

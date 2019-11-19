@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Modules for TransresnetMultimodalAgent.
-"""
+"""Modules for TransresnetMultimodalAgent."""
 
 import torch
 from torch import nn
@@ -21,15 +19,11 @@ from projects.personality_captions.transresnet.modules import (
 
 
 class TransresnetMultimodalModel(TransresnetModel):
-    """
-    Extension of Transresnet to incorporate dialogue history and multimodality.
-    """
+    """Extension of Transresnet to incorporate dialogue history and multimodality."""
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """
-        Override to include model-specific args.
-        """
+        """Override to include model-specific args."""
         TransresnetModel.add_cmdline_args(argparser)
         agent = argparser.add_argument_group("TransresnetMultimodal task arguments")
         agent.add_argument(
@@ -151,9 +145,7 @@ class TransresnetMultimodalModel(TransresnetModel):
             )
 
     def _build_context_encoder(self):
-        """
-        Build the context (i.e. dialogue history) encoder.
-        """
+        """Build the context (i.e. dialogue history) encoder."""
         if self.opt.get("share_encoder"):
             self.context_encoder = self.label_encoder
         else:
@@ -497,9 +489,7 @@ class TransresnetMultimodalModel(TransresnetModel):
 
 
 class MultimodalCombiner(nn.Module):
-    """
-    Multimodal Combination module.
-    """
+    """Multimodal Combination module."""
 
     def __init__(
         self,

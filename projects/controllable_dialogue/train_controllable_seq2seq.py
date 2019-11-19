@@ -13,9 +13,7 @@ from parlai.scripts.train_model import setup_args as tm_setupargs
 
 
 def setup_args():
-    """
-    Defaults for baseline model.
-    """
+    """Defaults for baseline model"""
     parser = tm_setupargs()
 
     parser.set_defaults(

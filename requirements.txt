@@ -1,4 +1,3 @@
-black==19.10b
 boto3==1.9.246
 botocore==1.12.246
 docutils==0.14

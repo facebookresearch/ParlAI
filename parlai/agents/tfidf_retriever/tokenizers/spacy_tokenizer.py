@@ -4,8 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-Tokenizer that is backed by spaCy (spacy.io).
+"""Tokenizer that is backed by spaCy (spacy.io).
 
 Requires spaCy package and the spaCy english model.
 """

@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Runs Talk the Walk Simulation using pretrained model files for tourist and agent.
+Runs Talk the Walk Simulation using pretrained model files for tourist and
+agent.
 """
 
 from parlai.core.params import ParlaiParser

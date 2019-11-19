@@ -11,9 +11,7 @@ from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 
 
 class RNNModel(nn.Module):
-    """
-    Container module with an encoder, a recurrent module, and a decoder.
-    """
+    """Container module with an encoder, a recurrent module, and a decoder."""
 
     def __init__(self, opt, ntoken):
         super(RNNModel, self).__init__()

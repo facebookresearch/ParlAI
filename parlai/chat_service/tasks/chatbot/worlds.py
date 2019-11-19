@@ -13,9 +13,7 @@ from parlai.core.agents import create_agent_from_shared
 
 # ---------- Chatbot demo ---------- #
 class MessengerBotChatOnboardWorld(OnboardWorld):
-    """
-    Example messenger onboarding world for Chatbot Model.
-    """
+    """Example messenger onboarding world for Chatbot Model."""
 
     @staticmethod
     def generate_world(opt, agents):
@@ -26,9 +24,7 @@ class MessengerBotChatOnboardWorld(OnboardWorld):
 
 
 class MessengerBotChatTaskWorld(World):
-    """
-    Example one person world that talks to a provided agent (bot).
-    """
+    """Example one person world that talks to a provided agent (bot)."""
 
     MAX_AGENTS = 1
 
@@ -86,9 +82,7 @@ class MessengerBotChatTaskWorld(World):
 
 # ---------- Overworld -------- #
 class MessengerOverworld(World):
-    """
-    World to handle moving agents to their proper places.
-    """
+    """World to handle moving agents to their proper places"""
 
     def __init__(self, opt, agent):
         self.agent = agent

@@ -3,8 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Simple wrapper around the Stanford CoreNLP pipeline.
+"""Simple wrapper around the Stanford CoreNLP pipeline.
 
 Serves commands to a java subprocess running the jar. Requires java 8.
 """
@@ -31,9 +30,7 @@ class CoreNLPTokenizer(Tokenizer):
         self._launch()
 
     def _launch(self):
-        """
-        Start the CoreNLP jar with pexpect.
-        """
+        """Start the CoreNLP jar with pexpect."""
         annotators = ['tokenize', 'ssplit']
         if 'ner' in self.annotators:
             annotators.extend(['pos', 'lemma', 'ner'])

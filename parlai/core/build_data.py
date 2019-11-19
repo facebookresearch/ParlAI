@@ -28,8 +28,8 @@ def built(path, version_string=None):
     """
     Check if '.built' flag has been set for that task.
 
-    If a version_string is provided, this has to match, or the version is regarded as
-    not built.
+    If a version_string is provided, this has to match, or the version
+    is regarded as not built.
     """
     if version_string:
         fname = os.path.join(path, '.built')
@@ -66,8 +66,8 @@ def download(url, path, fname, redownload=False):
     """
     Download file using `requests`.
 
-    If ``redownload`` is set to false, then will not download tar file again if it is
-    present (default ``True``).
+    If ``redownload`` is set to false, then
+    will not download tar file again if it is present (default ``True``).
     """
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
@@ -151,27 +151,19 @@ def download(url, path, fname, redownload=False):
 
 
 def make_dir(path):
-    """
-    Make the directory and any nonexistent parent directories (`mkdir.
-
-    -p`).
-    """
+    """Make the directory and any nonexistent parent directories (`mkdir -p`)."""
     # the current working directory is a fine path
     if path != '':
         os.makedirs(path, exist_ok=True)
 
 
 def move(path1, path2):
-    """
-    Rename the given file.
-    """
+    """Rename the given file."""
     shutil.move(path1, path2)
 
 
 def remove_dir(path):
-    """
-    Remove the given directory, if it exists.
-    """
+    """Remove the given directory, if it exists."""
     shutil.rmtree(path, ignore_errors=True)
 
 
@@ -217,9 +209,7 @@ def unzip(path, fname, deleteZip=True):
 
 
 def cat(file1, file2, outfile, deleteFiles=True):
-    """
-    Concatenate two files to an outfile, possibly deleting the originals.
-    """
+    """Concatenate two files to an outfile, possibly deleting the originals."""
     with open(outfile, 'wb') as wfd:
         for f in [file1, file2]:
             with open(f, 'rb') as fd:
@@ -238,9 +228,7 @@ def _get_confirm_token(response):
 
 
 def download_from_google_drive(gd_id, destination):
-    """
-    Use the requests package to download a file from Google Drive.
-    """
+    """Use the requests package to download a file from Google Drive."""
     URL = 'https://docs.google.com/uc?export=download'
 
     with requests.Session() as session:
@@ -310,9 +298,9 @@ def modelzoo_path(datapath, path):
     """
     Map pretrain models filenames to their path on disk.
 
-    If path starts with 'models:', then we remap it to the model zoo path within the
-    data directory (default is ParlAI/data/models). We download models from the model
-    zoo if they are not here yet.
+    If path starts with 'models:', then we remap it to the model zoo path
+    within the data directory (default is ParlAI/data/models).
+    We download models from the model zoo if they are not here yet.
     """
     if path is None:
         return None

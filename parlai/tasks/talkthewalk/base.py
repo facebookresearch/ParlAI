@@ -53,9 +53,7 @@ class TTWBase(FixedDialogTeacher):
         return shared
 
     def _setup_episode(self, episode):
-        """
-        Process one episode in an example.
-        """
+        """Process one episode in an example."""
         raise NotImplementedError('Abstract class: user must implement _setup_episode')
 
     def _setup_data(self, datafile):

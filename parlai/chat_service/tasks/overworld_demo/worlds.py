@@ -10,9 +10,7 @@ from parlai.chat_service.services.messenger.worlds import OnboardWorld
 
 # ---------- Echo demo ---------- #
 class MessengerEchoOnboardWorld(OnboardWorld):
-    """
-    Example messenger onboarding world for Echo task, displays.
-
+    """Example messenger onboarding world for Echo task, displays.
     onboarding worlds that only exist to send an introduction message.
     """
 
@@ -33,9 +31,7 @@ class MessengerEchoOnboardWorld(OnboardWorld):
 
 
 class MessengerEchoTaskWorld(World):
-    """
-    Example one person world that uses only user input.
-    """
+    """Example one person world that uses only user input."""
 
     MAX_AGENTS = 1
 
@@ -69,9 +65,8 @@ class MessengerEchoTaskWorld(World):
 
 # ----------- Onboard Data Demo ----------- #
 class MessengerOnboardDataOnboardWorld(OnboardWorld):
-    """
-    Example messenger onboarding that collects and returns data for use in the real task
-    world.
+    """Example messenger onboarding that collects and returns data for use
+    in the real task world
     """
 
     def __init__(self, opt, agent):
@@ -115,9 +110,7 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
 
 
 class MessengerOnboardDataTaskWorld(World):
-    """
-    Example one person world that relays data given in the onboard world.
-    """
+    """Example one person world that relays data given in the onboard world."""
 
     MAX_AGENTS = 1
 
@@ -154,9 +147,8 @@ class MessengerOnboardDataTaskWorld(World):
 
 # ---------- Chat world -------- #
 class MessengerChatOnboardWorld(OnboardWorld):
-    """
-    Example messenger onboarding world for chat task, displays intro and explains
-    instructions.
+    """Example messenger onboarding world for chat task, displays intro and
+    explains instructions.
     """
 
     def __init__(self, opt, agent):
@@ -200,9 +192,7 @@ class MessengerChatOnboardWorld(OnboardWorld):
 
 
 class MessengerChatTaskWorld(World):
-    """
-    Example one person world that lets two users chat.
-    """
+    """Example one person world that lets two users chat."""
 
     MAX_AGENTS = 2
 
@@ -241,9 +231,7 @@ class MessengerChatTaskWorld(World):
 
 # ---------- Overworld -------- #
 class MessengerOverworld(World):
-    """
-    World to handle moving agents to their proper places.
-    """
+    """World to handle moving agents to their proper places"""
 
     DEMOS = {
         'echo': (MessengerEchoOnboardWorld, MessengerEchoTaskWorld),

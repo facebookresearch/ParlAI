@@ -209,11 +209,9 @@ class MockSocket:
 
 
 class MockAgent(object):
-    """
-    Class that pretends to be an MTurk agent interacting through the webpage by
-    simulating the same commands that are sent from the core.html file.
-
-    Exposes methods to use for testing and checking status
+    """Class that pretends to be an MTurk agent interacting through the
+    webpage by simulating the same commands that are sent from the core.html
+    file. Exposes methods to use for testing and checking status
     """
 
     def __init__(self, hit_id, assignment_id, worker_id, task_group_id):
@@ -253,9 +251,7 @@ class MockAgent(object):
         self.ws.handlers[self.worker_id] = handler
 
     def make_packet_handler(self, on_msg):
-        """
-        A packet handler.
-        """
+        """A packet handler"""
 
         def handler_mock(pkt):
             if pkt['type'] == data_model.WORLD_MESSAGE:
@@ -338,9 +334,7 @@ class MockAgent(object):
 
 
 class TestMTurkManagerWorkflows(unittest.TestCase):
-    """
-    Various test cases to replicate a whole mturk workflow.
-    """
+    '''Various test cases to replicate a whole mturk workflow'''
 
     def setUp(self):
         # Mock functions that hit external APIs and such

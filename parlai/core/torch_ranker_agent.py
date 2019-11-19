@@ -36,9 +36,7 @@ class TorchRankerAgent(TorchAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """
-        Add CLI args.
-        """
+        """Add CLI args."""
         super(TorchRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
@@ -253,8 +251,8 @@ class TorchRankerAgent(TorchAgent):
         """
         Get fast metrics calculations if we train with batch candidates.
 
-        Specifically, calculate accuracy ('train_accuracy'), average rank, and mean
-        reciprocal rank.
+        Specifically, calculate accuracy ('train_accuracy'), average rank,
+        and mean reciprocal rank.
         """
         batchsize = scores.size(0)
         # get accuracy
@@ -270,9 +268,7 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['mrr'] += torch.sum(mrr).item()
 
     def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
-        """
-        Return predictions from training.
-        """
+        """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         if self.rank_top_k > 0:
@@ -337,9 +333,7 @@ class TorchRankerAgent(TorchAgent):
         return True
 
     def train_step(self, batch):
-        """
-        Train on a single batch of examples.
-        """
+        """Train on a single batch of examples."""
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
@@ -387,9 +381,7 @@ class TorchRankerAgent(TorchAgent):
         return self._get_train_preds(scores, label_inds, cands, cand_vecs)
 
     def eval_step(self, batch):
-        """
-        Evaluate a single batch of examples.
-        """
+        """Evaluate a single batch of examples."""
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
@@ -456,9 +448,7 @@ class TorchRankerAgent(TorchAgent):
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
-        """
-        Heuristic to block a model repeating a line from the history.
-        """
+        """Heuristic to block a model repeating a line from the history."""
         history_strings = []
         for h in self.history.history_raw_strings:
             # Heuristic: Block any given line in the history, splitting by '\n'.
@@ -705,9 +695,7 @@ class TorchRankerAgent(TorchAgent):
         return -1
 
     def share(self):
-        """
-        Share model parameters.
-        """
+        """Share model parameters."""
         shared = super().share()
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
@@ -719,9 +707,7 @@ class TorchRankerAgent(TorchAgent):
         return shared
 
     def reset_metrics(self):
-        """
-        Reset metrics.
-        """
+        """Reset metrics."""
         super().reset_metrics()
         # Note: we cannot change the type of metrics ahead of time, so you
         # should correctly initialize to floats or ints here
@@ -732,9 +718,7 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):
-        """
-        Report loss and mean_rank from model's perspective.
-        """
+        """Report loss and mean_rank from model's perspective."""
         base = super().report()
         m = {}
         examples = self.metrics['examples']
@@ -884,16 +868,12 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidate_encs = None
 
     def load_candidates(self, path, cand_type='vectors'):
-        """
-        Load fixed candidates from a path.
-        """
+        """Load fixed candidates from a path."""
         print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
         return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):
-        """
-        Prebuild cached vectors for fixed candidates.
-        """
+        """Prebuild cached vectors for fixed candidates."""
         cand_batches = [cands[i : i + 512] for i in range(0, len(cands), 512)]
         print(
             "[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
@@ -905,9 +885,7 @@ class TorchRankerAgent(TorchAgent):
         return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
 
     def _save_candidates(self, vecs, path, cand_type='vectors'):
-        """
-        Save cached vectors.
-        """
+        """Save cached vectors."""
         print("[ Saving fixed candidate set {} to {} ]".format(cand_type, path))
         with open(path, 'wb') as f:
             torch.save(vecs, f)

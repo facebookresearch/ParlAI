@@ -48,11 +48,7 @@ class InteractiveWorld(DialogPartnerWorld):
         return a1_persona, a2_persona
 
     def parley(self):
-        """
-        Agent 0 goes first.
-
-        Alternate between the two agents.
-        """
+        """Agent 0 goes first. Alternate between the two agents."""
         if self.cnt == 0:
             self.p1, self.p2 = self.get_new_personas()
 
