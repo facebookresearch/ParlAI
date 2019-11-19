@@ -67,7 +67,7 @@ class TestParlaiParser(unittest.TestCase):
         with testing_utils.capture_output() as _:
             parser.parse_args()
         help_str = parser.format_help()
-        assert re.search('--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
+        assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
 
     def test_recommendations_group(self):
         """Test whether recommended args work for a group."""
@@ -85,9 +85,9 @@ class TestParlaiParser(unittest.TestCase):
             parser.parse_args()
 
         help_str = parser.format_help()
-        assert re.search('Test Group:\n', help_str)
+        assert re.search(r'Test Group:\n', help_str)
         assert re.search(
-            '--batchsize[^\n]*\n[^\n]*\(recommended: \[5, 10, 15\]\)', help_str
+            r'--batchsize[^\n]*\n[^\n]*\(recommended: \[5, 10, 15\]\)', help_str
         )
 
 
