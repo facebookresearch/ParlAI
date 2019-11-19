@@ -22,6 +22,20 @@ NO_TOPIC = '[NO TOPIC]'
 
 
 class InteractiveWorld(DialogPartnerWorld):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """Add command-line arguments specifically for this agent."""
+        parser = argparser.add_argument_group(
+            'Wizard Interactive World Arguments'
+        )
+        parser.add_argument(
+            '--add-knowledge',
+            type='bool',
+            default=True,
+            help='Add knowledge to the observation; select the gold knowledge'
+            'with the knowledge selector'
+        )
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         print('[ loading topics.. ]')
@@ -30,6 +44,7 @@ class InteractiveWorld(DialogPartnerWorld):
         self.cnt = 0
         self.human_agent = self.agents[0]
         self.model_agent = self.agents[1]
+        self.dialogue_history = []
 
     def load_topics(self, opt):
         # Load possible chosen topics
@@ -68,6 +83,9 @@ class InteractiveWorld(DialogPartnerWorld):
         chosen_topic = topic_list[choice]
         print('[ Your chosen topic is: {} ]'.format(chosen_topic))
         return chosen_topic
+
+    def add_knowledge(self):
+        pass
 
     def parley(self):
         if self.cnt == 0:

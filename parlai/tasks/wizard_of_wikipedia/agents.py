@@ -782,6 +782,9 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
         elif self.teacher_type == 'more_docs_sentence':
             action['text'] = texts
             action['label_candidates'] = self.sent_tok.tokenize(passages)
+            label = action['labels'][0]
+            if label not in action['label_candidates']:
+                action['label_candidates'].append(label)
         elif self.teacher_type == 'span':
             action['text'] = '{}\n{}'.format(passages, texts)
             action['labels'] = [span_label]
