@@ -77,7 +77,7 @@ def setup_args(parser=None):
     return parser
 
 
-def get_word_stats(text, agent_dict, bins=[0, 100, 1000, 100000]):
+def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     """
     Function which takes text sequence and dict, returns word freq and length statistics
 
@@ -229,7 +229,7 @@ def eval_wordstat(opt, print_parser=None):
         world.parley()
         # orig eval_wordstat.py handles bsz=1 but for simplicity we assume bsz>1
         assert batch_size != 1
-        for world_idx, w in enumerate(world.worlds):
+        for w in world.worlds:
             try:
                 try:
                     response_act = w.acts[-1]

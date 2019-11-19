@@ -6,8 +6,6 @@
 
 from copy import deepcopy
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent

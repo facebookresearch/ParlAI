@@ -7,7 +7,6 @@
 import unittest
 import os
 import time
-import threading
 from unittest import mock
 from parlai.mturk.core.dev.agents import (
     MTurkAgent,

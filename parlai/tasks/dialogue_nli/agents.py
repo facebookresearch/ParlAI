@@ -5,14 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 """Dialogue safety related datasets and teachers."""
 
-import copy
 import json
 import os
-import random
-import sys as _sys
 
-import parlai.core.build_data as build_data
-from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
 from .build import build

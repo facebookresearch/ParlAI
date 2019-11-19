@@ -36,7 +36,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from collections import defaultdict, namedtuple, Counter
+from collections import namedtuple, Counter
 from operator import attrgetter
 
 import os
