@@ -343,8 +343,9 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
         self.speaker_label = opt.get('speaker_label', 'both')
+        self.add_topic = opt.get('add_topic', False)
+        self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -388,7 +389,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
-        if self.opt['add_topic'] and entry_idx == 0:
+        if self.add_topic and entry_idx == 0:
             text = d.get('chosen_topic', '') + '\n' + text
 
         action = {
@@ -407,41 +408,17 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
 
 class BasicWizardDialogTeacher(BasicdialogTeacher):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Basic Dialog Arguments')
-        agent.add_argument(
-            '--speaker-label',
-            type=str,
-            default='wizard',
-            choices=['both', 'wizard', 'apprentice'],
-            help='Which speaker labels to train on',
-        )
-        agent.add_argument(
-            '--add-topic',
-            type='bool',
-            default=True,
-            help='prepend chosen topic to first turn',
-        )
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = "wizard"
+        self.add_topic = True
 
 
 class BasicApprenticeDialogTeacher(BasicdialogTeacher):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Basic Dialog Arguments')
-        agent.add_argument(
-            '--speaker-label',
-            type=str,
-            default='apprentice',
-            choices=['both', 'wizard', 'apprentice'],
-            help='Which speaker labels to train on',
-        )
-        agent.add_argument(
-            '--add-topic',
-            type='bool',
-            default=True,
-            help='prepend chosen topic to first turn',
-        )
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = 'apprentice'
+        self.add_topic = True
 
 
 ###############################################################
