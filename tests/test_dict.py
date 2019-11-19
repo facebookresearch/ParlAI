@@ -12,7 +12,7 @@ from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
-from parlai.utils.misc import Opt
+from parlai.core.opt import Opt
 
 import parlai.utils.testing as testing_utils
 import os
