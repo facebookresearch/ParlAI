@@ -12,7 +12,6 @@ from parlai.agents.bert_ranker.helpers import (
     get_bert_optimizer,
     MODEL_PATH,
 )
-from parlai.utils.misc import load_opt_file
 from parlai.core.torch_agent import History
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.utils.misc import warn_once
