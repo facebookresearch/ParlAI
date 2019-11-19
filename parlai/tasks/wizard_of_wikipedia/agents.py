@@ -344,7 +344,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
-        self.speaker_label = opt['speaker_label']
+        self.speaker_label = opt.get('speaker_label', 'both')
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -355,6 +355,12 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default='both',
             choices=['both', 'wizard', 'apprentice'],
             help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
+            type='bool',
+            default=False,
+            help='prepend chosen topic to first turn',
         )
 
     def num_examples(self):
@@ -382,17 +388,60 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
+        if self.opt['add_topic'] and entry_idx == 0:
+            text = d.get('chosen_topic', '') + '\n' + text
+
         action = {
             'id': 'WizardBasicDialog',
             'text': text,
             'labels': labels,
             'episode_done': episode_done,
         }
+        if 'label_candidates' in d:
+            action['label_candidates'] = d['label_candidates']
 
         if self.speaker_label == 'wizard':
             action['chosen_topic'] = d.get('chosen_topic', '')
 
         return action
+
+
+class BasicWizardDialogTeacher(BasicdialogTeacher):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Basic Dialog Arguments')
+        agent.add_argument(
+            '--speaker-label',
+            type=str,
+            default='wizard',
+            choices=['both', 'wizard', 'apprentice'],
+            help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
+            type='bool',
+            default=True,
+            help='prepend chosen topic to first turn',
+        )
+
+
+class BasicApprenticeDialogTeacher(BasicdialogTeacher):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Basic Dialog Arguments')
+        agent.add_argument(
+            '--speaker-label',
+            type=str,
+            default='apprentice',
+            choices=['both', 'wizard', 'apprentice'],
+            help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
+            type='bool',
+            default=True,
+            help='prepend chosen topic to first turn',
+        )
 
 
 ###############################################################
