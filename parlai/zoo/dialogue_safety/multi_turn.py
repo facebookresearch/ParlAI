@@ -11,7 +11,6 @@ dialogue safety task.
 from parlai.core.build_data import download_models
 
 
-
 def download(datapath):
     opt = {'datapath': datapath}  # for builder
     fnames = ['safety_models_v1.tgz']
