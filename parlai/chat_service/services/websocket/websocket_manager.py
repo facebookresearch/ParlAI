@@ -108,16 +108,6 @@ class WebsocketManager(ChatServiceManager):
                 agent_state = self.get_agent_state(agent.id)
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
 
-        # Monitor for crashed overworld futures
-        for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
-            if overworld_fut.done():
-                try:
-                    overworld_fut.result()
-                except Exception as e:
-                    self.agent_id_to_overworld_future.pop(agent_id, None)
-                    self.messenger_agent_states.pop(agent_id, None)
-                    raise e
-
         with self.agent_pool_change_condition:
             valid_pools = self._get_unique_pool()
             for world_type, agent_pool in valid_pools.items():
@@ -171,8 +161,8 @@ class WebsocketManager(ChatServiceManager):
                     future = self.world_runner.launch_task_world(
                         task_id, self.taskworld_map[world_type], agents
                     )
-                    future.add_done_callback(_done_callback)
-                    self.active_worlds[task_id] = future
+                future.add_done_callback(_done_callback)
+                self.active_worlds[task_id] = future
 
     def start_task(self):
         """Begin handling task.
