@@ -310,6 +310,18 @@ class ChatServiceManager(ABC):
         future = self.world_runner.launch_overworld(
             task_id, self.overworld, self.onboard_map, agent
         )
+
+        def _done_callback(fut):
+            self.observe_message(agent_id, 'See you later!')
+            for world_type in self.agent_pool:
+                agent_state = self.get_agent_state(agent_id)
+                if agent_state in self.agent_pool[world_type]:
+                    self.agent_pool[world_type].remove(agent_state)
+                    self.remove_agent_from_pool(agent_state, world_type=world_type)
+            del self.messenger_agent_states[agent_id]
+            del self.agent_id_to_overworld_future[agent_id]
+
+        future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
 
     def _on_new_message(self, message):

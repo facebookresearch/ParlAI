@@ -156,7 +156,7 @@ class MessengerWorldRunner:
                 self._world_module, overworld_name, "generate_world"
             )
             overworld = world_generator(self.opt, [overworld_agent])
-            while not self.system_done:
+            while not overworld.episode_done() and not self.system_done:
                 world_type = overworld.parley()
                 if world_type is None:
                     time.sleep(0.5)
@@ -179,6 +179,7 @@ class MessengerWorldRunner:
                 while agent_state.get_active_agent() != overworld_agent:
                     time.sleep(2)
                 overworld.return_overworld()
+            utils.print_and_log(logging.INFO, 'exiting overworld')
             return world_type
 
         fut = self.executor.submit(_world_function)
