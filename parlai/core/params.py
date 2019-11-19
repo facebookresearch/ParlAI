@@ -1075,7 +1075,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add recommended value to help string if recommended exists"""
         if 'help' in kwargs:
             if 'recommended' in kwargs:
-                kwargs['help'] += " (recommended: " + str(kwargs['recommended'] + ")")
+                kwargs['help'] += " (recommended: " + str(kwargs['recommended']) + ")"
                 del kwargs['recommended']
         return kwargs
 
