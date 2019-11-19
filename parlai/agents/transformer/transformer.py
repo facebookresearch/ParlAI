@@ -78,6 +78,7 @@ def add_common_cmdline_args(argparser):
         default='relu',
         help='Nonlinear activation to use. AIAYN uses relu, but '
         'more recent papers prefer gelu.',
+        recommended='gelu',
     )
     argparser.add_argument(
         '--output-scaling',
