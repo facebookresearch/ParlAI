@@ -54,7 +54,7 @@ codecov: &codecov
   run:
     name: Coverage report
     command: |
-      codecov
+      codecov --flags $CIRCLE_JOB
 
 installdeps: &installdeps
   run:
