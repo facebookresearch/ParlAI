@@ -161,8 +161,8 @@ class WebsocketManager(ChatServiceManager):
                     future = self.world_runner.launch_task_world(
                         task_id, self.taskworld_map[world_type], agents
                     )
-                future.add_done_callback(_done_callback)
-                self.active_worlds[task_id] = future
+                    future.add_done_callback(_done_callback)
+                    self.active_worlds[task_id] = future
 
     def start_task(self):
         """Begin handling task.
