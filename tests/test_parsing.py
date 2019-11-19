@@ -9,10 +9,10 @@ import unittest
 
 
 class TestRecommended(unittest.TestCase):
-    """Basic tests on the eval_model.py example."""
+    """Basic tests on the recommended values of parser."""
 
-    def test_output(self):
-        """Test output of running eval_model"""
+    def test_help(self):
+        """Test help message of parser"""
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -27,8 +27,8 @@ class TestRecommended(unittest.TestCase):
 
         variant_start = help_str.find("Chooses locations of layer norms, etc")
         variant_end = help_str[variant_start:].find("\n")
-        variant_str = help_str[variant_start: variant_start + variant_end].split()
-        assert(variant_str[variant_str.index("(recommended:") + 1][:-1] == "xlm")
+        variant_str = help_str[variant_start : variant_start + variant_end].split()
+        assert variant_str[variant_str.index("(recommended:") + 1][:-1] == "xlm"
 
 
 if __name__ == '__main__':
