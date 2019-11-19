@@ -335,7 +335,7 @@ class ChatServiceManager(ABC):
             self.observe_message(
                 agent_id, 'Please wait while the worlds are initializing...'
             )
-            return
+            self.world_runner.init_fut.result()
 
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
