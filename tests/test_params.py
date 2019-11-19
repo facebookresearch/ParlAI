@@ -7,6 +7,7 @@
 """Test ParlaiParser and other opt/params.py code."""
 
 import os
+import re
 import json
 import unittest
 from parlai.core.params import ParlaiParser
@@ -50,6 +51,44 @@ class TestParlaiParser(unittest.TestCase):
                 pp = ParlaiParser(True, True)
                 opt = pp.parse_args(['--model-file', modfn])
                 agents.create_agent(opt)
+
+    def test_recommendations_single(self):
+        """Test whether recommended args work for non-group."""
+        parser = ParlaiParser()
+        parser.add_argument(
+            '-bs',
+            '--batchsize',
+            default=1,
+            type=int,
+            help='batch size for minibatch training schemes',
+            recommended="10",
+        )
+
+        with testing_utils.capture_output() as _:
+            parser.parse_args()
+        help_str = parser.format_help()
+        assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
+
+    def test_recommendations_group(self):
+        """Test whether recommended args work for a group."""
+        parser = ParlaiParser()
+        parser_grp = parser.add_argument_group('Test Group')
+        parser_grp.add_argument(
+            '-bs',
+            '--batchsize',
+            default=1,
+            type=int,
+            help='batch size for minibatch training schemes',
+            recommended=[5, 10, 15],
+        )
+        with testing_utils.capture_output() as _:
+            parser.parse_args()
+
+        help_str = parser.format_help()
+        assert re.search(r'Test Group:\n', help_str)
+        assert re.search(
+            r'--batchsize[^\n]*\n[^\n]*\(recommended: \[5, 10, 15\]\)', help_str
+        )
 
 
 if __name__ == '__main__':
