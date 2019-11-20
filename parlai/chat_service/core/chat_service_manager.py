@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import sys
+import copy
 import logging
 import datetime
 import threading
@@ -159,8 +160,10 @@ class ChatServiceManager(ABC):
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
+        # Deepcopy the opts so the manager opts aren't changed by the world runner
+        runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            opt, self.world_path, self.max_workers, self, opt['is_debug']
+            runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
@@ -307,6 +310,28 @@ class ChatServiceManager(ABC):
         future = self.world_runner.launch_overworld(
             task_id, self.overworld, self.onboard_map, agent
         )
+
+        def _done_callback(fut):
+            e = fut.exception()
+            if e is not None:
+                shared_utils.print_and_log(
+                    logging.ERROR,
+                    'World {} had error {}'.format(task_id, repr(e)),
+                    should_print=True,
+                )
+                if self.debug:
+                    raise e
+            else:
+                self.observe_message(agent_id, 'See you later!')
+                for world_type in self.agent_pool:
+                    agent_state = self.get_agent_state(agent_id)
+                    if agent_state in self.agent_pool[world_type]:
+                        self.agent_pool[world_type].remove(agent_state)
+                        self.remove_agent_from_pool(agent_state, world_type=world_type)
+                del self.messenger_agent_states[agent_id]
+                del self.agent_id_to_overworld_future[agent_id]
+
+        future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
 
     def _on_new_message(self, message):
@@ -316,6 +341,12 @@ class ChatServiceManager(ABC):
             message to put on queue
         """
         agent_id = message['sender']['id']
+        if not self.world_runner.is_initialized():
+            self.observe_message(
+                agent_id, 'Please wait while the worlds are initializing...'
+            )
+            self.world_runner.init_fut.result()
+
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
