@@ -19,22 +19,22 @@ class InteractiveWorld(DialogPartnerWorld):
         self.load_personas()
 
     def load_personas(self):
-        # Create ConvAI2 data so we can assign personas.
-        convai2_opt = self.opt.copy()
-        convai2_opt['task'] = 'light_dialog'
-        convai2_opt['interactive_task'] = False
-        convai2_agent = RepeatLabelAgent(convai2_opt)
-        self.convai2_world = create_task(convai2_opt, convai2_agent)
+        # Create Light data so we can assign personas.
+        light_opt = self.opt.copy()
+        light_opt['task'] = 'light_dialog'
+        light_opt['interactive_task'] = False
+        light_agent = RepeatLabelAgent(light_opt)
+        self.light_world = create_task(light_opt, light_agent)
         self.cnt = 0
 
     def get_new_personas(self):
         # Find a new episode
         while True:
-            self.convai2_world.parley()
-            msg = self.convai2_world.get_acts()[0]
+            self.light_world.parley()
+            msg = self.light_world.get_acts()[0]
             if msg.get('episode_done', False):
-                self.convai2_world.parley()
-                msg = self.convai2_world.get_acts()[0]
+                self.light_world.parley()
+                msg = self.light_world.get_acts()[0]
                 break
         txt = msg.get('text', '').split('\n')
         a1_persona = ""  # (typically human in interactive)
