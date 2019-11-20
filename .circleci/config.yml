@@ -440,6 +440,10 @@ workflows:
           filters:
             branches:
               only: master
+      - nightly_gpu_tests:
+          filters:
+            branches:
+              only: master
       - check_extra_tests:
           filters:
             branches:
@@ -455,20 +459,3 @@ workflows:
       - test_website:
           requires:
             - deploy_website
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 10 * * *" # 10am UTC is 5am NYC
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - unittests_36
-      - unittests_37
-      - unittests_gpu11
-      - unittests_gpu12
-      - unittests_osx
-      - mturk_tests
-      - nightly_gpu_tests
-      - test_website
