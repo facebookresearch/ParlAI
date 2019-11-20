@@ -1124,7 +1124,14 @@ def _create_task_agents(opt):
 
 def _get_task_world(opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
-    sp = opt['task'].strip().split(':')
+    sp = opt['task'].strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
@@ -1146,7 +1153,7 @@ def _get_task_world(opt, user_agents, default_world=None):
                 world_name = "InteractiveWorld"
             else:
                 world_name = "DefaultWorld"
-        module_name = "parlai.tasks.%s.worlds" % (task)
+        module_name = "%s.tasks.%s.worlds" % (repo, task)
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)
