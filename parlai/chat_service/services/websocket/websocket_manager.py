@@ -255,12 +255,12 @@ class WebsocketManager(ChatServiceManager):
             (dict) payload to send through the socket. The keys should be:
                 'image': (True/False) whether the message is an image
                 'mime_type': str. Mime type of the message
-                'text': str. base64 encoded content
+                'data': str. base64 encoded content
 
         Returns a tornado future for tracking the `write_message` action.
         """
-        payload['text'] = payload['text'].replace('\n', '<br />')
-        message = {'text': '', 'attachment': payload, 'quick_replies': quick_replies}
+        payload['data'] = payload['data'].replace('\n', '<br />')
+        message = {'text': '', 'payload': payload, 'quick_replies': quick_replies}
         payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())

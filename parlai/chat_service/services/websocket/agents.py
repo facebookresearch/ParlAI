@@ -39,37 +39,10 @@ class WebsocketAgent(ChatServiceAgent):
         """
         logging.info(f"Sending new message: {act}")
         quick_replies = act.get('quick_replies', None)
-        attachment_msg = self._get_attachment_msg(act)
-        if attachment_msg is not None:
-            self.manager.observe_payload(self.id, attachment_msg, quick_replies)
+        if act.get('payload', None):
+            self.manager.observe_payload(self.id, act['payload'], quick_replies)
         else:
             self.manager.observe_message(self.id, act['text'], quick_replies)
-
-    def _get_attachment_msg(self, act):
-        """
-        Gets the message for an attachment given an act
-
-        Args:
-            act: dict. See `observe` for the structure of this dict
-
-        If the act does not have an attachment key, returns None. Otherwise,
-        returns the message for observe.
-        """
-        if not act.get('attachment'):
-            return None
-
-        attachment = act['attachment']
-        assert attachment['type'] == 'image', "Only image attachments supported"
-
-        if 'path' in attachment:
-            image = Image.open(attachment['path'])
-            msg = self._get_message_from_image(image)
-        elif 'data' in attachment:
-            msg = self._get_message_from_image(attachment['data'])
-        else:
-            raise ValueError("Invalid attachment format for type 'image'")
-
-        return msg
 
     def _get_message_from_image(self, image):
         """Gets the message dict for sending the provided image
@@ -97,7 +70,7 @@ class WebsocketAgent(ChatServiceAgent):
         action = {
             'episode_done': False,
             'text': message.get('text', ''),
-            'attachment': message.get('attachment'),
+            'payload': message.get('payload'),
         }
 
         self._queue_action(action, self.action_id)
