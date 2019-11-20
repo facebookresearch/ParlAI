@@ -9,12 +9,14 @@ not available. Uses the retrieval model from the model zoo.
 """
 
 from parlai.core.agents import Agent, create_agent
+from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE
 
 import json
 import os
 
 
 # TODO: put this guy in the model zoo and replace
+SELECTOR_FILE = '/checkpoint/edinan/20191119/wizard_doc_reader/lr=1e-05_lr-scheduler-patience=3_lr-scheduler-decay=0.9_warmupupdates=2000/model'
 
 
 class KnowledgeRetrieverAgent(Agent):
@@ -29,6 +31,7 @@ class KnowledgeRetrieverAgent(Agent):
             type=str,
             default='models:wikipedia_full/tfidf_retriever/model',
         )
+        parser.add_argument('--selector-model-file', type=str, default=SELECTOR_FILE)
         parser.add_argument(
             '--num-retrieved',
             type=int,
@@ -36,21 +39,28 @@ class KnowledgeRetrieverAgent(Agent):
             help='how many passages to retrieve for each category',
         )
         parser.add_argument(
-            '--add-passage-title',
+            '--add-token-knowledge',
             type='bool',
             default=False,
-            help='Add the passage title to the set of retrieved knowledge'
+            help='Add knowledge token to retrieved knowledge',
         )
-        # TODO: make the above default to True for certain agents
         parser.add_argument('--debug', type='bool', default=False)
         return parser
 
     def __init__(self, opt, shared=None):
-        self.add_passage_title = opt['add_passage_title']
+        self.opt = opt
+        self.add_token_knowledge = opt['add_token_knowledge']
+        self.model_path = os.path.join(
+            opt['datapath'],
+            'models',
+            'wizard_of_wikipedia',
+            'full_dialogue_retrieval_model',
+        )
 
         if not shared:
             # Create retriever
             self._set_up_tfidf_retriever(opt)
+            self._set_up_selector(opt)
         else:
             self.retriever = shared['retriever']
             self.sent_tok = shared['sent_tok']
@@ -59,7 +69,8 @@ class KnowledgeRetrieverAgent(Agent):
         self.id = 'KnowledgeRetrieverAgent'
 
         # NOTE: dialogue history should NOT be shared between instances
-        self.dialogue_history = {}
+        self.retriever_history = {'episode_done': False}
+        self.dialogue_history = []
 
     def _set_up_tfidf_retriever(self, opt):
         retriever_opt = {
@@ -74,6 +85,13 @@ class KnowledgeRetrieverAgent(Agent):
         wiki_map_path = os.path.join(self.model_path, 'chosen_topic_to_passage.json')
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
+    def _set_up_selector(self, opt):
+        selector_opt = {
+            'model_file': opt['selector_model_file'],
+            'eval_candidates': 'inline',
+        }
+        self.selector = create_agent(selector_opt)
+
     def _set_up_sent_tok(self):
         try:
             import nltk
@@ -87,40 +105,39 @@ class KnowledgeRetrieverAgent(Agent):
             nltk.download('punkt')
             self.sent_tok = nltk.data.load(st_path)
 
-    def maintain_retrieved_texts(
-        self,
-        history,
-        observation,
-        actor_id='apprentice',
-    ):
+    def maintain_retriever_history(self, obs, actor_id='apprentice'):
         """
         Maintain texts retrieved by the retriever to mimic the set-up
         from the data collection for the task.
         """
 
         if actor_id == 'apprentice':
-            if history['episode_done']:
+            if self.retriever_history['episode_done']:
                 # clear history
-                history['chosen_topic'] = ''
-                history['wizard'] = ''
-                history['apprentice'] = ''
-                history['episode_done'] = False
+                self.retriever_history['chosen_topic'] = ''
+                self.retriever_history['wizard'] = ''
+                self.retriever_history['apprentice'] = ''
+                self.retriever_history['episode_done'] = False
+                self.dialogue_history = []
 
             # save chosen topic
-            if 'chosen_topic' in observation:
-                history['chosen_topic'] = observation['chosen_topic']
-            if 'text' in observation:
-                history['apprentice'] = observation['text']
+            if 'chosen_topic' in obs:
+                self.retriever_history['chosen_topic'] = obs['chosen_topic']
+            if 'text' in obs:
+                self.retriever_history['apprentice'] = obs['text']
 
-            history['episode_done'] = observation['episode_done']
+            self.retriever_history['episode_done'] = obs['episode_done']
 
-        elif not history['episode_done']:
+        elif not self.retriever_history['episode_done']:
             # only add the wizard item to the history if episode_done is not
             # True
-            history['wizard'] = observation['text']
+            self.retriever_history['wizard'] = obs['text']
+
+        self.dialogue_history.append({'id': actor_id, 'text': obs['text']})
 
     def get_chosen_topic_passages(self, chosen_topic):
         retrieved_txt_format = []
+        retrieved_txt_format_no_title = []
         if chosen_topic in self.wiki_map:
             retrieved_txt = self.wiki_map[chosen_topic]
             retrieved_txts = retrieved_txt.split('\n')
@@ -133,20 +150,22 @@ class KnowledgeRetrieverAgent(Agent):
                     if total >= 10:
                         break
                     if len(sent) > 0:
-                        if self.add_passage_title:
-                            retrieved_txt_format.append(
-                                ' '.join([chosen_topic, sent])
-                            )
+                        if self.add_token_knowledge:
+                            delim = ' ' + TOKEN_KNOWLEDGE + ' '
                         else:
-                            retrieved_txt_format.append(sent)
+                            delim = ' '
+                        retrieved_txt_format.append(delim.join([chosen_topic, sent]))
+                        retrieved_txt_format_no_title.append(sent)
                         total += 1
 
         if len(retrieved_txt_format) > 0:
             passages = '\n'.join(retrieved_txt_format)
+            passages_no_title = '\n'.join(retrieved_txt_format_no_title)
         else:
             passages = ''
+            passages_no_title = ''
 
-        return passages
+        return passages, passages_no_title
 
     def get_passages(self, act):
         """
@@ -161,24 +180,27 @@ class KnowledgeRetrieverAgent(Agent):
             retrieved_txts = [retrieved_txt]
 
         retrieved_txt_format = []
+        retrieved_txt_format_no_title = []
         for ret_txt in retrieved_txts:
             paragraphs = ret_txt.split('\n')
             if len(paragraphs) > 2:
                 sentences = self.sent_tok.tokenize(paragraphs[2])
                 for sent in sentences:
-                    if self.add_passage_title:
-                        retrieved_txt_format.append(
-                            ' '.join([paragraphs[0], sent])
-                        )
+                    if self.add_token_knowledge:
+                        delim = ' ' + TOKEN_KNOWLEDGE + ' '
                     else:
-                        retrieved_txt_format.append(sent)
+                        delim = ' '
+                    retrieved_txt_format.append(delim.join([paragraphs[0], sent]))
+                    retrieved_txt_format_no_title.append(sent)
 
         if len(retrieved_txt_format) > 0:
             passages = '\n'.join(retrieved_txt_format)
+            passages_no_title = '\n'.join(retrieved_txt_format_no_title)
         else:
             passages = ''
+            passages_no_title = ''
 
-        return passages
+        return passages, passages_no_title
 
     def tfidf_retriever_act(self, history):
         """
@@ -188,56 +210,79 @@ class KnowledgeRetrieverAgent(Agent):
         """
         # retrieve on chosen topic
         chosen_topic_txts = None
-        if self.ret_history.get('chosen_topic'):
-            chosen_topic_txts = self.get_chosen_topic_passages(
-                self.ret_history['chosen_topic']
+        if self.retriever_history.get('chosen_topic'):
+            chosen_topic_txts, chosen_topic_txts_no_title = self.get_chosen_topic_passages(
+                self.retriever_history['chosen_topic']
             )
 
         # retrieve on apprentice
         apprentice_txts = None
-        if self.ret_history.get('apprentice'):
+        if self.retriever_history.get('apprentice'):
             apprentice_act = {
-                'text': self.ret_history['apprentice'],
+                'text': self.retriever_history['apprentice'],
                 'episode_done': True,
             }
             self.retriever.observe(apprentice_act)
-            apprentice_txts = self.get_passages(self.retriever.act())
+            apprentice_txts, apprentice_txts_no_title = self.get_passages(
+                self.retriever.act()
+            )
 
         # retrieve on wizard
         wizard_txts = None
-        if self.ret_history.get('wizard'):
-            wizard_act = {'text': self.ret_history['wizard'], 'episode_done': True}
+        if self.retriever_history.get('wizard'):
+            wizard_act = {
+                'text': self.retriever_history['wizard'],
+                'episode_done': True,
+            }
             self.retriever.observe(wizard_act)
-            wizard_txts = self.get_passages(self.retriever.act())
+            wizard_txts, wizard_txts_no_title = self.get_passages(self.retriever.act())
 
         # combine everything
         combined_txt = ''
+        combined_txt_no_title = ''
         if chosen_topic_txts:
             combined_txt += chosen_topic_txts
+            combined_txt_no_title += chosen_topic_txts_no_title
         if wizard_txts:
             combined_txt += '\n' + wizard_txts
+            combined_txt_no_title += '\n' + wizard_txts_no_title
         if apprentice_txts:
             combined_txt += '\n' + apprentice_txts
+            combined_txt_no_title += '\n' + apprentice_txts_no_title
 
-        return combined_txt
+        return combined_txt, combined_txt_no_title
+
+    def _format_selector_observation(self, knowledge_no_title, episode_done=False):
+        obs = {'episode_done': episode_done}
+        obs['label_candidates'] = knowledge_no_title.split('\n')
+        text = self.retriever_history.get('chosen_topic', '')
+        if len(self.dialogue_history) > 0:
+            if len(self.dialogue_history) > 1:
+                text += self.dialogue_history[-2]['text']
+            text += self.dialogue_history[-1]['text']
+        obs['text'] = text
+        return obs
 
     def act(self):
-        knowledge = self.tfidf_retriever_act(self.dialogue_history)
+        knowledge, knowledge_no_title = self.tfidf_retriever_act(self.retriever_history)
 
-        # TODO: get the 'golden knowledge' from the knowledge selector agent
+        act = {'text': knowledge, 'episode_done': False, 'id': self.id}
 
-        act = {
-            'text': knowledge,
-            'episode_done': False,
-            'id': self.id,
-        }
+        selector_obs = self._format_selector_observation(
+            knowledge_no_title, episode_done=self.observation.get('episode_done', False)
+        )
+
+        self.selector.observe(selector_obs)
+        chosen_sentence = self.selector.act().get('text', '')
+
+        act['checked_sentence'] = chosen_sentence
+
         if self.next_wizard is not None:
             # add the reply to the dialogue history
-            self.maintain_retrieved_texts(
-                self.dialogue_history,
-                {'text': self.next_wizard},
-                actor_id='wizard',
+            self.maintain_retriever_history(
+                {'text': self.next_wizard}, actor_id='wizard'
             )
+
         return act
 
     def observe(self, observation, actor_id='apprentice'):
@@ -245,11 +290,9 @@ class KnowledgeRetrieverAgent(Agent):
         Observe a dialogue act. Use `actor_id` to indicate whether dialogue acts
         are from the 'apprentice' or the 'wizard' agent.
         """
-        self.maintain_retrieved_texts(
-            self.dialogue_history,
-            observation,
-            actor_id=actor_id
-        )
+        if actor_id == 'apprentice':
+            self.observation = observation
+        self.maintain_retriever_history(observation, actor_id=actor_id)
         if 'labels' in observation or 'eval_labels' in observation:
             labels = 'labels' if 'labels' in observation else 'eval_labels'
             self.next_wizard = observation[labels][0]

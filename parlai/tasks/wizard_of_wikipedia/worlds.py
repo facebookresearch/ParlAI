@@ -10,32 +10,19 @@ import random
 import os
 import string
 
-from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
-from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+
+from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
+    KnowledgeRetrieverAgent,
+)
 
 
 NO_TOPIC = '[NO TOPIC]'
 
 
 class InteractiveWorld(DialogPartnerWorld):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
-        parser = argparser.add_argument_group(
-            'Wizard Interactive World Arguments'
-        )
-        parser.add_argument(
-            '--add-knowledge',
-            type='bool',
-            default=True,
-            help='Add knowledge to the observation; select the gold knowledge'
-            'with the knowledge selector'
-        )
-
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         print('[ loading topics.. ]')
@@ -44,7 +31,20 @@ class InteractiveWorld(DialogPartnerWorld):
         self.cnt = 0
         self.human_agent = self.agents[0]
         self.model_agent = self.agents[1]
-        self.dialogue_history = []
+
+        self._set_up_knowledge_agent(opt.get('add_token_knowledge', False))
+
+    def _set_up_knowledge_agent(self, add_token_knowledge=False):
+        from parlai.core.params import ParlaiParser
+
+        parser = ParlaiParser(False, False)
+        KnowledgeRetrieverAgent.add_cmdline_args(parser)
+        parser.set_params(
+            model='projects:wizard_of_wikipedia:knowledge_retriever',
+            add_token_knowledge=add_token_knowledge,
+        )
+        knowledge_opt = parser.parse_args([], print_args=False)
+        self.knowledge_agent = create_agent(knowledge_opt)
 
     def load_topics(self, opt):
         # Load possible chosen topics
@@ -84,8 +84,12 @@ class InteractiveWorld(DialogPartnerWorld):
         print('[ Your chosen topic is: {} ]'.format(chosen_topic))
         return chosen_topic
 
-    def add_knowledge(self):
-        pass
+    def add_knowledge_to_act(self, act):
+        self.knowledge_agent.observe(act, actor_id='apprentice')
+        knowledge_act = self.knowledge_agent.act()
+        act['knowledge'] = knowledge_act['text']
+        act['checked_sentence'] = knowledge_act['checked_sentence']
+        return act
 
     def parley(self):
         if self.cnt == 0:
@@ -106,10 +110,17 @@ class InteractiveWorld(DialogPartnerWorld):
             # add the chosen_topic to the message
             act['chosen_topic'] = self.topic
             act.force_set('text', '\n'.join([self.topic, act.get('text', 'hi')]))
+
+        # add knowledge to the model observation
+        self.add_knowledge_to_act(act)
+
         self.model_agent.observe(validate(act))
 
         # model agent act
         self.acts[1] = self.model_agent.act()
+
+        # add the model reply to the knowledge retriever's dialogue history
+        self.knowledge_agent.observe(self.acts[1], actor_id='wizard')
 
         # human agent observe
         self.human_agent.observe(validate(self.acts[1]))
