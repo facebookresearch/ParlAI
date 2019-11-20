@@ -57,7 +57,7 @@ from parlai.core.agents import (
     create_task_agent_from_taskname,
 )
 from parlai.core.metrics import aggregate_metrics
-from parlai.utils.misc import Message, Timer, display_messages
+from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 
