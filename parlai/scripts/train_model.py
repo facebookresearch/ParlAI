@@ -30,7 +30,6 @@ import json
 import numpy as np
 import os
 import signal
-from tqdm import tqdm
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
@@ -259,16 +258,12 @@ def _run_single_eval(opt, valid_world, max_exs):
 
     cnt = 0
     max_cnt = max_exs if max_exs > 0 else float('inf')
-    total_exs = min(valid_world.num_examples(), max_cnt)
-    pbar = tqdm(total=total_exs)
     while not valid_world.epoch_done() and cnt < max_cnt:
         valid_world.parley()
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        num_exs = valid_world.opt['batchsize']
-        cnt += num_exs
-        pbar.update(num_exs)
+        cnt += valid_world.opt['batchsize']
 
     valid_report = valid_world.report()
     valid_world.reset()  # make sure world doesn't remember valid data
