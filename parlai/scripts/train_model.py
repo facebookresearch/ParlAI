@@ -712,8 +712,6 @@ class TrainLoop:
                                             "distributed mode")
                     break
 
-                self.last_valid_epoch = self._total_epochs
-
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
