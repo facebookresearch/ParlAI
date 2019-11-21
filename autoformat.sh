@@ -124,13 +124,8 @@ then
     if [[ $CHECK -eq 1 ]]; then A="$A --check"; fi
     if [[ $INTERNAL -eq 1 ]]; then A="$A --internal"; fi
     if [[ $RUN_ALL_FILES -eq 1 ]]; then A="$A --all"; fi
-    echo "Black:"
     bash $0 --black $A
-    echo "------------------------------------------------------------------------------"
-    echo "Doc formatting:"
     bash $0 --doc $A
-    echo "------------------------------------------------------------------------------"
-    echo "Flake8:"
     bash $0 --flake8 $A
     exit 0
 fi
@@ -146,7 +141,11 @@ then
         then
             black $CHECK_FILES
         else
-            black --check $CHECK_FILES
+            if ! ( black --check $CHECK_FILES 2>/dev/null ); then
+                echo -e "\033[0;31mSome files need to be blacked.\033[0m"
+                echo "Please run \`bash ./autoformat.sh\` and commit the changes."
+                exit 1
+            fi
         fi
     elif [[ "$CMD" == "docformatter" ]]
     then
@@ -156,8 +155,11 @@ then
         then
             docformatter -i $DOCOPTS $CHECK_FILES
         else
-            echo "The following require doc formatting:"
-            docformatter -c $DOCOPTS $CHECK_FILES
+            if ! docformatter -c $DOCOPTS $CHECK_FILES > /dev/null 2>&1; then
+                echo -e "\033[0;31mSome docstrings need to be formatted.\033[0m"
+                echo "Please run \`./autoformat.sh\` and commit the changes."
+                exit 1
+            fi
         fi
     elif [[ "$CMD" == "flake8" ]]
     then
@@ -167,9 +169,9 @@ then
         # soft complaint on too-long-lines
         flake8 --select=E501 --show-source $CHECK_FILES
         # hard complaint on really long lines
-        exec flake8 --max-line-length=127 --show-source $CHECK_FILES
+        flake8 --max-line-length=127 --show-source $CHECK_FILES
     else
         echo "Don't know how to \`$CMD\`."
-        false
+        exit 1
     fi
 fi
