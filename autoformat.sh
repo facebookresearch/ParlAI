@@ -7,12 +7,15 @@
 # This shell script lints only the things that changed in the most recent change.
 
 
+# exit on errors
+set -e
+
+# configuration options for our doc formatting
 DOCOPTS="--pre-summary-newline --wrap-descriptions 88 --wrap-summaries 88 \
     --make-summary-multi-line"
 
-set -e
-
 usage () {
+    # prints the help message
     cat <<EOF
 Usage: $0
 
@@ -49,6 +52,7 @@ onlyexists() {
     done
 }
 
+# parse the command line args
 RUN_ALL_FILES=0
 RUNALL=1
 INTERNAL=0
@@ -97,6 +101,8 @@ while true; do
   shift
 done
 
+
+# decide which repo we're working on
 if [[ $INTERNAL -eq 1 ]]; then
     ROOT="$(git -C ./parlai_internal/ rev-parse --show-toplevel)"
     REPO="-C ./parlai_internal"
@@ -105,17 +111,19 @@ else
     REPO=""
 fi
 
+# find out what files we're working on
 if [[ $RUN_ALL_FILES -eq 1 ]]; then
     CHECK_FILES="$(git $REPO ls-files | grep '\.py$' | reroot $ROOT | onlyexists $ROOT | tr '\n' ' ')"
 else
     CHECK_FILES="$(git $REPO diff --name-only master... | grep '\.py$' | reroot $ROOT | onlyexists | tr '\n' ' ')"
 fi
 
+# if we're doing all the tests, we should run them in serial
 if [[ $RUNALL -eq 1 ]]
 then
-    if [[ $CHECK -eq 1 ]]; then A="$A -c"; fi
-    if [[ $INTERNAL -eq 1 ]]; then A="$A -i"; fi
-    if [[ $RUN_ALL_FILES -eq 1 ]]; then A="$A -a"; fi
+    if [[ $CHECK -eq 1 ]]; then A="$A --check"; fi
+    if [[ $INTERNAL -eq 1 ]]; then A="$A --internal"; fi
+    if [[ $RUN_ALL_FILES -eq 1 ]]; then A="$A --all"; fi
     echo "Black:"
     bash $0 --black $A
     echo "------------------------------------------------------------------------------"
@@ -127,9 +135,7 @@ then
     exit 0
 fi
 
-echo "Checking files:"
-echo $CHECK_FILES
-
+# finally do the actual checks
 if [ "$CHECK_FILES" != "" ]
 then
     if [[ "$CMD" == "black" ]]
