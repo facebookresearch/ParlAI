@@ -114,7 +114,7 @@ following script:
 
 You can run an interactive session with the model with:
 
-    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+    python projects/wizard_of_wikipedia/scripts/interactive_retrieval_model.py
 
 Check back later for more pretrained models soon!
 

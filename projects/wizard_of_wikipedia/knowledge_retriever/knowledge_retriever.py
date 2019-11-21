@@ -8,15 +8,16 @@ Knowledge retrieval agent. Used in interactive mode when the knowledge is
 not available. Uses the retrieval model from the model zoo.
 """
 
-from parlai.core.agents import Agent, create_agent
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
+from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE
+from parlai.zoo.wizard_of_wikipedia.knowledge_retriever import download
 
 import json
 import os
 
 
-# TODO: put this guy in the model zoo and replace
-SELECTOR_FILE = '/checkpoint/edinan/20191119/wizard_doc_reader/lr=1e-05_lr-scheduler-patience=3_lr-scheduler-decay=0.9_warmupupdates=2000/model'
+SELECTOR_FILE = 'models:wizard_of_wikipedia/knowledge_retriever/model'
 
 
 class KnowledgeRetrieverAgent(Agent):
@@ -25,6 +26,7 @@ class KnowledgeRetrieverAgent(Agent):
         """
         Add command-line arguments specifically for this agent.
         """
+        TorchRankerAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('KnowledgeRetriever Arguments')
         parser.add_argument(
             '--retriever-model-file',
@@ -62,6 +64,7 @@ class KnowledgeRetrieverAgent(Agent):
             self._set_up_tfidf_retriever(opt)
             self._set_up_selector(opt)
         else:
+            self.selector = create_agent_from_shared(shared['selector'])
             self.retriever = shared['retriever']
             self.sent_tok = shared['sent_tok']
             self.wiki_map = shared['wiki_map']
@@ -71,6 +74,7 @@ class KnowledgeRetrieverAgent(Agent):
         # NOTE: dialogue history should NOT be shared between instances
         self.retriever_history = {'episode_done': False}
         self.dialogue_history = []
+        self.checked_sentence_history = []
 
     def _set_up_tfidf_retriever(self, opt):
         retriever_opt = {
@@ -86,11 +90,17 @@ class KnowledgeRetrieverAgent(Agent):
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_selector(self, opt):
+        # make sure to download all relevant files
+        download(opt['datapath'])
         selector_opt = {
+            'datapath': opt['datapath'],
             'model_file': opt['selector_model_file'],
             'eval_candidates': 'inline',
+            'model': 'transformer/biencoder',
+            'override': {'model': 'transformer/biencoder'},
         }
-        self.selector = create_agent(selector_opt)
+        final_opt = {**self.opt, **selector_opt}
+        self.selector = create_agent(final_opt)
 
     def _set_up_sent_tok(self):
         try:
@@ -254,7 +264,9 @@ class KnowledgeRetrieverAgent(Agent):
 
     def _format_selector_observation(self, knowledge_no_title, episode_done=False):
         obs = {'episode_done': episode_done}
-        obs['label_candidates'] = knowledge_no_title.split('\n')
+        obs['label_candidates'] = [
+            x for x in knowledge_no_title.split('\n') if x
+        ]
         text = self.retriever_history.get('chosen_topic', '')
         if len(self.dialogue_history) > 0:
             if len(self.dialogue_history) > 1:
@@ -263,22 +275,39 @@ class KnowledgeRetrieverAgent(Agent):
         obs['text'] = text
         return obs
 
-    def act(self):
-        knowledge, knowledge_no_title = self.tfidf_retriever_act(self.retriever_history)
-
-        act = {'text': knowledge, 'episode_done': False, 'id': self.id}
-
+    def _get_checked_sentence(self, knowledge_no_title):
+        # choose a sentence from the retrieved knowledge using a
+        # Transformer-based ranking model; the downstream dialogue model may
+        # or may not make use of this chosen sentence
         selector_obs = self._format_selector_observation(
             knowledge_no_title, episode_done=self.observation.get('episode_done', False)
         )
 
         self.selector.observe(selector_obs)
-        chosen_sentence = self.selector.act().get('text', '')
+        chosen_sentence_act = self.selector.act()
+        cands = chosen_sentence_act.get('text_candidates', [])
+        if not cands:
+            return ''
 
-        act['checked_sentence'] = chosen_sentence
+        for cand in cands:
+            if cand not in self.checked_sentence_history:
+                self.checked_sentence_history.append(cand)
+                return cand
 
+        # return best prediction
+        return cands[0]
+
+    def act(self):
+        # retrieve knowledge based on the dialogue history using a TF-IDF retriever
+        knowledge, knowledge_no_title = self.tfidf_retriever_act(self.retriever_history)
+
+        act = {'text': knowledge, 'episode_done': False, 'id': self.id}
+        act['checked_sentence'] = self._get_checked_sentence(knowledge_no_title)
+        act['title'] = self.retriever_history.get('chosen_topic', '')
+
+        # add the wizard reply to the dialogue history (this only happens
+        # if there are labels or eval_labels -- not in interactive mode)
         if self.next_wizard is not None:
-            # add the reply to the dialogue history
             self.maintain_retriever_history(
                 {'text': self.next_wizard}, actor_id='wizard'
             )
@@ -305,5 +334,6 @@ class KnowledgeRetrieverAgent(Agent):
         shared = super().share()
         shared['opt'] = self.opt
         shared['retriever'] = self.retriever
+        shared['selector'] = self.selector.share()
         shared['sent_tok'] = self.sent_tok
         shared['wiki_map'] = self.wiki_map
