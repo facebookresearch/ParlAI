@@ -80,7 +80,7 @@ then
     then
         command -v black >/dev/null || \
             ( echo "Please run \`pip install black\` and rerun $0." && false )
-        if [[ $FIXIT ]]
+        if [[ $CHECK -eq 0 ]]
         then
             black $CHANGED_FILES
         else
@@ -90,9 +90,8 @@ then
     then
         command -v docformatter > /dev/null || \
             ( echo "Please run \`pip install docformatter\` and rerun $0." && false )
-        if [[ $FIXIT ]]
+        if [[ $CHECK -eq 0 ]]
         then
-            echo "Reformatting docs:"
             docformatter -i $DOCOPTS $CHANGED_FILES
         else
             echo "The following require doc formatting:"
