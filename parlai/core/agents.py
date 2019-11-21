@@ -120,7 +120,7 @@ class Agent(object):
         Should be the same as using create_agent_from_shared(.), but slightly easier.
         """
         return type(self)(self.opt, self.share())
-        
+
     def share(self):
         """
         Share any parameters needed to create a shared version of this agent.

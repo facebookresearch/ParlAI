@@ -3,19 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic script which allows local human keyboard input to talk to a trained model.
-
-Examples
---------
-
-.. code-block:: shell
-
-  python examples/interactive.py -m drqa -mf "models:drqa/squad/model"
-
-When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
-
-Input is often model or task specific, but in drqa, it is always
-``context '\\n' question``.
+"""
+Allows a model to self-chat on a given task.
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
@@ -43,7 +32,6 @@ def setup_args(parser=None):
         help='Do not display these fields',
     )
     parser.add_argument(
-        
         '-it',
         '--interactive-task',
         type='bool',
@@ -69,7 +57,7 @@ def interactive(opt, print_parser=None):
     agent2 = agent1.clone()
     if hasattr(agent2, 'id'):
         agent2.id = agent2.id + "2"
-    
+
     world = create_task(opt, [agent1, agent2])
 
     if print_parser:
