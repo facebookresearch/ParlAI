@@ -83,6 +83,11 @@ class retry(object):
     """
     Decorator for flaky tests. Test is run up to ntries times, retrying on failure.
 
+    :param ntries:
+        the number of tries to attempt
+    :param log_retry:
+        if True, prints to stdout on retry to avoid being seen as "hanging"
+
     On the last time, the test will simply fail.
 
     >>> @retry(ntries=10)
@@ -91,8 +96,9 @@ class retry(object):
     ...     self.assertLess(0.5, random.random())
     """
 
-    def __init__(self, ntries=3):
+    def __init__(self, ntries=3, log_retry=False):
         self.ntries = ntries
+        self.log_retry = log_retry
 
     def __call__(self, testfn):
         """Call testfn(), possibly multiple times on failureException."""
@@ -104,7 +110,8 @@ class retry(object):
                 try:
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
-                    pass
+                    if self.log_retry:
+                        print("Retrying {}".format(testfn))
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
 
