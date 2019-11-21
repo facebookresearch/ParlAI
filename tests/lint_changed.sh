@@ -63,8 +63,13 @@ if [[ $RUNALL -eq 1 ]]
 then
     if [[ $CHECK -eq 1 ]]; then A="$A -c"; fi
     if [[ $INTERNAL -eq 1 ]]; then A="$A -i"; fi
+    echo "Black:"
     bash $0 -b $A
+    echo "------------------------------------------------------------------------------"
+    echo "Doc formatting:"
     bash $0 -d $A
+    echo "------------------------------------------------------------------------------"
+    echo "Flake8:"
     bash $0 -f $A
     exit 0
 fi
@@ -74,8 +79,7 @@ then
     if [[ "$CMD" == "black" ]]
     then
         command -v black >/dev/null || \
-            ( echo "Please install black." && false )
-        # only output if something needs to change
+            ( echo "Please run \`pip install black\` and rerun $0." && false )
         if [[ $FIXIT ]]
         then
             black $CHANGED_FILES
@@ -85,17 +89,19 @@ then
     elif [[ "$CMD" == "docformatter" ]]
     then
         command -v docformatter > /dev/null || \
-            ( echo "Please run \`pip install docformatter\`." && false )
+            ( echo "Please run \`pip install docformatter\` and rerun $0." && false )
         if [[ $FIXIT ]]
         then
+            echo "Reformatting docs:"
             docformatter -i $DOCOPTS $CHANGED_FILES
         else
+            echo "The following require doc formatting:"
             docformatter -c $DOCOPTS $CHANGED_FILES
         fi
     elif [[ "$CMD" == "flake8" ]]
     then
-        flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
-            ( echo "Please install flake8 >=3.6.0." && false )
+        command -v flake8 >/dev/null || \
+            ( echo "Please run \`pip install flake8\` and rerun $0." && false )
 
         # soft complaint on too-long-lines
         flake8 --select=E501 --show-source $CHANGED_FILES
