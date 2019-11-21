@@ -8,7 +8,7 @@ import random
 import io
 import os
 import pickle
-from parlai.core.utils import msg_to_str
+from parlai.utils.misc import msg_to_str
 
 rand = random.Random(42)
 

@@ -1018,4 +1018,16 @@ task_list = [
             "determine if the text is offensive or \'safe\'."
         ),
     },
+    {
+        "id": "MultiWOZ",
+        "display_name": "MultiWOZ",
+        "task": "multiwoz",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+            "(see http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"
+            " for more information). "
+        ),
+    },
 ]

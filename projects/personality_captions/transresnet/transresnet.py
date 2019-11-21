@@ -7,7 +7,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs
+from parlai.utils.misc import round_sigfigs
 from .modules import TransresnetModel
 from parlai.tasks.personality_captions.build import build
 

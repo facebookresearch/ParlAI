@@ -3,8 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 """Transformer Agents."""
 from parlai.core.agents import Agent
-from parlai.core.utils import warn_once
-from parlai.core.utils import padded_3d
+from parlai.utils.misc import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
@@ -71,6 +70,7 @@ def add_common_cmdline_args(argparser):
         choices={'aiayn', 'xlm'},
         default='aiayn',
         help='Chooses locations of layer norms, etc.',
+        recommended='xlm',
     )
     argparser.add_argument(
         '--activation',
@@ -78,6 +78,7 @@ def add_common_cmdline_args(argparser):
         default='relu',
         help='Nonlinear activation to use. AIAYN uses relu, but '
         'more recent papers prefer gelu.',
+        recommended='gelu',
     )
     argparser.add_argument(
         '--output-scaling',
@@ -178,7 +179,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         super().__init__(opt, shared)
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
-            from parlai.core.distributed_utils import is_distributed
+            from parlai.utils.distributed import is_distributed
 
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')

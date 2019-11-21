@@ -7,7 +7,7 @@
 
 import unittest
 import parlai.scripts.display_data as display_data
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 MODEL_OPTIONS = {

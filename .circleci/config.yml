@@ -46,7 +46,15 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --upgrade --progress-bar off pip
+      pip3 install --progress-bar off --upgrade pip
+      pip3 install --progress-bar off coverage
+      pip3 install --progress-bar off codecov
+
+codecov: &codecov
+  run:
+    name: Coverage report
+    command: |
+      codecov --flags $CIRCLE_JOB
 
 installdeps: &installdeps
   run:
@@ -99,11 +107,11 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
-      wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+      wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      sudo /bin/bash ./NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      wget https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
+      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
+      sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
       nvidia-smi
       pyenv global 3.6.5
 
@@ -124,11 +132,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dt-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Data tests
-          command: python setup.py test -s tests.suites.datatests -v
+          command: coverage run setup.py test -s tests.suites.datatests -v
+      - <<: *codecov
 
   unittests_osx:
     <<: *osx_cpu37
@@ -137,11 +152,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-osx-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_36:
     <<: *standard_cpu36
@@ -150,11 +172,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut36-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_37:
     <<: *standard_cpu37
@@ -163,11 +192,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu11:
     <<: *gpu
@@ -177,11 +213,18 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu12:
     <<: *gpu
@@ -191,11 +234,18 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
-          name: Unit tests (GPU; pytorch 1.2)
-          command: python setup.py test -s tests.suites.unittests -v
+          name: Unit tests (GPU; pytorch >= 1.2)
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   black:
     <<: *standard_cpu36
@@ -248,12 +298,22 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-nightly-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python setup.py test -s tests.suites.nightly_gpu -v
+          command: coverage run setup.py test -s tests.suites.nightly_gpu -v
+      - run:
+          name: Quickstart unit tests (GPU; pytorch 1.1)
+          command: sh tests/test_quickstart.sh
+      - <<: *codecov
 
   mturk_tests:
     <<: *standard_cpu36
@@ -262,10 +322,17 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-mturk-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python setup.py test -s tests.suites.mturk -v
+          command: coverage run setup.py test -s tests.suites.mturk -v
+      - <<: *codecov
 
   build_website:
     <<: *standard_cpu36
@@ -274,9 +341,16 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
+      - <<: *codecov
 
   deploy_website:
     <<: *standard_cpu36
@@ -285,7 +359,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dw-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
       - run:

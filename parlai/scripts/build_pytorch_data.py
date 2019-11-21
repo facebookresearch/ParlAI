@@ -106,7 +106,7 @@ def build_data(opt):
     ordered_opt.pop('pytorch_teacher_dataset')
     ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
-    teacher = world_data.agents[0]
+    teacher = world_data.get_task_agent()
     agent = world_data.agents[1]
     datapath = os.path.join(
         opt.get('datapath', '.'),

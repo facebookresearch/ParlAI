@@ -27,11 +27,11 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.utils import (
+from parlai.utils.misc import (
     AttrDict,
     argsort,
     fp16_optimizer_wrapper,
@@ -39,12 +39,15 @@ from parlai.core.utils import (
     warn_once,
     round_sigfigs,
 )
-from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
 except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
+
+
+class StopTrainException(Exception):
+    pass
 
 
 class Batch(AttrDict):
@@ -973,7 +976,7 @@ class TorchAgent(ABC, Agent):
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['num_updates'] = self._number_training_updates
+        metrics['total_train_updates'] = self._number_training_updates
 
         steps = self.metrics['updates']
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
@@ -1516,12 +1519,11 @@ class TorchAgent(ABC, Agent):
         """
         if output is None:
             return batch_reply
-        if output.text is not None:
-            for i, response in zip(valid_inds, output.text):
-                batch_reply[i]['text'] = response
-        if output.text_candidates is not None:
-            for i, cands in zip(valid_inds, output.text_candidates):
-                batch_reply[i]['text_candidates'] = cands
+        for k, v in output.items():
+            if v is None:
+                continue
+            for i, sub_val in zip(valid_inds, v):
+                batch_reply[i][k] = sub_val
         return batch_reply
 
     def observe(self, observation):
@@ -1792,7 +1794,7 @@ class TorchAgent(ABC, Agent):
 
     def set_interactive_mode(self, mode, shared):
         """Set interactive mode on or off."""
-        if shared is None:
+        if shared is None and mode:
             # Only print in the non-shared version.
             print("[" + self.id + ': full interactive mode on.' + ']')
 

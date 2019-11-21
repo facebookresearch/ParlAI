@@ -10,7 +10,6 @@ https://arxiv.org/abs/1905.01969
 from parlai.core.build_data import built, download_models, get_model_dir
 import os
 import os.path
-import torch
 
 
 def download(datapath):

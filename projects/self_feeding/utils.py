@@ -26,11 +26,15 @@ class Parley(object):
         context,
         response='',
         reward=0,
-        candidates=[],
-        memories=[],
+        candidates=None,
+        memories=None,
         episode_done=False,
         **kwargs,
     ):
+        if candidates is None:
+            candidates = []
+        if memories is None:
+            memories = []
         self.context = context
         self.response = response if response is not None else ''
         self.reward = reward

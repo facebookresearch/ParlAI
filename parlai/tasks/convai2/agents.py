@@ -6,7 +6,7 @@
 
 from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FbDialogTeacher
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from .build import build
 
 import copy

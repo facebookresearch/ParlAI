@@ -12,11 +12,16 @@ They are useful as unit tests for the basic models.
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.teachers import DialogTeacher
+from parlai.core.teachers import DialogTeacher, AbstractImageTeacher
 from torch.utils.data import Dataset
 import copy
 import random
 import itertools
+import os
+from PIL import Image
+import string
+import torch
+import json
 
 # default parameters
 VOCAB_SIZE = 7
@@ -73,12 +78,14 @@ class CandidateTeacher(DialogTeacher):
     def num_examples(self):
         return self.num_episodes()
 
+    def build_corpus(self):
+        """Build corpus; override for customization."""
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
+
     def setup_data(self, fold):
         # N words appearing in a random order
         self.rng = random.Random(42)
-        full_corpus = [
-            list(x) for x in itertools.permutations(self.words, self.example_size)
-        ]
+        full_corpus = self.build_corpus()
         self.rng.shuffle(full_corpus)
 
         it = iter(full_corpus)
@@ -278,6 +285,28 @@ class NocandidateTeacher(CandidateTeacher):
             yield (t, a), e
 
 
+class RepeatWordsTeacher(NocandidateTeacher):
+    """
+    Each input/output pair is a word repeated n times.
+
+    Useful for testing beam-blocking.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Set sizes so that we have appropriate number of examples (700)
+        kwargs['vocab_size'] = 70
+        kwargs['example_size'] = 11
+        super().__init__(*args, **kwargs)
+
+    def build_corpus(self):
+        """Override to repeat words."""
+        return [
+            [x for _ in range(l)]
+            for l in range(1, self.example_size)
+            for x in self.words
+        ]
+
+
 class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
     """
     Strips the candidates so the model can't see any options. Good for testing
@@ -353,6 +382,51 @@ class BadExampleTeacher(CandidateTeacher):
 
         newget.case = random.randint(0, self.NUM_CASES)
         return newget
+
+
+class ImageTeacher(AbstractImageTeacher):
+    """Teacher which provides images and captions.
+
+    In __init__, setup some fake images + features
+    """
+
+    def __init__(self, opt, shared=None):
+        self._setup_test_data(opt)
+        super().__init__(opt, shared)
+
+    def _setup_test_data(self, opt):
+        datapath = os.path.join(opt['datapath'], 'ImageTeacher')
+        imagepath = os.path.join(datapath, 'images')
+        os.makedirs(imagepath, exist_ok=True)
+
+        self.image_features_path = os.path.join(datapath, 'image_features')
+
+        # Create fake images and features
+        imgs = [f'img_{i}' for i in range(10)]
+        img_features_dict = {}
+        for img in imgs:
+            image = Image.new('RGB', (100, 100))
+            image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
+            img_features_dict[img] = torch.FloatTensor(opt['image_features_dim'])
+        torch.save(img_features_dict, self.image_features_path)
+
+        # write out fake data
+        for dt in ['train', 'valid', 'test']:
+            data = [
+                {
+                    'image_id': img,
+                    'text': ''.join(
+                        random.choice(string.ascii_uppercase) for _ in range(10)
+                    ),
+                }
+                for img in imgs
+            ]
+            with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
+                json.dump(data, f)
+
+    def get_image_features_path(self, task, image_model_name, dt):
+        """Return path dummy image features"""
+        return self.image_features_path
 
 
 class DefaultTeacher(CandidateTeacher):

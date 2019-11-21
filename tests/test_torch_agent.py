@@ -8,10 +8,10 @@
 
 import os
 import unittest
-from parlai.core.agents import Agent, create_agent_from_shared
-from parlai.core.testing_utils import capture_output, tempdir
-from parlai.core.utils import Message
-import parlai.core.testing_utils as testing_utils
+from parlai.core.agents import create_agent_from_shared
+from parlai.utils.testing import capture_output, tempdir
+from parlai.utils.misc import Message
+import parlai.utils.testing as testing_utils
 
 from collections import deque
 
@@ -984,6 +984,29 @@ class TestTorchAgent(unittest.TestCase):
                 init_model_file, is_finetune = agent._get_init_model(popt, None)
                 self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
                 self.assertFalse(is_finetune)
+
+
+class TestLegacyVersioning(unittest.TestCase):
+    def test_legacy_version(self):
+        # simply tries to load and run some models with versioning attached
+        with capture_output():
+            with self.assertRaises(RuntimeError):
+                testing_utils.display_model(
+                    {
+                        'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                        'task': 'convai2',
+                        'no_cuda': True,
+                    }
+                )
+
+            testing_utils.display_model(
+                {
+                    'model': 'legacy:seq2seq:0',
+                    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                    'task': 'convai2',
+                    'no_cuda': True,
+                }
+            )
 
 
 if __name__ == '__main__':

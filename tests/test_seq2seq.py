@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
@@ -95,11 +95,12 @@ class TestSeq2Seq(unittest.TestCase):
         )
 
         self.assertTrue(
-            valid['bleu'] > 0.95,
-            "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            valid['bleu-4'] > 0.95,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertTrue(
-            test['bleu'] > 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'] > 0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
         self.assertTrue(
             valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)

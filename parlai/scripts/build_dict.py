@@ -20,8 +20,8 @@ Examples
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
-from parlai.core.distributed_utils import is_distributed
+from parlai.utils.misc import TimeLogger
+from parlai.utils.distributed import is_distributed
 import copy
 import os
 import tqdm
@@ -102,8 +102,7 @@ def build_dict(opt, skip_if_built=False):
     ordered_opt['batchsize'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
-    # TODO: change 'none' to 'no_image_model'
-    ordered_opt['image_mode'] = 'none'
+    ordered_opt['image_mode'] = 'no_image_model'
     ordered_opt['pytorch_teacher_batch_sort'] = False
     if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
         pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
