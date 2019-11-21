@@ -906,6 +906,9 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
 
+class SelfchatTeacher(WizardDialogKnowledgeTeacher):
+    pass
+
 
 def create_agents(opt, task):
     if not opt.get('interactive_task', False):

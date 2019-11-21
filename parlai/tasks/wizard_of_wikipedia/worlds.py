@@ -100,3 +100,63 @@ class InteractiveWorld(DialogPartnerWorld):
             print('\n[ Preparing new chat... ]\n')
             self.cnt = 0
             self.model_agent.reset()
+
+
+class InteractiveSelfchatWorld(InteractiveWorld):
+    def __init__(self, opt, agents, shared=None):
+        super().__init__(opt, agents, shared)
+        print('[ loading topics.. ]')
+        self.load_topics(opt)
+        self.num_topics = opt['num_topics']
+        self.cnt = 0
+        self.model1_agent = self.agents[0]
+        self.model2_agent = self.agents[1]
+
+    def get_new_topic(self):
+        random.seed()
+        return random.choice(self.topic_list)
+
+    def parley(self):
+        if self.cnt == 0:
+            self.topic = self.get_new_topic()
+            self.acts = [None, None]
+            # choose speaking order:
+            if random.choice([0, 1]):
+                self.agents_ordered = [self.agents[0], self.agents[1]]
+            else:
+                self.agents_ordered = [self.agents[1], self.agents[0]]
+                
+        acts = self.acts
+        agents = self.agents_ordered
+
+        if self.cnt == 0:
+            # initial context
+            context = {
+                'text': self.topic,
+                'episode_done': False
+            }
+            agents[0].observe(validate(context))
+            print("TOPIC: " + self.topic)
+        # now we do regular loop
+        acts[0] = agents[0].act()
+        agents[1].observe(validate(acts[0]))
+        acts[1] = agents[1].act()
+        agents[0].observe(validate(acts[1]))
+
+        print(self.display() + '\n~~')
+
+        self.update_counters()
+        self.cnt += 1
+
+        if self.cnt > 8:
+            print('[ CHAT DONE ]')
+            print('\n[ Preparing new chat... ]\n')
+            self.cnt = 0
+            agents[0].reset()
+            agents[1].reset()
+
+
+
+
+
+
