@@ -27,13 +27,13 @@ class WebsocketAgent(ChatServiceAgent):
         base 64 encoded image and `mime_type` which will be an image mime type.
 
         Args:
-            act: dict. If act contains an `attachment` key, then a dict should be
-                provided for the value in `attachment`. Otherwise, act should be
+            act: dict. If act contain an `payload` key, then a dict should be
+                provided for the value in `payload`. Otherwise, act should be
                 a dict with the key `text` for the message.
-                For the `attachment` dict, this agent expects a `type` key, which
+                For the `pyaload` dict, this agent expects a `type` key, which
                 specifies whether or not the attachment is an image. If the
-                attachment is an image, either a `path` key must be specified
-                for the path to the image, or a `data` key holding a PIL Image.
+                attachment is an image, a `data` key must be specified with a
+                base 64 encoded image.
                 A `quick_replies` key can be provided with a list of string quick
                 replies for any message
         """
