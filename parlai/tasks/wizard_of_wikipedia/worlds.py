@@ -116,6 +116,14 @@ class InteractiveSelfchatWorld(InteractiveWorld):
         random.seed()
         return random.choice(self.topic_list)
 
+    def display(self):
+        s = ''
+        if self.cnt == 0:
+            s += '==============================\n'
+        s += super().display()
+        return s
+        
+        
     def parley(self):
         if self.cnt == 0:
             self.topic = self.get_new_topic()
@@ -125,29 +133,23 @@ class InteractiveSelfchatWorld(InteractiveWorld):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]
-
-        acts = self.acts
-        agents = self.agents_ordered
-
-        if self.cnt == 0:
             # initial context
-            context = {'text': self.topic, 'episode_done': False}
-            agents[0].observe(validate(context))
-            print("TOPIC: " + self.topic)
-        # now we do regular loop
-        acts[0] = agents[0].act()
-        agents[1].observe(validate(acts[0]))
-        acts[1] = agents[1].act()
-        agents[0].observe(validate(acts[1]))
-
-        print(self.display() + '\n~~')
+            context = {'text': self.topic, 'episode_done': False, 'id': 'context'}
+            self.acts[1] = context
+            self.agents_ordered[0].observe(validate(context))
+        else:
+            # do regular loop
+            acts = self.acts
+            agents = self.agents_ordered
+            acts[0] = agents[0].act()
+            agents[1].observe(validate(acts[0]))
+            acts[1] = agents[1].act()
+            agents[0].observe(validate(acts[1]))
 
         self.update_counters()
         self.cnt += 1
 
         if self.cnt > 8:
-            print('[ CHAT DONE ]')
-            print('\n[ Preparing new chat... ]\n')
             self.cnt = 0
             agents[0].reset()
             agents[1].reset()
