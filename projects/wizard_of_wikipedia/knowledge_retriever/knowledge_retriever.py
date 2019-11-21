@@ -264,9 +264,7 @@ class KnowledgeRetrieverAgent(Agent):
 
     def _format_selector_observation(self, knowledge_no_title, episode_done=False):
         obs = {'episode_done': episode_done}
-        obs['label_candidates'] = [
-            x for x in knowledge_no_title.split('\n') if x
-        ]
+        obs['label_candidates'] = [x for x in knowledge_no_title.split('\n') if x]
         text = self.retriever_history.get('chosen_topic', '')
         if len(self.dialogue_history) > 0:
             if len(self.dialogue_history) > 1:

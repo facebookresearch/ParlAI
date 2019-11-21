@@ -89,9 +89,11 @@ class InteractiveWorld(DialogPartnerWorld):
         knowledge_act = self.knowledge_agent.act()
         act['knowledge'] = knowledge_act['text']
         act['checked_sentence'] = knowledge_act['checked_sentence']
-        print('[ Using chosen sentence from Wikpedia ]: {}'.format(
-            knowledge_act['checked_sentence']
-        ))
+        print(
+            '[ Using chosen sentence from Wikpedia ]: {}'.format(
+                knowledge_act['checked_sentence']
+            )
+        )
         act['title'] = knowledge_act['title']
         return act
 
