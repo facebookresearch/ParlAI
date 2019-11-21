@@ -18,10 +18,10 @@ try:
     while True:
         # Send data
         message = input("Enter message here: ").encode()
-        if message.decode() == "EXIT":
-            break
         print('sending {!r}'.format(message.decode()))
         sock.sendall(message)
+        if message.decode() == "EXIT":
+            break
 
         # Look for the response
         amount_received = 0

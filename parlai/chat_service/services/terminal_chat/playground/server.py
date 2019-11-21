@@ -16,6 +16,7 @@ sock.bind(server_address)
 
 # Listen for incoming connections
 sock.listen(1)
+user_exit = False
 
 while True:
     # Wait for a connection
@@ -27,6 +28,10 @@ while True:
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(1024)
+            if data.decode() == "EXIT":
+                print("Closing connection")
+                user_exit = True
+                break
             print('received {!r}'.format(data.decode()))
             if data:
                 print('sending data back to the client')
@@ -34,6 +39,8 @@ while True:
             else:
                 print('no data from', client_address)
                 break
+        if user_exit:
+            break
 
     finally:
         # Clean up the connection
