@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -8,8 +8,6 @@
 
 
 DOCOPTS="--pre-summary-newline --wrap-descriptions 88 --wrap-summaries 88 --make-summary-multi-line"
-
-echo "hi $@"
 
 set -e
 
