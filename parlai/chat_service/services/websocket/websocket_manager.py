@@ -115,7 +115,9 @@ class WebsocketManager(ChatServiceManager):
                 world_config = self.task_configs[world_type]
                 if world_config.max_time_in_pool is not None:
                     self.check_timeout_in_pool(
-                        world_type, agent_pool, world_config.max_time_in_pool,
+                        world_type,
+                        agent_pool,
+                        world_config.max_time_in_pool,
                         world_config.backup_task,
                     )
 

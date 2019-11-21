@@ -610,7 +610,7 @@ class MessengerManager:
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
     def check_timeout_in_pool(
-        self, world_type, agent_pool, max_time_in_pool, backup_task=None,
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
     ):
         """Check for timed-out agents in pool.
 
@@ -702,7 +702,9 @@ class MessengerManager:
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool,
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
                             world_config.backup_task,
                         )
 

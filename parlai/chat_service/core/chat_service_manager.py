@@ -416,9 +416,7 @@ class ChatServiceManager(ABC):
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
                     if self.service_reference_id is not None:
-                        self.mark_removed(
-                            agent.service_id, self.service_reference_id
-                        )
+                        self.mark_removed(agent.service_id, self.service_reference_id)
 
     def _create_agent(self, task_id, agent_id):
         """Initialize an agent and return it.
@@ -487,7 +485,7 @@ class ChatServiceManager(ABC):
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
     def check_timeout_in_pool(
-        self, world_type, agent_pool, max_time_in_pool, backup_task=None,
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
     ):
         """Check for timed-out agents in pool.
 
@@ -579,7 +577,9 @@ class ChatServiceManager(ABC):
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool,
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
                             world_config.backup_task,
                         )
 
