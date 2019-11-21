@@ -125,16 +125,13 @@ class InteractiveSelfchatWorld(InteractiveWorld):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]
-                
+
         acts = self.acts
         agents = self.agents_ordered
 
         if self.cnt == 0:
             # initial context
-            context = {
-                'text': self.topic,
-                'episode_done': False
-            }
+            context = {'text': self.topic, 'episode_done': False}
             agents[0].observe(validate(context))
             print("TOPIC: " + self.topic)
         # now we do regular loop
@@ -154,9 +151,3 @@ class InteractiveSelfchatWorld(InteractiveWorld):
             self.cnt = 0
             agents[0].reset()
             agents[1].reset()
-
-
-
-
-
-

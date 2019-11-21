@@ -906,6 +906,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
 
+
 class SelfchatTeacher(WizardDialogKnowledgeTeacher):
     pass
 
