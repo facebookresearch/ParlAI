@@ -9,14 +9,13 @@ Allows a model to self-chat on a given task.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
+        parser = ParlaiParser(True, True, 'Self chat with a model')
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument(
         '--display-prettify',
@@ -38,18 +37,18 @@ def setup_args(parser=None):
         default=True,
         help='Create interactive version of task',
     )
-    parser.set_defaults(interactive_mode=True, task='interactive')
+    parser.set_defaults(interactive_mode=True, task='self_chat')
     return parser
 
 
-def interactive(opt, print_parser=None):
+def self_chat(opt, print_parser=None):
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
         elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        print('[ Deprecated Warning: self_chat should be passed opt not Parser ]')
         opt = opt.parse_args()
 
     # Create models
@@ -79,4 +78,4 @@ def interactive(opt, print_parser=None):
 if __name__ == '__main__':
     random.seed(42)
     parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    self_chat(parser.parse_args(print_args=False), print_parser=parser)
