@@ -28,6 +28,11 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
   _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
+  
+- **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
+  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._  
+  
+  
 
 ## Chit-chat
 

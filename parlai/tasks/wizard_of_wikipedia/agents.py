@@ -343,8 +343,9 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.speaker_label = opt.get('speaker_label', 'both')
+        self.add_topic = opt.get('add_topic', False)
         self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
-        self.speaker_label = opt['speaker_label']
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -355,6 +356,12 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default='both',
             choices=['both', 'wizard', 'apprentice'],
             help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
+            type='bool',
+            default=False,
+            help='prepend chosen topic to first turn',
         )
 
     def num_examples(self):
@@ -382,17 +389,36 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
+        if self.add_topic and entry_idx == 0:
+            text = d.get('chosen_topic', '') + '\n' + text
+
         action = {
             'id': 'WizardBasicDialog',
             'text': text,
             'labels': labels,
             'episode_done': episode_done,
         }
+        if 'label_candidates' in d:
+            action['label_candidates'] = d['label_candidates']
 
         if self.speaker_label == 'wizard':
             action['chosen_topic'] = d.get('chosen_topic', '')
 
         return action
+
+
+class BasicWizardDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = "wizard"
+        self.add_topic = True
+
+
+class BasicApprenticeDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = 'apprentice'
+        self.add_topic = True
 
 
 ###############################################################
