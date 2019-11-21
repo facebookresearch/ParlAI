@@ -173,7 +173,6 @@ class MessengerManager:
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
-        #if not self.world_runner.world_initializing:
         # Deepcopy the opts so the manager opts aren't changed by the world runner
         runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(

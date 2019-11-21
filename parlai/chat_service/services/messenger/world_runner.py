@@ -32,7 +32,6 @@ class MessengerWorldRunner:
         self.opt = opt
         self.tasks = {}  # task ID to task
         self.initialized = False
-        self.world_initializing = False
 
         def _is_done_initializing(fut):
             e = fut.exception()
@@ -47,7 +46,6 @@ class MessengerWorldRunner:
             self.initialized = True
 
         if hasattr(self._world_module, "module_initialize"):
-            self.world_initializing = True
             self._log("Initializing world module...")
             # perform any module intialization steps
             init_fn = self._world_module.module_initialize
