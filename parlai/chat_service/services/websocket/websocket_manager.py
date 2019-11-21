@@ -67,7 +67,7 @@ class WebsocketManager(ChatServiceManager):
     def _load_model(self):
         """Load model if necessary"""
         if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _handle_message_read(self, event):
         """Send read receipt back to user who sent message

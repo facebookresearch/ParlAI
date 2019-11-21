@@ -161,9 +161,9 @@ class ChatServiceManager(ABC):
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
         # Deepcopy the opts so the manager opts aren't changed by the world runner
-        runner_opt = copy.deepcopy(opt)
+        self.runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
+            self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
