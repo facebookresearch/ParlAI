@@ -46,6 +46,10 @@ except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
 
+class StopTrainException(Exception):
+    pass
+
+
 class Batch(AttrDict):
     """
     Batch is a namedtuple containing data being sent to an agent.
