@@ -173,11 +173,13 @@ class MessengerManager:
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
+        #if not self.world_runner.world_initializing:
         # Deepcopy the opts so the manager opts aren't changed by the world runner
         runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
             runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )
+        self._load_model(runner_opt)
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
         }
@@ -195,13 +197,10 @@ class MessengerManager:
         self.setup_socket()
         self.start_new_run()
 
-        if not self.world_runner.world_initializing:
-            self._load_model()
-
-    def _load_model(self):
+    def _load_model(self, runner_opt):
         """Load model if necessary."""
-        if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+        if 'model_file' in runner_opt or 'model' in runner_opt:
+            runner_opt['shared_bot_params'] = create_agent(runner_opt).share()
 
     def _init_logs(self):
         """Initialize logging settings from the opt."""
