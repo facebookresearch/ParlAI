@@ -395,7 +395,6 @@ class MessengerManager:
                 del self.messenger_agent_states[agent_id]
                 del self.agent_id_to_overworld_future[agent_id]
 
-
         future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
 
