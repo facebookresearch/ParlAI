@@ -122,8 +122,7 @@ class InteractiveSelfchatWorld(InteractiveWorld):
             s += '==============================\n'
         s += super().display()
         return s
-        
-        
+
     def parley(self):
         if self.cnt == 0:
             self.topic = self.get_new_topic()
