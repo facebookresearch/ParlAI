@@ -263,7 +263,7 @@ jobs:
           name: black
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh -b -c
+            bash ./autoformat.sh -b -c
 
   docformat:
     <<: *standard_cpu36
@@ -281,7 +281,7 @@ jobs:
           name: docformat
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh -d -c
+            bash ./autoformat.sh -d -c
 
   lint:
     <<: *standard_cpu36
@@ -305,7 +305,7 @@ jobs:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh -c -f
+            bash ./autoformat.sh -c -f
 
   nightly_gpu_tests:
     <<: *gpu
