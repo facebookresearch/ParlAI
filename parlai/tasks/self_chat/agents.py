@@ -15,9 +15,11 @@ import json
 import os
 import random
 
+
 class DefaultTeacher(Teacher):
     # Dummy class.
     pass
+
 
 def create_agents(opt, task):
     if not opt.get('interactive_task', False):

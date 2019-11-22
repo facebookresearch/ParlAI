@@ -20,10 +20,10 @@ class InteractiveWorld(DialogPartnerWorld):
         self.init_contexts()
         self.max_cnt = self.opt.get('selfchat_max_turns', 10)
         self.cnt = 0
-        
+
     def init_contexts(self):
         pass
-        
+
     def get_contexts(self):
         return ['__SILENCE__', '']
 
@@ -39,7 +39,7 @@ class InteractiveWorld(DialogPartnerWorld):
             return True
         else:
             return False
-    
+
     def parley(self):
         if self.cnt == 0:
             self.acts = [None, None]
@@ -51,8 +51,11 @@ class InteractiveWorld(DialogPartnerWorld):
             self.contexts = self.get_contexts()
             # initial context
             for i in range(0, 2):
-                context = {'text': self.contexts[i],
-                           'episode_done': False, 'id': 'context'}
+                context = {
+                    'text': self.contexts[i],
+                    'episode_done': False,
+                    'id': 'context',
+                }
                 self.acts[1 - i] = context
                 self.agents_ordered[i].observe(validate(context))
         else:
