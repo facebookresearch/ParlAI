@@ -1138,15 +1138,15 @@ def _get_task_world(opt, user_agents, default_world=None):
         task = sp[0].lower()
         if len(sp) > 1:
             sp[1] = sp[1][0].upper() + sp[1][1:]
-            world_name = sp[1] + "World"
+            world_name = sp[1] + 'World'
             if opt.get('interactive_task', False):
-                world_name = "Interactive" + world_name
+                world_name = 'Interactive' + world_name
         else:
             if opt.get('interactive_task', False):
-                world_name = "InteractiveWorld"
+                world_name = 'InteractiveWorld'
             else:
-                world_name = "DefaultWorld"
-        module_name = "parlai.tasks.%s.worlds" % (task)
+                world_name = 'DefaultWorld'
+        module_name = 'parlai.tasks.%s.worlds' % (task)
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)

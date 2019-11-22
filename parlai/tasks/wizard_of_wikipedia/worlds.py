@@ -13,6 +13,10 @@ import string
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.tasks.wizard_of_wikipedia.agents import (
+    TOKEN_KNOWLEDGE,
+    TOKEN_END_KNOWLEDGE,
+)
 
 from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
     KnowledgeRetrieverAgent,
@@ -23,10 +27,17 @@ NO_TOPIC = '[NO TOPIC]'
 
 
 class InteractiveWorld(DialogPartnerWorld):
+    """
+    Interactive world for wizard of wikipedia.
+
+    Used for models trained on the task `-t wizard_of_wikipedias`.
+    """
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         print('[ loading topics.. ]')
-        self.load_topics(opt)
+        self.opt = opt
+        self._load_topics(opt)
         self.num_topics = opt['num_topics']
         self.cnt = 0
         self.human_agent = self.agents[0]
@@ -46,7 +57,7 @@ class InteractiveWorld(DialogPartnerWorld):
         knowledge_opt = parser.parse_args([], print_args=False)
         self.knowledge_agent = create_agent(knowledge_opt)
 
-    def load_topics(self, opt):
+    def _load_topics(self, opt):
         # Load possible chosen topics
         topics_path = os.path.join(
             opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
@@ -55,7 +66,7 @@ class InteractiveWorld(DialogPartnerWorld):
         datatype = opt['datatype'].split(':')[0]
         self.topic_list = json.load(open(topics_path, 'rb'))[datatype]
 
-    def get_new_topic(self):
+    def _get_new_topic(self):
         random.seed()
         topics = random.sample(self.topic_list, self.num_topics - 1)
         topics.append(NO_TOPIC)
@@ -84,7 +95,7 @@ class InteractiveWorld(DialogPartnerWorld):
         print('[ Your chosen topic is: {} ]'.format(chosen_topic))
         return chosen_topic
 
-    def add_knowledge_to_act(self, act):
+    def _add_knowledge_to_act(self, act):
         self.knowledge_agent.observe(act, actor_id='apprentice')
         knowledge_act = self.knowledge_agent.act()
         act['knowledge'] = knowledge_act['text']
@@ -98,8 +109,15 @@ class InteractiveWorld(DialogPartnerWorld):
         return act
 
     def parley(self):
+        """
+        Loop between wizard and apprentice.
+
+        Adds knowledge to the wizard observations. Assumes that the model agent
+        is the wizard model.
+        """
+
         if self.cnt == 0:
-            self.topic = self.get_new_topic()
+            self.topic = self._get_new_topic()
             self.acts = [None, None]
             self.human_first = random.choice([0, 1])
 
@@ -118,8 +136,9 @@ class InteractiveWorld(DialogPartnerWorld):
             act.force_set('text', '\n'.join([self.topic, act.get('text', 'hi')]))
 
         # add knowledge to the model observation
-        self.add_knowledge_to_act(act)
+        act = self._add_knowledge_to_act(act)
 
+        # model observes knowledge and human (apprentice) act
         self.model_agent.observe(validate(act))
 
         # model agent act
@@ -128,7 +147,7 @@ class InteractiveWorld(DialogPartnerWorld):
         # add the model reply to the knowledge retriever's dialogue history
         self.knowledge_agent.observe(self.acts[1], actor_id='wizard')
 
-        # human agent observe
+        # human (apprentice) agent observes model act
         self.human_agent.observe(validate(self.acts[1]))
 
         self.update_counters()
@@ -139,3 +158,45 @@ class InteractiveWorld(DialogPartnerWorld):
             print('\n[ Preparing new chat... ]\n')
             self.cnt = 0
             self.model_agent.reset()
+
+
+class InteractiveGeneratorWorld(InteractiveWorld):
+    """
+    Interactive world for generative models.
+
+    Specifically a world for models trained on the task
+    `-t wizard_of_wikipedia generator`.
+    """
+
+    def __init__(self, opt, agents, shared=None):
+        super().__init__(opt, agents, shared)
+        print('[ loading topics.. ]')
+        self.opt = opt
+        self._load_topics(opt)
+        self.num_topics = opt['num_topics']
+        self.cnt = 0
+        self.human_agent = self.agents[0]
+        self.model_agent = self.agents[1]
+
+        self._set_up_knowledge_agent(add_token_knowledge=True)
+
+    def _add_knowledge_to_act(self, act):
+        self.knowledge_agent.observe(act, actor_id='apprentice')
+        knowledge_act = self.knowledge_agent.act()
+        act['knowledge'] = knowledge_act['text']
+        act['checked_sentence'] = knowledge_act['checked_sentence']
+        print(
+            '[ Using chosen sentence from Wikpedia ]: {}'.format(
+                knowledge_act['checked_sentence']
+            )
+        )
+        act['title'] = knowledge_act['title']
+        if self.opt.get('prepend_gold_knowledge', False):
+            new_text = ' '.join([
+                TOKEN_KNOWLEDGE,
+                knowledge_act['checked_sentence'],
+                TOKEN_END_KNOWLEDGE,
+                act['text']
+            ])
+            act.force_set('text', new_text)
+        return act
