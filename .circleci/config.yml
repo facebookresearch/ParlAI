@@ -5,11 +5,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 standard_cpu37: &standard_cpu37
   docker:
-    - image: circleci/python:3.7.1
+    - image: circleci/python:3.7.5-buster-node
 
 standard_cpu36: &standard_cpu36
   docker:
-    - image: circleci/python:3.6.5-node
+    - image: circleci/python:3.6.9-buster-node
 
 osx_cpu37: &osx_cpu37
   macos:
@@ -126,7 +126,7 @@ buildwebsite: &buildwebsite
 # -------------------------------------------------------------------------------------
 jobs:
   datatests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -139,7 +139,7 @@ jobs:
           key: deps-dt-v3{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
-      - <<: *installtorchcpu36
+      - <<: *installtorchcpu37
       - run:
           name: Data tests
           command: coverage run setup.py test -s tests.suites.datatests -v
@@ -248,7 +248,7 @@ jobs:
       - <<: *codecov
 
   black:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -266,7 +266,7 @@ jobs:
             bash ./tests/lint_changed.sh -b
 
   lint:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -316,7 +316,7 @@ jobs:
       - <<: *codecov
 
   mturk_tests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -335,7 +335,7 @@ jobs:
       - <<: *codecov
 
   build_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -348,12 +348,12 @@ jobs:
           key: deps-bw-v3{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
-      - <<: *installtorchcpu36
+      - <<: *installtorchcpu37
       - <<: *buildwebsite
       - <<: *codecov
 
   deploy_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -366,7 +366,7 @@ jobs:
           key: deps-dw-v3{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
-      - <<: *installtorchcpu36
+      - <<: *installtorchcpu37
       - <<: *buildwebsite
       - run:
           working_directory: ~/ParlAI/
@@ -376,9 +376,10 @@ jobs:
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
+            sudo apt-get install s3cmd
 
   test_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/
     steps:
       - run:
@@ -398,7 +399,7 @@ jobs:
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
   check_extra_tests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
