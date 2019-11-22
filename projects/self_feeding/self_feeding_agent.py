@@ -25,7 +25,6 @@ from parlai.agents.transformer.transformer import TransformerRankerAgent
 
 from .feedback_classifier.feedback_classifier import FeedbackClassifierRegex
 from .modules import SelfFeedingModel
-from .utils import add_person_tokens
 
 EPS = 1e-9
 
