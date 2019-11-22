@@ -1537,21 +1537,8 @@ class TorchAgent(ABC, Agent):
         # want to remove this behavior and demand that teachers return Messages
         observation = Message(observation)
 
-        if self.__expecting_to_reply:
-            raise RuntimeError(
-                "Last observe() had a label, but no call to self_observe ever "
-                "happened. You are likely making multiple observe() calls without "
-                "a corresponding act(). This was changed in #2043. File a GitHub "
-                "issue if you require assistance."
-            )
-
-        if self.__expecting_clear_history:
-            raise RuntimeError(
-                "Last observe() was episode_done, but we never saw a corresponding "
-                "self_observe to clear the history, probably because you missed an "
-                "act(). This was changed in #2043. File a GitHub issue if you require "
-                "assistance."
-            )
+        # Sanity check everything is in order
+        self._validate_observe_invariants()
 
         if observation.get('episode_done'):
             self.__expecting_clear_history = True
@@ -1575,27 +1562,17 @@ class TorchAgent(ABC, Agent):
 
         This is used so that the agent can incorporate its own response into
         the dialogue history after a batch_act. Failure to implement this will
-        result in an agent that cannot hear itself speak
+        result in an agent that cannot hear itself speak.
 
         :param self_message:
             The message corresponding to the output from batch_act.
         """
         use_reply = self.opt.get('use_reply', 'label')
 
-        if self.observation is None:
-            raise RuntimeError(
-                "You're self_observing without having observed something. Check if "
-                "you're missing a step in your observe/act/self_observe loop."
-            )
+        # quick check everything is in order
+        self._validate_self_observe_invariants()
 
         if self.observation['episode_done']:
-            if not self.__expecting_clear_history:
-                raise RuntimeError(
-                    "You probably overrode observe() without implementing calling "
-                    "super().observe(). This is unexpected. *If you must* avoid the "
-                    "super call, then you should file a GitHub issue referencing "
-                    "#2043."
-                )
             # oh this was the last example in the episode. reset the history
             self.history.reset()
             # additionally mark the last observation as invalid
@@ -1635,6 +1612,47 @@ class TorchAgent(ABC, Agent):
             return
 
         raise RuntimeError("Unexpected case in self_observe.")
+
+    def _validate_observe_invariants(self):
+        """
+        Check that we properly called self_observe after the last batch_act.
+        """
+        if self.__expecting_to_reply:
+            raise RuntimeError(
+                "Last observe() had a label, but no call to self_observe ever "
+                "happened. You are likely making multiple observe() calls without "
+                "a corresponding act(). This was changed in #2043. File a GitHub "
+                "issue if you require assistance."
+            )
+
+        if self.__expecting_clear_history:
+            raise RuntimeError(
+                "Last observe() was episode_done, but we never saw a corresponding "
+                "self_observe to clear the history, probably because you missed an "
+                "act(). This was changed in #2043. File a GitHub issue if you require "
+                "assistance."
+            )
+
+    def _validate_self_observe_invariants(self):
+        """
+        Check some invariant conditions for self_observe.
+
+        Goal is to catch potential places where we forget to call self_observe.
+        """
+        if self.observation is None:
+            raise RuntimeError(
+                "You're self_observing without having observed something. Check if "
+                "you're missing a step in your observe/act/self_observe loop."
+            )
+
+        if self.observation['episode_done']:
+            if not self.__expecting_clear_history:
+                raise RuntimeError(
+                    "You probably overrode observe() without implementing calling "
+                    "super().observe(). This is unexpected. *If you must* avoid the "
+                    "super call, then you should file a GitHub issue referencing "
+                    "#2043."
+                )
 
     def state_dict(self):
         """

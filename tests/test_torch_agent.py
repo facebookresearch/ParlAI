@@ -903,7 +903,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.observe(obs)
         _ = agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
-        # --use-reply none never thinks of itself
+        # --use-reply none doesn't hear itself
         agent = get_agent(use_reply='none')
         obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
         agent.observe(obs)
