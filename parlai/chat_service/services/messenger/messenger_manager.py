@@ -16,6 +16,7 @@ import threading
 import time
 import traceback
 import datetime
+import copy
 
 from parlai.core.agents import create_agent
 from parlai.chat_service.services.messenger.agents import MessengerAgent
@@ -172,9 +173,12 @@ class MessengerManager:
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
+        # Deepcopy the opts so the manager opts aren't changed by the world runner
+        runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            opt, self.world_path, self.max_workers, self, opt['is_debug']
+            runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )
+        self._load_model(runner_opt)
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
         }
@@ -191,12 +195,11 @@ class MessengerManager:
         self.init_new_state()
         self.setup_socket()
         self.start_new_run()
-        self._load_model()
 
-    def _load_model(self):
+    def _load_model(self, runner_opt):
         """Load model if necessary."""
-        if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+        if 'model_file' in runner_opt or 'model' in runner_opt:
+            runner_opt['shared_bot_params'] = create_agent(runner_opt).share()
 
     def _init_logs(self):
         """Initialize logging settings from the opt."""
@@ -380,6 +383,15 @@ class MessengerManager:
                 self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
                 if self.debug:
                     raise e
+            else:
+                self.observe_message(agent_id, 'See you later!')
+                for world_type in self.agent_pool:
+                    agent_state = self.get_agent_state(agent_id)
+                    if agent_state in self.agent_pool[world_type]:
+                        self.agent_pool[world_type].remove(agent_state)
+                        self.remove_agent_from_pool(agent_state, world_type=world_type)
+                del self.messenger_agent_states[agent_id]
+                del self.agent_id_to_overworld_future[agent_id]
 
         future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
@@ -398,6 +410,11 @@ class MessengerManager:
             message to put on queue
         """
         agent_id = message['sender']['id']
+        if not self.world_runner.is_initialized():
+            self.observe_message(
+                agent_id, 'Please wait while the worlds are initializing...'
+            )
+            self.world_runner.init_fut.result()
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
@@ -570,8 +587,6 @@ class MessengerManager:
         # Set up receive
         if not self.bypass_server_setup:
             socket_use_url = self.server_url
-            if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = 'https://localhost'
             self.message_socket = MessageSocket(
                 socket_use_url, self.port, self._handle_webhook_event
             )

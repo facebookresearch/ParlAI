@@ -53,7 +53,7 @@ class MessageSocketHandler(WebSocketHandler):
         message = json.loads(message_text)
         message = {
             'text': message.get('text', ''),
-            'attachment': message.get('attachment'),
+            'payload': message.get('payload'),
             'sender': {'id': self.sid},
             'recipient': {'id': 0},
         }

@@ -9,6 +9,9 @@ from parlai.chat_service.services.websocket.websocket_manager import WebsocketMa
 from parlai.chat_service.services.messenger import shared_utils as utils
 
 
+SERVICE_NAME = 'websocket'
+
+
 def setup_args():
     """Set up args."""
     parser = ParlaiParser(False, False)
@@ -19,6 +22,7 @@ def setup_args():
 
 def run(opt):
     """Run MessengerManager."""
+    opt['service'] = SERVICE_NAME
     manager = WebsocketManager(opt)
     try:
         manager.start_task()
