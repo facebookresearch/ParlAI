@@ -11,7 +11,7 @@ from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
 
-class InteractiveWorld(DialogPartnerWorld):
+class InteractiveSimpleWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         print("[ loading personas.. ]")
@@ -38,22 +38,35 @@ class InteractiveWorld(DialogPartnerWorld):
         txt = msg.get('text', '').split('\n')
         a1_persona = ""  # (typically human in interactive)
         a2_persona = ""
+        p = {}
         for t in txt:
-            if not t.startswith("_partner_say"):
-                if t.startswith("_partner_name"):
-                    t0 = t.replace("_partner_name", '_self_name')
-                else:
-                    t0 = t.replace("_self_name", '_partner_name')
-                if t.startswith("_self_persona"):
-                    t0 = ''
-                if t.startswith("_object_desc"):
-                    continue
-                if t.startswith("_self_act") or t.startswith("_self_emote"):
-                    continue
-                if t0 != '':
-                    a1_persona += t0 + '\n'
-                if t != '':
-                    a2_persona += t + '\n'
+            p[t.split(' ')[0]] = t
+
+        a1_persona = (
+            p['_setting_name']
+            + '\n'
+            + p['_setting_desc']
+            + '\n'
+            + p['_self_name'].replace("_self_name", '_partner_name')
+            + '\n'
+            + p['_partner_name'].replace("_partner_name", '_self_name')
+            + '\n'
+            + '_self_persona I am a '
+            + ' '.join(p['_partner_name'].split(' ')[1:])
+            + '.\n'
+        )
+
+        a2_persona = (
+            p['_setting_name']
+            + '\n'
+            + p['_setting_desc']
+            + p['_partner_name']
+            + '\n'
+            + p['_self_name']
+            + '\n'
+            + p['_self_persona']
+            + '\n'
+        )
         return a1_persona, a2_persona
 
     def parley(self):
