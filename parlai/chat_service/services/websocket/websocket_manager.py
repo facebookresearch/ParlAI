@@ -267,6 +267,9 @@ class WebsocketManager(ChatServiceManager):
         payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())
+        if socket_id not in MessageSocketHandler.subs:
+            self.agent_id_to_overworld_future[socket_id].cancel()
+            return
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def restructure_message(self):
