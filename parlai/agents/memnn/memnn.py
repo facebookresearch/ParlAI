@@ -91,7 +91,7 @@ class MemnnAgent(TorchRankerAgent):
         if self.use_time_features:
             # add time features to dictionary before building the model
             for i in range(self.memsize):
-                d[self._time_feature(i)] = 100000000 + i
+                d[self._time_feature(i)] = 100_000_000 + i
         return d
 
     def build_model(self):
