@@ -352,6 +352,26 @@ jobs:
       - <<: *buildwebsite
       - <<: *codecov
 
+  copyright:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - restore_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
+      - <<: *installdeps
+      - save_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - run:
+          working_directory: ~/ParlAI/
+          name: Check copyrights
+          command: |
+              python tests/check_copyright.py
+
   deploy_website:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
@@ -437,6 +457,7 @@ workflows:
       - unittests_37
       - unittests_36
       - unittests_osx
+      - copyright
       - mturk_tests:
           filters:
             branches:
