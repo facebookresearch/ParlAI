@@ -12,6 +12,7 @@ import string
 
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfchatWorld
 
 
 NO_TOPIC = '[NO TOPIC]'
@@ -102,53 +103,18 @@ class InteractiveWorld(DialogPartnerWorld):
             self.model_agent.reset()
 
 
-class InteractiveSelfchatWorld(InteractiveWorld):
-    def __init__(self, opt, agents, shared=None):
-        super().__init__(opt, agents, shared)
+class InteractiveSelfchatWorld(SelfchatWorld):
+    def init_contexts(self):
         print('[ loading topics.. ]')
-        self.load_topics(opt)
-        self.num_topics = opt['num_topics']
-        self.cnt = 0
-        self.model1_agent = self.agents[0]
-        self.model2_agent = self.agents[1]
+        # Load possible chosen topics
+        topics_path = os.path.join(
+            self.opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
+        )
+        # Get training set topics
+        datatype = self.opt['datatype'].split(':')[0]
+        self.topic_list = json.load(open(topics_path, 'rb'))[datatype]
 
-    def get_new_topic(self):
+    def get_contexts(self):
         random.seed()
-        return random.choice(self.topic_list)
-
-    def display(self):
-        s = ''
-        if self.cnt == 0:
-            s += '==============================\n'
-        s += super().display()
-        return s
-
-    def parley(self):
-        if self.cnt == 0:
-            self.topic = self.get_new_topic()
-            self.acts = [None, None]
-            # choose speaking order:
-            if random.choice([0, 1]):
-                self.agents_ordered = [self.agents[0], self.agents[1]]
-            else:
-                self.agents_ordered = [self.agents[1], self.agents[0]]
-            # initial context
-            context = {'text': self.topic, 'episode_done': False, 'id': 'context'}
-            self.acts[1] = context
-            self.agents_ordered[0].observe(validate(context))
-        else:
-            # do regular loop
-            acts = self.acts
-            agents = self.agents_ordered
-            acts[0] = agents[0].act()
-            agents[1].observe(validate(acts[0]))
-            acts[1] = agents[1].act()
-            agents[0].observe(validate(acts[1]))
-
-        self.update_counters()
-        self.cnt += 1
-
-        if self.cnt > 8:
-            self.cnt = 0
-            agents[0].reset()
-            agents[1].reset()
+        topic = random.choice(self.topic_list)
+        return [topic, topic]

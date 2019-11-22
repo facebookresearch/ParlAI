@@ -16,14 +16,8 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Self chat with a model')
+    parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
-    parser.add_argument(
-        '--display-prettify',
-        type='bool',
-        default=False,
-        help='Set to use a prettytable when displaying '
-        'examples with text candidates',
-    )
     parser.add_argument(
         '--display-ignore-fields',
         type=str,
@@ -50,7 +44,8 @@ def self_chat(opt, print_parser=None):
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: self_chat should be passed opt not Parser ]')
         opt = opt.parse_args()
-
+        
+    random.seed(opt['seed'])
     # Create models
     agent1 = create_agent(opt, requireModelExists=True)
     agent2 = agent1.clone()
@@ -76,6 +71,5 @@ def self_chat(opt, print_parser=None):
 
 
 if __name__ == '__main__':
-    random.seed(42)
     parser = setup_args()
     self_chat(parser.parse_args(print_args=False), print_parser=parser)
