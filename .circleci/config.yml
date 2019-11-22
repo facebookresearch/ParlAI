@@ -5,11 +5,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 standard_cpu37: &standard_cpu37
   docker:
-    - image: circleci/python:3.7.5-buster
+    - image: circleci/python:3.7.5-buster-node
 
 standard_cpu36: &standard_cpu36
   docker:
-    - image: circleci/python:3.6.9-buster
+    - image: circleci/python:3.6.9-buster-node
 
 osx_cpu37: &osx_cpu37
   macos:
