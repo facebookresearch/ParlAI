@@ -9,10 +9,7 @@ import re
 import parlai.utils.testing as testing_utils
 
 FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
-WHITELIST_PHRASES = [
-    'Moscow Institute of Physics and Technology.',
-    'https://github.com/fartashf/vsepp',
-]
+WHITELIST_PHRASES = ['Moscow Institute of Physics and Technology.']
 COPYRIGHT = [
     "Copyright (c) Facebook, Inc. and its affiliates.",
     "This source code is licensed under the MIT license found in the",
