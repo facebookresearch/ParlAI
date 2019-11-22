@@ -113,7 +113,7 @@ class Agent(object):
         Default implementation is no-op, but many subagents implement this logic.
         """
         pass
-    
+
     def share(self):
         """
         Share any parameters needed to create a shared version of this agent.
