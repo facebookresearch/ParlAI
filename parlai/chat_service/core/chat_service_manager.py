@@ -416,9 +416,7 @@ class ChatServiceManager(ABC):
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
                     if self.service_reference_id is not None:
-                        self.mark_removed(
-                            int(agent.service_id), int(self.service_reference_id)
-                        )
+                        self.mark_removed(agent.service_id, self.service_reference_id)
 
     def _create_agent(self, task_id, agent_id):
         """Initialize an agent and return it.
@@ -486,7 +484,9 @@ class ChatServiceManager(ABC):
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
-    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+    def check_timeout_in_pool(
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
+    ):
         """Check for timed-out agents in pool.
 
         :param world_type:
@@ -495,6 +495,8 @@ class ChatServiceManager(ABC):
             list of ``AgentState``s
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
+        :param backup_task:
+            string backup_task to start if we reach a timeout in the original pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
@@ -506,6 +508,9 @@ class ChatServiceManager(ABC):
 
                 agent_state.stored_data['removed_after_timeout'] = True
                 self.after_agent_removed(agent_state.service_id)
+
+                if backup_task is not None:
+                    self.add_agent_to_pool(agent_state, backup_task)
 
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
@@ -572,7 +577,10 @@ class ChatServiceManager(ABC):
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
+                            world_config.backup_task,
                         )
 
                     needed_agents = self.max_agents_for[world_type]
