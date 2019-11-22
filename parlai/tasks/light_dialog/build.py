@@ -69,6 +69,7 @@ def build(opt):
         'cands',
         'current_self_output',
         'clip_cands',
+        'speech_prefix',
     ]
     fpath = ''
     for f in fields:
