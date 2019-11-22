@@ -352,7 +352,7 @@ jobs:
       - <<: *buildwebsite
       - <<: *codecov
 
-  build_website:
+  copyright:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
@@ -368,7 +368,7 @@ jobs:
             - "~/venv/lib"
       - run:
           working_directory: ~/ParlAI/
-          name: Upload the website
+          name: Check copyrights
           command: |
               python tests/check_copyright.py
 
