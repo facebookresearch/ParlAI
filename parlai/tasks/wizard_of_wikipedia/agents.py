@@ -915,7 +915,7 @@ class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
 
 
-class SelfchatTeacher(BasicBothDialogTeacher):
+class SelfchatTeacher(WizardDialogKnowledgeTeacher):
     """
     Teacher used to create candidates for selfchats, if needed.
     """

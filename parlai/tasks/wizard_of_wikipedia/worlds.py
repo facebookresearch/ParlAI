@@ -12,7 +12,7 @@ import string
 
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
-from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfchatWorld
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 
 
 NO_TOPIC = '[NO TOPIC]'
@@ -103,7 +103,7 @@ class InteractiveWorld(DialogPartnerWorld):
             self.model_agent.reset()
 
 
-class InteractiveSelfchatWorld(SelfchatWorld):
+class InteractiveSelfchatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         print('[ loading topics.. ]')
         # Load possible chosen topics
