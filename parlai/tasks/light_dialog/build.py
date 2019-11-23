@@ -54,7 +54,8 @@ def download(opt):
 
 def build(opt):
     dpath, version = download(opt)
-
+    if 'light_use_speech_prefix' not in opt:
+        opt['light_use_speech_prefix'] = True
     # create particular instance of dataset depending on flags..
     fields = [
         'setting',
