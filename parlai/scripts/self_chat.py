@@ -44,7 +44,7 @@ def self_chat(opt, print_parser=None):
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: self_chat should be passed opt not Parser ]')
         opt = opt.parse_args()
-        
+
     random.seed(opt['seed'])
     # Create models
     agent1 = create_agent(opt, requireModelExists=True)
