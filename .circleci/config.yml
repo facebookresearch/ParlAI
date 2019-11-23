@@ -350,7 +350,11 @@ jobs:
             - "~/venv/lib"
       - <<: *installtorchcpu37
       - <<: *buildwebsite
-      - <<: *codecov
+      - run:
+          working_directory: ~/ParlAI/
+          name: temp check
+          command: |
+            pip install s3cmd
 
   copyright:
     <<: *standard_cpu37
@@ -392,11 +396,10 @@ jobs:
           working_directory: ~/ParlAI/
           name: Upload the website
           command: |
-            sudo apt-get install s3cmd
+            pip install s3cmd
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
-            sudo apt-get install s3cmd
 
   test_website:
     <<: *standard_cpu37
