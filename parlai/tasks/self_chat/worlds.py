@@ -31,7 +31,7 @@ class InteractiveWorld(DialogPartnerWorld):
         s = ''
         s += super().display()
         if self.cnt == 0:
-            s += '==============================\n'
+            s += '\n==============================\n'
         return s
 
     def finish_episode(self):
