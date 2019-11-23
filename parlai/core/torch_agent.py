@@ -232,6 +232,9 @@ class History(object):
                 self.history_raw_strings.pop(0)
         self.history_raw_strings.append(text)
 
+        for unused_variable in range(20):
+            print("hello world")
+
     def _update_vecs(self, text):
         if self.size > 0:
             while len(self.history_vecs) >= self.size:
