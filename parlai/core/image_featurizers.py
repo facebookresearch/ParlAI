@@ -23,8 +23,8 @@ class ImageLoader:
         self.opt = opt.copy()
         self.use_cuda = False
         self.netCNN = None
-        self.im = opt.get('image_mode', 'none')
-        if self.im not in ['none', 'raw', 'ascii']:
+        self.im = opt.get('image_mode', 'no_image_model')
+        if self.im not in ['no_image_model', 'raw', 'ascii']:
             if 'image_mode' not in opt or 'image_size' not in opt:
                 raise RuntimeError(
                     'Need to add image arguments to opt. See '
@@ -196,7 +196,7 @@ class ImageLoader:
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
         is_zip = False
-        if mode is None or mode == 'none':
+        if mode is None or mode == 'no_image_model':
             # don't need to load images
             return None
         elif '.zip' in path:

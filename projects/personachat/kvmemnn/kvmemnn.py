@@ -338,7 +338,7 @@ class KvmemnnAgent(Agent):
             self.fixedCands = False
             self.fixedX = None
             path = opt['model_file'] + '.candspair'
-            if os.path.isfile(path) and opt.get('loadcands') != False:
+            if os.path.isfile(path) and opt.get('loadcands') is not False:
                 print("[loading candidates: " + path + "*]")
                 fc = load_cands(path)
                 fcs = []
@@ -495,7 +495,7 @@ class KvmemnnAgent(Agent):
             report = {'mean_rank': self.opt['neg_samples']}
         else:
             maxn = 0
-            for i in range(100):
+            for _ in range(100):
                 n = self.model.lt.weight[5].norm(2)[0].item()
                 if n > maxn:
                     maxn = n
@@ -562,7 +562,7 @@ class KvmemnnAgent(Agent):
         if cache_sz < 1:
             return negs
         k = self.opt['neg_samples']
-        for i in range(1, k * 3):
+        for _ in range(1, k * 3):
             index = random.randint(0, cache_sz)
             neg = self.ys_cache[index]
             if not self.same(ys.squeeze(0), neg.squeeze(0)):

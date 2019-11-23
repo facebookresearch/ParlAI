@@ -50,7 +50,7 @@ class LanguageModelEntry(LanguageModelAgent):
 
         self.model.eval()
 
-        if obs['episode_done'] == True:
+        if obs['episode_done'] is True:
             self.reset_next = True
         else:
             self.reset_next = False

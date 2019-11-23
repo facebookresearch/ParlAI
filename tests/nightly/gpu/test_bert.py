@@ -17,6 +17,7 @@ class TestBertModel(unittest.TestCase):
     for about 100 samples on convai2
     """
 
+    @testing_utils.retry(ntries=3, log_retry=True)
     def test_biencoder(self):
         stdout, valid, test = testing_utils.train_model(
             dict(
@@ -39,6 +40,7 @@ class TestBertModel(unittest.TestCase):
             'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
         )
 
+    @testing_utils.retry(ntries=3, log_retry=True)
     def test_crossencoder(self):
         stdout, valid, test = testing_utils.train_model(
             dict(

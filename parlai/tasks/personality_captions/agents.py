@@ -48,7 +48,7 @@ class DefaultDataset(Dataset):
     def __init__(self, opt):
         self.opt = opt
         opt['image_load_task'] = 'personality_captions'
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.include_image = opt.get('include_image')
@@ -136,7 +136,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.data_path, personalities_data_path, self.image_path = _path(opt)
         self.datatype = opt.get('datatype').split(':')[0]
         self.include_personality = opt.get('include_personality')
@@ -253,7 +253,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         Queues next example.
         """
         ready = None
-        load_image = self.image_mode != 'none' and self.include_image
+        load_image = self.image_mode != 'no_image_model' and self.include_image
         # pull up the currently queued example
         if self.example is not None:
             # if self.image_mode != 'none' and 'image_id' in self.example:
