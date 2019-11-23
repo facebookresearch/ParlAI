@@ -422,12 +422,15 @@ class BasicApprenticeDialogTeacher(BasicdialogTeacher):
         self.speaker_label = 'apprentice'
         self.add_topic = True
 
+
 class BasicBothDialogTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['task'] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
-        super().__init__(opt, shared)    
-    
+        opt[
+            'task'
+        ] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
+        super().__init__(opt, shared)
+
 
 ###############################################################
 #                                                             #
