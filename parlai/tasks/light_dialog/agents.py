@@ -111,7 +111,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
         opt = copy.deepcopy(opt)
         opt['parlaidialogteacher_datafile'] = _path(opt)
         if 'light_use_speech_prefix' not in opt:
-             opt['light_use_speech_prefix'] = True
+            opt['light_use_speech_prefix'] = True
         super().__init__(opt, shared)
 
 
