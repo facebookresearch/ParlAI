@@ -14,7 +14,7 @@ class TestQuickStart(unittest.TestCase):
     """Runs the quickstart test script"""
 
     def run_quickstart_sh(self):
-        subprocess.call(['sh tests/test_quickstart.sh'])
+        subprocess.run(['sh', 'tests/test_quickstart.sh'])
 
 
 if __name__ == '__main__':
