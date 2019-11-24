@@ -20,9 +20,9 @@ osx_cpu37: &osx_cpu37
 
 gpu: &gpu
   environment:
-    CUDA_VERSION: "10.0"
+    CUDA_VERSION: "10.2"
   machine:
-    image: default
+    image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
 # -------------------------------------------------------------------------------------
 
@@ -60,6 +60,7 @@ installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
+      pip install -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
@@ -107,13 +108,23 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-430.40.run -s --no-drm
-      wget https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
+      wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
+      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
+      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run --silent
+      # old instructions
+      # wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
+      # wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      # sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      # sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+      # sudo apt-get update
+      # sudo apt-get -y install cuda
+      echo "Done installing CUDA."
+      pyenv versions
       nvidia-smi
-      pyenv global 3.6.5
+      pyenv global 3.7.0
 
 buildwebsite: &buildwebsite
   run:
@@ -133,10 +144,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -153,10 +164,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpuosx
@@ -173,10 +184,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu36
@@ -193,10 +204,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -211,13 +222,19 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu11
@@ -232,13 +249,19 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu12
@@ -296,13 +319,19 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu12
@@ -323,10 +352,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -342,15 +371,19 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
       - <<: *buildwebsite
-      - <<: *codecov
+      - run:
+          working_directory: ~/ParlAI/
+          name: temp check
+          command: |
+            pip install s3cmd
 
   copyright:
     <<: *standard_cpu37
@@ -360,10 +393,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -380,10 +413,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -392,11 +425,10 @@ jobs:
           working_directory: ~/ParlAI/
           name: Upload the website
           command: |
-            sudo apt-get install s3cmd
+            pip install s3cmd
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
-            sudo apt-get install s3cmd
 
   test_website:
     <<: *standard_cpu37
