@@ -90,7 +90,7 @@ class DefaultTeacher(SelfOriginalTeacher):
     pass
 
 
-class IneractiveTeacher(SelfOriginalTeacher):
+class InteractiveTeacher(SelfOriginalTeacher):
     # Dummy class to add arguments for interactive world.
     pass
 
