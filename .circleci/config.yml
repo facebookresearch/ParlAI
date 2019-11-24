@@ -108,15 +108,18 @@ setupcuda: &setupcuda
     command: |
       # download and install nvidia drivers, cuda, etc
       wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
-      wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
-      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
-      sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
-      sudo apt-get update
-      sudo apt-get -y install cuda
-      echo "Done installing."
+      wget --no-clobber -P ~/nvidia-downloads wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
+      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run
+      # old instructions
+      # wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
+      # wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      # sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      # sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+      # sudo apt-get update
+      # sudo apt-get -y install cuda
+      echo "Done installing CUDA."
       pyenv versions
       nvidia-smi
       pyenv global 3.7.0
@@ -218,10 +221,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
@@ -245,10 +248,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
@@ -315,10 +318,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v1
+          key: nvidia-downloads-v2
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
