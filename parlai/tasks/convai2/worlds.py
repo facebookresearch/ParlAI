@@ -49,7 +49,8 @@ class InteractiveWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.personas_list = load_personas(self.opt)
-
+        self.cnt = 0
+        
     def get_new_personas(self):
         random.seed()
         personas_1 = random.choice(self.personas_list)
