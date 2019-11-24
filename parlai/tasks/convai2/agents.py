@@ -90,6 +90,11 @@ class DefaultTeacher(SelfOriginalTeacher):
     pass
 
 
+class IneractiveTeacher(SelfOriginalTeacher):
+    # Dummy class to add arguments for interactive world.
+    pass
+
+
 class SelfchatTeacher(SelfOriginalTeacher):
     # Dummy class to add arguments for interactive world.
     pass
