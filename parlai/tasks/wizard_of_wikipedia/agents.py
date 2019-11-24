@@ -922,7 +922,6 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     """
     Teacher used to create candidates for selfchats, if needed.
     """
-
     pass
 
 
