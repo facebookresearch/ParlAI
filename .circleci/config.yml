@@ -110,8 +110,8 @@ setupcuda: &setupcuda
       # download and install nvidia drivers, cuda, etc
       wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
       wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
-      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
-      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run
+      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q
+      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run --silent
       # old instructions
       # wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
       # wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
