@@ -6,7 +6,6 @@
 
 import random
 
-from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
 
 
