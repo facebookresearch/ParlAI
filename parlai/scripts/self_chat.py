@@ -9,6 +9,7 @@ Allows a model to self-chat on a given task.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.utils.world_logging import WorldLogger
 
 import random
 
@@ -18,6 +19,7 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True, 'Self chat with a model')
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
+    parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument(
         '--display-ignore-fields',
         type=str,
@@ -30,6 +32,10 @@ def setup_args(parser=None):
         type='bool',
         default=True,
         help='Create interactive version of task',
+    )
+    parser.add_argument('--outfile', type=str, default='/tmp/selfchat.json')
+    parser.add_argument(
+        '--format', type=str, default='json', choices={'parlai', 'json'}
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     return parser
@@ -59,15 +65,18 @@ def self_chat(opt, print_parser=None):
         print_parser.opt = agent1.opt
         print_parser.print_args()
 
-    # Show some example dialogs:
-    while True:
+    logger = WorldLogger(opt)
+
+    # Run some self chats.
+    for _ in range(opt['num_examples']):
         world.parley()
+        logger.log(world)
+
         if opt.get('display_examples'):
             print("---")
             print(world.display())
-        if world.epoch_done():
-            print("EPOCH DONE")
-            break
+
+    logger.write(opt['outfile'], opt['format'])
 
 
 if __name__ == '__main__':

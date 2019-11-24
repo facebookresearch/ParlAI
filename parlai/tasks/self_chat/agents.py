@@ -17,8 +17,10 @@ import random
 
 
 class DefaultTeacher(Teacher):
-    # Dummy class.
-    pass
+    def __init__(self, opt, shared=None):
+        raise RuntimeError(
+            '-t self_chat is a dummy helper, and not meant to be used directly.'
+        )
 
 
 def create_agents(opt, task):

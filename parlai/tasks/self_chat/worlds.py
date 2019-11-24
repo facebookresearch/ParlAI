@@ -34,13 +34,19 @@ class InteractiveWorld(DialogPartnerWorld):
             s += '\n==============================\n'
         return s
 
-    def finish_episode(self):
+    def episode_done(self):
         if self.cnt > self.max_cnt:
             return True
         else:
             return False
 
     def parley(self):
+        if self.episode_done():
+            self.cnt = 0
+            agents = self.get_agents()
+            for a in agents:
+                a.reset()
+
         if self.cnt == 0:
             self.acts = [None, None]
             # choose speaking order:
@@ -69,8 +75,3 @@ class InteractiveWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.cnt += 1
-
-        if self.finish_episode():
-            self.cnt = 0
-            agents[0].reset()
-            agents[1].reset()
