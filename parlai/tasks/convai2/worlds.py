@@ -23,7 +23,6 @@ def load_personas(opt):
     convai2_opt['interactive_task'] = False
     convai2_agent = RepeatLabelAgent(convai2_opt)
     convai2_world = create_task(convai2_opt, convai2_agent)
-    cnt = 0
     personas = set()
     while not convai2_world.epoch_done():
         convai2_world.parley()
