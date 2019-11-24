@@ -6,6 +6,7 @@
 
 import unittest
 import subprocess
+import parlai.utils.testing as testing_utils
 
 
 @testing_utils.skipUnlessGPU
