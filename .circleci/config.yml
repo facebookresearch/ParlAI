@@ -22,7 +22,7 @@ gpu: &gpu
   environment:
     CUDA_VERSION: "10.0"
   machine:
-    image: default
+    image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
 # -------------------------------------------------------------------------------------
 
