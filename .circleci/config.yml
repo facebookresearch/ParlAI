@@ -20,7 +20,7 @@ osx_cpu37: &osx_cpu37
 
 gpu: &gpu
   environment:
-    CUDA_VERSION: "10.0"
+    CUDA_VERSION: "10.2"
   machine:
     image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
@@ -107,13 +107,19 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-430.40.run -s --no-drm
-      wget https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
+      wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
+      wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      sudo cp cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      sudo apt-key add sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+      sudo apt-get update
+      sudo apt-get -y install cuda
+      echo "Done installing."
+      pyenv versions
       nvidia-smi
-      pyenv global 3.7.5
+      pyenv global 3.7.0
 
 buildwebsite: &buildwebsite
   run:
@@ -211,7 +217,13 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v1
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v1
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
           key: deps-gpu11-v4{{ checksum "requirements.txt" }}
@@ -232,7 +244,13 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v1
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v1
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
           key: deps-gpu12-v4{{ checksum "requirements.txt" }}
@@ -296,7 +314,13 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v1
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v1
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
           key: deps-nightly-v4{{ checksum "requirements.txt" }}
