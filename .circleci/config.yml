@@ -113,7 +113,7 @@ setupcuda: &setupcuda
       sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
       sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
       nvidia-smi
-      pyenv global 3.6.5
+      pyenv global 3.7.5
 
 buildwebsite: &buildwebsite
   run:
@@ -133,10 +133,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -153,10 +153,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpuosx
@@ -173,10 +173,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu36
@@ -193,10 +193,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -214,10 +214,10 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - restore_cache:
-          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu11
@@ -235,10 +235,10 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - restore_cache:
-          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu12
@@ -299,10 +299,10 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - restore_cache:
-          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu12
@@ -323,10 +323,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -342,10 +342,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
@@ -364,10 +364,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -384,10 +384,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
