@@ -1157,7 +1157,7 @@ def _get_task_world(opt, user_agents, default_world=None):
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)
-        except Exception:
+        except (ModuleNotFoundError, AttributeError):
             # Defaults to this if you did not specify a world for your task.
             if default_world is not None:
                 world_class = default_world

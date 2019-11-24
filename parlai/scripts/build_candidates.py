@@ -43,7 +43,7 @@ def build_cands(opt):
 
     print('[ starting to build candidates from task.. (ex:' + str(num_examples) + ')]')
     print('[ saving output to {} ]'.format(outfile))
-    cands = []
+    cands = set()
     for _ in range(num_examples):
         world.parley()
         # We get the acts of the first agent, which is the teacher.
@@ -55,7 +55,7 @@ def build_cands(opt):
             candidate = a.get('labels', a.get('eval_labels', None))
             if candidate is not None:
                 candidate = candidate[0]
-                cands.append(candidate)
+                cands.add(candidate)
         if log_timer.time() > opt['log_every_n_secs']:
             text, _log = log_timer.log(world.total_parleys, world.num_examples())
             print(text)

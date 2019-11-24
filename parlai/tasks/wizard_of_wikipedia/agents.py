@@ -17,6 +17,8 @@
     E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+import copy
+import parlai.core.agents as core_agents
 from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
@@ -419,6 +421,15 @@ class BasicApprenticeDialogTeacher(BasicdialogTeacher):
         super().__init__(opt, shared)
         self.speaker_label = 'apprentice'
         self.add_topic = True
+
+
+class BasicBothDialogTeacher(core_agents.MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt[
+            'task'
+        ] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
+        super().__init__(opt, shared)
 
 
 ###############################################################
@@ -904,6 +915,14 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
 
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
+    pass
+
+
+class SelfchatTeacher(BasicBothDialogTeacher):
+    """
+    Teacher used to create candidates for selfchats, if needed.
+    """
+
     pass
 
 

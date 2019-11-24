@@ -1738,7 +1738,10 @@ class TorchAgent(ABC, Agent):
         """
         batch_size = len(observations)
         # initialize a list of replies with this agent's id
-        batch_reply = [Message({'id': self.getID()}) for _ in range(batch_size)]
+        batch_reply = [
+            Message({'id': self.getID(), 'episode_done': False})
+            for _ in range(batch_size)
+        ]
 
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)
