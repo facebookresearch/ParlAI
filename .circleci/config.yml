@@ -310,9 +310,6 @@ jobs:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: coverage run setup.py test -s tests.suites.nightly_gpu -v
-      # - run:
-      #     name: Quickstart unit tests (GPU; pytorch 1.1)
-      #     command: sh tests/test_quickstart.sh
       - <<: *codecov
 
   mturk_tests:
