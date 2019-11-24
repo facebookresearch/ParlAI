@@ -15,7 +15,7 @@ import json
 
 class WorldLogger:
     """
-    Logs actions/observations in a world. 
+    Logs actions/observations in a world.
     """
 
     def __init__(self, opt):
