@@ -945,7 +945,7 @@ class TorchRankerAgent(TorchAgent):
         with torch.no_grad():
             for vec_batch in tqdm(vec_batches):
                 cand_encs.append(self.encode_candidates(vec_batch).cpu())
-        return torch.cat(cand_encs, 0).cuda()
+        return torch.cat(cand_encs, 0).to(vec_batch.device)
 
     def vectorize_fixed_candidates(self, cands_batch, add_start=False, add_end=False):
         """
