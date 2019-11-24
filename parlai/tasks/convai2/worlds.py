@@ -12,6 +12,7 @@ from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 from copy import deepcopy
 import random
 
+
 def load_personas(opt):
     print('[ loading personas.. ]')
     # Create ConvAI2 data so we can assign personas.
@@ -36,7 +37,9 @@ def load_personas(opt):
             a2_persona = ""
             for t in txt:
                 if t.startswith("partner's persona:"):
-                    a1_persona += t.replace("partner's persona:", 'your persona:') + '\n'
+                    a1_persona += (
+                        t.replace("partner's persona:", 'your persona:') + '\n'
+                    )
                 if t.startswith('your persona:'):
                     a2_persona += t + '\n'
             personas.add(a1_persona)
@@ -50,13 +53,13 @@ class InteractiveWorld(DialogPartnerWorld):
         super().__init__(opt, agents, shared)
         self.personas_list = load_personas(self.opt)
         self.cnt = 0
-        
+
     def get_new_personas(self):
         random.seed()
         personas_1 = random.choice(self.personas_list)
         personas_2 = random.choice(self.personas_list)
         return personas_1, personas_2
-    
+
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
         if self.cnt == 0:
