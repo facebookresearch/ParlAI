@@ -1030,4 +1030,15 @@ task_list = [
             " for more information). "
         ),
     },
+    {
+        "id": "SelfChat",
+        "display_name": "SelfChat",
+        "task": "self_chat",
+        "tags": [],
+        "description": (
+            "Not a dataset, but a generic world for model self-chats. "
+            "(see parlai/scripts/self_chat.py"
+            " for more information). "
+        ),
+    },
 ]

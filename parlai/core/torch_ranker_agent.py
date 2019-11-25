@@ -14,6 +14,7 @@ from abc import abstractmethod
 from itertools import islice
 import os
 from tqdm import tqdm
+import random
 
 import torch
 
@@ -124,6 +125,18 @@ class TorchRankerAgent(TorchAgent):
             default=-1,
             help='Ranking returns the top k results of k > 0, otherwise sorts every '
             'single candidate according to the ranking.',
+        )
+        agent.add_argument(
+            '--inference',
+            choices={'max', 'topk'},
+            default='max',
+            help='Final response output algorithm',
+        )
+        agent.add_argument(
+            '--topk',
+            type=int,
+            default=5,
+            help='K used in Top K sampling inference, when selected',
         )
 
     def __init__(self, opt, shared=None):
@@ -444,7 +457,14 @@ class TorchRankerAgent(TorchAgent):
         ):
             cand_preds = self.block_repeats(cand_preds)
 
-        preds = [cand_preds[i][0] for i in range(batchsize)]
+        if self.opt.get('inference', 'max') == 'max':
+            preds = [cand_preds[i][0] for i in range(batchsize)]
+        else:
+            # Top-k inference.
+            preds = []
+            for i in range(batchsize):
+                preds.append(random.choice(cand_preds[i][0 : self.opt['topk']]))
+
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
@@ -924,8 +944,8 @@ class TorchRankerAgent(TorchAgent):
         self.model.eval()
         with torch.no_grad():
             for vec_batch in tqdm(vec_batches):
-                cand_encs.append(self.encode_candidates(vec_batch))
-        return torch.cat(cand_encs, 0)
+                cand_encs.append(self.encode_candidates(vec_batch).cpu())
+        return torch.cat(cand_encs, 0).to(vec_batch.device)
 
     def vectorize_fixed_candidates(self, cands_batch, add_start=False, add_end=False):
         """
