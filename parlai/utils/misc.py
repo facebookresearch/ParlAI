@@ -6,6 +6,7 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from typing import Type, Union, Iterable, Optional, Set, Tuple, Any
 from copy import deepcopy
 import math
 import json
@@ -24,7 +25,7 @@ try:
 
     # default type in padded3d needs to be protected if torch
     # isn't installed.
-    TORCH_LONG = torch.long
+    TORCH_LONG: Optional[torch.dtype] = torch.long
     __TORCH_AVAILABLE = True
 except ImportError:
     TORCH_LONG = None
@@ -53,7 +54,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
 }
 
 
-def neginf(dtype):
+def neginf(dtype: Type) -> float:
     """Return a representable finite number near -inf for a dtype."""
     if dtype is torch.float16:
         return -NEAR_INF_FP16
@@ -169,19 +170,6 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     return cands
 
 
-def load_opt_file(optfile):
-    """Load an Opt from disk."""
-    try:
-        # try json first
-        with open(optfile, 'r') as handle:
-            opt = json.load(handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as handle:
-            opt = pickle.load(handle)
-    return Opt(opt)
-
-
 class Opt(dict):
     """
     Class for tracking options.
@@ -246,6 +234,19 @@ class Opt(dict):
                     i + 1, key, change[1], change[0]
                 )
             )
+
+
+def load_opt_file(optfile: str) -> Opt:
+    """Load an Opt from disk."""
+    try:
+        # try json first
+        with open(optfile, 'r') as handle:
+            opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as bhandle:
+            opt = pickle.load(bhandle)
+    return Opt(opt)
 
 
 class Predictor(object):
@@ -397,7 +398,7 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-def round_sigfigs(x, sigfigs=4):
+def round_sigfigs(x: Union[float, torch.Tensor], sigfigs=4) -> float:
     """
     Round value to specified significant figures.
 
@@ -406,17 +407,13 @@ def round_sigfigs(x, sigfigs=4):
 
     :returns: float number rounded to specified sigfigs
     """
+    if isinstance(x, torch.Tensor):
+        x = x.item()
+
     try:
         if x == 0:
             return 0
         return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
-    except (RuntimeError, TypeError):
-        # handle 1D torch tensors
-        # if anything else breaks here please file an issue on Github
-        if hasattr(x, 'item'):
-            return round_sigfigs(x.item(), sigfigs)
-        else:
-            return round_sigfigs(x[0], sigfigs)
     except (ValueError, OverflowError) as ex:
         if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
             return x
@@ -648,7 +645,7 @@ def clip_text(text, max_len):
     return text
 
 
-def _ellipse(lst, max_display=5, sep='|'):
+def _ellipse(lst: List[str], max_display: int = 5, sep: str = '|') -> str:
     """
     Like join, but possibly inserts an ellipsis.
 
@@ -666,7 +663,12 @@ def _ellipse(lst, max_display=5, sep='|'):
     return sep.join(str(c) for c in choices)
 
 
-def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
+def display_messages(
+    msgs: List[Dict[str, Any]],
+    prettify: bool = False,
+    ignore_fields: str = '',
+    max_len: int = 1000,
+) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
 
@@ -695,9 +697,9 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
 
     lines = []
     episode_done = False
-    ignore_fields = ignore_fields.split(',')
+    ignore_fields_ = ignore_fields.split(',')
     for index, msg in enumerate(msgs):
-        if msg is None or (index == 1 and 'agent_reply' in ignore_fields):
+        if msg is None or (index == 1 and 'agent_reply' in ignore_fields_):
             # We only display the first agent (typically the teacher) if we
             # are ignoring the agent reply.
             continue
@@ -711,7 +713,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
-            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
+            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields_:
                 if type(msg[key]) is list:
                     line = '[' + key + ']:\n  ' + _ellipse(msg[key], sep='\n  ')
                 else:
@@ -724,10 +726,10 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
-            if msg.get(field) and field not in ignore_fields:
+            if msg.get(field) and field not in ignore_fields_:
                 lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
         # Handling this separately since we need to clean up the raw output before displaying.
-        token_loss_line = _token_losses_line(msg, ignore_fields, space)
+        token_loss_line = _token_losses_line(msg, ignore_fields_, space)
         if token_loss_line:
             lines.append(token_loss_line)
 
@@ -867,13 +869,13 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 
 def padded_tensor(
-    items,
-    pad_idx=0,
-    use_cuda=False,
-    left_padded=False,
-    max_len=None,
-    fp16friendly=False,
-):
+    items: List[Union[List[int], torch.LongTensor]],
+    pad_idx: int = 0,
+    use_cuda: bool = False,
+    left_padded: bool = False,
+    max_len: Optional[int] = None,
+    fp16friendly: bool = False,
+) -> Tuple[torch.LongTensor, List[int]]:
     """
     Create a right-padded matrix from an uneven list of lists.
 
@@ -1011,7 +1013,7 @@ def argsort(keys, *lists, descending=False):
     return output
 
 
-_seen_warnings = set()
+_seen_warnings: Set[str] = set()
 
 
 def warn_once(msg, warningtype=None):
