@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.chat_service.core.manager_utils import ChatServiceMessageSocket
 
+
 # Socket handler
 class TerminalMessageSocket(ChatServiceMessageSocket):
     """ChatServiceMessageSocket is a wrapper around websocket to forward messages from the
