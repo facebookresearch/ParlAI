@@ -67,7 +67,8 @@ class WorldLogger:
                     }
                 )
                 text = ''
-        out[-1]['episode_done'] = True
+        if len(out) > 0:
+            out[-1]['episode_done'] = True
         return out
 
     def write_parlai_format(self, outfile):
