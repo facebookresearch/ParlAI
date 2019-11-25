@@ -1817,20 +1817,6 @@ class TorchAgent(ABC, Agent):
             if self._number_grad_accum != 0:
                 return
 
-        # keep track up number of steps, compute warmup factor
-        self._number_training_updates += 1
-
-        # compute warmup adjustment if needed
-        if self.opt.get('warmup_updates', -1) > 0:
-            if not hasattr(self, 'warmup_scheduler'):
-                raise RuntimeError('Looks like you forgot to call build_lr_scheduler')
-            if self._is_lr_warming_up():
-                self.warmup_scheduler.step(epoch=self._number_training_updates)
-
-        if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
-            # training step scheduler
-            self.scheduler.step(self._number_training_updates)
-
         if self.fp16:
             # we've been accumulating grads in fp16 and delaying the fp32 copy update.
             # finally time to perform the update.
@@ -1848,6 +1834,20 @@ class TorchAgent(ABC, Agent):
 
         self.metrics['updates'] += 1
         self.optimizer.step()
+
+        # keep track up number of steps, compute warmup factor
+        self._number_training_updates += 1
+
+        # compute warmup adjustment if needed
+        if self.opt.get('warmup_updates', -1) > 0:
+            if not hasattr(self, 'warmup_scheduler'):
+                raise RuntimeError('Looks like you forgot to call build_lr_scheduler')
+            if self._is_lr_warming_up():
+                self.warmup_scheduler.step(epoch=self._number_training_updates)
+
+        if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
+            # training step scheduler
+            self.scheduler.step(self._number_training_updates)
 
     def zero_grad(self):
         """
