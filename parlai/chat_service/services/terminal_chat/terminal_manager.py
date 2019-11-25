@@ -5,11 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
-from parlai.chat_service.core.chat_service_manager import ChatServiceMessageSender
 
 
 class TerminalManager(ChatServiceManager):
-    class TerminalMessageSender(ChatServiceMessageSender):
+    class TerminalMessageSender(ChatServiceManager.ChatServiceMessageSender):
         def send_read(self, receiver_id):
             raise NotImplementedError
 
