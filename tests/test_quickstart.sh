@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-([ -z "$CIRCLE_NODE_INDEX" ] || [ $CIRCLE_NODE_INDEX != 0 ])  && exit
+([ -z "$CIRCLE_NODE_INDEX" ] || [ $CIRCLE_NODE_INDEX != 0 ])  && echo "SKIPPED" && exit
 
 set -e  # error and exit on any failure
 
