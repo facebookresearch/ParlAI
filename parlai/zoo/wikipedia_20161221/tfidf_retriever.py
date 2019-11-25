@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 """TFIDF retriever for Wikipedia (for use with e.g. DrQA+SQuAD).
 access from model zoo with:
-  --model-file "models:wikipedia_20161221/tfidf_retriever/drqa_docs"
+  --model-file "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
 """
 
 from parlai.core.build_data import download_models
