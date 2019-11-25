@@ -578,27 +578,25 @@ class TestLearningRateScheduler(unittest.TestCase):
             num_epochs=9 / 500,
         )
 
-        with testing_utils.tempdir() as tmpdir:
-            model_file = os.path.join(tmpdir, 'model')
-            args['num_epochs'] = 9 / 500
-            args['validation_every_n_epochs'] = 9 / 500
-            stdout1, valid1, test1 = testing_utils.train_model(args)
-            args['num_epochs'] = 16 / 500
-            args['validation_every_n_epochs'] = 16 / 500
-            stdout2, valid2, test2 = testing_utils.train_model(args)
+        args['num_epochs'] = 9 / 500
+        args['validation_every_n_epochs'] = 9 / 500
+        stdout1, valid1, test1 = testing_utils.train_model(args)
+        args['num_epochs'] = 16 / 500
+        args['validation_every_n_epochs'] = 16 / 500
+        stdout2, valid2, test2 = testing_utils.train_model(args)
 
-            self.assertAlmostEqual(
-                valid1['lr'],
-                1 / 3,
-                msg='Invsqrt LR {} was not 1/3 at step 9'.format(valid1['lr']),
-                delta=0.001,
-            )
-            self.assertAlmostEqual(
-                valid2['lr'],
-                1 / 4,
-                msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
-                delta=0.001,
-            )
+        self.assertAlmostEqual(
+            valid1['lr'],
+            1 / 3,
+            msg='Invsqrt LR {} was not 1/3 at step 9'.format(valid1['lr']),
+            delta=0.001,
+        )
+        self.assertAlmostEqual(
+            valid2['lr'],
+            1 / 4,
+            msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
+            delta=0.001,
+        )
 
 
 if __name__ == '__main__':
