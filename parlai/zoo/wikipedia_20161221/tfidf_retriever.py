@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 """TFIDF retriever for Wikipedia (for use with e.g. DrQA+SQuAD).
 access from model zoo with:
-  --model-file "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+  --model-file "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
 """
 
 from parlai.core.build_data import download_models
@@ -15,4 +15,4 @@ def download(datapath):
     opt = {'datapath': datapath}
     fnames = ['drqa_docs.tgz']
     opt['model_type'] = 'tfidf_retriever'  # for builder
-    download_models(opt, fnames, 'wikipedia_2016-12-21', use_model_type=True)
+    download_models(opt, fnames, 'wikipedia_20161221', use_model_type=True)

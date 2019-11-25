@@ -10,8 +10,6 @@ dialogue safety task.
 
 from parlai.core.build_data import download_models
 
-import os
-
 
 def download(datapath):
     opt = {'datapath': datapath}  # for builder

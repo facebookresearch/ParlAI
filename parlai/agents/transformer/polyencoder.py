@@ -32,6 +32,7 @@ class PolyencoderAgent(TorchRankerAgent):
             help='Type of polyencoder, either we compute'
             'vectors using codes + attention, or we '
             'simply take the first N vectors.',
+            recommended='codes',
         )
         agent.add_argument(
             '--poly-n-codes',
@@ -40,6 +41,7 @@ class PolyencoderAgent(TorchRankerAgent):
             help='number of vectors used to represent the context'
             'in the case of n_first, those are the number'
             'of vectors that are considered.',
+            recommended=64,
         )
         agent.add_argument(
             '--poly-attention-type',
@@ -49,6 +51,7 @@ class PolyencoderAgent(TorchRankerAgent):
             help='Type of the top aggregation layer of the poly-'
             'encoder (where the candidate representation is'
             'the key)',
+            recommended='basic',
         )
         agent.add_argument(
             '--polyencoder-attention-keys',
@@ -58,6 +61,7 @@ class PolyencoderAgent(TorchRankerAgent):
             help='Input emb vectors for the first level of attention. '
             'Context refers to the context outputs; position refers to the '
             'computed position embeddings.',
+            recommended='context',
         )
         agent.add_argument(
             '--poly-attention-num-heads',
@@ -74,6 +78,7 @@ class PolyencoderAgent(TorchRankerAgent):
             default='basic',
             choices=['basic', 'sqrt', 'multihead'],
             help='Type ',
+            recommended='basic',
         )
         agent.add_argument(
             '--codes-attention-num-heads',

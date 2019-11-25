@@ -64,7 +64,7 @@ class OeTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             # another instance was set up already, just reference its data
@@ -116,14 +116,14 @@ class OeTeacher(FixedDialogTeacher):
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none':
+            if self.image_mode != 'no_image_model':
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.epochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.epochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)

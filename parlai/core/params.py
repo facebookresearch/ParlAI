@@ -440,34 +440,41 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
-    def add_websockets_args(self):
-        """Add websocket arguments."""
-        websockets = self.add_argument_group('Websockets')
-        websockets.add_argument(
+    def add_chatservice_args(self):
+        """Arguments for all chat services"""
+        args = self.add_argument_group('Chat Services')
+        args.add_argument(
             '--debug',
             dest='is_debug',
             action='store_true',
             help='print and log all server interactions and messages',
         )
-        websockets.add_argument(
+        args.add_argument(
             '--config-path',
             default=None,
             type=str,
             help='/path/to/config/file for a given task.',
         )
+        args.add_argument(
+            '--password',
+            dest='password',
+            type=str,
+            default=None,
+            help='Require a password for entry to the bot',
+        )
+
+    def add_websockets_args(self):
+        """Add websocket arguments."""
+        self.add_chatservice_args()
+        websockets = self.add_argument_group('Websockets')
         websockets.add_argument(
             '--port', default=35496, type=int, help='Port to run the websocket handler'
         )
 
     def add_messenger_args(self):
         """Add Facebook Messenger arguments."""
+        self.add_chatservice_args()
         messenger = self.add_argument_group('Facebook Messenger')
-        messenger.add_argument(
-            '--debug',
-            dest='is_debug',
-            action='store_true',
-            help='print and log all server interactions and messages',
-        )
         messenger.add_argument(
             '--verbose',
             dest='verbose',
@@ -489,13 +496,6 @@ class ParlaiParser(argparse.ArgumentParser):
             help='override the page token stored in the cache for a new one',
         )
         messenger.add_argument(
-            '--password',
-            dest='password',
-            type=str,
-            default=None,
-            help='Require a password for entry to the bot',
-        )
-        messenger.add_argument(
             '--bypass-server-setup',
             dest='bypass_server_setup',
             action='store_true',
@@ -509,12 +509,6 @@ class ParlaiParser(argparse.ArgumentParser):
             default=False,
             help='Run the server locally on this server rather than setting up'
             ' a heroku server.',
-        )
-        messenger.add_argument(
-            '--config-path',
-            default=None,
-            type=str,
-            help='/path/to/config/file for a given task.',
         )
 
         messenger.set_defaults(is_debug=False)
@@ -830,7 +824,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
-        if image_mode is not None and image_mode != 'none':
+        if image_mode is not None and image_mode != 'no_image_model':
             self.add_image_args(image_mode)
 
         # find which task specified if any, and add its specific arguments
@@ -1071,8 +1065,17 @@ class ParlaiParser(argparse.ArgumentParser):
                 kwargs['help'] = argparse.SUPPRESS
         return kwargs
 
+    def _augment_help_msg(self, kwargs):
+        """Add recommended value to help string if recommended exists"""
+        if 'help' in kwargs:
+            if 'recommended' in kwargs:
+                kwargs['help'] += " (recommended: " + str(kwargs['recommended']) + ")"
+                del kwargs['recommended']
+        return kwargs
+
     def add_argument(self, *args, **kwargs):
         """Override to convert underscores to hyphens for consistency."""
+        kwargs = self._augment_help_msg(kwargs)
         return super().add_argument(
             *fix_underscores(args), **self._handle_hidden_args(kwargs)
         )
@@ -1083,6 +1086,7 @@ class ParlaiParser(argparse.ArgumentParser):
         original_add_arg = arg_group.add_argument
 
         def ag_add_argument(*args, **kwargs):
+            kwargs = self._augment_help_msg(kwargs)
             return original_add_arg(
                 *fix_underscores(args), **self._handle_hidden_args(kwargs)
             )

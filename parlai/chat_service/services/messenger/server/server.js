@@ -8,12 +8,15 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const nunjucks = require('nunjucks');
 const WebSocket = require('ws');
 
 const task_directory_name = 'task';
 
 const PORT = process.env.PORT || 3000;
+const LOCAL_HTTPS = process.env.LOCAL_HTTPS || false;
+const HOME = process.env.HOME || '';
 
 // Initialize app
 const app = express();
@@ -33,7 +36,18 @@ nunjucks.configure(task_directory_name, {
 // ======================= <Socket> =======================
 
 // Start a socket to make a connection between the world and
-const server = http.createServer(app);
+let server;
+if (LOCAL_HTTPS) {
+  var options = {
+      ca: fs.readFileSync(HOME + '/.ssl/fullchain.pem'),
+      key: fs.readFileSync(HOME + '/.ssl/privkey.pem'),
+      cert: fs.readFileSync(HOME + '/.ssl/cert.pem'),
+  };
+
+  server = https.createServer(options, app);
+} else {
+  server = http.createServer(app);
+}
 const wss = new WebSocket.Server({ server });
 
 // Socket used for speaking to the world

@@ -16,6 +16,7 @@ import threading
 import time
 import traceback
 import datetime
+import copy
 
 from parlai.core.agents import create_agent
 from parlai.chat_service.services.messenger.agents import MessengerAgent
@@ -172,8 +173,10 @@ class MessengerManager:
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
+        # Deepcopy the opts so the manager opts aren't changed by the world runner
+        self.runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            opt, self.world_path, self.max_workers, self, opt['is_debug']
+            self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
@@ -196,7 +199,7 @@ class MessengerManager:
     def _load_model(self):
         """Load model if necessary."""
         if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
         """Initialize logging settings from the opt."""
@@ -380,6 +383,15 @@ class MessengerManager:
                 self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
                 if self.debug:
                     raise e
+            else:
+                self.observe_message(agent_id, 'See you later!')
+                for world_type in self.agent_pool:
+                    agent_state = self.get_agent_state(agent_id)
+                    if agent_state in self.agent_pool[world_type]:
+                        self.agent_pool[world_type].remove(agent_state)
+                        self.remove_agent_from_pool(agent_state, world_type=world_type)
+                del self.messenger_agent_states[agent_id]
+                del self.agent_id_to_overworld_future[agent_id]
 
         future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
@@ -398,6 +410,11 @@ class MessengerManager:
             message to put on queue
         """
         agent_id = message['sender']['id']
+        if not self.world_runner.is_initialized():
+            self.observe_message(
+                agent_id, 'Please wait while the worlds are initializing...'
+            )
+            self.world_runner.init_fut.result()
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
@@ -570,8 +587,6 @@ class MessengerManager:
         # Set up receive
         if not self.bypass_server_setup:
             socket_use_url = self.server_url
-            if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = 'https://localhost'
             self.message_socket = MessageSocket(
                 socket_use_url, self.port, self._handle_webhook_event
             )
@@ -594,7 +609,9 @@ class MessengerManager:
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
-    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+    def check_timeout_in_pool(
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
+    ):
         """Check for timed-out agents in pool.
 
         :param world_type:
@@ -603,6 +620,8 @@ class MessengerManager:
             list of ``AgentState``s
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
+        :param backup_task:
+            string backup_task to start if we reach a timeout in the original pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
@@ -614,6 +633,9 @@ class MessengerManager:
 
                 agent_state.stored_data['removed_after_timeout'] = True
                 self.after_agent_removed(agent_state.messenger_id)
+
+                if backup_task is not None:
+                    self.add_agent_to_pool(agent_state, backup_task)
 
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
@@ -680,7 +702,10 @@ class MessengerManager:
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
+                            world_config.backup_task,
                         )
 
                     needed_agents = self.max_agents_for[world_type]

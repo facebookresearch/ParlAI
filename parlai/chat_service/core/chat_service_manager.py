@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import sys
+import copy
 import logging
 import datetime
 import threading
@@ -159,8 +160,10 @@ class ChatServiceManager(ABC):
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
+        # Deepcopy the opts so the manager opts aren't changed by the world runner
+        self.runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            opt, self.world_path, self.max_workers, self, opt['is_debug']
+            self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
@@ -307,6 +310,28 @@ class ChatServiceManager(ABC):
         future = self.world_runner.launch_overworld(
             task_id, self.overworld, self.onboard_map, agent
         )
+
+        def _done_callback(fut):
+            e = fut.exception()
+            if e is not None:
+                shared_utils.print_and_log(
+                    logging.ERROR,
+                    'World {} had error {}'.format(task_id, repr(e)),
+                    should_print=True,
+                )
+                if self.debug:
+                    raise e
+            else:
+                self.observe_message(agent_id, 'See you later!')
+                for world_type in self.agent_pool:
+                    agent_state = self.get_agent_state(agent_id)
+                    if agent_state in self.agent_pool[world_type]:
+                        self.agent_pool[world_type].remove(agent_state)
+                        self.remove_agent_from_pool(agent_state, world_type=world_type)
+                del self.messenger_agent_states[agent_id]
+                del self.agent_id_to_overworld_future[agent_id]
+
+        future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
 
     def _on_new_message(self, message):
@@ -316,6 +341,12 @@ class ChatServiceManager(ABC):
             message to put on queue
         """
         agent_id = message['sender']['id']
+        if not self.world_runner.is_initialized():
+            self.observe_message(
+                agent_id, 'Please wait while the worlds are initializing...'
+            )
+            self.world_runner.init_fut.result()
+
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
@@ -385,9 +416,7 @@ class ChatServiceManager(ABC):
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
                     if self.service_reference_id is not None:
-                        self.mark_removed(
-                            int(agent.service_id), int(self.service_reference_id)
-                        )
+                        self.mark_removed(agent.service_id, self.service_reference_id)
 
     def _create_agent(self, task_id, agent_id):
         """Initialize an agent and return it.
@@ -455,7 +484,9 @@ class ChatServiceManager(ABC):
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
-    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+    def check_timeout_in_pool(
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
+    ):
         """Check for timed-out agents in pool.
 
         :param world_type:
@@ -464,6 +495,8 @@ class ChatServiceManager(ABC):
             list of ``AgentState``s
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
+        :param backup_task:
+            string backup_task to start if we reach a timeout in the original pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
@@ -475,6 +508,9 @@ class ChatServiceManager(ABC):
 
                 agent_state.stored_data['removed_after_timeout'] = True
                 self.after_agent_removed(agent_state.service_id)
+
+                if backup_task is not None:
+                    self.add_agent_to_pool(agent_state, backup_task)
 
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
@@ -541,7 +577,10 @@ class ChatServiceManager(ABC):
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
+                            world_config.backup_task,
                         )
 
                     needed_agents = self.max_agents_for[world_type]

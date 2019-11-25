@@ -109,11 +109,9 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             .contiguous()
             .view(nb_cands * size_batch, -1)
         )
-        segments_context = tokens_context * 0
 
         # remove the start token ["CLS"] from candidates
         tokens_cands = cand_vecs.view(nb_cands * size_batch, -1)
-        segments_cands = tokens_cands * 0 + 1
         all_tokens, all_segments = concat_without_padding(
             tokens_context, tokens_cands, self.use_cuda, self.NULL_IDX
         )

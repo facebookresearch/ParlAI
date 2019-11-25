@@ -704,6 +704,37 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
         test_learning_rate_resuming(self, RANKER_ARGS)
 
+    def test_invsqrt_learning_rate(self):
+        args = dict(
+            task='integration_tests:candidate',
+            model='transformer/generator',
+            learningrate=1,
+            batchsize=1,
+            warmup_updates=1,
+            lr_scheduler='invsqrt',
+            num_epochs=9 / 500,
+        )
+
+        args['num_epochs'] = 9 / 500
+        args['validation_every_n_epochs'] = 9 / 500
+        stdout1, valid1, test1 = testing_utils.train_model(args)
+        args['num_epochs'] = 16 / 500
+        args['validation_every_n_epochs'] = 16 / 500
+        stdout2, valid2, test2 = testing_utils.train_model(args)
+
+        self.assertAlmostEqual(
+            valid1['lr'],
+            1 / 3,
+            msg='Invsqrt LR {} was not 1/3 at step 9'.format(valid1['lr']),
+            delta=0.001,
+        )
+        self.assertAlmostEqual(
+            valid2['lr'],
+            1 / 4,
+            msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
+            delta=0.001,
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
