@@ -6,7 +6,6 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
-from typing import Type, Union, Iterable, Optional, Set, Tuple, Any
 from copy import deepcopy
 import math
 import json
@@ -14,7 +13,7 @@ import pickle
 import random
 import time
 import traceback
-from typing import Any, Dict, List
+from typing import Type, Union, Optional, Set, Tuple, Any, Dict, List
 import warnings
 
 from parlai.core.message import Message
