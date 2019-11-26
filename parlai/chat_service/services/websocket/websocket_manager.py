@@ -3,9 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Websocket Manager Module
-Contains implementation of the WebsocketManager which helps run ParlAI via
-websockets
+"""
+Websocket Manager Module Contains implementation of the WebsocketManager which helps run
+ParlAI via websockets.
 """
 
 import json
@@ -37,7 +37,9 @@ class WebsocketManager(ChatServiceManager):
             pass
 
     def __init__(self, opt):
-        """Create a WebsocketManager using the given setup options"""
+        """
+        Create a WebsocketManager using the given setup options.
+        """
         super().__init__(opt)
         self.opt = opt
         self.port = opt.get('port')
@@ -57,7 +59,9 @@ class WebsocketManager(ChatServiceManager):
         pass
 
     def _complete_setup(self):
-        """Complete necessary setup items."""
+        """
+        Complete necessary setup items.
+        """
         self.agent_pool = {}
         self.messenger_agent_states = {}
         self.agent_id_to_overworld_future = {}
@@ -65,23 +69,27 @@ class WebsocketManager(ChatServiceManager):
         self._load_model()
 
     def _load_model(self):
-        """Load model if necessary"""
+        """
+        Load model if necessary.
+        """
         if 'model_file' in self.opt or 'model' in self.opt:
             self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _handle_message_read(self, event):
-        """Send read receipt back to user who sent message
-        This function is left empty as it is not applicable to websockets since
-        read receipts are not supported
+        """
+        Send read receipt back to user who sent message This function is left empty as
+        it is not applicable to websockets since read receipts are not supported.
         """
         pass
 
     def _manager_loop_fn(self):
-        """An iteration of the manager's main loop to launch worlds.
+        """
+        An iteration of the manager's main loop to launch worlds.
         """
 
         def _done_callback(fut):
-            """Log and raise exception of task world, if there is one.
+            """
+            Log and raise exception of task world, if there is one.
 
             Additionally, set active agent to overworld agent.
             """
@@ -168,7 +176,8 @@ class WebsocketManager(ChatServiceManager):
                     self.active_worlds[task_id] = future
 
     def start_task(self):
-        """Begin handling task.
+        """
+        Begin handling task.
         """
         self.running = True
         self.app = self._make_app()
@@ -181,7 +190,9 @@ class WebsocketManager(ChatServiceManager):
         tornado.ioloop.IOLoop.current().start()
 
     def shutdown(self):
-        """Defined to shutown the tornado application"""
+        """
+        Defined to shutown the tornado application.
+        """
         try:
             self.world_runner.shutdown()
             self._expire_all_conversations()
@@ -190,7 +201,8 @@ class WebsocketManager(ChatServiceManager):
         tornado.ioloop.IOLoop.current().stop()
 
     def _create_agent(self, task_id, socketID):
-        """Initialize an agent and return it.
+        """
+        Initialize an agent and return it.
 
         Called each time an agent is placed into a new task.
 
@@ -203,7 +215,7 @@ class WebsocketManager(ChatServiceManager):
 
     def _make_app(self):
         """
-        Starts the tornado application
+        Starts the tornado application.
         """
         message_callback = self._on_new_message
 
@@ -222,7 +234,8 @@ class WebsocketManager(ChatServiceManager):
         )
 
     def observe_message(self, socket_id, message, quick_replies=None):
-        """Send a message through the message manager.
+        """
+        Send a message through the message manager.
 
         :param socket_id:
             int identifier for agent socket to send message to
@@ -250,7 +263,8 @@ class WebsocketManager(ChatServiceManager):
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def observe_payload(self, socket_id, payload, quick_replies=None):
-        """Send a message through the message manager.
+        """
+        Send a message through the message manager.
 
         :param socket_id:
             int identifier for agent socket to send message to
@@ -273,8 +287,9 @@ class WebsocketManager(ChatServiceManager):
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def restructure_message(self):
-        """This is to restructure a new message to conform to the message structure
-        defined in the `chat_service` README
+        """
+        This is to restructure a new message to conform to the message structure defined
+        in the `chat_service` README.
         """
         pass
 

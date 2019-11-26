@@ -21,8 +21,9 @@ def get_task(opt):
 class QADataCollectionTaskWorld(World):
     """
     World for recording a person's question and answer given a context.
-    Assumes the context is a random context from a given task, e.g.
-    from SQuAD, CBT, etc.
+
+    Assumes the context is a random context from a given task, e.g. from SQuAD, CBT,
+    etc.
     """
 
     collector_agent_id = 'QA Collector'

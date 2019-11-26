@@ -548,10 +548,28 @@ class ObjectChecklistModelAgent(ModelAgentBase):
         ori_len = len(observations)
         observations = [obv for obv in observations if 'text' in obv]
         if self.opt['datatype'] == 'train' or self.opt['datatype'] == 'pretrain':
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(
-                observations
-            )
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+            (
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            ) = self.data_agent.get_data(observations)
+            (
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            ) = (
                 self._get_variable(x),
                 self._get_variable(action_key),
                 self._get_variable(second_action_key),
@@ -581,10 +599,28 @@ class ObjectChecklistModelAgent(ModelAgentBase):
             reply = [{'loss': loss.data[0]} for _ in range(ori_len)]
             return reply
         else:
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(
-                observations, 'valid'
-            )
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+            (
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            ) = self.data_agent.get_data(observations, 'valid')
+            (
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            ) = (
                 self._get_variable(x, True),
                 self._get_variable(action_key, True),
                 self._get_variable(second_action_key, True),

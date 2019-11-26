@@ -11,10 +11,14 @@ import parlai.utils.testing as testing_utils
 
 
 class TestEvalModel(unittest.TestCase):
-    """Basic tests on the eval_model.py example."""
+    """
+    Basic tests on the eval_model.py example.
+    """
 
     def test_output(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -45,7 +49,9 @@ class TestEvalModel(unittest.TestCase):
             )
 
     def test_metrics_all(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -76,7 +82,9 @@ class TestEvalModel(unittest.TestCase):
             self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
 
     def test_metrics_select(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',

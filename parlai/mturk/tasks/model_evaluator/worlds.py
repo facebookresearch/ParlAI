@@ -18,9 +18,10 @@ class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
 
 
 class ModelEvaluatorWorld(MTurkTaskWorld):
-    """World for letting Turkers evaluate a dialog model's performance given a
-    context. Assumes the context is a context from a given task, e.g.
-    from SQuAD, CBT, etc.
+    """
+    World for letting Turkers evaluate a dialog model's performance given a context.
+
+    Assumes the context is a context from a given task, e.g. from SQuAD, CBT, etc.
     """
 
     evaluator_agent_id = 'Model Evaluator'

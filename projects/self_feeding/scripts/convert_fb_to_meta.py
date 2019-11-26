@@ -30,7 +30,9 @@ def setup_args():
 
 
 def main(config):
-    """Converts a Fbdialog file of episodes into a json file of Parley examples"""
+    """
+    Converts a Fbdialog file of episodes into a json file of Parley examples.
+    """
     examples = []
     for episode in extract_fb_episodes(config['infile']):
         examples.extend(episode_to_examples(episode, config['history_size']))

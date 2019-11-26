@@ -48,10 +48,10 @@ def _image_loader(path):
 
 class DefaultTeacher(DialogTeacher):
     """
-    This version of VisDial inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    This version of VisDial inherits from the core Dialog Teacher, which just requires
+    it to define an iterator over its data `setup_data` in order to inherit basic
+    metrics, a `act` function, and enables Hogwild training with shared memory with no
+    extra work.
     """
 
     def __init__(self, opt, shared=None):

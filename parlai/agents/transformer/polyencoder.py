@@ -3,7 +3,9 @@
 # LICENSE file in the root directory of this source tree.
 
 # hack to make sure -m transformer/generator works as expected
-"""Poly-encoder Agent."""
+"""
+Poly-encoder Agent.
+"""
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -13,15 +15,18 @@ import torch
 
 
 class PolyencoderAgent(TorchRankerAgent):
-    """Poly-encoder Agent.
+    """
+    Poly-encoder Agent.
 
-    Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
-    but does not rely on an external library (hugging face).
+    Equivalent of bert_ranker/polyencoder and biencoder_multiple_output but does not
+    rely on an external library (hugging face).
     """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         TransformerRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Polyencoder Arguments')
         agent.add_argument(
@@ -104,18 +109,24 @@ class PolyencoderAgent(TorchRankerAgent):
                 self.model = torch.nn.DataParallel(self.model)
 
     def build_model(self, states=None):
-        """Return built model."""
+        """
+        Return built model.
+        """
         return PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
 
     def vectorize(self, *args, **kwargs):
-        """Add the start and end token to the labels."""
+        """
+        Add the start and end token to the labels.
+        """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
         obs = super().vectorize(*args, **kwargs)
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
-        """Add the start and end token to the text."""
+        """
+        Add the start and end token to the text.
+        """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs and 'added_start_end_tokens' not in obs:
             obs.force_set(
@@ -125,37 +136,41 @@ class PolyencoderAgent(TorchRankerAgent):
         return obs
 
     def vectorize_fixed_candidates(self, *args, **kwargs):
-        """Vectorize fixed candidates.
+        """
+        Vectorize fixed candidates.
 
-        Override to add start and end token when computing the candidate encodings
-        in interactive mode.
+        Override to add start and end token when computing the candidate encodings in
+        interactive mode.
         """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
         return super().vectorize_fixed_candidates(*args, **kwargs)
 
     def _make_candidate_encs(self, vecs):
-        """Make candidate encs.
+        """
+        Make candidate encs.
 
-        The polyencoder module expects
-        cand vecs to be 3D while torch_ranker_agent expects it to be 2D.
-        This requires a little adjustment (used in interactive mode only)
+        The polyencoder module expects cand vecs to be 3D while torch_ranker_agent
+        expects it to be 2D. This requires a little adjustment (used in interactive mode
+        only)
         """
         rep = super()._make_candidate_encs(vecs)
         return rep.transpose(0, 1).contiguous()
 
     def encode_candidates(self, padded_cands):
-        """Encode candidates."""
+        """
+        Encode candidates.
+        """
         padded_cands = padded_cands.unsqueeze(1)
         _, _, _, cand_rep = self.model(cand_tokens=padded_cands)
         return cand_rep
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        """Score candidates.
+        """
+        Score candidates.
 
-        The Poly-encoder encodes the candidate and context independently. Then,
-        the model applies additional attention before ultimately scoring a
-        candidate.
+        The Poly-encoder encodes the candidate and context independently. Then, the
+        model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
         ctxt_rep, ctxt_rep_mask, ctxt_pos, _ = self.model(ctxt_tokens=batch.text_vec)
@@ -183,14 +198,17 @@ class PolyencoderAgent(TorchRankerAgent):
         return scores
 
     def load_state_dict(self, state_dict):
-        """Override to account for codes."""
+        """
+        Override to account for codes.
+        """
         if self.model.type == 'codes' and 'codes' not in state_dict:
             state_dict['codes'] = self.model.codes
         super().load_state_dict(state_dict)
 
 
 class PolyEncoderModule(torch.nn.Module):
-    """Poly-encoder model.
+    """
+    Poly-encoder model.
 
     See https://arxiv.org/abs/1905.01969 for more details
     """
@@ -246,7 +264,8 @@ class PolyEncoderModule(torch.nn.Module):
             )
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
-        """Return encoder, given options.
+        """
+        Return encoder, given options.
 
         :param opt:
             opt dict
@@ -287,7 +306,8 @@ class PolyEncoderModule(torch.nn.Module):
         )
 
     def attend(self, attention_layer, queries, keys, values, mask):
-        """Apply attention.
+        """
+        Apply attention.
 
         :param attention_layer:
             nn.Module attention layer to use for the attention
@@ -314,7 +334,8 @@ class PolyEncoderModule(torch.nn.Module):
             raise Exception('Unrecognized type of attention')
 
     def encode(self, ctxt_tokens, cand_tokens):
-        """Encode a text sequence.
+        """
+        Encode a text sequence.
 
         :param ctxt_tokens:
             2D long tensor, batchsize x sent_len
@@ -377,7 +398,8 @@ class PolyEncoderModule(torch.nn.Module):
         return ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed
 
     def score(self, ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed):
-        """Score the candidates.
+        """
+        Score the candidates.
 
         :param ctxt_rep:
             3D float tensor, bsz x ctxt_len x dim
@@ -408,7 +430,8 @@ class PolyEncoderModule(torch.nn.Module):
         ctxt_pos=None,
         cand_rep=None,
     ):
-        """Forward pass of the model.
+        """
+        Forward pass of the model.
 
         Due to a limitation of parlai, we have to have one single model
         in the agent. And because we want to be able to use data-parallel,
@@ -443,7 +466,9 @@ class PolyEncoderModule(torch.nn.Module):
 
 
 class PolyBasicAttention(BasicAttention):
-    """Override basic attention to account for edge case for polyencoder."""
+    """
+    Override basic attention to account for edge case for polyencoder.
+    """
 
     def __init__(self, poly_type, n_codes, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -451,10 +476,11 @@ class PolyBasicAttention(BasicAttention):
         self.n_codes = n_codes
 
     def forward(self, *args, **kwargs):
-        """Forward pass.
+        """
+        Forward pass.
 
-        Account for accidental dimensionality reduction when num_codes is 1
-        and the polyencoder type is 'codes'
+        Account for accidental dimensionality reduction when num_codes is 1 and the
+        polyencoder type is 'codes'
         """
         lhs_emb = super().forward(*args, **kwargs)
         if self.poly_type == 'codes' and self.n_codes == 1 and len(lhs_emb.shape) == 2:

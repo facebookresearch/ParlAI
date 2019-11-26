@@ -59,7 +59,9 @@ class WizardDictAgent(DictionaryAgent):
                 self.save_path = opt['dict_file']
 
     def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable."""
+        """
+        Returns a sequence of tokens from the iterable.
+        """
         if self.lower:
             text = text.lower()
 
@@ -86,7 +88,8 @@ class WizardDictAgent(DictionaryAgent):
         return word_tokens
 
     def re_tokenize(self, text):
-        """This splits along whitespace and punctuation and keeps the newline
-        as a token in the returned list.
+        """
+        This splits along whitespace and punctuation and keeps the newline as a token in
+        the returned list.
         """
         return RETOK.findall(text)

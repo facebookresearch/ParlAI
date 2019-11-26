@@ -20,7 +20,8 @@ import os
 
 
 class BertDictionaryAgent(DictionaryAgent):
-    """Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
+    """
+    Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
     """
 
     def __init__(self, opt):

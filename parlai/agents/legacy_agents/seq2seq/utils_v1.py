@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""File for miscellaneous utility functions and constants."""
+"""
+File for miscellaneous utility functions and constants.
+"""
 
 # some of the utility methods are helpful for Torch
 try:
@@ -19,7 +21,8 @@ NEAR_INF = 1e20
 
 
 def set_namedtuple_defaults(namedtuple, default=None):
-    """Set *all* of the fields for a given nametuple to a singular value.
+    """
+    Set *all* of the fields for a given nametuple to a singular value.
 
     Modifies the tuple in place, but returns it anyway.
 
@@ -36,7 +39,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 
 def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False, max_len=None):
-    """Create a right-padded matrix from an uneven list of lists.
+    """
+    Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
     is a list containing the lengths of each row.
@@ -99,7 +103,8 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False, max_len=N
 
 
 def argsort(keys, *lists, descending=False):
-    """Reorder each list in lists by the (descending) sorted order of keys.
+    """
+    Reorder each list in lists by the (descending) sorted order of keys.
 
     :param iter keys: Keys to order by.
     :param list[list] lists: Lists to reordered by keys's order.

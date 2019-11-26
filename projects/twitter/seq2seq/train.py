@@ -3,9 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Train model for ppl metric with pre-selected parameters.
-These parameters have some variance in their final perplexity, but they were
-used to achieve the pre-trained model.
+"""
+Train model for ppl metric with pre-selected parameters.
+
+These parameters have some variance in their final perplexity, but they were used to
+achieve the pre-trained model.
 """
 
 from parlai.scripts.train_model import setup_args, TrainLoop
