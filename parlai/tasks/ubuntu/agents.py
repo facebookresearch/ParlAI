@@ -13,10 +13,10 @@ import os
 
 
 class UbuntuTeacher(DialogTeacher):
-    """This teacher inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    """
+    This teacher inherits from the core Dialog Teacher, which just requires it to define
+    an iterator over its data `setup_data` in order to inherit basic metrics, a default
+    `act` function, and enables Hogwild training with shared memory with no extra work.
     """
 
     def __init__(self, opt, shared=None):
@@ -114,9 +114,11 @@ class MultiturnTeacher(FixedDialogTeacher):
 
 
 class UbuntuTeacherWithNegs(UbuntuTeacher):
-    """ Output the exact same data as the default teacher, except for the
-        trainset where it provides negatives in label_candidates.
-        (It does not affect valid and test set)
+    """
+    Output the exact same data as the default teacher, except for the trainset where it
+    provides negatives in label_candidates.
+
+    (It does not affect valid and test set)
     """
 
     def __init__(self, opt, shared=None):
@@ -139,7 +141,10 @@ class UbuntuTeacherWithNegs(UbuntuTeacher):
                 self.all_candidates = shared['all_candidates']
 
     def add_candidates(self, sample, seed):
-        """ Add 16 candidates. Should be called only at train time.
+        """
+        Add 16 candidates.
+
+        Should be called only at train time.
         """
         rand = random.Random(seed)
         if 'label_candidates' in sample:

@@ -3,18 +3,22 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Agent does gets the local keyboard input in the act() function.
-   Example: python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+"""
+Agent does gets the local keyboard input in the act() function.
+
+Example: python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
 """
 
 from parlai.core.agents import Agent
 from parlai.core.message import Message
-from parlai.core.utils import display_messages, load_cands
+from parlai.utils.misc import display_messages, load_cands
 
 
 class LocalHumanAgent(Agent):
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Local Human Arguments')
         agent.add_argument(
             '-fixedCands',

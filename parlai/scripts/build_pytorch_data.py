@@ -3,8 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Generates a pytorch data file from the training data; for use in the
-PytorchDataTeacher.
+"""
+Generates a pytorch data file from the training data; for use in the PytorchDataTeacher.
 
 Note that with our given implementation of batch act, episodes are compressed
 such that each episode is one example for a model.
@@ -106,7 +106,7 @@ def build_data(opt):
     ordered_opt.pop('pytorch_teacher_dataset')
     ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
-    teacher = world_data.agents[0]
+    teacher = world_data.get_task_agent()
     agent = world_data.agents[1]
     datapath = os.path.join(
         opt.get('datapath', '.'),

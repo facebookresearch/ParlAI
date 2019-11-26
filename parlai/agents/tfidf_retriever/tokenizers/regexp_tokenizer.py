@@ -4,17 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Regex based tokenizer that emulates the Stanford/NLTK PTB tokenizers.
+"""
+Regex based tokenizer that emulates the Stanford/NLTK PTB tokenizers.
 
-However it is purely in Python, supports robust untokenization, unicode,
-and requires minimal dependencies.
+However it is purely in Python, supports robust untokenization, unicode, and requires
+minimal dependencies.
 """
 
 import regex
-import logging
 from .tokenizer import Tokens, Tokenizer
-
-logger = logging.getLogger(__name__)
+from parlai.utils.logging import logger
 
 
 class RegexpTokenizer(Tokenizer):

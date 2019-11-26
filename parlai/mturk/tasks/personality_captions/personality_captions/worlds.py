@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.utils import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from task_configs.task_config_personality import task_config as config_personality
@@ -171,7 +171,9 @@ class PersonalityGenerator(object):
 
 
 class ImageGenerator(object):
-    """Retrieve Image from Flicker 100m set"""
+    """
+    Retrieve Image from Flicker 100m set.
+    """
 
     def __init__(self, opt):
         self.images_idx_stack_path = os.path.join(os.getcwd(), './images_idx_stack.pkl')
@@ -212,8 +214,10 @@ class ImageGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    '''A world that provides a Personality to the MTurkAgent, and provides
-       the appropriate instructions during onboarding'''
+    """
+    A world that provides a Personality to the MTurkAgent, and provides the appropriate
+    instructions during onboarding.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -242,8 +246,9 @@ class RoleOnboardWorld(MTurkOnboardWorld):
 
 
 class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
-    """World an agent observes ten images, with ten different personalities,
-        and writes engaging comments about them
+    """
+    World an agent observes ten images, with ten different personalities, and writes
+    engaging comments about them.
     """
 
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
@@ -254,7 +259,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
         self.max_resp_time = opt['max_resp_time']  # in secs
         super().__init__(opt, agents, shared)
         self.agents = agents
-        self.offensive_lang_detector = OffensiveLanguageDetector()
+        self.offensive_lang_detector = OffensiveStringMatcher()
         self.agent = agents[0]
         self.data = []
         self.exact_match = False
@@ -270,8 +275,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
 
     def parley(self):
         """
-            COMMENTER is given an image, and is told to give a comment for
-            the image
+        COMMENTER is given an image, and is told to give a comment for the image.
         """
         # Initial Message Value
         control_msg = {'episode_done': False}
@@ -475,9 +479,9 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
         )
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

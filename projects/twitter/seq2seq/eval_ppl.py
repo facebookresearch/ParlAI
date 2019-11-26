@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Evaluate pre-trained model trained for ppl metric."""
+"""
+Evaluate pre-trained model trained for ppl metric.
+"""
 
 from parlai.scripts.eval_ppl import eval_ppl, setup_args
 from projects.twitter.constants import DICT_FILE_30K

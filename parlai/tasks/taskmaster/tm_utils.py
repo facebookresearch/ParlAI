@@ -27,7 +27,8 @@ ASSIS_NUM_EX = 5
 ###############################################################
 def _path(opt):
     """
-    Ensures that the data is build and returns path to specific data file
+    Ensures that the data is build and returns path to specific data file.
+
     :param opt:
         Options dict: mainly used to access the data file name while path creation.
     """
@@ -79,9 +80,9 @@ def gen_ep_cheatsheet(convo):
 
 def update_indexes(conversation):
     """
-    Re-assigns indexes after smoothening (mostly for clarity purposes)
-    Doesn't really matter since we never index by specifically using the "index"
-    field of the json obj
+    Re-assigns indexes after smoothening (mostly for clarity purposes) Doesn't really
+    matter since we never index by specifically using the "index" field of the json obj.
+
     :param conversation:
         The dialogue between USER and ASSISTANT with inconsistent indices
     """
@@ -117,7 +118,8 @@ def join_speech(utt1, utt2):
 def smoothen_convo(conversation, opt):
     """
     Aggregates contiguous responses by the same speaker in the data so that data
-    eventually contains alternations between USER and ASSISTANT
+    eventually contains alternations between USER and ASSISTANT.
+
     :param conversation:
         The dialogue between USER and ASSISTANT with possible multiple contiguous
         speeches by the same speaker

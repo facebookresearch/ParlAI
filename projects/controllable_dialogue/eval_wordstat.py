@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This script is derived from parlai/core/scripts/eval_wordstat.py
+This script is derived from parlai/core/scripts/eval_wordstat.py.
 
 This script measures many different metrics of the text generated for the validation
 set - including all the controllable attributes.
@@ -15,7 +15,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from controllable_seq2seq.controls import (
@@ -77,9 +77,10 @@ def setup_args(parser=None):
     return parser
 
 
-def get_word_stats(text, agent_dict, bins=[0, 100, 1000, 100000]):
+def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     """
-    Function which takes text sequence and dict, returns word freq and length statistics
+    Function which takes text sequence and dict, returns word freq and length
+    statistics.
 
     :param sequence: text sequence
     :param agent_dict: can be external dict or dict from the model
@@ -117,7 +118,8 @@ def update_sent_attr_stats(sent_attrs, history, prediction):
 
 
 def eval_wordstat(opt, print_parser=None):
-    """Evaluates a model.
+    """
+    Evaluates a model.
 
     :param opt: tells the evaluation function how to run
     :param print_parser: if provided, prints the options that are set within the
@@ -229,7 +231,7 @@ def eval_wordstat(opt, print_parser=None):
         world.parley()
         # orig eval_wordstat.py handles bsz=1 but for simplicity we assume bsz>1
         assert batch_size != 1
-        for world_idx, w in enumerate(world.worlds):
+        for w in world.worlds:
             try:
                 try:
                     response_act = w.acts[-1]

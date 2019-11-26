@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This file contains code for computing Arora-style sentence embeddings, for
-response-relatedness control.
+This file contains code for computing Arora-style sentence embeddings, for response-
+relatedness control.
 """
 
 from parlai.core.params import ParlaiParser
@@ -14,7 +14,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.core.build_data import modelzoo_path
 import torchtext.vocab as vocab
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 from collections import Counter, deque
 import numpy as np
 import os
@@ -26,11 +26,9 @@ CONTROLLABLE_DIR = 'controllable_dialogue'
 
 class SentenceEmbedder(object):
     """
-    A class to produce Arora-style sentence embeddings
-      sent_emb(s)
-    where s is a sentence. Also gives relatedness scores
-      cos_sim(word_emb(w), sent_emb(s))
-    for words w with GloVe embeddings word_emb(w).
+    A class to produce Arora-style sentence embeddings sent_emb(s) where s is a
+    sentence. Also gives relatedness scores cos_sim(word_emb(w), sent_emb(s)) for words
+    w with GloVe embeddings word_emb(w).
 
     See: "A Simple But Tough-To-Beat Baseline For Sentence Embeddings",
     Arora et al, 2017, https://openreview.net/pdf?id=SyK00v5xx
@@ -84,8 +82,8 @@ class SentenceEmbedder(object):
     def get_emb_matrix(self, dictionary):
         """
         Construct an embedding matrix containing pretrained GloVe vectors for all words
-        in dictionary, and store in self.emb_matrix. This is needed for
-        response-relatedness weighted decoding.
+        in dictionary, and store in self.emb_matrix. This is needed for response-
+        relatedness weighted decoding.
 
         Inputs:
           dictionary: ParlAI dictionary
@@ -239,7 +237,8 @@ def remove_first_sv(emb, first_sv):
 
 
 def get_word_counts(opt, count_inputs):
-    """Goes through the dataset specified in opt, returns word counts and all utterances
+    """
+    Goes through the dataset specified in opt, returns word counts and all utterances.
 
     Inputs:
       count_inputs: If True, include both input and reply when counting words and

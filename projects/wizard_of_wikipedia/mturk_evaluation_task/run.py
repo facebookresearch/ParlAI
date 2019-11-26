@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
 import parlai.mturk.core.mturk_utils as mturk_utils
 
@@ -13,9 +13,9 @@ from task_config import task_config
 import gc
 import datetime
 import json
-import logging
 import os
 import sys
+from parlai.utils.logging import ParlaiLogger, INFO
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
@@ -25,8 +25,10 @@ MASTER_QUALIF = {
 
 
 def main():
-    """This task consists of an MTurk agent evaluating a wizard model. They
-    are assigned a topic and asked to chat.
+    """
+    This task consists of an MTurk agent evaluating a wizard model.
+
+    They are assigned a topic and asked to chat.
     """
     start_time = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M')
     argparser = ParlaiParser(False, add_model_args=True)
@@ -81,7 +83,9 @@ def main():
         help='Each worker must be unique',
     )
     argparser.add_argument(
-        '--mturk-log', type=str, default='data/mturklogs/{}.log'.format(start_time)
+        '--mturk-log',
+        type=str,
+        default='data/mturklogs/wizard_of_wikipedia/{}.log'.format(start_time),
     )
 
     def inject_override(opt, override_dict):
@@ -90,17 +94,20 @@ def main():
             opt[k] = v
 
     def get_logger(opt):
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-        console = logging.StreamHandler()
-        console.setFormatter(fmt)
-        logger.addHandler(console)
+        fmt = '%(asctime)s: [ %(message)s ]'
+        logfile = None
         if 'mturk_log' in opt:
-            logfile = logging.FileHandler(opt['mturk_log'], 'a')
-            logfile.setFormatter(fmt)
-            logger.addHandler(logfile)
+            logfile = opt['mturk_log']
+            if not os.path.isdir(os.path.dirname(logfile)):
+                os.makedirs(os.path.dirname(logfile))
+        logger = ParlaiLogger(
+            "mturk_woz",
+            console_level=INFO,
+            file_level=INFO,
+            console_format=fmt,
+            file_format=fmt,
+            filename=logfile,
+        )
         logger.info('COMMAND: %s' % ' '.join(sys.argv))
         logger.info('-' * 100)
         logger.info('CONFIG:\n%s' % json.dumps(opt, indent=4, sort_keys=True))

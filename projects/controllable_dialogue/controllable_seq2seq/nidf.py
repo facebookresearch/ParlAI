@@ -11,7 +11,7 @@ This file contains code to compute NIDF measures, used for specificity control.
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 from collections import Counter
 import os
 import math
@@ -23,7 +23,8 @@ PARLAI_FORMAT_DIR = 'controllable_dialogue/ConvAI2_parlaiformat'
 
 
 def get_word_counts(opt, count_inputs):
-    """Goes through the dataset specified in opt and gets word counts.
+    """
+    Goes through the dataset specified in opt and gets word counts.
 
     Inputs:
       count_inputs: If True, include both input and reply when counting words
@@ -77,8 +78,9 @@ def get_word_counts(opt, count_inputs):
 def learn_nidf(opt):
     """
     Go through ConvAI2 and Twitter data, and count word frequences.
-    Save word2count.pkl, which contains word2count, and total num_sents.
-    These are both needed to calculate NIDF later.
+
+    Save word2count.pkl, which contains word2count, and total num_sents. These are both
+    needed to calculate NIDF later.
     """
 
     opt['log_every_n_secs'] = 2

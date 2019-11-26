@@ -7,7 +7,7 @@
 
 import unittest
 import parlai.scripts.display_data as display_data
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
@@ -34,7 +34,9 @@ RETRIEVAL_OPTIONS = {
 
 @testing_utils.skipUnlessGPU
 class TestWizardModel(unittest.TestCase):
-    """Checks that pre-trained Wizard models give the correct results"""
+    """
+    Checks that pre-trained Wizard models give the correct results.
+    """
 
     @classmethod
     def setUpClass(cls):

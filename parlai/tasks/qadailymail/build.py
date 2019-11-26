@@ -7,6 +7,16 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        '0BwmD_VLjROrfN0xhTDVteGQ3eG8',
+        'qadailymail.tar.gz',
+        '77bfe0d91dbc9774991bbce59895743adfc984eafffc328a7b1d34a89e2b5646',
+        from_google=True,
+    )
+]
 
 
 def _process(fname, fout):
@@ -46,10 +56,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'qadailymail.tar.gz'
-        gd_id = '0BwmD_VLjROrfN0xhTDVteGQ3eG8'
-        build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         ext = os.path.join('dailymail', 'questions')
         create_fb_format(dpath, 'train', os.path.join(dpath, ext, 'training'))

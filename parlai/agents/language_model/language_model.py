@@ -7,8 +7,8 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.utils import PaddingUtils, round_sigfigs
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.misc import PaddingUtils, round_sigfigs
+from parlai.utils.thread import SharedTable
 from .modules import RNNModel
 
 import torch
@@ -21,7 +21,9 @@ import json
 
 
 class LanguageModelAgent(Agent):
-    """ Agent which trains an RNN on a language modeling task.
+    """
+    Agent which trains an RNN on a language modeling task.
+
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
     """
@@ -32,7 +34,9 @@ class LanguageModelAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Language Model Arguments')
         agent.add_argument(
             '--init-model',
@@ -153,7 +157,9 @@ class LanguageModelAgent(Agent):
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """
+        Set up model if shared params not set, otherwise no work to do.
+        """
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
         self.metrics = {'loss': 0, 'num_tokens': 0, 'lmloss': 0, 'lm_num_tokens': 0}
@@ -281,9 +287,11 @@ class LanguageModelAgent(Agent):
         self.reset()
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
+        """
+        Set overridable opts from loaded opt file.
+
+        Print out each added key and each overriden key. Only override args specific to
+        the model.
         """
         model_args = {
             'hiddensize',
@@ -313,20 +321,28 @@ class LanguageModelAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         return self.dict.txt2vec(text)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.reset_metrics()
 
@@ -351,7 +367,9 @@ class LanguageModelAgent(Agent):
         return m
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['dict'] = self.dict
@@ -370,7 +388,9 @@ class LanguageModelAgent(Agent):
         return shared
 
     def observe(self, observation):
-        """Save observation for act.
+        """
+        Save observation for act.
+
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
@@ -429,16 +449,18 @@ class LanguageModelAgent(Agent):
             return obs
 
     def repackage_hidden(self, h):
-        """Wraps hidden states in new Variables, to detach them from their history."""
+        """
+        Wraps hidden states in new Variables, to detach them from their history.
+        """
         if isinstance(h, Variable):
             return Variable(h.data)
         else:
             return tuple(self.repackage_hidden(v) for v in h)
 
     def get_target_loss(self, data, hidden, targets):
-        """Calculates the loss with respect to the targets, token by token,
-           where each output token is conditioned on either the input or the
-           previous target token.
+        """
+        Calculates the loss with respect to the targets, token by token, where each
+        output token is conditioned on either the input or the previous target token.
         """
         loss = 0.0
         bsz = data.size(0)
@@ -467,8 +489,9 @@ class LanguageModelAgent(Agent):
         return loss
 
     def get_predictions(self, data):
-        """Generates predictions word by word until we either reach the end token
-           or some max length (opt['truncate_pred']).
+        """
+        Generates predictions word by word until we either reach the end token or some
+        max length (opt['truncate_pred']).
         """
         token_list = []
         bsz = data.size(0)
@@ -526,7 +549,9 @@ class LanguageModelAgent(Agent):
         return torch.cat(token_list, 1)
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
-        """Produce a prediction from our model."""
+        """
+        Produce a prediction from our model.
+        """
         output = None
         predictions = None
         if is_training:
@@ -556,7 +581,9 @@ class LanguageModelAgent(Agent):
         return output, hidden, predictions
 
     def vectorize(self, observations, seq_len, is_training):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
         labels = None
         valid_inds = None
         y_lens = None
@@ -671,7 +698,9 @@ class LanguageModelAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path and hasattr(self, 'model'):
@@ -687,7 +716,9 @@ class LanguageModelAgent(Agent):
                 json.dump(self.opt, handle)
 
     def shutdown(self):
-        """Save the state of the model when shutdown."""
+        """
+        Save the state of the model when shutdown.
+        """
         path = self.opt.get('model_file', None)
         if path is not None:
             self.save(path + '.shutdown_state')
@@ -698,12 +729,16 @@ class LanguageModelAgent(Agent):
             self.scheduler.step(metrics_dict['loss'])
 
     def load_opt(self, path):
-        """Return opt, states."""
+        """
+        Return opt, states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states['opt']
 
     def load(self, path):
-        """Load model states."""
+        """
+        Load model states.
+        """
         if os.path.isfile(path):
             # load model parameters if available
             print('[ Loading existing model params from {} ]'.format(path))

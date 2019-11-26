@@ -11,7 +11,7 @@ from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
 
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import os
 import torch
 from torch.utils.data.sampler import RandomSampler, SequentialSampler as Sequential
@@ -60,13 +60,15 @@ def solved_task(str_output, valid, test):
 # due to distributed changing the spawn method.
 @testing_utils.skipIfGPU
 class TestPytorchDataTeacher(unittest.TestCase):
-    """Various tests for PytorchDataTeacher"""
+    """
+    Various tests for PytorchDataTeacher.
+    """
 
     """Unit Tests"""
 
     def test_shuffle(self):
-        """Simple test to ensure that dataloader is initialized with correct
-        data sampler
+        """
+        Simple test to ensure that dataloader is initialized with correct data sampler.
         """
         dts = ['train', 'valid', 'test']
         exts = ['', ':stream', ':ordered', ':stream:ordered']
@@ -105,11 +107,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_preprocess(self):
         """
-        Test that the preprocess functionality works with the PytorchDataTeacher
-        with a sample TorchAgent (here, the Seq2seq model).
+        Test that the preprocess functionality works with the PytorchDataTeacher with a
+        sample TorchAgent (here, the Seq2seq model).
 
-        This tests whether the action provided by the preprocessed teacher
-        is equivalent to the agent's observation after the agent processes it.
+        This tests whether the action provided by the preprocessed teacher is equivalent
+        to the agent's observation after the agent processes it.
         """
 
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
@@ -156,8 +158,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_valid_pyt_batchsort(self):
         """
-        Tests that batchsort *works* for two epochs; that is, that
-        every example is seen both epochs
+        Tests that batchsort *works* for two epochs; that is, that every example is seen
+        both epochs.
         """
         parser = train_setup_args()
 
@@ -223,11 +225,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_batchsort_field(self):
         """
-        Test that the batchsort actually works for Pytorch Data Teacher
+        Test that the batchsort actually works for Pytorch Data Teacher.
 
-        That is, for every batch except the last one, check that the length
-        of each example (determined by batchsort_field) is within
-        `batch-length-range`
+        That is, for every batch except the last one, check that the length of each
+        example (determined by batchsort_field) is within `batch-length-range`
         """
         # First, check that batchsort itself works
         defaults = unit_test_parser_defaults.copy()
@@ -285,11 +286,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def _pyt_train(self, datatype):
         """
-        Integration test: ensure that pytorch data teacher can successfully
-        teach Seq2Seq model to fully solve the babi:task10k:1 task.
+        Integration test: ensure that pytorch data teacher can successfully teach
+        Seq2Seq model to fully solve the babi:task10k:1 task.
 
-        The Seq2Seq model can solve the babi:task10k:1 task with the normal
-        ParlAI setup, and thus should be able to with a PytorchDataTeacher
+        The Seq2Seq model can solve the babi:task10k:1 task with the normal ParlAI
+        setup, and thus should be able to with a PytorchDataTeacher
         """
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = datatype
@@ -317,11 +318,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
     @testing_utils.retry()
     def test_pyt_preprocess_train(self):
         """
-        Test that the preprocess functionality works with the PytorchDataTeacher
-        with a sample TorchAgent (here, the Seq2seq model).
+        Test that the preprocess functionality works with the PytorchDataTeacher with a
+        sample TorchAgent (here, the Seq2seq model).
 
-        This tests whether an agent can train to completion with
-        these preprocessed examples
+        This tests whether an agent can train to completion with these preprocessed
+        examples
         """
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = 'train'
@@ -336,7 +337,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def _pyt_batchsort_train(self, datatype, preprocess):
         """
-        Tests the functionality of training with batchsort
+        Tests the functionality of training with batchsort.
 
         :param string datatype:
             datatype to train with
@@ -370,8 +371,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pytd_teacher(self):
         """
-        Test that the pytorch teacher works with given Pytorch Datasets
-        as well
+        Test that the pytorch teacher works with given Pytorch Datasets as well.
         """
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = 'train:stream'
@@ -411,8 +411,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_multitask(self):
         """
-        Unit test for ensuring that PytorchDataTeacher correctly handles
-        multitasking.
+        Unit test for ensuring that PytorchDataTeacher correctly handles multitasking.
 
         This test will iterate through the following scenarios:
             1. 2 `pytorch_teacher_task`s
@@ -420,7 +419,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
             3. 1 `pytorch_teacher_task`, 1 `pytorch_teacher_dataset`
             4. 1 `pytorch_teacher_dataset`, 1 regular ParlAI task
             5. 2 `pytorch_teacher_dataset`s
-
         """
 
         def run_display_test(defaults, ep_and_ex_counts):

@@ -23,7 +23,8 @@ def setup_args():
 
 
 def main(config):
-    """Creates .stitched files from .suggested files
+    """
+    Creates .stitched files from .suggested files.
 
     input: a .suggested file of logs (in ParlaiDialog format) from Mturk task 2, each of
         which starts with an initial prompt or topic request, and ends with a y

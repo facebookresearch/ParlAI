@@ -3,9 +3,10 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This preprocessing script was used to create ParlAI's version of the
-data. It was run in a script called parse.py inside ijcnlp_dailydialog/ after
-uncompressing the original directory and all subdirectories.
+This preprocessing script was used to create ParlAI's version of the data.
+
+It was run in a script called parse.py inside ijcnlp_dailydialog/ after uncompressing
+the original directory and all subdirectories.
 """
 
 import json

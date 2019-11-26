@@ -4,9 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""This is a simple question answering task on the MNIST dataset.
-In each episode, agents are presented with a number, which they are asked to
-identify.
+"""
+This is a simple question answering task on the MNIST dataset. In each episode, agents
+are presented with a number, which they are asked to identify.
 
 Useful for debugging and checking that one's image model is up and running.
 """
@@ -29,10 +29,10 @@ def _path(opt):
 
 class MnistQATeacher(DialogTeacher):
     """
-    This version of MNIST inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    This version of MNIST inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a `act` function, and enables Hogwild training with shared memory with no extra
+    work.
     """
 
     def __init__(self, opt, shared=None):

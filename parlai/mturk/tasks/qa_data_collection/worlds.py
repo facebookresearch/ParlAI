@@ -8,9 +8,11 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 
 
 class QADataCollectionOnboardWorld(MTurkOnboardWorld):
-    '''Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete
-    '''
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete
+    """
 
     def parley(self):
         ad = {}
@@ -24,8 +26,9 @@ class QADataCollectionOnboardWorld(MTurkOnboardWorld):
 class QADataCollectionWorld(MTurkTaskWorld):
     """
     World for recording a turker's question and answer given a context.
-    Assumes the context is a random context from a given task, e.g.
-    from SQuAD, CBT, etc.
+
+    Assumes the context is a random context from a given task, e.g. from SQuAD, CBT,
+    etc.
     """
 
     collector_agent_id = 'QA Collector'

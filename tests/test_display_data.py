@@ -6,14 +6,18 @@
 from examples.display_data import display_data
 from parlai.core.params import ParlaiParser
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 class TestDisplayData(unittest.TestCase):
-    """Basic tests on the display_data.py example."""
+    """
+    Basic tests on the display_data.py example.
+    """
 
     def test_output(self):
-        """Does display_data reach the end of the loop?"""
+        """
+        Does display_data reach the end of the loop?
+        """
         with testing_utils.capture_output() as stdout:
             parser = ParlaiParser()
             opt = parser.parse_args(['--task', 'babi:task1k:1'], print_args=False)

@@ -15,12 +15,12 @@ from threading import Lock
 import gc
 import datetime
 import json
-import logging
 import os
 import sys
 import copy
 import random
 import pprint
+from parlai.utils.logging import ParlaiLogger, INFO
 
 
 # update this with models you want to run. these names correspond to variables
@@ -58,7 +58,8 @@ responsiveness_model_bfw_setting_minus_10
 
 
 def main():
-    """This task consists of an MTurk agent evaluating a Controllable Dialog model.
+    """
+    This task consists of an MTurk agent evaluating a Controllable Dialog model.
     """
     start_time = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M')
     argparser = ParlaiParser(False, add_model_args=True)
@@ -118,7 +119,7 @@ def main():
     argparser.add_argument(
         '--mturk-log',
         type=str,
-        default=('$HOME/ParlAI/data/mturklogs/controllable/{}.log'.format(start_time)),
+        default=('data/mturklogs/controllable/{}.log'.format(start_time)),
     )
     argparser.add_argument(
         '--short-eval',
@@ -141,20 +142,20 @@ def main():
     )
 
     def get_logger(opt):
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-        console = logging.StreamHandler()
-        console.setFormatter(fmt)
-        logger.addHandler(console)
+        fmt = '%(asctime)s: [ %(message)s ]'
+        logfn = None
         if 'mturk_log' in opt:
-            logfn = opt['mturk_log'].replace('$HOME', os.environ['HOME'])
+            logfn = opt['mturk_log']
             if not os.path.isdir(os.path.dirname(logfn)):
-                raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
-            logfile = logging.FileHandler(logfn, 'a')
-            logfile.setFormatter(fmt)
-            logger.addHandler(logfile)
+                os.makedirs(os.path.dirname(logfn), exist_ok=True)
+        logger = ParlaiLogger(
+            name="mturk_controllable",
+            console_level=INFO,
+            file_level=INFO,
+            console_format=fmt,
+            file_format=fmt,
+            filename=logfn,
+        )
         logger.info('COMMAND: %s' % ' '.join(sys.argv))
         logger.info('-' * 100)
         logger.info('CONFIG:\n%s' % json.dumps(opt, indent=4, sort_keys=True))
@@ -175,7 +176,7 @@ def main():
 
     start_opt.update(task_config)
 
-    get_logger(start_opt)
+    logger = get_logger(start_opt)
 
     model_share_params = {}
     worker_models_seen = {}
@@ -261,7 +262,7 @@ def main():
                 worker_models_seen[worker_id] = set()
             print("MODELCOUNTS:")
             print(pprint.pformat(model_counts))
-            logging.info("MODELCOUNTS\n" + pprint.pformat(model_counts))
+            logger.info("MODELCOUNTS\n" + pprint.pformat(model_counts))
             model_options = [
                 (model_counts[setup_name] + 10 * random.random(), setup_name)
                 for setup_name in SETTINGS_TO_RUN
@@ -269,7 +270,7 @@ def main():
             ]
             if not model_options:
                 lock.release()
-                logging.error(
+                logger.error(
                     "Worker {} already finished all settings! Returning none".format(
                         worker_id
                     )

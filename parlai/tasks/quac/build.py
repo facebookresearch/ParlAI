@@ -8,12 +8,25 @@
 import parlai.core.build_data as build_data
 import os
 import json
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://s3.amazonaws.com/my89public/quac/train_v0.2.json',
+        'train_v0.2.json',
+        'ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://s3.amazonaws.com/my89public/quac/val_v0.2.json',
+        'val_v0.2.json',
+        '09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378',
+        zipped=False,
+    ),
+]
 
 VERSION = '0.2'
-TRAIN_FILENAME = 'train_v' + VERSION + '.json'
-VALID_FILENAME = 'val_v' + VERSION + '.json'
 
-URL = 'https://s3.amazonaws.com/my89public/quac/'
 SHOULD = '__SHOULD__'
 MAYBE = '__MAYBE__'
 SHOULD_NOT = '__SHOULDNOT__'
@@ -85,14 +98,14 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(URL + VALID_FILENAME, dpath, VALID_FILENAME)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
-        with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
+        with open(os.path.join(dpath, RESOURCES[0].file_name)) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, VALID_FILENAME)) as f:
+        with open(os.path.join(dpath, RESOURCES[1].file_name)) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

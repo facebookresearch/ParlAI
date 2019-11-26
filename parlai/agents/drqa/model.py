@@ -7,18 +7,17 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
-import logging
 
 from torch.autograd import Variable
 from .utils import load_embeddings, AverageMeter
 from .rnn_reader import RnnDocReader
-
-logger = logging.getLogger('DrQA')
+from parlai.utils.logging import logger
 
 
 class DocReaderModel(object):
-    """High level model that handles intializing the underlying network
-    architecture, saving, updating examples, and predicting examples.
+    """
+    High level model that handles intializing the underlying network architecture,
+    saving, updating examples, and predicting examples.
     """
 
     def __init__(self, opt, word_dict, feature_dict, state_dict=None):
@@ -174,7 +173,7 @@ class DocReaderModel(object):
         try:
             torch.save(params, filename)
         except BaseException:
-            logger.warn('[ WARN: Saving failed... continuing anyway. ]')
+            logger.warning('[ WARN: Saving failed... continuing anyway. ]')
 
     def cuda(self):
         self.network.cuda()

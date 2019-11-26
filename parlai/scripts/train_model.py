@@ -20,7 +20,6 @@ Examples
   python -m parlai.scripts.train -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
   python -m parlai.scripts.train -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
   python -m parlai.scripts.train -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
-
 """  # noqa: E501
 
 # TODO List:
@@ -35,10 +34,11 @@ from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.utils import Timer, round_sigfigs, warn_once
+from parlai.utils.misc import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
+from parlai.core.torch_agent import StopTrainException
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
-from parlai.core.distributed_utils import (
+from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
     all_gather_list,
@@ -65,10 +65,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument(
         '-et',
         '--evaltask',
-        help=(
-            'task to use for valid/test (defaults to the '
-            'one used for training if not set)'
-        ),
+        help='task to use for valid/test (defaults to the one used for training)',
     )
     train.add_argument(
         '--eval-batchsize',
@@ -118,7 +115,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=int,
         default=-1,
         hidden=True,
-        help='max examples to use during validation (default ' '-1 uses all)',
+        help='max examples to use during validation (default -1 uses all)',
     )
     train.add_argument(
         '--short-final-eval',
@@ -142,7 +139,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-vmt',
         '--validation-metric',
         default='accuracy',
-        help='key into report table for selecting best ' 'validation',
+        help='key into report table for selecting best validation',
     )
     train.add_argument(
         '-vmm',
@@ -157,15 +154,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=float,
         default=1.0,
         hidden=True,
-        help='value at which training will stop if exceeded by ' 'training metric',
-    )
-    train.add_argument(
-        '-dbf',
-        '--dict-build-first',
-        hidden=True,
-        type='bool',
-        default=True,
-        help='build dictionary first before training agent',
+        help='value at which training will stop if exceeded by metric',
     )
     train.add_argument(
         '-lfc',
@@ -308,7 +297,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
         reports.append(task_report)
 
-    tasks = [world.opt['task'] for world in valid_worlds]
+    tasks = [world.getID() for world in valid_worlds]
     report = aggregate_task_reports(
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )
@@ -328,14 +317,18 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
 
 
 def _save_best_valid(model_file, best_valid):
-    """Save the best validation score to disk."""
+    """
+    Save the best validation score to disk.
+    """
     f = open(model_file + '.best_valid', 'w')
     f.write(str(best_valid))
     f.close()
 
 
 class TrainLoop:
-    """TrainLoop contains the core training loop logic."""
+    """
+    TrainLoop contains the core training loop logic.
+    """
 
     def __init__(self, opt):
         # if python is called from a non-interactive shell, like a bash script,
@@ -356,14 +349,12 @@ class TrainLoop:
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
-        if opt['dict_build_first'] and not (
-            opt.get('dict_file') or opt.get('model_file')
-        ):
+        if not (opt.get('dict_file') or opt.get('model_file')):
             raise RuntimeError(
                 'WARNING: For train_model, please specify either a '
                 'model_file or dict_file.'
             )
-        if opt['dict_build_first'] and 'dict_file' in opt:
+        if 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task'):
                 opt['dict_file'] = get_pyt_dict_file(opt)
@@ -440,11 +431,13 @@ class TrainLoop:
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
 
-        if opt['tensorboard_log'] is True:
+        if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
-        """Save the model to disk, possibly with a suffix."""
+        """
+        Save the model to disk, possibly with a suffix.
+        """
         if not is_primary_worker():
             # never do IO as a non-primary worker
             return
@@ -623,8 +616,8 @@ class TrainLoop:
         """
         Sync training metrics across workers.
 
-        A handful of special cases are handled as exceptions, and the remaining
-        metrics are simply averaged across workers.
+        A handful of special cases are handled as exceptions, and the remaining metrics
+        are simply averaged across workers.
         """
         if not is_distributed():
             # nothing special needed
@@ -669,7 +662,9 @@ class TrainLoop:
         return eta
 
     def log(self):
-        """Output a training log entry."""
+        """
+        Output a training log entry.
+        """
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')
@@ -716,7 +711,15 @@ class TrainLoop:
         with world:
             while True:
                 # do one example / batch of examples
-                world.parley()
+                try:
+                    world.parley()
+                except StopTrainException:
+                    if is_distributed():
+                        raise RuntimeError(
+                            "StopTrainException not supported for " "distributed mode"
+                        )
+                    break
+
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
@@ -755,7 +758,15 @@ class TrainLoop:
                     or self._total_epochs - self.last_valid_epoch
                     >= self.val_every_n_epochs
                 ):
-                    stop_training = self.validate()
+                    try:
+                        stop_training = self.validate()
+                    except StopTrainException:
+                        if is_distributed():
+                            raise RuntimeError(
+                                "StopTrainException not "
+                                "supported for distributed mode"
+                            )
+                        break
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break

@@ -3,11 +3,13 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Agent code for the model described in (https://arxiv.org/abs/1811.00945)."""
+"""
+Agent code for the model described in (https://arxiv.org/abs/1811.00945).
+"""
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs
+from parlai.utils.misc import round_sigfigs
 from .modules import TransresnetModel
 from parlai.tasks.personality_captions.build import build
 
@@ -33,7 +35,9 @@ class TransresnetAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command line args."""
+        """
+        Add command line args.
+        """
         arg_group = argparser.add_argument_group('Transresnet Arguments')
         TransresnetModel.add_cmdline_args(argparser)
         argparser.add_argument(
@@ -113,7 +117,9 @@ class TransresnetAgent(Agent):
         super().__init__(opt, shared)
 
     def share(self):
-        """Share appropriate attributes."""
+        """
+        Share appropriate attributes.
+        """
         shared = super().share()
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -172,7 +178,9 @@ class TransresnetAgent(Agent):
                 torch.save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
-        """Load and return the list of personalities."""
+        """
+        Load and return the list of personalities.
+        """
         personality_path = os.path.join(
             self.opt['datapath'], 'personality_captions/personalities.txt'
         )
@@ -188,12 +196,16 @@ class TransresnetAgent(Agent):
         return perss
 
     def observe(self, observation):
-        """Observe."""
+        """
+        Observe.
+        """
         self.observation = observation
         return observation
 
     def act(self):
-        """Act."""
+        """
+        Act.
+        """
         return self.batch_act([self.observation])[0]
 
     def train_step(self, valid_obs, image_feats, personalities):
@@ -345,7 +357,9 @@ class TransresnetAgent(Agent):
         return image_feats
 
     def filter_valid_obs(self, observations, is_training):
-        """Filter out invalid observations."""
+        """
+        Filter out invalid observations.
+        """
         label_key = 'labels' if is_training else 'eval_labels'
         valid_obs = []
         valid_indexes = []
@@ -436,12 +450,16 @@ class TransresnetAgent(Agent):
                     print('Done')
 
     def reset(self):
-        """Reset metrics."""
+        """
+        Reset metrics.
+        """
         super().reset()
         self.reset_metrics()
 
     def reset_metrics(self):
-        """Reset the metrics."""
+        """
+        Reset the metrics.
+        """
         self.metrics['hits@1/100'] = 0.0
         self.metrics['loss'] = 0.0
         self.metrics['num_samples'] = 0.0

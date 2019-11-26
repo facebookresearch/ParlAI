@@ -5,13 +5,20 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-
+from parlai.core.build_data import DownloadableFile
 from parlai.core import build_data
+
+RESOURCES = [
+    DownloadableFile(
+        'https://drive.google.com/uc?export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc',
+        'dialog-bAbI-plus.zip',
+        'e67dfecbde5e6250833143a6148150a313204237b765d39e7b8ebc111cb3204e',
+    )
+]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dialog-bAbI-plus')
-    fname = "dialog-bAbI-plus.zip"
     version = None
 
     if not build_data.built(dpath, version_string=version):
@@ -21,11 +28,8 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        url = (
-            "https://drive.google.com/uc?"
-            "export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc"
-        )
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         build_data.mark_done(dpath, version)

@@ -19,7 +19,9 @@ from .modules_v0 import MemNN, Decoder
 
 
 class MemnnAgent(Agent):
-    """Memory Network agent."""
+    """
+    Memory Network agent.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -196,7 +198,8 @@ class MemnnAgent(Agent):
         return shared
 
     def observe(self, observation):
-        """Save observation for act.
+        """
+        Save observation for act.
 
         If multiple observations are from the same episode, concatenate them.
         """

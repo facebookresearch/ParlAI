@@ -3,27 +3,24 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""A script to read in and store ParlAI tasks in a sqlite database.
+"""
+A script to read in and store ParlAI tasks in a sqlite database.
 
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
 import sqlite3
 import os
-import logging
 
 from tqdm import tqdm
 
 from collections import deque
 import random
 from parlai.core.agents import create_task_agent_from_taskname
+from parlai.utils.logging import logger
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
+fmt = '%(asctime)s: [ %(message)s ]'
+logger.set_format(fmt)
 
 # ------------------------------------------------------------------------------
 # Store corpus.
@@ -31,7 +28,8 @@ logger.addHandler(console)
 
 
 def store_contents(opt, task, save_path, context_length=-1, include_labels=True):
-    """Preprocess and store a corpus of documents in sqlite.
+    """
+    Preprocess and store a corpus of documents in sqlite.
 
     Args:
         task: ParlAI tasks of text (and possibly values) to store.

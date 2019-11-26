@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
-from parlai.core.utils import display_messages
+from parlai.utils.misc import display_messages
 from parlai.core.agents import create_agent_from_shared
 
 import requests
@@ -14,12 +14,12 @@ import time
 
 
 class ConvAIWorld(World):
-    """ConvAIWorld provides conversations with participants in the convai.io
-    competition.
-    This world takes in exactly one agent which will converse with a partner
-    over a remote connection.
-    For each remote conversation being maintained by this world, a copy of the
-    original agent will be instantiated from the original agent's `share()`
+    """
+    ConvAIWorld provides conversations with participants in the convai.io competition.
+
+    This world takes in exactly one agent which will converse with a partner over a
+    remote connection. For each remote conversation being maintained by this world, a
+    copy of the original agent will be instantiated from the original agent's `share()`
     method.
     """
 
@@ -96,8 +96,10 @@ class ConvAIWorld(World):
         self.bot_url = self.router_bot_url + self.bot_id
 
     def _get_updates(self):
-        """Make HTTP request to Router Bot for new messages
-           Expecting server response to be like {'ok': True, "result": [...]}
+        """
+        Make HTTP request to Router Bot for new messages Expecting server response to be
+        like {'ok': True, "result": [...]}
+
         :return: list of new messages received since last request
         """
         res = requests.get(self.bot_url + '/getUpdates')
@@ -117,7 +119,9 @@ class ConvAIWorld(World):
             print('Warning! Increasing pull delay to %d', self.router_bot_pull_delay)
 
     def _send_message(self, observation, chatID):
-        """Make HTTP request to Router Bot to post new message
+        """
+        Make HTTP request to Router Bot to post new message.
+
         :param observation: message that will be sent to server
         :param chatID: id of chat
         :return: None
@@ -167,9 +171,9 @@ class ConvAIWorld(World):
         return '\n'.join(lines)
 
     def _init_chat(self, chatID):
-        """Create new chat for new dialog.
-        Sets up a new instantiation of the agent so that each chat has its own
-        local state.
+        """
+        Create new chat for new dialog. Sets up a new instantiation of the agent so that
+        each chat has its own local state.
 
         :param chatID: chat id
         :return: new instance of your local agent
@@ -186,7 +190,9 @@ class ConvAIWorld(World):
         return self.chats[chatID]
 
     def cleanup_finished_chat(self, chatID):
-        """Shutdown specified chat.
+        """
+        Shutdown specified chat.
+
         :param chatID: chat id
         :return: None
         """
@@ -195,21 +201,23 @@ class ConvAIWorld(World):
             self.finished_chats.remove(chatID)
 
     def cleanup_finished_chats(self):
-        """Shutdown all finished chats.
+        """
+        Shutdown all finished chats.
+
         :return: None
         """
         for chatID in self.finished_chats.copy():
             self.cleanup_finished_chat(chatID)
 
     def pull_new_messages(self):
-        """Requests the server for new messages and processes every message.
-        If a message starts with '/start' string then a new chat will be created and
-        the message will be added to stack.
-        If a message has the same chat id as already existing chat then it will be
-        added to message stack for this chat.
-        Any other messages will be ignored.
-        If after processing all messages message stack is still empty then new request
-        to server will be performed.
+        """
+        Requests the server for new messages and processes every message. If a message
+        starts with '/start' string then a new chat will be created and the message will
+        be added to stack. If a message has the same chat id as already existing chat
+        then it will be added to message stack for this chat. Any other messages will be
+        ignored. If after processing all messages message stack is still empty then new
+        request to server will be performed.
+
         :return: None
         """
         print('Waiting for new messages from server...', flush=True)
@@ -255,10 +263,12 @@ class ConvAIWorld(World):
                     print('Waiting for new messages from server...', flush=True)
 
     def parley(self):
-        """Pops next message from stack, gets corresponding chat, agents, world
-        and performs communication between agents.
-        Result of communication will be send to server.
-        If message stack is empty then server will be requested for new messages.
+        """
+        Pops next message from stack, gets corresponding chat, agents, world and
+        performs communication between agents. Result of communication will be send to
+        server. If message stack is empty then server will be requested for new
+        messages.
+
         :return: None
         """
         print('Try to cleanup finished chat before new parley.')

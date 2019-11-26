@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic example which iterates through the tasks specified and runs the given
-model on them.
+"""
+Basic example which iterates through the tasks specified and runs the given model on
+them.
 
 Examples
 --------
@@ -26,6 +27,13 @@ def setup_args():
     parser = ParlaiParser(True, True, 'Display model predictions.')
     parser.add_argument('-n', '-ne', '--num-examples', default=10)
     parser.add_argument('--display-ignore-fields', type=str, default='')
+    parser.add_argument(
+        '--verbose',
+        type='bool',
+        default=False,
+        hidden=True,
+        help='Display additional debug info, e.g. the per-token loss breakdown for generative models.',
+    )
     # by default we want to display info about the validation set
     parser.set_defaults(datatype='valid')
     return parser

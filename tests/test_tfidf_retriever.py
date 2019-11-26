@@ -7,12 +7,12 @@
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.utils.logging import logger, ERROR
 
 import os
 import unittest
 import contextlib
 import io
-import logging
 
 SKIP_TESTS = False
 try:
@@ -24,7 +24,9 @@ except ImportError:
 
 
 class TestTfidfRetriever(unittest.TestCase):
-    """Basic tests on the display_data.py example."""
+    """
+    Basic tests on the display_data.py example.
+    """
 
     @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
     def test_sparse_tfidf_retriever(self):
@@ -32,8 +34,7 @@ class TestTfidfRetriever(unittest.TestCase):
         DB_PATH = '/tmp/tmp_test_babi.db'
         TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
         # keep things quiet
-        logger = logging.getLogger('parlai.agents.tfidf_retriever.build_tfidf')
-        logger.setLevel(logging.ERROR)
+        logger.setLevel(ERROR)
         try:
             parser = ParlaiParser(True, True)
             parser.set_defaults(

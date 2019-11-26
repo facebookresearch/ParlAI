@@ -8,7 +8,7 @@ import random
 import io
 import os
 import pickle
-from parlai.core.utils import msg_to_str
+from parlai.utils.misc import msg_to_str
 
 rand = random.Random(42)
 
@@ -118,7 +118,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 use_feat(opt, 'light_use_speech', 'partner')
                 and d['speech'][i] is not None
             ):
-                text += '_partner_say ' + str(d['speech'][i]) + '\n'
+                if opt['light_use_speech_prefix']:
+                    text += '_partner_say '
+                text += str(d['speech'][i]) + '\n'
             if (
                 use_feat(opt, 'light_use_action', 'partner')
                 and d['action'][i] is not None
@@ -151,7 +153,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
-                    text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
+                    if opt['light_use_speech_prefix']:
+                        text += '_self_say '
+                    text += str(d['speech'][i + 1]) + '\n'
                     shown['speech'] = True
                 used_current = True
             if (
@@ -199,7 +203,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 and d['speech'][i + 1] is not None
                 and ('speech' not in shown)
             ):
-                text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
+                if opt['light_use_speech_prefix']:
+                    text += '_self_say '
+                text += str(d['speech'][i + 1]) + '\n'
             if (
                 use_feat(opt, 'light_use_action', 'self')
                 and d['action'][i + 1] is not None

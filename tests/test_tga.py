@@ -3,20 +3,26 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Test TorchGeneratorAgent."""
+"""
+Test TorchGeneratorAgent.
+"""
 
 import unittest
 from parlai.core.agents import create_agent
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
 
 class TestUpgradeOpt(unittest.TestCase):
-    """Test upgrade_opt behavior."""
+    """
+    Test upgrade_opt behavior.
+    """
 
     def test_inference(self):
-        """Test --inference with simple options."""
+        """
+        Test --inference with simple options.
+        """
         with testing_utils.capture_output():
             upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 1})
             self.assertEqual(upgraded['inference'], 'greedy')
@@ -25,7 +31,9 @@ class TestUpgradeOpt(unittest.TestCase):
             self.assertEqual(upgraded['inference'], 'beam')
 
     def test_file_inference(self):
-        """Test --inference with older model files."""
+        """
+        Test --inference with older model files.
+        """
         testing_utils.download_unittest_models()
         with testing_utils.capture_output():
             pp = ParlaiParser(True, True)

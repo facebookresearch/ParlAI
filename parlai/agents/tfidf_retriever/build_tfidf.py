@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""A script to build the tf-idf document matrices for retrieval.
+"""
+A script to build the tf-idf document matrices for retrieval.
 
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
@@ -14,7 +15,6 @@ import scipy.sparse as sp
 import argparse
 import os
 import math
-import logging
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -24,15 +24,10 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
+from parlai.utils.logging import logger
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
-
-
+fmt = '%(asctime)s: [ %(message)s ]'
+logger.set_format(fmt)
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
 # ------------------------------------------------------------------------------
@@ -132,7 +127,9 @@ def live_count_matrix_t(args, cands):
 
 
 def count_text(ngram, hash_size, doc_id, text=None):
-    """Compute hashed ngram counts of text."""
+    """
+    Compute hashed ngram counts of text.
+    """
     row, col, data = [], [], []
     # Tokenize
     tokens = tokenize(utils.normalize(text))
@@ -151,12 +148,15 @@ def count_text(ngram, hash_size, doc_id, text=None):
 
 
 def count(ngram, hash_size, doc_id):
-    """Fetch the text of a document and compute hashed ngrams counts."""
+    """
+    Fetch the text of a document and compute hashed ngrams counts.
+    """
     return count_text(ngram, hash_size, doc_id, text=fetch_text(doc_id))
 
 
 def get_count_matrix_t(args, db_opts):
-    """Form a sparse word to document count matrix (inverted index, torch ver).
+    """
+    Form a sparse word to document count matrix (inverted index, torch ver).
 
     M[i, j] = # times word i appears in document j.
     """
@@ -195,7 +195,8 @@ def get_count_matrix_t(args, db_opts):
 
 
 def get_count_matrix(args, db_opts):
-    """Form a sparse word to document count matrix (inverted index).
+    """
+    Form a sparse word to document count matrix (inverted index).
 
     M[i, j] = # times word i appears in document j.
     """
@@ -245,7 +246,8 @@ def get_count_matrix(args, db_opts):
 
 
 def get_tfidf_matrix_t(cnts):
-    """Convert the word count matrix into tfidf one (torch version).
+    """
+    Convert the word count matrix into tfidf one (torch version).
 
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
@@ -264,7 +266,8 @@ def get_tfidf_matrix_t(cnts):
 
 
 def get_tfidf_matrix(cnts):
-    """Convert the word count matrix into tfidf one.
+    """
+    Convert the word count matrix into tfidf one.
 
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
@@ -282,14 +285,18 @@ def get_tfidf_matrix(cnts):
 
 
 def get_doc_freqs_t(cnts):
-    """Return word --> # of docs it appears in (torch version)."""
+    """
+    Return word --> # of docs it appears in (torch version).
+    """
     return torch.histc(
         cnts._indices()[0].float(), bins=cnts.size(0), min=0, max=cnts.size(0)
     )
 
 
 def get_doc_freqs(cnts):
-    """Return word --> # of docs it appears in."""
+    """
+    Return word --> # of docs it appears in.
+    """
     binary = (cnts > 0).astype(int)
     freqs = np.array(binary.sum(1)).squeeze()
     return freqs
@@ -302,7 +309,7 @@ def get_doc_freqs(cnts):
 
 def run(args):
     # ParlAI version of run method, modified slightly
-    logging.info('Counting words...')
+    logger.info('Counting words...')
     count_matrix = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
@@ -362,7 +369,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    logging.info('Counting words...')
+    logger.info('Counting words...')
     count_matrix, doc_dict = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')

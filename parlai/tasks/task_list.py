@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""This file contains a list of all the tasks, their id and task name, description
-and the tags associated with them.
+"""
+This file contains a list of all the tasks, their id and task name, description and the
+tags associated with them.
 """
 
 task_list = [
@@ -1016,6 +1017,29 @@ task_list = [
             "(see https://arxiv.org/abs/1908.06083 for more information). \n"
             "All datasets are classification tasks in which the goal is to "
             "determine if the text is offensive or \'safe\'."
+        ),
+    },
+    {
+        "id": "MultiWOZ",
+        "display_name": "MultiWOZ",
+        "task": "multiwoz",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+            "(see http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"
+            " for more information). "
+        ),
+    },
+    {
+        "id": "SelfChat",
+        "display_name": "SelfChat",
+        "task": "self_chat",
+        "tags": [],
+        "description": (
+            "Not a dataset, but a generic world for model self-chats. "
+            "(see parlai/scripts/self_chat.py"
+            " for more information). "
         ),
     },
 ]

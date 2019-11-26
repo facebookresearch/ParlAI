@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 @testing_utils.skipUnlessGPU
@@ -13,10 +13,11 @@ class TestBertModel(unittest.TestCase):
     """
     Test of Bert biencoder and crossencoder.
 
-    Checks that Both Biencoder and CrossEncoder of Bert can be trained
-    for about 100 samples on convai2
+    Checks that Both Biencoder and CrossEncoder of Bert can be trained for about 100
+    samples on convai2
     """
 
+    @testing_utils.retry(ntries=3, log_retry=True)
     def test_biencoder(self):
         stdout, valid, test = testing_utils.train_model(
             dict(
@@ -39,6 +40,7 @@ class TestBertModel(unittest.TestCase):
             'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
         )
 
+    @testing_utils.retry(ntries=3, log_retry=True)
     def test_crossencoder(self):
         stdout, valid, test = testing_utils.train_model(
             dict(

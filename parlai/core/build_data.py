@@ -20,17 +20,95 @@ import shutil
 import hashlib
 import tqdm
 import math
-import traceback
 import zipfile
 from multiprocessing import Pool
+
+
+class DownloadableFile:
+    """
+    A class used to abstract any file that has to be downloaded online.
+
+    Any task that needs to download a file needs to have a list RESOURCES
+    that have objects of this class as elements.
+
+    This class provides the following functionality:
+
+    - Download a file from a URL / Google Drive
+    - Untar the file if zipped
+    - Checksum for the downloaded file
+    - Send HEAD request to validate URL or Google Drive link
+
+    An object of this class needs to be created with:
+
+    - url <string> : URL or Google Drive id to download from
+    - file_name <string> : File name that the file should be named
+    - hashcode <string> : SHA256 hashcode of the downloaded file
+    - zipped <boolean> : False if the file is not compressed
+    - from_google <boolean> : True if the file is from Google Drive
+    """
+
+    def __init__(self, url, file_name, hashcode, zipped=True, from_google=False):
+        self.url = url
+        self.file_name = file_name
+        self.hashcode = hashcode
+        self.zipped = zipped
+        self.from_google = from_google
+
+    def checksum(self, dpath):
+        """
+        Checksum on a given file.
+
+        :param dpath: path to the downloaded file.
+        """
+        sha256_hash = hashlib.sha256()
+        with open(os.path.join(dpath, self.file_name), "rb") as f:
+            for byte_block in iter(lambda: f.read(65536), b""):
+                sha256_hash.update(byte_block)
+            if sha256_hash.hexdigest() != self.hashcode:
+                # remove_dir(dpath)
+                raise AssertionError(
+                    f"[ Checksum for {self.file_name} from \n{self.url}\n"
+                    "does not match the expected checksum. Please try again. ]"
+                )
+            else:
+                print("[ Checksum Successful ]")
+
+    def download_file(self, dpath):
+        if self.from_google:
+            download_from_google_drive(self.url, os.path.join(dpath, self.file_name))
+        else:
+            download(self.url, dpath, self.file_name)
+
+        self.checksum(dpath)
+
+        if self.zipped:
+            untar(dpath, self.file_name)
+
+    def check_header(self):
+        """
+        Performs a HEAD request to check if the URL / Google Drive ID is live.
+        """
+        session = requests.Session()
+        if self.from_google:
+            URL = 'https://docs.google.com/uc?export=download'
+            response = session.head(URL, params={'id': self.url}, stream=True)
+        else:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
+            }
+            response = session.head(self.url, allow_redirects=True, headers=headers)
+        status = response.status_code
+        session.close()
+
+        assert status == 200
 
 
 def built(path, version_string=None):
     """
     Check if '.built' flag has been set for that task.
 
-    If a version_string is provided, this has to match, or the version
-    is regarded as not built.
+    If a version_string is provided, this has to match, or the version is regarded as
+    not built.
     """
     if version_string:
         fname = os.path.join(path, '.built')
@@ -67,8 +145,8 @@ def download(url, path, fname, redownload=False):
     """
     Download file using `requests`.
 
-    If ``redownload`` is set to false, then
-    will not download tar file again if it is present (default ``True``).
+    If ``redownload`` is set to false, then will not download tar file again if it is
+    present (default ``True``).
     """
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
@@ -152,19 +230,25 @@ def download(url, path, fname, redownload=False):
 
 
 def make_dir(path):
-    """Make the directory and any nonexistent parent directories (`mkdir -p`)."""
+    """
+    Make the directory and any nonexistent parent directories (`mkdir -p`).
+    """
     # the current working directory is a fine path
     if path != '':
         os.makedirs(path, exist_ok=True)
 
 
 def move(path1, path2):
-    """Rename the given file."""
+    """
+    Rename the given file.
+    """
     shutil.move(path1, path2)
 
 
 def remove_dir(path):
-    """Remove the given directory, if it exists."""
+    """
+    Remove the given directory, if it exists.
+    """
     shutil.rmtree(path, ignore_errors=True)
 
 
@@ -210,7 +294,9 @@ def unzip(path, fname, deleteZip=True):
 
 
 def cat(file1, file2, outfile, deleteFiles=True):
-    """Concatenate two files to an outfile, possibly deleting the originals."""
+    """
+    Concatenate two files to an outfile, possibly deleting the originals.
+    """
     with open(outfile, 'wb') as wfd:
         for f in [file1, file2]:
             with open(f, 'rb') as fd:
@@ -229,7 +315,9 @@ def _get_confirm_token(response):
 
 
 def download_from_google_drive(gd_id, destination):
-    """Use the requests package to download a file from Google Drive."""
+    """
+    Use the requests package to download a file from Google Drive.
+    """
     URL = 'https://docs.google.com/uc?export=download'
 
     with requests.Session() as session:
@@ -299,9 +387,9 @@ def modelzoo_path(datapath, path):
     """
     Map pretrain models filenames to their path on disk.
 
-    If path starts with 'models:', then we remap it to the model zoo path
-    within the data directory (default is ParlAI/data/models).
-    We download models from the model zoo if they are not here yet.
+    If path starts with 'models:', then we remap it to the model zoo path within the
+    data directory (default is ParlAI/data/models). We download models from the model
+    zoo if they are not here yet.
     """
     if path is None:
         return None
@@ -350,6 +438,9 @@ def download_multiprocess(
 ):
     """
     Download items in parallel (e.g. for an image + dialogue task)
+
+    Note: "of threading, multiprocess and pytorch.multiprocessing pick two".
+    These three don't all play well together. On OS X, may hang upon successful finish.
 
     :param urls: Array of urls to download
     :param path: directory to save items in

@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Convert a dataset into the ParlAI text format.
+"""
+Convert a dataset into the ParlAI text format.
 
 Examples
 --------
@@ -16,7 +17,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 

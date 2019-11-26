@@ -7,9 +7,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-
-SNLI_BASE_URL = 'https://nlp.stanford.edu/projects/snli/'
+RESOURCES = [
+    DownloadableFile(
+        'https://nlp.stanford.edu/projects/snli/snli_1.0.zip',
+        'snli_1.0.zip',
+        'afb3d70a5af5d8de0d9d81e2637e0fb8c22d1235c2749d83125ca43dab0dbd3e',
+    )
+]
 
 
 def build(opt):
@@ -24,14 +30,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'snli_' + version + '.zip'
-        # dataset URL
-        url = SNLI_BASE_URL + fname
-        build_data.download(url, dpath, fname)
-
-        # uncompress it
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

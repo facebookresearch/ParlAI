@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Model Code."""
+"""
+Model Code.
+"""
 
 import torch
 from torch import nn
@@ -13,11 +15,15 @@ from parlai.agents.transformer import transformer as Transformer
 
 
 class TransresnetModel(nn.Module):
-    """Actual model code for the Transresnet Agent."""
+    """
+    Actual model code for the Transresnet Agent.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command line arguments."""
+        """
+        Add command line arguments.
+        """
         Transformer.add_common_cmdline_args(argparser)
         agent = argparser.add_argument_group('TransresnetModel arguments')
         agent.add_argument(
@@ -467,11 +473,15 @@ class TransresnetModel(nn.Module):
         return loss, num_correct
 
     def freeze_text_encoder(self):
-        """Freeze the text (candidate) encoder."""
+        """
+        Freeze the text (candidate) encoder.
+        """
         self.text_encoder_frozen = True
 
     def unfreeze_text_encoder(self):
-        """Unfreeze the text (candidate) encoder."""
+        """
+        Unfreeze the text (candidate) encoder.
+        """
         self.text_encoder_frozen = False
 
     def sum_encodings(self, addends):
@@ -552,7 +562,9 @@ class TransresnetModel(nn.Module):
 
 
 def load_fasttext_embeddings(dic, embedding_dim, datapath):
-    """Load weights from fasttext_cc and put them in embeddings.weights."""
+    """
+    Load weights from fasttext_cc and put them in embeddings.weights.
+    """
     print('Initializing embeddings from fasttext_cc')
     from parlai.zoo.fasttext_cc_vectors.build import download
 
@@ -574,7 +586,9 @@ def load_fasttext_embeddings(dic, embedding_dim, datapath):
 
 
 class LinearWrapper(nn.Module):
-    """Linear layer with dropout."""
+    """
+    Linear layer with dropout.
+    """
 
     def __init__(self, in_dim, out_dim, dropout):
         super(LinearWrapper, self).__init__()
@@ -582,5 +596,7 @@ class LinearWrapper(nn.Module):
         self.dp = nn.Dropout(dropout)
 
     def forward(self, input):
-        """Forward pass."""
+        """
+        Forward pass.
+        """
         return self.lin(self.dp(input))

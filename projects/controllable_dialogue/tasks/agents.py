@@ -6,7 +6,7 @@
 
 import copy
 from .build import build, make_path
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from parlai.core.teachers import ParlAIDialogTeacher
 
 

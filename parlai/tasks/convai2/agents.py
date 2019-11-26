@@ -6,7 +6,7 @@
 
 from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FbDialogTeacher
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from .build import build
 
 import copy
@@ -91,6 +91,11 @@ class DefaultTeacher(SelfOriginalTeacher):
 
 
 class InteractiveTeacher(SelfOriginalTeacher):
+    # Dummy class to add arguments for interactive world.
+    pass
+
+
+class SelfchatTeacher(SelfOriginalTeacher):
     # Dummy class to add arguments for interactive world.
     pass
 

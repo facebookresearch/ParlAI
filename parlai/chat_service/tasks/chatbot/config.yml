@@ -1,0 +1,17 @@
+tasks:
+  default:
+    onboard_world: MessengerBotChatOnboardWorld
+    task_world: MessengerBotChatTaskWorld
+    timeout: 1800
+    agents_required: 1
+task_name: chatbot
+world_module: parlai.chat_service.tasks.chatbot.worlds
+overworld: MessengerOverworld
+page_id: 1 # Configure Your Own Page
+max_workers: 30
+opt:
+  debug: True
+  model: legacy:seq2seq:0
+  model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
+  override:
+    model: legacy:seq2seq:0

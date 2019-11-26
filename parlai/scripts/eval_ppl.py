@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Base script for model-agnostic perplexity evaluation.
+"""
+Base script for model-agnostic perplexity evaluation.
 
 While resistent to choices of model-added tokens like START and END, this
 requires fixing a specific vocabulary. Be sure to use the same build_dict
@@ -35,8 +36,8 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.misc import Timer, round_sigfigs, no_lock
+from parlai.utils.thread import SharedTable
 from parlai.core.worlds import create_task, World
 
 import copy
@@ -52,8 +53,9 @@ def setup_args(parser=None):
 
 
 class PerplexityWorld(World):
-    """Instead of just calling act/observe on each agent, this world just calls
-    act on the teacher and then calls `next_word_probability` on the agent.
+    """
+    Instead of just calling act/observe on each agent, this world just calls act on the
+    teacher and then calls `next_word_probability` on the agent.
 
     The label for each example is parsed by the provided tokenizer, and then
     for each word in the parsed label the model is given the input and all of
@@ -178,7 +180,8 @@ class PerplexityWorld(World):
 
 
 def eval_ppl(opt, build_dict=None, dict_file=None):
-    """Evaluates the the perplexity of a model.
+    """
+    Evaluates the the perplexity of a model.
 
     This uses a dictionary which implements the following functions:
     - tokenize(text): splits string up into list of tokens

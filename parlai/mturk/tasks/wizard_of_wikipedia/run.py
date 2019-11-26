@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import (
     MTurkWizardOfWikipediaWorld,
@@ -89,17 +89,17 @@ def setup_personas_with_wiki_links(opt):
 
 def main():
     """
-        Wizard of Wikipedia Data Collection Task.
+    Wizard of Wikipedia Data Collection Task.
 
-        The task involves two people holding a conversation. One dialog partner
-        chooses a topic to discuss, and then dialog proceeds.
+    The task involves two people holding a conversation. One dialog partner
+    chooses a topic to discuss, and then dialog proceeds.
 
-        One partner is the Wizard, who has access to retrieved external
-        information conditioned on the last two utterances, as well as
-        information regarding the chosen topic.
+    One partner is the Wizard, who has access to retrieved external
+    information conditioned on the last two utterances, as well as
+    information regarding the chosen topic.
 
-        The other partner is the Apprentice, who assumes the role of someone
-        eager to learn about the chosen topic.
+    The other partner is the Apprentice, who assumes the role of someone
+    eager to learn about the chosen topic.
     """
     argparser = ParlaiParser(False, False)
     DictionaryAgent.add_cmdline_args(argparser)
@@ -213,7 +213,9 @@ def main():
             for worker in workers:
                 worker_id = worker.worker_id
                 if worker_id not in worker_roles:
-                    '''Something went wrong...'''
+                    """
+                    Something went wrong...
+                    """
                     continue
                 role = worker_roles[worker_id]
                 if role not in valid_workers:

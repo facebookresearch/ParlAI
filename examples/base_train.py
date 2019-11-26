@@ -3,9 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic template of training loop.
-We create an agent that will train on the training task, and be evaluated
-on the validation version of the task.
+"""
+Basic template of training loop. We create an agent that will train on the training
+task, and be evaluated on the validation version of the task.
 
 We then do one iteration over ten training examples and one validation example,
 printing reports from those tasks after completing those iterations.
@@ -19,6 +19,7 @@ processing the data.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task
+from parlai.utils.logging import logger
 import time
 
 
@@ -42,21 +43,21 @@ def main():
     start = time.time()
     # train / valid loop
     for _ in range(1):
-        print('[ training ]')
+        logger.info('[ training ]')
         for _ in range(opt['num_iters']):  # train for a bit
             world_train.parley()
 
-        print('[ training summary. ]')
-        print(world_train.report())
+        logger.info('[ training summary. ]')
+        logger.info(world_train.report())
 
-        print('[ validating ]')
+        logger.info('[ validating ]')
         for _ in range(1):  # check valid accuracy
             world_valid.parley()
 
-        print('[ validation summary. ]')
-        print(world_valid.report())
+        logger.info('[ validation summary. ]')
+        logger.info(world_valid.report())
 
-    print('finished in {} s'.format(round(time.time() - start, 2)))
+    logger.info('finished in {} s'.format(round(time.time() - start, 2)))
 
 
 if __name__ == '__main__':

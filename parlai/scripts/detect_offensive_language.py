@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic example which iterates through the tasks specified and
-checks them for offensive language.
+"""
+Basic example which iterates through the tasks specified and checks them for offensive
+language.
 
 Examples
 --------
@@ -16,7 +17,8 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import OffensiveLanguageDetector, TimeLogger
+from parlai.utils.safety import OffensiveStringMatcher
+from parlai.utils.misc import TimeLogger
 
 import random
 
@@ -34,7 +36,8 @@ def setup_args(parser=None):
 
 
 def detect(opt, printargs=None, print_parser=None):
-    """Checks a task for offensive language.
+    """
+    Checks a task for offensive language.
     """
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
@@ -46,7 +49,7 @@ def detect(opt, printargs=None, print_parser=None):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-    bad = OffensiveLanguageDetector()
+    bad = OffensiveStringMatcher()
 
     if print_parser:
         # Show arguments after loading model

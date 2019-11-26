@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 SKIP_TESTS = False
 try:
@@ -20,7 +20,9 @@ LR = 1e-2
 
 
 class TestFairseq(unittest.TestCase):
-    """Checks that fairseq can learn some very basic tasks."""
+    """
+    Checks that fairseq can learn some very basic tasks.
+    """
 
     @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")

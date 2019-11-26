@@ -6,21 +6,22 @@
 """
 Provides standard metric evaluations for dialog.
 
-Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
-between processes.
+Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics between
+processes.
 """
 
-from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, no_lock
+from parlai.utils.thread import SharedTable
+from parlai.utils.misc import round_sigfigs, no_lock
 from collections import Counter
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from numbers import Number
 
 import re
 
-DEFAULT_METRICS = {'correct', 'bleu', 'accuracy', 'f1'}
+DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
-ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS
+BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3'}
+ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS
 
 
 try:
@@ -42,7 +43,9 @@ re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
 
 def normalize_answer(s):
-    """Lower text and remove punctuation, articles and extra whitespace."""
+    """
+    Lower text and remove punctuation, articles and extra whitespace.
+    """
 
     def remove_articles(text):
         return re_art.sub(' ', text)
@@ -105,7 +108,9 @@ def aggregate_task_reports(reports, tasks, micro=False):
 
 
 def _exact_match(guess, answers):
-    """Check if guess is a (normalized) exact match with any answer."""
+    """
+    Check if guess is a (normalized) exact match with any answer.
+    """
     if guess is None or answers is None:
         return False
     guess = normalize_answer(guess)
@@ -135,7 +140,9 @@ def _prec_recall_f1_score(pred_items, gold_items):
 
 
 def _f1_score(guess, answers):
-    """Return the max F1 score between the guess and *any* answer."""
+    """
+    Return the max F1 score between the guess and *any* answer.
+    """
     if guess is None or answers is None:
         return 0
     g_tokens = normalize_answer(guess).split()
@@ -145,8 +152,10 @@ def _f1_score(guess, answers):
     return max(f1 for p, r, f1 in scores)
 
 
-def _bleu(guess, answers):
-    """Compute approximate BLEU score between guess and a set of answers."""
+def _bleu(guess, answers, weights=None):
+    """
+    Compute approximate BLEU score between guess and a set of answers.
+    """
     if nltkbleu is None:
         # bleu library not installed, just return a default value
         return None
@@ -156,10 +165,14 @@ def _bleu(guess, answers):
     # going to be slower than fairseq's (which is written in C), but fairseq's
     # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
     # works with strings, which is better suited for this module.
+    if weights is None:
+        # default bleu-4
+        weights = [1 / 4 for _ in range(4)]
     return nltkbleu.sentence_bleu(
         [normalize_answer(a).split(" ") for a in answers],
         normalize_answer(guess).split(" "),
         smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
+        weights=weights,
     )
 
 
@@ -189,7 +202,9 @@ def _rouge(guess, answers):
 
 
 def aggregate_metrics(reporters):
-    """Aggregate metrics from multiple reports."""
+    """
+    Aggregate metrics from multiple reports.
+    """
     # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
@@ -231,7 +246,9 @@ def aggregate_metrics(reporters):
 
 
 class Metrics(object):
-    """Class that maintains evaluation metrics over dialog."""
+    """
+    Class that maintains evaluation metrics over dialog.
+    """
 
     def __init__(self, opt):
         self.metrics = {}
@@ -250,18 +267,18 @@ class Metrics(object):
             if each_m.startswith('rouge'):
                 if rouge is not None:
                     # only compute rouge if rouge is available
-                    self.metrics_list.add('rouge')
+                    self.metrics_list.add(each_m)
             elif each_m == 'bleu' and nltkbleu is None:
                 # only compute bleu if bleu is available
                 pass
             else:
                 self.metrics_list.add(each_m)
-        metrics_list = (
+        self._print_metrics_list = (
             self.metrics_list
             if 'rouge' not in self.metrics_list
             else self.metrics_list | ROUGE_METRICS
         )
-        for k in metrics_list:
+        for k in self._print_metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
         self.eval_pr = [1, 5, 10, 100]
@@ -316,7 +333,9 @@ class Metrics(object):
                 self.metrics['hits@_cnt'] += 1
 
     def update(self, observation, labels):
-        """Update metrics based on an observation and true labels."""
+        """
+        Update metrics based on an observation and true labels.
+        """
         with self._lock():
             self.metrics['cnt'] += 1
 
@@ -334,18 +353,27 @@ class Metrics(object):
             # F1 and BLEU metrics.
             if 'f1' in self.metrics_list:
                 f1 = _f1_score(prediction, labels)
-            if 'bleu' in self.metrics_list:
-                bleu = _bleu(prediction, labels)
-            if 'rouge' in self.metrics_list:
+            bleu_scores = {}
+            rouge1 = rouge2 = rougeL = None
+            if 'bleu-4' in self.metrics_list:
+                bleu_scores['bleu-4'] = _bleu(prediction, labels)
+            if 'bleu-1' in self.metrics_list:
+                for i in range(3):
+                    weights = [1 / (i + 1) for _ in range(i + 1)]
+                    bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
+            if 'rouge-L' in self.metrics_list:
                 rouge1, rouge2, rougeL = _rouge(prediction, labels)
-
             with self._lock():
                 if 'f1' in self.metrics:
                     self.metrics['f1'] += f1
                     self.metrics['f1_cnt'] += 1
-                if 'bleu' in self.metrics:
-                    self.metrics['bleu'] += bleu
-                    self.metrics['bleu_cnt'] += 1
+                if 'bleu-4' in self.metrics:
+                    self.metrics['bleu-4'] += bleu_scores.pop('bleu-4')
+                    self.metrics['bleu-4_cnt'] += 1
+                if 'bleu-1' in self.metrics:
+                    for b, b_score in bleu_scores.items():
+                        self.metrics[b] += b_score
+                        self.metrics[f'{b}_cnt'] += 1
                 if 'rouge-L' in self.metrics and rouge1 is not None:
                     self.metrics['rouge-1'] += rouge1
                     self.metrics['rouge-1_cnt'] += 1
@@ -386,7 +414,9 @@ class Metrics(object):
         return loss
 
     def report(self):
-        """Report the metrics over all data seen so far."""
+        """
+        Report the metrics over all data seen so far.
+        """
         m = {}
         total = self.metrics['cnt']
         m['exs'] = total
@@ -407,7 +437,7 @@ class Metrics(object):
                         / max(1, self.metrics['hits@_cnt']),
                         3,
                     )
-            for k in self.metrics_list:
+            for k in self._print_metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(
                         self.metrics[k] / max(1, self.metrics[k + '_cnt']), 4
@@ -415,7 +445,9 @@ class Metrics(object):
         return m
 
     def clear(self):
-        """Clear all the metrics."""
+        """
+        Clear all the metrics.
+        """
         # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
             self.metrics['cnt'] = 0

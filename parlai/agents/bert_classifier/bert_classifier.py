@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""BERT classifier agent uses bert embeddings to make an utterance-level classification."""
+"""
+BERT classifier agent uses bert embeddings to make an utterance-level classification.
+"""
 
 from parlai.agents.bert_ranker.bert_dictionary import BertDictionaryAgent
 from parlai.agents.bert_ranker.helpers import (
@@ -12,10 +14,9 @@ from parlai.agents.bert_ranker.helpers import (
     get_bert_optimizer,
     MODEL_PATH,
 )
-from parlai.core.utils import load_opt_file
 from parlai.core.torch_agent import History
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from parlai.zoo.bert.build import download
 
 from collections import deque
@@ -34,14 +35,18 @@ except ImportError:
 
 
 class BertClassifierHistory(History):
-    """Handles tokenization history."""
+    """
+    Handles tokenization history.
+    """
 
     def __init__(self, opt, **kwargs):
         self.sep_last_utt = opt.get('sep_last_utt', False)
         super().__init__(opt, **kwargs)
 
     def get_history_vec(self):
-        """Override from parent class to possibly add [SEP] token."""
+        """
+        Override from parent class to possibly add [SEP] token.
+        """
         if not self.sep_last_utt or len(self.history_vecs) <= 1:
             return super().get_history_vec()
 
@@ -56,7 +61,9 @@ class BertClassifierHistory(History):
 
 
 class BertClassifierAgent(TorchClassifierAgent):
-    """Classifier based on BERT implementation."""
+    """
+    Classifier based on BERT implementation.
+    """
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -71,12 +78,16 @@ class BertClassifierAgent(TorchClassifierAgent):
 
     @classmethod
     def history_class(cls):
-        """Determine the history class."""
+        """
+        Determine the history class.
+        """
         return BertClassifierHistory
 
     @staticmethod
     def add_cmdline_args(parser):
-        """Add CLI args."""
+        """
+        Add CLI args.
+        """
         TorchClassifierAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('BERT Classifier Arguments')
         parser.add_argument(
@@ -110,12 +121,16 @@ class BertClassifierAgent(TorchClassifierAgent):
 
     @staticmethod
     def dictionary_class():
-        """Determine the dictionary class."""
+        """
+        Determine the dictionary class.
+        """
         return BertDictionaryAgent
 
     @classmethod
     def upgrade_opt(cls, opt_on_disk):
-        """Upgrade opts from older model files."""
+        """
+        Upgrade opts from older model files.
+        """
         super(BertClassifierAgent, cls).upgrade_opt(opt_on_disk)
 
         # 2019-06-25: previous versions of the model did not add a CLS token
@@ -127,12 +142,16 @@ class BertClassifierAgent(TorchClassifierAgent):
         return opt_on_disk
 
     def build_model(self):
-        """Construct the model."""
+        """
+        Construct the model.
+        """
         num_classes = len(self.class_list)
         return BertWrapper(BertModel.from_pretrained(self.pretrained_path), num_classes)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        """Initialize the optimizer."""
+        """
+        Initialize the optimizer.
+        """
         self.optimizer = get_bert_optimizer(
             [self.model], self.opt['type_optimization'], self.opt['learningrate']
         )
@@ -152,7 +171,9 @@ class BertClassifierAgent(TorchClassifierAgent):
         return obs
 
     def score(self, batch):
-        """Score the batch."""
+        """
+        Score the batch.
+        """
         segment_idx = (batch.text_vec * 0).long()
         if self.sep_last_utt:
             batch_len = batch.text_vec.size(1)
