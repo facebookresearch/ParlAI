@@ -490,10 +490,14 @@ class PolyBasicAttention(BasicAttention):
 
 
 class IRFriendlyPolyencoderAgent(AddLabelFixedCandsTRA, PolyencoderAgent):
-    """Poly-encoder agent that allows for adding label to fixed cands."""
+    """
+    Poly-encoder agent that allows for adding label to fixed cands.
+    """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add cmd line args."""
+        """
+        Add cmd line args.
+        """
         super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
         super(PolyencoderAgent, cls).add_cmdline_args(argparser)

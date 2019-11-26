@@ -4,16 +4,17 @@
 """
 Bi-encoder Agent.
 """
-
+import torch
 from .transformer import TransformerRankerAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 
 
 class AddLabelFixedCandsTRA(TorchRankerAgent):
-    """Override TorchRankerAgent to include label in fixed cands set.
+    """
+    Override TorchRankerAgent to include label in fixed cands set.
 
-    Necessary for certain IR tasks where given candidate set does not contain
-    example labels.
+    Necessary for certain IR tasks where given candidate set does not contain example
+    labels.
     """
 
     def __init__(self, opt, shared=None):
@@ -24,7 +25,9 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Override to include new arg."""
+        """
+        Override to include new arg.
+        """
         super(TorchRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('AddLabelFixedCandsTRA')
         agent.add_argument(
@@ -64,14 +67,18 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
         return (cands, cand_vecs, label_inds)
 
     def train_step(self, batch):
-        """Override to clean up candidates."""
+        """
+        Override to clean up candidates.
+        """
         output = super().train_step(batch)
         if self.candidates == 'fixed':
             self.fixed_candidates = self.fixed_candidates[: self.num_fixed_candidates]
         return output
 
     def eval_step(self, batch):
-        """Override to clean up candidates."""
+        """
+        Override to clean up candidates.
+        """
         output = super().eval_step(batch)
         if self.eval_candidates == 'fixed':
             self.fixed_candidates = self.fixed_candidates[: self.num_fixed_candidates]
@@ -120,10 +127,14 @@ class BiencoderAgent(TransformerRankerAgent):
 
 
 class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA, BiencoderAgent):
-    """Bi-encoder agent that allows for adding label to fixed cands."""
+    """
+    Bi-encoder agent that allows for adding label to fixed cands.
+    """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add cmd line args."""
+        """
+        Add cmd line args.
+        """
         super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
         super(BiencoderAgent, cls).add_cmdline_args(argparser)
