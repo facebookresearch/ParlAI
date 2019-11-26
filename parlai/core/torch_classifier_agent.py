@@ -85,16 +85,28 @@ class TorchClassifierAgent(TorchAgent):
             default=True,
             help='give prec/recall metrics for all classes',
         )
+        parser.add_argument(
+            '--classes-from-file',
+            type=str,
+            default=None,
+            help='loads the list of classes from a file',
+        )
 
     def __init__(self, opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
         # set up classes
-        if opt.get('classes') is None:
-            raise RuntimeError('Must specify --classes argument.')
+        if opt.get('classes') is None and opt.get('classes_from_file') is None:
+            raise RuntimeError(
+                'Must specify --classes or --classes-from-file argument.'
+            )
         if not shared:
-            self.class_list = opt['classes']
+            if opt['classes_from_file'] is not None:
+                with open(opt['classes_from_file']) as f:
+                    self.class_list = f.read().splitlines()
+            else:
+                self.class_list = opt['classes']
             self.class_dict = {val: i for i, val in enumerate(self.class_list)}
             if opt.get('class_weights', None) is not None:
                 self.class_weights = opt['class_weights']
