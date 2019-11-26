@@ -9,7 +9,8 @@ Provides utilities useful for multiprocessing.
 This includes a ``SharedTable``.
 """
 
-from multiprocessing import Lock, RawArray
+from multiprocessing import Lock
+from multiprocessing import RawArray  # type: ignore
 from collections.abc import MutableMapping
 import ctypes
 import sys

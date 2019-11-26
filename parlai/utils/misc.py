@@ -678,7 +678,7 @@ def display_messages(
 
     def _token_losses_line(
         msg: Dict[str, Any], ignore_fields: List[str], space: str
-    ) -> str:
+    ) -> Optional[str]:
         """
         Displays the loss associated with each token. Can be used for debugging generative models.
 
@@ -906,7 +906,7 @@ def padded_tensor(
     # number of items
     n = len(items)
     # length of each item
-    lens = [len(item) for item in items]
+    lens: List[int] = [len(item) for item in items]  # type: ignore
     # max in time dimension
     t = max(lens) if max_len is None else max_len
 
@@ -919,9 +919,9 @@ def padded_tensor(
 
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
-        output = items[0].new(n, t)
+        output = items[0].new(n, t)  # type: ignore
     else:
-        output = torch.LongTensor(n, t)
+        output = torch.LongTensor(n, t)  # type: ignore
     output.fill_(pad_idx)
 
     for i, (item, length) in enumerate(zip(items, lens)):
@@ -930,7 +930,7 @@ def padded_tensor(
             continue
         if not isinstance(item, torch.Tensor):
             # put non-tensors into a tensor
-            item = torch.LongTensor(item)
+            item = torch.LongTensor(item)  # type: ignore
         if left_padded:
             # place at end
             output[i, t - length :] = item
