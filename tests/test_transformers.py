@@ -712,7 +712,8 @@ class TestLearningRateScheduler(unittest.TestCase):
             batchsize=1,
             warmup_updates=1,
             lr_scheduler='invsqrt',
-            num_epochs=9 / 500,
+            n_layers=1,
+            n_heads=1,
         )
 
         args['num_epochs'] = 9 / 500
