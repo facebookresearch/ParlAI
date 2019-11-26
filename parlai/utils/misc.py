@@ -13,7 +13,7 @@ import pickle
 import random
 import time
 import traceback
-from typing import Type, Union, Optional, Set, Tuple, Any, Dict, List
+from typing import Type, Union, Optional, Set, Tuple, Any, Dict, List, Sized
 import warnings
 
 from parlai.core.message import Message
@@ -21,6 +21,7 @@ from parlai.core.message import Message
 # some of the utility methods are helpful for Torch
 try:
     import torch
+    import torch.optim
 
     # default type in padded3d needs to be protected if torch
     # isn't installed.
@@ -943,7 +944,13 @@ def padded_tensor(
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
+def padded_3d(
+    tensors: List[torch.LongTensor],
+    pad_idx: int = 0,
+    use_cuda: bool = False,
+    dtype: Optional[torch.dtype] = TORCH_LONG,
+    fp16friendly: bool = False,
+):
     """
     Make 3D padded tensor for list of lists of 1D tensors or lists.
 
@@ -960,8 +967,8 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=Fal
         3D tensor with the maximum dimensions of the inputs
     """
     a = len(tensors)
-    b = max(len(row) for row in tensors)
-    c = max(len(item) for row in tensors for item in row)
+    b = max(len(row) for row in tensors)  # type: ignore
+    c = max(len(item) for row in tensors for item in row)  # type: ignore
 
     # pad empty tensors
     if fp16friendly and c % 8 != 0:
@@ -971,7 +978,8 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=Fal
     output = torch.full((a, b, c), pad_idx, dtype=dtype)
 
     for i, row in enumerate(tensors):
-        for j, item in enumerate(row):
+        item: Sized
+        for j, item in enumerate(row):  # type: ignore
             if len(item) == 0:
                 continue
             if not isinstance(item, torch.Tensor):
@@ -984,7 +992,7 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=Fal
     return output
 
 
-def argsort(keys, *lists, descending=False):
+def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
     """
     Reorder each list in lists by the (descending) sorted order of keys.
 
@@ -1015,7 +1023,7 @@ def argsort(keys, *lists, descending=False):
 _seen_warnings: Set[str] = set()
 
 
-def warn_once(msg, warningtype=None):
+def warn_once(msg: str, warningtype=None) -> None:
     """
     Raise a warning, but only once.
 
@@ -1029,7 +1037,10 @@ def warn_once(msg, warningtype=None):
 
 
 def fp16_optimizer_wrapper(
-    optimizer, verbose=False, dynamic_loss_scale=True, loss_initial_scale=2.0 ** 17
+    optimizer: torch.optim.Optimizer,  # type: ignore
+    verbose: bool = False,
+    dynamic_loss_scale: bool = True,
+    loss_initial_scale: float = 2.0 ** 17,
 ):
     """
     Wrap the an optimizer with FP16 loss scaling protection.
