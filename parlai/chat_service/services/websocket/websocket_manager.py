@@ -67,7 +67,7 @@ class WebsocketManager(ChatServiceManager):
     def _load_model(self):
         """Load model if necessary"""
         if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _handle_message_read(self, event):
         """Send read receipt back to user who sent message
@@ -115,7 +115,10 @@ class WebsocketManager(ChatServiceManager):
                 world_config = self.task_configs[world_type]
                 if world_config.max_time_in_pool is not None:
                     self.check_timeout_in_pool(
-                        world_type, agent_pool, world_config.max_time_in_pool
+                        world_type,
+                        agent_pool,
+                        world_config.max_time_in_pool,
+                        world_config.backup_task,
                     )
 
                 needed_agents = self.max_agents_for[world_type]
@@ -264,6 +267,9 @@ class WebsocketManager(ChatServiceManager):
         payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())
+        if socket_id not in MessageSocketHandler.subs:
+            self.agent_id_to_overworld_future[socket_id].cancel()
+            return
         return MessageSocketHandler.subs[socket_id].write_message(message)
 
     def restructure_message(self):

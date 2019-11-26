@@ -174,11 +174,10 @@ class MessengerManager:
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
         # Deepcopy the opts so the manager opts aren't changed by the world runner
-        runner_opt = copy.deepcopy(opt)
+        self.runner_opt = copy.deepcopy(opt)
         self.world_runner = MessengerWorldRunner(
-            runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
+            self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )
-        self._load_model(runner_opt)
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
         }
@@ -195,11 +194,12 @@ class MessengerManager:
         self.init_new_state()
         self.setup_socket()
         self.start_new_run()
+        self._load_model()
 
-    def _load_model(self, runner_opt):
+    def _load_model(self):
         """Load model if necessary."""
-        if 'model_file' in runner_opt or 'model' in runner_opt:
-            runner_opt['shared_bot_params'] = create_agent(runner_opt).share()
+        if 'model_file' in self.opt or 'model' in self.opt:
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
         """Initialize logging settings from the opt."""
@@ -609,7 +609,9 @@ class MessengerManager:
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
-    def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+    def check_timeout_in_pool(
+        self, world_type, agent_pool, max_time_in_pool, backup_task=None
+    ):
         """Check for timed-out agents in pool.
 
         :param world_type:
@@ -618,6 +620,8 @@ class MessengerManager:
             list of ``AgentState``s
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
+        :param backup_task:
+            string backup_task to start if we reach a timeout in the original pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
@@ -629,6 +633,9 @@ class MessengerManager:
 
                 agent_state.stored_data['removed_after_timeout'] = True
                 self.after_agent_removed(agent_state.messenger_id)
+
+                if backup_task is not None:
+                    self.add_agent_to_pool(agent_state, backup_task)
 
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
@@ -695,7 +702,10 @@ class MessengerManager:
                     world_config = self.task_configs[world_type]
                     if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, world_config.max_time_in_pool
+                            world_type,
+                            agent_pool,
+                            world_config.max_time_in_pool,
+                            world_config.backup_task,
                         )
 
                     needed_agents = self.max_agents_for[world_type]
