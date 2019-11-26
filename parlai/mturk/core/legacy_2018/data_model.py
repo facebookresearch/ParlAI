@@ -17,9 +17,9 @@ param COMMAND_SUBMIT_HIT ........ / MTurk web client should submit the HIT direc
 COMMAND_CHANGE_CONVERSATION / MTurk web client should change conversations |
 'conversation_id' holds the new conversation_id \\'agent_id' holds the new display id
 for the agent COMMAND_RESTORE_STATE ..... / MTurk web client should restore the state of
-a                             |  disconnected conversation. The previously sent
-|  messages are in the 'messages' param, and the                             \\ last
-sent command is in 'last_command' COMMAND_INACTIVE_HIT ...... / MTurk web client should
+a                             |  disconnected conversation. The previously sent |
+messages are in the 'messages' param, and the                             \\ last sent
+command is in 'last_command' COMMAND_INACTIVE_HIT ...... / MTurk web client should
 remove the done button                             |  and text box and instead display
 the contents of \\ 'inactive_text' param. COMMAND_INACTIVE_DONE ..... / MTurk web client
 should show the "DONE" button                             |  and display the contents of
