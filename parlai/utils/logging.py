@@ -30,6 +30,7 @@ class ParlaiLogger(logging.Logger):
     ):
         """
         Initialize the logger object.
+
         :param name:
             Name of the logger
         :param console_level:
@@ -70,15 +71,18 @@ class ParlaiLogger(logging.Logger):
         self.altStream = None
 
     def log(self, msg, level=INFO):
-        """Default Logging function."""
+        """
+        Default Logging function.
+        """
         super().log(level, msg)
 
     def add_file_handler(self, filename, level=INFO, format=None):
         """
         Add a file handler to the logger object.
-        Use case: When logging using the logger object instead of instantiating a new ParlaiLogger
-                  this function might  be useful to add a filehandler on the go.
-        Only does so if there is no file handler existing.
+
+        Use case: When logging using the logger object instead of instantiating a new
+        ParlaiLogger           this function might  be useful to add a filehandler on
+        the go. Only does so if there is no file handler existing.
         """
         if not hasattr(self, 'fileHandler'):
             if format is None:
@@ -92,7 +96,9 @@ class ParlaiLogger(logging.Logger):
             raise Exception("ParlaiLogger: A filehandler already exists")
 
     def add_format_prefix(self, prefix):
-        """Include `prefix` in all future logging statements."""
+        """
+        Include `prefix` in all future logging statements.
+        """
         # change both handler formatters to add a prefix
         new_str = prefix + " " + '%(message)s'
 
@@ -114,35 +120,47 @@ class ParlaiLogger(logging.Logger):
             self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
 
     def set_format(self, fmt):
-        """Set format after instantiation"""
+        """
+        Set format after instantiation.
+        """
         self.streamHandler.setFormatter(logging.Formatter(fmt))
         if hasattr(self, 'fileHandler'):
             self.fileHandler.setFormatter(logging.Formatter(fmt))
 
     def reset_formatters(self):
-        """Resort back to initial formatting."""
+        """
+        Resort back to initial formatting.
+        """
         if hasattr(self, 'fileHandler'):
             self.fileHandler.setFormatter(self.fileFormatter)
         self.streamHandler.setFormatter(self.consoleFormatter)
 
     def mute(self):
-        """Stop logging to stdout."""
+        """
+        Stop logging to stdout.
+        """
         prev_level = self.streamHandler.level
         self.streamHandler.level = float('inf')
         return prev_level
 
     def unmute(self, level):
-        """Resume logging to stdout."""
+        """
+        Resume logging to stdout.
+        """
         self.streamHandler.level = level
 
     def redirect_out(self, stream):
-        """Redirect all logging output to `stream`."""
+        """
+        Redirect all logging output to `stream`.
+        """
         self.altStream = stream
         self.altStreamHandler = logging.StreamHandler(self.altStream)
         super().addHandler(self.altStreamHandler)
 
     def stop_redirect_out(self):
-        """Stop redirecting output to alternate stream."""
+        """
+        Stop redirecting output to alternate stream.
+        """
         if self.altStream is None:
             raise Exception('No existing redirection.')
         else:

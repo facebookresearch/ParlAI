@@ -19,7 +19,8 @@ SOCKET_TIMEOUT = 6
 
 # Socket handler
 class ChatServiceMessageSocket:
-    """ChatServiceMessageSocket is a wrapper around websocket to forward messages from the
+    """
+    ChatServiceMessageSocket is a wrapper around websocket to forward messages from the
     remote server to the ChatServiceManager.
     """
 
@@ -69,7 +70,9 @@ class ChatServiceMessageSocket:
             pass
 
     def _send_world_alive(self):
-        """Registers world with the passthrough server"""
+        """
+        Registers world with the passthrough server.
+        """
         self._safe_send(
             json.dumps(
                 {
@@ -81,7 +84,9 @@ class ChatServiceMessageSocket:
         )
 
     def _setup_socket(self):
-        """Create socket handlers and registers the socket"""
+        """
+        Create socket handlers and registers the socket.
+        """
 
         def on_socket_open(*args):
             shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
@@ -107,8 +112,10 @@ class ChatServiceMessageSocket:
                 self._ensure_closed()
 
         def on_disconnect(*args):
-            """Disconnect event is a no-op for us, as the server reconnects
-            automatically on a retry"""
+            """
+            Disconnect event is a no-op for us, as the server reconnects automatically
+            on a retry.
+            """
             shared_utils.print_and_log(
                 logging.INFO, 'World server disconnected: {}'.format(args)
             )
@@ -116,7 +123,9 @@ class ChatServiceMessageSocket:
             self._ensure_closed()
 
         def on_message(*args):
-            """Incoming message handler for messages from the FB user"""
+            """
+            Incoming message handler for messages from the FB user.
+            """
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':
                 self.alive = True
@@ -168,7 +177,8 @@ class ChatServiceMessageSocket:
 
 
 class ChatServiceWorldRunner:
-    """World Runner.
+    """
+    World Runner.
 
     Launches worlds, overworlds, etc. Helper for ChatServiceManager.
     """
@@ -190,7 +200,9 @@ class ChatServiceWorldRunner:
             utils.print_and_log(logging.INFO, "{} DEBUG: {}".format(time, text))
 
     def shutdown(self):
-        """Shutdown the world runner."""
+        """
+        Shutdown the world runner.
+        """
         for _, task in self.tasks.items():
             if task.world is not None:
                 task.world.shutdown()
@@ -201,7 +213,8 @@ class ChatServiceWorldRunner:
         self._log("Shutdown complete.")
 
     def _run_world(self, task, world_name, agents):
-        """Run a world until completion.
+        """
+        Run a world until completion.
 
         :param task:
             TaskState. State of the given task.
@@ -229,7 +242,8 @@ class ChatServiceWorldRunner:
         return ret_val, world_data
 
     def launch_task_world(self, task_name, world_name, agents):
-        """Launch a task world.
+        """
+        Launch a task world.
 
         Return the job's future.
 
@@ -255,7 +269,8 @@ class ChatServiceWorldRunner:
         return fut
 
     def launch_overworld(self, task_name, overworld_name, onboard_map, overworld_agent):
-        """Launch an overworld and a subsequent onboarding world.
+        """
+        Launch an overworld and a subsequent onboarding world.
 
         Return the job's future
 

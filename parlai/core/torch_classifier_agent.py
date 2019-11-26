@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Torch Classifier Agents classify text into a fixed set of labels."""
+"""
+Torch Classifier Agents classify text into a fixed set of labels.
+"""
 
 
 from parlai.utils.distributed import is_distributed
@@ -20,13 +22,15 @@ class TorchClassifierAgent(TorchAgent):
     """
     Abstract Classifier agent. Only meant to be extended.
 
-    TorchClassifierAgent aims to handle much of the bookkeeping any
-    classification model.
+    TorchClassifierAgent aims to handle much of the bookkeeping any classification
+    model.
     """
 
     @staticmethod
     def add_cmdline_args(parser):
-        """Add CLI args."""
+        """
+        Add CLI args.
+        """
         TorchAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('Torch Classifier Arguments')
         # class arguments
@@ -162,7 +166,9 @@ class TorchClassifierAgent(TorchAgent):
         return torch.nn.CrossEntropyLoss(weight_tensor)
 
     def share(self):
-        """Share model parameters."""
+        """
+        Share model parameters.
+        """
         shared = super().share()
         shared['class_dict'] = self.class_dict
         shared['class_list'] = self.class_list
@@ -202,7 +208,9 @@ class TorchClassifierAgent(TorchAgent):
             self.metrics['confusion_matrix'][(label, pred)] += 1
 
     def _format_interactive_output(self, probs, prediction_id):
-        """Format interactive mode output with scores."""
+        """
+        Format interactive mode output with scores.
+        """
         preds = []
         for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
@@ -214,7 +222,9 @@ class TorchClassifierAgent(TorchAgent):
         return preds
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         if batch.text_vec is None:
             return Output()
         self.model.train()
@@ -239,7 +249,9 @@ class TorchClassifierAgent(TorchAgent):
         return Output(preds)
 
     def eval_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         if batch.text_vec is None:
             return
 
@@ -268,7 +280,9 @@ class TorchClassifierAgent(TorchAgent):
         return Output(preds)
 
     def reset_metrics(self):
-        """Reset metrics."""
+        """
+        Reset metrics.
+        """
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
         self.metrics['examples'] = 0
@@ -312,7 +326,9 @@ class TorchClassifierAgent(TorchAgent):
         return num_actual_positives
 
     def report(self):
-        """Report loss as well as precision, recall, and F1 metrics."""
+        """
+        Report loss as well as precision, recall, and F1 metrics.
+        """
         m = super().report()
         examples = self.metrics['examples']
         if examples > 0:

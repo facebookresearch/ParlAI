@@ -13,7 +13,9 @@ LR = 1
 
 
 class TestSeq2Seq(unittest.TestCase):
-    """Checks that seq2seq can learn some very basic tasks."""
+    """
+    Checks that seq2seq can learn some very basic tasks.
+    """
 
     @testing_utils.retry(ntries=3)
     def test_ranking(self):
@@ -43,7 +45,9 @@ class TestSeq2Seq(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_generation(self):
-        """This test uses a single-turn sequence repitition task."""
+        """
+        This test uses a single-turn sequence repitition task.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -72,7 +76,9 @@ class TestSeq2Seq(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
-        """Ensures beam search can generate the correct response"""
+        """
+        Ensures beam search can generate the correct response.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -110,7 +116,9 @@ class TestSeq2Seq(unittest.TestCase):
         )
 
     def test_badinput(self):
-        """Ensures model doesn't crash on malformed inputs."""
+        """
+        Ensures model doesn't crash on malformed inputs.
+        """
         stdout, _, _ = testing_utils.train_model(
             dict(
                 task='integration_tests:bad_example',
@@ -133,7 +141,9 @@ class TestSeq2Seq(unittest.TestCase):
 class TestHogwildSeq2seq(unittest.TestCase):
     @testing_utils.skipIfGPU
     def test_generation_multi(self):
-        """This test uses a multi-turn task and multithreading."""
+        """
+        This test uses a multi-turn task and multithreading.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',

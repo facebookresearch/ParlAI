@@ -3,7 +3,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Test TorchRankerAgent."""
+"""
+Test TorchRankerAgent.
+"""
 
 import os
 import unittest
@@ -13,7 +15,9 @@ from parlai.tasks.integration_tests.agents import CandidateTeacher
 
 
 class _AbstractTRATest(unittest.TestCase):
-    """Test upgrade_opt behavior."""
+    """
+    Test upgrade_opt behavior.
+    """
 
     @classmethod
     def setUpClass(cls):

@@ -8,8 +8,11 @@ import threading
 
 
 class AskerOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
     """
 
     def parley(self):
@@ -26,8 +29,11 @@ class AskerOnboardingWorld(MTurkOnboardWorld):
 
 
 class AnswererOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
     """
 
     def parley(self):
@@ -45,8 +51,11 @@ class AnswererOnboardingWorld(MTurkOnboardWorld):
 
 
 class EvaluatorOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
     """
 
     def parley(self):
@@ -64,9 +73,10 @@ class EvaluatorOnboardingWorld(MTurkOnboardWorld):
 
 class MultiRoleAgentWorld(MTurkTaskWorld):
     """
-    World to demonstrate workers with assymetric roles. This task amounts
-    to three rounds and then an evaluation step. It is purposefully created
-    as a task to demo multiple views and has no other purpose.
+    World to demonstrate workers with assymetric roles.
+
+    This task amounts to three rounds and then an evaluation step. It is purposefully
+    created as a task to demo multiple views and has no other purpose.
     """
 
     collector_agent_id = 'Moderator'

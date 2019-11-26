@@ -20,7 +20,6 @@ Examples
   python -m parlai.scripts.train -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
   python -m parlai.scripts.train -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
   python -m parlai.scripts.train -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
-
 """  # noqa: E501
 
 # TODO List:
@@ -318,14 +317,18 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
 
 
 def _save_best_valid(model_file, best_valid):
-    """Save the best validation score to disk."""
+    """
+    Save the best validation score to disk.
+    """
     f = open(model_file + '.best_valid', 'w')
     f.write(str(best_valid))
     f.close()
 
 
 class TrainLoop:
-    """TrainLoop contains the core training loop logic."""
+    """
+    TrainLoop contains the core training loop logic.
+    """
 
     def __init__(self, opt):
         # if python is called from a non-interactive shell, like a bash script,
@@ -432,7 +435,9 @@ class TrainLoop:
             self.tb_logger = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
-        """Save the model to disk, possibly with a suffix."""
+        """
+        Save the model to disk, possibly with a suffix.
+        """
         if not is_primary_worker():
             # never do IO as a non-primary worker
             return
@@ -611,8 +616,8 @@ class TrainLoop:
         """
         Sync training metrics across workers.
 
-        A handful of special cases are handled as exceptions, and the remaining
-        metrics are simply averaged across workers.
+        A handful of special cases are handled as exceptions, and the remaining metrics
+        are simply averaged across workers.
         """
         if not is_distributed():
             # nothing special needed
@@ -657,7 +662,9 @@ class TrainLoop:
         return eta
 
     def log(self):
-        """Output a training log entry."""
+        """
+        Output a training log entry.
+        """
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')

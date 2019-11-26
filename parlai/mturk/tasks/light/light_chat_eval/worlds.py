@@ -23,9 +23,11 @@ def is_disconnected(act):
 
 
 class LightEvalTestWorld(MTurkOnboardWorld):
-    '''Task world that gives a pre-determined task as a test. Assigns a
-    blocking qualification if the worker fails the test.
-    '''
+    """
+    Task world that gives a pre-determined task as a test.
+
+    Assigns a blocking qualification if the worker fails the test.
+    """
 
     GESTURES = list(
         map(
@@ -217,9 +219,10 @@ class LightEvalTestWorld(MTurkOnboardWorld):
 
 
 class LightEvalTaskWorld(MTurkTaskWorld):
-    '''Task world steps the worker through a conversation, giving them cands
-    to select from as if they are a retrieval model.
-    '''
+    """
+    Task world steps the worker through a conversation, giving them cands to select from
+    as if they are a retrieval model.
+    """
 
     def __init__(self, opt, mturk_agents, sample, use_train, max_wrong):
         self.mturk_agent = mturk_agents[0]

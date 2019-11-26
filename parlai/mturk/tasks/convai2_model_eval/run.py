@@ -26,8 +26,10 @@ MASTER_QUALIF_SDBOX = {
 
 
 def main():
-    """This task consists of an MTurk agent evaluating a chit-chat model. They
-    are asked to chat to the model adopting a specific persona. After their
+    """
+    This task consists of an MTurk agent evaluating a chit-chat model.
+
+    They are asked to chat to the model adopting a specific persona. After their
     conversation, they are asked to evaluate their partner on several metrics.
     """
     argparser = ParlaiParser(False, add_model_args=True)

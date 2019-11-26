@@ -5,9 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-These agents contain a number of "unit test" corpora, or
-fake corpora that ensure models can learn simple behavior easily.
-They are useful as unit tests for the basic models.
+These agents contain a number of "unit test" corpora, or fake corpora that ensure models
+can learn simple behavior easily. They are useful as unit tests for the basic models.
 
 The corpora are all randomly, but deterministically generated
 """
@@ -33,8 +32,10 @@ NUM_TEST = 100
 
 class CandidateTeacher(DialogTeacher):
     """
-    Candidate teacher produces several candidates, one of which is a repeat
-    of the input. A good ranker should easily identify the correct response.
+    Candidate teacher produces several candidates, one of which is a repeat of the
+    input.
+
+    A good ranker should easily identify the correct response.
     """
 
     def __init__(
@@ -79,7 +80,9 @@ class CandidateTeacher(DialogTeacher):
         return self.num_episodes()
 
     def build_corpus(self):
-        """Build corpus; override for customization."""
+        """
+        Build corpus; override for customization.
+        """
         return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def setup_data(self, fold):
@@ -122,10 +125,10 @@ class CandidateTeacher(DialogTeacher):
 
 class CandidateTeacherDataset(Dataset):
     """
-    Candidate Teacher, in Pytorch Dataset form
+    Candidate Teacher, in Pytorch Dataset form.
 
-    Identical setup. Only difference is a `self.data` object, which contains
-    all the episodes in the task.
+    Identical setup. Only difference is a `self.data` object, which contains all the
+    episodes in the task.
     """
 
     def __init__(
@@ -228,11 +231,7 @@ class MultipassTeacher(CandidateTeacher):
     """
     Multiturn teacher, where each episode goes:
 
-    call      response
-    1         1
-    2         1 2
-    3         1 2 3
-    4         1 2 3 4
+    call      response 1         1 2         1 2 3         1 2 3 4         1 2 3 4
     """
 
     def num_examples(self):
@@ -250,7 +249,8 @@ class MultipassTeacher(CandidateTeacher):
 
 
 class MultiturnCandidateTeacher(CandidateTeacher):
-    """Splits inputs/targets by spaces into multiple turns.
+    """
+    Splits inputs/targets by spaces into multiple turns.
 
     Good for testing models that use the dialog history.
     """
@@ -275,8 +275,9 @@ class MultiturnCandidateTeacher(CandidateTeacher):
 
 class NocandidateTeacher(CandidateTeacher):
     """
-    Strips the candidates so the model can't see any options. Good for testing
-    simple generative models.
+    Strips the candidates so the model can't see any options.
+
+    Good for testing simple generative models.
     """
 
     def setup_data(self, fold):
@@ -299,7 +300,9 @@ class RepeatWordsTeacher(NocandidateTeacher):
         super().__init__(*args, **kwargs)
 
     def build_corpus(self):
-        """Override to repeat words."""
+        """
+        Override to repeat words.
+        """
         return [
             [x for _ in range(l)]
             for l in range(1, self.example_size)
@@ -309,8 +312,9 @@ class RepeatWordsTeacher(NocandidateTeacher):
 
 class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
     """
-    Strips the candidates so the model can't see any options. Good for testing
-    simple generative models.
+    Strips the candidates so the model can't see any options.
+
+    Good for testing simple generative models.
     """
 
     def setup_data(self, fold):
@@ -385,7 +389,8 @@ class BadExampleTeacher(CandidateTeacher):
 
 
 class ImageTeacher(AbstractImageTeacher):
-    """Teacher which provides images and captions.
+    """
+    Teacher which provides images and captions.
 
     In __init__, setup some fake images + features
     """
@@ -425,7 +430,9 @@ class ImageTeacher(AbstractImageTeacher):
                 json.dump(data, f)
 
     def get_image_features_path(self, task, image_model_name, dt):
-        """Return path dummy image features"""
+        """
+        Return path dummy image features.
+        """
         return self.image_features_path
 
 

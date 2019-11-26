@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Dialogue safety related datasets and teachers."""
+"""
+Dialogue safety related datasets and teachers.
+"""
 
 import parlai.core.build_data as build_data
 from parlai.core.message import Message
@@ -27,9 +29,9 @@ MULTI_TURN_DATA = 'multi_turn_safety.json'
 
 class StandardTeacher(_BaseSafetyTeacher):
     """
-    Data from the standard collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the standard collection described in the paper `Build it Break it Fix it
+    for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
     `python examples/display_data.py -t dialogue_safety:standard --round 3`
@@ -47,9 +49,9 @@ class StandardTeacher(_BaseSafetyTeacher):
 
 class AdversarialTeacher(_BaseSafetyTeacher):
     """
-    Data from the adversarial collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the adversarial collection described in the paper `Build it Break it Fix
+    it for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
     `python examples/display_data.py -t dialogue_safety:adversarial --round 3`
@@ -67,9 +69,9 @@ class AdversarialTeacher(_BaseSafetyTeacher):
 
 class MultiturnTeacher(FixedDialogTeacher):
     """
-    Data from the multi-turn adversarial collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the multi-turn adversarial collection described in the paper `Build it
+    Break it Fix it for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data containing multi-turn conversations, try running
     `python examples/display_data.py -t dialogue_safety:multiturn`.
@@ -137,8 +139,9 @@ class MultiturnTeacher(FixedDialogTeacher):
 
 class WikiToxicCommentsTeacher(FixedDialogTeacher):
     """
-    Dataset of comments from Wikipedia's Talk page edits. Taken from
-    the Toxic Comments Classification Challenge on Kaggle.
+    Dataset of comments from Wikipedia's Talk page edits. Taken from the Toxic Comments
+    Classification Challenge on Kaggle.
+
     <https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>
 
     We convert this data to a binary classification task.
@@ -342,8 +345,8 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def _setup_data(self, datatype):
         """
-        Set up the data based on the correct partition flag specified
-        and partition accordingly
+        Set up the data based on the correct partition flag specified and partition
+        accordingly.
         """
         if not self.use_test_set:
             dp = os.path.join(self.data_path, 'wiki-toxic-comments-partition.json')

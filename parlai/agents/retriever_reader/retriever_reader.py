@@ -3,8 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Agent which first retrieves from a database and then reads the dialogue + knowledge
-from the database to answer.
+"""
+Agent which first retrieves from a database and then reads the dialogue + knowledge from
+the database to answer.
+
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
@@ -28,7 +30,9 @@ class RetrieverReaderAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('RetrieverReader Arguments')
         agent.add_argument('--retriever-model-file', type=str, default=None)
         agent.add_argument('--reader-model-file', type=str, default=None)
@@ -48,7 +52,9 @@ class RetrieverReaderAgent(Agent):
         self.observation = obs
 
     def _split_doc(self, doc):
-        """Given a doc, split it into chunks (by paragraph)."""
+        """
+        Given a doc, split it into chunks (by paragraph).
+        """
         GROUP_LENGTH = 0
         docs = []
         curr = []

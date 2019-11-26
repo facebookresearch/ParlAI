@@ -10,7 +10,9 @@ from torch import nn
 
 
 def xavier_init(module):
-    """Xavier initializer for module parameters."""
+    """
+    Xavier initializer for module parameters.
+    """
     for parameter in module.parameters():
         if len(parameter.data.shape) == 1:
             # 1D vector means bias
@@ -22,8 +24,9 @@ def xavier_init(module):
 
 
 class ImgNet(nn.Module):
-    """Module to embed the visual information. Used by answerer agent.
-    In ``forward``: Embed image attributes and concatenate them together.
+    """
+    Module to embed the visual information. Used by answerer agent. In ``forward``:
+    Embed image attributes and concatenate them together.
 
     **Note:** ``parlai.core.image_featurizers.ImageLoader`` can also be
     used instead.
@@ -43,8 +46,10 @@ class ImgNet(nn.Module):
 
 
 class ListenNet(nn.Module):
-    """Module for listening the sequence spoken by other agent. In ``forward``:
-    Generate token embeddings.
+    """
+    Module for listening the sequence spoken by other agent.
+
+    In ``forward``: Generate token embeddings.
     """
 
     def __init__(self, in_size, embed_size):
@@ -58,7 +63,10 @@ class ListenNet(nn.Module):
 
 
 class StateNet(nn.Module):
-    """Module for containing the state update mechanism for an agent. In
+    """
+    Module for containing the state update mechanism for an agent.
+
+    In
     ``forward``: Update states by passing the embeddings through LSTMCell.
     """
 
@@ -73,8 +81,10 @@ class StateNet(nn.Module):
 
 
 class SpeakNet(nn.Module):
-    """Module for speaking a token based on current state. In ``forward``:
-    Return a probability distribution of utterances of tokens.
+    """
+    Module for speaking a token based on current state.
+
+    In ``forward``: Return a probability distribution of utterances of tokens.
     """
 
     def __init__(self, state_size, out_size):
@@ -89,7 +99,10 @@ class SpeakNet(nn.Module):
 
 
 class PredictNet(nn.Module):
-    """Module to make a prediction as per goal. Used by questioner agent. In
+    """
+    Module to make a prediction as per goal.
+
+    Used by questioner agent. In
     ``forward``: Return a probability distribution of utterances of tokens.
     """
 

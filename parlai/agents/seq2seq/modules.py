@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Module files as torch.nn.Module subclasses for Seq2seqAgent."""
+"""
+Module files as torch.nn.Module subclasses for Seq2seqAgent.
+"""
 
 import math
 
@@ -21,10 +23,9 @@ def _transpose_hidden_state(hidden_state):
     """
     Transpose the hidden state so that batch is the first dimension.
 
-    RNN modules produce (num_layers x batchsize x dim) hidden state, but
-    DataParallel expects batch size to be first. This helper is used to
-    ensure that we're always outputting batch-first, in case DataParallel
-    tries to stitch things back together.
+    RNN modules produce (num_layers x batchsize x dim) hidden state, but DataParallel
+    expects batch size to be first. This helper is used to ensure that we're always
+    outputting batch-first, in case DataParallel tries to stitch things back together.
     """
     if isinstance(hidden_state, tuple):
         return tuple(map(_transpose_hidden_state, hidden_state))
@@ -35,7 +36,9 @@ def _transpose_hidden_state(hidden_state):
 
 
 def opt_to_kwargs(opt):
-    """Get kwargs for seq2seq from opt."""
+    """
+    Get kwargs for seq2seq from opt.
+    """
     kwargs = {}
     for k in [
         'numlayers',
@@ -56,7 +59,9 @@ def opt_to_kwargs(opt):
 
 
 class Seq2seq(TorchGeneratorModel):
-    """Sequence to sequence parent module."""
+    """
+    Sequence to sequence parent module.
+    """
 
     RNN_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
 
@@ -82,7 +87,8 @@ class Seq2seq(TorchGeneratorModel):
         input_dropout=0,
         longest_label=1,
     ):
-        """Initialize seq2seq model.
+        """
+        Initialize seq2seq model.
 
         See cmdline args in Seq2seqAgent for description of arguments.
         """
@@ -148,7 +154,9 @@ class Seq2seq(TorchGeneratorModel):
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
-        """Reorder encoder states according to a new set of indices."""
+        """
+        Reorder encoder states according to a new set of indices.
+        """
         enc_out, hidden, attn_mask = encoder_states
 
         # make sure we swap the hidden state around, apropos multigpu settings
@@ -192,14 +200,16 @@ class Seq2seq(TorchGeneratorModel):
 
 
 class UnknownDropout(nn.Module):
-    """With set frequency, replaces tokens with unknown token.
+    """
+    With set frequency, replaces tokens with unknown token.
 
-    This layer can be used right before an embedding layer to make the model
-    more robust to unknown words at test time.
+    This layer can be used right before an embedding layer to make the model more robust
+    to unknown words at test time.
     """
 
     def __init__(self, unknown_idx, probability):
-        """Initialize layer.
+        """
+        Initialize layer.
 
         :param unknown_idx: index of unknown token, replace tokens with this
         :param probability: during training, replaces tokens with unknown token
@@ -210,7 +220,9 @@ class UnknownDropout(nn.Module):
         self.prob = probability
 
     def forward(self, input):
-        """If training and dropout rate > 0, masks input with unknown token."""
+        """
+        If training and dropout rate > 0, masks input with unknown token.
+        """
         if self.training and self.prob > 0:
             mask = input.new(input.size()).float().uniform_(0, 1) < self.prob
             input.masked_fill_(mask, self.unknown_idx)
@@ -218,7 +230,9 @@ class UnknownDropout(nn.Module):
 
 
 class RNNEncoder(nn.Module):
-    """RNN Encoder."""
+    """
+    RNN Encoder.
+    """
 
     def __init__(
         self,
@@ -236,7 +250,9 @@ class RNNEncoder(nn.Module):
         unknown_idx=None,
         sparse=False,
     ):
-        """Initialize recurrent encoder."""
+        """
+        Initialize recurrent encoder.
+        """
         super().__init__()
 
         self.dropout = nn.Dropout(p=dropout)
@@ -270,7 +286,8 @@ class RNNEncoder(nn.Module):
             self.rnn = shared_rnn
 
     def forward(self, xs):
-        """Encode sequence.
+        """
+        Encode sequence.
 
         :param xs: (bsz x seqlen) LongTensor of input token indices
 
@@ -316,7 +333,8 @@ class RNNEncoder(nn.Module):
 
 
 class RNNDecoder(nn.Module):
-    """Recurrent decoder module.
+    """
+    Recurrent decoder module.
 
     Can be used as a standalone language model or paired with an encoder.
     """
@@ -336,7 +354,9 @@ class RNNDecoder(nn.Module):
         attn_length=-1,
         sparse=False,
     ):
-        """Initialize recurrent decoder."""
+        """
+        Initialize recurrent decoder.
+        """
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
         self.layers = numlayers
@@ -366,7 +386,8 @@ class RNNDecoder(nn.Module):
         )
 
     def forward(self, xs, encoder_output, incremental_state=None):
-        """Decode from input tokens.
+        """
+        Decode from input tokens.
 
         :param xs: (bsz x seqlen) LongTensor of input token indices
         :param encoder_output: output from RNNEncoder. Tuple containing
@@ -439,7 +460,9 @@ class Identity(nn.Module):
 
 
 class OutputLayer(nn.Module):
-    """Takes in final states and returns distribution over candidates."""
+    """
+    Takes in final states and returns distribution over candidates.
+    """
 
     def __init__(
         self,
@@ -451,7 +474,8 @@ class OutputLayer(nn.Module):
         shared_weight=None,
         padding_idx=-1,
     ):
-        """Initialize output layer.
+        """
+        Initialize output layer.
 
         :param num_features:  number of candidates to rank
         :param hiddensize:    (last) dimension of the input vectors
@@ -507,7 +531,8 @@ class OutputLayer(nn.Module):
                 self.o2e = Identity()
 
     def forward(self, input):
-        """Compute scores from inputs.
+        """
+        Compute scores from inputs.
 
         :param input: (bsz x seq_len x num_directions * hiddensize) tensor of
                        states, e.g. the output states of an RNN
@@ -549,7 +574,8 @@ class OutputLayer(nn.Module):
 
 
 class AttentionLayer(nn.Module):
-    """Computes attention between hidden and encoder states.
+    """
+    Computes attention between hidden and encoder states.
 
     See arxiv.org/abs/1508.04025 for more info on each attention type.
     """
@@ -563,7 +589,9 @@ class AttentionLayer(nn.Module):
         attn_length=-1,
         attn_time='pre',
     ):
-        """Initialize attention layer."""
+        """
+        Initialize attention layer.
+        """
         super().__init__()
         self.attention = attn_type
 
@@ -598,7 +626,8 @@ class AttentionLayer(nn.Module):
                 self.attn = nn.Linear(hsz, hszXdirs, bias=False)
 
     def forward(self, xes, hidden, attn_params):
-        """Compute attention over attn_params given input and hidden states.
+        """
+        Compute attention over attn_params given input and hidden states.
 
         :param xes:         input state. will be combined with applied
                             attention.

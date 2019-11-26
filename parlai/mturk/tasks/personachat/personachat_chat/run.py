@@ -12,8 +12,9 @@ import os
 
 
 def main():
-    """This task consists of one agent, model or MTurk worker, talking to an
-    MTurk worker to negotiate a deal.
+    """
+    This task consists of one agent, model or MTurk worker, talking to an MTurk worker
+    to negotiate a deal.
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

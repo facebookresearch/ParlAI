@@ -113,7 +113,8 @@ def includes_topic(episode, topic):
 
 
 def main(opt):
-    """Converts a Fbdialog file of episodes into two self-feeding files (split by topic)
+    """
+    Converts a Fbdialog file of episodes into two self-feeding files (split by topic)
 
     All conversations including a word in the provided topic's bag of words will be
     separated from conversations without those words.
