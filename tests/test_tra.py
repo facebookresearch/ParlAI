@@ -8,9 +8,7 @@
 import os
 import unittest
 
-from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
-from parlai.core.params import ParlaiParser
 from parlai.tasks.integration_tests.agents import CandidateTeacher
 
 

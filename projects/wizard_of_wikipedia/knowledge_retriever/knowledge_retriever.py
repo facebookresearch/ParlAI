@@ -97,10 +97,13 @@ class KnowledgeRetrieverAgent(Agent):
             'model_file': opt['selector_model_file'],
             'eval_candidates': 'inline',
             'model': 'transformer/biencoder',
-            'override': {'model': 'transformer/biencoder'},
+            'batchsize': 1,
+            'override': {'model': 'transformer/biencoder', 'batchsize': 1},
         }
-        final_opt = {**self.opt, **selector_opt}
-        self.selector = create_agent(final_opt)
+        for k, v in self.opt.items():
+            if k not in selector_opt:
+                selector_opt[k] = v
+        self.selector = create_agent(selector_opt)
 
     def _set_up_sent_tok(self):
         try:
@@ -264,7 +267,9 @@ class KnowledgeRetrieverAgent(Agent):
 
     def _format_selector_observation(self, knowledge_no_title, episode_done=False):
         obs = {'episode_done': episode_done}
-        obs['label_candidates'] = [x for x in knowledge_no_title.split('\n') if x]
+        obs['label_candidates'] = [
+            x for x in knowledge_no_title.split('\n') if x
+        ]
         text = self.retriever_history.get('chosen_topic', '')
         if len(self.dialogue_history) > 0:
             if len(self.dialogue_history) > 1:
@@ -335,3 +340,4 @@ class KnowledgeRetrieverAgent(Agent):
         shared['selector'] = self.selector.share()
         shared['sent_tok'] = self.sent_tok
         shared['wiki_map'] = self.wiki_map
+        return shared

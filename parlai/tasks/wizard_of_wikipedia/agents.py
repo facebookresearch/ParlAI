@@ -17,6 +17,8 @@
     E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+import copy
+import parlai.core.agents as core_agents
 from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
@@ -343,8 +345,9 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.speaker_label = opt.get('speaker_label', 'both')
+        self.add_topic = opt.get('add_topic', False)
         self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
-        self.speaker_label = opt['speaker_label']
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -355,6 +358,12 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default='both',
             choices=['both', 'wizard', 'apprentice'],
             help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
+            type='bool',
+            default=False,
+            help='prepend chosen topic to first turn',
         )
 
     def num_examples(self):
@@ -382,17 +391,45 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
+        if self.add_topic and entry_idx == 0:
+            text = d.get('chosen_topic', '') + '\n' + text
+
         action = {
             'id': 'WizardBasicDialog',
             'text': text,
             'labels': labels,
             'episode_done': episode_done,
         }
+        if 'label_candidates' in d:
+            action['label_candidates'] = d['label_candidates']
 
         if self.speaker_label == 'wizard':
             action['chosen_topic'] = d.get('chosen_topic', '')
 
         return action
+
+
+class BasicWizardDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = "wizard"
+        self.add_topic = True
+
+
+class BasicApprenticeDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = 'apprentice'
+        self.add_topic = True
+
+
+class BasicBothDialogTeacher(core_agents.MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt[
+            'task'
+        ] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
+        super().__init__(opt, shared)
 
 
 ###############################################################
@@ -881,6 +918,14 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
 
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
+    pass
+
+
+class SelfchatTeacher(BasicBothDialogTeacher):
+    """
+    Teacher used to create candidates for selfchats, if needed.
+    """
+
     pass
 
 

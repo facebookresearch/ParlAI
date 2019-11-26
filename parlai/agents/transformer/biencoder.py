@@ -5,7 +5,6 @@
 
 from .transformer import TransformerRankerAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-import torch
 
 
 class BiencoderAgent(TransformerRankerAgent):

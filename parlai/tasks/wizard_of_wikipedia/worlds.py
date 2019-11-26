@@ -10,6 +10,7 @@ import random
 import os
 import string
 
+
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
@@ -17,6 +18,7 @@ from parlai.tasks.wizard_of_wikipedia.agents import (
     TOKEN_KNOWLEDGE,
     TOKEN_END_KNOWLEDGE,
 )
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 
 from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
     KnowledgeRetrieverAgent,
@@ -200,3 +202,20 @@ class InteractiveGeneratorWorld(InteractiveWorld):
             ])
             act.force_set('text', new_text)
         return act
+
+
+class InteractiveSelfchatWorld(SelfChatBaseWorld):
+    def init_contexts(self):
+        print('[ loading topics.. ]')
+        # Load possible chosen topics
+        topics_path = os.path.join(
+            self.opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
+        )
+        # Get training set topics
+        datatype = self.opt['datatype'].split(':')[0]
+        self.topic_list = json.load(open(topics_path, 'rb'))[datatype]
+
+    def get_contexts(self):
+        random.seed()
+        topic = random.choice(self.topic_list)
+        return [topic, topic]

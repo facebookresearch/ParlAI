@@ -13,7 +13,7 @@ import pickle
 from unittest import mock
 from parlai.mturk.core.dev.worker_manager import WorkerManager
 from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
-from parlai.mturk.core.dev.worlds import MTurkOnboardWorld, MTurkTaskWorld
+from parlai.mturk.core.dev.worlds import MTurkOnboardWorld
 from parlai.mturk.core.dev.mturk_manager import MTurkManager
 from parlai.mturk.core.dev.socket_manager import SocketManager, Packet
 from parlai.core.params import ParlaiParser

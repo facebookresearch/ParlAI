@@ -8,6 +8,7 @@ Contains implementation of the WebsocketManager which helps run ParlAI via
 websockets
 """
 
+import json
 import asyncio
 import logging
 import traceback
@@ -66,7 +67,7 @@ class WebsocketManager(ChatServiceManager):
     def _load_model(self):
         """Load model if necessary"""
         if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _handle_message_read(self, event):
         """Send read receipt back to user who sent message
@@ -114,7 +115,10 @@ class WebsocketManager(ChatServiceManager):
                 world_config = self.task_configs[world_type]
                 if world_config.max_time_in_pool is not None:
                     self.check_timeout_in_pool(
-                        world_type, agent_pool, world_config.max_time_in_pool
+                        world_type,
+                        agent_pool,
+                        world_config.max_time_in_pool,
+                        world_config.backup_task,
                     )
 
                 needed_agents = self.max_agents_for[world_type]
@@ -217,18 +221,58 @@ class WebsocketManager(ChatServiceManager):
             debug=self.debug,
         )
 
-    def observe_message(self, socket_id, text):
+    def observe_message(self, socket_id, message, quick_replies=None):
         """Send a message through the message manager.
 
         :param socket_id:
             int identifier for agent socket to send message to
-        :param text:
-            string text to send
-        """
-        asyncio.set_event_loop(asyncio.new_event_loop())
-        return MessageSocketHandler.subs[socket_id].write_message(text)
+        :param message:
+            (dict) message to send through the socket. The keys should be:
+                'image': (True/False) whether the message is an image
+                'mime_type': str. Mime type of the message
+                'text': str. base64 encoded content
+        :param quick_replies:
+            (list) list of strings to send as quick replies.
 
-    def restructure_message():
+        Returns a tornado future for tracking the `write_message` action.
+        """
+        if quick_replies is not None:
+            quick_replies = list(quick_replies)
+
+        message = json.dumps(
+            {'text': message.replace('\n', '<br />'), 'quick_replies': quick_replies}
+        )
+
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        if socket_id not in MessageSocketHandler.subs:
+            self.agent_id_to_overworld_future[socket_id].cancel()
+            return
+        return MessageSocketHandler.subs[socket_id].write_message(message)
+
+    def observe_payload(self, socket_id, payload, quick_replies=None):
+        """Send a message through the message manager.
+
+        :param socket_id:
+            int identifier for agent socket to send message to
+        :param payload:
+            (dict) payload to send through the socket. The keys should be:
+                'image': (True/False) whether the message is an image
+                'mime_type': str. Mime type of the message
+                'data': str. base64 encoded content
+
+        Returns a tornado future for tracking the `write_message` action.
+        """
+        payload['data'] = payload['data'].replace('\n', '<br />')
+        message = {'text': '', 'payload': payload, 'quick_replies': quick_replies}
+        payload = json.dumps(message)
+
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        if socket_id not in MessageSocketHandler.subs:
+            self.agent_id_to_overworld_future[socket_id].cancel()
+            return
+        return MessageSocketHandler.subs[socket_id].write_message(message)
+
+    def restructure_message(self):
         """This is to restructure a new message to conform to the message structure
         defined in the `chat_service` README
         """

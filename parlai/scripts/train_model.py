@@ -37,6 +37,7 @@ from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.utils.misc import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
+from parlai.core.torch_agent import StopTrainException
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.utils.distributed import (
     sync_object,
@@ -703,7 +704,15 @@ class TrainLoop:
         with world:
             while True:
                 # do one example / batch of examples
-                world.parley()
+                try:
+                    world.parley()
+                except StopTrainException:
+                    if is_distributed():
+                        raise RuntimeError(
+                            "StopTrainException not supported for " "distributed mode"
+                        )
+                    break
+
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
@@ -742,7 +751,15 @@ class TrainLoop:
                     or self._total_epochs - self.last_valid_epoch
                     >= self.val_every_n_epochs
                 ):
-                    stop_training = self.validate()
+                    try:
+                        stop_training = self.validate()
+                    except StopTrainException:
+                        if is_distributed():
+                            raise RuntimeError(
+                                "StopTrainException not "
+                                "supported for distributed mode"
+                            )
+                        break
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break

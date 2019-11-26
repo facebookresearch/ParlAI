@@ -10,7 +10,7 @@ from queue import Queue
 from parlai.core.agents import Agent
 
 
-class ChatServiceAgent(ABC, Agent):
+class ChatServiceAgent(Agent, ABC):
     """Base class for a person on a chat serivce that can act in a ParlAI world"""
 
     def __init__(self, opt, manager, receiver_id, task_id):
