@@ -6,8 +6,8 @@
 """
 Provides standard metric evaluations for dialog.
 
-Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
-between processes.
+Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics between
+processes.
 """
 
 from parlai.utils.thread import SharedTable
@@ -43,7 +43,9 @@ re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
 
 def normalize_answer(s):
-    """Lower text and remove punctuation, articles and extra whitespace."""
+    """
+    Lower text and remove punctuation, articles and extra whitespace.
+    """
 
     def remove_articles(text):
         return re_art.sub(' ', text)
@@ -106,7 +108,9 @@ def aggregate_task_reports(reports, tasks, micro=False):
 
 
 def _exact_match(guess, answers):
-    """Check if guess is a (normalized) exact match with any answer."""
+    """
+    Check if guess is a (normalized) exact match with any answer.
+    """
     if guess is None or answers is None:
         return False
     guess = normalize_answer(guess)
@@ -136,7 +140,9 @@ def _prec_recall_f1_score(pred_items, gold_items):
 
 
 def _f1_score(guess, answers):
-    """Return the max F1 score between the guess and *any* answer."""
+    """
+    Return the max F1 score between the guess and *any* answer.
+    """
     if guess is None or answers is None:
         return 0
     g_tokens = normalize_answer(guess).split()
@@ -147,7 +153,9 @@ def _f1_score(guess, answers):
 
 
 def _bleu(guess, answers, weights=None):
-    """Compute approximate BLEU score between guess and a set of answers."""
+    """
+    Compute approximate BLEU score between guess and a set of answers.
+    """
     if nltkbleu is None:
         # bleu library not installed, just return a default value
         return None
@@ -194,7 +202,9 @@ def _rouge(guess, answers):
 
 
 def aggregate_metrics(reporters):
-    """Aggregate metrics from multiple reports."""
+    """
+    Aggregate metrics from multiple reports.
+    """
     # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
@@ -236,7 +246,9 @@ def aggregate_metrics(reporters):
 
 
 class Metrics(object):
-    """Class that maintains evaluation metrics over dialog."""
+    """
+    Class that maintains evaluation metrics over dialog.
+    """
 
     def __init__(self, opt):
         self.metrics = {}
@@ -321,7 +333,9 @@ class Metrics(object):
                 self.metrics['hits@_cnt'] += 1
 
     def update(self, observation, labels):
-        """Update metrics based on an observation and true labels."""
+        """
+        Update metrics based on an observation and true labels.
+        """
         with self._lock():
             self.metrics['cnt'] += 1
 
@@ -400,7 +414,9 @@ class Metrics(object):
         return loss
 
     def report(self):
-        """Report the metrics over all data seen so far."""
+        """
+        Report the metrics over all data seen so far.
+        """
         m = {}
         total = self.metrics['cnt']
         m['exs'] = total
@@ -429,7 +445,9 @@ class Metrics(object):
         return m
 
     def clear(self):
-        """Clear all the metrics."""
+        """
+        Clear all the metrics.
+        """
         # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
             self.metrics['cnt'] = 0

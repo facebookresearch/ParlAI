@@ -10,7 +10,9 @@ import parlai.utils.testing as testing_utils
 
 @testing_utils.skipUnlessGPU
 class TestDrQAModel(unittest.TestCase):
-    """Checks that DrQA Model can be downloaded and achieve appropriate results"""
+    """
+    Checks that DrQA Model can be downloaded and achieve appropriate results.
+    """
 
     def test_pretrained(self):
         stdout, _, test = testing_utils.eval_model(

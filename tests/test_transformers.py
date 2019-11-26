@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Test many variants of transformers."""
+"""
+Test many variants of transformers.
+"""
 
 import os
 import unittest
@@ -12,11 +14,15 @@ import parlai.utils.testing as testing_utils
 
 
 class TestTransformerRanker(unittest.TestCase):
-    """Checks that transformer_ranker can learn some very basic tasks."""
+    """
+    Checks that transformer_ranker can learn some very basic tasks.
+    """
 
     @testing_utils.retry(ntries=3)
     def test_repeater(self):
-        """Test a simple repeat-after-me model."""
+        """
+        Test a simple repeat-after-me model.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -48,7 +54,9 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
     def test_resuming(self):
-        """Test saving and resuming training."""
+        """
+        Test saving and resuming training.
+        """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
 
@@ -130,7 +138,9 @@ class TestTransformerRanker(unittest.TestCase):
             )
 
     def test_backcomp(self):
-        """Tests that the transformer ranker model files continue to work over time."""
+        """
+        Tests that the transformer ranker model files continue to work over time.
+        """
         testing_utils.download_unittest_models()
 
         stdout, valid, test = testing_utils.eval_model(
@@ -172,7 +182,9 @@ class TestTransformerRanker(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
-        """Test --variant xlm."""
+        """
+        Test --variant xlm.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -207,7 +219,9 @@ class TestTransformerRanker(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
-        """Test a transformer ranker reduction method other than `mean`."""
+        """
+        Test a transformer ranker reduction method other than `mean`.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -243,11 +257,15 @@ class TestTransformerRanker(unittest.TestCase):
 
 
 class TestTransformerGenerator(unittest.TestCase):
-    """Checks that the generative transformer can learn basic tasks."""
+    """
+    Checks that the generative transformer can learn basic tasks.
+    """
 
     @testing_utils.retry(ntries=3)
     def test_greedysearch(self):
-        """Test greedy search."""
+        """
+        Test greedy search.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -284,7 +302,9 @@ class TestTransformerGenerator(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
-        """Test beamsearch."""
+        """
+        Test beamsearch.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -321,7 +341,9 @@ class TestTransformerGenerator(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch_blocking(self):
-        """Test beamsearch blocking."""
+        """
+        Test beamsearch blocking.
+        """
         with testing_utils.tempdir() as tmpdir:
             mf = os.path.join(tmpdir, 'model')
             df = os.path.join(tmpdir, 'model.dict')
@@ -451,7 +473,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_nucleus(self):
-        """Test nucleus generation."""
+        """
+        Test nucleus generation.
+        """
         # Nucleus is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
@@ -472,7 +496,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_topk(self):
-        """Test topk generation."""
+        """
+        Test topk generation.
+        """
         # Topk is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
@@ -493,7 +519,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_generator_backcomp(self):
-        """Tests that the generator model files work over time."""
+        """
+        Tests that the generator model files work over time.
+        """
         testing_utils.download_unittest_models()
 
         stdout, valid, test = testing_utils.eval_model(
@@ -541,7 +569,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_badinput(self):
-        """Ensures model doesn't crash on malformed inputs."""
+        """
+        Ensures model doesn't crash on malformed inputs.
+        """
         stdout, _, _ = testing_utils.train_model(
             dict(
                 task='integration_tests:bad_example',
@@ -560,7 +590,9 @@ class TestTransformerGenerator(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
-        """Test --variant xlm."""
+        """
+        Test --variant xlm.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -601,7 +633,9 @@ class TestTransformerGenerator(unittest.TestCase):
 
 
 def test_learning_rate_resuming(self, args):
-    """Test learning rate resumes correctly."""
+    """
+    Test learning rate resumes correctly.
+    """
     mdl = args['model']
     with testing_utils.tempdir() as tmpdir:
         model_file = os.path.join(tmpdir, 'model')
@@ -667,10 +701,14 @@ def test_learning_rate_resuming(self, args):
 
 
 class TestLearningRateScheduler(unittest.TestCase):
-    """Test learning rate scheduler for both generative and ranking transformers."""
+    """
+    Test learning rate scheduler for both generative and ranking transformers.
+    """
 
     def test_resuming_generator(self):
-        """Test generators resume correctly."""
+        """
+        Test generators resume correctly.
+        """
         GENERATOR_ARGS = dict(
             task='integration_tests:nocandidate',
             model='transformer/generator',
@@ -688,7 +726,9 @@ class TestLearningRateScheduler(unittest.TestCase):
         test_learning_rate_resuming(self, GENERATOR_ARGS)
 
     def test_resuming_ranker(self):
-        """Test resuming learning rate for the ranker."""
+        """
+        Test resuming learning rate for the ranker.
+        """
         RANKER_ARGS = dict(
             task='integration_tests:candidate',
             model='transformer/ranker',

@@ -9,7 +9,8 @@ from parlai.core.worlds import World
 
 # ----- Baseline overworld that simply defers to the default world ----- #
 class SimpleMessengerOverworld(World):
-    """Passthrough world to spawn task worlds of only one type
+    """
+    Passthrough world to spawn task worlds of only one type.
 
     Demos of more advanced overworld functionality exist in the overworld demo
     """

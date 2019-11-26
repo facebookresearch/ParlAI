@@ -11,7 +11,6 @@ An example is given as follows:
            'image': <image features if specified else image>,
            'label': <comment/response>,
           }
-
 """
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
@@ -41,7 +40,9 @@ def _path(opt):
 
 
 class DefaultDataset(Dataset):
-    """A Pytorch Dataset"""
+    """
+    A Pytorch Dataset.
+    """
 
     def __init__(self, opt):
         self.opt = opt
@@ -116,11 +117,10 @@ class DefaultDataset(Dataset):
 
 class ImageChatTeacher(FixedDialogTeacher):
     """
-        Provides the personality in the `text` field, and
-        response in the `labels` field
+    Provides the personality in the `text` field, and response in the `labels` field.
 
-        To specify your own path to the YFCC100m images, please use the
-        `--yfcc-path` command line argument.
+    To specify your own path to the YFCC100m images, please use the `--yfcc-path`
+    command line argument.
     """
 
     def __init__(self, opt, shared=None):
@@ -212,8 +212,9 @@ class ImageChatTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         load_image = self.image_mode != 'no_image_model' and self.include_image
@@ -247,7 +248,9 @@ class ImageChatTeacher(FixedDialogTeacher):
 
 
 class ImageChatTestTeacher(ImageChatTeacher):
-    """Test ImageChat teacher for ensuring pretrained model does not break."""
+    """
+    Test ImageChat teacher for ensuring pretrained model does not break.
+    """
 
     def _setup_data(self, data_path, personalities_data_path):
         super()._setup_data(data_path, personalities_data_path)
@@ -263,16 +266,22 @@ class ImageChatTestTeacher(ImageChatTeacher):
         self.image_features = torch.load(image_features_path)
 
     def reset(self):
-        """Reset teacher."""
+        """
+        Reset teacher.
+        """
         super().reset()
         self.example = None
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         return len(self.image_features)
 
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         return len(self.image_features)
 
     def get(self, episode_idx, entry_idx=0):

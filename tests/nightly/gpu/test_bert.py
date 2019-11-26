@@ -13,8 +13,8 @@ class TestBertModel(unittest.TestCase):
     """
     Test of Bert biencoder and crossencoder.
 
-    Checks that Both Biencoder and CrossEncoder of Bert can be trained
-    for about 100 samples on convai2
+    Checks that Both Biencoder and CrossEncoder of Bert can be trained for about 100
+    samples on convai2
     """
 
     @testing_utils.retry(ntries=3, log_retry=True)

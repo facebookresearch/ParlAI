@@ -25,8 +25,10 @@ MASTER_QUALIF = {
 
 
 def main():
-    """This task consists of an MTurk agent evaluating a wizard model. They
-    are assigned a topic and asked to chat.
+    """
+    This task consists of an MTurk agent evaluating a wizard model.
+
+    They are assigned a topic and asked to chat.
     """
     start_time = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M')
     argparser = ParlaiParser(False, add_model_args=True)

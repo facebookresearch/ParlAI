@@ -124,9 +124,17 @@ def additional_validate(
     for example in valid_data:
         exp_dict = {'text': example[2], 'actions': example[3], 'graph': example[1]}
         if not seq2seq:
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data(
-                [exp_dict], 'valid'
-            )
+            (
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            ) = data_agent.get_data([exp_dict], 'valid')
             x, action_key, second_action_key, action_type, checked = (
                 _get_variable(x, True),
                 _get_variable(action_key, True),
@@ -173,10 +181,28 @@ def additional_validate(
                 }
                 all_dicts.append(exp_dict)
             if not seq2seq:
-                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data(
-                    all_dicts, 'train', assert_=False
-                )
-                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+                (
+                    x,
+                    action_key,
+                    second_action_key,
+                    action_type,
+                    current_room,
+                    checked,
+                    y,
+                    y_mask,
+                    counter_feat,
+                ) = data_agent.get_data(all_dicts, 'train', assert_=False)
+                (
+                    x,
+                    action_key,
+                    second_action_key,
+                    action_type,
+                    current_room,
+                    checked,
+                    y,
+                    y_mask,
+                    counter_feat,
+                ) = (
                     _get_variable(x, True),
                     _get_variable(action_key, True),
                     _get_variable(second_action_key, True),

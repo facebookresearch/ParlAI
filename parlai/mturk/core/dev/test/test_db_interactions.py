@@ -20,7 +20,9 @@ DataHandlerFile.data_dir = data_dir
 
 
 class TestDataHandler(unittest.TestCase):
-    '''Various unit tests for the SQLite database'''
+    """
+    Various unit tests for the SQLite database.
+    """
 
     DB_NAME = 'test_db.db'
 

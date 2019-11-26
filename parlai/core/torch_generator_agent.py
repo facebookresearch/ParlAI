@@ -229,10 +229,10 @@ class TorchGeneratorAgent(TorchAgent):
     """
     Abstract Generator agent; only meant to be extended.
 
-    TorchGeneratorAgent aims to handle much of the bookkeeping and
-    infrastructure work for any generative models, like seq2seq or transformer.
-    It implements the train_step and eval_step. The only requirement is that
-    your model *must* implemented the interface TorchGeneratorModel interface.
+    TorchGeneratorAgent aims to handle much of the bookkeeping and infrastructure work
+    for any generative models, like seq2seq or transformer. It implements the train_step
+    and eval_step. The only requirement is that your model *must* implemented the
+    interface TorchGeneratorModel interface.
     """
 
     @classmethod
@@ -255,7 +255,9 @@ class TorchGeneratorAgent(TorchAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command line arguments."""
+        """
+        Add command line arguments.
+        """
         agent = argparser.add_argument_group('Torch Generator Agent')
         agent.add_argument(
             '--beam-size',
@@ -378,7 +380,9 @@ class TorchGeneratorAgent(TorchAgent):
         return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -390,7 +394,9 @@ class TorchGeneratorAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def set_interactive_mode(self, mode, shared=False):
-        """Turn on interactive mode."""
+        """
+        Turn on interactive mode.
+        """
         super().set_interactive_mode(mode, shared)
         if mode:
             self.skip_generation = False
@@ -413,7 +419,9 @@ class TorchGeneratorAgent(TorchAgent):
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        """
+        Pre-initialize CUDA buffer by doing fake forward pass.
+        """
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
@@ -431,7 +439,9 @@ class TorchGeneratorAgent(TorchAgent):
                     raise e
 
     def reset_metrics(self):
-        """Reset metrics for reporting loss and perplexity."""
+        """
+        Reset metrics for reporting loss and perplexity.
+        """
         super().reset_metrics()
         # Note: we cannot change the type of metrics ahead of time, so you
         # should correctly initialize to floats or ints here
@@ -441,7 +451,9 @@ class TorchGeneratorAgent(TorchAgent):
         self.metrics['correct_tokens'] = 0
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
@@ -453,8 +465,8 @@ class TorchGeneratorAgent(TorchAgent):
         """
         Report loss and perplexity from model's perspective.
 
-        Note that this includes predicting __END__ and __UNK__ tokens and may
-        differ from a truly independent measurement.
+        Note that this includes predicting __END__ and __UNK__ tokens and may differ
+        from a truly independent measurement.
         """
         base = super().report()
         m = {}
@@ -476,7 +488,9 @@ class TorchGeneratorAgent(TorchAgent):
         return base
 
     def vectorize(self, *args, **kwargs):
-        """Override vectorize for generative models."""
+        """
+        Override vectorize for generative models.
+        """
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
@@ -524,7 +538,9 @@ class TorchGeneratorAgent(TorchAgent):
             return loss
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
         self._init_cuda_buffer(batchsize, self.truncate or 256)
@@ -571,7 +587,9 @@ class TorchGeneratorAgent(TorchAgent):
         return token_losses
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None:
             return
         bsz = batch.text_vec.size(0)
@@ -756,7 +774,9 @@ class TorchGeneratorAgent(TorchAgent):
 
 
 class _HypothesisTail(object):
-    """Hold some bookkeeping about a hypothesis."""
+    """
+    Hold some bookkeeping about a hypothesis.
+    """
 
     # use slots because we don't want dynamic attributes here
     __slots__ = ['timestep', 'hypid', 'score', 'tokenid']
@@ -772,10 +792,9 @@ class TreeSearch(object):
     """
     Abstract Tree Search class.
 
-    It keeps information about beam_size concurrent, developing hypotheses.
-    Concrete implementations make choices about which token to explore next at
-    each point in the tree. Different choices result in different generation
-    algorithms.
+    It keeps information about beam_size concurrent, developing hypotheses. Concrete
+    implementations make choices about which token to explore next at each point in the
+    tree. Different choices result in different generation algorithms.
     """
 
     def __init__(
@@ -831,11 +850,15 @@ class TreeSearch(object):
         self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
     def get_output_from_current_step(self):
-        """Get the outputput at the current step."""
+        """
+        Get the outputput at the current step.
+        """
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """Get the backtrack at the current step."""
+        """
+        Get the backtrack at the current step.
+        """
         return self.bookkeep[-1]
 
     @abstractmethod
@@ -863,7 +886,9 @@ class TreeSearch(object):
         pass
 
     def advance(self, logprobs):
-        """Advance the beam one step."""
+        """
+        Advance the beam one step.
+        """
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
@@ -923,11 +948,15 @@ class TreeSearch(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def is_done(self):
-        """Return whether beam search is complete."""
+        """
+        Return whether beam search is complete.
+        """
         return self.eos_top and self.n_best_counter >= self.beam_size
 
     def _find_ngrams(self, input_list, n):
-        """Find ngrams of size n in input list."""
+        """
+        Find ngrams of size n in input list.
+        """
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def _get_hyp_from_finished(self, hypothesis_tail):
@@ -959,7 +988,9 @@ class TreeSearch(object):
         return hyp_idx
 
     def _get_pretty_hypothesis(self, list_of_hypotails):
-        """Return hypothesis as a tensor of token ids."""
+        """
+        Return hypothesis as a tensor of token ids.
+        """
         return torch.stack([ht.tokenid for ht in reversed(list_of_hypotails)])
 
     def get_rescored_finished(self, n_best=None):
@@ -1049,10 +1080,14 @@ class GreedySearch(TreeSearch):
 
 
 class BeamSearch(TreeSearch):
-    """Beam search."""
+    """
+    Beam search.
+    """
 
     def select_paths(self, logprobs, prior_scores):
-        """Select the next vocabulary item in these beams."""
+        """
+        Select the next vocabulary item in these beams.
+        """
         # if numel is 1, then this is the first time step, only one hyp is expanded
         if prior_scores.numel() == 1:
             logprobs = logprobs[0:1]

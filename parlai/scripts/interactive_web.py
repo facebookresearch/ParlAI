@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Talk with a model using a web UI."""
+"""
+Talk with a model using a web UI.
+"""
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -156,7 +158,9 @@ WEB_HTML = """
 
 
 class MyHandler(BaseHTTPRequestHandler):
-    """Handle HTTP requests."""
+    """
+    Handle HTTP requests.
+    """
 
     def _interactive_running(self, opt, reply_text):
         reply = {'episode_done': False, 'text': reply_text}
@@ -165,13 +169,17 @@ class MyHandler(BaseHTTPRequestHandler):
         return model_res
 
     def do_HEAD(self):
-        """Handle HEAD requests."""
+        """
+        Handle HEAD requests.
+        """
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_POST(self):
-        """Handle POST request, especially replying to a chat message."""
+        """
+        Handle POST request, especially replying to a chat message.
+        """
         if self.path == '/interact':
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
@@ -194,7 +202,9 @@ class MyHandler(BaseHTTPRequestHandler):
             return self._respond({'status': 500})
 
     def do_GET(self):
-        """Respond to GET request, especially the initial load."""
+        """
+        Respond to GET request, especially the initial load.
+        """
         paths = {
             '/': {'status': 200},
             '/favicon.ico': {'status': 202},  # Need for chrome
@@ -217,7 +227,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 def setup_interactive(shared):
-    """Build and parse CLI opts."""
+    """
+    Build and parse CLI opts.
+    """
     parser = setup_args()
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
     SHARED['opt'] = parser.parse_args(print_args=False)

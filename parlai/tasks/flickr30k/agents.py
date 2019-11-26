@@ -34,7 +34,9 @@ def _path(opt):
 
 
 class FlickrDataset(Dataset):
-    """A Pytorch Dataset utilizing streaming"""
+    """
+    A Pytorch Dataset utilizing streaming.
+    """
 
     def __init__(self, opt, shared=None):
         self.opt = opt
@@ -105,7 +107,7 @@ class DefaultDataset(FlickrDataset):
 
 class DefaultTeacher(FixedDialogTeacher):
     """
-    Flickr default teacher that expects open-ended descriptions of images
+    Flickr default teacher that expects open-ended descriptions of images.
     """
 
     def __init__(self, opt, shared=None):
@@ -188,8 +190,9 @@ class DefaultTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example

@@ -35,11 +35,12 @@ def _path(opt, filename, add_suffix=False):
 
 
 class SelfFeedingTeacher(ParlAIDialogTeacher):
-    """Teacher for the SelfFeedingAgent
+    """
+    Teacher for the SelfFeedingAgent.
 
-    opt['datatype'] determines whether we use the designated filepath ('train') or
-        one of the eval files ('valid', 'test'), which are identical regardless of
-        what training set is being used.
+    opt['datatype'] determines whether we use the designated filepath ('train') or one
+    of the eval files ('valid', 'test'), which are identical regardless of     what
+    training set is being used.
     """
 
     def __init__(self, opt, shared=None):
@@ -159,7 +160,8 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
         argparser.set_defaults(history_size=2)
 
     def _setup_data(self, path):  # Make private method for ParlAIDialogTeacher
-        """Reads data in the fbdialog format.
+        """
+        Reads data in the fbdialog format.
 
         Returns ``((x,y,r,c), new_episode?)`` tuples.
         """
@@ -201,10 +203,10 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
 
 
 class SelfFeedingMTLTeacher(core_agents.MultiTaskTeacher):
-    """Creates a teacher that is actually a set of teachers each based on
-    a task string--each of these teachers will get called in turn,
-    either randomly or in order.
-    They are all in the same world (they are the same agent switching tasks).
+    """
+    Creates a teacher that is actually a set of teachers each based on a task string--
+    each of these teachers will get called in turn, either randomly or in order. They
+    are all in the same world (they are the same agent switching tasks).
 
     More specifically, this child class of MultiTaskTeacher supports multitask learning
     with batches (ensuring that all batches only have data from a single task at a time)

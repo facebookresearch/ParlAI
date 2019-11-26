@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This script is derived from parlai/core/scripts/eval_wordstat.py
+This script is derived from parlai/core/scripts/eval_wordstat.py.
 
 This script measures many different metrics of the text generated for the validation
 set - including all the controllable attributes.
@@ -79,7 +79,8 @@ def setup_args(parser=None):
 
 def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     """
-    Function which takes text sequence and dict, returns word freq and length statistics
+    Function which takes text sequence and dict, returns word freq and length
+    statistics.
 
     :param sequence: text sequence
     :param agent_dict: can be external dict or dict from the model
@@ -117,7 +118,8 @@ def update_sent_attr_stats(sent_attrs, history, prediction):
 
 
 def eval_wordstat(opt, print_parser=None):
-    """Evaluates a model.
+    """
+    Evaluates a model.
 
     :param opt: tells the evaluation function how to run
     :param print_parser: if provided, prints the options that are set within the

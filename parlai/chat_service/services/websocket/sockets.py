@@ -28,7 +28,7 @@ class MessageSocketHandler(WebSocketHandler):
     def open(self):
         """
         Opens a websocket and assigns a random UUID that is stored in the class-level
-        `subs` variable
+        `subs` variable.
         """
         if self.sid not in self.subs.values():
             self.subs[self.sid] = self
@@ -36,12 +36,15 @@ class MessageSocketHandler(WebSocketHandler):
             logging.info(f"Current subscribers: {self.subs}")
 
     def on_close(self):
-        """Runs when a socket is closed"""
+        """
+        Runs when a socket is closed.
+        """
         del self.subs[self.sid]
 
     def on_message(self, message_text):
-        """Callback that runs when a new message is received from a client
-        See the chat_service README for the resultant message structure.
+        """
+        Callback that runs when a new message is received from a client See the
+        chat_service README for the resultant message structure.
 
         Args:
             message_text: A stringified JSON object with a text or attachment key.

@@ -30,7 +30,9 @@ QN_WORDS = ['who', 'what', 'where', 'why', 'when', 'how', 'which', 'whom', 'whos
 class NIDFFeats(object):
     """
     An object to hold a vector containing the NIDF values for all words in the
-    vocabulary. The vector is contstructed when first needed.
+    vocabulary.
+
+    The vector is contstructed when first needed.
     """
 
     def __init__(self):
@@ -63,7 +65,9 @@ class NIDFFeats(object):
 
     def get_feat_vec(self, dict):
         """
-        Return the NIDF feature vector. If necessary, construct it first.
+        Return the NIDF feature vector.
+
+        If necessary, construct it first.
         """
         if self.NIDF_FEATS is None:
             self.make_feat_vec(dict)
@@ -114,12 +118,16 @@ def initialize_control_information(opt, build_task=True):
 
 
 def flatten(list_of_lists):
-    """Flatten a list of lists"""
+    """
+    Flatten a list of lists.
+    """
     return [item for sublist in list_of_lists for item in sublist]
 
 
 def intrep_frac(lst):
-    """Returns the fraction of items in the list that are repeated"""
+    """
+    Returns the fraction of items in the list that are repeated.
+    """
     if len(lst) == 0:
         return 0
     num_rep = 0
@@ -130,7 +138,9 @@ def intrep_frac(lst):
 
 
 def extrep_frac(lst1, lst2):
-    """Returns the fraction of items in lst1 that are in lst2"""
+    """
+    Returns the fraction of items in lst1 that are in lst2.
+    """
     if len(lst1) == 0:
         return 0
     num_rep = len([x for x in lst1 if x in lst2])
@@ -138,7 +148,9 @@ def extrep_frac(lst1, lst2):
 
 
 def get_ngrams(text, n):
-    """Returns all ngrams that are in the text.
+    """
+    Returns all ngrams that are in the text.
+
     Inputs:
         text: string
         n: int
@@ -154,8 +166,8 @@ def get_ngrams(text, n):
 def matching_ngram_completions(comparison_seq, hypothesis, n):
     """
     Return the list of words that if appended to hypothesis, would create a n-gram that
-    already exists in comparison_seq. For efficiency, this function represents words
-    as integers not strings.
+    already exists in comparison_seq. For efficiency, this function represents words as
+    integers not strings.
 
     Inputs:
         comparison_seq: list of integers
@@ -204,9 +216,8 @@ def matching_ngram_completions(comparison_seq, hypothesis, n):
 
 def intrep_word_used_before(dict, hypothesis, history, wt, feat, remove_stopwords):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is 1 for words that have already appeared within the hypothesis,
-    0 otherwise.
+    Weighted decoding feature function. See explanation above. This feature is 1 for
+    words that have already appeared within the hypothesis, 0 otherwise.
 
     Additional inputs:
       remove_stopwords: bool. If True, stopwords are not included when identifying words
@@ -222,9 +233,9 @@ def intrep_word_used_before(dict, hypothesis, history, wt, feat, remove_stopword
 
 def intrep_ngram_used_before(dict, hypothesis, history, wt, feat, n):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is 1 for words that, if added to the hypothesis, will create a n-gram
-    that has already appeared in the hypothesis; otherwise 0.
+    Weighted decoding feature function. See explanation above. This feature is 1 for
+    words that, if added to the hypothesis, will create a n-gram that has already
+    appeared in the hypothesis; otherwise 0.
 
     Additional inputs:
       n: int, the size of the n-grams considered.
@@ -240,9 +251,8 @@ def extrep_word_used_before(
     dict, hypothesis, history, wt, feat, remove_stopwords, person
 ):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is 1 for words that have already been used earlier in the conversation;
-    otherwise 0.
+    Weighted decoding feature function. See explanation above. This feature is 1 for
+    words that have already been used earlier in the conversation; otherwise 0.
 
     Additional inputs:
       remove_stopwords: bool. If True, stopwords are not included when identifying words
@@ -269,9 +279,9 @@ def extrep_word_used_before(
 
 def extrep_ngram_used_before(dict, hypothesis, history, wt, feat, n, person):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is 1 for words that, if added to hypothesis, would create a n-gram that
-    has already been used earlier in the conversation; otherwise 0.
+    Weighted decoding feature function. See explanation above. This feature is 1 for
+    words that, if added to hypothesis, would create a n-gram that has already been used
+    earlier in the conversation; otherwise 0.
 
     Additional inputs:
       n: int, the size of the n-grams considered.
@@ -301,9 +311,10 @@ def extrep_ngram_used_before(dict, hypothesis, history, wt, feat, n, person):
 
 def nidf(dict, hypothesis, history, wt, feat):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is equal to the NIDF (normalized inverse document frequency) score for
-    each word. The score is always between 0 and 1.
+    Weighted decoding feature function.
+
+    See explanation above. This feature is equal to the NIDF (normalized inverse
+    document frequency) score for each word. The score is always between 0 and 1.
     """
     feat += wt * nidf_feats.get_feat_vec(dict)
     return feat
@@ -311,8 +322,9 @@ def nidf(dict, hypothesis, history, wt, feat):
 
 def qn_words(dict, hypothesis, history, wt, feat):
     """
-    Weighted decoding feature function. See explanation above.
-    This feature is 1 for 'interrogative words', 0 otherwise.
+    Weighted decoding feature function.
+
+    See explanation above. This feature is 1 for 'interrogative words', 0 otherwise.
     """
     qn_indices = [dict[w] for w in QN_WORDS]
     feat[qn_indices] += wt
@@ -321,11 +333,11 @@ def qn_words(dict, hypothesis, history, wt, feat):
 
 def lastutt_sim_arora_word(dict, hypothesis, history, wt, feat):
     """
-    Weighted decoding feature function. See explanation above.
-    Given a word w, this feature is equal to
-      cos_sim(word_emb(w), sent_emb(l))
-    the cosine similarity between the GloVe vector for word w, and the Arora-style
-    sentence embedding for the partner's last utterance l.
+    Weighted decoding feature function.
+
+    See explanation above. Given a word w, this feature is equal to cos_sim(word_emb(w),
+    sent_emb(l)) the cosine similarity between the GloVe vector for word w, and the
+    Arora-style sentence embedding for the partner's last utterance l.
     """
     partner_utts = history.partner_utts
     if len(partner_utts) == 0:  # if bot goes first then do nothing
@@ -477,7 +489,9 @@ def get_wd_features(dict, hypothesis, history, wd_features, wd_weights):
 
 def intrep_repeated_word_frac(utt, history, remove_stopwords):
     """
-    Sentence-level attribute function. See explanation above.
+    Sentence-level attribute function.
+
+    See explanation above.
     Returns the fraction of words in utt that are repeated.
     Additional inputs:
       remove_stopwords: bool. If True, stopwords are removed before counting repetition.
@@ -491,7 +505,9 @@ def intrep_repeated_word_frac(utt, history, remove_stopwords):
 
 def intrep_repeated_ngram_frac(utt, history, n):
     """
-    Sentence-level attribute function. See explanation above.
+    Sentence-level attribute function.
+
+    See explanation above.
     Returns the fraction of n-grams in utt that are repeated.
     Additional inputs:
       n: int, the size of the n-grams considered.
@@ -503,7 +519,9 @@ def intrep_repeated_ngram_frac(utt, history, n):
 
 def extrep_repeated_word_frac(utt, history, remove_stopwords, person):
     """
-    Sentence-level attribute function. See explanation above.
+    Sentence-level attribute function.
+
+    See explanation above.
     Returns the fraction of words in utt that already appeared in a previous utterance.
     Additional inputs:
       remove_stopwords: bool. If True, stopwords are removed from utt before counting
@@ -530,7 +548,9 @@ def extrep_repeated_word_frac(utt, history, remove_stopwords, person):
 
 def extrep_repeated_ngram_frac(utt, history, n, person):
     """
-    Sentence-level attribute function. See explanation above.
+    Sentence-level attribute function.
+
+    See explanation above.
     Returns fraction of n-grams in utt that already appeared in a previous utterance.
     Additional inputs:
       n: int, the size of the n-grams considered.
@@ -554,8 +574,9 @@ def extrep_repeated_ngram_frac(utt, history, n, person):
 
 def avg_nidf(utt, history):
     """
-    Sentence-level attribute function. See explanation above.
-    Returns the mean NIDF of the words in utt.
+    Sentence-level attribute function.
+
+    See explanation above. Returns the mean NIDF of the words in utt.
     """
     words = utt.split()
     problem_words = [w for w in words if w not in word2nidf]
@@ -579,8 +600,9 @@ def avg_nidf(utt, history):
 
 def contains_qmark(utt, history):
     """
-    Sentence-level attribute function. See explanation above.
-    Returns 1 if utt contains a question mark, otherwise 0.
+    Sentence-level attribute function.
+
+    See explanation above. Returns 1 if utt contains a question mark, otherwise 0.
     """
     return int("?" in utt)
 
@@ -623,7 +645,9 @@ def lastutt_sim_arora_sent(utt, history):
 
 def wordlist_frac(utt, history, word_list):
     """
-    Sentence-level attribute function. See explanation above.
+    Sentence-level attribute function.
+
+    See explanation above.
     Returns the fraction of words in utt that are in word_list.
     Additional inputs:
       word_list: list of strings.
@@ -701,8 +725,8 @@ ATTR2SENTSCOREFN = {
 
 def eval_attr(utt, history, attr):
     """
-    Given a conversational history and an utterance, compute the requested
-    sentence-level attribute for utt.
+    Given a conversational history and an utterance, compute the requested sentence-
+    level attribute for utt.
 
     Inputs:
         utt: string. The utterance, tokenized and lowercase
