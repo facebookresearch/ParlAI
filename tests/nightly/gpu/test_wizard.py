@@ -91,44 +91,41 @@ class TestKnowledgeRetriever(unittest.TestCase):
     """
 
     def test_knowledge_retriever(self):
-        with testing_utils.capture_output():
-            from parlai.core.params import ParlaiParser
+        from parlai.core.params import ParlaiParser
 
-            parser = ParlaiParser(False, False)
-            KnowledgeRetrieverAgent.add_cmdline_args(parser)
-            parser.set_params(
-                model='projects:wizard_of_wikipedia:knowledge_retriever',
-                add_token_knowledge=True,
-            )
-            knowledge_opt = parser.parse_args([], print_args=False)
-            knowledge_agent = create_agent(knowledge_opt)
+        parser = ParlaiParser(False, False)
+        KnowledgeRetrieverAgent.add_cmdline_args(parser)
+        parser.set_params(
+            model='projects:wizard_of_wikipedia:knowledge_retriever',
+            add_token_knowledge=True,
+        )
+        knowledge_opt = parser.parse_args([], print_args=False)
+        knowledge_agent = create_agent(knowledge_opt)
 
-            knowledge_agent.observe(
-                {
-                    'text': 'what do you think of mountain dew?',
-                    'chosen_topic': 'Mountain Dew',
-                    'episode_done': False,
-                }
-            )
+        knowledge_agent.observe(
+            {
+                'text': 'what do you think of mountain dew?',
+                'chosen_topic': 'Mountain Dew',
+                'episode_done': False,
+            }
+        )
 
-            knowledge_act = knowledge_agent.act()
+        knowledge_act = knowledge_agent.act()
 
-            title = knowledge_act['title']
-            self.assertEqual(
-                title, 'Mountain Dew', 'Did not save chosen topic correctly'
-            )
+        title = knowledge_act['title']
+        self.assertEqual(title, 'Mountain Dew', 'Did not save chosen topic correctly')
 
-            knowledge = knowledge_act['text']
-            self.assertIn(
-                TOKEN_KNOWLEDGE, knowledge, 'Knowledge token was not inserted correctly'
-            )
+        knowledge = knowledge_act['text']
+        self.assertIn(
+            TOKEN_KNOWLEDGE, knowledge, 'Knowledge token was not inserted correctly'
+        )
 
-            checked_sentence = knowledge_act['checked_sentence']
-            self.assertEqual(
-                checked_sentence,
-                'Mountain Dew (stylized as Mtn Dew) is a carbonated soft drink brand produced and owned by PepsiCo.',
-                'Did not correctly choose the checked sentence',
-            )
+        checked_sentence = knowledge_act['checked_sentence']
+        self.assertEqual(
+            checked_sentence,
+            'Mountain Dew (stylized as Mtn Dew) is a carbonated soft drink brand produced and owned by PepsiCo.',
+            'Did not correctly choose the checked sentence',
+        )
 
 
 if __name__ == '__main__':
