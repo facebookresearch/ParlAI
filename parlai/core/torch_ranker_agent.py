@@ -96,6 +96,13 @@ class TorchRankerAgent(TorchAgent):
             'the candidates is independent of the input.',
         )
         agent.add_argument(
+            '--encode-candidate-vecs-batchsize',
+            type=int,
+            default=256,
+            hidden=True,
+            help='Batchsize when encoding candidate vecs',
+        )
+        agent.add_argument(
             '--init-model',
             type=str,
             default=None,
@@ -262,6 +269,10 @@ class TorchRankerAgent(TorchAgent):
         """
         pass
 
+    def _maybe_invalidate_fixed_encs_cache(self):
+        if self.candidates != 'fixed':
+            self.fixed_candidate_encs = None
+
     def _get_batch_train_metrics(self, scores):
         """
         Get fast metrics calculations if we train with batch candidates.
@@ -353,6 +364,7 @@ class TorchRankerAgent(TorchAgent):
         """
         Train on a single batch of examples.
         """
+        self._maybe_invalidate_fixed_encs_cache()
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
@@ -420,6 +432,10 @@ class TorchRankerAgent(TorchAgent):
         if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
+            if self.fixed_candidate_encs is None:
+                self.fixed_candidate_encs = self._make_candidate_encs(
+                    cand_vecs
+                ).detach()
             if self.eval_candidates == 'fixed':
                 cand_encs = self.fixed_candidate_encs
             elif self.eval_candidates == 'vocab':
@@ -732,6 +748,7 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
+        shared['num_fixed_candidates'] = self.num_fixed_candidates
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
@@ -838,7 +855,9 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidates = shared['fixed_candidates']
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
             self.fixed_candidate_encs = shared['fixed_candidate_encs']
+            self.num_fixed_candidates = shared['num_fixed_candidates']
         else:
+            self.num_fixed_candidates = 0
             opt = self.opt
             cand_path = self.fixed_candidates_path
             if 'fixed' in (self.candidates, self.eval_candidates):
@@ -872,6 +891,7 @@ class TorchRankerAgent(TorchAgent):
                         self._save_candidates(vecs, vecs_path)
 
                 self.fixed_candidates = cands
+                self.num_fixed_candidates = len(self.fixed_candidates)
                 self.fixed_candidate_vecs = vecs
                 if self.use_cuda:
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
@@ -922,7 +942,9 @@ class TorchRankerAgent(TorchAgent):
         cand_vecs = []
         for batch in tqdm(cand_batches):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-        return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
+        return padded_3d(
+            [cand_vecs], pad_idx=self.NULL_IDX, dtype=cand_vecs[0].dtype
+        ).squeeze(0)
 
     def _save_candidates(self, vecs, path, cand_type='vectors'):
         """
@@ -957,10 +979,11 @@ class TorchRankerAgent(TorchAgent):
         """
 
         cand_encs = []
-        vec_batches = [vecs[i : i + 256] for i in range(0, len(vecs), 256)]
+        bsz = self.opt.get('encode_candidate_vecs_batchsize', 256)
+        vec_batches = [vecs[i : i + bsz] for i in range(0, len(vecs), bsz)]
         print(
-            "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
-            "".format(len(vec_batches))
+            "[ Encoding fixed candidates set from ({} batch(es) of up to {}) ]"
+            "".format(len(vec_batches), bsz)
         )
         # Put model into eval mode when encoding candidates
         self.model.eval()

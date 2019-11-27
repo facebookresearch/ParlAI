@@ -225,6 +225,56 @@ class TestPolyRanker(_AbstractTRATest):
     def _get_threshold(self):
         return 0.6
 
+    def test_eval_fixed_label_not_in_cands(self):
+        # test where cands during eval do not contain test label
+        args = self._get_args()
+        args[
+            'model'
+        ] = 'parlai.agents.transformer.polyencoder:IRFriendlyPolyencoderAgent'
+        args['eval_candidates'] = 'fixed'
+
+        teacher = CandidateTeacher({'datatype': 'train'})
+        all_cands = teacher.train + teacher.val + teacher.test
+        train_val_cands = teacher.train + teacher.val
+        all_cands_str = '\n'.join([' '.join(x) for x in all_cands])
+        train_val_cands_str = '\n'.join([' '.join(x) for x in train_val_cands])
+
+        with testing_utils.tempdir() as tmpdir:
+            tmp_cands_file = os.path.join(tmpdir, 'all_cands.text')
+            with open(tmp_cands_file, 'w') as f:
+                f.write(all_cands_str)
+            tmp_train_val_cands_file = os.path.join(tmpdir, 'train_val_cands.text')
+            with open(tmp_train_val_cands_file, 'w') as f:
+                f.write(train_val_cands_str)
+            args['fixed_candidates_path'] = tmp_cands_file
+            args['encode_candidate_vecs'] = False  # don't encode before training
+            args['ignore_bad_candidates'] = False
+            args['model_file'] = os.path.join(tmpdir, 'model')
+            args['dict_file'] = os.path.join(tmpdir, 'model.dict')
+            args['num_epochs'] = 20
+            # Train model where it has access to the candidate in labels
+            stdout, valid, test = testing_utils.train_model(args)
+            self.assertGreaterEqual(
+                valid['hits@100'],
+                0.0,
+                "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            )
+
+            # Evaluate model where label is not in fixed candidates
+            args['fixed_candidates_path'] = tmp_train_val_cands_file
+
+            # Will fail without appropriate arg set
+            with self.assertRaises(RuntimeError):
+                testing_utils.eval_model(args, skip_valid=True)
+
+            args['add_label_to_fixed_cands'] = True
+            stdout, valid, test = testing_utils.eval_model(args, skip_valid=True)
+            self.assertGreaterEqual(
+                test['hits@100'],
+                0.0,
+                "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

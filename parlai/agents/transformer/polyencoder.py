@@ -6,6 +6,7 @@
 """
 Poly-encoder Agent.
 """
+from .biencoder import AddLabelFixedCandsTRA
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -486,3 +487,17 @@ class PolyBasicAttention(BasicAttention):
         if self.poly_type == 'codes' and self.n_codes == 1 and len(lhs_emb.shape) == 2:
             lhs_emb = lhs_emb.unsqueeze(self.dim - 1)
         return lhs_emb
+
+
+class IRFriendlyPolyencoderAgent(AddLabelFixedCandsTRA, PolyencoderAgent):
+    """
+    Poly-encoder agent that allows for adding label to fixed cands.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        """
+        Add cmd line args.
+        """
+        super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
+        super(PolyencoderAgent, cls).add_cmdline_args(argparser)
