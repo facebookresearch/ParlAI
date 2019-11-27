@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Simple loop which sets up a remote connection. The paired agent can run this
-same loop but with the '--remote-host' flag set. For example...
+"""
+Simple loop which sets up a remote connection. The paired agent can run this same loop
+but with the '--remote-host' flag set. For example...
 
 Agent 1:
 python remote.py

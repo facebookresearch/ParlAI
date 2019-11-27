@@ -204,7 +204,9 @@ class PersonasGenerator(object):
 
 
 class PersonaAssignWorld(MTurkOnboardWorld):
-    """A world that assigns a persona to an agent."""
+    """
+    A world that assigns a persona to an agent.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.max_persona_time = opt['max_persona_time']
@@ -683,9 +685,11 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         return True
 
     def parallel_eval_mode(self):
-        """Parallel function that shuts one agent down and asks the other
-        to do the evaluation if their are two agents. If there is only
-        one agent, it performs the evaluation.
+        """
+        Parallel function that shuts one agent down and asks the other to do the
+        evaluation if their are two agents.
+
+        If there is only one agent, it performs the evaluation.
         """
 
         def eval_or_shutdown(agent):

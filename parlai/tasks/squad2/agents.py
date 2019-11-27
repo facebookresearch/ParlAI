@@ -12,13 +12,14 @@ import os
 
 
 class IndexTeacher(FixedDialogTeacher):
-    """Hand-written SQuAD teacher, which loads the json squad data and
-    implements its own `act()` method for interacting with student agent,
-    rather than inheriting from the core Dialog Teacher. This code is here as
-    an example of rolling your own without inheritance.
+    """
+    Hand-written SQuAD teacher, which loads the json squad data and implements its own
+    `act()` method for interacting with student agent, rather than inheriting from the
+    core Dialog Teacher. This code is here as an example of rolling your own without
+    inheritance.
 
-    This teacher also provides access to the "answer_start" indices that
-    specify the location of the answer in the context.
+    This teacher also provides access to the "answer_start" indices that specify the
+    location of the answer in the context.
     """
 
     def __init__(self, opt, shared=None):
@@ -81,9 +82,11 @@ class IndexTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 
@@ -117,9 +120,11 @@ class DefaultTeacher(DialogTeacher):
 
 
 class OpenSquadTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     Note: This teacher omits the context paragraph
     """
 
@@ -152,7 +157,10 @@ class OpenSquadTeacher(DialogTeacher):
 
 
 class TitleTeacher(DefaultTeacher):
-    """This version of SquAD inherits from the Default Teacher. The only
+    """
+    This version of SquAD inherits from the Default Teacher.
+
+    The only
     difference is that the 'text' field of an observation will contain
     the title of the article separated by a newline from the paragraph and the
     query.
@@ -187,8 +195,8 @@ class TitleTeacher(DefaultTeacher):
 
 
 class SentenceIndexTeacher(IndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
+    """
+    Index teacher where the labels are the sentences the contain the true answer.
     """
 
     def __init__(self, opt, shared=None):
@@ -263,11 +271,11 @@ class SentenceIndexTeacher(IndexTeacher):
 
 
 class SentenceIndexEditTeacher(SentenceIndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
+    """
+    Index teacher where the labels are the sentences the contain the true answer.
 
-    Some punctuation may be removed from the context and the answer for
-    tokenization purposes.
+    Some punctuation may be removed from the context and the answer for tokenization
+    purposes.
     """
 
     def __init__(self, opt, shared=None):
@@ -319,8 +327,9 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
 
 
 class SentenceLabelsTeacher(IndexTeacher):
-    """Teacher which contains the question as the text, the sentences as the
-    label candidates, and the label as the sentence containing the answer.
+    """
+    Teacher which contains the question as the text, the sentences as the label
+    candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
     """

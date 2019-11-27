@@ -98,7 +98,9 @@ class PersonasGenerator(object):
 
 
 class RephrasePersonaWorld(MTurkOnboardWorld):
-    """A world that provides a persona to the MTurkAgent"""
+    """
+    A world that provides a persona to the MTurkAgent.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.opt = opt

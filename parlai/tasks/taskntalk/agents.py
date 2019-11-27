@@ -32,9 +32,11 @@ def _path(opt, task_size='small'):
 
 
 class TaskNTalkTeacher(Teacher):
-    """TaskNTalk basic teacher, it picks a random image and associates
-    a random task with it. Metric updates and observation are to be
-    implemented.
+    """
+    TaskNTalk basic teacher, it picks a random image and associates a random task with
+    it.
+
+    Metric updates and observation are to be implemented.
     """
 
     def __init__(self, opt, shared=None):
@@ -48,7 +50,9 @@ class TaskNTalkTeacher(Teacher):
             self.task_index = shared['task_index']
 
     def _setup_data(self, data_path):
-        """Read the json file and store images and task definitions."""
+        """
+        Read the json file and store images and task definitions.
+        """
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             json_data = json.load(data_file)
@@ -59,7 +63,9 @@ class TaskNTalkTeacher(Teacher):
         random.shuffle(self.data)
 
     def share(self):
-        """Share images and task definitions with other teachers."""
+        """
+        Share images and task definitions with other teachers.
+        """
         shared = super().share()
         shared['data'] = self.data
         shared['task_defn'] = self.task_defn
@@ -70,13 +76,17 @@ class TaskNTalkTeacher(Teacher):
         return len(self.data)
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         self.observation = observation
         # TODO(kd): update metrics
         return observation
 
     def act(self):
-        """Select random image and associate random task with it."""
+        """
+        Select random image and associate random task with it.
+        """
         image = random.choice(self.data)
         task = random.choice(self.task_defn)
         labels = [image[self.task_index[attr]] for attr in task]
@@ -91,7 +101,9 @@ class TaskNTalkTeacher(Teacher):
 
 
 class SmallTeacher(TaskNTalkTeacher):
-    """Teacher for small dataset, invoked by ``taskntalk:small``."""
+    """
+    Teacher for small dataset, invoked by ``taskntalk:small``.
+    """
 
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'small')
@@ -99,7 +111,9 @@ class SmallTeacher(TaskNTalkTeacher):
 
 
 class LargeTeacher(TaskNTalkTeacher):
-    """Teacher for large dataset, invoked by ``taskntalk:large``."""
+    """
+    Teacher for large dataset, invoked by ``taskntalk:large``.
+    """
 
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'large')
@@ -107,6 +121,8 @@ class LargeTeacher(TaskNTalkTeacher):
 
 
 class DefaultTeacher(SmallTeacher):
-    """Default teacher for small dataset, invoked by ``taskntalk``."""
+    """
+    Default teacher for small dataset, invoked by ``taskntalk``.
+    """
 
     pass

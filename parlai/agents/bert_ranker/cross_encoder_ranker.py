@@ -51,8 +51,10 @@ def concat_without_padding(text_idx, cand_idx, use_cuda, null_idx=0):
 
 
 class CrossEncoderRankerAgent(TorchRankerAgent):
-    """ TorchRankerAgent implementation of the crossencoder.
-        It is a standalone Agent. It might be called by the Both Encoder.
+    """
+    TorchRankerAgent implementation of the crossencoder.
+
+    It is a standalone Agent. It might be called by the Both Encoder.
     """
 
     @staticmethod

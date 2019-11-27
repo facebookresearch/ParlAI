@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic example which iterates through the tasks specified and prints them out.
-Used for verification of data loading and iteration.
+"""
+Basic example which iterates through the tasks specified and prints them out. Used for
+verification of data loading and iteration.
 
 For example, to make sure that bAbI task 1 (1k exs) loads one can run and to
 see a few of them:

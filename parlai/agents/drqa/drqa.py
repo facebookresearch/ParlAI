@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""(A partial) implementation of the DrQa Document Reader from:
+"""
+(A partial) implementation of the DrQa Document Reader from:
 
 Danqi Chen, Adam Fisch, Jason Weston, Antoine Bordes. 2017.
 Reading Wikipedia to Answer Open-Domain Questions.
@@ -43,7 +44,9 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """Override DictionaryAgent to use spaCy tokenizer."""
+    """
+    Override DictionaryAgent to use spaCy tokenizer.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -79,7 +82,9 @@ class SimpleDictionaryAgent(DictionaryAgent):
             self.embedding_words = None
 
     def add_to_dict(self, tokens):
-        """Builds dictionary from the list of provided tokens.
+        """
+        Builds dictionary from the list of provided tokens.
+
         Only adds words contained in self.embedding_words, if not None.
         """
         for token in tokens:
@@ -207,7 +212,9 @@ class DrqaAgent(Agent):
         return reply
 
     def batch_act(self, observations):
-        """Update or predict on a batch of examples.
+        """
+        Update or predict on a batch of examples.
+
         More efficient than act().
         """
         batchsize = len(observations)
@@ -260,7 +267,9 @@ class DrqaAgent(Agent):
         return batch_reply
 
     def save(self, fname=None):
-        """Save the parameters of the agent to a file."""
+        """
+        Save the parameters of the agent to a file.
+        """
         fname = self.opt.get('model_file', None) if fname is None else fname
         if fname:
             print("[ saving model: " + fname + " ]")
@@ -275,7 +284,9 @@ class DrqaAgent(Agent):
     # --------------------------------------------------------------------------
 
     def _build_ex(self, ex):
-        """Find the token span of the answer in the context for this example.
+        """
+        Find the token span of the answer in the context for this example.
+
         If a token span cannot be found, return None. Otherwise, torchify.
         """
         # Check if empty input (end of epoch)
@@ -330,7 +341,9 @@ class DrqaAgent(Agent):
         return inputs + (document, doc_spans)
 
     def _find_target(self, document, labels):
-        """Find the start/end token span for all labels in document.
+        """
+        Find the start/end token span for all labels in document.
+
         Return a random one for training.
         """
 
@@ -348,7 +361,8 @@ class DrqaAgent(Agent):
         return targets[np.random.choice(len(targets))]
 
     def _subsample_doc(self, paras, labels, subsample):
-        """Subsample paragraphs from the document (mostly for training speed).
+        """
+        Subsample paragraphs from the document (mostly for training speed).
         """
         # first find a valid paragraph (with a label)
         pi = -1

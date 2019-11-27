@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""KvMemNN model for ConvAI2 (personachat data).
+"""
+KvMemNN model for ConvAI2 (personachat data).
 """
 
 from parlai.core.build_data import download_models

@@ -19,10 +19,10 @@ import os
 
 def main():
     """
-        Personality-Captions Data Collection Task.
+    Personality-Captions Data Collection Task.
 
-        This is the task setup used when collecting the Personality-Captions
-        dataset (https://arxiv.org/abs/1810.10665).
+    This is the task setup used when collecting the Personality-Captions dataset
+    (https://arxiv.org/abs/1810.10665).
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
