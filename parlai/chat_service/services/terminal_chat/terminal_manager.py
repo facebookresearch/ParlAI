@@ -4,7 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+
+import json
+import asyncio
+import logging
+import traceback
+import sys
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
+from parlai.core.agents import create_agent
+import parlai.chat_service.services.messenger.shared_utils as shared_utils
+
 
 
 class TerminalManager(ChatServiceManager):
@@ -21,7 +30,7 @@ class TerminalManager(ChatServiceManager):
 
     def parse_additional_args(self, opt):
         """Parse any other service specific args here."""
-        raise NotImplementedError
+        pass
 
     def _complete_setup(self):
         """
@@ -30,11 +39,16 @@ class TerminalManager(ChatServiceManager):
         Call every other functions used in setup from here.
         To be called during instantiation
         """
-        raise NotImplementedError
+        self.setup_server()
+        self.init_new_state()
+        self.setup_socket()
+        self.start_new_run()
+        self._load_model()
 
     def _load_model(self):
         """Load model if necessary."""
-        raise NotImplementedError
+        if 'model_file' in self.opt or 'model' in self.opt:
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _handle_message_read(self, event):
         pass
@@ -49,7 +63,7 @@ class TerminalManager(ChatServiceManager):
 
     def _confirm_message_delivery(self, event):
         """A callback for when messages are marked as delivered"""
-        raise NotImplementedError
+        pass
 
     def setup_server(self):
         """Prepare the Chat Service server for handling messages."""
