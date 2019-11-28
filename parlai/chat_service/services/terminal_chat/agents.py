@@ -7,6 +7,7 @@
 from parlai.chat_service.core.agents import ChatServiceAgent
 import logging
 
+
 class TerminalAgents(ChatServiceAgent):
     def __init__(self, opt, manager, receiver_id, task_id):
         super().__init__(opt, manager, receiver_id, task_id)
@@ -20,10 +21,7 @@ class TerminalAgents(ChatServiceAgent):
 
     def put_data(self, message):
         logging.info(f"Received new message: {message}")
-        action = {
-            'episode_done': False,
-            'text': message.get('text', ''),
-        }
+        action = {'episode_done': False, 'text': message.get('text', '')}
 
         self._queue_action(action, self.action_id)
         self.action_id += 1

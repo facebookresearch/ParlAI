@@ -5,15 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 
-import json
-import asyncio
-import logging
-import traceback
-import sys
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 from parlai.core.agents import create_agent
-import parlai.chat_service.services.messenger.shared_utils as shared_utils
-
 
 
 class TerminalManager(ChatServiceManager):
