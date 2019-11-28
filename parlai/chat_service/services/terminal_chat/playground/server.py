@@ -50,8 +50,8 @@
 import socketserver
 import threading
 
-class MyTCPHandler(socketserver.StreamRequestHandler):
 
+class MyTCPHandler(socketserver.StreamRequestHandler):
     def handle(self):
         # self.rfile is a file-like object created by the handler;
         # we can now use e.g. readline() instead of raw recv() calls
@@ -62,17 +62,19 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         # to the client
         self.wfile.write(self.data.upper())
 
+
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
-class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = str(self.request.recv(1024), 'ascii')
         cur_thread = threading.current_thread()
         print(f'{cur_thread}: {data}')
         response = bytes("{}: {}".format(cur_thread.name, data), 'ascii')
         self.request.sendall(response)
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 12344

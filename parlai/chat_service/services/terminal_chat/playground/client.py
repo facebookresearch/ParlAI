@@ -26,7 +26,7 @@ try:
         sock.sendall(message)
         if message.decode() == "EXIT\n":
             break
-        
+
         data = sock.recv(1024)
         if data is not None:
             data = data.decode()
@@ -35,4 +35,3 @@ try:
 finally:
     print('closing socket')
     sock.close()
-

@@ -10,13 +10,14 @@ from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 class TerminalManager(ChatServiceManager):
     class TerminalMessageSender(ChatServiceManager.ChatServiceMessageSender):
         def send_read(self, receiver_id):
-            raise NotImplementedError
+            pass
 
         def typing_on(self, receiver_id, persona_id=None):
-            raise NotImplementedError
+            pass
 
     def __init__(self, opt):
         super().__init__(opt)
+        self.port = opt.get('port')
 
     def parse_additional_args(self, opt):
         """Parse any other service specific args here."""
@@ -24,8 +25,9 @@ class TerminalManager(ChatServiceManager):
 
     def _complete_setup(self):
         """
-        Complete necessary setup items. Consider this as a unified method for
-        setting up. Call every other functions used in setup from here.
+        Complete necessary setup items. Consider this as a unified method for setting up.
+
+        Call every other functions used in setup from here.
         To be called during instantiation
         """
         raise NotImplementedError
@@ -34,13 +36,16 @@ class TerminalManager(ChatServiceManager):
         """Load model if necessary."""
         raise NotImplementedError
 
+    def _handle_message_read(self, event):
+        pass
+
     def restructure_message(self):
         """Use this function to restructure the message into the provided format."""
         raise NotImplementedError
 
     def _handle_bot_read(self, agent_id):
         """Use this function to handle/execute events once the bot has observed the message."""
-        raise NotImplementedError
+        pass
 
     def _confirm_message_delivery(self, event):
         """A callback for when messages are marked as delivered"""
