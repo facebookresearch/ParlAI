@@ -159,6 +159,7 @@ class MTurkDataHandler:
         for worker_id, w_data in worker_data.items():
             worker_file = os.path.join(target_dir_workers, '{}.json'.format(worker_id))
             force_dir(worker_file)
+            print(f'Saving MTurk data to {worker_file}.')
             with open(worker_file, 'w') as outfile:
                 json.dump(w_data, outfile)
 
