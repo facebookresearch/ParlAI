@@ -20,15 +20,17 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class MockTurkManager:
-    """Manages interactions between MTurk agents as well as direct interactions
-    between a world and the MTurk server.
+    """
+    Manages interactions between MTurk agents as well as direct interactions between a
+    world and the MTurk server.
     """
 
     current_manager = None
 
     def __init__(self, opt, mturk_agent_ids, is_test=False, use_db=False):
-        """Fake an MTurk manager that has the functionality to run a task,
-        but not on mturk
+        """
+        Fake an MTurk manager that has the functionality to run a task, but not on
+        mturk.
         """
         self.opt = opt
         self.mturk_agent_ids = mturk_agent_ids
@@ -38,18 +40,25 @@ class MockTurkManager:
 
     # Required lifecycle functions below
     def setup_server(self, task_directory_path=None):
-        """Noop, we aren't connecting to a server"""
+        """
+        Noop, we aren't connecting to a server.
+        """
         print('[mock] setup_server called')
 
     def start_new_run(self):
-        """Initialize expected state to not cause crashes"""
+        """
+        Initialize expected state to not cause crashes.
+        """
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         print('[mock] start_new_run called')
 
     def ready_to_accept_workers(self, timeout_seconds=None):
-        """No threads, as there is no sustained worker pool. Instead
-        we instantiate x MockTurkAgents in onboarding"""
+        """
+        No threads, as there is no sustained worker pool.
+
+        Instead we instantiate x MockTurkAgents in onboarding
+        """
         self.id_to_agent = {
             agent_id: MockTurkAgent(
                 self.opt,
@@ -69,9 +78,11 @@ class MockTurkManager:
         print('[mock] set_onboard_function called')
 
     def start_task(self, eligibility_function, assign_role_function, task_function):
-        """Handle running a task by checking to see when enough agents are
-        in the pool to start an instance of the task. Continue doing this
-        until the desired number of conversations is had.
+        """
+        Handle running a task by checking to see when enough agents are in the pool to
+        start an instance of the task.
+
+        Continue doing this until the desired number of conversations is had.
         """
         print('[mock] start_task called')
         if callable(eligibility_function):
@@ -135,20 +146,25 @@ class MockTurkManager:
             agent.task_done = True
 
     def shutdown(self, force=False):
-        """No servers, nothing to clean up"""
+        """
+        No servers, nothing to clean up.
+        """
         print('[mock] shutdown called')
 
     def move_agents_to_waiting(self, agents):
-        """Mock moving to a waiting world"""
+        """
+        Mock moving to a waiting world.
+        """
         for agent in agents:
             agent.mock_status = AssignState.STATUS_WAITING
             agent.set_status(AssignState.STATUS_WAITING)
             agent.conversation_id = 'waiting'
 
     def disconnect_agent(self, worker_id, assignment_id):
-        """Set an agent to status disconnect, and all other agents to
-        partner disconnect. send them the correct message. Mocks
-        MTurkManager._handle_agent_disconnect
+        """
+        Set an agent to status disconnect, and all other agents to partner disconnect.
+
+        send them the correct message. Mocks MTurkManager._handle_agent_disconnect
         """
         worker = self.id_to_agent[worker_id]
         worker.disconnected = True
@@ -157,7 +173,9 @@ class MockTurkManager:
                 agent.some_agent_disconnected = True
 
     def worker_alive(self, worker_id, hit_id, assign_id):
-        """Mocks baseline worker_alive status changes for mock agents"""
+        """
+        Mocks baseline worker_alive status changes for mock agents.
+        """
         agent = self.id_to_agent[worker_id]
         if agent.mock_status == AssignState.STATUS_NONE:
             agent.status = AssignState.STATUS_ONBOARDING
@@ -186,13 +204,17 @@ class MockTurkManager:
         agent.append_message(msg.data)
 
     def onboard_new_agent(self, agent):
-        """Creates an onboarding thread for the given agent"""
+        """
+        Creates an onboarding thread for the given agent.
+        """
         # get state variable in question
         worker_id = agent.worker_id
         assignment_id = agent.assignment_id
 
         def _onboard_function(agent):
-            """Onboarding wrapper to set state to onboarding properly"""
+            """
+            Onboarding wrapper to set state to onboarding properly.
+            """
             if self.onboard_function:
                 agent.id = 'Onboarding'
                 self.onboard_function(agent)
@@ -215,8 +237,9 @@ class MockTurkManager:
     def send_message(
         self, receiver_id, assignment_id, data, blocking=True, ack_func=None
     ):
-        """'Send' a message directly by updating the queue of messages not
-        yet recieved that the agent can pull from
+        """
+        'Send' a message directly by updating the queue of messages not yet recieved
+        that the agent can pull from.
         """
         data = data.copy()  # Ensure data packet is sent in current state
         data['type'] = data_model.MESSAGE_TYPE_MESSAGE
@@ -252,11 +275,15 @@ class MockTurkManager:
     def send_command(
         self, receiver_id, assignment_id, data, blocking=True, ack_func=None
     ):
-        """Commands aren't actually sent this way, as state updates are read"""
+        """
+        Commands aren't actually sent this way, as state updates are read.
+        """
         return None
 
     def timeout_all_agents(self):
-        """Set all agent statuses to disconnect to kill the world"""
+        """
+        Set all agent statuses to disconnect to kill the world.
+        """
         for agent in self.agents:
             agent.disconnected = True
 

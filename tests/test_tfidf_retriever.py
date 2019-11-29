@@ -24,7 +24,9 @@ except ImportError:
 
 
 class TestTfidfRetriever(unittest.TestCase):
-    """Basic tests on the display_data.py example."""
+    """
+    Basic tests on the display_data.py example.
+    """
 
     @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
     def test_sparse_tfidf_retriever(self):

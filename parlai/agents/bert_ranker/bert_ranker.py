@@ -10,7 +10,9 @@ from parlai.core.torch_agent import TorchAgent
 
 
 class BertRankerAgent(TorchAgent):
-    """Abstract parent class for all Bert Ranker agents."""
+    """
+    Abstract parent class for all Bert Ranker agents.
+    """
 
     def __init__(self, opt, shared=None):
         raise RuntimeError(

@@ -27,8 +27,8 @@ class DefaultTeacher(FbDialogTeacher):
 
 
 class DoubleTeacher(DefaultTeacher):
-    """This version creates text-label pairs from the perspective of both
-    speakers.
+    """
+    This version creates text-label pairs from the perspective of both speakers.
     """
 
     def _rebuild(self, entries):
@@ -49,8 +49,8 @@ class DoubleTeacher(DefaultTeacher):
         return True
 
     def setup_data(self, path):
-        """Adds additional perspectives.
-        For example, in the conversation:
+        """
+        Adds additional perspectives. For example, in the conversation:
 
         x1 y1
         x2 y2
@@ -60,7 +60,6 @@ class DoubleTeacher(DefaultTeacher):
 
         y1 x2
         y2 x3
-
         """
         # this shows conversations in both directions
         alternate = []

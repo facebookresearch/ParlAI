@@ -14,7 +14,9 @@ import parlai.utils.testing as testing_utils
 
 
 class TestInit(unittest.TestCase):
-    """Make sure all python packages have init files."""
+    """
+    Make sure all python packages have init files.
+    """
 
     def test_init_everywhere(self):
         for folder in testing_utils.git_ls_dirs('parlai'):

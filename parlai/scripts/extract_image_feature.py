@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Basic example which iterates through the tasks specified and load/extract
-the image features.
+"""
+Basic example which iterates through the tasks specified and load/extract the image
+features.
 
 For more options, check ``parlai.core.image_featurizers``
 
@@ -17,7 +18,6 @@ To extract the image feature of COCO images:
 .. code-block:: shell
 
   python examples/extract_image_feature.py -t vqa_v1 -im resnet152
-
 """
 import importlib
 import h5py
@@ -63,13 +63,13 @@ def setup_args(parser=None):
 
 
 def get_dataset_class(opt):
-    """ To use a custom Pytorch Dataset, specify it on the command line:
-        ``--dataset parlai.tasks.vqa_v1.agents:VQADataset``
+    """
+    To use a custom Pytorch Dataset, specify it on the command line: ``--dataset
+    parlai.tasks.vqa_v1.agents:VQADataset``
 
-        Note that if the dataset is named ``DefaultDataset``, then you do
-        not need to specify its name following the colon; e.g., it
-        would just be:
-        ``--dataset parlai.tasks.vqa_v1.agents``
+    Note that if the dataset is named ``DefaultDataset``, then you do not need to
+    specify its name following the colon; e.g., it would just be: ``--dataset
+    parlai.tasks.vqa_v1.agents``
     """
     dataset_name = opt.get('pytorch_teacher_dataset')
     sp = dataset_name.strip().split(':')
@@ -110,7 +110,9 @@ def extract_feats(opt):
         pbar.close()
     elif opt.get('use_hdf5_extraction', False):
         # TODO Deprecate
-        '''One can specify a Pytorch Dataset for custom image loading'''
+        """
+        One can specify a Pytorch Dataset for custom image loading.
+        """
         nw = opt.get('numworkers', 1)
         im = opt.get('image_mode', 'raw')
         opt['batchsize'] = 1
@@ -128,7 +130,9 @@ def extract_feats(opt):
         images_built_file = image_path + '.built'
 
         if not os.path.exists(image_path) or not os.path.isfile(images_built_file):
-            '''Image features have not been computed yet'''
+            """
+            Image features have not been computed yet.
+            """
             opt['num_load_threads'] = 20
             agent = RepeatLabelAgent(opt)
             if opt['task'] == 'pytorch_teacher':

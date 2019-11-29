@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Contains code for parsing and building a dictionary from text."""
+"""
+Contains code for parsing and building a dictionary from text.
+"""
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.agents import Agent
@@ -48,7 +50,8 @@ def unescape(s):
 
 
 def find_ngrams(token_dict, text, n):
-    """Break text into ngrams that appear in ``token_dict``.
+    """
+    Break text into ngrams that appear in ``token_dict``.
 
     :param token_dict: ``dict`` to check for ngrams
     :param text: ``str`` to look for ngrams in
@@ -83,12 +86,12 @@ def find_ngrams(token_dict, text, n):
 
 
 class DictionaryAgent(Agent):
-    """Builds and/or loads a dictionary.
+    """
+    Builds and/or loads a dictionary.
 
-    The dictionary provides access to the frequency of each token, functions
-    to translate sentences from tokens to their vectors (list of ints, each
-    int is the index of a token in the dictionary) and back from vectors to
-    tokenized text.
+    The dictionary provides access to the frequency of each token, functions to
+    translate sentences from tokens to their vectors (list of ints, each int is the
+    index of a token in the dictionary) and back from vectors to tokenized text.
     """
 
     default_lang = 'english'
@@ -105,7 +108,9 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add commandline arguments related to the dictionary."""
+        """
+        Add commandline arguments related to the dictionary.
+        """
         dictionary = argparser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '--dict-file',
@@ -192,7 +197,9 @@ class DictionaryAgent(Agent):
         return dictionary
 
     def __init__(self, opt, shared=None):
-        """Initialize DictionaryAgent."""
+        """
+        Initialize DictionaryAgent.
+        """
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
@@ -314,7 +321,9 @@ class DictionaryAgent(Agent):
             self.ind2tok[index] = word
 
     def __contains__(self, key):
-        """If key is an int, returns whether the key is in the indices.
+        """
+        If key is an int, returns whether the key is in the indices.
+
         If key is a str, return if the token is in the dict of tokens.
         """
         if type(key) == int:
@@ -323,11 +332,12 @@ class DictionaryAgent(Agent):
             return key in self.tok2ind
 
     def __getitem__(self, key):
-        """If key is an int, returns the corresponding token. If it does not
-        exist, return the unknown token.
-        If key is a str, return the token's index. If the token is not in the
-        dictionary, return the index of the unknown token. If there is no
-        unknown token, return ``None``.
+        """
+        If key is an int, returns the corresponding token.
+
+        If it does not exist, return the unknown token. If key is a str, return the
+        token's index. If the token is not in the dictionary, return the index of the
+        unknown token. If there is no unknown token, return ``None``.
         """
         if type(key) == int:
             # return token from index, or unk_token
@@ -340,8 +350,9 @@ class DictionaryAgent(Agent):
         return len(self.tok2ind)
 
     def __setitem__(self, key, value):
-        """If the key is not in the dictionary, add it to the dictionary and set
-        its frequency to value.
+        """
+        If the key is not in the dictionary, add it to the dictionary and set its
+        frequency to value.
         """
         key = str(key)
         if self.lower:
@@ -353,9 +364,11 @@ class DictionaryAgent(Agent):
         return self.tok2ind.keys()
 
     def copy_dict(self, dictionary):
-        """Overwrite own state with any state in the other dictionary.
-        This allows loading of the contents of another dictionary while keeping
-        the current dictionary version.
+        """
+        Overwrite own state with any state in the other dictionary.
+
+        This allows loading of the contents of another dictionary while keeping the
+        current dictionary version.
         """
         for k, v in vars(dictionary).items():
             setattr(self, k, v)
@@ -376,7 +389,9 @@ class DictionaryAgent(Agent):
         return [t.text for t in tokens]
 
     def spacy_span_tokenize(self, text):
-        """Returns tuple of tokens, spans."""
+        """
+        Returns tuple of tokens, spans.
+        """
         tokens = self.NLP.tokenizer(text)
         return (
             [t.text for t in tokens],
@@ -384,8 +399,9 @@ class DictionaryAgent(Agent):
         )
 
     def nltk_tokenize(self, text, building=False):
-        """Uses nltk-trained PunktTokenizer for sentence tokenization and
-        Treebank Word Tokenizer for tokenizing words within sentences.
+        """
+        Uses nltk-trained PunktTokenizer for sentence tokenization and Treebank Word
+        Tokenizer for tokenizing words within sentences.
         """
 
         return (
@@ -396,18 +412,20 @@ class DictionaryAgent(Agent):
 
     @staticmethod
     def re_tokenize(text):
-        """Find boundaries between word characters, newlines, and non-word
-        non-whitespace tokens (r'[\w\n]+ | [^\w\s] | \n').
+        """
+        Find boundaries between word characters, newlines, and non-word non-whitespace
+        tokens (r'[\w\n]+ | [^\w\s] | \n').
 
-        This splits along whitespace and punctuation and keeps the newline as
-        a token in the returned list.
+        This splits along whitespace and punctuation and keeps the newline as a token in
+        the returned list.
         """
         return RETOK.findall(text)
 
     @staticmethod
     def split_tokenize(text):
-        """Splits tokens based on whitespace after adding whitespace around
-        punctuation.
+        """
+        Splits tokens based on whitespace after adding whitespace around punctuation.
+
         Use re_tokenize if you want more robust handling of punctuation.
         """
         return (
@@ -421,8 +439,9 @@ class DictionaryAgent(Agent):
         )
 
     def span_tokenize(self, text):
-        """Tokenizes, and then calculates the starting index of each token in
-        the original string.
+        """
+        Tokenizes, and then calculates the starting index of each token in the original
+        string.
         """
         if self.tokenizer == 'spacy':
             # spacy has own
@@ -438,7 +457,9 @@ class DictionaryAgent(Agent):
         return tokens, indices
 
     def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable."""
+        """
+        Returns a sequence of tokens from the iterable.
+        """
         if self.lower:
             text = text.lower()
 
@@ -452,18 +473,24 @@ class DictionaryAgent(Agent):
         return word_tokens
 
     def bpe_tokenize(self, text):
-        """Return a sequence of BPE-tokens from the text."""
+        """
+        Return a sequence of BPE-tokens from the text.
+        """
         return self.bpehelper.tokenize(text)
 
     def add_to_dict(self, tokens):
-        """Build dictionary from the list of provided tokens."""
+        """
+        Build dictionary from the list of provided tokens.
+        """
         self.built = False
         for token in tokens:
             self.add_token(token)
             self.freq[token] += 1
 
     def remove_tail(self, min_freq):
-        """Remove elements below the frequency cutoff from the dictionary."""
+        """
+        Remove elements below the frequency cutoff from the dictionary.
+        """
         to_remove = []
         for token, freq in self.freq.items():
             if freq < min_freq:
@@ -476,7 +503,9 @@ class DictionaryAgent(Agent):
             del self.ind2tok[idx]
 
     def _remove_non_bpe(self):
-        """Set the dictionary vocab to the bpe vocab, merging counts."""
+        """
+        Set the dictionary vocab to the bpe vocab, merging counts.
+        """
         to_remove = []
         to_add = []
         for token, freq in self.freq.items():
@@ -494,7 +523,9 @@ class DictionaryAgent(Agent):
             self.freq[token] += freq
 
     def resize_to_max(self, maxtokens):
-        """Trims the dictionary to the maximum number of tokens."""
+        """
+        Trims the dictionary to the maximum number of tokens.
+        """
         if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
             for k in range(maxtokens, len(self.ind2tok)):
                 v = self.ind2tok[k]
@@ -503,7 +534,8 @@ class DictionaryAgent(Agent):
                 del self.freq[v]
 
     def load(self, filename):
-        """Load pre-existing dictionary in 'token[<TAB>count]' format.
+        """
+        Load pre-existing dictionary in 'token[<TAB>count]' format.
 
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
@@ -523,9 +555,9 @@ class DictionaryAgent(Agent):
         print('[ num words =  %d ]' % len(self))
 
     def save(self, filename=None, append=False, sort=True):
-        """Save dictionary to file.
-        Format is 'token<TAB>count' for every token in the dictionary, sorted
-        by count with the most frequent words first.
+        """
+        Save dictionary to file. Format is 'token<TAB>count' for every token in the
+        dictionary, sorted by count with the most frequent words first.
 
         If ``append`` (default ``False``) is set to ``True``, appends instead of
         overwriting.
@@ -557,9 +589,10 @@ class DictionaryAgent(Agent):
             pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def sort(self, trim=True):
-        """Sorts the dictionary, so that the elements with the lowest index have
-        the highest counts. This reindexes the dictionary according to the
-        sorted frequencies, breaking ties alphabetically by token.
+        """
+        Sorts the dictionary, so that the elements with the lowest index have the
+        highest counts. This reindexes the dictionary according to the sorted
+        frequencies, breaking ties alphabetically by token.
 
         :param bool trim: If True, truncate the dictionary based on minfreq and
             maxtokens.
@@ -581,7 +614,8 @@ class DictionaryAgent(Agent):
         return sorted_pairs
 
     def parse(self, txt_or_vec, vec_type=list):
-        """Convenience function for parsing either text or vectors of indices.
+        """
+        Convenience function for parsing either text or vectors of indices.
 
         ``vec_type`` is the type of the returned vector if the input is a string.
         """
@@ -591,7 +625,8 @@ class DictionaryAgent(Agent):
             return self.vec2txt(txt_or_vec)
 
     def txt2vec(self, text, vec_type=list):
-        """Converts a string to a vector (list of ints).
+        """
+        Converts a string to a vector (list of ints).
 
         First runs a sentence tokenizer, then a word tokenizer.
 
@@ -606,8 +641,9 @@ class DictionaryAgent(Agent):
         return res
 
     def vec2txt(self, vector, delimiter=' '):
-        """Converts a vector (iterable of ints) into a string, with each token
-        separated by the delimiter (default ``' '``).
+        """
+        Converts a vector (iterable of ints) into a string, with each token separated by
+        the delimiter (default ``' '``).
         """
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings
@@ -620,10 +656,11 @@ class DictionaryAgent(Agent):
         return text
 
     def act(self):
-        """Add words in the last observation to the dictionary.
+        """
+        Add words in the last observation to the dictionary.
 
-        This checks any fields in the message present in the --dict-textfields
-        argument (e.g. "text,labels").
+        This checks any fields in the message present in the --dict-textfields argument
+        (e.g. "text,labels").
         """
         for textfield in self.textfields:
             source = self.observation.get(textfield)
@@ -639,7 +676,9 @@ class DictionaryAgent(Agent):
         return {'id': 'Dictionary'}
 
     def share(self):
-        """Share internal dicts."""
+        """
+        Share internal dicts.
+        """
         shared = super().share()
         shared['freq'] = self.freq
         shared['tok2ind'] = self.tok2ind
@@ -647,17 +686,22 @@ class DictionaryAgent(Agent):
         return shared
 
     def shutdown(self):
-        """Save on shutdown if ``save_path`` is set."""
+        """
+        Save on shutdown if ``save_path`` is set.
+        """
         if hasattr(self, 'save_path'):
             self.save(self.save_path)
 
     def __str__(self):
-        """Return string representation of frequencies in dictionary."""
+        """
+        Return string representation of frequencies in dictionary.
+        """
         return str(self.freq)
 
 
 class _BPEHelper(object):
-    """Helper class for performing BPE subword tokenization.
+    """
+    Helper class for performing BPE subword tokenization.
 
     For technical details, please refer to https://arxiv.org/abs/1508.07909.
     This class just wraps around the official subword-nmt repository.
@@ -668,7 +712,8 @@ class _BPEHelper(object):
     """
 
     def __init__(self, codecs_filename):
-        """Initialize the BPE module.
+        """
+        Initialize the BPE module.
 
         If `codecs_filename` already exists, loads the pretrained codecs.
         If it does not, codecs will be saved there after a call to `finalize()`.
@@ -692,7 +737,8 @@ class _BPEHelper(object):
             self.bpe = apply_bpe.BPE(codecs_file)
 
     def tokenize(self, text):
-        """Tokenize the text with bpe if codecs are already finalized.
+        """
+        Tokenize the text with bpe if codecs are already finalized.
 
         Otherwise, returns the regularly split tokens that will train the bpe.
 
@@ -708,7 +754,8 @@ class _BPEHelper(object):
             return tokens
 
     def finalize(self, frequencies, num_symbols=30000, minfreq=2):
-        """Build the codecs.
+        """
+        Build the codecs.
 
         :param: dictionary of (token: frequency) pairs
         :param num_symbols: Number of BPE symbols. Recommend 30000-40000.

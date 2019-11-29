@@ -5,8 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Inheritence around add_cmdline_args can be tricky. This serves as an
-example, and verifies inheritence is behaving correctly.
+Inheritence around add_cmdline_args can be tricky.
+
+This serves as an example, and verifies inheritence is behaving correctly.
 """
 
 import unittest
@@ -39,7 +40,9 @@ class SubClassB(SubClassA):
 
 class TestInheritence(unittest.TestCase):
     def test_subclassA(self):
-        """Verify that class A does contain the super args."""
+        """
+        Verify that class A does contain the super args.
+        """
         parser = ParlaiParser(add_model_args=True)
         opt = parser.parse_args(
             args=['--model', 'tests.test_ta_inheritence:SubClassA'], print_args=False
@@ -53,7 +56,9 @@ class TestInheritence(unittest.TestCase):
         self.assertIn('beam_size', opt)
 
     def test_subclassB(self):
-        """Verify that class B does not contain the super args."""
+        """
+        Verify that class B does not contain the super args.
+        """
         parser = ParlaiParser(add_model_args=True)
         opt = parser.parse_args(
             args=['--model', 'tests.test_ta_inheritence:SubClassB'], print_args=False

@@ -130,7 +130,9 @@ def _path(opt, version):
 
 
 class DefaultDataset(Dataset):
-    """A Pytorch Dataset utilizing streaming."""
+    """
+    A Pytorch Dataset utilizing streaming.
+    """
 
     def __init__(self, opt, version='2017'):
         self.opt = opt
@@ -274,7 +276,7 @@ class V2017Dataset(DefaultDataset):
 
 class DefaultTeacher(FixedDialogTeacher):
     """
-    COCO default teacher that expects open-ended descriptions of images
+    COCO default teacher that expects open-ended descriptions of images.
     """
 
     def __init__(self, opt, shared=None, version='2017'):
@@ -419,8 +421,9 @@ class DefaultTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example

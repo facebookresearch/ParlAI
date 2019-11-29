@@ -23,9 +23,12 @@ def is_disconnected(act):
 
 
 class LightChatOnboardingWorld(MTurkOnboardWorld):
-    '''Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
-    '''
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
+    """
 
     instruction_act = {
         'id': 'System',
@@ -124,9 +127,10 @@ class LightChatOnboardingWorld(MTurkOnboardWorld):
 
 class LightChatTaskWorld(MTurkTaskWorld):
     """
-    World to demonstrate workers with assymetric roles. This task amounts
-    to three rounds and then an evaluation step. It is purposefully created
-    as a task to demo multiple views and has no other purpose.
+    World to demonstrate workers with assymetric roles.
+
+    This task amounts to three rounds and then an evaluation step. It is purposefully
+    created as a task to demo multiple views and has no other purpose.
     """
 
     collector_agent_id = 'Moderator'

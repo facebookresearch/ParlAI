@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Basic example which iterates through the tasks specified and
-evaluates the given model on them.
+"""
+Basic example which iterates through the tasks specified and evaluates the given model
+on them.
 
 Examples
 --------
@@ -95,7 +96,8 @@ def _eval_single_world(opt, agent, task):
 
 
 def eval_model(opt, print_parser=None):
-    """Evaluates a model.
+    """
+    Evaluates a model.
 
     :param opt: tells the evaluation function how to run
     :param bool print_parser: if provided, prints the options that are set within the

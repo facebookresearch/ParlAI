@@ -20,7 +20,9 @@ LR = 1e-2
 
 
 class TestFairseq(unittest.TestCase):
-    """Checks that fairseq can learn some very basic tasks."""
+    """
+    Checks that fairseq can learn some very basic tasks.
+    """
 
     @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")

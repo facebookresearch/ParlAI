@@ -211,11 +211,15 @@ class History(object):
         self.reset_on_next_update = False
 
     def parse(self, text):
-        """Tokenize text with the given dictionary."""
+        """
+        Tokenize text with the given dictionary.
+        """
         return self.dict.txt2vec(text)
 
     def reset(self):
-        """Clear the history."""
+        """
+        Clear the history.
+        """
         self.history_raw_strings = []
         self.history_strings = []
         self.history_vecs = []
@@ -282,13 +286,17 @@ class History(object):
             self.reset_on_next_update = True
 
     def get_history_str(self):
-        """Return the string version of the history."""
+        """
+        Return the string version of the history.
+        """
         if len(self.history_strings) > 0:
             return self.delimiter.join(self.history_strings)
         return None
 
     def get_history_vec(self):
-        """Return a vectorized version of the history."""
+        """
+        Return a vectorized version of the history.
+        """
         if len(self.history_vecs) == 0:
             return None
 
@@ -309,7 +317,9 @@ class History(object):
         return history
 
     def get_history_vec_list(self):
-        """Return a list of history vecs."""
+        """
+        Return a list of history vecs.
+        """
         return self.history_vecs
 
     def _add_person_tokens(self, text, token, add_after_newln=False):
@@ -395,7 +405,9 @@ class TorchAgent(ABC, Agent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add the default commandline args we expect most agents to want."""
+        """
+        Add the default commandline args we expect most agents to want.
+        """
         agent = argparser.add_argument_group('TorchAgent Arguments')
         agent.add_argument(
             '-i',
@@ -650,7 +662,9 @@ class TorchAgent(ABC, Agent):
         cls.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
-        """Initialize agent."""
+        """
+        Initialize agent.
+        """
         super().__init__(opt, shared)
         opt = self.opt
 
@@ -740,7 +754,9 @@ class TorchAgent(ABC, Agent):
         self.set_interactive_mode(opt['interactive_mode'], shared)
 
     def build_history(self):
-        """Return the constructed history object."""
+        """
+        Return the constructed history object.
+        """
         return self.history_class()(
             self.opt,
             maxlen=self.text_truncate,
@@ -754,8 +770,8 @@ class TorchAgent(ABC, Agent):
         """
         Return the constructed dictionary, which will be set to self.dict.
 
-        If you need to add additional tokens to the dictionary, this is likely
-        the right place to do it.
+        If you need to add additional tokens to the dictionary, this is likely the right
+        place to do it.
         """
         d = self.dictionary_class()(self.opt)
         if self.opt.get('person_tokens'):
@@ -803,7 +819,9 @@ class TorchAgent(ABC, Agent):
         return init_model, is_finetune
 
     def build_model(self):
-        """Construct the model and return it."""
+        """
+        Construct the model and return it.
+        """
         raise NotImplementedError('not implemented for this class')
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
@@ -1043,7 +1061,9 @@ class TorchAgent(ABC, Agent):
         return memory_used / memory_avail
 
     def _is_lr_warming_up(self):
-        """Check if we're warming up the learning rate."""
+        """
+        Check if we're warming up the learning rate.
+        """
         return (
             self.warmup_scheduler is not None
             and self._number_training_updates <= self.opt['warmup_updates']
@@ -1211,7 +1231,9 @@ class TorchAgent(ABC, Agent):
         return shared
 
     def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
-        """Add start and end tokens to a list or tensor."""
+        """
+        Add start and end tokens to a list or tensor.
+        """
         if isinstance(vec, torch.Tensor):
             if len(vec.shape) != 1:
                 raise Exception('_add_start_end_tokens expects a 1D tensor')
@@ -1228,7 +1250,9 @@ class TorchAgent(ABC, Agent):
         return vec
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -1267,7 +1291,9 @@ class TorchAgent(ABC, Agent):
         return tensor
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
-        """Check that vector is truncated correctly."""
+        """
+        Check that vector is truncated correctly.
+        """
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -1413,7 +1439,9 @@ class TorchAgent(ABC, Agent):
         return obs
 
     def is_valid(self, obs):
-        """Determine if an observation is valid or not."""
+        """
+        Determine if an observation is valid or not.
+        """
         return 'text_vec' in obs or 'image' in obs
 
     def batchify(self, obs_batch, sort=False):
@@ -1654,8 +1682,8 @@ class TorchAgent(ABC, Agent):
         """
         Save model parameters to path (or default to model_file arg).
 
-        Please try to refrain from overriding this function, and instead
-        override `state_dict(self)` for more specific saving.
+        Please try to refrain from overriding this function, and instead override
+        `state_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
@@ -1703,21 +1731,27 @@ class TorchAgent(ABC, Agent):
         return states
 
     def reset(self):
-        """Clear internal states."""
+        """
+        Clear internal states.
+        """
         self.observation = {}
         self.history.reset()
         self.replies.clear()
         self.reset_metrics()
 
     def reset_metrics(self):
-        """Reset all TorchAgentMetrics."""
+        """
+        Reset all TorchAgentMetrics.
+        """
         super().reset_metrics()
         self.metrics['gnorm'] = 0.0
         self.metrics['clip'] = 0.0
         self.metrics['updates'] = 0
 
     def act(self):
-        """Call batch_act with the singleton batch."""
+        """
+        Call batch_act with the singleton batch.
+        """
         if self._replies_are_shared:
             raise RuntimeError(
                 'act() will misbehave in batching mode. Set batchsize to 1, or '
@@ -1768,16 +1802,22 @@ class TorchAgent(ABC, Agent):
 
     @abstractmethod
     def train_step(self, batch):
-        """[Abstract] Process one batch with training labels."""
+        """
+        [Abstract] Process one batch with training labels.
+        """
         pass
 
     @abstractmethod
     def eval_step(self, batch):
-        """[Abstract] Process one batch but do not train on it."""
+        """
+        [Abstract] Process one batch but do not train on it.
+        """
         pass
 
     def set_interactive_mode(self, mode, shared):
-        """Set interactive mode on or off."""
+        """
+        Set interactive mode on or off.
+        """
         if shared is None and mode:
             # Only print in the non-shared version.
             print("[" + self.id + ': full interactive mode on.' + ']')
@@ -1786,9 +1826,8 @@ class TorchAgent(ABC, Agent):
         """
         Perform a backward pass.
 
-        It is recommended you use this instead of
-        loss.backward(), for integration with distributed training and FP16
-        training.
+        It is recommended you use this instead of loss.backward(), for integration with
+        distributed training and FP16 training.
         """
         if self.opt.get('update_freq', 1) > 1:
             # gradient accumulation, but still need to average across the minibatches
@@ -1853,8 +1892,8 @@ class TorchAgent(ABC, Agent):
         """
         Zero out optimizer.
 
-        It is recommended you call this in train_step. It automatically handles
-        gradient accumulation if agent is called with --update-freq.
+        It is recommended you call this in train_step. It automatically handles gradient
+        accumulation if agent is called with --update-freq.
         """
         if self._number_grad_accum != 0:
             # if we're accumulating gradients, don't actually zero things out yet.

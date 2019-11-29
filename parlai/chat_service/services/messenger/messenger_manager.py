@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Messenger Manager Module.
+"""
+Messenger Manager Module.
 
-Contains implementation of the MessengerManager, which helps run
-ParlAI via FB Messenger.
+Contains implementation of the MessengerManager, which helps run ParlAI via FB
+Messenger.
 """
 
 import logging
@@ -30,7 +31,8 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class AgentState:
-    """Keep track of Agent State.
+    """
+    Keep track of Agent State.
 
     State includes which is the "active" agent - i.e., which agent in which
     world do we message, etc.
@@ -46,7 +48,8 @@ class AgentState:
         self.time_in_pool = {}
 
     def get_active_agent(self):
-        """Return active messenger agent.
+        """
+        Return active messenger agent.
 
         :return:
             a MessengerAgent, which corresponds to the active agent for this
@@ -55,16 +58,17 @@ class AgentState:
         return self.active_agent
 
     def set_active_agent(self, active_agent):
-        """Set active agent for this agent.
+        """
+        Set active agent for this agent.
 
         :param active_agent:
             A MessengerAgent, the new active agent for this given agent state
-
         """
         self.active_agent = active_agent
 
     def get_overworld_agent(self):
-        """Return overworld messenger agent.
+        """
+        Return overworld messenger agent.
 
         :return:
             a MessengerAgent, which corresponds agent object in the overworld
@@ -72,7 +76,8 @@ class AgentState:
         return self.overworld_agent
 
     def get_id(self):
-        """Return agent's ID.
+        """
+        Return agent's ID.
 
         :return:
             int agent ID
@@ -80,7 +85,8 @@ class AgentState:
         return self.messenger_id
 
     def has_task(self, task_id):
-        """Determine if an agent is in a task.
+        """
+        Determine if an agent is in a task.
 
         :param task_id:
             string task id
@@ -91,7 +97,8 @@ class AgentState:
         return task_id in self.task_id_to_agent
 
     def get_agent_for_task(self, task_id):
-        """Return MessengerAgent for given task id.
+        """
+        Return MessengerAgent for given task id.
 
         For each "player", a separate agent is created for each task. This
         returns the appropriate MessengerAgent given the task id
@@ -108,7 +115,8 @@ class AgentState:
             return None
 
     def assign_agent_to_task(self, agent, task_id):
-        """Mark agent in task.
+        """
+        Mark agent in task.
 
         :param agent:
             MessengerAgent object to mark in task
@@ -119,12 +127,14 @@ class AgentState:
 
 
 class MessengerManager:
-    """Manages interactions between agents on messenger as well as direct
-    interactions between agents and the messenger overworld
+    """
+    Manages interactions between agents on messenger as well as direct interactions
+    between agents and the messenger overworld.
     """
 
     def __init__(self, opt):
-        """Create an MessengerManager using the given setup options
+        """
+        Create an MessengerManager using the given setup options.
         """
         # Manager attributes
         self.opt = opt
@@ -158,7 +168,9 @@ class MessengerManager:
         shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def _parse_config(self, opt):
-        """Parse config for task."""
+        """
+        Parse config for task.
+        """
         self.config = opt['config']
         self.overworld = self.config['overworld']
         self.world_path = self.config['world_path']
@@ -189,7 +201,9 @@ class MessengerManager:
         }
 
     def _complete_setup(self):
-        """Complete necessary setup items."""
+        """
+        Complete necessary setup items.
+        """
         self.setup_server()
         self.init_new_state()
         self.setup_socket()
@@ -197,17 +211,22 @@ class MessengerManager:
         self._load_model()
 
     def _load_model(self):
-        """Load model if necessary."""
+        """
+        Load model if necessary.
+        """
         if 'model_file' in self.opt or 'model' in self.opt:
             self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
-        """Initialize logging settings from the opt."""
+        """
+        Initialize logging settings from the opt.
+        """
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
 
     def add_agent_to_pool(self, agent, world_type='default'):
-        """Add the agent to pool.
+        """
+        Add the agent to pool.
 
         :param agent:
             MessengerAgent object
@@ -222,7 +241,8 @@ class MessengerManager:
             self.agent_pool.setdefault(world_type, []).append(agent)
 
     def mark_removed(self, agent_id, pageid):
-        """Mark the agent as removed from the pool.
+        """
+        Mark the agent as removed from the pool.
 
         Can be overriden to change other metadata linked to agent removal.
 
@@ -234,7 +254,8 @@ class MessengerManager:
         pass
 
     def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
-        """Remove agent from the pool.
+        """
+        Remove agent from the pool.
 
         :param agent:
             MessengerAgent object
@@ -257,7 +278,9 @@ class MessengerManager:
                         self.mark_removed(int(agent.messenger_id), int(self.page_id))
 
     def _expire_all_conversations(self):
-        """Iterate through all sub-worlds and shut them down."""
+        """
+        Iterate through all sub-worlds and shut them down.
+        """
         self.running = False
         for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
             self.observe_message(
@@ -283,7 +306,8 @@ class MessengerManager:
         self.shutting_down = True
 
     def _get_unique_pool(self):
-        """Return unique pool.
+        """
+        Return unique pool.
 
         Returns a filtered version of the agent pool where each agent is
         only listed a maximum of one time.
@@ -343,7 +367,8 @@ class MessengerManager:
             self.handle_message_read(event)
 
     def _on_first_message(self, message):
-        """Handle first message from player.
+        """
+        Handle first message from player.
 
         Run when a psid is given that is not paired with any assignment yet.
         Launch an overworld, complete onboarding, etc.
@@ -377,7 +402,9 @@ class MessengerManager:
         )
 
         def _done_callback(fut):
-            """Log and raise exception of overworld (if there is one)."""
+            """
+            Log and raise exception of overworld (if there is one).
+            """
             e = fut.exception()
             if e is not None:
                 self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
@@ -397,14 +424,16 @@ class MessengerManager:
         self.agent_id_to_overworld_future[agent_id] = future
 
     def after_agent_removed(self, agent_id):
-        """Perform any changes to metadata on agent removal.
+        """
+        Perform any changes to metadata on agent removal.
 
         override if extra bookkeeping must be done when removing agent
         """
         pass
 
     def _on_new_message(self, message):
-        """Put an incoming message onto the correct agent's message queue.
+        """
+        Put an incoming message onto the correct agent's message queue.
 
         :param message:
             message to put on queue
@@ -452,7 +481,8 @@ class MessengerManager:
             agent.put_data(message)
 
     def _create_agent(self, task_id, agent_id):
-        """Initialize an agent and return it.
+        """
+        Initialize an agent and return it.
 
         Called each time an agent is placed into a new task.
 
@@ -464,7 +494,8 @@ class MessengerManager:
         return MessengerAgent(self.opt, self, task_id, agent_id, self.page_id)
 
     def get_agent_state(self, agent_id):
-        """Return agent state.
+        """
+        Return agent state.
 
         :param agent_id:
             int agent identifier
@@ -477,7 +508,8 @@ class MessengerManager:
         return None
 
     def _get_agent(self, agent_id, task_id):
-        """Return agent object for given agent ID and task ID.
+        """
+        Return agent object for given agent ID and task ID.
 
         :param agent_id:
             int agent identifier
@@ -495,7 +527,9 @@ class MessengerManager:
         return None
 
     def _log_missing_agent(self, agent_id, assignment_id):
-        """Log the occurence of a missing agent."""
+        """
+        Log the occurence of a missing agent.
+        """
         shared_utils.print_and_log(
             logging.WARN,
             'Expected to have an agent for {}_{}, yet none was found'.format(
@@ -505,7 +539,9 @@ class MessengerManager:
 
     # Manager Lifecycle Functions #
     def setup_server(self):
-        """Prepare the Messenger server for handling messages."""
+        """
+        Prepare the Messenger server for handling messages.
+        """
         if self.bypass_server_setup:
             return
 
@@ -553,7 +589,9 @@ class MessengerManager:
 
     # override if permission needed externally
     def get_app_token(self):
-        """Find and return an app access token."""
+        """
+        Find and return an app access token.
+        """
         if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
                 os.makedirs(os.path.expanduser('~/.parlai/'))
@@ -575,7 +613,9 @@ class MessengerManager:
         return token
 
     def setup_socket(self):
-        """Set up socket to start communicating to workers."""
+        """
+        Set up socket to start communicating to workers.
+        """
         if not self.bypass_server_setup:
             shared_utils.print_and_log(
                 logging.INFO, 'Local: Setting up WebSocket...', should_print=True
@@ -595,7 +635,8 @@ class MessengerManager:
         )
 
     def init_new_state(self):
-        """Prepare for new run.
+        """
+        Prepare for new run.
 
         Initialize everything in the agent, task, and thread states
         """
@@ -605,14 +646,17 @@ class MessengerManager:
         self.agent_id_to_overworld_future = {}
 
     def start_new_run(self):
-        """Begin new run."""
+        """
+        Begin new run.
+        """
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
     def check_timeout_in_pool(
         self, world_type, agent_pool, max_time_in_pool, backup_task=None
     ):
-        """Check for timed-out agents in pool.
+        """
+        Check for timed-out agents in pool.
 
         :param world_type:
             string world type
@@ -656,15 +700,17 @@ class MessengerManager:
                     agent_state.stored_data['seen_wait_message'] = True
 
     def start_task(self):
-        """Begin handling task.
+        """
+        Begin handling task.
 
-        Periodically check to see when enough agents are in the agent pool
-        to start an instance of the task. Continue doing this until the desired
-        number of conversations is had.
+        Periodically check to see when enough agents are in the agent pool to start an
+        instance of the task. Continue doing this until the desired number of
+        conversations is had.
         """
 
         def _done_callback(fut):
-            """Log and raise exception of task world, if there is one.
+            """
+            Log and raise exception of task world, if there is one.
 
             Additionally, set active agent to overworld agent.
             """
@@ -758,7 +804,9 @@ class MessengerManager:
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
     def shutdown(self):
-        """Handle any client shutdown cleanup."""
+        """
+        Handle any client shutdown cleanup.
+        """
         # Ensure all threads are cleaned and conversations are handled
         try:
             self.is_running = False
@@ -776,7 +824,8 @@ class MessengerManager:
     # Agent Interaction Functions #
 
     def observe_message(self, receiver_id, text, quick_replies=None, persona_id=None):
-        """Send a message through the message manager.
+        """
+        Send a message through the message manager.
 
         :param receiver_id:
             int identifier for agent to send message to
@@ -792,7 +841,8 @@ class MessengerManager:
         )
 
     def observe_payload(self, receiver_id, data, quick_replies=None, persona_id=None):
-        """Send a payload through the message manager.
+        """
+        Send a payload through the message manager.
 
         :param receiver_id:
             int identifier for agent to send message to
@@ -808,7 +858,8 @@ class MessengerManager:
         )
 
     def upload_attachment(self, payload):
-        """Upload an attachment and return an attachment ID.
+        """
+        Upload an attachment and return an attachment ID.
 
         :param payload:
             dict with the following format:
