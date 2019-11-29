@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.chat_service.services.websocket.agents import WebsocketAgent
-import logging
 
 
 class TerminalAgent(WebsocketAgent):

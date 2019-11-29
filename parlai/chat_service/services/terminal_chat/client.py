@@ -26,6 +26,7 @@ def get_rand_id():
 def prBlueBG(text):
     """
     Print given in text with a blue background.
+
     :param text: The text to be printed
     """
     print("\033[44m{}\033[0m".format(text), sep="")
@@ -37,7 +38,7 @@ def on_message(ws, message):
 
 
 def on_error(ws, error):
-    print("error", error)
+    print(error)
 
 
 def on_close(ws):
@@ -61,10 +62,7 @@ def on_open(ws):
             time.sleep(1.5)
             if x == "[DONE]":
                 break
-        try:
-            ws.close()
-        except e:
-            print("eee", e)
+        ws.close()
 
     thread.start_new_thread(run, ())
 

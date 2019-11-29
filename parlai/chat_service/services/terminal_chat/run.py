@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Terminal Chat Runner."""
+"""
+Terminal Chat Runner.
+"""
 
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.terminal_chat.terminal_manager import TerminalManager
@@ -14,7 +16,9 @@ SERVICE_NAME = 'terminal'
 
 
 def setup_args():
-    """Set up args."""
+    """
+    Set up args.
+    """
     parser = ParlaiParser(False, False)
     parser.add_parlai_data_path()
     parser.add_websockets_args()
@@ -22,7 +26,9 @@ def setup_args():
 
 
 def run(opt):
-    """Run MessengerManager."""
+    """
+    Run TerminalManager.
+    """
     opt['service'] = SERVICE_NAME
     manager = TerminalManager(opt)
     try:
