@@ -5,11 +5,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 standard_cpu37: &standard_cpu37
   docker:
-    - image: circleci/python:3.7.1
+    - image: circleci/python:3.7.5-buster-node
 
 standard_cpu36: &standard_cpu36
   docker:
-    - image: circleci/python:3.6.5-node
+    - image: circleci/python:3.6.9-buster-node
 
 osx_cpu37: &osx_cpu37
   macos:
@@ -20,9 +20,9 @@ osx_cpu37: &osx_cpu37
 
 gpu: &gpu
   environment:
-    CUDA_VERSION: "10.0"
+    CUDA_VERSION: "10.2"
   machine:
-    image: default
+    image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
 # -------------------------------------------------------------------------------------
 
@@ -46,12 +46,21 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --upgrade --progress-bar off pip
+      pip3 install --progress-bar off --upgrade pip
+      pip3 install --progress-bar off coverage
+      pip3 install --progress-bar off codecov
+
+codecov: &codecov
+  run:
+    name: Coverage report
+    command: |
+      codecov --flags $CIRCLE_JOB
 
 installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
+      pip install -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
@@ -99,13 +108,23 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
-      wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+      wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
+      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
+      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run --silent
+      # old instructions
+      # wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
+      # wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      # sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      # sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+      # sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+      # sudo apt-get update
+      # sudo apt-get -y install cuda
+      echo "Done installing CUDA."
+      pyenv versions
       nvidia-smi
-      pyenv global 3.6.5
+      pyenv global 3.7.0
 
 buildwebsite: &buildwebsite
   run:
@@ -118,17 +137,24 @@ buildwebsite: &buildwebsite
 # -------------------------------------------------------------------------------------
 jobs:
   datatests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
-      - <<: *installtorchcpu36
+      - save_cache:
+          key: deps-dt-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - <<: *installtorchcpu37
       - run:
           name: Data tests
-          command: python setup.py test -s tests.suites.datatests -v
+          command: coverage run setup.py test -s tests.suites.datatests -v
+      - <<: *codecov
 
   unittests_osx:
     <<: *osx_cpu37
@@ -137,11 +163,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-osx-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_36:
     <<: *standard_cpu36
@@ -150,11 +183,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut36-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_37:
     <<: *standard_cpu37
@@ -163,11 +203,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut37-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu11:
     <<: *gpu
@@ -175,16 +222,26 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu12:
     <<: *gpu
@@ -192,19 +249,29 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
-          name: Unit tests (GPU; pytorch 1.2)
-          command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
+          name: Unit tests (GPU; pytorch >= 1.2)
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   black:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -214,15 +281,33 @@ jobs:
           name: minimum black dependencies
           working_directory: ~/ParlAI
           command: |
-            pip install -q gitpython black  # only what's needd to lint
+            pip install -q gitpython black  # only what's needed to lint
       - run:
           name: black
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh -b
+            bash ./autoformat.sh -b -c
+
+  docformat:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: minimum docformat dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q gitpython docformatter  # only what's needed to lint
+      - run:
+          name: docformat
+          working_directory: ~/ParlAI
+          command: |
+            bash ./autoformat.sh -d -c
 
   lint:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -238,12 +323,12 @@ jobs:
           name: minimum lint dependencies
           working_directory: ~/ParlAI
           command: |
-            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
+            pip install -q flake8 gitpython flake8-bugbear  # only what's needed to lint
       - run:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh
+            bash ./autoformat.sh -c -f
 
   nightly_gpu_tests:
     <<: *gpu
@@ -252,59 +337,119 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-v2
       - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-v2
+          paths:
+            - "~/nvidia-downloads/"
       - <<: *setup
+      - restore_cache:
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-nightly-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python setup.py test -s tests.suites.nightly_gpu -v
+          command: coverage run setup.py test -s tests.suites.nightly_gpu -v
+      - run:
+          name: Quickstart unit tests (GPU; pytorch 1.1)
+          command: sh tests/test_quickstart.sh
+      - <<: *codecov
 
   mturk_tests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-mturk-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python setup.py test -s tests.suites.mturk -v
+          command: coverage run setup.py test -s tests.suites.mturk -v
+      - <<: *codecov
 
   build_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
-      - <<: *installtorchcpu36
+      - save_cache:
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - <<: *installtorchcpu37
       - <<: *buildwebsite
+      - run:
+          working_directory: ~/ParlAI/
+          name: temp check
+          command: |
+            pip install s3cmd
+
+  copyright:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - restore_cache:
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
+      - <<: *installdeps
+      - save_cache:
+          key: deps-bw-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - run:
+          working_directory: ~/ParlAI/
+          name: Check copyrights
+          command: |
+              python tests/check_copyright.py
 
   deploy_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
       - <<: *installdeps
-      - <<: *installtorchcpu36
+      - save_cache:
+          key: deps-dw-v4{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - <<: *installtorchcpu37
       - <<: *buildwebsite
       - run:
           working_directory: ~/ParlAI/
           name: Upload the website
           command: |
-            sudo apt-get install s3cmd
+            pip install s3cmd
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
   test_website:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/
     steps:
       - run:
@@ -324,7 +469,7 @@ jobs:
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
   check_extra_tests:
-    <<: *standard_cpu36
+    <<: *standard_cpu37
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -357,12 +502,18 @@ workflows:
     jobs:
       - black
       - lint
+      - docformat
       - unittests_gpu11
       - unittests_gpu12
       - unittests_37
       - unittests_36
       - unittests_osx
+      - copyright
       - mturk_tests:
+          filters:
+            branches:
+              only: master
+      - nightly_gpu_tests:
           filters:
             branches:
               only: master
@@ -381,20 +532,3 @@ workflows:
       - test_website:
           requires:
             - deploy_website
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 10 * * *" # 10am UTC is 5am NYC
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - unittests_36
-      - unittests_37
-      - unittests_gpu11
-      - unittests_gpu12
-      - unittests_osx
-      - mturk_tests
-      - nightly_gpu_tests
-      - test_website

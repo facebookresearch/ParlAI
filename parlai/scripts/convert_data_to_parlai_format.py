@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Convert a dataset into the ParlAI text format.
+"""
+Convert a dataset into the ParlAI text format.
 
 Examples
 --------
@@ -45,7 +46,8 @@ def dump_data(opt):
     for _ in range(num_examples):
         world.parley()
         acts = world.get_acts()
-        acts[0]['labels'] = acts[0].get('labels', acts[0].pop('eval_labels', None))
+        value = acts[0].get('labels', acts[0].pop('eval_labels', None))
+        acts[0].force_set('labels', value)
         txt = msg_to_str(acts[0], ignore_fields=ignorefields)
         fw.write(txt + '\n')
         if acts[0].get('episode_done', False):

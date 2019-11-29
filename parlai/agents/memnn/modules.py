@@ -11,7 +11,9 @@ from functools import lru_cache
 
 
 def opt_to_kwargs(opt):
-    """Get kwargs for seq2seq from opt."""
+    """
+    Get kwargs for seq2seq from opt.
+    """
     kwargs = {}
     for k in ['memsize', 'time_features', 'position_encoding', 'hops']:
         if k in opt:
@@ -20,7 +22,9 @@ def opt_to_kwargs(opt):
 
 
 class MemNN(nn.Module):
-    """Memory Network module."""
+    """
+    Memory Network module.
+    """
 
     def __init__(
         self,
@@ -33,7 +37,8 @@ class MemNN(nn.Module):
         dropout=0,
         padding_idx=0,
     ):
-        """Initialize memnn model.
+        """
+        Initialize memnn model.
 
         See cmdline args in MemnnAgent for description of arguments.
         """
@@ -193,17 +198,19 @@ class Embed(nn.Embedding):
 
 
 class Hop(nn.Module):
-    """Memory Network hop outputs attention-weighted sum of memory embeddings.
+    """
+    Memory Network hop outputs attention-weighted sum of memory embeddings.
 
-    0) rotate the query embeddings
-    1) compute the dot product between the input vector and each memory vector
-    2) compute a softmax over the memory scores
-    3) compute the weighted sum of the memory embeddings using the probabilities
-    4) add the query embedding to the memory output and return the result
+    0) rotate the query embeddings 1) compute the dot product between the input vector
+    and each memory vector 2) compute a softmax over the memory scores 3) compute the
+    weighted sum of the memory embeddings using the probabilities 4) add the query
+    embedding to the memory output and return the result
     """
 
     def __init__(self, embedding_size, rotate=True):
-        """Initialize linear rotation."""
+        """
+        Initialize linear rotation.
+        """
         super().__init__()
         if rotate:
             self.rotate = nn.Linear(embedding_size, embedding_size, bias=False)

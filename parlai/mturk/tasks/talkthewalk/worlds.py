@@ -23,9 +23,11 @@ def _agent_shutdown(agent, timeout):
 
 
 class TalkTheWalkWorld(MultiAgentDialogWorld):
-    """A world where messages from agents can be interpreted as _actions_ in the
-    world which result in changes in the environment (are executed). Hence a
-    grounded simulation can be implemented rather than just dialogue between
+    """
+    A world where messages from agents can be interpreted as _actions_ in the world
+    which result in changes in the environment (are executed).
+
+    Hence a grounded simulation can be implemented rather than just dialogue between
     agents.
     """
 
@@ -78,7 +80,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             self.init_world()
 
     def load_data(self):
-        """Load the data for replaying a dialog"""
+        """
+        Load the data for replaying a dialog.
+        """
         data_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), self.logs_file
         )
@@ -86,7 +90,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             self.data = json.load(f)
 
     def load_world(self, world_idx):
-        """Loads a world into the task when replaying data"""
+        """
+        Loads a world into the task when replaying data.
+        """
         if world_idx == -1:
             success_worlds = []
             best_world_len = 1000
@@ -121,7 +127,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.send_map(self.agents[1])
 
     def init_world(self):
-        """Initializes a new world for the dialog"""
+        """
+        Initializes a new world for the dialog.
+        """
         # first sample neighborhood
         neighborhood_ind = random.randint(0, len(self.neighborhoods) - 1)
         self.neighborhood = self.neighborhoods[neighborhood_ind]
@@ -161,7 +169,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.send_map(self.agents[1])
 
     def update_location(self, act):
-        """Updates the tourist's location based on an action"""
+        """
+        Updates the tourist's location based on an action.
+        """
         if act == "ACTION:TURNLEFT":
             self.location[2] = (self.location[2] - 1) % 4
         if act == "ACTION:TURNRIGHT":
@@ -175,7 +185,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             self.location[1] = max(min(self.location[1], self.max_y), self.min_y)
 
     def send_location(self, agent):
-        """Sends the current location to the given agent"""
+        """
+        Sends the current location to the given agent.
+        """
         msg = {
             'id': "WORLD_LOCATION",
             'message_id': 'WORLD_LOCATION',
@@ -188,7 +200,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         agent.observe(msg)
 
     def send_map(self, agent):
-        """Sends the world map to the given agent"""
+        """
+        Sends the world map to the given agent.
+        """
         msg = {
             'id': "WORLD_MAP",
             'message_id': 'WORLD_MAP',
@@ -201,7 +215,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         agent.observe(msg)
 
     def is_action(self, msg):
-        """Returns whether a message is an action from the Tourist"""
+        """
+        Returns whether a message is an action from the Tourist.
+        """
         return msg in self.actions
 
     def episode_done(self):
@@ -223,8 +239,10 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                 other_agent.observe(msg)
 
     def is_world_success(self, world):
-        """Determines whether a given world/dialog yielded a successful
-           run of the task. Used when loading a world from data for replay.
+        """
+        Determines whether a given world/dialog yielded a successful run of the task.
+
+        Used when loading a world from data for replay.
         """
         target_location = world['target_location']
         start_location = world['start_location']
@@ -288,7 +306,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         return False, -1
 
     def replay_actions(self):
-        """Replays a loaded dialog in the mturk interface"""
+        """
+        Replays a loaded dialog in the mturk interface.
+        """
         tourist = self.agents[0]
         guide = self.agents[1]
         cur_time = None
@@ -351,8 +371,10 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.episodeDone = True
 
     def construct_expanded_array(self, grid, size):
-        """Constructing a larger attention grid when replaying actions.
-           Used when displaying the heat map for the Guide.
+        """
+        Constructing a larger attention grid when replaying actions.
+
+        Used when displaying the heat map for the Guide.
         """
         new_grid = np.full((size, size), -1.0)
         new_grid = self.fill_initial(new_grid, grid, size)
@@ -498,7 +520,9 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                     agent.pay_bonus(0.10)
 
     def save(self):
-        """Saves the state of the world"""
+        """
+        Saves the state of the world.
+        """
         data_path = self.opt['data_path']
         if not os.path.exists(data_path):
             os.makedirs(data_path)

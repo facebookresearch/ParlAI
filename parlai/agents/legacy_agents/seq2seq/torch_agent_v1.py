@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""General utility code for building PyTorch-based agents in ParlAI.
+"""
+General utility code for building PyTorch-based agents in ParlAI.
 
 Contains the following main utilities:
 
@@ -108,7 +109,8 @@ set_namedtuple_defaults(Output, default=None)
 
 
 class TorchAgent(Agent):
-    """A provided base agent for any model that wants to use Torch.
+    """
+    A provided base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -138,7 +140,8 @@ class TorchAgent(Agent):
 
     @staticmethod
     def dictionary_class():
-        """Return the dictionary class that this agent expects to use.
+        """
+        Return the dictionary class that this agent expects to use.
 
         Can be overriden if a more complex dictionary is required.
         """
@@ -146,7 +149,9 @@ class TorchAgent(Agent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add the default commandline args we expect most agents to want."""
+        """
+        Add the default commandline args we expect most agents to want.
+        """
         agent = argparser.add_argument_group('TorchAgent Arguments')
         # pretrained embedding arguments
         agent.add_argument(
@@ -279,7 +284,9 @@ class TorchAgent(Agent):
         cls.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
-        """Initialize agent."""
+        """
+        Initialize agent.
+        """
         super().__init__(opt, shared)
         opt = self.opt
 
@@ -332,7 +339,8 @@ class TorchAgent(Agent):
         self.add_person_tokens = opt.get('person_tokens', False)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        """Initialize optimizer with model parameters.
+        """
+        Initialize optimizer with model parameters.
 
         :param params:       parameters from the model, for example:
                              [p for p in model.parameters() if p.requires_grad]
@@ -381,11 +389,11 @@ class TorchAgent(Agent):
         )
 
     def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule.
+        """
+        Use the metrics to decide when to adjust LR schedule.
 
-        This uses the loss as the validation metric if present, if not this
-        function does nothing. Note that the model must be reporting loss for
-        this to work.
+        This uses the loss as the validation metric if present, if not this function
+        does nothing. Note that the model must be reporting loss for this to work.
         Override this to override the behavior.
         """
         if 'loss' in metrics_dict:
@@ -437,7 +445,8 @@ class TorchAgent(Agent):
         return embs, init
 
     def _project_vec(self, vec, target_dim, method='random'):
-        """If needed, project vector to target dimensionality.
+        """
+        If needed, project vector to target dimensionality.
 
         Projection methods implemented are the following:
 
@@ -469,7 +478,8 @@ class TorchAgent(Agent):
             return vec
 
     def _copy_embeddings(self, weight, emb_type, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
@@ -489,7 +499,8 @@ class TorchAgent(Agent):
             )
 
     def share(self):
-        """Share fields from parent as well as useful objects in this class.
+        """
+        Share fields from parent as well as useful objects in this class.
 
         Subclasses will likely want to share their model as well.
         """
@@ -500,7 +511,9 @@ class TorchAgent(Agent):
         return shared
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -513,7 +526,8 @@ class TorchAgent(Agent):
     def _vectorize_text(
         self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
     ):
-        """Return vector from text.
+        """
+        Return vector from text.
 
         :param text:          String to vectorize.
         :param add_start:     Add the start token to the front of the tensor.
@@ -547,7 +561,9 @@ class TorchAgent(Agent):
         return tensor
 
     def _check_truncate(self, vec, truncate):
-        """Check that vector is truncated correctly."""
+        """
+        Check that vector is truncated correctly.
+        """
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -556,9 +572,11 @@ class TorchAgent(Agent):
             return vec[:truncate]
 
     def _set_text_vec(self, obs, truncate, split_lines):
-        """Sets the 'text_vec' field in the observation.
+        """
+        Sets the 'text_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
@@ -584,9 +602,11 @@ class TorchAgent(Agent):
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'labels_vec' field in the observation.
+        """
+        Sets the 'labels_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         # convert 'labels' or 'eval_labels' into vectors
         if 'labels' in obs:
@@ -615,9 +635,11 @@ class TorchAgent(Agent):
         return obs
 
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'label_candidates_vec' field in the observation.
+        """
+        Sets the 'label_candidates_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         if 'label_candidates_vecs' in obs:
             if truncate is not None:
@@ -636,7 +658,8 @@ class TorchAgent(Agent):
     def vectorize(
         self, obs, add_start=True, add_end=True, truncate=None, split_lines=False
     ):
-        """Make vectors out of observation fields and store in the observation.
+        """
+        Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
         processed and a new field is added to the observation with the suffix
@@ -668,7 +691,8 @@ class TorchAgent(Agent):
         sort=False,
         is_valid=lambda obs: 'text_vec' in obs or 'image' in obs,
     ):
-        """Create a batch of valid observations from an unchecked batch.
+        """
+        Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
         function, which defaults to checking if the preprocessed 'text_vec'
@@ -763,7 +787,8 @@ class TorchAgent(Agent):
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
-        """Match sub-batch of predictions to the original batch indices.
+        """
+        Match sub-batch of predictions to the original batch indices.
 
         Batches may be only partially filled (i.e when completing the remainder
         at the end of the validation or test set), or we may want to sort by
@@ -810,7 +835,8 @@ class TorchAgent(Agent):
     def get_dialog_history(
         self, observation, reply=None, add_person_tokens=False, add_p1_after_newln=False
     ):
-        """Retrieve dialog history and add current observations to it.
+        """
+        Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
         :param reply:              past utterance from the model to add to the
@@ -853,7 +879,8 @@ class TorchAgent(Agent):
         return obs
 
     def last_reply(self, use_label=True):
-        """Retrieve the last reply from the model.
+        """
+        Retrieve the last reply from the model.
 
         If available, we use the true label instead of the model's prediction.
 
@@ -888,7 +915,9 @@ class TorchAgent(Agent):
         return None
 
     def _save_history(self, observations, replies):
-        """Save the model replies to the history."""
+        """
+        Save the model replies to the history.
+        """
         # make sure data structure is set up
         if 'predictions' not in self.replies:
             self.replies['predictions'] = {}
@@ -908,7 +937,8 @@ class TorchAgent(Agent):
             preds[i].append(replies[i].get('text'))
 
     def reply_history(self):
-        """Get the model's predicted reply history within this episode.
+        """
+        Get the model's predicted reply history within this episode.
 
         :param batch: (default False) return the reply history for every
                       row in the batch, otherwise will return just for this
@@ -923,7 +953,8 @@ class TorchAgent(Agent):
         return [p for b, p in preds]
 
     def observe(self, observation):
-        """Process incoming message in preparation for producing a response.
+        """
+        Process incoming message in preparation for producing a response.
 
         This includes remembering the past history of the conversation.
         """
@@ -939,7 +970,8 @@ class TorchAgent(Agent):
         return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):
-        """Save model parameters to path (or default to model_file arg).
+        """
+        Save model parameters to path (or default to model_file arg).
 
         Override this method for more specific saving.
         """
@@ -963,7 +995,8 @@ class TorchAgent(Agent):
                     json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states.
+        """
+        Return opt and model states.
 
         Override this method for more specific loading.
         """
@@ -975,18 +1008,23 @@ class TorchAgent(Agent):
         return states
 
     def reset(self):
-        """Clear internal states."""
+        """
+        Clear internal states.
+        """
         self.observation = None
         self.history.clear()
         self.replies.clear()
         self.reset_metrics()
 
     def act(self):
-        """Call batch_act with the singleton batch."""
+        """
+        Call batch_act with the singleton batch.
+        """
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
-        """Process a batch of observations (batchsize list of message dicts).
+        """
+        Process a batch of observations (batchsize list of message dicts).
 
         These observations have been preprocessed by the observe method.
 
@@ -1021,16 +1059,24 @@ class TorchAgent(Agent):
         return batch_reply
 
     def train_step(self, batch):
-        """Process one batch with training labels."""
+        """
+        Process one batch with training labels.
+        """
         raise NotImplementedError('Abstract class: user must implement train_step')
 
     def eval_step(self, batch):
-        """Process one batch but do not train on it."""
+        """
+        Process one batch but do not train on it.
+        """
         raise NotImplementedError('Abstract class: user must implement eval_step')
 
 
 class Beam(object):
-    """Generic beam class. It keeps information about beam_size hypothesis."""
+    """
+    Generic beam class.
+
+    It keeps information about beam_size hypothesis.
+    """
 
     def __init__(
         self,
@@ -1043,7 +1089,8 @@ class Beam(object):
         cuda='cpu',
         block_ngram=0,
     ):
-        """Instantiate Beam object.
+        """
+        Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
         :param min_length: minimum length of the predicted sequence
@@ -1084,19 +1131,27 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1"""
+        """
+        Get list of ngrams with context length n-1.
+        """
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
-        """Get the outputput at the current step."""
+        """
+        Get the outputput at the current step.
+        """
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """Get the backtrack at the current step."""
+        """
+        Get the backtrack at the current step.
+        """
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
-        """Advance the beam one step."""
+        """
+        Advance the beam one step.
+        """
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -1171,11 +1226,14 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
-        """Return whether beam search is complete."""
+        """
+        Return whether beam search is complete.
+        """
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
@@ -1186,7 +1244,8 @@ class Beam(object):
         )
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
@@ -1211,7 +1270,9 @@ class Beam(object):
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
-        """Return prettier version of the hypotheses."""
+        """
+        Return prettier version of the hypotheses.
+        """
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
@@ -1243,7 +1304,8 @@ class Beam(object):
         return hyp_idx
 
     def get_rescored_finished(self, n_best=None):
-        """Return finished hypotheses in rescored order.
+        """
+        Return finished hypotheses in rescored order.
 
         :param n_best: how many n best hypothesis to return
         :return: list with hypothesis
@@ -1270,7 +1332,8 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Check if self.finished is empty and add hyptail in that case.
+        """
+        Check if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
 
@@ -1291,7 +1354,8 @@ class Beam(object):
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Create pydot graph representation of the beam.
+        """
+        Create pydot graph representation of the beam.
 
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes

@@ -23,9 +23,9 @@ class MTurkMultiAgentDialogOnboardWorld(MTurkOnboardWorld):
 
 
 class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
-    """Basic world where each agent gets a turn in a round-robin fashion,
-    receiving as input the actions of all other agents since that agent last
-    acted.
+    """
+    Basic world where each agent gets a turn in a round-robin fashion, receiving as
+    input the actions of all other agents since that agent last acted.
     """
 
     def __init__(self, opt, agents=None, shared=None):
@@ -35,8 +35,11 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
         self.episodeDone = False
 
     def parley(self):
-        """For each agent, get an observation of the last action each of the
-        other agents took. Then take an action yourself.
+        """
+        For each agent, get an observation of the last action each of the other agents
+        took.
+
+        Then take an action yourself.
         """
         acts = self.acts
         for index, agent in enumerate(self.agents):
@@ -54,9 +57,9 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
         return self.episodeDone
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

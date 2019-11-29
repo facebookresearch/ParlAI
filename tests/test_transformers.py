@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Test many variants of transformers."""
+"""
+Test many variants of transformers.
+"""
 
 import os
 import unittest
@@ -12,11 +14,15 @@ import parlai.utils.testing as testing_utils
 
 
 class TestTransformerRanker(unittest.TestCase):
-    """Checks that transformer_ranker can learn some very basic tasks."""
+    """
+    Checks that transformer_ranker can learn some very basic tasks.
+    """
 
     @testing_utils.retry(ntries=3)
     def test_repeater(self):
-        """Test a simple repeat-after-me model."""
+        """
+        Test a simple repeat-after-me model.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -48,7 +54,9 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
     def test_resuming(self):
-        """Test saving and resuming training."""
+        """
+        Test saving and resuming training.
+        """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
 
@@ -130,7 +138,9 @@ class TestTransformerRanker(unittest.TestCase):
             )
 
     def test_backcomp(self):
-        """Tests that the transformer ranker model files continue to work over time."""
+        """
+        Tests that the transformer ranker model files continue to work over time.
+        """
         testing_utils.download_unittest_models()
 
         stdout, valid, test = testing_utils.eval_model(
@@ -172,7 +182,9 @@ class TestTransformerRanker(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
-        """Test --variant xlm."""
+        """
+        Test --variant xlm.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -207,7 +219,9 @@ class TestTransformerRanker(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
-        """Test a transformer ranker reduction method other than `mean`."""
+        """
+        Test a transformer ranker reduction method other than `mean`.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
@@ -243,11 +257,15 @@ class TestTransformerRanker(unittest.TestCase):
 
 
 class TestTransformerGenerator(unittest.TestCase):
-    """Checks that the generative transformer can learn basic tasks."""
+    """
+    Checks that the generative transformer can learn basic tasks.
+    """
 
     @testing_utils.retry(ntries=3)
     def test_greedysearch(self):
-        """Test greedy search."""
+        """
+        Test greedy search.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -269,20 +287,24 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.90, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.90,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
-        """Test beamsearch."""
+        """
+        Test beamsearch.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -304,19 +326,156 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.20, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.95,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.20, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+        )
+
+    @testing_utils.retry(ntries=3)
+    def test_beamsearch_blocking(self):
+        """
+        Test beamsearch blocking.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            mf = os.path.join(tmpdir, 'model')
+            df = os.path.join(tmpdir, 'model.dict')
+            stdout, valid, test = testing_utils.train_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model='transformer/generator',
+                    model_file=mf,
+                    dict_file=df,
+                    optimizer='adamax',
+                    learningrate=7e-3,
+                    batchsize=32,
+                    num_epochs=20,
+                    n_layers=1,
+                    n_heads=1,
+                    ffn_size=32,
+                    embedding_size=32,
+                    inference='beam',
+                    beam_size=2,
+                )
+            )
+            stdout_bb, valid_beam_block, test_beam_block = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model_file=mf,
+                    dict_file=df,
+                    batch_size=1,
+                    inference='beam',
+                    beam_size=5,
+                    beam_block_ngram=1,
+                    skip_generation=False,
+                )
+            )
+            stdout_bb2, valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model_file=mf,
+                    dict_file=df,
+                    batch_size=1,
+                    inference='beam',
+                    beam_size=5,
+                    beam_block_ngram=2,
+                    skip_generation=False,
+                )
+            )
+        self.assertLessEqual(
+            valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
+        )
+        self.assertGreaterEqual(
+            valid['bleu-4'],
+            0.5,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+        )
+        self.assertLessEqual(
+            test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu-4'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['bleu-4'],
+            0.5,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+        )
+
+        # Beam Block 1
+        self.assertLessEqual(
+            valid_beam_block['f1'],
+            0.4,
+            "valid beam block f1 = {}\nLOG:\n{}".format(
+                valid_beam_block['f1'], stdout_bb
+            ),
+        )
+        self.assertLessEqual(
+            valid_beam_block['bleu-4'],
+            1e-9,
+            "valid beam block bleu = {}\nLOG:\n{}".format(
+                valid_beam_block['bleu-4'], stdout_bb
+            ),
+        )
+        self.assertLessEqual(
+            test_beam_block['f1'],
+            0.4,
+            "test beam block f1 = {}\nLOG:\n{}".format(
+                test_beam_block['f1'], stdout_bb
+            ),
+        )
+        self.assertLessEqual(
+            test_beam_block['bleu-4'],
+            1e-9,
+            "test beam block bleu = {}\nLOG:\n{}".format(
+                test_beam_block['bleu-4'], stdout_bb
+            ),
+        )
+
+        # Beam Block 2
+        self.assertLessEqual(
+            valid_beam_block2['f1'],
+            0.6,
+            "valid beam block f1 = {}\nLOG:\n{}".format(
+                valid_beam_block2['f1'], stdout_bb2
+            ),
+        )
+        self.assertLessEqual(
+            valid_beam_block2['bleu-4'],
+            1e-6,
+            "valid beam block bleu = {}\nLOG:\n{}".format(
+                valid_beam_block2['bleu-4'], stdout_bb2
+            ),
+        )
+        self.assertLessEqual(
+            test_beam_block2['f1'],
+            0.6,
+            "test beam block f1 = {}\nLOG:\n{}".format(
+                test_beam_block2['f1'], stdout_bb2
+            ),
+        )
+        self.assertLessEqual(
+            test_beam_block2['bleu-4'],
+            1e-6,
+            "test beam block bleu = {}\nLOG:\n{}".format(
+                test_beam_block2['bleu-4'], stdout_bb2
+            ),
         )
 
     def test_nucleus(self):
-        """Test nucleus generation."""
+        """
+        Test nucleus generation.
+        """
         # Nucleus is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
@@ -337,7 +496,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_topk(self):
-        """Test topk generation."""
+        """
+        Test topk generation.
+        """
         # Topk is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
@@ -358,7 +519,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_generator_backcomp(self):
-        """Tests that the generator model files work over time."""
+        """
+        Tests that the generator model files work over time.
+        """
         testing_utils.download_unittest_models()
 
         stdout, valid, test = testing_utils.eval_model(
@@ -406,7 +569,9 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_badinput(self):
-        """Ensures model doesn't crash on malformed inputs."""
+        """
+        Ensures model doesn't crash on malformed inputs.
+        """
         stdout, _, _ = testing_utils.train_model(
             dict(
                 task='integration_tests:bad_example',
@@ -425,7 +590,9 @@ class TestTransformerGenerator(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
-        """Test --variant xlm."""
+        """
+        Test --variant xlm.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -451,20 +618,24 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.90, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.90,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
 
 def test_learning_rate_resuming(self, args):
-    """Test learning rate resumes correctly."""
+    """
+    Test learning rate resumes correctly.
+    """
     mdl = args['model']
     with testing_utils.tempdir() as tmpdir:
         model_file = os.path.join(tmpdir, 'model')
@@ -530,10 +701,14 @@ def test_learning_rate_resuming(self, args):
 
 
 class TestLearningRateScheduler(unittest.TestCase):
-    """Test learning rate scheduler for both generative and ranking transformers."""
+    """
+    Test learning rate scheduler for both generative and ranking transformers.
+    """
 
     def test_resuming_generator(self):
-        """Test generators resume correctly."""
+        """
+        Test generators resume correctly.
+        """
         GENERATOR_ARGS = dict(
             task='integration_tests:nocandidate',
             model='transformer/generator',
@@ -551,7 +726,9 @@ class TestLearningRateScheduler(unittest.TestCase):
         test_learning_rate_resuming(self, GENERATOR_ARGS)
 
     def test_resuming_ranker(self):
-        """Test resuming learning rate for the ranker."""
+        """
+        Test resuming learning rate for the ranker.
+        """
         RANKER_ARGS = dict(
             task='integration_tests:candidate',
             model='transformer/ranker',
@@ -566,6 +743,38 @@ class TestLearningRateScheduler(unittest.TestCase):
             warmup_updates=1,
         )
         test_learning_rate_resuming(self, RANKER_ARGS)
+
+    def test_invsqrt_learning_rate(self):
+        args = dict(
+            task='integration_tests:candidate',
+            model='transformer/generator',
+            learningrate=1,
+            batchsize=1,
+            warmup_updates=1,
+            lr_scheduler='invsqrt',
+            n_layers=1,
+            n_heads=1,
+        )
+
+        args['num_epochs'] = 9 / 500
+        args['validation_every_n_epochs'] = 9 / 500
+        stdout1, valid1, test1 = testing_utils.train_model(args)
+        args['num_epochs'] = 16 / 500
+        args['validation_every_n_epochs'] = 16 / 500
+        stdout2, valid2, test2 = testing_utils.train_model(args)
+
+        self.assertAlmostEqual(
+            valid1['lr'],
+            1 / 3,
+            msg='Invsqrt LR {} was not 1/3 at step 9'.format(valid1['lr']),
+            delta=0.001,
+        )
+        self.assertAlmostEqual(
+            valid2['lr'],
+            1 / 4,
+            msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
+            delta=0.001,
+        )
 
 
 if __name__ == '__main__':

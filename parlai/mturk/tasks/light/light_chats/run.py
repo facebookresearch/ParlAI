@@ -298,9 +298,10 @@ class GraphGenerator(object):
 
 
 def main():
-    '''Handles setting up and running a ParlAI-MTurk task by instantiating
-    an MTurk manager and configuring it for the qa_data_collection task
-    '''
+    """
+    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
+    and configuring it for the qa_data_collection task.
+    """
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

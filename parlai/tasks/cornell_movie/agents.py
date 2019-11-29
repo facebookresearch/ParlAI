@@ -27,13 +27,30 @@ class DefaultTeacher(FbDialogTeacher):
 
 
 class DoubleTeacher(DefaultTeacher):
-    """This version creates text-label pairs from the perspective of both
-    speakers.
+    """
+    This version creates text-label pairs from the perspective of both speakers.
     """
 
+    def _rebuild(self, entries):
+        new_list = []
+        if len(entries) > 0:
+            # add all ( y_t => x_(t+1) ) pairs
+            new_list.extend(
+                [
+                    (entries[i][1][0], [entries[i + 1][0]])
+                    for i in range(len(entries) - 1)
+                ]
+            )
+        return new_list
+
+    def _is_valid(self, entry):
+        if entry[0] == '' or entry[1] is None:
+            return False
+        return True
+
     def setup_data(self, path):
-        """Adds additional perspectives.
-        For example, in the conversation:
+        """
+        Adds additional perspectives. For example, in the conversation:
 
         x1 y1
         x2 y2
@@ -41,42 +58,21 @@ class DoubleTeacher(DefaultTeacher):
 
         Creates the additional dialog:
 
-        '' x1
         y1 x2
         y2 x3
-
-        And if a y3 was available in response to x3, also would have added:
-
-        y3
         """
-
-        def rebuild(entries):
-            new_list = []
-            if len(entries) > 0:
-                # prepend silent input => x_0
-                new_list.append(('', [entries[0][0]]))
-
-                # add all ( y_t => x_(t+1) ) pairs
-                new_list.extend(
-                    [
-                        (entries[i][1][0], [entries[i + 1][0]])
-                        for i in range(len(entries) - 1)
-                    ]
-                )
-                if len(entries[-1]) > 1 and entries[-1][1]:
-                    # add y_n => '', if last y avail
-                    new_list.append((entries[-1][1][0], None))
-            return new_list
-
         # this shows conversations in both directions
         alternate = []
         for entry, new in super().setup_data(path):
             if new:
-                for i, e in enumerate(rebuild(alternate)):
-                    yield e, i == 0
+                for i, e in enumerate(self._rebuild(alternate)):
+                    if self._is_valid(e):
+                        yield e, i == 0
                 alternate.clear()
             alternate.append(entry)
-            yield entry, new
+            if self._is_valid(entry):
+                yield entry, new
         if alternate:
-            for i, e in enumerate(rebuild(alternate)):
-                yield e, i == 0
+            for i, e in enumerate(self._rebuild(alternate)):
+                if self._is_valid(e):
+                    yield e, i == 0

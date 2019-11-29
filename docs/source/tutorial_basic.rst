@@ -295,10 +295,6 @@ the labels aren't available:
         return reply
 
 
-Of course, we can do much better than randomly guessing. In :doc:`a later tutorial <tutorial_seq2seq>`,
-we'll set up a better agent which learns from the training data.
-
-
 Tasks
 ^^^^^
 

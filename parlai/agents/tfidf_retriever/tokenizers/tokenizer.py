@@ -4,13 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Base tokenizer/tokens classes and utilities."""
+"""
+Base tokenizer/tokens classes and utilities.
+"""
 
 import copy
 
 
 class Tokens(object):
-    """A class to represent a list of tokenized text."""
+    """
+    A class to represent a list of tokenized text.
+    """
 
     TEXT = 0
     TEXT_WS = 1
@@ -25,21 +29,28 @@ class Tokens(object):
         self.opts = opts or {}
 
     def __len__(self):
-        """The number of tokens."""
+        """
+        The number of tokens.
+        """
         return len(self.data)
 
     def slice(self, i=None, j=None):
-        """Return a view of the list of tokens from [i, j)."""
+        """
+        Return a view of the list of tokens from [i, j).
+        """
         new_tokens = copy.copy(self)
         new_tokens.data = self.data[i:j]
         return new_tokens
 
     def untokenize(self):
-        """Returns the original text (with whitespace reinserted)."""
+        """
+        Returns the original text (with whitespace reinserted).
+        """
         return ''.join([t[self.TEXT_WS] for t in self.data]).strip()
 
     def words(self, uncased=False):
-        """Returns a list of the text of each token
+        """
+        Returns a list of the text of each token.
 
         Args:
             uncased: lower cases text
@@ -50,11 +61,15 @@ class Tokens(object):
             return [t[self.TEXT] for t in self.data]
 
     def offsets(self):
-        """Returns a list of [start, end) character offsets of each token."""
+        """
+        Returns a list of [start, end) character offsets of each token.
+        """
         return [t[self.SPAN] for t in self.data]
 
     def pos(self):
-        """Returns a list of part-of-speech tags of each token.
+        """
+        Returns a list of part-of-speech tags of each token.
+
         Returns None if this annotation was not included.
         """
         if 'pos' not in self.annotators:
@@ -62,7 +77,9 @@ class Tokens(object):
         return [t[self.POS] for t in self.data]
 
     def lemmas(self):
-        """Returns a list of the lemmatized text of each token.
+        """
+        Returns a list of the lemmatized text of each token.
+
         Returns None if this annotation was not included.
         """
         if 'lemma' not in self.annotators:
@@ -70,7 +87,9 @@ class Tokens(object):
         return [t[self.LEMMA] for t in self.data]
 
     def entities(self):
-        """Returns a list of named-entity-recognition tags of each token.
+        """
+        Returns a list of named-entity-recognition tags of each token.
+
         Returns None if this annotation was not included.
         """
         if 'ner' not in self.annotators:
@@ -78,7 +97,8 @@ class Tokens(object):
         return [t[self.NER] for t in self.data]
 
     def ngrams(self, n=1, uncased=False, filter_fn=None, as_strings=True):
-        """Returns a list of all ngrams from length 1 to n.
+        """
+        Returns a list of all ngrams from length 1 to n.
 
         Args:
             n: upper limit of ngram length
@@ -108,7 +128,9 @@ class Tokens(object):
         return ngrams
 
     def entity_groups(self):
-        """Group consecutive entity tokens with the same NER tag."""
+        """
+        Group consecutive entity tokens with the same NER tag.
+        """
         entities = self.entities()
         if not entities:
             return None
@@ -130,7 +152,9 @@ class Tokens(object):
 
 
 class Tokenizer(object):
-    """Base tokenizer class.
+    """
+    Base tokenizer class.
+
     Tokenizers implement tokenize, which should return a Tokens class.
     """
 

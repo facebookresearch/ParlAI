@@ -26,11 +26,15 @@ class Parley(object):
         context,
         response='',
         reward=0,
-        candidates=[],
-        memories=[],
+        candidates=None,
+        memories=None,
         episode_done=False,
         **kwargs,
     ):
+        if candidates is None:
+            candidates = []
+        if memories is None:
+            memories = []
         self.context = context
         self.response = response if response is not None else ''
         self.reward = reward
@@ -85,7 +89,8 @@ class Parley(object):
 
 
 def sanitize_parley(parley):
-    """Separate memories from context, pull out response, split context/memories lists
+    """
+    Separate memories from context, pull out response, split context/memories lists.
     """
     if '\n' in parley.context:
         snippets = parley.context.split('\n')
@@ -154,7 +159,8 @@ def extract_parlai_episodes(datafile):
 
 
 def episode_to_examples(episode, histsz):
-    """Converts an episode (list of Parleys) into self-feeding compatible examples
+    """
+    Converts an episode (list of Parleys) into self-feeding compatible examples.
 
     WARNING: we no longer require a histz when making a self-feeding file. Shortening of
     the history is typically done in the teacher file or in interactive mode.

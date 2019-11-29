@@ -30,8 +30,8 @@ class QualificationFlowOnboardWorld(MTurkOnboardWorld):
 
 class QualificationFlowSoloWorld(MTurkTaskWorld):
     """
-    World that asks a user 5 math questions, first from a test set if the user
-    is entering for the first time, and then randomly for all subsequent times
+    World that asks a user 5 math questions, first from a test set if the user is
+    entering for the first time, and then randomly for all subsequent times.
 
     Users who don't get enough correct in the test set are assigned a
     qualification that blocks them from completing more HITs during shutdown
@@ -106,9 +106,10 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
 
     def shutdown(self):
         """
-        Here is where the filtering occurs. If a worker hasn't successfully
-        answered all the questions correctly, they are given the qualification
-        that marks that they should be blocked from this task.
+        Here is where the filtering occurs.
+
+        If a worker hasn't successfully answered all the questions correctly, they are
+        given the qualification that marks that they should be blocked from this task.
         """
         if self.firstTime and self.correct != len(self.questions):
             mturk_utils.give_worker_qualification(

@@ -13,7 +13,9 @@ import time
 
 @testing_utils.skipIfGPU
 class TestSharedTable(unittest.TestCase):
-    """Make sure the package is alive."""
+    """
+    Make sure the package is alive.
+    """
 
     def test_init_from_dict(self):
         d = {'a': 0, 'b': 1, 'c': 1.0, 'd': True, 1: False, 2: 2.0}

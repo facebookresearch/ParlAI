@@ -64,14 +64,18 @@ def _path(opt):
 
 
 def escape(s):
-    """Replace potential special characters with escaped version.
+    """
+    Replace potential special characters with escaped version.
+
     For example, newline => \\n and tab => \\t
     """
     return s.replace('\n', '\\n').replace('\t', '\\t').replace('\r', '\\r')
 
 
 def unescape(s):
-    """Revert escaped characters back to their special version.
+    """
+    Revert escaped characters back to their special version.
+
     For example, \\n => newline and \\t => tab
     """
     return s.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
@@ -155,7 +159,9 @@ class VqaDictionaryAgent(Agent):
         return len(self.tok2ind)
 
     def add_to_ques_dict(self, tokens):
-        """Builds dictionary from the list of provided tokens.
+        """
+        Builds dictionary from the list of provided tokens.
+
         Only adds words contained in self.embedding_words, if not None.
         """
         for token in tokens:
@@ -166,7 +172,9 @@ class VqaDictionaryAgent(Agent):
                 self.ind2tok[index] = token
 
     def add_to_ans_dict(self, token):
-        """Builds dictionary from the list of provided tokens.
+        """
+        Builds dictionary from the list of provided tokens.
+
         Only adds words contained in self.embedding_words, if not None.
         """
         self.ansfreq[token] += 1
@@ -212,8 +220,8 @@ class VqaDictionaryAgent(Agent):
         )
 
     def act(self):
-        """Add any words passed in the 'text' field of the observation to this
-        dictionary.
+        """
+        Add any words passed in the 'text' field of the observation to this dictionary.
         """
         mc_label = self.observation.get('mc_label', self.observation.get('labels', []))
         for text in mc_label:
@@ -267,7 +275,9 @@ class VqaDictionaryAgent(Agent):
         return txt_answers
 
     def load(self, filename):
-        """Load pre-existing dictionary in 'token[<TAB>count]' format.
+        """
+        Load pre-existing dictionary in 'token[<TAB>count]' format.
+
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
         print('Dictionary: loading dictionary from {}'.format(filename))
@@ -297,9 +307,9 @@ class VqaDictionaryAgent(Agent):
         print('[ num ans words =  %d ]' % len(self.ind2ans))
 
     def save(self, filename=None, append=False, sort=True):
-        """Save dictionary to file.
-        Format is 'token<TAB>count' for every token in the dictionary, sorted
-        by count with the most frequent words first.
+        """
+        Save dictionary to file. Format is 'token<TAB>count' for every token in the
+        dictionary, sorted by count with the most frequent words first.
 
         If ``append`` (default ``False``) is set to ``True``, appends instead
         of overwriting.
@@ -335,13 +345,17 @@ class VqaDictionaryAgent(Agent):
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
     def shutdown(self):
-        """Save on shutdown if ``save_path`` is set."""
+        """
+        Save on shutdown if ``save_path`` is set.
+        """
         if hasattr(self, 'save_path'):
             self.save(self.save_path)
 
 
 class VQADataset(Dataset):
-    """A Pytorch Dataset utilizing streaming"""
+    """
+    A Pytorch Dataset utilizing streaming.
+    """
 
     def __init__(self, opt):
         self.opt = opt
@@ -419,7 +433,9 @@ class VQADataset(Dataset):
             self.image_paths.add(self.image_path + '%012d.jpg' % (qa['image_id']))
 
     def _setup_image_data(self):
-        '''hdf5 image dataset'''
+        """
+        hdf5 image dataset.
+        """
         extract_feats(self.opt)
         im = self.opt.get('image_mode')
         if self.opt.get('attention', False):
@@ -459,15 +475,15 @@ class DefaultDataset(VQADataset):
 
 class OeTeacher(FixedDialogTeacher):
     """
-    VQA Open-Ended teacher, which loads the json vqa data and implements its
-    own `act` method for interacting with student agent.
+    VQA Open-Ended teacher, which loads the json vqa data and implements its own `act`
+    method for interacting with student agent.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         data_path, annotation_path, self.image_path = _path(opt)
         self.datafile = data_path
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             self.ques = shared['ques']
@@ -485,7 +501,9 @@ class OeTeacher(FixedDialogTeacher):
         self.imageEpochDone = False
 
     def num_examples(self):
-        """Number of examples in VQA-v1."""
+        """
+        Number of examples in VQA-v1.
+        """
         return len(self.ques['questions'])
 
     def num_episodes(self):
@@ -512,20 +530,21 @@ class OeTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none' and 'image_id' in self.example:
+            if self.image_mode != 'no_image_model' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
@@ -556,8 +575,8 @@ class OeTeacher(FixedDialogTeacher):
 
 class McTeacher(OeTeacher):
     """
-    VQA Multiple-Choice teacher, which inherits from OeTeacher but overrides
-    the label and label_candidates fields with multiple choice data.
+    VQA Multiple-Choice teacher, which inherits from OeTeacher but overrides the label
+    and label_candidates fields with multiple choice data.
     """
 
     def get(self, episode_idx, entry_idx=0):
@@ -575,8 +594,8 @@ class McTeacher(OeTeacher):
 
 class AllTeacher(OeTeacher):
     """
-    VQA Teacher, which inherits from OeTeacher and gives access to
-    the multiple choices and the multiple choice answer.
+    VQA Teacher, which inherits from OeTeacher and gives access to the multiple choices
+    and the multiple choice answer.
     """
 
     def act(self):

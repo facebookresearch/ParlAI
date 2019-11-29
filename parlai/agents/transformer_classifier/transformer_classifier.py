@@ -8,10 +8,7 @@ from parlai.agents.transformer.transformer import (
     TransformerMemNetModel,
 )
 from parlai.agents.transformer.modules import TransformerLinearWrapper
-from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
-
-import torch
 
 
 class TransformerClassifierAgent(TorchClassifierAgent):
@@ -38,7 +35,8 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         return TransformerLinearWrapper(self.base_model.context_encoder, num_classes)
 
     def vectorize(self, *args, **kwargs):
-        """ Add the start and end token to the text.
+        """
+        Add the start and end token to the text.
         """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
@@ -46,7 +44,8 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
-        """ Add the start and end token to the text.
+        """
+        Add the start and end token to the text.
         """
         obs = super()._set_text_vec(*args, **kwargs)
 
