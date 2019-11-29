@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """Terminal Chat Runner."""
+
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.terminal_chat.terminal_manager import TerminalManager
 from parlai.chat_service.services.messenger import shared_utils as utils
