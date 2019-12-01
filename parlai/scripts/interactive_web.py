@@ -29,7 +29,7 @@ WEB_HTML = """
         <div class="columns" style="height: 100%">
             <div class="column is-three-fifths is-offset-one-fifth">
               <section class="hero is-info is-large has-background-light has-text-grey-dark" style="height: 100%">
-                <div id="parent" class="hero-body">
+                <div id="parent" class="hero-body" style="overflow: auto; height: calc(100% - 76px); padding-top: 1em; padding-bottom: 0;">
                     <article class="media">
                       <figure class="media-left">
                         <span class="icon is-large">
@@ -47,7 +47,7 @@ WEB_HTML = """
                       </div>
                     </article>
                 </div>
-                <div class="hero-foot column is-three-fifths is-offset-one-fifth">
+                <div class="hero-foot column is-three-fifths is-offset-one-fifth" style="height: 76px">
                   <form id = "interact">
                       <div class="field is-grouped">
                         <p class="control is-expanded">
@@ -129,7 +129,7 @@ WEB_HTML = """
 
                     // Change info for Model response
                     parDiv.append(createChatRow("Model", data.text));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
             document.getElementById("interact").addEventListener("reset", function(event){{
@@ -147,7 +147,7 @@ WEB_HTML = """
 
                     parDiv.innerHTML = '';
                     parDiv.append(createChatRow("Model", "Enter a message, and the model will respond interactively."));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
         </script>
