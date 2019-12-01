@@ -26,9 +26,9 @@ WEB_HTML = """
     <script defer src={}></script>
     <head><title> Interactive Run </title></head>
     <body>
-        <div class="columns">
+        <div class="columns" style="height: 100%">
             <div class="column is-three-fifths is-offset-one-fifth">
-              <section class="hero is-info is-large has-background-light has-text-grey-dark">
+              <section class="hero is-info is-large has-background-light has-text-grey-dark" style="height: 100%">
                 <div id="parent" class="hero-body">
                     <article class="media">
                       <figure class="media-left">
