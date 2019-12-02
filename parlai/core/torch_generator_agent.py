@@ -921,6 +921,32 @@ class TreeSearch(object):
         """
         pass
 
+    def _block_ngrams(
+        self, ngram_size: int, logprobs: torch.Tensor, source: torch.LongTensor = None
+    ):
+        """
+        Hard block ngrams from the logprobs, based on the source.
+
+        :param ngram_size:
+            The length of ngrams to block. Must be > 0.
+        :param logprobs:
+            Float or HalfTensor, representing the log-probabilities. This is
+            modified in place.
+        :param source:
+            Source text to grab ngrams from. If None, it uses the current
+            hypothesis (i.e. self-blocking).
+        """
+        for beam_id, hyp in enumerate(self.partial_hyps):
+            if len(hyp) < self.block_ngram - 1:
+                continue
+            source_ = hyp if source is None else source
+            ngrams = self._find_ngrams(source_, ngram_size)
+            prefix = hyp[(-ngram_size - 1) :]
+            for ngram in ngrams:
+                if ngram_size == 1 or prefix == list(ngram[:-1]):
+                    logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+        return logprobs
+
     def advance(self, logprobs):
         """
         Advance the beam one step.
@@ -942,26 +968,16 @@ class TreeSearch(object):
 
         # beam blocking
         if self.block_ngram > 0:
-            for beam_id, hyp in enumerate(self.partial_hyps):
-                if len(hyp) < self.block_ngram - 1:
-                    continue
-                ngrams = self._find_ngrams(hyp, self.block_ngram)
-                prefix = hyp[-(self.block_ngram - 1) :]
-                for ngram in ngrams:
-                    if prefix == list(ngram[:-1]) or self.block_ngram == 1:
-                        logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+            logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
 
         if self.context_block_ngram > 0:
             if self.context is None:
                 raise ValueError(
                     "Must use TreeSearch.set_context to use context blocking."
                 )
-            for beam_id, hyp in enumerate(self.partial_hyps):
-                ngrams = self._find_ngrams(self.context, self.context_block_ngram)
-                prefix = hyp[-(self.context_block_ngram - 1) :]
-                for ngram in ngrams:
-                    if prefix == list(ngram[:-1]) or self.context_block_ngram == 1:
-                        logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+            logprobs = self._block_ngrams(
+                self.context_block_ngram, logprobs, self.context
+            )
 
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
         # use clone() here to ensure that self.all_scores will not be changed
