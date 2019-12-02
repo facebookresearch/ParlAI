@@ -739,8 +739,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         bsz = len(batch.text_lengths)
         beams = [
-            self._treesearch_factory(dev).set_context(ctx).set_dict(self.dict)
-            for ctx in batch.text_vec
+            self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
         ]
 
         # repeat encoder outputs and decoder inputs
@@ -884,10 +883,6 @@ class TreeSearch(object):
             ngram blocking, if supplied
         """
         self.context = context.tolist()
-        return self
-
-    def set_dict(self, d):
-        self.d = d
         return self
 
     def get_output_from_current_step(self):
