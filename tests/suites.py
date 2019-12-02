@@ -91,7 +91,3 @@ def internal_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai_internal/tests")
     return test_suite
-
-
-if __name__ == '__main__':
-    unittest.run(unittests())

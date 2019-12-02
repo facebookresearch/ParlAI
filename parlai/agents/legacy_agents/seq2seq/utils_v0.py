@@ -6,7 +6,8 @@
 
 from collections import deque, namedtuple
 from collections.abc import MutableMapping
-from multiprocessing import Lock, RawArray
+from multiprocessing import Lock
+from multiprocessing import RawArray  # type: ignore
 from operator import attrgetter
 
 import ctypes
