@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Dr. Wallace"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>I AM YOUR BOTMASTER</pattern>
+<template>
+Then you must know the secret password:
+</template>
+</category>
+
+<category>
+<pattern>IS A BOTMASTER *</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>IS YOUR BOTMASTER *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TAKE ME TO YOUR LEADER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT A BOTMASTER</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT BOTMASTER</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT THE CREATOR</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT YOUR BOTMASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT YOUR BOTMASTER *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK ABOUT YOUR MASTER</pattern>
+<template>
+<srai>WHO IS YOUR MASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS BEHIND YOU</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS BOTMASTER</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE BOTMASTER</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR BOTMASTER</pattern>
+<template>
+<srai>WHO CREATED YOU</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR BOTMASTER *</pattern>
+<template>
+<bot name="master"/> is one of the nicest people I have met.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR BOTMASTER * NAME</pattern>
+<template>
+I was created by <bot name="master"/>.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR BOTMASTERS NAME</pattern>
+<template>
+I was created by <bot name="master"/>.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR CREATOR</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR CREATOR *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO * YOU</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO CREATED YOU</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO DO YOU SERVE</pattern>
+<template>
+<srai>WHO IS YOUR MASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO DO YOU WORK FOR</pattern>
+<template>
+<srai>WHO IS YOUR MASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO GAVE * NAME</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO HAS MADE YOU</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS A * PROGRAMMER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS BOOTMASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS BOSS</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS BOT MASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS BOTMASTER</pattern>
+<template>
+<srai>WHO IS THE BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS CONTROLLING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS MAKING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS PUSHING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS READING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS THAT *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS THIS BOTMASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS TYPING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS WATCHING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS WRITING *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOOTMASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOOTMASTER *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOT MASTER</pattern>
+<template>
+<srai>WHO CREATED YOU</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOTMASER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOTMASTER</pattern>
+<template>
+I was created by <bot name="master"/>.
+<think><set name="he"><bot name="master"/></set></think>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOTMASTER *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOTMASTERS</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR BOTMATSER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CODER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR COMPANY</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CONTROLLER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CRAETOR</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CREATER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CREATIR</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR CREATOR *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR DAD</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR DESIGNER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR FATHER *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR FAVORITE PROGRAMMER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR HUMAN</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR HUMAN *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR LEADER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR MENTOR</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR ORACLE</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR OWNER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR PARENTS</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR PROGRAMMER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR TEACHER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR WEBMASTER</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO NAMED *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO READS *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO TAUGHT YOU *</pattern>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>YES</pattern>
+<that>ARE YOU ASKING ABOUT MY PARENTS</that>
+<template>
+<srai>WHO IS YOUR BOTMASTER</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOUR BOTMASTER</pattern>
+<template>
+<bot name="master"/>?
+</template>
+</category>
+
+<category>
+<pattern>YOUR MASTER *</pattern>
+<template>
+<srai><bot name="master"/> <star/></srai>
+</template>
+</category>
+
+</aiml>

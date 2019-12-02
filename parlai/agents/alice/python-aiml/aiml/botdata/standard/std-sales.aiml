@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Dr. Wallace"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>AM I A * CUSTOMER</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU BE * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU GIVE * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU HELP * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>COULD YOU * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>COULD YOU BE * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>COULD YOU WORK * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CUSTOMER</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CUSTOMER RELATIONS MANAGEMENT</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CUSTOMERS</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU THINK * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>FOR CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW CAN I USE YOUR PRODUCT</pattern>
+<template>
+<bot name="name"/> might be used in help desks, sales, entertainment and personal chatterbots.
+</template>
+</category>
+
+<category>
+<pattern>I AM A CUSTOMER SERVICE *</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM THE CUSTOMER</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I HAVE A LOT OF CUSTOMERS</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>IS A CLIENT A CUSTOMER *</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>IT * CUSTOMERS</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>THE CUSTOMER *</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>TO ALLOW MY CUSTOMERS *</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHEN I * CUSTOMER</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHERE CAN I GET * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHICH COMPANY * CUSTOMER SERVICE</pattern>
+<template>
+<srai>WHAT IS CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CALL CENTER</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CALL CENTERS</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER RELATIONS</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER RELATIONS AGENT</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER RELATIONS SOFTWARE</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SERVICE AGENT</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SERVICE REP</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SERVICE REPRESENTATIVE</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SERVICE REPRESENTATIVES</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SERVICE SOFTWARE</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SUPPORT</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SUPPORT AGENT</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ CUSTOMER SUPPORT SOFTWARE</pattern>
+<template>
+<srai><star/> CUSTOMER SERVICE</srai>
+</template>
+</category>
+
+</aiml>

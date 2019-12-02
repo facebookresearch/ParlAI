@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>CONTINUATION *</pattern>
+<template>Blank template</template>
+</category>
+<category><pattern>CONTINUATION</pattern>
+<template><think><set name="continue"><get name="continued"/></set><set name="continued"><get name="continuedd"/></set><set name="continuedd"><get name="continueddd"/></set><set name="continueddd"><get name="continuedddd"/></set><set name="continuedddd"><get name="continueddddd"/></set><set name="continueddddd"><get name="continuedddddd"/></set><set name="continuedddddd"><get name="continueddddddd"/></set><set name="continueddddddd"><get name="continuedddddddd"/></set><set name="continuedddddddd"><get name="continueddddddddd"/></set><set name="continueddddddddd"><get name="continuedddddddddd"/></set><set name="continuedddddddddd"><get name="continueddddddddddd"/></set><set name="continueddddddddddd"><get name="continuedddddddddddd"/></set><set name="continuedddddddddddd"><get name="continueddddddddddddd"/></set><set name="continueddddddddddddd"><get name="continuedddddddddddddd"/></set><set name="continuedddddddddddddd"><get name="continueddddddddddddddd"/></set><set name="continueddddddddddddddd"><get name="continuedddddddddddddddd"/></set><set name="continuedddddddddddddddd"><srai>RANDOM TOPIC</srai></set></think><get name="continue"/></template>
+</category>
+</aiml>

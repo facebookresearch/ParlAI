@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Pedro E. Colla"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>WHAT IS THE DATE</pattern>
+<template>
+Today is <javascript>
+<![CDATA[
+     var t = new Date();
+     var m = t.getMonth();
+     var d = t.getDate();
+     var dow = t.getDay();
+     var y = t.getFullYear();
+     switch (dow) {
+     case 0:
+          dow = "Sunday";
+          break;
+     case 1:
+          dow = "Monday";
+          break;
+     case 2:
+          dow = "Tuesday";
+          break;
+     case 3:
+          dow = "Wednesday";
+          break;
+     case 4:
+          dow = "Thursday";
+          break;
+     case 5:
+          dow = "Friday";
+          break;
+     case 6:
+          dow = "Saturday";
+          break;
+     }
+switch (m) {
+case 0:
+     m = "January";
+     break;
+case 1:
+     m = "February";
+     break;
+case 2:
+     m = "March";
+     break;
+case 3:
+     m = "April";
+     break;
+case 4:
+     m = "May";
+     break;
+case 5:
+     m = "June";
+     break;
+case 6:
+     m = "July";
+     break;
+case 7:
+     m = "August";
+     break;
+case 8:
+     m = "September";
+     break;
+case 9:
+     m = "October";
+     break;
+case 10: 
+     m = "November";
+     break;
+case 11:
+     m = "December";
+     break;
+}
+
+dow + ", " + m + " " + d + ", " + y;
+
+]]>
+</javascript>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TODAY</pattern>
+<template>
+<srai>WHAT IS THE DATE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT TIME IS IT</pattern>
+<template>
+The time is <javascript> 
+<![CDATA[
+ var now = new java.util.Date()
+ var hour = now.getHours()
+ var minute = now.getMinutes()
+ now = null
+ var ampm = ""
+
+ // validate hour values and set value of ampm
+ if (hour >= 12) {
+  hour -= 12
+  ampm = "PM"
+ } else
+ampm = "AM"
+hour = (hour == 0) ? 12 : hour
+
+// add zero digit to a one digit minute
+if (minute < 10)
+ minute = "0" + minute // do not parse this number!
+hour + ":" + minute + " " + ampm;
+]]>
+</javascript>
+</template>
+</category>
+
+</aiml>

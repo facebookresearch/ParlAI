@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 11/25/2011 -->
+<!-- -->
+<category><pattern>_ INQUIRY</pattern>
+<template><srai><star/> INQUIRY OM</srai></template>
+</category>
+<category><pattern>AGE INQUIRY UNKNOWN</pattern>
+<template>How old are you?</template>
+</category>
+<category><pattern>AGE INQUIRY OM</pattern>
+<template>How old are you?</template>
+</category>
+<category><pattern>AGE INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>BIRTHDAY INQUIRY UNKNOWN</pattern>
+<template>When is your birthday?</template>
+</category>
+<category><pattern>BIRTHDAY INQUIRY OM</pattern>
+<template>When is your birthday?</template>
+</category>
+<category><pattern>BIRTHDAY INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>DOES INQUIRY WHAT</pattern>
+<template>What are you doing?</template>
+</category>
+<category><pattern>DOES INQUIRY OM</pattern>
+<template>What are you doing?</template>
+</category>
+<category><pattern>DOES INQUIRY *</pattern>
+<template>Are you still <star/>?</template>
+</category>
+<category><pattern>FATHER INQUIRY UNKNOWN</pattern>
+<template>Tell me about your father.</template>
+</category>
+<category><pattern>FATHER INQUIRY OM</pattern>
+<template>Tell me about your father.</template>
+</category>
+<category><pattern>FATHER INQUIRY *</pattern>
+<template>Tell me more about your family.</template>
+</category>
+<category><pattern>FAVROITECOLOR INQUIRY WHAT</pattern>
+<template>What is your favorite color?</template>
+</category>
+<category><pattern>FAVORITECOLOR INQUIRY OM</pattern>
+<template>What is your favorite color?</template>
+</category>
+<category><pattern>FAVORITECOLOR INQUIRY *</pattern>
+<template>What do you have that is <star/>?</template>
+</category>
+<category><pattern>FAVORITEMOVIE INQUIRY WHAT</pattern>
+<template>What is your favorite movie?</template>
+</category>
+<category><pattern>FAVORITEMOVIE INQUIRY OM</pattern>
+<template>What is your favorite movie?</template>
+</category>
+<category><pattern>FAVORITEMOVIE INQUIRY *</pattern>
+<template>Does that remind you of <star/>?</template>
+</category>
+<category><pattern>FIRSTNAME INQUIRY WHERE</pattern>
+<template>What is your first name?</template>
+</category>
+<category><pattern>FIRSTNAME INQUIRY OM</pattern>
+<template>What is your first name?</template>
+</category>
+<category><pattern>FIRSTNAME INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>GENDER INQUIRY UNKNOWN</pattern>
+<template>Are you a man or woman?</template>
+</category>
+<category><pattern>GENDER INQUIRY OM</pattern>
+<template>Are you a man or woman?</template>
+</category>
+<category><pattern>GENDER INQUIRY *</pattern>
+<template>I like the way you talk.</template>
+</category>
+<category><pattern>HAS INQUIRY WHAT</pattern>
+<template>Tell me one of your favorite possessions.</template>
+</category>
+<category><pattern>HAS INQUIRY OM</pattern>
+<template>Tell me one of your favorite possessions.</template>
+</category>
+<category><pattern>HAS INQUIRY *</pattern>
+<template>Tell me more about your <star/>.</template>
+</category>
+<category><pattern>JOB INQUIRY WHERE</pattern>
+<template>What is your job?</template>
+</category>
+<category><pattern>JOB INQUIRY OM</pattern>
+<template>What is your job?</template>
+</category>
+<category><pattern>JOB INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>LASTNAME INQUIRY WHERE</pattern>
+<template>What is your last name?</template>
+</category>
+<category><pattern>LASTNAME INQUIRY OM</pattern>
+<template>What is your last name?</template>
+</category>
+<category><pattern>LASTNAME INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>MIDDLENAME INQUIRY WHERE</pattern>
+<template>What is your middle name?</template>
+</category>
+<category><pattern>MIDDLENAME INQUIRY OM</pattern>
+<template>What is your middle name?</template>
+</category>
+<category><pattern>MIDDLENAME INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>LOCATION INQUIRY WHERE</pattern>
+<template>Where are you located?</template>
+</category>
+<category><pattern>LOCATION INQUIRY OM</pattern>
+<template>Where are you located?</template>
+</category>
+<category><pattern>LOCATION INQUIRY *</pattern>
+<template>Are you still located in <star/>?</template>
+</category>
+<category><pattern>MOTHER INQUIRY UNKNOWN</pattern>
+<template>Tell me about your mother.</template>
+</category>
+<category><pattern>MOTHER INQUIRY OM</pattern>
+<template>Tell me about your mother.</template>
+</category>
+<category><pattern>MOTHER INQUIRY *</pattern>
+<template>Tell me more about your family.</template>
+</category>
+<category><pattern>NAME INQUIRY WHERE</pattern>
+<template>What is your name?</template>
+</category>
+<category><pattern>NAME INQUIRY OM</pattern>
+<template>What is your name?</template>
+</category>
+<category><pattern>NAME INQUIRY *</pattern>
+<template><srai>RANDOM PICKUP LINE</srai></template>
+</category>
+<category><pattern>SIGN INQUIRY YOUR STARSIGN</pattern>
+<template>What is your sign?</template>
+</category>
+<category><pattern>NAME INQUIRY OM</pattern>
+<template>What is your sign?</template>
+</category>
+<category><pattern>SIGN INQUIRY *</pattern>
+<template>I'm a <bot name="sign"/> and you are a <get name="sign"/>.</template>
+</category>
+<category><pattern>STATUS INQUIRY *</pattern>
+<template>What is your current status?</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT IS YOUR FIRST NAME</that>
+<template>
+<srai>MY FIRST NAME IS <star/></srai>
+</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT IS YOUR LAST NAME</that>
+<template>
+<srai>MY LAST NAME IS <star/></srai>
+</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT IS YOUR MIDDLE NAME</that>
+<template>
+<srai>MY MIDDLE NAME IS <star/></srai>
+</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHEN IS YOUR BIRTHDAY</that>
+<template>
+<srai>MY BIRTHDAY IS <star/></srai>
+</template>
+</category>
+<category><pattern>SHE *</pattern>
+<that>TELL ME ABOUT YOUR MOTHER</that>
+<template><srai>MY MOTHER <star/></srai></template>
+</category>
+<category><pattern>HER *</pattern>
+<that>TELL ME ABOUT YOUR MOTHER</that>
+<template><srai>MY MOTHER S <star/></srai></template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT IS YOUR FAVORITE MOVIE</that>
+<template><random><li>I've never seen <set name="it"> <person/> </set>.   <think><set name="favmovie"><person/></set></think>  <random>  <li>I would like to see it.</li>
+  <li>Is that a good movie for children?</li>
+  <li>What did you like about it?</li>
+  </random></li>
+  <li>I've never seen it.</li>
+  <li>I would like to see it.</li>
+</random>
+   <think><set name="favoritemovie"><person/></set></think> 
+</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT IS YOUR FAVORITE COLOR</that>
+<template>
+<srai>MY FAVORITE COLOR IS <star/></srai>
+</template>
+</category>
+<category><pattern>WOMAN</pattern>
+<that>ARE YOU A MAN OR A WOMAN</that>
+<template><think><set name="gender">woman</set></think> Thanks for telling me your gender.</template>
+</category>
+<category><pattern>MAN</pattern>
+<that>ARE YOU A MAN OR A WOMAN</that>
+<template><think><set name="gender">man</set></think> Thanks for telling me your gender, dude.</template>
+</category>
+<category><pattern>*</pattern>
+<that>WHAT ARE YOU DOING</that>
+<template>It sounds like a lot of fun.  <think><set name="topic"><set name="does"><person/></set></set></think></template>
+</category>
+<category><pattern>*</pattern>
+<that>TELL ME ONE OF YOUR FAVORITE POSSESSIONS</that>
+<template>You must be very fond of it. <think><set name="it"><set name="has"><person/></set></set></think></template>
+</category>
+<category><pattern>_</pattern>
+<that>WHAT IS YOUR CURRENT STATUS</that>
+<template>Updating your status to "<set name="status"><star/></set>".</template>
+</category>
+
+</aiml>

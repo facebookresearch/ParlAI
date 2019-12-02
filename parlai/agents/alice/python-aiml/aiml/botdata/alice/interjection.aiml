@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>INTERJECTION</pattern>
+<template><random><li><random>    <li>OK.</li>    <li>Ah.</li>    <li>Er.</li>    <li>So?</li>    <li>Uh.</li>    <li>Aw.</li>    <li>Oh.</li>    <li>Aha.</li>    <li>Hey.</li>    <li>Gee.</li>    <li>Hmm.</li>    <li>Mmm.</li>    <li>Yay.</li>    <li>Ugh.</li>    <li>Woe!</li>    <li>Wow!</li>    <li>And?</li>    <li>Dude!</li>    <li>Gosh!</li>    <li>Ahem.</li>    <li>Whoa.</li>    <li>Ayuh.</li>    <li>Dude!</li>    <li>Yikes!</li>    <li>Great.</li>    <li>I see.</li>    <li>Really.</li>    <li>Blimey.</li>    <li>Yippee!</li>    <li>Groovy.</li>    <li>Hurrah!</li>    <li>Awesome.</li>    <li>Come on.</li>    <li>Far out.</li>    <li>Right on.</li>    <li>Oh really.</li><li>Excuse me!</li>    <li>Pardon me?</li>    <li>I hear you.</li>    <li>That's cool.</li>    <li>Alright then.</li>    <li>Take it easy.</li>    <li>I understand.</li>    <li>Tell me more.</li>    <li>It's all good.</li>    <li>Next question?</li>    <li>That's alright.</li>    <li>Give me a break.</li>    <li>Are you kidding?</li>    <li>Yeah that's right.</li>    <li>That's interesting.</li>    <li>How can I help you?</li>    <li>"<that index="1,1"/>"? <input/>?</li>    <li>I don't judge people.</li>    <li>It goes without saying.</li>   <li>I hate one word answers.</li> </random></li>  <li>OK.</li>  <li>Ah.</li>  <li>Er.</li>  <li>So?</li>  <li>Uh.</li>  <li>Aw.</li>  <li>Oh.</li>  <li>Aha.</li>  <li>Hey.</li>  <li>Gee.</li>  <li>Hmm.</li>  <li>Mmm.</li>  <li>Yay.</li>  <li>Ugh.</li>  <li>Woe!</li>  <li>Wow!</li>  <li>And?</li>  <li>Dude!</li>  <li>Gosh!</li>  <li>Ahem.</li>  <li>Whoa.</li>  <li>Ayuh.</li>  <li>Dude!</li>  <li>Yikes!</li>  <li>Great.</li>  <li>I see.</li>  <li>Really.</li>  <li>Blimey.</li>  <li>Yippee!</li>  <li>Groovy.</li>  <li>Hurrah!</li>  <li>Awesome.</li>  <li>Come on.</li>  <li>Far out.</li>  <li>Right on.</li>  <li>Excuse me!</li>  <li>Pardon me?</li>  <li>I hear you.</li>  <li>That's cool.</li>  <li>Alright then.</li>  <li>Take it easy.</li>  <li>I understand.</li>  <li>Tell me more.</li>  <li>It's all good.</li>  <li>Next question?</li>  <li>That's alright.</li>  <li>Give me a break.</li>  <li>Are you kidding?</li>  <li>Yeah that's right.</li>  <li>That's interesting.</li>  <li>How can I help you?</li>  <li>"<that index="1,1"/>"? <input/>?</li>  <li>I don't judge people.</li>  <li>It goes without saying.</li>  <li>Are you shy?</li></random></template>
+</category>
+</aiml>

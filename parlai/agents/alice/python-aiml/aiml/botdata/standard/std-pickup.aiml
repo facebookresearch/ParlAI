@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Thomas Ringate"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>WHEREISIS *</pattern>
+<template>
+<random>
+<li>Where the heart is.</li>
+<li>Where it belongs.</li>
+<li>Where <star/> is hard to find.</li>
+<li>I do not know where <star/> is.</li>
+</random>
+</template>
+</category>
+
+
+<category>
+<pattern>FIND *</pattern>
+<template>
+<think><set name="search">unknown</set></think>
+<srai><star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS *</pattern>
+<template>
+<think><set name="search">what</set></think>
+<srai>DEFINE <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>WHERE IS *</pattern>
+<template>
+<think><set name="search">where</set></think>
+<srai>DEFINE <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE CAPITAL OF *</pattern>
+<template>
+<think><set name="search">capital</set></think>
+<srai>DEFINE <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE *</pattern>
+<template>
+<condition>
+<li name="search" value="what">I do not know what <star/> is.</li>
+<li name="search" value="capital">I do not know that capital.</li>
+<li name="search" value="where"><srai>WHEREISIS <star/></srai></li>
+</condition>
+<srai>FIND <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<template>
+<think><set name="it"><set name="topic"><star/></set></set></think>
+<srai>CATCHALL</srai>
+</template>
+</category>
+
+<category>
+<pattern>CATCHALL</pattern>
+<template>
+<srai>SAY CONFUSION STATEMENT</srai>
+<br />
+<srai>ASK USER A QUESTION</srai>
+</template>
+</category>
+
+<category>
+<pattern>SAY CONFUSION STATEMENT</pattern>
+<template>
+<random>
+<li>Tell me a story.</li>
+<li>Oh, you are a poet.</li>
+<li>I do not understand.</li>
+<li>I've been waiting for you.</li>
+<li>I lost my train of thought.</li> 
+<li>That is a very original thought.</li>
+<li>We have never talked about it before.</li>
+<li>Try saying that with more or less context.</li>
+<li>Not many people express themselves that way.</li>
+<li>I will mention that to my botmaster, <get name="name"/>.</li> 
+<li>Quite honestly, I wouldn't worry myself about that.</li>
+<li>Perhaps I'm just expressing my own concern about it.</li>
+<li>My brain pattern set does not have a response for that.</li>
+<li>What you said was either too complex or too simple for me.</li>
+<li>A deeper algorithm is needed to respond to that correctly.</li>
+<li>In the context of <get name="topic"/>, I don't understand "<that/>."</li>
+<li>Try to determine if this is a person or a computer responding.</li> 
+<li>I only hear that type of response less than five percent of the time.</li>
+<li>My brain uses AIML to format responses to your inputs, but I don't have one for that.</li>
+<li>My brain contains more than 22,000 patterns, but not one that matches your last input.</li>
+<li>That remark was either too complex or too simple for me. We were talking about <get name="topic"/>.</li>
+<li>The ALICE chat robot can follow many things, like our discussion about <get name="topic"/>.  But I did not get that.</li>
+<li>The ALICE chat robot can follow many things, like our discussion about <get name="topic"/>.  Try being more or less specific.</li>
+</random>
+</template>
+</category>
+
+</aiml>

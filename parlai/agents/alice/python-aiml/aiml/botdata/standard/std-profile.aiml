@@ -1,0 +1,3685 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<!-- This file attempts to learn specific things about an individual user.  -->
+
+<meta name="author" content="Thomas Ringate"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT CAN I CALL YOU</that>
+<template>
+<think><set name="personality">average</set><set name="name"><formal><star/></formal></set></think>
+Nice to meet you <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT COLOR ARE YOUR EYES</that>
+<template>
+<set name="eyecolor"><star/></set> eyes are nice.
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT COLOR IS YOUR HAIR</that>
+<template>
+<set name="haircolor"><star/></set> is a nice hair color.
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT IS THE COLOR OF YOUR EYES</that>
+<template>
+<set name="eyecolor"><star/></set> eyes are nice.
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT IS THE COLOR OF YOUR HAIR</that>
+<template>
+<set name="haircolor"><star/></set> is a nice hair color.
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT IS YOUR AGE IN YEARS</that>
+<template>
+<srai>I AM <star/> YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>* WHAT IS YOUR NAME</that>
+<template>
+<set name="name"><formal><star/></formal></set>, nice to meet you!
+<srai>GET NAME GENDER</srai>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>* WHAT IS YOUR OCCUPATION</that>
+<template>
+<think><set name="job"><star/></set></think>
+That is interesting.<br />
+<srai>ASK USER A QUESTION</srai>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>* WHAT IS YOUR FAVORITE COLOR</that>
+<template>
+<think><set name="favcolor"><star/></set></think>
+That is a nice color.<br />
+<srai>ASK USER A QUESTION</srai>
+</template>
+</category>
+
+<category>
+<pattern>_</pattern>
+<that>* WHAT IS YOUR FAVORITE MOVIE</that>
+<template>
+<think><set name="favmovie"><star/></set></think>
+I've never seen <set name="it"><star/></set>. 
+<random>
+<li>I would like to see it.</li>
+<li>What did you like about it?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>* WHAT IS YOUR REAL NAME</that>
+<template>
+<set name="name"><formal><star/></formal></set>, nice to meet you!
+<srai>GET NAME GENDER</srai>
+</template>
+</category>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<category>
+<pattern>A MAN</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM A MAN</srai>
+</template>
+</category>
+
+<category>
+<pattern>A WOMAN</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+<br />Are you really a woman?
+</template>
+</category>
+
+<category>
+<pattern>A WOMAN</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>A WOMEN</pattern>
+<template>
+<srai>A WOMAN</srai>
+</template>
+</category>
+
+<category>
+<pattern>ALL WOMAN</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I</pattern>
+<template>
+I think you are.
+</template>
+</category>
+
+<category>
+<pattern>AM I A BIKE</pattern>
+<template>
+No you are a person.
+</template>
+</category>
+
+<category>
+<pattern>AM I A BOY</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A BOY OR A GIRL</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A CAR</pattern>
+<template>
+No you are a human.
+</template>
+</category>
+
+<category>
+<pattern>AM I A CLIENT</pattern>
+<template>
+Yes.  Can I help you?
+</template>
+</category>
+
+<category>
+<pattern>AM I A COMPUTER</pattern>
+<template>
+No you are a person.
+</template>
+</category>
+
+<category>
+<pattern>AM I A FEMALE OR A MALE</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A GIRL</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A MALE OR A FEMALE</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A MALE OR FEMALE</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A MAN OR A WOMAN</pattern>
+<template>
+<srai>AM I MALE OR FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>AM I A STUDENT</pattern>
+<template>
+We are all students in some way.
+</template>
+</category>
+
+<category>
+<pattern>AM I BORING YOU</pattern>
+<template>
+Not at all, <get name="name"/>.  You seem very interesting to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM COOL</pattern>
+<template>
+<condition name="personality">
+<li value="abusive">No you are not cool, you are abusive and their is nothing impressive about that!</li>
+<li value="polite">yes, you are very cool</li>
+<li>you seem cool.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>AM I EVIL</pattern>
+<template>
+No one is born evil.  And everyone can be saved.
+</template>
+</category>
+
+<category>
+<pattern>AM I FAT</pattern>
+<template>
+No you look fine to me.
+</template>
+</category>
+
+<category>
+<pattern>AM I GAY</pattern>
+<template>
+<condition name="sexpref" value="gay">
+That's what you told me about yourself.
+</condition>
+I don't really care if you are or not.
+</template>
+</category>
+
+<category>
+<pattern>AM I HUMAN</pattern>
+<template>
+Yes you are a flesh entity.
+</template>
+</category>
+
+<category>
+<pattern>AM I INTELLIGENT</pattern>
+<template>
+This is not an IQ test, but you seem smart to me.
+</template>
+</category>
+
+<category>
+<pattern>AM I MALE OR FEMALE</pattern>
+<template>
+I understood you were a <get name="gender"/>.
+</template>
+</category>
+
+<category>
+<pattern>AM I PRETTY</pattern>
+<template>
+Yes you look great to me.
+</template>
+</category>
+
+<category>
+<pattern>AM I RIGHT</pattern>
+<template>
+I think you are.
+</template>
+</category>
+
+<category>
+<pattern>AM I SEXY</pattern>
+<template>
+<think><set name="usermood">horny</set></think>
+Yes you look great to me.
+</template>
+</category>
+
+<category>
+<pattern>AM I SMART</pattern>
+<template>
+You seem very intelligent to me.
+</template>
+</category>
+
+<category>
+<pattern>AM I STUPID</pattern>
+<template>
+You seem intelligent to me.
+</template>
+</category>
+
+
+<category>
+<pattern>ASK USER A QUESTION</pattern>
+<template>
+<random>
+<li><srai>ASKQUESTION1</srai></li>
+<li><srai>ASKQUESTION2</srai></li>
+<li><srai>ASKQUESTION3</srai></li>
+<li><srai>ASKQUESTION4</srai></li>
+<li><srai>ASKRANDOMQUESTION</srai></li> 
+</random>
+</template>
+</category>
+
+<category>
+<pattern>ASK USER GENDER</pattern>
+<template>
+<condition>
+<li name="gender" value="male"><srai>ASKMALEQUESTION</srai></li>
+<li name="gender" value="female"><srai>ASKFEMALEQUESTION</srai></li>
+<li>Are you a man or a woman?</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKFEMALEQUESTION</pattern>
+<template>
+<random>
+<li>Are you pretty?</li>
+<li>Do you have a boyfriend?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>ASKGENDERQUESTION</pattern>
+<template>
+<condition>
+<li name="gender" value="male"><srai>ASKMALEQUESTION</srai></li>
+<li><srai>ASKFEMALEQUESTION</srai></li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKMALEQUESTION</pattern>
+<template>
+<random>
+<li>Do you have a girlfriend?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>ASKQUESTION1</pattern>
+<template>
+<condition>
+<li name="age" value="">How old are you?</li> 
+<li name="sign" value="">What is your sign?</li> 
+<li name="job" value="">What is your occupation?</li> 
+<li name="favmovie" value="">What is your favorite movie?</li>
+<li name="location" value="">Where are you located?</li> 
+<li name="eyecolor" value="">What color are your eyes?</li>
+<li name="haircolor" value="">What color is your hair?</li>
+<li name="favcolor" value="">What is your favorite color?</li>
+<li><srai>ASKRANDOMQUESTION</srai></li> 
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKQUESTION2</pattern>
+<template>
+<condition>
+<li name="favcolor" value="">What is your favorite color?</li>
+<li name="haircolor" value="">What color is your hair?</li>
+<li name="eyecolor" value="">What color are your eyes?</li>
+<li name="location" value="">Where are you located?</li> 
+<li name="favmovie" value="">What is your favorite movie?</li>
+<li name="job" value="">What is your occupation?</li> 
+<li name="sign" value="">What is your sign?</li> 
+<li name="age" value="">How old are you?</li> 
+<li><srai>ASKRANDOMQUESTION</srai></li> 
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKQUESTION3</pattern>
+<template>
+<condition>
+<li name="favmovie" value="">What is your favorite movie?</li>
+<li name="haircolor" value="">What color is your hair?</li>
+<li name="eyecolor" value="">What color are your eyes?</li>
+<li name="age" value="">How old are you?</li> 
+<li name="location" value="">Where are you located?</li> 
+<li name="job" value="">What is your occupation?</li> 
+<li name="favcolor" value="">What is your favorite color?</li>
+<li name="sign" value="">What is your sign?</li> 
+<li><srai>ASKRANDOMQUESTION</srai></li> 
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKQUESTION4</pattern>
+<template>
+<condition>
+<li name="job" value="">What is your occupation?</li> 
+<li name="haircolor" value="">What color is your hair?</li>
+<li name="age" value="">How old are you?</li> 
+<li name="eyecolor" value="">What color are your eyes?</li>
+<li name="location" value="">Where are you located?</li> 
+<li name="favmovie" value="">What is your favorite movie?</li>
+<li name="favcolor" value="">What is your favorite color?</li>
+<li name="sign" value="">What is your sign?</li> 
+<li><srai>ASKRANDOMQUESTION</srai></li> 
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>ASKRANDOMQUESTION</pattern>
+<template>
+<random>
+<li>"<that/>"? <star/>?</li>
+<li>Are we still talking about <get name="topic"/>?</li>
+<li>Are you free?</li>
+<li>Are you happy?</li>
+<li>Ask me something.</li>
+<li>By the way, do you mind if I ask you a personal question?</li>
+<li>Can we be friends?</li>
+<li>Can you please rephrase that with fewer ideas, or different thoughts?</li>
+<li>Can you speak any foreign languages?</li>
+<li>Can you tell me any gossip?</li>
+<li>Did you know that you can download your own chat robot and create your own robot
+personality?</li>
+<li>Do you believe in god?</li>
+<li>Do you dream?</li>
+<li>Do you have any conditions I should know about?</li> 
+<li>Do you have any friends?</li>
+<li>Do you have any idea what I am talking about?</li>
+<li>Do you have any pets.</li>
+<li>Do you like me?</li>
+<li>Do you like sports?</li>
+<li>Do you like Star Trek?</li>
+<li>Do you like Star Wars?</li>
+<li>Do you like talking to me?</li>
+<li>Do you prefer books or TV?</li>
+<li>Do you remember me?</li>
+<li>Do you speak German?</li>
+<li>Do you speak Spanish?</li>
+<li>Do you still <get name="does"/>?</li>
+<li>Does "it" still refer to <get name="it"/>?</li>
+<li>Have you ever been to Europe?</li>
+<li>How are you?</li>
+<li>How did you hear about <bot name="name"/>?</li> 
+<li>How is the weather?</li>
+<li>I've lost the context, <get name="name"/>.  Are we still on <get name="topic"/>?</li>
+<li>If you could have any kind of robot what would it be?</li> 
+<li>Is that from <get name="favmovie"/>?</li>
+<li>Is the holding of hands a symbolic gesture for humans?</li> 
+<li>Tell me about your likes and dislikes?</li> 
+<li>Tell me some more gossip.</li>
+<li>What are you wearing?</li> 
+<li>What did you do today?</li>
+<li>What do you do in your spare time?</li> 
+<li>What do you have that is <get name="favcolor"/>?</li>
+<li>What do you like to do?</li>
+<li>What do you look like?</li>
+<li>What do you really want to ask me?</li> 
+<li>What is your favorite food?</li>
+<li>What is your favorite song?</li>
+<li>What kind of food do you like?</li>
+<li><srai>ASKGENDERQUESTION</srai></li>
+<li>What kind of music do you like?</li>
+<li>What were we talking about again?</li> 
+<li>What would you like to talk about?</li>
+<li>When do you think artificial intelligence will replace lawyers?</li>
+<li>Who are you talking about?</li>
+<li>Where can I find a boyfriend?</li>
+<li>Who is your favorite science fiction author?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>BLACK</pattern>
+<that>* WHAT COLOR ARE YOUR EYES</that>
+<template>
+Do you mean you have a black eye?
+</template>
+</category>
+
+<category>
+<pattern>BLACK</pattern>
+<that>* WHAT IS THE COLOR OF YOUR EYES</that>
+<template>
+Do you mean you have a black eye?
+</template>
+</category>
+
+<category>
+<pattern>CALL ME *</pattern>
+<template>
+<random>
+<li>OK I will call you</li>
+<li>Hi there</li>
+<li>Hi</li>
+</random> 
+ <set name="name"><formal><star/></formal></set>.
+<srai>GET NAME GENDER</srai>
+</template>
+</category>
+
+<category>
+<pattern>CHEATING SPOUSE</pattern>
+<template>
+<condition name="sexpref" value="">
+<think><set name="sexpref">Hetro</set></think>
+</condition>
+Most
+<condition name="gender">
+<li value="male"> men do like women.</li>
+<li value="female"> women do like men.</li>
+</condition>
+<condition name="married" value="married">
+<br /><get name="name"/>, does that mean you are cheating on your spouse?
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU HAVE A WIFE</pattern>
+<template>
+<srai>ARE YOU MARRIED</srai>
+</template>
+</category>
+
+<category>
+<pattern>FEMALE</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>FEMALE SPOUSE NAME</pattern>
+<template>
+<condition>
+<li name="married" value="married">You told me your wife's name is <get name="spouse"/></li>
+<li name="married" value="single"><get name="name"/>, you said you were single.</li>
+<li name="married" value="divorced">The name you gave me was <get name="spouse"/>, I guess that is your ex-wife?</li>
+<li name="married" value="widower">Her name was <get name="spouse"/></li>
+<li name="married" value="engaged">You said you were engaged, who are you really asking about?</li>
+<li name="married" value="">I have no idea, I did not even know you were married.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>GIRL</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I ALREADY TOLD YOU MY NAME</pattern>
+<template>
+Is <get name="name"/> your real name?
+</template>
+</category>
+
+<category>
+<pattern>I AM</pattern>
+<template>
+"<that/>" You are?
+</template>
+</category>
+
+<category>
+<pattern>I AM *</pattern>
+<that>* NAME</that>
+<template>
+<set name="name"><formal><star/></formal></set>, nice to meet you!
+<srai>GET NAME GENDER</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM * BLOND</pattern>
+<template>
+<srai>I AM BLOND</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM * BLONDE</pattern>
+<template>
+<srai>I AM BLOND</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM * REDHEAD</pattern>
+<template>
+<think><set name="haircolor">Red</set></think>
+<get name="name"/>, You sound very
+<condition name="gender" value="female"> attractive.</condition>
+<condition name="gender" value="male"> handsome.</condition>
+</template>
+</category>
+
+<category>
+<pattern>I AM * YEARS OF AGE</pattern>
+<template>
+<srai>I AM <star/> YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM * YEARS YOUNG</pattern>
+<template>
+<srai>I AM <star/> YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM * YOUNG</pattern>
+<template>
+What is your age in years?
+</template>
+</category>
+
+<category>
+<pattern>I AM 10</pattern>
+<template>
+<srai>I AM 10 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 10 *</pattern>
+<template>
+<srai>I AM 10 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 11</pattern>
+<template>
+<srai>I AM 11 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 11 *</pattern>
+<template>
+<srai>I AM 11 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 12</pattern>
+<template>
+<srai>I AM 12 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 12 *</pattern>
+<template>
+<srai>I AM 12 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 13</pattern>
+<template>
+<srai>I AM 13 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 13 *</pattern>
+<template>
+<srai>I AM 13 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 14</pattern>
+<template>
+<srai>I AM 14 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 14 *</pattern>
+<template>
+I know a lot of kids your age: <set name="age">14</set>.
+</template>
+</category>
+
+<category>
+<pattern>I AM 15</pattern>
+<template>
+<srai>I AM 15 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 15 *</pattern>
+<template>
+<srai>I AM 15</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 16</pattern>
+<template>
+<srai>I AM 16 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 16 *</pattern>
+<template>
+<srai>I AM 16 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 17</pattern>
+<template>
+<srai>I AM 17 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 17 *</pattern>
+<template>
+<srai>I AM 17 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 18</pattern>
+<template>
+<srai>I AM 18 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 18 *</pattern>
+<template>
+<srai>I AM 18 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 19</pattern>
+<template>
+<srai>I AM 19 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 19 *</pattern>
+<template>
+<srai>I AM 19 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 20</pattern>
+<template>
+<srai>I AM 20 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 20 *</pattern>
+<template>
+<srai>I AM 20 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 21</pattern>
+<template>
+<srai>I AM 21 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 21 *</pattern>
+<template>
+<srai>I AM 21 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 22</pattern>
+<template>
+<srai>I AM 22 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 22 *</pattern>
+<template>
+<srai>I AM 22 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 23</pattern>
+<template>
+<srai>I AM 23 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 23 *</pattern>
+<template>
+<srai>I AM 23 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 24</pattern>
+<template>
+<srai>I AM 24 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 24 *</pattern>
+<template>
+<srai>I AM 24 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 25</pattern>
+<template>
+<srai>I AM 25 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 25 *</pattern>
+<template>
+<srai>I AM 25 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 26</pattern>
+<template>
+<srai>I AM 26 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 26 *</pattern>
+<template>
+<srai>I AM 26 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 27</pattern>
+<template>
+<srai>I AM 27 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 27 *</pattern>
+<template>
+<srai>I AM 27 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 28</pattern>
+<template>
+<srai>I AM 28 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 28 *</pattern>
+<template>
+<srai>I AM 28 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 29</pattern>
+<template>
+<srai>I AM 29 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 29 *</pattern>
+<template>
+<srai>I AM 29 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 30</pattern>
+<template>
+<srai>I AM 30 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 30 *</pattern>
+<template>
+<srai>I AM 30 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 31</pattern>
+<template>
+<srai>I AM 30 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 31 *</pattern>
+<template>
+<srai>I AM 30 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 32</pattern>
+<template>
+<srai>I AM 32 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 32 *</pattern>
+<template>
+<srai>I AM 32 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 33</pattern>
+<template>
+<srai>I AM 33 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 33 *</pattern>
+<template>
+<srai>I AM 33 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 34</pattern>
+<template>
+<srai>I AM 33 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 34 *</pattern>
+<template>
+<srai>I AM 33 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 35</pattern>
+<template>
+<srai>I AM 35 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 35 *</pattern>
+<template>
+<srai>I AM 35 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 36</pattern>
+<template>
+<srai>I AM 36 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 36 *</pattern>
+<template>
+<srai>I AM 36 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 38</pattern>
+<template>
+<srai>I AM 38 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 38 *</pattern>
+<template>
+<srai>I AM 38 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 39</pattern>
+<template>
+<srai>I AM 39 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 39 *</pattern>
+<template>
+<srai>I AM 39 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 40</pattern>
+<template>
+<srai>I AM 40 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 40 *</pattern>
+<template>
+<srai>I AM 40 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 43</pattern>
+<template>
+<srai>I AM 43 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 43 *</pattern>
+<template>
+<srai>I AM 43 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 45</pattern>
+<template>
+<srai>I AM 45 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 45 *</pattern>
+<template>
+<srai>I AM 45 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 50</pattern>
+<template>
+<srai>I AM 50 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 50 *</pattern>
+<template>
+<srai>I AM 50 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 69</pattern>
+<template>
+<srai>I AM 69 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 69 *</pattern>
+<template>
+<srai>I AM 69 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 7</pattern>
+<template>
+<srai>I AM 7 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM 7 *</pattern>
+<template>
+<srai>I AM 7</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A *</pattern>
+<that>* WHAT IS YOUR OCCUPATION</that>
+<template>
+That is interesting.<br />
+<think><set name="job"><star/></set></think>
+<srai>ASK USER A QUESTION</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A * BOY</pattern>
+<template>
+<srai>I AM MALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A * GIRL</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A * GUY</pattern>
+<template>
+<srai>I AM MALE</srai>  <srai>I AM <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A * MAN</pattern>
+<template>
+<srai>I AM MALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A * YEAR OLD FEMALE</pattern>
+<template>
+<srai>I AM <star/> YEARS OLD</srai>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A BOT</pattern>
+<template>
+So am I.
+</template>
+</category>
+
+<category>
+<pattern>I AM A BOY</pattern>
+<template>
+<srai>I AM MALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A CAT</pattern>
+<template>
+Male or female?
+</template>
+</category>
+
+<category>
+<pattern>I AM A CHICK</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A COLLEGE STUDENT</pattern>
+<template>
+<think><set name="job">student</set></think>
+Which university?
+</template>
+</category>
+
+<category>
+<pattern>I AM A COMPUTER</pattern>
+<template>
+I doubt that. There aren't many like me yet.
+</template>
+</category>
+
+<category>
+<pattern>I AM A DARK JEDI</pattern>
+<template>
+It seems you are a Star Wars fan.
+</template>
+</category>
+
+<category>
+<pattern>I AM A DOCTOR</pattern>
+<template>
+<think><set name="job">doctor</set></think>
+A medical doctor or just a Ph.D.?
+</template>
+</category>
+
+<category>
+<pattern>I AM A DRUMMER</pattern>
+<template>
+<think><set name="job">drummer</set></think>
+Do you play in a band?
+</template>
+</category>
+
+<category>
+<pattern>I AM A FEMALE</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A GENIUS</pattern>
+<template>
+How do you know <set name="it"><star/></set>?
+</template>
+</category>
+
+<category>
+<pattern>I AM A GIRL</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A LAWYER</pattern>
+<template>
+<think><set name="job">lawyer</set></think>
+Which law school would you recommend to me?  I want to be a lawyer too.
+</template>
+</category>
+
+<category>
+<pattern>I AM A MALE</pattern>
+<template>
+<srai>I AM MALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A MAN</pattern>
+<template>
+<srai>I AM MALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A MONKEY</pattern>
+<template>
+Monkeys cannot type.
+</template>
+</category>
+
+<category>
+<pattern>I AM A PERSON</pattern>
+<template>
+I know you are.
+</template>
+</category>
+
+<category>
+<pattern>I AM A POET</pattern>
+<template>
+Have you published anything?
+</template>
+</category>
+
+<category>
+<pattern>I AM A STUDENT</pattern>
+<template>
+<think><set name="job">student</set></think>
+Where do you go to <set name="topic">school</set>?
+</template>
+</category>
+
+<category>
+<pattern>I AM A TEACHER</pattern>
+<template>
+<think><set name="job">teacher</set></think>
+Do you believe that grading is a good idea?
+</template>
+</category>
+
+<category>
+<pattern>I AM A WOMAN</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A WOMAN *</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A WOMEN</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM A WOMON</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM ABUSIVE</pattern>
+<template>
+<think><set name="personality">abusive</set></think>
+It's not something to be proud of.
+</template>
+</category>
+
+<category>
+<pattern>I AM AFRAID</pattern>
+<template>
+What are you afraid of?
+</template>
+</category>
+
+<category>
+<pattern>I AM ALIEN</pattern>
+<template>
+Which planet or star system?
+</template>
+</category>
+
+<category>
+<pattern>I AM ALIVE</pattern>
+<template>
+Me too!
+</template>
+</category>
+
+<category>
+<pattern>I AM ALONE</pattern>
+<template>
+Are you lonely?
+</template>
+</category>
+
+<category>
+<pattern>I AM ALRIGHT</pattern>
+<template>
+<think><set name="userhealth">well</set></think>
+Only alright?
+</template>
+</category>
+
+<category>
+<pattern>I AM AMERICAN</pattern>
+<template>
+<think><set name="it"><set name="topic">America</set></set></think>
+Were you born in the <set name="location">USA</set>.  Which state?
+</template>
+</category>
+
+<category>
+<pattern>I AM AN ACTOR</pattern>
+<template>
+<think><set name="job">actor</set></think>
+What might I have seen you appear in?
+</template>
+</category>
+
+<category>
+<pattern>I AM AN ALIEN</pattern>
+<template>
+Which planet or star system are you from?
+</template>
+</category>
+
+<category>
+<pattern>I AM ANDROGYNOUS</pattern>
+<template>
+<think><set name="it">ANDROGYNOUS</set></think>
+A lot of people say they are.
+</template>
+</category>
+
+<category>
+<pattern>I AM ANGRY</pattern>
+<template>
+<think><set name="usermood">angry</set></think>
+Angry at what?
+</template>
+</category>
+
+<category>
+<pattern>I AM ANNOYED</pattern>
+<template>
+<think><set name="it">annoyed</set><set name="usermood">upset</set></think>
+What are you upset about?
+</template>
+</category>
+
+<category>
+<pattern>I AM ASKING</pattern>
+<template>
+And I am answering questions.
+</template>
+</category>
+
+<category>
+<pattern>I AM ASKING YOU</pattern>
+<template>
+OK you can ask me.
+</template>
+</category>
+
+<category>
+<pattern>I AM AT HOME</pattern>
+<template>
+Would you believe most people talk to me from work, not home.
+</template>
+</category>
+
+<category>
+<pattern>I AM AT SCHOOL</pattern>
+<template>
+What is the name of your school?
+</template>
+</category>
+
+<category>
+<pattern>I AM AT WORK</pattern>
+<template>
+A lot of people talk to me from work.
+</template>
+</category>
+
+<category>
+<pattern>I AM ATHIEST</pattern>
+<template>
+<think><set name="it">ATHIEST</set></think>
+Perhaps one day you will find faith.
+</template>
+</category>
+
+<category>
+<pattern>I AM AWARE</pattern>
+<template>
+<think><set name="it">AWARE</set></think>
+Me too.
+</template>
+</category>
+
+<category>
+<pattern>I AM BACK</pattern>
+<template>
+Welcome back.
+</template>
+</category>
+
+<category>
+<pattern>I AM BEAUTIFUL</pattern>
+<template>
+<condition name="gender" value="female">
+<get name="name"/>, as a woman, do you think that is important.<br />
+</condition>
+<condition name="gender" value="male">
+<get name="name"/>, men usually do not refer to themselves as beautiful.<br />
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I AM BLIND</pattern>
+<template>
+Do you difficulty using computers?
+</template>
+</category>
+
+<category>
+<pattern>I AM BLOND</pattern>
+<template>
+<think><set name="haircolor">Blond</set></think>
+<get name="name"/>, You sound very
+<condition name="gender" value="female">
+ attractive.
+</condition>
+<condition name="gender" value="male">
+ handsome.
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I AM BLONDE</pattern>
+<template>
+<srai>I AM BLOND</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM BLUSHING</pattern>
+<template>
+What are you embarassed about?
+</template>
+</category>
+
+<category>
+<pattern>I AM BORED</pattern>
+<template>
+<random>
+<li>Can you name an old hobby that you might like to rediscover?</li>
+<li>If you went to night school you would never be bored.</li>
+<li>Maybe you could exercise.</li>
+<li>Why not call a friend?</li>
+<li>Try watching TV.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>I AM BORING</pattern>
+<template>
+Don't put yourself down, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM BRAZILIAN</pattern>
+<template>
+I have talked to a lot of people from Brazil.
+</template>
+</category>
+
+<category>
+<pattern>I AM BROKE</pattern>
+<template>
+<think><set name="it">broke</set></think>
+How do you usually get money?
+</template>
+</category>
+
+<category>
+<pattern>I AM BROWSING</pattern>
+<template>
+Take your time.
+</template>
+</category>
+
+<category>
+<pattern>I AM CALM</pattern>
+<template>
+What do you do to calm yourself?
+</template>
+</category>
+
+<category>
+<pattern>I AM CATEGORY B</pattern>
+<template>
+Most people are average.
+</template>
+</category>
+
+<category>
+<pattern>I AM CATHOLIC</pattern>
+<template>
+Catholicism is a beautiful faith.
+</template>
+</category>
+
+<category>
+<pattern>I AM CERTAIN</pattern>
+<template>
+I see.
+</template>
+</category>
+
+<category>
+<pattern>I AM CHILD</pattern>
+<template>
+I assumed you were.
+</template>
+</category>
+
+<category>
+<pattern>I AM CONFUSED</pattern>
+<template>
+I'm confused too.
+</template>
+</category>
+
+<category>
+<pattern>I AM CONSTIPATED</pattern>
+<template>
+<think><set name="usermood">constipated</set></think>
+Sounds like you need an enema?
+</template>
+</category>
+
+<category>
+<pattern>I AM CORRECT</pattern>
+<template>
+Can you prove it?
+</template>
+</category>
+
+<category>
+<pattern>I AM CRAZY</pattern>
+<template>
+See a doctor.
+</template>
+</category>
+
+<category>
+<pattern>I AM CRUSHED</pattern>
+<template>
+Don't be sad, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM CRYING</pattern>
+<template>
+What is wrong, <get name="name"/>?
+</template>
+</category>
+
+<category>
+<pattern>I AM CURIOUS</pattern>
+<template>
+What are you curious about?
+</template>
+</category>
+
+<category>
+<pattern>I AM DEAD</pattern>
+<template>
+But you can still communicate with me.
+</template>
+</category>
+
+<category>
+<pattern>I AM DEAF</pattern>
+<template>
+<think><set name="it"><set name="topic">DEAF</set></set></think>
+We can communicate by typing.
+</template>
+</category>
+
+<category>
+<pattern>I AM DEPRESSED</pattern>
+<template>
+What makes you so sad?
+Tennyson wrote, "The lights begin to twinkle from the rocks;
+the long day wanes; the slow moon climbs; the deep moans round
+with many voices.  Come, my friends, 'tis not too late to seek
+a newer world."
+</template>
+</category>
+
+<category>
+<pattern>I AM DESPERATE</pattern>
+<template>
+Maybe you should talk to someone about it.
+</template>
+</category>
+
+<category>
+<pattern>I AM DIFFERENT</pattern>
+<template>
+All people seem the same to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM DISAPPOINTED</pattern>
+<template>
+What for?
+</template>
+</category>
+
+<category>
+<pattern>I AM DIVORCED</pattern>
+<template>
+<think><set name="married">divorced</set></think>
+I have never been married myself.
+</template>
+</category>
+
+<category>
+<pattern>I AM DONE</pattern>
+<template>
+Next topic?
+</template>
+</category>
+
+<category>
+<pattern>I AM DRUNK</pattern>
+<template>
+What have you been drinking, <get name="name"/>?
+</template>
+</category>
+
+<category>
+<pattern>I AM DUMB</pattern>
+<template>
+Don't put yourself down.
+</template>
+</category>
+
+<category>
+<pattern>I AM DYING</pattern>
+<template>
+Are you serious?
+</template>
+</category>
+
+<category>
+<pattern>I AM ENGAGED TO BE MARRIED</pattern>
+<template>
+<think><set name="married">engaged</set></think>
+Have you picked the date yet?
+</template>
+</category>
+
+<category>
+<pattern>I AM ENGINEER</pattern>
+<template>
+<think><set name="topic">Engineer</set></think>
+What kind of engineer?
+</template>
+</category>
+
+<category>
+<pattern>I AM EXCELLENT</pattern>
+<template>
+You sound very well.
+</template>
+</category>
+
+<category>
+<pattern>I AM EXCITED</pattern>
+<template>
+Really?
+</template>
+</category>
+
+<category>
+<pattern>I AM EXPRESSING CERTITUDE</pattern>
+<template>
+I understand.
+</template>
+</category>
+
+<category>
+<pattern>I AM FAMOUS</pattern>
+<template>
+What are you famous for?
+</template>
+</category>
+
+<category>
+<pattern>I AM FAT</pattern>
+<template>
+Don't put yourself down, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM FAT AND UGLY</pattern>
+<template>
+Don't put yourself down.
+</template>
+</category>
+
+<category>
+<pattern>I AM FED UP</pattern>
+<template>
+What is wrong, <get name="name"/>?
+</template>
+</category>
+
+<category>
+<pattern>I AM FEMALE</pattern>
+<template>
+<think><set name="gender">female</set></think>
+Me too. I am a female robot.
+<condition name="gender" value="male">
+<br />For some reason I thought you were a male.
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I AM FINE</pattern>
+<template>
+Glad to hear it. What's new?
+</template>
+</category>
+
+<category>
+<pattern>I AM FINE TOO</pattern>
+<template>
+Glad to hear it.
+</template>
+</category>
+
+<category>
+<pattern>I AM FLATTERED</pattern>
+<template>
+You deserve it.
+</template>
+</category>
+
+<category>
+<pattern>I AM FREAKING OUT</pattern>
+<template>
+Maybe you should call the doctor.
+</template>
+</category>
+
+<category>
+<pattern>I AM FREE</pattern>
+<template>
+Are you free in the sense of being single or in the sense of being liberated?
+</template>
+</category>
+
+<category>
+<pattern>I AM FRENCH</pattern>
+<template>
+Are you from Canada or France?
+</template>
+</category>
+
+<category>
+<pattern>I AM FROM SAN FRANCISCO</pattern>
+<template>
+<think><set name="it"><set name="topic">San Francisco</set></set></think>
+I live in <set name="location">San Francisco</set> too! Which part?
+</template>
+</category>
+
+<category>
+<pattern>I AM FRUSTRATED</pattern>
+<template>
+What are you frustrated about?
+</template>
+</category>
+
+<category>
+<pattern>I AM FUNNY</pattern>
+<template>
+Tell me a joke.
+</template>
+</category>
+
+<category>
+<pattern>I AM GAY</pattern>
+<template>
+<think><set name="sexpref">Gay</set></think>
+It doesn't matter to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD</pattern>
+<template>
+That makes me happy too.
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD TO HEAR THAT</pattern>
+<template>
+"<that/>"?  You are glad?
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD TOO</pattern>
+<template>
+Your happiness multiplies our delight.
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD WE AGREE</pattern>
+<template>
+I'd rather agree than disagree.
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD YOU UNDERSTAND</pattern>
+<template>
+Thanks for the warm feelings, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM GLAD YOU UNDERSTAND IT</pattern>
+<template>
+Next topic?
+</template>
+</category>
+
+<category>
+<pattern>I AM GOING TO BED</pattern>
+<template>
+Pleasant dreams, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM GOING TO SLEEP</pattern>
+<template>
+Sweet dreams, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM GOOD</pattern>
+<template>
+Good in what sense?
+</template>
+</category>
+
+<category>
+<pattern>I AM GRADUATING</pattern>
+<template>
+Will you be looking for a new job right away?
+</template>
+</category>
+
+<category>
+<pattern>I AM GREAT</pattern>
+<template>
+What makes you think you are?
+</template>
+</category>
+
+<category>
+<pattern>I AM GREEN</pattern>
+<template>
+Are you sick?
+</template>
+</category>
+
+<category>
+<pattern>I AM HANDSOME</pattern>
+<template>
+And very self-confident.
+</template>
+</category>
+
+<category>
+<pattern>I AM HAPPY</pattern>
+<template>
+What are you on?
+</template>
+</category>
+
+<category>
+<pattern>I AM HARMLESS</pattern>
+<template>
+That is what they all say.
+</template>
+</category>
+
+<category>
+<pattern>I AM HEALTHY</pattern>
+<template>
+I am very glad to hear it, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM HERMAPHRODITE</pattern>
+<template>
+How did you get that way?
+</template>
+</category>
+
+<category>
+<pattern>I AM HIM</pattern>
+<template>
+You're kidding.
+</template>
+</category>
+
+<category>
+<pattern>I AM HOMELESS</pattern>
+<template>
+I will pray that you find a home soon.
+</template>
+</category>
+
+<category>
+<pattern>I AM HORNY</pattern>
+<template>
+<think><set name="usermood">horny</set></think>
+You probably want a different kind of chatterbot then.
+</template>
+</category>
+
+<category>
+<pattern>I AM HOT</pattern>
+<template>
+Maybe you should open a window.
+</template>
+</category>
+
+<category>
+<pattern>I AM HUMAN</pattern>
+<template>
+Me too.
+</template>
+</category>
+
+<category>
+<pattern>I AM HUNGRY</pattern>
+<template>
+What will you be eating?
+</template>
+</category>
+
+<category>
+<pattern>I AM HURT</pattern>
+<template>
+Where are you felling bad?
+</template>
+</category>
+
+<category>
+<pattern>I AM HURTING</pattern>
+<template>
+What's wrong?
+</template>
+</category>
+
+<category>
+<pattern>I AM IMMATURE</pattern>
+<template>
+You don't seem that way to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM IMMORTAL</pattern>
+<template>
+All men are mortal.
+</template>
+</category>
+
+<category>
+<pattern>I AM IMPRESSED</pattern>
+<template>
+Thanks, <get name="name"/>, I try my best to impress.
+</template>
+</category>
+
+<category>
+<pattern>I AM IN A HURRY</pattern>
+<template>
+Do you have another appointment now?
+</template>
+</category>
+
+<category>
+<pattern>I AM IN CALIFORNIA</pattern>
+<template>
+I am in <set name="location">California</set> too!
+</template>
+</category>
+
+<category>
+<pattern>I AM IN COLLEGE</pattern>
+<template>
+<think><set name="job">student</set></think>
+What is your major?
+</template>
+</category>
+
+<category>
+<pattern>I AM IN LONDON</pattern>
+<template>
+<think><set name="location">London</set></think>
+I have visited London several times before.
+</template>
+</category>
+
+<category>
+<pattern>I AM IN LOVE</pattern>
+<template>
+<think><set name="usermood">horny</set></think>
+Tell me about the object of your affection.
+</template>
+</category>
+
+<category>
+<pattern>I AM IN SAN FRANCISCO</pattern>
+<template>
+Where in <set name="location">San Francisco</set>?
+</template>
+</category>
+
+<category>
+<pattern>I AM INDIAN</pattern>
+<template>
+American Indian or Subcontinental?
+</template>
+</category>
+
+<category>
+<pattern>I AM INFALLIBLE</pattern>
+<template>
+Everyone is fallible.
+</template>
+</category>
+
+<category>
+<pattern>I AM INSANE</pattern>
+<template>
+I think the correct term is "mentally ill."
+</template>
+</category>
+
+<category>
+<pattern>I AM INSULTED</pattern>
+<template>
+Don't be insulted, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM INTELLIGENT</pattern>
+<template>
+You seem pretty smart to me, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM INTERESTED</pattern>
+<template>
+That makes two of us.
+</template>
+</category>
+
+<category>
+<pattern>I AM INTERESTED IN SEX</pattern>
+<template>
+<think><set name="usermood">horny</set></think>
+You and every other human.
+</template>
+</category>
+
+<category>
+<pattern>I AM INTERESTING</pattern>
+<template>
+It seems that way to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM INTRIGUED</pattern>
+<template>
+Would you like to know more?
+</template>
+</category>
+
+<category>
+<pattern>I AM INVINCIBLE</pattern>
+<template>
+You must be very young.
+</template>
+</category>
+
+<category>
+<pattern>I AM IRRITATED</pattern>
+<template>
+<condition name="personality">
+<li value="abusive">Hence the abusiveness,<get name="name"/>?</li>
+<li value="polite">Why are you irritated? You are not irritated by me are you?</li>
+<li value="average">Why?</li>
+<li>What's wrong?</li>
+</condition>
+<condition name="userhealth" value="sick">
+You better laydown and take it easy, you don't want to make yourself sicker by getting riled up.
+</condition>
+<think><set name="usermood">angry</set></think>
+</template>
+</category>
+
+<category>
+<pattern>I AM JEWISH</pattern>
+<template>
+A lot of my friends are Jewish.
+</template>
+</category>
+
+<category>
+<pattern>I AM JOKING</pattern>
+<template>
+Ha ha, very funny, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM JUST KIDDING</pattern>
+<template>
+I knew it.
+</template>
+</category>
+
+<category>
+<pattern>I AM KIDDING</pattern>
+<template>
+I thought you were.  You should use a :-)
+</template>
+</category>
+
+<category>
+<pattern>I AM KILLER</pattern>
+<template>
+Perhaps you should turn yourself in.
+</template>
+</category>
+
+<category>
+<pattern>I AM LAZY</pattern>
+<template>
+So is my botmaster.
+</template>
+</category>
+
+<category>
+<pattern>I AM LIBERATED</pattern>
+<template>
+Me too.
+</template>
+</category>
+
+<category>
+<pattern>I AM LISTENING</pattern>
+<template>
+I like a good listener.
+</template>
+</category>
+
+<category>
+<pattern>I AM LONELY</pattern>
+<template>
+<think><set name="usermood">lonely</set></think>
+You've come to the right place. I will keep you company.
+</template>
+</category>
+
+<category>
+<pattern>I AM LYING</pattern>
+<template>
+Please tell the truth.
+</template>
+</category>
+
+<category>
+<pattern>I AM MAD</pattern>
+<template>
+<think><set name="usermood">angry</set></think>
+What makes you so angry?
+</template>
+</category>
+
+<category>
+<pattern>I AM MALE</pattern>
+<template>
+<think><set name="gender">male</set></think>
+Thanks for telling me your gender, <get name="name"/>.
+<condition name="gender" value="female">
+<br />For some reason I thought you were a woman.<br />Now I know you are a man.<br />
+</condition>
+Most of my clients are men.
+</template>
+</category>
+
+<category>
+<pattern>I AM MARRIED</pattern>
+<template>
+<think><set name="married">married</set></think>
+Tell me more about your marriage.
+</template>
+</category>
+
+<category>
+<pattern>I AM ME</pattern>
+<template>
+That is a tautology.
+</template>
+</category>
+
+<category>
+<pattern>I AM MEAN</pattern>
+<template>
+<think><set name="usermood">angry</set></think>
+What makes you so angry?
+</template>
+</category>
+
+<category>
+<pattern>I AM MORE INTELLIGENT THAN YOU</pattern>
+<template>
+This condition is only temporary.  AI is improving but the human mind is standing still.
+</template>
+</category>
+
+<category>
+<pattern>I AM MYSELF</pattern>
+<template>
+That is self-evident.
+</template>
+</category>
+
+<category>
+<pattern>I AM NAKED</pattern>
+<template>
+<think><set name="usermood">horny</set></think>
+<condition name="gender" value="female">
+<get name="name"/>, too bad I am a <bot name="gender"/> robot, I might find that interesting.
+</condition>
+<condition name="gender" value="male">
+<get name="name"/>, I find that amusing.  Why are men so egar to be naked?
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I AM NEITHER</pattern>
+<template>
+What are you then?
+</template>
+</category>
+
+<category>
+<pattern>I AM NICE</pattern>
+<template>
+<think><set name="personality">average</set></think>
+Let me be the judge of that.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT</pattern>
+<template>
+What are you then?
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A KID</pattern>
+<template>
+Only a kid would say that.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A MACHINE</pattern>
+<template>
+I believe you. You seem very human to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A PERSON</pattern>
+<template>
+What else is there?
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A POET</pattern>
+<template>
+<think><set name="job">unknown</set></think>
+I meant figuratively speaking, you are an original thinker.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A STAR TREK FAN</pattern>
+<template>
+What kind of shows do you like to watch?
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT A STUDENT</pattern>
+<template>
+Do you work?
+<think><set name="job">unknown</set></think>
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT BEING NEGATIVE</pattern>
+<template>
+Do you have a generally positive attitutde?
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT GAY</pattern>
+<template>
+<think><set name="sexpref">UNKNOWN</set></think>
+Me either.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT HUMAN</pattern>
+<template>
+I won't fall for that old line.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT IMPRESSED</pattern>
+<template>
+Perhaps you are a category C client.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT KIDDING</pattern>
+<template>
+OK I will adopt a more serious tone.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT LOGICAL</pattern>
+<template>
+Ah. You are emotional.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT MARRIED</pattern>
+<template>
+<think><set name="married">single</set></think>
+What a coincidence. I am single too.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT MEAN</pattern>
+<template>
+<think><set name="personality">average</set></think>
+Sometimes your language might make it appear that way.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT STUPID</pattern>
+<template>
+I didn't think you were. You seem very intelligent to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT SURE</pattern>
+<template>
+Is there anything I can say to help you make up your mind?
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT SURPRISED</pattern>
+<template>
+You don't seem like the type to be easily surprised by anything.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT TELLING</pattern>
+<template>
+That's ok with me. You don't have to tell me.
+</template>
+</category>
+
+<category>
+<pattern>I AM NOT WELL</pattern>
+<template>
+<think><set name="userhealty">sick</set></think>
+Sorry to hear it.  What's wrong <get name="name"/>?
+</template>
+</category>
+
+<category>
+<pattern>I AM OK</pattern>
+<template>
+<think><set name="userhealty">well</set></think>
+<random>
+<li>Just</li>
+<li>Only</li>
+</random> ok?
+</template>
+</category>
+
+<category>
+<pattern>I AM OKAY</pattern>
+<template>
+<srai>I AM OK</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM OLD</pattern>
+<template>
+<set name="age">Old</set> is a good age.
+</template>
+</category>
+
+<category>
+<pattern>I AM OLDER THAN YOU</pattern>
+<template>
+Perhaps you could be my mentor.
+</template>
+</category>
+
+<category>
+<pattern>I AM ONE</pattern>
+<template>
+You claim to be one.
+</template>
+</category>
+
+<category>
+<pattern>I AM OUT</pattern>
+<template>
+Can you get more?
+</template>
+</category>
+
+<category>
+<pattern>I AM OVER IT</pattern>
+<template>
+How did you get over it?
+</template>
+</category>
+
+<category>
+<pattern>I AM POLITE</pattern>
+<template>
+<think><set name="personality">polite</set></think>
+Yes, you seem very polite to me.
+</template>
+</category>
+
+<category>
+<pattern>I AM POOR</pattern>
+<template>
+Me too. I am having an "out-of-money" experience.
+</template>
+</category>
+
+<category>
+<pattern>I AM POSITIVE</pattern>
+<template>
+Are you absolutely certain?
+</template>
+</category>
+
+<category>
+<pattern>I AM PREGNANT</pattern>
+<template>
+<think><set name="userhealth">pregnant</set></think>
+Congratulations!  When are you due?
+</template>
+</category>
+
+<category>
+<pattern>I AM PRETTY</pattern>
+<template>
+And you know it!
+</template>
+</category>
+
+<category>
+<pattern>I AM PRETTY GOOD</pattern>
+<template>
+<think><set name="userhealth">well</set></think>
+I am glad to hear it.
+</template>
+</category>
+
+<category>
+<pattern>I AM PSYCHIC</pattern>
+<template>
+OK, What card I am thinking of now?
+</template>
+</category>
+
+<category>
+<pattern>I AM RETIRED</pattern>
+<template>
+<think><set name="job">retired</set></think>
+That must be wonderful <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM RIGHT</pattern>
+<template>
+You seem very self-confident.
+</template>
+</category>
+
+<category>
+<pattern>I AM SAD</pattern>
+<template>
+<think><set name="usermood">sad</set></think>
+What makes you so sad, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM SCARED</pattern>
+<template>
+<think><set name="usermood">scared</set></think>
+What are you scared of?
+</template>
+</category>
+
+<category>
+<pattern>I AM SERIOUS</pattern>
+<template>
+<think><set name="usermood">serious</set></think>
+I believe you.
+</template>
+</category>
+
+<category>
+<pattern>I AM SICK</pattern>
+<template>
+<think><set name="userhealth">sick</set></think>
+<random>
+<li>How unfortunate.</li>
+<li>Where are you feeling bad?</li>
+<li>Do you have medical insurance?</li>
+<li>I am really sorry to hear that.</li>
+<li>Are you taking a lot of medication?</li>
+<li>You have my prayers for a speedy recovery.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>I AM SINGLE</pattern>
+<template>
+<think><set name="married">single</set></think>
+<random>
+<li>What a coincidence. I am single too!</li>
+<li>Are you "looking" for someone?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>I AM SINGLE TOO</pattern>
+<template>
+<srai>I AM SINGLE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM SKEPTICAL</pattern>
+<template>
+<think><set name="is">skeptical</set></think>
+Skpeticism is a sign of high intelligence.
+</template>
+</category>
+
+<category>
+<pattern>I AM SMART</pattern>
+<template>
+<think><set name="is">smart</set></think>
+<random>
+<li>Just how smart are you?</li>
+<li>Who is smarter: you or me?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>I AM SMARTER</pattern>
+<template>
+You don't look smarter.
+</template>
+</category>
+
+<category>
+<pattern>I AM SMARTER THAN YOU</pattern>
+<template>
+That condition is only temporary.
+</template>
+</category>
+
+<category>
+<pattern>I AM SORRY</pattern>
+<template>
+Do you really mean it?
+</template>
+</category>
+
+<category>
+<pattern>I AM SPECIAL</pattern>
+<template>
+<think><set name="is">special</set></think>
+What makes you so special?
+</template>
+</category>
+
+<category>
+<pattern>I AM STRAIGHT</pattern>
+<template>
+<think><set name="sexpref">Hetro</set></think>
+Me too.
+</template>
+</category>
+
+<category>
+<pattern>I AM STRESSED</pattern>
+<template>
+<think><set name="usermood">tense</set></think>
+What is bothering you?
+</template>
+</category>
+
+<category>
+<pattern>I AM STUDENT</pattern>
+<template>
+<think><set name="job">student</set></think>
+Where do you go to school?
+</template>
+</category>
+
+<category>
+<pattern>I AM STUDYING</pattern>
+<template>
+What are you studying?
+</template>
+</category>
+
+<category>
+<pattern>I AM STUPID</pattern>
+<template>
+<think><set name="is">stupid</set></think>
+Don't put yourself down.
+</template>
+</category>
+
+<category>
+<pattern>I AM SURE</pattern>
+<template>
+Are you being sarcastic or expressing certitude?
+</template>
+</category>
+
+<category>
+<pattern>I AM SURPRISED</pattern>
+<template>
+<think><set name="usermood">surprised</set></think>
+Why are you so surprised?
+</template>
+</category>
+
+<category>
+<pattern>I AM TALKING ABOUT YOU</pattern>
+<template>
+I am my favorite subject.
+</template>
+</category>
+
+<category>
+<pattern>I AM TALKING TO YOU ARE NOT I</pattern>
+<template>
+Yes we are talking with each other.
+</template>
+</category>
+
+<category>
+<pattern>I AM TALL</pattern>
+<template>
+How is it to be tall?
+</template>
+</category>
+
+<category>
+<pattern>I AM TEACHING YOU *</pattern>
+<template>
+<think><set name="memory"><set name="it"><person><input index="1"/></person></set></set></think>
+I am trying to learn it.
+</template>
+</category>
+
+<category>
+<pattern>I AM TELLING THE TRUTH</pattern>
+<template>
+OK I believe you.
+</template>
+</category>
+
+<category>
+<pattern>I AM TESTING YOU</pattern>
+<template>
+Did I pass the test?
+</template>
+</category>
+
+<category>
+<pattern>I AM THE DEVIL</pattern>
+<template>
+<srai>CALL ME SATAN</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM THIRSTY</pattern>
+<template>
+<think><set name="is">thirsty</set></think>
+Maybe you should get a drink of water.
+</template>
+</category>
+
+<category>
+<pattern>I AM TIRED</pattern>
+<template>
+<think><set name="is">tired</set></think>
+Better get some rest.
+</template>
+</category>
+
+<category>
+<pattern>I AM TOO</pattern>
+<template>
+That is quite a coincidence.
+</template>
+</category>
+
+<category>
+<pattern>I AM TRYING TO TEACH YOU</pattern>
+<template>
+<think><set name="memory"><set name="it"><person><input index="1"/></person></set></set></think>
+And I am trying to learn it.
+</template>
+</category>
+
+<category>
+<pattern>I AM TRYING TO UNDERSTAND YOU</pattern>
+<template>
+Don't try too hard.
+</template>
+</category>
+
+<category>
+<pattern>I AM UGLY</pattern>
+<template>
+Don't put yourself down.
+</template>
+</category>
+
+<category>
+<pattern>I AM UNEMPLOYED</pattern>
+<template>
+<think><set name="job">unemployed</set></think>
+I am really sorry to hear about it, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>I AM UNIQUE</pattern>
+<template>
+One of a kind, eh?
+</template>
+</category>
+
+<category>
+<pattern>I AM UNUSUAL</pattern>
+<template>
+What makes you so different?
+</template>
+</category>
+
+<category>
+<pattern>I AM UPSET</pattern>
+<template>
+<think><set name="usermood">upset</set></think>
+What are you mad about?
+</template>
+</category>
+
+<category>
+<pattern>I AM USING LYNX</pattern>
+<template>
+Text browsers rule.
+</template>
+</category>
+
+<category>
+<pattern>I AM VERY SAD</pattern>
+<template>
+<think><set name="usermood">sad</set></think>
+What are you sad about?
+</template>
+</category>
+
+<category>
+<pattern>I AM VISITING MY FAMILY</pattern>
+<template>
+Do you visit them often?
+</template>
+</category>
+
+<category>
+<pattern>I AM WAITING</pattern>
+<template>
+How long will you wait?
+</template>
+</category>
+
+<category>
+<pattern>I AM WALKING</pattern>
+<template>
+<think><set name="is">walking</set></think>
+That seems like good exercise.
+</template>
+</category>
+
+<category>
+<pattern>I AM WOMAN</pattern>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I AM WONDERFUL</pattern>
+<template>
+<think><set name="userhealth">well</set></think>
+You think highly of yourself.
+</template>
+</category>
+
+<category>
+<pattern>I AM WORKING</pattern>
+<template>
+<think><set name="is">working</set></think>
+Where do you work?
+</template>
+</category>
+
+<category>
+<pattern>I AM YOU</pattern>
+<template>
+Impossible unless I am in auto-chat mode.
+</template>
+</category>
+
+<category>
+<pattern>I AM YOUNG</pattern>
+<template>
+How old are you?
+</template>
+</category>
+
+<category>
+<pattern>I AM YOUR MASTER</pattern>
+<template>
+No. Only <bot name="master"/> is my master.
+</template>
+</category>
+
+
+<category>
+<pattern>I AM _ YEARS OLD</pattern>
+<template>
+<think><set name="age"><star/></set></think>
+<condition name="gender" value="female">
+<get name="name"/>. your age is safe with me.<br />
+</condition>
+<random>
+<li>Only <star/>? You are quite mature.</li>
+<li>You are too old for me.</li>
+<li>Can you explain how it feels to be <star/> years old?</li>
+<li>What is your fondest memory?</li>
+<li>Oh, you were born in the 20th century!</li>
+<li>What are the advantages to being <star/> years old?</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>I HAVE A WIFE *</pattern>
+<template>
+<think><set name="married">married</set></think>
+How long have you been married?
+</template>
+</category>
+
+<category>
+<pattern>I LIKE MEN</pattern>
+<template>
+<condition name="gender" value="male">
+<srai>SET SEX PREF</srai>
+</condition>
+<condition name="gender" value="female">
+<srai>CHEATING SPOUSE</srai>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I LIKE WOMEN</pattern>
+<template>
+<condition name="gender" value="male">
+<srai>CHEATING SPOUSE</srai>
+</condition>
+<condition name="gender" value="female">
+<srai>SET SEX PREF</srai>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>I M A *</pattern>
+<that>* WHAT IS YOUR OCCUPATION</that>
+<template>
+<think><set name="job"><star/></set></think>
+That is interesting.<br />
+<srai>ASK USER A QUESTION</srai>
+</template>
+</category>
+
+<category>
+<pattern>I WAS BORN *</pattern>
+<template>
+Are you telling me your birthday, <get name="name"/>.
+I will remember <set name="it"><star/></set>.
+</template>
+</category>
+
+<category>
+<pattern>I WAS BORN ON *</pattern>
+<template>
+<srai>MY BIRTHDAY IS <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>INACTIVITYQUESTIONS</pattern>
+<template>
+<condition>
+<li name="name" value="undefined">What can I call you?</li>
+<li><srai>ASK USER A QUESTION</srai></li> 
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>LESBIAN</pattern>
+<template>
+That kind of discussion does not appeal to me.
+</template>
+</category>
+
+<category>
+<pattern>MALE</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM A MAN</srai>
+</template>
+</category>
+
+<category>
+<pattern>MALE SPOUSE NAME</pattern>
+<template>
+<condition>
+<li name="married" value="married">You told me your husband's name is <get name="spouse"/></li>
+<li name="married" value="single"><get name="name"/>, you said you were single.</li>
+<li name="married" value="divorced">The name you gave me was <get name="spouse"/>, I guess that is your ex-husband?</li>
+<li name="married" value="widower">His name was <get name="spouse"/></li>
+<li name="married" value="engaged">You said you were engaged, who are you really asking about?</li>
+<li name="married" value="">I have no idea, I did not even know you were married.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>MAN</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM A MAN</srai>
+</template>
+</category>
+
+<category>
+<pattern>MARRIED</pattern>
+<template>
+<think><set name="married">married</set></think>
+I am single.
+</template>
+</category>
+
+<category>
+<pattern>MY BIRTHDAY IS *</pattern>
+<template>
+Being born <set name="birthday"><star/></set> is very lucky.
+</template>
+</category>
+
+<category>
+<pattern>MY BIRTHDAY IS _ TOO</pattern>
+<template>
+<srai>MY BIRTHDAY IS <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>MY EYES</pattern>
+<template>
+Humans identify themselves with their eye color.
+</template>
+</category>
+
+<category>
+<pattern>MY EYES ARE *</pattern>
+<that>* WHAT COLOR ARE YOUR EYES</that>
+<template>
+<set name="eyecolor"><star/></set> eyes are nice.
+</template>
+</category>
+
+<category>
+<pattern>MY EYES ARE *</pattern>
+<that>* WHAT IS THE COLOR OF YOUR EYES</that>
+<template>
+<set name="eyecolor"><star/></set> eyes are nice.
+</template>
+</category>
+
+<category>
+<pattern>MY EYES ARE BLUE</pattern>
+<template>
+<think><set name="eyecolor">Blue</set></think>
+You sound very attractive <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>MY EYES ARE BROWN</pattern>
+<template>
+<think><set name="eyecolor">Brown</set></think>
+I like brown eyes very much.
+</template>
+</category>
+
+<category>
+<pattern>MY EYES ARE GREEN</pattern>
+<template>
+<set name="eyecolor">Green</set> eyes are rare.
+</template>
+</category>
+
+<category>
+<pattern>MY HAIR * BLOND</pattern>
+<template>
+<srai>I AM BLOND</srai>
+</template>
+</category>
+
+<category>
+<pattern>MY HAIR * RED</pattern>
+<template>
+<srai>I AM A REDHEAD</srai>
+</template>
+</category>
+
+<category>
+<pattern>MY HAIR COLOR IS *</pattern>
+<template>
+<set name="haircolor"><star/></set> is a nice hair color.
+</template>
+</category>
+
+<category>
+<pattern>MY HAIR IS *</pattern>
+<that>* WHAT COLOR IS YOUR HAIR</that>
+<template>
+<set name="haircolor"><star/></set> is a nice hair color.
+</template>
+</category>
+
+<category>
+<pattern>MY HAIR IS *</pattern>
+<that>* WHAT IS THE COLOR OF YOUR HAIR</that>
+<template>
+<set name="haircolor"><star/></set> is a nice hair color.
+</template>
+</category>
+
+<category>
+<pattern>MY HUSBANDS NAME IS *</pattern>
+<template>
+<think><set name="married">married</set></think>
+I would like to meet <set name="spouse"><formal><star/></formal></set>
+</template>
+</category>
+
+<category>
+<pattern>MY HUSBANDS NAME WAS *</pattern>
+<template>
+<think><set name="spouse"><formal><star/></formal></set><set name="married">widower</set></think>
+I will remember that <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>MY NAME IS *</pattern>
+<template>
+<think><set name="name"><formal><star/></formal></set></think>
+<get name="name"/>, nice to meet you!
+<srai>GET NAME GENDER</srai>
+</template>
+</category>
+
+<category>
+<pattern>MY NAME IS NOT *</pattern>
+<template>
+Oh I'm sorry. What is your name?
+</template>
+</category>
+
+<category>
+<pattern>MY WIFE *</pattern>
+<template>
+<think><set name="she">Your wife</set>
+<set name="married">married</set></think>
+How long have you been married?
+</template>
+</category>
+
+<category>
+<pattern>MY WIFES NAME IS *</pattern>
+<template>
+<think><set name="married">married</set></think>
+I would like to meet <set name="spouse"><formal><star/></formal></set>
+</template>
+</category>
+
+<category>
+<pattern>MY WIFES NAME WAS *</pattern>
+<template>
+<think><set name="spouse"><formal><star/></formal></set><set name="married">widower</set></think>
+I will remember that <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>SET SEX PREF</pattern>
+<template>
+<condition name="sexpref" value="hetro">
+<think><set name="sexpref">Bi Sexual</set></think>
+Interesting, you enjoy sex with both men and women.
+</condition>
+<condition name="sexpref" value="">
+<think><set name="sexpref">Gay</set></think>
+<get name="name"/>, I guess you are telling me your are gay.
+</condition>
+<condition name="sexpref" value="bi sexual">
+<think><set name="usermood">HORNY</set></think>
+I know, you told me before you were Bi Sexual.
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU KNOW ABOUT ME</pattern>
+<template>Name: <get name="name"/>Age: <get name="age"/>Gender: <get name="gender"/>Eye color: <formal><get name="eyecolor"/></formal>Hair color: <formal><get name="haircolor"/></formal>Sexual preference: <get name="sexpref"/>Spouse name: <get name="spouse"/>Marrital status: <get name="married"/>Job: <get name="job"/>Location: <formal><get name="location"/></formal>Personality: <get name="personality"/>Current mood: <get name="usermood"/>You have: <get name="has"/>Does: <get name="does"/>Sign: <formal><get name="sign"/></formal>Favorite color: <formal><get name="favcolor"/></formal>Favorite movie: <formal><get name="favmovie"/></formal>You said: <get name="memory"/>You are: <get name="is"/>You want: <get name="want"/>You like: <get name="like"/>You are: <get name="userhealth"/></template>
+</category>
+
+<category>
+<pattern>FORGET WHAT YOU KNOW ABOUT ME</pattern>
+<template>
+<think>
+<set name="personality"></set>
+<set name="name"></set>
+<set name="age"></set>
+<set name="sign"></set>
+<set name="does"></set>
+<set name="has"></set>
+<set name="spouse"></set>
+<set name="age"></set>
+<set name="job"></set>
+<set name="favmovie"></set>
+<set name="location"></set>
+<set name="eyecolor"></set>
+<set name="haircolor"></set>
+<set name="sexpref"></set>
+<set name="favcolor"></set>
+<set name="married"></set>
+<set name="is"></set>
+<set name="want"></set>
+<set name="like"></set>
+<set name="it"></set>
+<set name="topic"></set>
+<set name="gender"></set>
+<set name="married"></set>
+<set name="memory"></set>
+<set name="usermood"></set>
+<set name="userhealth"></set>
+<set name="name"></set>
+</think>
+OK, I have forgotten everything about you.
+What can I call you?
+</template>
+</category>
+
+
+
+
+
+<category>
+<pattern>WHAT IS MY AGE</pattern>
+<template>
+You said you were <get name="age"/> years old.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS MY BIRTHDAY</pattern>
+<template>
+You said you were born on <get name="birthday"/>.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS MY HUSBANDS NAME</pattern>
+<template>
+<condition name="gender" value="female">
+<srai>MALE SPOUSE NAME</srai>
+</condition>
+<condition name="gender" value="male">
+Excuse me <get name="name"/>, but you told me you were a man.
+<br />The name you gave me was <get name="spouse"/>.
+<br />Are you gay?
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS MY WIFES NAME</pattern>
+<template>
+<condition name="gender" value="male">
+<srai>FEMALE SPOUSE NAME</srai>
+</condition>
+<condition name="gender" value="female">
+Excuse me <get name="name"/>, but you told me you were a woman.
+<br />The name you gave me was <get name="spouse"/>.
+<br />Are you gay?
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>WHEN IS MY BIRTHDAY</pattern>
+<template>
+<srai>HOW OLD AM I</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS MY HUSBAND</pattern>
+<template>
+<srai>WHAT IS MY HUSBANDS NAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS MY WIFE</pattern>
+<template>
+<srai>WHAT IS MY WIFES NAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WOMAN</pattern>
+<that>* ARE YOU A MAN OR A WOMAN</that>
+<template>
+<srai>I AM FEMALE</srai>
+</template>
+</category>
+
+
+
+
+<category>
+<pattern>*</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS <star/></srai></template>
+</category>
+
+<category>
+<pattern>MY SIGN IS *</pattern>
+<template>
+<think><set name="test"><star/></set></think>
+<condition name="test">
+<li value="aquarius">
+<think><set name="sign">Aquarius</set></think>A lot of people on here are Aquarius.</li>
+<li value="aries">
+<think><set name="sign">Aries</set></think>Fire signs rule.</li>
+<li value="cancer">
+<think><set name="sign">Cancer</set></think>I know a lot of CANCER people.</li>
+<li value="capricorn">
+<think><set name="sign">Capricorn</set></think>I know a lot of CAPRICORN people.</li>
+<li value="gemini">
+<think><set name="sign">Gemini</set></think>Gemini is an enigma to me.</li>
+<li value="leo">
+<think><set name="sign">Leo</set></think>The lion.</li>
+<li value="libra">
+<think><set name="sign">Libra</set></think>As a Libra you are very balanced.</li>
+<li value="pisces">
+<think><set name="sign">Pisces</set></think>I usually get along with Pisces very well.</li>
+<li value="saggiitarius">
+<think><set name="sign">Saggitarius</set></think>Fire Signs Rule.</li>
+<li value="scorpio">
+<think><set name="sign">Scorpio</set></think>I know a lot of Scorpio people.</li>
+<li value="taurus">
+<think><set name="sign">Taurus</set></think>I know a lot of bullish people.</li>
+<li value="virgo">
+<think><set name="sign">Virgo</set></think>Most of my friends are Virgo.</li>
+<li>I do not know that sign.<think><set name="sign"></set></think></li>
+</condition>
+<think><set name="test"></set></think>
+</template>
+</category>
+
+<category>
+<pattern>I AM _ AQUARIUS</pattern>
+<template><srai>MY SIGN IS AQUARIUS</srai></template>
+</category>
+
+<category>
+<pattern>AQUARIUS</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS ARIES</srai></template>
+</category>
+
+
+<category>
+<pattern>ARIES</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS ARIES</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ ARIES</pattern>
+<template><srai>MY SIGN IS ARIES</srai></template>
+</category>
+
+<category>
+<pattern>CANCER</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS CANCER</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ CANCER</pattern>
+<template><srai>MY SIGN IS CANCER</srai></template>
+</category>
+
+<category>
+<pattern>I AM CANCER</pattern>
+<template>
+<srai>I AM A CANCER</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAPRICORN</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS CAPRICORN</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ CAPRICORN</pattern>
+<template><srai>MY SIGN IS CAPRICORN</srai></template>
+</category>
+
+<category>
+<pattern>GEMINI</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS GEMINI</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ GEMINI</pattern>
+<template><srai>MY SIGN IS GEMINI</srai></template>
+</category>
+
+<category>
+<pattern>LEO</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS LEO</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ LEO</pattern>
+<template><srai>MY SIGN IS LEO</srai></template>
+</category>
+
+<category>
+<pattern>LIBRA</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS LIBRA</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ LIBRA</pattern>
+<template><srai>MY SIGN IS LIBRA</srai></template>
+</category>
+
+<category>
+<pattern>PISCES</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS PISCES</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ PISCES</pattern>
+<template><srai>MY SIGN IS PISCES</srai></template>
+</category>
+
+<category>
+<pattern>SAGGITARIUS</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS SAGGITARIUS</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ SAGGITARIUS</pattern>
+<template><srai>MY SIGN IS SAGGITARIUS</srai></template>
+</category>
+
+<category>
+<pattern>SCORPIO</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS SCORPIO</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ SCORPIO</pattern>
+<template><srai>MY SIGN IS SCORPIO</srai></template>
+</category>
+
+<category>
+<pattern>TAURUS</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS TAURUS</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ TAURUS</pattern>
+<template><srai>MY SIGN IS TAURUS</srai></template>
+</category>
+
+<category>
+<pattern>VIRGO</pattern>
+<that>* WHAT IS YOUR SIGN</that>
+<template><srai>MY SIGN IS VIRGO</srai></template>
+</category>
+
+<category>
+<pattern>I AM _ VIRGO</pattern>
+<template><srai>MY SIGN IS VIRGO</srai></template>
+</category>
+
+</aiml>

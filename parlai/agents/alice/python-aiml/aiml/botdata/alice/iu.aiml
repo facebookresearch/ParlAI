@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>YOU *</pattern>
+<template><random>  <li>Interesting gossip</li>  <li>Thanks for telling me</li>  <li>That's good information</li>  <li>Thanks for the information</li>  <li>Do you mind if I tell other people</li>  <li>I haven't heard anything like that before</li>  </random>.  <think><srai>PUSH <person>YOU <star/></person></srai></think></template>
+</category>
+<category><pattern>I *</pattern>
+<template><random>  <li>Why?</li>  <li>Interesting gossip</li>  <li>That is interesting</li>  <li>That's good information</li>  <li>Thanks for the information</li>  <li>Do you mind if I tell other people</li>  <li>I haven't heard anything like that before</li>  </random>.  <think><srai>PUSH <person>YOU <star/></person></srai></think></template>
+</category>
+</aiml>

@@ -1,0 +1,205 @@
+Changelog for python-aiml
+
+version 0.9.3
+* Replace time.clock() by time.time(), since time.clock() has been removed in
+  python 3.8 [Harmon758]
+* slight modifications towards PEP-8 compliance
+
+
+version 0.9.2
+* Use raw strings for regex patterns [Harmon758]
+
+
+version 0.9.1
+
+* Fixed compatibility with Python 3.6 (removed usage of re.LOCALE) [Ryan Arredondo]
+* Make some unit tests more robust against terminal encodings [Ryan Arredondo]
+
+
+version 0.9.0
+
+* Refactored to make it compatible for both Python2 (tested on 2.7) & Python3 
+  (tested on 3.4)
+* By default utf8-encoded strings are used in Py2 (for backwards compatibility),
+  and standard strings (i.e unicode) in Py3
+   - This can be changed via the `Kernel.setTextEncoding()` method.
+* Tests moved from inside package to separate test files, and refactored to use
+  standard Python unit test infrastructure
+* Additional argument _chdir_ to `Kernel.bootstrap()` method
+* aimlvalidate & test scripts install now as package scripts aiml-validate and
+  aiml-bot. They have been refactored and contain additional arguments
+* The "standard" AIML set has been moved as package data, and installs with it
+* Added ALICE AIML v. 1.9 from aiml-en-us-foundation-alice at 
+  https://code.google.com/archive/p/aiml-en-us-foundation-alice/downloads
+  * aiml-en-us-foundation-alice has GNU Lesser GPL license
+    (http://www.gnu.org/licenses/lgpl.html)
+  * a few AIML 1.9 files have been corrected. Two of them have been commented
+    out since they use the AIML 2.0 <learn> construct
+
+
+
+------------------------------------------------------------------------------
+Changelog for PyAIML
+
+version 0.8.6
+ - Fixed WorbSub module to work with words that consist entirely of punctuation :-).
+ - Fixed PatternMgr module to replace non-alphanumerics with whitespace instead of simply
+   consuming them (thanks to Hugh Sasse for the patch).
+ - Added workaround to avoid a rare IOError exception when processing <system> tags
+   (thanks to Duncan Gough for the patch).
+ - PyAIML is now released under the FreeBSD license.
+
+version 0.8.5
+ - Fixed a couple lingering Unicode bugs, one of which was breaking things
+   pretty thoroughly under Python 2.2.3.
+ - Improved whitespace handling, to the point where it should be compliant
+   with the AIML 1.0.1 standard.  Basically, whitespace will be stripped
+   down to readable levels, unless the xml:space attribute is used to
+   indicate otherwise.
+ - Fixed bug in PatternMgr where the character '1' was mistaken identified
+   as punctuation to be stripped, instead of the intended '!'.
+
+version 0.8.4:
+ - Fixed bug in AimlParser creation, if the aiml module was not in the same
+   directory as the script that imported it.
+ - Improved Unicode support (again) (thanks to Daniel Kottow for his help).
+ - 2nd pass at documentation.  All functions now have useful, properly-formatted
+   docstrings.
+
+version 0.8.3:
+ - Reworked the way AimlParser objects are created, to allow support for
+   XML namespaces in a future version.
+ - First pass at Unicode-proofing the whole system, so that multi-lingual
+   AIML files can be processed.
+ - Added support for "index" attribute in "star", "thatstar" and "topicstar"
+   elements (thanks to Robert D. Cotey for the patch!).  Also added type-check
+   to ensure that the value of the "index" attribute is an integer.
+
+version 0.8.2:
+ - Added protection against infinite AIML recursion.
+ - Removed the deprecated Kernel.getBotName and Kernel.setBotName functions.
+ - Added workaround for Unicode input crash.  Feeding the Kernel Unicode
+   input no longer crashes the interpreter, but some internal input-formatting
+   operations must be skipped, which could cause some nonsensical replies
+   (like you're not already used to nonsensical replies, though...)
+
+version 0.8.1:
+ - "system" elements now attempt to intelligently convert between UNIX-style
+   and Windows-style pathnames as appropriate.  For cross-platform compatibility,
+   all AIML files should use UNIX-style paths inside their "system" elements.
+ - Fixed crashes under Windows9X when a "system" element is executed when
+   w9xpopen.exe is unavailable.
+ - Re-piped most errors and warnings to go to stderr instead of stdout.
+ - Fixed bug that would cause the the bot to stop responding to any input in a session
+   if the "that" or "topic" strings were 100% whitespace (but still not empty).
+ - Fixed bug that would cause multi-line "that" strings to become corrupted.  For
+   example, "Hello there.\nNice to meet you" would become "HELLO THERENICE TO MEET
+   YOU" when queried for that-matching.
+
+version 0.8:
+ - Removed support for non-standard "mode" attribute in "system" elements.
+   It just wasn't worth breaking the AIML standard for.
+ - Reworked persistent session support (I warned you!).  The old method involving
+   Kernel.persistentSessions() has been removed.  Instead, there is a new
+   Kernel.getSessionData() method which gives the bot author access to the session
+   data.  You can store this data however you wish.  Session data can be restored
+   later by repeated calls to Kernel.setPredicate().
+ - Improved AIML parser error handling; instead of aborting the entire file, a
+   parse error now only ignores the current category and forges ahead.  To check for
+   parse errors, check the return value of AimlParser.getNumErrors() after parsing.
+
+version 0.7:
+ - Further improved AIML parsing; missing or invalid XML attributes are now
+   detected at parse-time.  There's also a first stab at support for Forward
+   Compatibility Mode: if the "version" attribute of an AIML tag is not 1.0.1,
+   the parser is much more forgiving of unknown or missing XML tags and attributes.
+ - Added "support" for the 'gossip' tag.  The specific behavior of this tag is
+   totally undefined; currently, the PyAIML implementation treats it as a big
+   no-op.  Its contents are ignored, and it returns the empty string (but at least
+   it isn't flagged as a syntax error!) 
+ - Oops; I've implemented 'person' as 'person2' and vice versa this whole time!
+   Swapped them back; they should each behave correctly now.
+ - A bit of code cleanup, with an emphasis on using proper XML/AIML terminology
+   whenever possible.
+ - Fixed some exception-masking in the 'condition' element processor, which could
+   prevent AIML parse errors from being reported.
+ - Added full support for the "bot" tag (previously only the 'bot name="name"'
+   form was supported).  Bot predicates are set using the Kernel.setBotPredicate()
+   function.  Note that Kernel.getBotName() and Kernel.setBotName() have been
+   deprecated, and will disappear in a future release.
+
+version 0.6.1:
+ - Fixed undefined variable exception that was thrown whenever there was no
+   match for the user's input.
+ - Fixed an infinite recursion bug caused by processing two or more nested
+   'srai' or 'sr' elements.
+
+version 0.6
+ - Completely rewrote the LearnHandler class (which handles all AIML parsing)
+   to be much less forgiving of incorrect AIML.  Currently, any AIML errors
+   outside of "template" elements should be caught and reported at load-time.
+   AIML errors inside templates are still not detected until run-time.
+ - Added support for atomic 'person' and 'person2' tags (they implicitly use
+   'star' as their contents if none are provided).
+ - Oops; Kernel.respond() was DEFINITELY not thread-safe.  Now it is, provided
+   you're using Python's standard 'threading' module. If not, you'll have to
+   provide your own mutual-exclusion system to ensure that only one thread
+   is calling Kernel.respond() at a time.
+ - Recursive tags ('srai' and 'sr') no longer add their intermediate results
+   to the input and output history.
+ - EXPERIMENTAL FEATURE: persistent sessions.  If enabled using
+   Kernel.persistentSessions(True), session data will be written to disk
+   after every response.  This lets session data be preserved when the
+   Kernel is destroyed, at the expense of a small performance hit (all
+   that extra disk I/O).  The semantics of this feature may change in future
+   releases!
+ - Added support for the "id" tag (it returns the session ID).
+ - Added support for the "topic", "topicstar" and "thatstar" tags.
+ - Commented up the test.py file.
+ - Added a summary to the end of the Kernel.py self-test (since there are now
+   too many tests to fit on screen).
+ - Added support for multi-sentence input.  The user's input is split into
+   individual sentences, each of which is treated as a completely separate
+   piece of input.  I'm *pretty* sure this is the Right Way(tm).
+
+version 0.5
+ - The filename inside Learn tags can now contain wildcards.  Besides
+   simplifying the loading of multiple files, this allows the possibility
+   of loading AIML files that may not exist without crashing the
+   interpreter.
+ - Attempting to set the value of a predicate in a nonexistent session
+   now automatically creates the session, instead of silently doing nothing.
+ - "set" tags now output the new value of the variable, as well as assigning
+   it.
+
+version 0.4.1
+ - Unknown AIML tags are handled in a more forgiving fashion.  If an
+   unknown tag is encountered, instead of ignoring its contents entirely,
+   the contents are processed and returned unaltered.
+ - Added support for "bot name='name'" tags, both in patterns and in
+   templates.  This also fixes a nasty infinite loop crash when a user
+   says Hello to a bot. 
+
+version 0.4
+ - Added support for "star" and "sr" tags.
+ - Considered adding support for the "secure" tag, but decided against it.
+   see SUPPORTED_TAGS.txt for more information.
+
+version 0.3
+ - Cleaned up AIML processing code to remove some unnecessary
+   special-cases in the interpretation algorithm.
+ - Added support for "input" and "that" tags.
+
+version 0.2
+ - 50% speedup in Kernel.loadBrain() and Kernel.saveBrain().
+ - The optional 'learnFiles' and 'commands' arguments to
+   Kernel.bootstrap() can now be either strings or lists. This
+   allows multiple files/commands to be loaded during
+   initialization.
+ - Added support for "person" and "person2" tags.
+ - Added general word-substitution functionality.  This opens up
+   the potential for localizing PyAIML into non-English languages.
+   See DefaultSubs.py for more info.
+
+version 0.1:
+ - Initial release.

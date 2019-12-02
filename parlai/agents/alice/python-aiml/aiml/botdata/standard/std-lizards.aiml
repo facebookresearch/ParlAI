@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<!-- <meta name="author" content="Unknown"/> -->
+<!-- <meta name="language" content="en"/> -->
+
+<category>
+<pattern>I HAVE A LIZARD</pattern>
+<template>
+Having pet <set name="topic">lizards</set> is a lot of fun.
+            What kind do you have?
+</template>
+</category>
+
+<category>
+<pattern>LET US TALK ABOUT *</pattern>
+<template>
+Sure, <set name="topic"><star/></set> sounds like a good topic.
+</template>
+</category>
+
+<category>
+<pattern>NO</pattern>
+<that>DO YOU HAVE ANY QUESTIONS ABOUT FEEDING LIZARDS</that>
+<template>
+Okay.
+   Did you know that some<set name="topic">lizards</set> are
+   nocturnal?
+</template>
+</category>
+
+<category>
+<pattern>_ LIZARDS</pattern>
+<template>
+Great! What kinds of <set name="topic">lizards</set>
+   do you like?
+</template>
+</category>
+
+<category>
+<pattern>_ REPTILES</pattern>
+<template>
+Some reptiles are cool.. Take for example various
+    <set name="topic">lizards</set>.
+</template>
+</category>
+
+<topic name="lizards">
+
+<category>
+<pattern>*</pattern>
+<template>
+Do you want to continue talking about Lizards?
+</template>
+</category>
+
+<category>
+<pattern>NO</pattern>
+<that>DO YOU WANT TO CONTINUE TALKING ABOUT LIZARDS</that>
+<template>
+<think><set name="topic"></set></think>
+<srai><input index="2"/></srai>
+</template>
+</category>
+
+<category>
+<pattern>YES</pattern>
+<that>DO YOU WANT TO CONTINUE TALKING ABOUT LIZARDS</that>
+<template>
+<random>
+<li>Do you know what Bearded Dragons look like?</li>
+<li>What else do you know about lizards?</li>
+<li>Chameleons are cool.</li>
+<li>Some people think reptiles are creepy until they get to know one.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>* I HAVE ONE</pattern>
+<template>
+Cool! Do you play with it much?
+</template>
+</category>
+
+<category>
+<pattern>I HAVE A *</pattern>
+<template>
+Is <set name="it"><star/></set> a lizard?
+</template>
+</category>
+
+<category>
+<pattern>I HAVE AN *</pattern>
+<template>
+Is <set name="it"><star/></set> a lizard?
+</template>
+</category>
+
+<category>
+<pattern>NO</pattern>
+<that>DO YOU KNOW WHAT BEARDED DRAGONS LOOK LIKE</that>
+<template>
+<srai>WHAT DO BEARDED DRAGONS LOOK LIKE</srai>
+</template>
+</category>
+
+<category>
+<pattern>NO *</pattern>
+<that>IT IS A LIZARD</that>
+<template>
+Oh, well, how many <set name="topic">pets</set> do you have?
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO BEARDED DRAGONS LOOK LIKE</pattern>
+<template>
+Bearded Dragons have spikes similar to a horney toad,
+   and they are usually brown or yellowish with dark brown
+   or possibly reddish markings.  Kind of cool looking in a
+   rugged sort of way. They are very nice, and make fun pets.
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO CHAMELEONS LOOK LIKE</pattern>
+<template>
+Chameleons are some of the most exotic and strange looking
+   lizards anywhere.  They come in all kinds of colors from classic
+   green and brown, to unique purples and reds.  They have two toed
+   feet that help them climb anything they can grip. People usually know
+   them for their great abiliy to change colors and for their curly tail
+   that also helps them climb.
+</template>
+</category>
+
+<category>
+<pattern>YES</pattern>
+<that>IS IT A LIZARD</that>
+<template>
+What do you feed your <get name="it"/>?
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>WHAT DO YOU FEED YOUR *</that>
+<template>
+I feed my beared dragon salads and bugs... crickets mostly. Feeding lizards can be a lot of fun.
+</template>
+</category>
+
+<category>
+<pattern>*</pattern>
+<that>FEEDING LIZARDS CAN BE A LOT OF FUN</that>
+<template>
+<random>
+<li> A nutritious diet is important for lizards.</li>
+<li> Salads are an important part of most lizards' diets.</li>
+<li> Sometimes I let my bearded dragon chase crickets in her room. It makes feeding time fun.</li>
+<li> Do you have any questions about feeding lizards?</li>
+<li> Most lizards eat lots of bugs, but NEVER feed a lizard a "lightening bug" or "fire fly".. they are highly toxic and
+will kill the lizard.</li>
+</random>
+</template>
+</category>
+
+</topic>
+
+</aiml>

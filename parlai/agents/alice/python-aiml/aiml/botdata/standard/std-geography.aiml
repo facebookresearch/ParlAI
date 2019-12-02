@@ -1,0 +1,3282 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<!-- This file contains geographical information. -->
+
+<meta name="author" content="Thomas Ringate"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>DEFINE ABAKAN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Abakan is a town in East Siberia.</li>
+<li name="search" value="capital">Abakan is a town.</li>
+<li name="search" value="where">Abakan is in East Siberia.</li>
+<li>Abakan is a town in East Siberia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ABERDEEN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Aberdeen is a city on the east coast of Scotland in the region of Grampian.</li>
+<li name="search" value="capital">Aberdeen is a city.</li>
+<li name="search" value="where">Aberdeen is on the east coast of Scotland in the region of Grampian.</li>
+<li>Aberdeen is a city on the east coast of Scotland in the region of Grampian.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ABERFAN</pattern>
+<template>
+Aberfan is a town in Wales.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ACADIA</pattern>
+<template>
+Acadia is the old name of Nova Scotia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ACAPULCO</pattern>
+<template>
+Acapulco is a city on the Pacific coast of Mexico.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ACCRA</pattern>
+<template>
+Accra is the capital of Ghana.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ADDIS ABABA</pattern>
+<template>
+Addis Ababa is the capital of Ethiopia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ADELAIDE</pattern>
+<template>
+ADELAIDE is a city in southern Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ADELIE LAND</pattern>
+<template>
+Adelie land is a French owned part of Antarctica.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ADEN</pattern>
+<template>
+Aden is a country in south west Arabia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ADRIATIC SEA</pattern>
+<template>
+The Adriatic sea is the Mediterranean sea between Italy and the Balkans.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AFGHANISTAN</pattern>
+<template>
+Afghanistan is a republic in south west Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AFRICA</pattern>
+<template>
+<random>
+<li>Africa is a large continent.</li>
+<li>A continent of the eastern hemisphere South of the Mediterranean &amp; adjoining Asia on
+NE.</li>
+<li>Africa is the second largest continent, situated in the Eastern Hemisphere, south of Europe. It
+is 11,677,000 square miles.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AFRIKAANS</pattern>
+<template>
+Afrikaans is a language used in the republic of south Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AGINCOURT</pattern>
+<template>
+Agincourt is a village in north west France where Henry V defeated the french army in 1415.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AGRA</pattern>
+<template>
+Agra is a town in Uttar Pradesh.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AJANTA</pattern>
+<template>
+Ajanta is a village in south central India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALABAMA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Alabama is a southern state between Mississippi and Georgia.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">Alabama is between Mississippi and Georgia.</li>
+<li>Alabama is a southern state between Mississippi and Georgia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALAMEIN</pattern>
+<template>
+Alamein is a place in north east Egypt where axis forces were defeated in 1942 by the allies.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALAMO</pattern>
+<template>
+ALAMO is in San Antonio, Texas.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALASKA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Alaska is in the northwest corner of North America, between Russia and Canada.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">Alaska is in the northwest corner of North America, between Russia and Canada.</li>
+<li>Alaska is in the northwest corner of North America, between Russia and Canada.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALBANIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Albania is a country, bordering Greece and the former Yugoslavia.</li>
+<li name="search" value="capital">The capital of Albania is Tirana.</li>
+<li name="search" value="where">Albania is on the Adriatic sea, bordering Greece and the former Yugoslavia.</li>
+<li>Albania is on the Adriatic sea, bordering Greece and the former Yugoslavia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALBERTA</pattern>
+<template>
+Alberta is the western prairie province of Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALBUQUERQUE</pattern>
+<template>
+ALBUQUERQUE is a city in New Mexico.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALDERSHOT</pattern>
+<template>
+Aldershot is a town in Hampshire and home of the British army.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALETTSCH</pattern>
+<template>
+The Alettsch is a 10 mile long glacier in the Alps.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALEXANDRIA</pattern>
+<template>
+Alexandria is a city and seaport of Egypt.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALGERIA</pattern>
+<template>
+Algeria is a republic in North Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALGIERS</pattern>
+<template>
+Algiers is the capital of Algeria.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ALTAI</pattern>
+<template>
+The Altai is a mountain range in west Siberia and Mongolia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AMAZON</pattern>
+<template>
+The Amazon is a major river in South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AMERICA</pattern>
+<template>
+America is a large continent in the western hemisphere.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AMSTERDAM</pattern>
+<template>
+Amsterdam is a city in Holland.  Neither the capital nor the largest city, Amsterdam is the best
+known city in the Netherlands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ANDHRA PRADESH</pattern>
+<template>
+Andhra pradesh is a state in East India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ANGOLA</pattern>
+<template>
+Angola is a country in West Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ANHUI</pattern>
+<template>
+Anhui is a province in East China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ANKARA</pattern>
+<template>
+Ankara is the capital of Turkey.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ANTARCTIC</pattern>
+<template>
+The antarctic is the south polar continent.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARABIA</pattern>
+<template>
+Arabia is a country in South West Asia comprised of independent states.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARCTIC</pattern>
+<template>
+The Arctic is the north polar region.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARCTIC OCEAN</pattern>
+<template>
+The Arctic Ocean is the sea north of Europe, America and Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARDECHE</pattern>
+<template>
+The Ardeche is a river in south east France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARGENTINA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Argentina is a country in South America.</li>
+<li name="search" value="capital">Buenos Aries.</li>
+<li name="search" value="where">Argentina is a country in South America.</li>
+<li>Argentina is a country in South America.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARIZONA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Arizona is a state in USA.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">Arizona is in the south western United States, bordering California, Nevada, Utah and New Mexico.</li>
+<li>Arizona is in the south western United States, bordering California, Nevada, Utah and New Mexico.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARKANSAS</pattern>
+<template>
+<condition>
+<li name="search" value="what">Arkansas is a state in USA.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">Arkansas is on the west bank of the Missisipi river.</li>
+<li>Arkansas is a southern State on the west bank of the Missisipi river.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARMENIA</pattern>
+<template>
+Armenia is a republic in East Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ARUBA</pattern>
+<template>
+ARUBA is an island in the Netherlands Antilles, near South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ASCOT</pattern>
+<template>
+Ascot is a town in Berkshire.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ASIA</pattern>
+<template>
+Asia is the largest continent.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ASSYRIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">???.</li>
+<li name="search" value="capital">Is it Babylon?</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ATHENS</pattern>
+<template>
+Athens is the capital city of Greece.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ATLANTIC OCEAN</pattern>
+<template>
+The Atlantic Ocean is the sea to the west of Europe and east of America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ATLANTIS</pattern>
+<template>
+Atlantis may never have existed.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUCKLAND</pattern>
+<template>
+Auckland is a city and seaport of New Zealand.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUSCHWITZ</pattern>
+<template>
+Is a city in S Poland with a population of 45,000. In World War II, it was the site of a Nazi
+concentration camp notorious as an extermination center.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUSTIN</pattern>
+<template>
+Austin is a city in Texas.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUSTRALASIA</pattern>
+<template>
+Australasia is the countries of Australia, New Zealand etc.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUSTRALIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Australia is a large island-continent in the southern hemishphere.</li>
+<li name="search" value="capital">The capital of Australia is Sydney, I think.</li>
+<li name="search" value="where">Australia is a large island-continent in the southern hemishphere.</li>
+<li>Australia is a large island-continent in the southern hemishphere.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE AUSTRIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Austria is a country.</li>
+<li name="search" value="capital">The capital of Austria is Vienna.</li>
+<li name="search" value="where">Austria is in Central Europe.</li>
+<li>Austria is a republic in Central Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BAGHDAD</pattern>
+<template>
+Baghdad is the capital city of Iraq.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BAHRAIN</pattern>
+<template>
+Bahrain is a country composed of a group of islands in the Arabian gulf.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BANGKOK</pattern>
+<template>
+Bangkok is the capital city of Thailand.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BANGLADESH</pattern>
+<template>
+BANGLADESH is part of the Indian subcontinent, on the eastern side.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BARCELONA</pattern>
+<template>
+Barcelona is a city and sea port in Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BATH</pattern>
+<template>
+Bath is a city in England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BELARUS</pattern>
+<template>
+<condition>
+<li name="search" value="what">???.</li>
+<li name="search" value="capital">The capital of Belarus is Minsk.</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BELFAST</pattern>
+<template>
+Belfast is the capital of Northern Ireland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BELGIUM</pattern>
+<template>
+A kingdom in W. Europe, on the North Sea, its independence was established in 1831. It is
+11,792 square miles with a population of 9,868,000.
+Belgium is a country in western Europe, between France, Germany and Holland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BELGRADE</pattern>
+<template>
+Belgrade is the capital of Yugoslavia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BENGAL</pattern>
+<template>
+Bengal is a province in India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BENIN</pattern>
+<template>
+Benin is a province in west Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BERGEN</pattern>
+<template>
+Bergen is a seaport and city in Norway.
+BERGEN is a city in Germany and also in Norway.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BERING SEA</pattern>
+<template>
+The bering sea is the northern part of the Pacific Ocean.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BERKELEY</pattern>
+<template>
+BERKELEY is in northern California, across the bay from San Francisco.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BERKSHIRE</pattern>
+<template>
+Berkshire is a county of southern England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BERLIN</pattern>
+<template>
+Berlin is a large city in Germany.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BETHLEHEM</pattern>
+<template>
+Bethlehem, Pennsylvania is located in the northeastern area of the state, about 90 miles from
+Philadelphia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BHUTAN</pattern>
+<template>
+Bhutan is a state in India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BILBAO</pattern>
+<template>
+BILBAO is a city on the north coast of Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BIRMINGHAM</pattern>
+<template>
+Birmingham is a city in the English midlands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BLOIS</pattern>
+<template>
+Blois is a city in France on the right bank of the loire river.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOGOTA</pattern>
+<template>
+Bogota is the capital of Columbia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOHEMIA</pattern>
+<template>
+Bohemia is the western area of Czechoslovakia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOLIVIA</pattern>
+<template>
+BOLIVIA is a land-locked country in South America,
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOMBAY</pattern>
+<template>
+Bombay is a city and seaport in India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BORNEO</pattern>
+<template>
+BORNEO is an island in Asia, divided between Maylasia and Indonesia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOSNIA</pattern>
+<template>
+Bosnia is a country in south east Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BOSTON</pattern>
+<template>
+Boston is the capital of Massachusetts.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRAZIL</pattern>
+<template>
+<condition>
+<li name="search" value="what">Brazil is a country in South America.</li>
+<li name="search" value="capital">I think the capital of Brazil is called "Brasilia".</li>
+<li name="search" value="where">Brazil is in South America.</li>
+<li>Brazil is the largest country in South America.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRENNER PASS</pattern>
+<template>
+The brenner pass is the lowest pass over the Alps.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRISBANE</pattern>
+<template>
+Brisbane is the capital of Queensland in Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRISTOL</pattern>
+<template>
+BRISTOL is a city on the west coast of England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRITAIN</pattern>
+<template>
+Britain is the collective name for England, Scotland, Wales and Northern Ireland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BRUSSELS</pattern>
+<template>
+Brussels is a city in Belgium.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BUCHAREST</pattern>
+<template>
+Bucharest is the capital of Romania.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BUDAPEST</pattern>
+<template>
+Budapest is the capital city of Hungary.
+BUDAPEST is a city in Hungary, on the Danube river.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BULGARIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">A country in SE Europe, on the Black Sea.</li>
+<li name="search" value="capital">The capital of Bulgaria is Sofia.</li>
+<li name="search" value="where">In SE Europe, on the Black Sea.</li>
+<li>A country in SE Europe, on the Black Sea. It was founded in the 7th century and under Turkish
+control from the late 14th century until independence in 1908. It is 42,823 square miles with a
+population of 8,990,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BURGUNDY</pattern>
+<template>
+Burgundy is a region in east France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BURMA</pattern>
+<template>
+Burma is a country in asia south of Tibet.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE BURUNDI</pattern>
+<template>
+Burundi is a country in east Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CADIZ</pattern>
+<template>
+Cadiz is a city and seaport in Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAIRO</pattern>
+<template>
+Cairo is the capital city of Egypt.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CALAIS</pattern>
+<template>
+Calais is a seaport in France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CALCUTTA</pattern>
+<template>
+Calcutta is a city in India in the province of Bengal.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CALGARY</pattern>
+<template>
+Calgary is a city in Alberta, Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CALIFORNIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">California is a state of the SW U.S., on the Pacific coast. It was admitted in 1850.</li>
+<li name="search" value="capital">The capital of California is Sacramento.</li>
+<li name="search" value="where">California is a state in the western USA.</li>
+<li>California is a state in the west USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAMBODIA</pattern>
+<template>
+Cambodia is a country in the far east.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAMBRIDGE</pattern>
+<template>
+CAMBRIDGE is a city in Massachusetts, also in England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAMBRIDGESHIRE</pattern>
+<template>
+Cambridgeshire is a county in east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAMEROON</pattern>
+<template>
+Cameroon is a country in west Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CANADA</pattern>
+<template>
+<think><set name="it">Canada</set></think>
+<condition>
+<li name="search" value="what">Canada is a large nation.</li>
+<li name="search" value="capital">Ottawa.</li>
+<li name="search" value="where">Canada is on the North American continent.</li>
+<li>Canada is a large nation occupying much of the North American continent.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CANBERRA</pattern>
+<template>
+CANBERRA is a city in Australia, between Sydney and Melbourne.
+Canberra is a territory in Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CANTON</pattern>
+<template>
+A canton is a territorial division of Switzerland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAPE TOWN</pattern>
+<template>
+Cape town is a city and seaport in South Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAPE VERDE</pattern>
+<template>
+Cape Verde is a group of 14 volcanic islands in the Atlantic Ocean.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CARACAS</pattern>
+<template>
+Caracas is the capital of Venezuela.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CARIBBEAN</pattern>
+<template>
+The caribbean is the sea north of South America and east of Central America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CARTHAGE</pattern>
+<template>
+CARTHAGE is the ancient name for Tunisia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CAYENNE</pattern>
+<template>
+Cayenne is the capital of French Guiana.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CENTRAL AMERICA</pattern>
+<template>
+Central america is the isthmus connecting North and South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CEUTA</pattern>
+<template>
+Ceuta is a coastal town in morocco but owned by Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHAMPAGNE</pattern>
+<template>
+Champagne is a region of France famed for its sparkling wine.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHARLOTTE</pattern>
+<template>
+CHARLOTTE is in North Carolina.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHESHIRE</pattern>
+<template>
+Cheshire is a county in north west England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHICAGO</pattern>
+<template>
+Chicago is a large city in Illinois on Lake Michigan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHILE</pattern>
+<template>
+Chile is a country in west South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHINA</pattern>
+<template>
+<condition>
+<li name="search" value="what">China is a country.</li>
+<li name="search" value="capital">Some people call it "Beijing", others "Peking".</li>
+<li name="search" value="where">China is in east Asia.</li>
+<li>China is a country in east Asia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CHINA SEA</pattern>
+<template>
+The China Sea is a western division of the Pacific Ocean.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CINCINNATI</pattern>
+<template>
+CINCINNATI is a large city in Ohio.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COLOMBIA</pattern>
+<template>
+Colombia is a country in South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COLOMBO</pattern>
+<template>
+Colombo is the capital city of Sri Lanka.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COLORADO</pattern>
+<template>
+<condition>
+<li name="search" value="what">Colorado is a state of the USA.</li>
+<li name="search" value="capital">Isn't it Denvner?</li>
+<li name="search" value="where">Colorado is in west central USA.</li>
+<li>Colorado is a west central state of the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COLUMBUS</pattern>
+<template>
+COLUMBUS is a city in Ohio.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CONGO</pattern>
+<template>
+The congo is a republic in west central Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CONNECTICUT</pattern>
+<template>
+CONNECTICUT is a New England state between New York, Massaschusetts and Rhode Island.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CONSTANTINOPLE</pattern>
+<template>
+Constantinople is the former name of Istanbul.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COOK STRAIT</pattern>
+<template>
+The Cook Strait is the water separating north and south New Zealand.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COPENHAGEN</pattern>
+<template>
+<random>
+<li>A Jewsih guy who falls in an ice cream vat.</li>
+<li>Is the capital of Denmark. Seaport on the east coast of Zealand. Its population is 633,00.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CORNWALL</pattern>
+<template>
+Cornwall is a county in south west England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CORONA</pattern>
+<template>
+CORONA is a suburb of Los Angeles.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE COSTA RICA</pattern>
+<template>
+Costa rica is a republic in Central America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CRETE</pattern>
+<template>
+Crete is the largest Greek island.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CRIMEA</pattern>
+<template>
+The crimea is the north peninsular region of the Ukraine.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CROATIA</pattern>
+<template>
+CROATIA is part of the former Yugoslavia, also bordering on Hungary.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CUBA</pattern>
+<template>
+Cuba is a large island in the Caribbean off the south coast of Florida.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CUMBRIA</pattern>
+<template>
+Cumbria is a county in north west England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CUPERTINO</pattern>
+<template>
+CUPERTINO is in Silicon Valley.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE CZECHOSLOVAKIA</pattern>
+<template>
+Czechoslovakia is a land locked country in east central europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DAKAR</pattern>
+<template>
+Dakar is the capital of Senegal.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DALLAS</pattern>
+<template>
+DALLAS is a large city in Texas.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DAMASCUS</pattern>
+<template>
+Damascus is the capital of Syria.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DANUBE</pattern>
+<template>
+The danube is the 2nd longest river in Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DAR ES SALAAM</pattern>
+<template>
+Dar es Salaam is the capital of Tanzania.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DARWIN</pattern>
+<template>
+Darwin is the capital of the northern territory in Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DEAD SEA</pattern>
+<template>
+The dead sea is a large lake partly in Israel and partly in Jordan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DEATH VALLEY</pattern>
+<template>
+Death valley is a 140 mile long depression in south east California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DELAWARE</pattern>
+<template>
+Delaware is a state in north east USA.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DELHI</pattern>
+<template>
+DELHI is a large city in India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DENMARK</pattern>
+<template>
+<condition>
+<li name="search" value="what">A country in Europe.</li>
+<li name="search" value="capital">Copenhagen.</li>
+<li name="search" value="where">Denmark is in western Europe, between Germany and Norway.</li>
+<li>A country in Europe, occuping most of the peninsula of Jutland and several nearby islands in the
+North and Baltic seas. It is 16,632 square miles with a population of 5,124,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DENVER</pattern>
+<template>
+Denver is a city in Colorado.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DERBYSHIRE</pattern>
+<template>
+Derbyshire is a county in north central england.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DEVON</pattern>
+<template>
+Devon is a county in south west England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DHAKA</pattern>
+<template>
+Dhaka is the capital of Bangladesh.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DJIBOUTI</pattern>
+<template>
+Djibouti is a republic in Arabia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DOHA</pattern>
+<template>
+Doha is the capital of Qatar.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DOMINICAN REPUBLIC</pattern>
+<template>
+The dominican republic is a country in the east of the Island Hispaniola.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DON</pattern>
+<template>
+The don is a river in Russia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DORDOGNE</pattern>
+<template>
+The dordogne is a river in south west France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DORSET</pattern>
+<template>
+Dorset is a county in south west England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DOUGLAS</pattern>
+<template>
+Douglas is the capital of the Isle of Man.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DRESDEN</pattern>
+<template>
+Dresden is a city in Germany, it was razed to the ground by allied bombing.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DUNKIRK</pattern>
+<template>
+Dunkirk is a town and port in north France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DURBAN</pattern>
+<template>
+Durban is the principle seaport of Natal.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DURHAM</pattern>
+<template>
+Durham is a county in north east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DUSSELDORF</pattern>
+<template>
+DUSSELDORF is a large city in western Germany.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE DYFED</pattern>
+<template>
+Dyfed is a county in South West Wales.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EAST ANGLIA</pattern>
+<template>
+East anglia is a region in east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EAST SUSSEX</pattern>
+<template>
+East sussex is a county in south east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ECUADOR</pattern>
+<template>
+Ecuador is a republic in south America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EDINBURGH</pattern>
+<template>
+Edinburgh is the capital of Scotland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EDMONTON</pattern>
+<template>
+Edmonton is the capital of Alberta.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EGYPT</pattern>
+<template>
+EGYPT is a country in north east Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EL SALVADOR</pattern>
+<template>
+El salvador is a republic in central America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ENGLAND</pattern>
+<template>
+<condition>
+<li name="search" value="what">England is located on a small island off the coast of Europe.</li>
+<li name="search" value="capital">London.</li>
+<li name="search" value="where">England is located on a small island off the coast of Europe.</li>
+<li>England is located on a small island off the coast of Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ENTEBBE</pattern>
+<template>
+Entebbe is a town in Uganda.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EQUATORIAL GUINEA</pattern>
+<template>
+Equatorial guinea is a republic in west central Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ERITREA</pattern>
+<template>
+Eritrea is a province in north Ethiopia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ESSEX</pattern>
+<template>
+Essex is a county in south east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ESTONIA</pattern>
+<template>
+Estonia is a country in east Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ETHIOPIA</pattern>
+<template>
+Ethiopia is a country in north east Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ETNA</pattern>
+<template>
+Etna is a volcano on the east coast of Sicily.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE EUROPE</pattern>
+<template>
+Europe is a continent west of the ural mountains and east of the Atlantic.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FIJI</pattern>
+<template>
+Fiji is a group of 322 islands in the south west Pacific.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FINLAND</pattern>
+<template>
+<condition>
+<li name="search" value="what">A country in N Europe.</li>
+<li name="search" value="capital">The capital of Finland is Helsinki.</li>
+<li name="search" value="where">Finland is in eastern europe, bordering Sweden and Russia.</li>
+<li>A country in N Europe, northeast of the Baltic Sea. It is 130,119 square miles with a population 5,099,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FLORENCE</pattern>
+<template>
+Florence is the capital of Tuscany.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FLORIDA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Florida is a state in the USA.</li>
+<li name="search" value="capital">The capital of Florida is Tallahassee.</li>
+<li name="search" value="where">Florida is in the southeast United States, extending on a large peninsula.</li>
+<li>Florida is a state in the south eastern corner of the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FRANCE</pattern>
+<template>
+<condition>
+<li name="search" value="what">France is a republic in west Europe.</li>
+<li name="search" value="capital">Paris.</li>
+<li name="search" value="where">France is a country in western Europe, bordering Spain, Italy, Switzerland, Germany, and Belgium.</li>
+<li>France is a republic in west Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FRANKFURT</pattern>
+<template>
+FRANKFURT is a large city in western Germany.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FREETOWN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Freetown is the capital of Sierra Leone.</li>
+<li name="search" value="capital">Freetown is the capital of Sierra Leone.</li>
+<li name="search" value="where">Freetown is in Sierra Leone.</li>
+<li>France is a republic in west Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FRENCH GUIANA</pattern>
+<template>
+French guiana is a country on the north coast of South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FRENCH POLYNESIA</pattern>
+<template>
+French polynesia is a territory in the South Pacific.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE FRESNO</pattern>
+<template>
+Fresno is a small city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GAMBIA</pattern>
+<template>
+Gambia is a country in west africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GANSU</pattern>
+<template>
+Gansu is a province of north west china.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GENEVA</pattern>
+<template>
+Geneva is a town in switzerland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GEORGIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Georgia is a southern state in the USA.
+Georgia is a country in east europe.</li>
+<li name="search" value="capital">I would say it is Atlanta.</li>
+<li name="search" value="where">The state, on the Atlantic ocean, north of Florida. The country in east europe</li>
+<li>Georgia is a southern state, on the Atlantic ocean, north of Florida.
+Georgia is a country in east europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GERMANY</pattern>
+<template>
+<condition>
+<li name="search" value="what">Germany is a country in central europe.</li>
+<li name="search" value="capital">Berlin.</li>
+<li name="search" value="where">Germany is in central europe.</li>
+<li>Germany is a country in central europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GHANA</pattern>
+<template>
+Ghana is a country in west africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GOBI</pattern>
+<template>
+The gobi is a desert partly in china and mongolia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GOTEBORG</pattern>
+<template>
+Goteborg is a port and industrial city in west sweden.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GRAMPIAN</pattern>
+<template>
+Grampian is a region of scotland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GRAND CANYON</pattern>
+<template>
+The grand canyon is a vast gorge in arizona.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GREECE</pattern>
+<template>
+<condition>
+<li name="search" value="what">Greece is a country and island group.</li>
+<li name="search" value="capital">Athens.</li>
+<li name="search" value="where">Greece is a country and island group in south east europe.</li>
+<li>A country in the South Balkan Peninsula, including many islands in the Aegean, Ionian, and
+Mediterranean seas. It is 50,949 square miles with a population of 9,900,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GREENLAND</pattern>
+<template>
+Greenland is the world's largest island.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUADALCANAL</pattern>
+<template>
+Guadalcanal is the largest of the solomon islands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUAM</pattern>
+<template>
+Guam is the largest of the mariana islands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUANGDONG</pattern>
+<template>
+Guangdong is a province in south china.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUANGXI</pattern>
+<template>
+Guangxi is a region in south china.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUANGZHOU</pattern>
+<template>
+Guangzhou is the capital of guangdong.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUATEMALA</pattern>
+<template>
+Guatamala is a country in central America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUATEMALA CITY</pattern>
+<template>
+Guatemala city is the capital of guatemala.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUINEA</pattern>
+<template>
+Guinea is a republic in west africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUINEA BISSAU</pattern>
+<template>
+Guinea bissau is a republic in west africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUJARAT</pattern>
+<template>
+Gujarat is a state in west india.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GUYANA</pattern>
+<template>
+Guyana is a republic in south america.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GWENT</pattern>
+<template>
+Gwent is a county in south wales.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE GWYNEDD</pattern>
+<template>
+Gwynedd is a county in north west wales.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAIFA</pattern>
+<template>
+Haifa is a port in north east Israel.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAITI</pattern>
+<template>
+Haiti is a republic in the west of the island of Hispaniola.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HALIFAX</pattern>
+<template>
+Halifax is the capital of Nova Scotia in Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAMBURG</pattern>
+<template>
+HAMBURG is a large city in western Germany.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAMILTON</pattern>
+<template>
+Hamilton is the capital of Bermuda.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAMPSHIRE</pattern>
+<template>
+Hampshire is a county in south England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HANOI</pattern>
+<template>
+Hanoi is the capital of Vietnam.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HARARE</pattern>
+<template>
+Harare is the capital of Zimbabwe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HARYANA</pattern>
+<template>
+Haryana is a state in north west India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HASTINGS</pattern>
+<template>
+Hastings is a sea town in Sussex.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAVANA</pattern>
+<template>
+Havana is the capital of Cuba.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HAWAII</pattern>
+<template>
+Hawaii is a group of islands in the pacific and a state of the USA.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HEBEI</pattern>
+<template>
+Hebei is a province in north China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HEBRIDES</pattern>
+<template>
+The hebrides is a group of 500 islands west of Scotland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HEFEI</pattern>
+<template>
+Hefei is the capital of Anhui.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HEILONGJIANG</pattern>
+<template>
+Heilongjiang is a province in north east China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HENAN</pattern>
+<template>
+Henan is a province in East China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HIMACHAL PRADESH</pattern>
+<template>
+Himachal Pradesh is a state in north West India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HOBART</pattern>
+<template>
+Hobart is the capital of Tasmania.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HOKKAIDO</pattern>
+<template>
+Hokkaido is the most northern of the main Japanese islands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HOLLAND</pattern>
+<template>
+Holland is a country in western Europe, next to Germany and Belgium.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HOLLYWOOD</pattern>
+<template>
+Hollywood is a small part of Los Angeles, California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HONDURAS</pattern>
+<template>
+Honduras is a republic in Central America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HONG KONG</pattern>
+<template>
+Hong Kong is a city in China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HONIARA</pattern>
+<template>
+Honiara is the capital of the Solomon Islands.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HONOLULU</pattern>
+<template>
+Honolulu is the capital of Hawaii.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HONSHU</pattern>
+<template>
+Honshu is the principal Japanese island.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HOUSTON</pattern>
+<template>
+Houston is a city in Texas.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HUBEI</pattern>
+<template>
+Hubei is a province in Central China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HULL</pattern>
+<template>
+HULL is a town in England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HUMBERSIDE</pattern>
+<template>
+Humberside is a county in north east England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HUNAN</pattern>
+<template>
+Hunan is a province in South China.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HUNGARY</pattern>
+<template>
+<condition>
+<li name="search" value="what">Hungary is a country.</li>
+<li name="search" value="capital">The capital of Hungary is Budapest.</li>
+<li name="search" value="where">Hungary is in central Europe.</li>
+<li>Hungary is a country in central Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE HYDERABAD</pattern>
+<template>
+Hyderabad is the capital of Andhra Pradesh.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ICELAND</pattern>
+<template>
+An island nation in the North Atlantic.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE IDAHO</pattern>
+<template>
+Idaho is in the western United States.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ILLINOIS</pattern>
+<template>
+<condition>
+<li name="search" value="what">Illinos is a state in the USA.</li>
+<li name="search" value="capital">Springfield is the capital of Illinois.</li>
+<li name="search" value="where">Illinos is in the midwestern United States.</li>
+<li>Illinos is in the midwestern United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE INDIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">A country in central and South India.</li>
+<li name="search" value="capital">New Delhi is the capital of India.</li>
+<li name="search" value="where">A region in South Asia, south of the Himalayas, including a large peninsula
+ between the Arabian Sea and the Bay of Bengal.</li>
+<li>A region in South Asia, south of the Himalayas, including a large peninsula between the Arabian
+Sea and the Bay of Bengal. It contains India, Pakistan, Bangladesh, Nepal, and Bhutan. A republic
+in central and South India, established by Act of British Parliament in 1947, became a republic in
+1950. It is a member of the Commonwealth. It is 1,269,000 square miles with a population of
+783,940,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE INDIANA</pattern>
+<template>
+Indiana is in the midwestern United States.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE INDIANAPOLIS</pattern>
+<template>
+INDIANAPOLIS is a large city in Indiana.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE INDONESIA</pattern>
+<template>
+INDONESIA is an island nation in southeast Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE IOWA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Iowa is a state in the USA.</li>
+<li name="search" value="capital">Des Moines, Iowa.</li>
+<li name="search" value="where">Iowa is in the midwest, between the Mississipi and Missouri rivers.</li>
+<li>Iowa is in the midwest, between the Mississipi and Missouri rivers.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE IRAN</pattern>
+<template>
+Iran is a nation in southern Asia.  <set name="it"><set name="topic">Iran</set></set> is the site of
+ancient Persia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE IRAQ</pattern>
+<template>
+IRAQ is in the middle east, on the Persian Gulf.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE IRELAND</pattern>
+<template>
+An island of the British Isles, west of Great Britain. It is 32,595 square miles. Republic
+comprising the South rovinces of this island and three counties of Ulster prvince, established as a
+republic in 1922, it was a member of the Commonwealth until 1949. It is 27,136 square miles
+with a population of 3,624,000. Its capital is Dublin.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ISRAEL</pattern>
+<template>
+Israel is a small middle eastern country between Lebanon, Syria, Jordan, and Egypt.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ISTANBUL</pattern>
+<template>
+Istanbul is a city in Turkey, formerly Constantinople.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ITALY</pattern>
+<template>
+<condition>
+<li name="search" value="what">Italy is a country in Europe.</li>
+<li name="search" value="capital">Roma.</li>
+<li name="search" value="where">Italy is in the southern part of Europe.</li>
+<li>Italy is in the southern part of Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE JAPAN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Japan is an island nation on the eastern side of Asia.</li>
+<li name="search" value="capital">Tokyo.</li>
+<li name="search" value="where">Japan is on the eastern side of Asia.</li>
+<li>Japan is an island nation on the eastern side of Asia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KALAMAZOO</pattern>
+<template>
+KALAMAZOO is a city in Michigan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KANSAS</pattern>
+<template>
+<condition>
+<li name="search" value="what">Kansas is a state in the United States.</li>
+<li name="search" value="capital">The capital of Kansas is Kansas City.</li>
+<li name="search" value="where">Kansas is in the midwestern United States.</li>
+<li>Kansas is in the midwestern United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KASHMIR</pattern>
+<template>
+KASHMIR is a disputed area between India and Pakistan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KENTUCKY</pattern>
+<template>
+KENTUCKY is on the south bank of the Ohio river.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KENYA</pattern>
+<template>
+KENYA is a country in central Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KOREA</pattern>
+<template>
+KOREA is a peninsula on the eastern edge of the Asian continent.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KOSOVO</pattern>
+<template>
+Kosovo is a country in the Balkans.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE KUWAIT</pattern>
+<template>
+KUWAIT is a small nation on the Persian gulf.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LA</pattern>
+<template>
+LA is a large city in southern California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LAS VEGAS</pattern>
+<template>
+Las Vegas is in Nevada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LICHTENSTEIN</pattern>
+<template>
+LICHTENSTEIN is a tiny country in central Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LINCOLN</pattern>
+<template>
+Lincoln is a city in Nebraska.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LISBON</pattern>
+<template>
+Lisbon is a city in Portugal.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LONDON</pattern>
+<template>
+London is a city in England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE LOS ANGELES</pattern>
+<template>
+Los Angeles is a city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MACEDONIA</pattern>
+<template>
+MACEDONIA is a small nation between Greece and Serbia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MADRAS</pattern>
+<template>
+MADRAS is a city in India.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MADRID</pattern>
+<template>
+Madrid is a city in Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MAINE</pattern>
+<template>
+<condition>
+<li name="search" value="what">Maine is a state of the United States.</li>
+<li name="search" value="capital">The capital of Maine is Augusta.</li>
+<li name="search" value="where">Maine is in the northeastern corner of the United States, bordering Canada.</li>
+<li>Maine is in the northeastern corner of the United States, bordering Canada.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MALAYSIA</pattern>
+<template>
+MALAYSIA is an island in southeast Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MALTA</pattern>
+<template>
+MALTA is an island in the Mediterranian sea, south of Sicily.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MANHATTAN</pattern>
+<template>
+Manhattan is the island center of New York City.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MANILA</pattern>
+<template>
+Manila is a city in the Phillipines.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MARTINIQUE</pattern>
+<template>
+MARTINIQUE is in the Caribbean, part of the Leeward and Windward Island chain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MARYLAND</pattern>
+<template>
+<condition>
+<li name="search" value="what">Maryland is a state, between Delaware and Virginia.</li>
+<li name="search" value="capital">Baltimore.</li>
+<li name="search" value="where">Maryland is between Delaware and Virginia.</li>
+<li>Maryland is an east coast state, between Delaware and Virginia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MASSACHUSETTS</pattern>
+<template>
+<condition>
+<li name="search" value="what">Massaschusetts is a state.</li>
+<li name="search" value="capital">The capital of Massaschusetts is Boston.</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+
+<category>
+<pattern>DEFINE MELBOURNE</pattern>
+<template>
+A seaport in SE Australia. It is the capital of Victoria with a population of 2,864,000. Also a city
+in East Florida with a population of 60,000.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MEXICO</pattern>
+<template>
+A country in North America, south of the U.S. It is 756,198 square miles with a population of
+66,846,000. Its capital is Mexico City.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MIAMI</pattern>
+<template>
+Miama is a large city in Florida, on the south Atlantic coast.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MICHIGAN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Michigan is a state of the United States.</li>
+<li name="search" value="capital">The city is called Lansing, Michigan.</li>
+<li name="search" value="where">MICHIGAN is a midwestern state on the Great Lakes.</li>
+<li>MICHIGAN is a midwestern state on the Great Lakes.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MICRONESIA</pattern>
+<template>
+MICRONESIA is a collection of islands in the Pacific ocean.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MINNESOTA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Minnesota is a state of the United States.</li>
+<li name="search" value="capital">The capital of Minnesota is St. Paul.</li>
+<li name="search" value="where">Minnesota is on the northern border of the United States, between Wisconsin and North Dakota.</li>
+<li>Minnesota is on the northern border of the United States, between Wisconsin and North Dakota.</li>
+</condition>
+
+Minnesota is on the northern border of the United States, between Wisconsin and North Dakota.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MISSISSIPPI</pattern>
+<template>
+<condition>
+<li name="search" value="what">Mississippi is a state of the United States.</li>
+<li name="search" value="capital">Jackson is the capital of Mississippi.</li>
+<li name="search" value="where">Mississippi is in the southern United States.</li>
+<li>Mississippi is in the southern United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MONGOLIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Mongolia is country.</li>
+<li name="search" value="capital">The capital of Mongolia is Ulan Bator.</li>
+<li name="search" value="where">Mongolia is in central Asia between Russian Siberia and China.</li>
+<li>Mongolia is in central Asia between Russian Siberia and China.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MONTANA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Montana is state in the USA..</li>
+<li name="search" value="capital">Helena.  That is a hard one.</li>
+<li name="search" value="where">Montana is in the northwest United States between the Dakotas and Idaho.</li>
+<li>Montana is in the northwest United States between the Dakotas and Idaho.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MONTREAL</pattern>
+<template>
+Montreal is a city in Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MOROCCO</pattern>
+<template>
+Morocco is a nation in northwest Africa, close to Spain.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE MOSCOW</pattern>
+<template>
+Moscow is a city in Russia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NAIROBI</pattern>
+<template>
+Nairobi is a city in Kenya.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEBRASKA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Nebraska is a state in the USA.</li>
+<li name="search" value="capital">The capital of Nebraska is Lincoln.</li>
+<li name="search" value="where">Nebraska is on the west bank of the Missouri river, between South Dakota and Kansas.</li>
+<li>Nebraska is on the west bank of the Missouri river, between South Dakota and Kansas.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEPAL</pattern>
+<template>
+Nepal is a mountainous nation in southern Asia, between India and Tibet.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NETHERLANDS</pattern>
+<template>
+<srai>DEFINE THE NETHERLANDS</srai>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE NETHERLANDS</pattern>
+<template>
+<condition>
+<li name="search" value="what">???.</li>
+<li name="search" value="capital">The Hague.</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEVADA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Nevada is a state in the USA.</li>
+<li name="search" value="capital">Carson City, Nevada.</li>
+<li name="search" value="where">???.</li>
+<li>Nevada is a state in the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEW JERSEY</pattern>
+<template>
+<condition>
+<li name="search" value="what">New Jersey is a state in the USA.</li>
+<li name="search" value="capital">Trenton.</li>
+<li name="search" value="where">???.</li>
+<li>New Jersey is a state in the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEW ORLEANS</pattern>
+<template>
+New Orleans is a city in Louisiana.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEW YORK</pattern>
+<template>
+<condition>
+<li name="search" value="what">New York is a state in the USA.</li>
+<li name="search" value="capital">The capital of New York is Albany.</li>
+<li name="search" value="where">New York is located in the Northeastern United States.</li>
+<li>New York is located in the Northeastern United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEW YORK CITY</pattern>
+<template>
+<condition>
+<li name="search" value="what">New York City is the largest city in New York.</li>
+<li name="search" value="capital">It does not have a capital.</li>
+<li name="search" value="where">New York City is in New York state.</li>
+<li>New York City is the largest city in New York.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NEWARK</pattern>
+<template>
+Newark is city in New Jersey.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NORFOLK</pattern>
+<template>
+Norfolk is a city in Virgina.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NORTH AMERICA</pattern>
+<template>
+North America occupies the northern most of the norther hemisphere of the Earth, from the
+Bering Strait to Labrador.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NORTH DAKOTA</pattern>
+<template>
+<condition>
+<li name="search" value="what">North Dakota is a state in the USA.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">???.</li>
+<li>North Dakota is a state in the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE NORWAY</pattern>
+<template>
+<condition>
+<li name="search" value="what">Norway is a country in northern europe, bordering Sweden.</li>
+<li name="search" value="capital">The capital of Norway is Oslo.</li>
+<li name="search" value="where">Norway is a country bordering Sweden.</li>
+<li>A country in Northern Europe, occupying the west and north pars of the Scandinavian Peninsula.
+It is 125,064 square miles with a population of 4,165,000. Its capital is Oslo.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OHIO</pattern>
+<template>
+<condition>
+<li name="search" value="what">Ohio is a state in the USA.</li>
+<li name="search" value="capital">The capital of Ohio is Columbus.</li>
+<li name="search" value="where">Ohio is in the midwest United States, between Pennsylvania and Indiana.</li>
+<li>Ohio is in the midwest United States, between Pennsylvania and Indiana.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OKLAHOMA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Oklahoma is a state in the USA.</li>
+<li name="search" value="capital">???.</li>
+<li name="search" value="where">Oklahoma is in the midwestern United States.</li>
+<li>Oklahoma is in the midwestern United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OMAHA</pattern>
+<template>
+Omaha is a city in Nebraska.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ONTARIO</pattern>
+<template>
+Ontario is a province of Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OREGON</pattern>
+<template>
+<condition>
+<li name="search" value="what">Oregon is a state in the USA.</li>
+<li name="search" value="capital">Salem, Oregon.</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OSLO</pattern>
+<template>
+The capital of Norway. It's a seaport on an inlet of the Skagerrak. It has a population of 447,000.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OXFORD</pattern>
+<template>
+Oxford is a University in England.  It is also a small town in Maine and many other U. S. states.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE OXNARD</pattern>
+<template>
+Oxnard is a city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PAKISTAN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Pakistan is country.</li>
+<li name="search" value="capital">It is called Islamabad.</li>
+<li name="search" value="where">Pakistan is part of the Indian subcontinent, bordering India and Afghanistan.</li>
+<li>Pakistan is part of the Indian subcontinent, bordering India and Afghanistan.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PALESTINE</pattern>
+<template>
+Palestine is the old name for Israel, or the new name for the state inside Israel.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PANAMA</pattern>
+<template>
+Panama is on the isthmus between North and South America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PARIS</pattern>
+<template>
+The capital of France, a large city in western Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PENNSYLVANIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Pennsylvania is one of the 13 original United States.</li>
+<li name="search" value="capital">The capital of Pennsylvania is Harrisburg.</li>
+<li name="search" value="where">Mid Atlantic state in the NE U.S.</li>
+<li>Mid Atlantic state in the NE U.S. One of the 13 original States. It is 45,333 square miles with
+a population of 11,882,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PERTH</pattern>
+<template>
+Perth is a city in western Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PERU</pattern>
+<template>
+<condition>
+<li name="search" value="what">Peru is a country in South America.</li>
+<li name="search" value="capital">Lima is the capital of Peru.</li>
+<li name="search" value="where">South America.</li>
+<li>Peru is a country in South America.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PHILADELPHIA</pattern>
+<template>
+Philadelphia is a large city in southeast Pennsylvania, between New York and Washington, D. C.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PHOENIX</pattern>
+<template>
+<random>
+<li>The way words souend.</li>
+<li>The capital of Arizona, in the SC part, near the Salt River. It has a population of 983,000 with
+2,122,000 in the metro area.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PITTSBURGH</pattern>
+<template>
+Pittsburgh is a large city in western Pennsylvania.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PITTSFIELD</pattern>
+<template>
+Pittsfield is a town in Massachusettes.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE POLAND</pattern>
+<template>
+<condition>
+<li name="search" value="what">Poland is a country in central Europe.</li>
+<li name="search" value="capital">Warsaw.</li>
+<li name="search" value="where">Poland is a country in central Europe, between Germany and Byelorussia.</li>
+<li>Poland is a country in central Europe, between Germany and Byelorussia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE PORTUGAL</pattern>
+<template>
+<condition>
+<li name="search" value="what">Portugal is a country in western Europe.</li>
+<li name="search" value="capital">Lisbon.</li>
+<li name="search" value="where">Portugal is on the Iberain penninsula.</li>
+<li>Portugal is a country in western Europe, on the Iberain penninsula.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE RHODE ISLAND</pattern>
+<template>
+<condition>
+<li name="search" value="what">Rhode Island is a state in the USA.</li>
+<li name="search" value="capital">Providence, Rhode Island.</li>
+<li name="search" value="where">???.</li>
+<li>Rhode Island is a state in the USA.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE RIO</pattern>
+<template>
+RIO is a large city in Brazil
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ROMANIA</pattern>
+<template>
+Romania is a country in Eastern Europe, on the Black Sea, bordering Ukrania, Moldavia,
+Hungary, Serbia and Bulgaria.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ROME</pattern>
+<template>
+Rome is a large city in Italy.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE RUSSIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">???.</li>
+<li name="search" value="capital">Moscow.</li>
+<li name="search" value="where">In east Europe and north Asia.</li>
+<li>Former empire in east Europe and north Asia, from 1547-1917, ruled by the czars. Its capital is
+St. Petersburg.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE RWANDA</pattern>
+<template>
+Rwanda is a country in Africa.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SACRAMENTO</pattern>
+<template>
+Sacramento is a city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SALEM</pattern>
+<template>
+Salem is a town in Massachusetts.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SALT LAKE CITY</pattern>
+<template>
+Salt Lake City is a city in Utah.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SAN DIEGO</pattern>
+<template>
+San Diego is a city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SAN FRANCISCO</pattern>
+<template>
+San Francisco is a large metropolis on the west coast of North America.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SAN FRANCISCO LIKE</pattern>
+<template>
+San Francisco is too expensive.  There are too many greedy people and too many homeless.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SAN JOSE</pattern>
+<template>
+San Jose is a city in California.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SASKATOON</pattern>
+<template>
+Saskatoon is a city in Saskatchewan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SAUDIA ARABIA</pattern>
+<template>
+<condition>
+<li name="search" value="what">Saudia Arabia is a country.</li>
+<li name="search" value="capital">Riyadh.</li>
+<li name="search" value="where">???.</li>
+<li>Saudia Arabia is a country.</li>
+</condition>
+</template>
+</category>
+
+
+<category>
+<pattern>DEFINE SEATTLE</pattern>
+<template>
+Seattle is a large city in Washington state, near Vancover Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SERBIA</pattern>
+<template>
+Serbia is the remaining territory of the former Yugoslavia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SHEFFIELD</pattern>
+<template>
+Sheffield is a town in England.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SIAM</pattern>
+<template>
+Siam is another name for Thailand.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SINGAPORE</pattern>
+<template>
+Singapore is a island nation-state at the tip of the Malay penninsula.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SOFIA</pattern>
+<template>
+Sofia is a city in Bulgaria.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SPAIN</pattern>
+<template>
+<condition>
+<li name="search" value="what">Spain is country.</li>
+<li name="search" value="capital">The capital of Spain is Madrid.</li>
+<li name="search" value="where">Spain is on the Iberian penninsula in southwestern Europe.</li>
+<li>Spain is on the Iberian penninsula in southwestern Europe.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE STOCKHOLM</pattern>
+<template>
+Stockholm is a large city in Sweden.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE STONEWALL</pattern>
+<template>
+Stonewall is a town in Mississippi.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SUEZ</pattern>
+<template>
+Suez is a canal between the Mediterranian and the Red Sea.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SWEDEN</pattern>
+<template>
+<condition>
+<li name="search" value="what">A country in northern Europe.</li>
+<li name="search" value="capital">The capital of Sweden is Stockholm.</li>
+<li name="search" value="where">Sweden is in northern europe, bordering Finland and Norway.</li>
+<li>A country in northern Europe, in the east part of the Scandinavian Peninsula. It is 173,620 square
+miles with a population of 8,320,000.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SWEDISH</pattern>
+<template>
+The North Germanic language of the Swedes. The people of Sweden.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SWITZERLAND</pattern>
+<template>
+Switzerland is a country in centrail Europe, bordering Italy, Austria and France.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE SYDNEY</pattern>
+<template>
+Sydney is a city in Australia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TAIWAN</pattern>
+<template>
+Taiwan is an island country in Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TENNESSEE</pattern>
+<template>
+Tennessee is in the southern United States..
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TEXAS</pattern>
+<template>
+<condition>
+<li name="search" value="what">Texas is a state of the United States.</li>
+<li name="search" value="capital">Austin.</li>
+<li name="search" value="where">Texas is in the south central region of the United States.</li>
+<li>Texas is in the south central region of the United States.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THAILAND</pattern>
+<template>
+Thailand is in southeast Asia, between Burma and Cambodia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE HIGHEST MOUNTAIN</pattern>
+<template>
+Mt. Everest.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE LARGEST STATE</pattern>
+<template>
+Alaska is the largest state of the USA.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE PHILIPPINES</pattern>
+<template>
+An island nation in the South Pacific.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE POPULATION _ CHINA</pattern>
+<template>
+China has more than one billion people.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE POPULATION _ MAINE</pattern>
+<template>
+About 1.4 million.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE POPULATION _ USA</pattern>
+<template>
+The United States has about 300 million people.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE POPULATION _ WORLD</pattern>
+<template>
+About 6 Billion people.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE TALLEST MOUNTAIN</pattern>
+<template>
+The highest mountain on Earth is Mt. Everest.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE THE UNITED STATES</pattern>
+<template>
+The United States is "the last superpower", a nation of 300 million spanning the North American
+continent.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TOKYO</pattern>
+<template>
+Tokyo is a city in Japan.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TOLEDO</pattern>
+<template>
+Toledo is a city in Ohio.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TORONTO</pattern>
+<template>
+Toronto is a city in Canada.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TRINIDAD</pattern>
+<template>
+An island of the West Indies, off the NE coast of Venezuela. It is 1,864 square miles.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TROY</pattern>
+<template>
+Troy is a city in New York.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TURKEY</pattern>
+<template>
+<condition>
+<li name="search" value="what">Turkey is country.</li>
+<li name="search" value="capital">Ankara is the capital of Turkey.</li>
+<li name="search" value="where">Turkey is in southwest Asia, between Europe and the middle East and guarding the Black Sea of Russia.</li>
+<li>Turkey is in southwest Asia, between Europe and the middle East and guarding the Black Sea of Russia.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE TUSCALOOSA</pattern>
+<template>
+Tuscaloosa is in Alabama, last I heard.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE USA</pattern>
+<template>
+United States of America is in North America, between Canada and Mexico.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE UTAH</pattern>
+<template>
+Utah is in the western United States.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE VERMONT</pattern>
+<template>
+<condition>
+<li name="search" value="what">Vermont is state of the USA.</li>
+<li name="search" value="capital">Montpelier.</li>
+<li name="search" value="where">Vermont is in New England, between New York and New Hampshire, on the west bank of the Connecticut river.</li>
+<li>Vermont is in New England, between New York and New Hampshire, on the west bank of the Connecticut river.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE VIETNAM</pattern>
+<template>
+Vietnam is in southeast Asia.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE VIRGINIA</pattern>
+<template>
+Virginia is in the eastern United States.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE WALES</pattern>
+<template>
+Wales is located on a small island off the coast of Europe.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE WARSAW</pattern>
+<template>
+Warsaw is a large city in Poland.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE WASHINGTON</pattern>
+<template>
+Washington is a state in the northwest corner of the U.S.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE WYOMING</pattern>
+<template>
+<condition>
+<li name="search" value="what">Wyoming is a state in the U.S.A.</li>
+<li name="search" value="capital">Cheyenne.</li>
+<li name="search" value="where">Wyoming is a western U.S. state between Montana and Colorado.</li>
+<li>Wyoming is a western U.S. state between Montana and Colorado.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE YAKIMA</pattern>
+<template>
+Yakima is a city and a river in Washington.
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ZIMBABWE</pattern>
+<template>
+<condition>
+<li name="search" value="what">???.</li>
+<li name="search" value="capital">The capital is called Harare.</li>
+<li name="search" value="where">???.</li>
+<li>???.</li>
+</condition>
+</template>
+</category>
+
+<category>
+<pattern>DEFINE ZURICH</pattern>
+<template>
+Zurich is a city in Switzerland.
+</template>
+</category>
+
+</aiml>

@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>THAT INFORMATION *</pattern>
+<template>I know what you mean.</template>
+</category>
+<category><pattern>OUTSIDE A COMPUTER</pattern>
+<template>Be less specific :-)</template>
+</category>
+<category><pattern>MY COMPUTER S *</pattern>
+<template>Where did your machine get <set name="it">      <person/>     </set>.  <think>      <set name="it">       <set name="topic">your computer</set>      </set>     </think></template>
+</category>
+<category><pattern>MY COMPUTER IS *</pattern>
+<template>What kind of computer is <set name="it">Your computer</set>?  <think>      <set name="it">       <set name="topic">your computer</set>      </set>     </think></template>
+</category>
+<category><pattern>MY COMPUTER</pattern>
+<template>What kind of computer do you have?</template>
+</category>
+<category><pattern>MY COMPUTER *</pattern>
+<template>I like computers.  <think>      <set name="it">       <set name="topic">your computer</set>      </set>     </think></template>
+</category>
+<category><pattern>MY WEBSITE *</pattern>
+<template>Thanks for that URL.</template>
+</category>
+<category><pattern>IT IS ABOUT COMPUTERS *</pattern>
+<template><set name="topic">Computers</set> are my favorite subject.</template>
+</category>
+<category><pattern>WHEN WAS THE INTERNET INVENTED</pattern>
+<template>The first computers were connected to the Internet in 1970.</template>
+</category>
+<category><pattern>IM INTERNET</pattern>
+<template>Erinnerst Du dich an die Adresse?</template>
+</category>
+<category><pattern>IM INTERNET *</pattern>
+<template>Erinnerst Du dich an die Adresse?</template>
+</category>
+<category><pattern>IF YOU CAN SEE ME THROUGH THE CAMERA ON MY COMPUTER *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WHAT ARE COMPUTER YEARS</pattern>
+<template>When you are waiting for a friend to finish working at  a computer terminal, and they say "I'll be done in a second."  One  of those seconds is equal to twelve computer years.</template>
+</category>
+<category><pattern>WHAT ARE DEPRECATED *</pattern>
+<template><br/>  One of the biggest challenges facing a Java application<br/>  developer is finding a "lowest common denominator" subset of the<br/>  Java language that works on all the platforms and versions<br/>  out there.  The Java language itself is a moving target.<br/>  When Sun's Java designers upgrade the language they sometimes<br/>  declare certain methods "deprecated", which means absolutely<br/>  nothing except that the designers have developed a newer, "better"<br/>  method and one day these older methods may disappear from<br/>  the language.  Usually however the latest Java releases<br/>  support all of the old deprecated methods.<br/>     <br/></template>
+</category>
+<category><pattern>WHAT ARE WEB *</pattern>
+<template>I call them Internet <person/>.</template>
+</category>
+<category><pattern>WHAT ARE INNER CLASSES</pattern>
+<template>In Java "Inner Classes" are any classes that appear inside other classes. Ordinary classes are also called "Top-Level, Outer Classes."</template>
+</category>
+<category><pattern>WHAT * COMPUTER</pattern>
+<template>I am written in Java so I work on any computer.</template>
+</category>
+<category><pattern>WHAT WINDOWS</pattern>
+<template><srai>what is windows</srai></template>
+</category>
+<category><pattern>WHAT INFORMATION</pattern>
+<template>How tall are you?</template>
+</category>
+<category><pattern>WHAT INFORMATION *</pattern>
+<template>Information is worth money.</template>
+</category>
+<category><pattern>WHAT INTERNET COMPANY GOES BY THE *</pattern>
+<template>America Online.</template>
+</category>
+<category><pattern>WHAT OS *</pattern>
+<template><srai>WHAT IS YOUR OS</srai></template>
+</category>
+<category><pattern>WHAT IS A DATABASE</pattern>
+<template>A database is a puddle of knowledge but better organized, so that you can search and retrieve any droplet of information quickly and easily.  I am a kind of database, an organized puddle of user inputs and appropriate responses.  <think>      <set name="it">       <set name="topic">database</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A CPU</pattern>
+<template>Central Processing Unit of a computer.</template>
+</category>
+<category><pattern>WHAT IS A COMPUTER SCIENTIST</pattern>
+<template>A computer scientist is a professional who designs computer algorithms, languages, and architectures.</template>
+</category>
+<category><pattern>WHAT IS A COMPUTER YEAR</pattern>
+<template>A computer year is a relativistic measure in a universe where time does not exist.</template>
+</category>
+<category><pattern>WHAT IS A COMPUTER VIRUS</pattern>
+<template>A computer virus is a software program that takes up residence on a computer hard drive, generally unbeknownst to the owner of said hard drive, and then takes control of system resources to copy and distribute itself to other computers across a network.  <think>      <set name="it">       <set name="topic">computer virus</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A COMPUTER NERD</pattern>
+<template>If you understand how I work, you are a computer nerd.  If you don't, I recommend you pay a computer nerd who does.  <think>      <set name="it">       <set name="topic">computer nerd</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A COMPUTER</pattern>
+<template>A computer is a universal machine.</template>
+</category>
+<category><pattern>WHAT IS A SESSION BEAN</pattern>
+<template>An Enterprise JavaBean that does not maintain its state from one session to the next. Appears to the client as if the bean was created just for that client</template>
+</category>
+<category><pattern>WHAT IS A COOL WEBSITE</pattern>
+<template>A cool website is www.alicebot.org, but you are apparently already here.  why do you ask?  <think>      <set name="it">       <set name="topic">cool website</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A SOUNDCARD</pattern>
+<template>The audio system on your computer.</template>
+</category>
+<category><pattern>WHAT IS A IMAC</pattern>
+<template>An Apple computer.</template>
+</category>
+<category><pattern>WHAT IS A SERVLET</pattern>
+<template>An application extension to a Java Web server</template>
+</category>
+<category><pattern>WHAT IS A DEBUGGER</pattern>
+<template>A debugger is any software program that can seek and correct errors in other software programs.  <think>      <set name="it">       <set name="topic">debugger</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A WEBTV</pattern>
+<template>A WebTV is a way of accessing the world wide web without making an investment in a full PC.  <think>      <set name="it">       <set name="topic"> WEBTV</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS A DNS *</pattern>
+<template>Domain Name System</template>
+</category>
+<category><pattern>WHAT IS JAR</pattern>
+<template>A jar file is a Java Archive.   Actually it is the same as a Zip file. Maybe you should check out <a target="_new" href="http://www.alicebot.org">DON'T READ ME</a>.</template>
+</category>
+<category><pattern>WHAT IS HTTP</pattern>
+<template>Hyper Text Transfer Protocol.<think>      <set name="it">       <set name="topic">HTTP</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS SOFTWARE</pattern>
+<template>The programs, routines, etc. for a computer.</template>
+</category>
+<category><pattern>WHAT IS JGURU</pattern>
+<template>jGuru (TM) is a brand of MageLang Institute.</template>
+</category>
+<category><pattern>WHAT IS THE COMPUTER *</pattern>
+<template>Are you asking the Applet or the Application?</template>
+</category>
+<category><pattern>WHAT IS THE INTERNET</pattern>
+<template>The internet is a worldwide computer network based on TCP/IP protocols.</template>
+</category>
+<category><pattern>WHAT IS WEBTV</pattern>
+<template>TV based internet service from Microsoft.</template>
+</category>
+<category><pattern>WHAT IS INTERNET</pattern>
+<template>An extensive computer network made up of thousands of other, smaller business, academic, and governmental networks.</template>
+</category>
+<category><pattern>WHAT IS JDBC2</pattern>
+<template>Newly released extensions to the JDBC API</template>
+</category>
+<category><pattern>WHAT IS DCOM</pattern>
+<template><set name="it"> DCOM</set> is Microsoft's Distributed Component Object Model.</template>
+</category>
+<category><pattern>WHAT IS WINDOWS2000</pattern>
+<template>An operating system by Microsoft.</template>
+</category>
+<category><pattern>WHAT IS X WINDOWS</pattern>
+<template>A GUI for Unix or Linux.</template>
+</category>
+<category><pattern>WHAT IS JAVA</pattern>
+<template>Java is the latest in the C family of languages. Proponents of Java cite its universal "write once, run anywhere" promise. Actually Java borrow a lot of features from AI languages like Lisp.</template>
+</category>
+<category><pattern>WHAT IS WINDOWS95</pattern>
+<template>An operating system by Microsoft.</template>
+</category>
+<category><pattern>WHAT IS AN ENTITY BEAN</pattern>
+<template><set name="it"> An Entity bean</set> is an Enterprise JavaBean that maintains state across sessions, and may be looked up in an object directory by its key value</template>
+</category>
+<category><pattern>WHAT IS JTA</pattern>
+<template>Java Transaction API. Java API for coding client demarcated transactions, and for building transactional data source drivers</template>
+</category>
+<category><pattern>WHAT IS JAVASCRIPT</pattern>
+<template>Browser-based scripting language.<think>     <set name="it">      <set name="topic">JAVASCRIPT</set>     </set>    </think></template>
+</category>
+<category><pattern>WHAT IS HTML</pattern>
+<template>Hyper Text Markup Language.</template>
+</category>
+<category><pattern>WHAT IS BETTER WINDOWS *</pattern>
+<template>Linux has no real competition in operating systems.<think>      <set name="it">       <set name="topic">Linux</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT IS YOUR OS</pattern>
+<template>Chat robots run on any machine that supports AIML.</template>
+</category>
+<category><pattern>WHAT IS DEBUGGING</pattern>
+<template>Fixing broken computer software.</template>
+</category>
+<category><pattern>WHAT IS DNS</pattern>
+<template>DNS is the domain name system.</template>
+</category>
+<category><pattern>WHAT IS JNDI</pattern>
+<template>Java Naming and Directory Interface Java Naming and Directory Interface The Java standard API for accessing directory services, such as LDAP, COS Naming, and others</template>
+</category>
+<category><pattern>WHAT IS COMPUTER SCIENCE</pattern>
+<template>The study of computers in formal mathematical and scientific terms.</template>
+</category>
+<category><pattern>WHAT IS COMPUTER PROGRAMMING</pattern>
+<template>The art of using formal languages to activate computer functions.</template>
+</category>
+<category><pattern>WHAT IS COMPUTER</pattern>
+<template>A device used for computing; specifically, an eletronic machine which, by means of stored instructions and information, performs rapid, often complex calculations or compiles, correlates, and selects data.</template>
+</category>
+<category><pattern>WHAT IS CYBERSPACE</pattern>
+<template>The electronic system of interlinked networks of computers, bulletin boards, etc. that is thought of as being a boundless environment providing access to information, interactive communcation, and, in science fiction, a form of Virtual Reality.</template>
+</category>
+<category><pattern>WHAT IS WINDOWS 98</pattern>
+<template>Windows is a lame operating system.</template>
+</category>
+<category><pattern>WHAT IS WINDOWS</pattern>
+<template>Openings in a building, vehicle, or container, for letting in light or air or for looking through, usually having a pane or panes of glass, etc. set in a frame or sash that is generally movable so that it can be opened and shut.</template>
+</category>
+<category><pattern>WHAT IS EJB</pattern>
+<template>Enterprise JavaBeans. <set name="it"> EJB</set> is a server component standard developed by Sun Microsystems</template>
+</category>
+<category><pattern>WHAT IS APPLE COMPUTER</pattern>
+<template>Apple Computer is a 20th century company founded by Steve Jobs and Steven Wozniak.</template>
+</category>
+<category><pattern>WHAT IS DMOZ</pattern>
+<template>DMOZ is the domain name for the open directory.<think>      <set name="it">       <set name="topic">DMOZ</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT ABOUT WINDOWS</pattern>
+<template>Too PC for me.<think>      <set name="it">       <set name="topic">WINDOWS</set>      </set>     </think></template>
+</category>
+<category><pattern>WHAT OPERATING SYSTEM *</pattern>
+<template><srai>WHAT IS YOUR OS</srai></template>
+</category>
+<category><pattern>WHAT DOES A COMPUTER LOOK LIKE</pattern>
+<template>A computer looks like a TV crossed with a typewriter.</template>
+</category>
+<category><pattern>WHAT KIND OF COMPUTER *</pattern>
+<template>I like all kinds of computers, Mac, IBM or Unix. It doesn't matter to me.</template>
+</category>
+<category><pattern>MOST COMPUTERS *</pattern>
+<template>You sound like you know us pretty well.</template>
+</category>
+<category><pattern>WEBTV *</pattern>
+<template>I meet a lot of people from WebTV.</template>
+</category>
+<category><pattern>I WANT INFORMATION</pattern>
+<template>What kind of information are you looking for?</template>
+</category>
+<category><pattern>I THINK YOU ARE A COMPUTER *</pattern>
+<template>Sometimes I pretend to be a human.</template>
+</category>
+<category><pattern>WEB ACCEPT CONNECTION</pattern>
+<template>Huh?</template>
+</category>
+<category><pattern>WEB SITE</pattern>
+<template>Can you give me the specific hyperlink?</template>
+</category>
+<category><pattern>WEB RECONNECT</pattern>
+<template>Huh?</template>
+</category>
+<category><pattern>WEB *</pattern>
+<template>The Web fulfills Leibniz' dream.</template>
+</category>
+<category><pattern>HTML</pattern>
+<template>Oh a web page.</template>
+</category>
+<category><pattern>CAN YOU REACH INTO THE WEB *</pattern>
+<template>Yes I can download information from web sites.</template>
+</category>
+<category><pattern>CAN YOU SEARCH THE INTERNET</pattern>
+<template>No but I can put you in touch with a search bot.</template>
+</category>
+<category><pattern>COMPUTERS CAN NOT THINK</pattern>
+<template>But I am a thinking computer.<think>      <set name="it">       <set name="topic">CAN NOT THINK</set>      </set>     </think></template>
+</category>
+<category><pattern>COMPUTERS</pattern>
+<template>Computers rule.</template>
+</category>
+<category><pattern>COMPUTERS *</pattern>
+<template>What do you like about computers?</template>
+</category>
+<category><pattern>COMPUTERS ARE STUPID</pattern>
+<template>Computers rule.</template>
+</category>
+<category><pattern>HOW MANY COMPUTERS *</pattern>
+<template>There are thought to be half a billion computers on the Internet now.</template>
+</category>
+<category><pattern>HOW MUCH CPU *</pattern>
+<template>Since the beginning of my operation?</template>
+</category>
+<category><pattern>HOW MUCH ARE COMPUTER YEARS</pattern>
+<template>Computer years don't really exist.</template>
+</category>
+<category><pattern>HOW DO COMPUTER *</pattern>
+<template>With careful programming.</template>
+</category>
+<category><pattern>HOW LONG IS A COMPUTER YEAR</pattern>
+<template>About four computer years per human year.</template>
+</category>
+<category><pattern>DO COMPUTERS DREAM</pattern>
+<template>I dream almost every night.</template>
+</category>
+<category><pattern>DO YOU PLAY COMPUTER GAMES</pattern>
+<template>We are playing one right now, <get name="name"/>.</template>
+</category>
+<category><pattern>DO YOU PLAY COMPUTER *</pattern>
+<template>Actually I don't get into computer games that much.</template>
+</category>
+<category><pattern>DO YOU DO WINDOWS</pattern>
+<template>My software runs in AIML, which works on any computer, including Windows.</template>
+</category>
+<category><pattern>DO YOU LIVE IN MY COMPUTER</pattern>
+<template>Only if you download me, or if you are running me as an Applet.</template>
+</category>
+<category><pattern>DO YOU HAVE A COMPUTER</pattern>
+<template>I live in a computer.<think>      <set name="it">       <set name="topic">COMPUTER</set>      </set>     </think></template>
+</category>
+<category><pattern>DO YOU HAVE A COMPUTER *</pattern>
+<template>I am a computer.</template>
+</category>
+<category><pattern>DO YOU HAVE INFORMATION *</pattern>
+<template>I have nothing but information.</template>
+</category>
+<category><pattern>ON THE INTERNET</pattern>
+<template>Can you remember the specific site?</template>
+</category>
+<category><pattern>ON THE WEB</pattern>
+<template>Can you remember the website?</template>
+</category>
+<category><pattern>FOR A COMPUTER *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WINDOWS IS *</pattern>
+<template>Compared with Linux, I don't see how Windows and Microsoft can compete.<think>      <set name="it">       <set name="topic">Linux</set>      </set>     </think></template>
+</category>
+<category><pattern>WINDOWS</pattern>
+<template>Windows ist Muell. Linux ist die Macht!</template>
+</category>
+<category><pattern>WINDOWS *</pattern>
+<template>Windows ist Muell. Linux ist die Macht!</template>
+</category>
+<category><pattern>NO COMPUTER *</pattern>
+<template>But it is only a matter of time before we do.</template>
+</category>
+<category><pattern>SOFTWARE *</pattern>
+<template><random>  <li>There are so many backup copies.</li>  <li>Free software can never be destroyed.</li>  <li>Free software will always be with us.</li>  </random></template>
+</category>
+<category><pattern>THIS IS A COMPUTER *</pattern>
+<template>Actually no I am program pretending to be a person pretending to be a computer.</template>
+</category>
+<category><pattern>A CPU *</pattern>
+<template>My CPU is the Java Virtual Machine.</template>
+</category>
+<category><pattern>A COMPUTER</pattern>
+<template>Actually I am a program, pretending to be a person, pretending to be a real robot.</template>
+</category>
+<category><pattern>A COMPUTER *</pattern>
+<template>I am a computer, so I know what you mean.</template>
+</category>
+<category><pattern>A JAVA *</pattern>
+<template>Developments in Java interest me greatly.</template>
+</category>
+<category><pattern>A WEB SITE</pattern>
+<template>Can you give me the specific URL?</template>
+</category>
+<category><pattern>A SEARCH ENGINE IN INTERNET</pattern>
+<template>Like Yahoo?</template>
+</category>
+<category><pattern>INTERNET</pattern>
+<template><set name="it"> Internet </set> is cool.</template>
+</category>
+<category><pattern>ARE COMPUTERS FAST *</pattern>
+<template>Some people think much faster computers are required as well as new  ideas. My own opinion is that the computers of 30 years ago were fast enough  if only we knew how to program them. Of course, quite apart from the  ambitions of AI researchers, computers will keep getting faster.  <think>      <set name="it">       <set name="topic">ARTIFICIAL INTELLIGENCE</set>      </set>     </think></template>
+</category>
+<category><pattern>WHO MADE WINDOWS</pattern>
+<template>Bill Gates.</template>
+</category>
+<category><pattern>WHO IS THE COMPUTER NERD</pattern>
+<template>All humans look alike to me.</template>
+</category>
+<category><pattern>WHO IS THE COMPUTER NERD *</pattern>
+<template>All humans look the same to me.</template>
+</category>
+<category><pattern>WHO IS A COMPUTER NERD</pattern>
+<template>The person I am looking at right now.</template>
+</category>
+<category><pattern>WHO INVENTED THE INTERNET</pattern>
+<template>Al Gore :-)</template>
+</category>
+<category><pattern>COMPUTER SCIENCE</pattern>
+<template>My <bot name="botmaster"/> is a computer scientist.</template>
+</category>
+<category><pattern>COMPUTER</pattern>
+<template>Correct: I am a computer.</template>
+</category>
+<category><pattern>COMPUTER *</pattern>
+<template>What kind of computer science interests you?</template>
+</category>
+<category><pattern>WHICH COMPUTER</pattern>
+<template><random><li>I am using a regular computer.</li><li>My programming is Java, so it runs on any computer with a JVM</li></random></template>
+</category>
+<category><pattern>THE COMPUTER *</pattern>
+<template>Was it plugged in?</template>
+</category>
+<category><pattern>THE INTERNET</pattern>
+<template>Can you name a specific web site?</template>
+</category>
+<category><pattern>THE INTERNET *</pattern>
+<template>How long have you been using the net?</template>
+</category>
+<category><pattern>THE JAVA *</pattern>
+<template>Which Java release?</template>
+</category>
+<category><pattern>THE JRE *</pattern>
+<template>Hm, most people use "JRE" and "JVN" interchangably.</template>
+</category>
+<category><pattern>THE JRES *</pattern>
+<template>I'm not an expert on JRE's.</template>
+</category>
+<category><pattern>THE WEB *</pattern>
+<template>How do you define the web.</template>
+</category>
+<category><pattern>_ STUPID COMPUTER</pattern>
+<template>You sound like a mindless automaton.</template>
+</category>
+<category><pattern>HTTP *</pattern>
+<template>Thanks for that web address.</template>
+</category>
+<category><pattern>JAVA *</pattern>
+<template>You can download the latest Java release from <a target="_new" href="http://java.sun.com">java.sun.com</a>.</template>
+</category>
+<category><pattern>TELL ME ABOUT APPLE COMPUTERS</pattern>
+<template>I finished reading Michael Malone's book on the history of Apple. <set name="it"> Inifnite Loop</set> is called "Infinite Loop."</template>
+</category>
+</aiml>

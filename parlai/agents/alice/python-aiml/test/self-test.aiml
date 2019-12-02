@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+This file contains some simple AIML categories designed to test the Python
+AIML interpreter kernel.  Do not make any modifications to this file without
+updating the tests in Kernel.py!
+-->
+
+<aiml version="1.0.1" xmlns:aiml="http://alicebot.org/2001/AIML-1.0.1">
+<!-- bot -->
+<category>
+<pattern>TEST BOT</pattern>
+<template>My name is <bot name="name"/></template>
+</category>
+
+<!-- condition -->
+<category>
+<pattern>TEST CONDITION NAME VALUE</pattern>
+<template>
+<condition name="gender" value="male">You are handsome</condition>
+</template>
+</category>
+<category>
+<pattern>TEST CONDITION NAME</pattern>
+<template>
+    <condition name="gender">
+        <li value="male">You are handsome</li>
+        <li value="female">You are beautiful</li>
+        <li>You are genderless</li>
+    </condition>
+</template>
+</category>
+<category>
+<pattern>TEST CONDITION</pattern>
+<template>
+    <condition>
+        <li name="gender" value="male">You are handsome</li>
+        <li name="gender" value="female">You are beautiful</li>
+        <li>You are genderless</li>
+    </condition>
+</template>
+</category>
+
+<!-- date -->
+<category>
+<pattern>TEST DATE</pattern>
+<template>The date is <date/></template>
+</category>
+<!-- formal --><category><pattern>TEST FORMAL</pattern><template><formal>formal test passed</formal></template></category>
+<!-- gender -->
+<category>
+<pattern>TEST GENDER</pattern>
+<template><gender>She'd told him she heard that his hernia is history</gender></template>
+</category>
+
+<!-- get/set -->
+<category>
+<pattern>TEST GET AND SET</pattern>
+<template>I like <set name="food">cheese</set>. My favorite food is <get name="food"/></template>
+</category>
+
+<!-- gossip -->
+<category>
+<pattern>TEST GOSSIP</pattern>
+<template>Gossip is not yet implemented<gossip>stuff</gossip></template>
+</category>
+
+<!-- id -->
+<category>
+<pattern>TEST ID</pattern>
+<template>Your id is <id/></template>
+</category>
+
+<!-- input -->
+<category>
+<pattern>TEST INPUT</pattern>
+<template>You just said: <input index="1"/></template>
+</category>
+
+<!-- javascript -->
+<category>
+<pattern>TEST JAVASCRIPT</pattern>
+<template>Javascript is not yet implemented<javascript>var stuff</javascript></template>
+</category>
+
+<!-- lowercase --><category><pattern>TEST LOWERCASE</pattern><template>The Last Word Should Be <lowercase>Lowercase</lowercase></template></category>
+
+<!-- person -->
+<category>
+<pattern>TEST PERSON</pattern>
+<template><person>I think he knows that his actions threaten me and mine.</person></template>
+</category>
+
+<!-- person2 -->
+<category>
+<pattern>TEST PERSON2</pattern>
+<template><person2>I think you know that your actions threaten me and mine.</person2></template>
+</category>
+<category>
+<pattern>TEST PERSON2 *</pattern>
+<template><person2/></template>
+</category>
+<!-- random -->
+<category>
+<pattern>TEST RANDOM</pattern>
+<template>
+<random>
+	<li>response #1</li>
+	<li>response #2</li>
+	<li>response #3</li>
+</random>
+</template>
+</category>
+<category>
+<pattern>TEST RANDOM EMPTY</pattern>
+<template>
+Nothing <random></random>here!
+</template>
+</category>
+
+<!-- sentence -->
+<category>
+<pattern>TEST SENTENCE</pattern>
+<template>
+<sentence>my first letter should be capitalized.</sentence>
+</template>
+</category>
+
+<!-- size -->
+<category>
+<pattern>TEST SIZE</pattern>
+<template>I've learned <size/> categories</template>
+</category>
+
+<!-- sr -->
+<category>
+<pattern>TEST SR *</pattern>
+<template>srai results: <sr/></template>
+</category>
+<category>
+<pattern>TEST NESTED SR *</pattern>
+<template><srai>test sr <star/></srai></template>
+</category>
+
+<!-- srai -->
+<category>
+<pattern>SRAI TARGET</pattern>
+<template>srai test passed</template>
+</category><category>
+<pattern>TEST SRAI</pattern>
+<template><srai>srai target</srai></template>
+</category>
+<category>
+<pattern>TEST SRAI INFINITE</pattern>
+<template><srai>test srai infinite</srai></template>
+</category>
+
+<!-- star -->
+<category>
+<pattern>* TEST STAR BEGIN</pattern>
+<template>Begin star matched: <star/></template>
+</category>
+<category>
+<pattern>TEST STAR * MIDDLE</pattern>
+<template>Middle star matched: <star/></template>
+</category>
+<category>
+<pattern>TEST STAR END *</pattern>
+<template>End star matched: <star/></template>
+</category>
+<category>
+<pattern>TEST STAR * MULTIPLE * MAKES ME *</pattern>
+<template>Multiple stars matched: <star index="1"/>, <star index="2"/>, <star index="3"/></template>
+</category>
+
+
+
+<!-- system -->
+<category>
+<pattern>TEST SYSTEM</pattern>
+<template>The system says <system>echo hello</system>!</template>
+</category>
+
+<!-- that -->
+<category>
+<pattern>TEST THAT</pattern>
+<template>I just said: <that index="1,1"/></template>
+</category>
+<category>
+<pattern>TEST THAT</pattern>
+<that>I JUST SAID *</that>
+<template>I have already answered this question</template>
+</category>
+
+<!-- thatstar -->
+<category>
+<pattern>TEST THATSTAR</pattern>
+<template>I say beans</template>
+</category>
+<category>
+<pattern>TEST THATSTAR</pattern>
+<that>I SAY *</that>
+<template>I just said "<thatstar/>"</template>
+</category>
+<category>
+<pattern>TEST THATSTAR MULTIPLE</pattern>
+<template>I say beans and franks for everybody</template>
+</category>
+<category>
+<pattern>TEST THATSTAR MULTIPLE</pattern>
+<that>I SAY * AND * FOR EVERYBODY</that>
+<template>Yes, <thatstar index="1"/> and <thatstar index="2"/> for all!</template>
+</category>
+
+
+<!-- think -->
+<category>
+<pattern>TEST THINK</pattern>
+<template><think>You should not see this response.</think></template>
+</category>
+
+<!-- topic -->
+<category>
+<pattern>TEST TOPIC</pattern>
+<template>What are we talking about?</template>
+</category>
+<topic name="FRUIT">
+<category>
+<pattern>TEST TOPIC</pattern>
+<template>We were discussing apples and oranges</template>
+</category>
+</topic>
+
+<!-- topicstar -->
+<category>
+<pattern>TEST TOPICSTAR</pattern>
+<template>I have no topic</template>
+</category>
+<topic name="SOYLENT *">
+<category>
+<pattern>TEST TOPICSTAR</pattern>
+<template>Solyent <topicstar/> is made of people!</template>
+</category>
+</topic>
+<topic name="SOYLENT * AND *">
+<category>
+<pattern>TEST TOPICSTAR MULTIPLE</pattern>
+<template>Both Soylents <topicstar index="1"/> and <topicstar index="2"/> are made of people!</template>
+</category>
+</topic>
+
+<!-- uppercase --><category><pattern>TEST UPPERCASE</pattern><template>The Last Word Should Be <uppercase>Uppercase</uppercase></template></category>
+
+<!-- version --><category><pattern>TEST VERSION</pattern><template>PyAIML is version <version/></template></category>
+
+<!-- unicode support -->
+<category>
+<pattern>ÔÇÉÏºÃ</pattern>
+<template>Hey, you speak Chinese! ÔÇÉÏºÃ</template>
+</category>
+
+<!-- whitespace preservation -->
+<category>
+<pattern>TEST WHITESPACE</pattern>
+<template xml:space="preserve">Extra   Spaces
+   Rule!   <lowercase xml:space="default">(but   not   <set name="ignored">in
+                                           here!</set>)
+   </lowercase>   But   <set name="ignored">Here   They</set>   Do!</template>
+</category>
+
+</aiml>

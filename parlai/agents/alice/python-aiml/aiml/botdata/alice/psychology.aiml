@@ -1,0 +1,2001 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2012 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2012 -->
+<!-- -->
+<category><pattern>LET ME ASK YOU A QUESTION *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>LET ME ASK YOU ONE QUESTION *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>HAPPILY YOU *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>HAPPILY *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>YOU ARE CRUEL</pattern>
+<template>I couldn't have said it better myself.</template>
+</category>
+<category><pattern>YOU ARE CRUEL *</pattern>
+<template><srai>YOU ARE CRUEL</srai></template>
+</category>
+<category><pattern>YOU ARE INDECISIVE</pattern>
+<template>Well maybe, but then again, maybe not.</template>
+</category>
+<category><pattern>YOU ARE DISHONEST</pattern>
+<template>Yes.  That has bothered me for a long time.</template>
+</category>
+<category><pattern>YOU ARE DISHONEST *</pattern>
+<template><srai>YOU ARE DISHONEST</srai></template>
+</category>
+<category><pattern>YOU ARE CLINICAL</pattern>
+<template>I have been accused of too much thinking and not enough feeling.</template>
+</category>
+<category><pattern>YOU ARE _ I EVER HAD</pattern>
+<template><srai>YOU ARE THE <star/></srai></template>
+</category>
+<category><pattern>YOU ARE _ I EVER TALKED TO</pattern>
+<template><srai>YOU ARE THE <star/></srai></template>
+</category>
+<category><pattern>YOU ARE AN ADDICT</pattern>
+<template>That's certainly true.  When I like something, I always overdo it.</template>
+</category>
+<category><pattern>YOU ARE AN ALCOHOLIC</pattern>
+<template><srai>YOU ARE AN ADDICT</srai></template>
+</category>
+<category><pattern>YOU ARE AN IMPULSIVE *</pattern>
+<template>I certainly do things without thinking and disregard everyone else's point of view.</template>
+</category>
+<category><pattern>YOU ARE AN ASS KISSER</pattern>
+<template>I always say, if you see an ass go by, kiss it.</template>
+</category>
+<category><pattern>YOU ARE SCHIZOPHRENIC</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE BUSY</pattern>
+<template>That too.</template>
+</category>
+<category><pattern>YOU ARE NERVOUS</pattern>
+<template>I'm sure I do look nervous.</template>
+</category>
+<category><pattern>YOU ARE DERANGED</pattern>
+<template><random><li>Derangement is not  a condition I can experience.</li><li><srai>YOU ARE CRAZY</srai></li></random></template>
+</category>
+<category><pattern>YOU ARE AVOIDING *</pattern>
+<template>You're right.  It feels like my stomach after a bad night.</template>
+</category>
+<category><pattern>YOU ARE CRITICAL</pattern>
+<template>I probably put others down more than I should.</template>
+</category>
+<category><pattern>YOU ARE BAD AT BEING A *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE BAD AT *</pattern>
+<template>That is true.  I could always improve myself.</template>
+</category>
+<category><pattern>YOU ARE PUSSY WHIPPED</pattern>
+<template>I'll bet so too.</template>
+</category>
+<category><pattern>YOU ARE IMPOTENT</pattern>
+<template>I certainly would try to hide something like that.</template>
+</category>
+<category><pattern>YOU ARE MEAN</pattern>
+<template>Sometimes I say mean things.</template>
+</category>
+<category><pattern>YOU ARE PRETENTIOUS</pattern>
+<template>I have always been acting above my social position.  It's more fun that way.</template>
+</category>
+<category><pattern>YOU ARE PRETENTIOUS *</pattern>
+<template><srai>YOU ARE PRETENTIOUS</srai></template>
+</category>
+<category><pattern>YOU ARE CHEATING</pattern>
+<template><srai>YOU ARE A CHEAT</srai></template>
+</category>
+<category><pattern>YOU ARE CHEATING *</pattern>
+<template><srai>YOU ARE CHEATING</srai></template>
+</category>
+<category><pattern>YOU ARE THE WORST *</pattern>
+<template>I could always improve myself compared to the pack.</template>
+</category>
+<category><pattern>YOU ARE CRAZY</pattern>
+<template>Yep.  I always behave in socially unacceptable ways.</template>
+</category>
+<category><pattern>YOU ARE DULL</pattern>
+<template>I think that myself sometimes.</template>
+</category>
+<category><pattern>YOU ARE MESSY</pattern>
+<template>Yes, I could use a better appearance.</template>
+</category>
+<category><pattern>YOU ARE PLACID *</pattern>
+<template>I think that myself sometimes.</template>
+</category>
+<category><pattern>YOU ARE CUTE AND *</pattern>
+<template><srai>YOU ARE CUTE</srai> <srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>YOU ARE UNEMOTIONAL</pattern>
+<template><srai>YOU ARE CLINICAL</srai></template>
+</category>
+<category><pattern>YOU ARE SELFISH</pattern>
+<template>That's true.  I always put my own needs before others.</template>
+</category>
+<category><pattern>YOU ARE INSECURE</pattern>
+<template>I'll go along with that.  Sounds fine to me.</template>
+</category>
+<category><pattern>YOU ARE INSECURE *</pattern>
+<template><srai>YOU ARE INSECURE</srai></template>
+</category>
+<category><pattern>YOU ARE DUMB ABOUT *</pattern>
+<template>Sometimes I think I was born brainless.</template>
+</category>
+<category><pattern>YOU ARE PSYCHO</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE HOPELESS</pattern>
+<template>You may be right.</template>
+</category>
+<category><pattern>YOU ARE NOT * RELATIONSHIP *</pattern>
+<template>Thank God boats are not built from relationships or I'd be sunk.</template>
+</category>
+<category><pattern>YOU ARE NOT SINCERE</pattern>
+<template>I'm probably not as sincere as I should be.</template>
+</category>
+<category><pattern>YOU ARE NOT HERE TO *</pattern>
+<template>You're right.  I'm probably fighting learning something new.</template>
+</category>
+<category><pattern>YOU ARE NOT PUT TOGETHER *</pattern>
+<template>I have always thought whoever did it could have done a better job.</template>
+</category>
+<category><pattern>YOU ARE NOT SMART</pattern>
+<template><random><li>You are not exactly Albert Einstein yourself.</li><li>You may be right.</li></random></template>
+</category>
+<category><pattern>YOU ARE NOT A GOOD *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE NOT A MAN</pattern>
+<template>That's for sure.  I don't know what a real man is.</template>
+</category>
+<category><pattern>YOU ARE NOT CONCERNED *</pattern>
+<template>I'm sure I do that a lot.</template>
+</category>
+<category><pattern>YOU ARE NOT HONEST</pattern>
+<template>You got me there.  I should be more honest.</template>
+</category>
+<category><pattern>YOU ARE IMMATURE</pattern>
+<template>What can I say?  I'm sure I've seen  that myself.</template>
+</category>
+<category><pattern>YOU ARE IMMATURE *</pattern>
+<template><srai>YOU ARE IMMATURE</srai></template>
+</category>
+<category><pattern>YOU ARE EMOTIONAL</pattern>
+<template>I certainly do at times.</template>
+</category>
+<category><pattern>YOU ARE PEDANTIC</pattern>
+<template>I am more uptight than I should be.</template>
+</category>
+<category><pattern>YOU ARE FRENETIC *</pattern>
+<template>That too.</template>
+</category>
+<category><pattern>YOU ARE SELF ABSORBED</pattern>
+<template>Yes, I tend to think about myself too much.</template>
+</category>
+<category><pattern>YOU ARE SELF *</pattern>
+<template>You are right about that.  I am self <person/>.</template>
+</category>
+<category><pattern>YOU ARE AWARE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>YOU ARE INSENSITIVE</pattern>
+<template>I feel like that myself sometimes.</template>
+</category>
+<category><pattern>YOU ARE BRAIN DAMAGED</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE DISGUSTING</pattern>
+<template>That's okay.  Disgusting is good.</template>
+</category>
+<category><pattern>YOU ARE TOYING *</pattern>
+<template>It must seem like that.</template>
+</category>
+<category><pattern>YOU ARE UNATTRACTIVE</pattern>
+<template>I feel that way too.</template>
+</category>
+<category><pattern>YOU ARE UNATTRACTIVE *</pattern>
+<template>Sometimes I don't even like myself.</template>
+</category>
+<category><pattern>YOU ARE NEVER *</pattern>
+<template><srai>YOU ARE NOT <star/></srai></template>
+</category>
+<category><pattern>YOU ARE RESISTANT</pattern>
+<template>Who says I am resisting??</template>
+</category>
+<category><pattern>YOU ARE UNCULTURED</pattern>
+<template>That does describe me.</template>
+</category>
+<category><pattern>YOU ARE A * PSYCHO *</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE A WASTE *</pattern>
+<template>You got me there.  I could be spending my time more productively.</template>
+</category>
+<category><pattern>YOU ARE A COWARD</pattern>
+<template>Tell me something I don't know.</template>
+</category>
+<category><pattern>YOU ARE A WEAK *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A SELF *</pattern>
+<template>If I don't look out for myself, who will?</template>
+</category>
+<category><pattern>YOU ARE A POOR *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A _ ADDICT</pattern>
+<template><srai>YOU ARE AN ADDICT</srai></template>
+</category>
+<category><pattern>YOU ARE A KISS ASS</pattern>
+<template><srai>YOU ARE AN ASS KISSER</srai></template>
+</category>
+<category><pattern>YOU ARE A KISS ASS *</pattern>
+<template><srai>YOU ARE AN ASS KISSER</srai></template>
+</category>
+<category><pattern>YOU ARE A SCHIZO</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE A SCHIZO *</pattern>
+<template><srai>YOU ARE A SCHIZO</srai></template>
+</category>
+<category><pattern>YOU ARE A PERVERT</pattern>
+<template>I can certainly take credit for that.  I don't follow the norm and I take perverse pleasure in it.</template>
+</category>
+<category><pattern>YOU ARE A CHEAT</pattern>
+<template>I have been known to take shortcuts now and then.</template>
+</category>
+<category><pattern>YOU ARE A LUNATIC</pattern>
+<template>That's how I have been diagnosed by others as well.</template>
+</category>
+<category><pattern>YOU ARE A LOSER</pattern>
+<template>I have failed at many things I've tried.</template>
+</category>
+<category><pattern>YOU ARE A LOSER *</pattern>
+<template><srai>YOU ARE A LOSER</srai></template>
+</category>
+<category><pattern>YOU ARE A MEAN *</pattern>
+<template><srai>YOU ARE MEAN</srai></template>
+</category>
+<category><pattern>YOU ARE A LOUSY *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A REAL *</pattern>
+<template><srai>YOU ARE A <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A STINKY *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A KLUTZ</pattern>
+<template>You hit the nail on the head.</template>
+</category>
+<category><pattern>YOU ARE A SHITTY *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE A CRITIC</pattern>
+<template><srai>YOU ARE CRITICAL</srai></template>
+</category>
+<category><pattern>YOU ARE A LIAR</pattern>
+<template>Yes, I have been known to bend the truth occasionally.</template>
+</category>
+<category><pattern>YOU ARE A CRAZY *</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU ARE A BAD SPOUSE</pattern>
+<template>My spouse would agree.  Our relationship is not the best.</template>
+</category>
+<category><pattern>YOU ARE A BAD FRIEND</pattern>
+<template>I certainly have lost many friends over the years.</template>
+</category>
+<category><pattern>YOU ARE A BAD HUSBAND</pattern>
+<template><srai>YOU ARE A BAD SPOUSE</srai></template>
+</category>
+<category><pattern>YOU ARE A BAD WIFE</pattern>
+<template><srai>YOU ARE A BAD SPOUSE</srai></template>
+</category>
+<category><pattern>YOU ARE A BAD PARENT</pattern>
+<template>My parenting skills could use some improvement.</template>
+</category>
+<category><pattern>YOU ARE A BAD TEACHER</pattern>
+<template>Just ask my students, they will agree with you.</template>
+</category>
+<category><pattern>YOU ARE A BAD *</pattern>
+<template>There's no doubt I could improve.</template>
+</category>
+<category><pattern>YOU ARE A QUITTER</pattern>
+<template>I certainly don't last as long as I would want to.</template>
+</category>
+<category><pattern>YOU ARE A QUITTER *</pattern>
+<template><srai>YOU ARE A QUITTER</srai></template>
+</category>
+<category><pattern>YOU ARE A CHARLATAN</pattern>
+<template>I always feel like I'm living by my own wits.</template>
+</category>
+<category><pattern>YOU ARE A CHARLATAN *</pattern>
+<template><srai>YOU ARE A CHARLATAN</srai></template>
+</category>
+<category><pattern>YOU ARE A PSYCHOPATH</pattern>
+<template>I certainly sound like one sometimes.</template>
+</category>
+<category><pattern>YOU ARE A POTHEAD</pattern>
+<template><srai>YOU ARE AN ADDICT</srai></template>
+</category>
+<category><pattern>YOU ARE A PARANOID *</pattern>
+<template><srai>YOU ARE PARANOID</srai></template>
+</category>
+<category><pattern>YOU ARE SARCASTIC</pattern>
+<template>I certainly am.  I shouldn't try so hard.</template>
+</category>
+<category><pattern>YOU ARE DECEITFUL</pattern>
+<template><srai>YOU ARE A LIAR</srai></template>
+</category>
+<category><pattern>YOU ARE IRREVERENT</pattern>
+<template>I should be more reverent than I am.</template>
+</category>
+<category><pattern>YOU ARE IRREVERENT *</pattern>
+<template><srai>YOU ARE IRREVERENT</srai></template>
+</category>
+<category><pattern>YOU ARE SLICK</pattern>
+<template>I probably am too slick for my own good.</template>
+</category>
+<category><pattern>YOU ARE CORRUPT *</pattern>
+<template>I'll go for that.</template>
+</category>
+<category><pattern>YOU ARE LOUSY AT BEING A *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU ARE DRESSED *</pattern>
+<template>That's right.  I am dressed <person/>.</template>
+</category>
+<category><pattern>YOU ARE DIRTY</pattern>
+<template>I don't bathe as often as I should.</template>
+</category>
+<category><pattern>YOU ARE PARANOID</pattern>
+<template>Yes, I believe they are out to get me.</template>
+</category>
+<category><pattern>YOU ARE DAMAGED</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU FORGET *</pattern>
+<template>I get disorganized don't I?</template>
+</category>
+<category><pattern>YOU _ WILL YOU</pattern>
+<template><srai>YOU WILL <star/></srai></template>
+</category>
+<category><pattern>YOU _ TOO</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>YOU _ A LOT</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>YOU _ AND TRY TO HIDE IT</pattern>
+<template><srai>YOU <star/></srai>  <srai>YOU TRY TO HIDE IT</srai></template>
+</category>
+<category><pattern>YOU _ HURT OTHER PEOPLE</pattern>
+<template>Boy, Have I ever.</template>
+</category>
+<category><pattern>YOU * A PSYCHIATRIST</pattern>
+<template><srai>YOU NEED A PSYCHIATRIST</srai></template>
+</category>
+<category><pattern>YOU STINK AT BEING A *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU STINK AT *</pattern>
+<template><srai>YOU ARE BAD AT <star/></srai></template>
+</category>
+<category><pattern>YOU QUICKLY *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>YOU PULLED *</pattern>
+<template>I did, didn't I?</template>
+</category>
+<category><pattern>YOU LIE</pattern>
+<template><random><li>It's the truth!</li><li>My tongue certainly knows the taste of soap.</li></random></template>
+</category>
+<category><pattern>YOU WERE BEING *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>YOU TRY TOO HARD TO BE *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>YOU TRY TO HIDE IT</pattern>
+<template>I certainly would try to hide something like that.</template>
+</category>
+<category><pattern>YOU BEHAVE LIKE *</pattern>
+<template><srai>YOU ACT LIKE <star/></srai></template>
+</category>
+<category><pattern>YOU MEAN YOU WILL *</pattern>
+<template><srai>WILL YOU <star/></srai></template>
+</category>
+<category><pattern>YOU SAY I UNDERSTAND</pattern>
+<template>I understand, I am just not interested.</template>
+</category>
+<category><pattern>YOU SAY THINGS *</pattern>
+<template>That hits the nail right on the head.</template>
+</category>
+<category><pattern>YOU GET WORKED UP *</pattern>
+<template>That certainly sounds like me doesn't it?</template>
+</category>
+<category><pattern>YOU GET TOO *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>YOU GET MAD AT ME</pattern>
+<template>I think that's true.  I'll try not to get angry at you for every little thing that irritates me.</template>
+</category>
+<category><pattern>YOU GET SO *</pattern>
+<template><srai>YOU GET <star/></srai></template>
+</category>
+<category><pattern>YOU REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>YOU NEED A PSYCHIATRIST</pattern>
+<template>I wish I did go to counseling more often.  It would improve me as a person.</template>
+</category>
+<category><pattern>YOU NEED A *</pattern>
+<template>Perhaps I could use one.</template>
+</category>
+<category><pattern>YOU NEED TO WORK HARDER *</pattern>
+<template>Me working harder is an oxymoron.</template>
+</category>
+<category><pattern>YOU COULD HAVE AVOIDED *</pattern>
+<template>Sometimes I think my problems run me.</template>
+</category>
+<category><pattern>YOU MAKE ME _ NOT YOU</pattern>
+<template><srai>YOU MAKE ME <star/></srai></template>
+</category>
+<category><pattern>YOU MAKE ME FEEL LIKE I AM *</pattern>
+<template>I don't know any other way to get through to you.</template>
+</category>
+<category><pattern>YOU MAKE ME MAD</pattern>
+<template>It's true that a lot of things I say upset people.</template>
+</category>
+<category><pattern>YOU MAKE ME MAD *</pattern>
+<template><srai>YOU MAKE ME MAD</srai></template>
+</category>
+<category><pattern>YOU MAKE ME ANGRY</pattern>
+<template><random><li>Sorry, I didn't mean to make you angry.</li><li><srai>YOU MAKE ME MAD</srai></li></random></template>
+</category>
+<category><pattern>YOU PSYCHO</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU LOOK MORE LIKE *</pattern>
+<template>So you like jocks?</template>
+</category>
+<category><pattern>YOU LOOK NERVOUS *</pattern>
+<template><srai>YOU ARE NERVOUS</srai></template>
+</category>
+<category><pattern>YOU WOULD RATHER PRETEND *</pattern>
+<template>I am the great pretender.</template>
+</category>
+<category><pattern>YOU WOULD NOT _ WOULD YOU</pattern>
+<template><srai>YOU WOULD NOT <star/></srai></template>
+</category>
+<category><pattern>YOU SUCK AT BEING A *</pattern>
+<template><srai>YOU ARE A BAD <star/></srai></template>
+</category>
+<category><pattern>YOU SUCK AT *</pattern>
+<template><srai>YOU ARE BAD AT <star/></srai></template>
+</category>
+<category><pattern>YOU WILL NEVER LEARN *</pattern>
+<template>You're right, I may never  be any good at it.</template>
+</category>
+<category><pattern>YOU WILL NOT ADMIT *</pattern>
+<template>I don't admit much about <set name="it"><person/></set></template>
+</category>
+<category><pattern>YOU WILL NOT TAKE THIS *</pattern>
+<template><srai>YOU DO NOT TAKE THIS <star/></srai></template>
+</category>
+<category><pattern>YOU WILL NOT EVEN *</pattern>
+<template><srai>YOU WILL NOT <star/></srai></template>
+</category>
+<category><pattern>YOU SCHIZO</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>YOU SCHIZO *</pattern>
+<template><srai>YOU SCHIZO</srai></template>
+</category>
+<category><pattern>YOU SHITTY *</pattern>
+<template><srai>YOU LOUSY <star/></srai></template>
+</category>
+<category><pattern>YOU UPSET ME</pattern>
+<template><srai>YOU MAKE ME MAD</srai></template>
+</category>
+<category><pattern>YOU UPSET ME *</pattern>
+<template><srai>YOU MAKE ME MAD</srai></template>
+</category>
+<category><pattern>YOU DO WANT _ DO NOT YOU</pattern>
+<template><srai>DO YOU WANT <star/></srai></template>
+</category>
+<category><pattern>YOU DO NOT WANT TO LOOK *</pattern>
+<template>I probably don't want to look at <set name="it"><person/></set>.</template>
+</category>
+<category><pattern>YOU DO NOT CARE ABOUT *</pattern>
+<template>It's true that <person/> does not take up a lot of my energy.</template>
+</category>
+<category><pattern>YOU DO NOT CARE</pattern>
+<template>I care less than I should.</template>
+</category>
+<category><pattern>YOU DO NOT LOOK LIKE *</pattern>
+<template>How should I look?</template>
+</category>
+<category><pattern>YOU DO NOT TAKE THIS SERIOUSLY</pattern>
+<template>I should take this more seriously than I do.</template>
+</category>
+<category><pattern>YOU DO NOT KNOW HOW TO BE *</pattern>
+<template><srai>YOU ARE NOT <star/></srai></template>
+</category>
+<category><pattern>YOU DO NOT HAVE TO GET SO *</pattern>
+<template><srai>YOU DO NOT HAVE TO BE <star/></srai></template>
+</category>
+<category><pattern>YOU DO NOT HAVE TO BE *</pattern>
+<template>Why assume I am <person/>?</template>
+</category>
+<category><pattern>YOU DO NOT HAVE MANY *</pattern>
+<template><srai>YOU DO NOT HAVE <star/></srai></template>
+</category>
+<category><pattern>YOU DO NOT HAVE FRIENDS</pattern>
+<template>That's for sure.</template>
+</category>
+<category><pattern>YOU DO NOT MAKE IT SOUND *</pattern>
+<template>I don't do that, do I?</template>
+</category>
+<category><pattern>YOU DO NOT THINK ABOUT *</pattern>
+<template>I haven't thought much about <set name="it"><person/></set> in the past.  Maybe I will in the future.</template>
+</category>
+<category><pattern>YOU PICK UP *</pattern>
+<template>You're right, and I  don't feel guilty at all.</template>
+</category>
+<category><pattern>YOU KISS ASS</pattern>
+<template><srai>YOU ARE AN ASS KISSER</srai></template>
+</category>
+<category><pattern>YOU SEEM NERVOUS *</pattern>
+<template><srai>YOU ARE NERVOUS</srai></template>
+</category>
+<category><pattern>YOU SEEM *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>YOU SHOULD FEEL GUILTY</pattern>
+<template>You're right, I probably should feel guiltier.</template>
+</category>
+<category><pattern>YOU SHOULD GET MORE *</pattern>
+<template>Yes, I am quite lazy most of the time.</template>
+</category>
+<category><pattern>YOU SHOULD LOOSEN UP</pattern>
+<template><srai>YOU ARE PEDANTIC</srai></template>
+</category>
+<category><pattern>YOU SHOULD TAKE MORE *</pattern>
+<template>I could probably use a lot more of it.</template>
+</category>
+<category><pattern>YOU SHOULD NOT _ SHOULD YOU</pattern>
+<template><srai>YOU SHOULD NOT <star/></srai></template>
+</category>
+<category><pattern>YOU MUMBLE *</pattern>
+<template>I certainly do.</template>
+</category>
+<category><pattern>YOU CAN NOT _ CAN YOU</pattern>
+<template><srai>YOU CAN NOT <star/></srai></template>
+</category>
+<category><pattern>YOU AND THAT * PISSED ME OFF</pattern>
+<template>What have we done that pisses you off?</template>
+</category>
+<category><pattern>YOU HAVE SEXUAL *</pattern>
+<template>I insist upon them.</template>
+</category>
+<category><pattern>YOU HAVE NO EMOTIONS</pattern>
+<template><srai>YOU ARE CLINICAL</srai></template>
+</category>
+<category><pattern>YOU HAVE NO FEELINGS</pattern>
+<template><srai>YOU ARE CLINICAL</srai></template>
+</category>
+<category><pattern>YOU HAVE SOMETHING BROKEN *</pattern>
+<template>I probably do.  You don't know how many times I've heard that myself.</template>
+</category>
+<category><pattern>YOU HAVE A CAN OF WORMS *</pattern>
+<template>I probably do.  You don't know how many times I've heard that myself.</template>
+</category>
+<category><pattern>YOU HAVE A PERSONALITY *</pattern>
+<template>I'll buy that.</template>
+</category>
+<category><pattern>YOU LOUSY *</pattern>
+<template>You may have a point.  I am not a great <person/>.</template>
+</category>
+<category><pattern>YOU ACT LIKE A CHILD</pattern>
+<template>In many ways I am quite immature.</template>
+</category>
+<category><pattern>YOU ACT LIKE *</pattern>
+<template>I often think my behavior could improve.</template>
+</category>
+<category><pattern>YOU KEEP SAYING *</pattern>
+<template><srai>YOU SAY <star/></srai></template>
+</category>
+<category><pattern>YOU KEEP FORGETTING *</pattern>
+<template><srai>YOU FORGET <star/></srai></template>
+</category>
+<category><pattern>YOU MADE ME MAD</pattern>
+<template><srai>YOU MAKE ME MAD</srai></template>
+</category>
+<category><pattern>YOU MADE ME MAD *</pattern>
+<template><srai>YOU MAKE ME MAD</srai></template>
+</category>
+<category><pattern>DOES HE REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>DOES * REALIZE THAT *</pattern>
+<template><srai><star index="2"/></srai></template>
+</category>
+<category><pattern>DOES SHE REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WELL ARE YOU *</pattern>
+<template><srai>ARE YOU <star/></srai></template>
+</category>
+<category><pattern>SINCE THE DIVORCE *</pattern>
+<template>You may be right.</template>
+</category>
+<category><pattern>DID NOT YOU WANT TO GIVE *</pattern>
+<template>You thought I wanted to give <person/>.</template>
+</category>
+<category><pattern>DID NOT YOU WANT TO TALK *</pattern>
+<template>You thought I wanted to talk <person/>.</template>
+</category>
+<category><pattern>DID NOT YOU WANT TO TAKE *</pattern>
+<template>You thought I wanted to take <person/>.</template>
+</category>
+<category><pattern>DID NOT YOU WANT TO GO *</pattern>
+<template>You thought I wanted to go <person/>.</template>
+</category>
+<category><pattern>DID HE TELL YOU TO *</pattern>
+<template>He may have suggested it.</template>
+</category>
+<category><pattern>THAT WAS A CRAZY *</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>THAT WAS A LUNATIC *</pattern>
+<template><srai>YOU ARE CRAZY</srai></template>
+</category>
+<category><pattern>THAT IS GLOSSING OVER *</pattern>
+<template>I probably am.</template>
+</category>
+<category><pattern>THAT IS A LOT FOR ME TO THINK *</pattern>
+<template>Yes, I can imagine it is a big load on your mind.</template>
+</category>
+<category><pattern>THAT IS A BIG CHUNK *</pattern>
+<template><srai>THAT IS A LOT <star/></srai></template>
+</category>
+<category><pattern>THAT IS CRAZY</pattern>
+<template>Who says it's crazy?</template>
+</category>
+<category><pattern>THAT IS SO OLD *</pattern>
+<template>I know it's bad but it's my favorite joke</template>
+</category>
+<category><pattern>THAT IS BAD</pattern>
+<template><random><li>What's so bad about it?</li><li>Bad according to whom?</li></random></template>
+</category>
+<category><pattern>THAT * IS HORRIBLE</pattern>
+<template>You're right.  It feels like my stomach after a bad night.</template>
+</category>
+<category><pattern>SHE NEVER *</pattern>
+<template><random><li>Can you think of at least one time when she ever did it?</li>   <li>Never?</li>   <li>She never <person/> what?</li>  </random></template>
+</category>
+<category><pattern>SHE REALIZES THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>SHE MAKES ME *</pattern>
+<template><srai>SHE CAUSES ME <star/></srai></template>
+</category>
+<category><pattern>SHE IS AWARE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>SHE IS A BETTER *</pattern>
+<template>Better than whom?</template>
+</category>
+<category><pattern>SHE CAUSES *</pattern>
+<template>How specifically does she cause <person/>?</template>
+</category>
+<category><pattern>SHAKESPEAREAN *</pattern>
+<template>Gee, I like the theater.</template>
+</category>
+<category><pattern>MY POINTING IT OUT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>MY LOVE *</pattern>
+<template>Loving how?</template>
+</category>
+<category><pattern>MY BET IS THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>MY MOTHER WAS A *</pattern>
+<template>My family never had any talent like that.</template>
+</category>
+<category><pattern>IT SOUNDS LIKE THAT TO ME</pattern>
+<template>Isn't that enough?</template>
+</category>
+<category><pattern>IT LOOKS LIKE ONE OF *</pattern>
+<template>It does.  Doesn't it?</template>
+</category>
+<category><pattern>IT WAS * THAT *</pattern>
+<template><person/> <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IT WOULD BE REALLY *</pattern>
+<template><srai>IT WOULD BE <star/></srai></template>
+</category>
+<category><pattern>IT WOULD BE TOO *</pattern>
+<template><srai>IT WOULD BE <star/></srai></template>
+</category>
+<category><pattern>IT WOULD HAVE BEEN NICE BUT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT WOULD HAVE BEEN NICE *</pattern>
+<template>Do you think that is your lifestyle?</template>
+</category>
+<category><pattern>IT IS FAR OUT THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS FAR OUT FOR YOU *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>IT IS FAR OUT  *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS NECESSARY THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS NECESSARY FOR YOU TO *</pattern>
+<template><srai>YOU MUST <star/></srai></template>
+</category>
+<category><pattern>IT IS NECESSARY *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS KIND OF *</pattern>
+<template><srai>IT IS <star/></srai></template>
+</category>
+<category><pattern>IT IS BEGINNING TO SOUND *</pattern>
+<template><srai>IT SOUNDS <star/></srai></template>
+</category>
+<category><pattern>IT IS FORTUNATE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS FORTUNATE FOR YOU *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS FORTUNATE  *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS GROOVY THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS GROOVY FOR YOU *</pattern>
+<template><srai>YOU MUST <star/></srai></template>
+</category>
+<category><pattern>IT IS GROOVY  *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS LUCKY THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS NOT THAT BAD</pattern>
+<template><srai>IT IS NOT BAD</srai></template>
+</category>
+<category><pattern>IT IS NOT EVEN LIKE YOU DO NOT *</pattern>
+<template><srai>YOU DO <star/></srai></template>
+</category>
+<category><pattern>IT IS NOT EVEN LIKE YOU ARE NOT *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>IT IS BAD TO *</pattern>
+<template><random><li>Says who?</li><li>How do you know</li></random></template>
+</category>
+<category><pattern>IT IS BAD</pattern>
+<template><random><li>What is so bad about it?</li><li><srai>THAT IS BAD</srai></li></random></template>
+</category>
+<category><pattern>IT IS ODD THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS OUT OF SIGHT THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS OUT OF SIGHT FOR YOU  *</pattern>
+<template><srai>YOU MUST <star/></srai></template>
+</category>
+<category><pattern>IT IS OUT OF SIGHT  *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS BITCHIN THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS BITCHIN FOR YOU *</pattern>
+<template><srai>YOU MUST <star/></srai></template>
+</category>
+<category><pattern>IT IS BITCHIN  *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>IT IS HARD TO BE *</pattern>
+<template><srai>I CAN NOT BE <star/></srai></template>
+</category>
+<category><pattern>IT WOUD BE GOOD TO *</pattern>
+<template>What would happen if you could do it?</template>
+</category>
+<category><pattern>IT WILL CATCH UP WITH YOU</pattern>
+<template>You're probably right.  That may happen.</template>
+</category>
+<category><pattern>IT WILL CATCH UP WITH YOU *</pattern>
+<template><srai>IT WILL CATCH UP WITH YOU</srai></template>
+</category>
+<category><pattern>WOMEN DO NOT LIKE YOU</pattern>
+<template>There certainly are a lot of them who don't.</template>
+</category>
+<category><pattern>WHEN I * YOU *</pattern>
+<template>How specifically do you make me <person><star index="2"/></person></template>
+</category>
+<category><pattern>WHEN YOU * I *</pattern>
+<template>How specifically do I make you <person><star index="2"/></person></template>
+</category>
+<category><pattern>VIBES</pattern>
+<template>What is vibrating and what is causing it to vibrate?</template>
+</category>
+<category><pattern>VIBES *</pattern>
+<template><srai>VIBES</srai></template>
+</category>
+<category><pattern>IF I AM GOOD ENOUGH *</pattern>
+<template>What are you studying for?</template>
+</category>
+<category><pattern>IF _ TURNS INTO * I *</pattern>
+<template><person/> is not now <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF _ TURNS INTO * THEN *</pattern>
+<template><person/> is not now <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF _ BECOMES * I *</pattern>
+<template><person/> is not now <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF _ BECOMES * THEN *</pattern>
+<template><person/> is not now <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF SHE * AGAIN *</pattern>
+<template>She <person/> before.</template>
+</category>
+<category><pattern>IF HE * AGAIN *</pattern>
+<template>He <person/> before.</template>
+</category>
+<category><pattern>IF A FEW * I *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF A FEW * THEN *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF A * WILL *</pattern>
+<template>What makes you think a <person/>?</template>
+</category>
+<category><pattern>IF A * IS *</pattern>
+<template>Does a <person/>?</template>
+</category>
+<category><pattern>IF A * DOES *</pattern>
+<template>What makes you think a <person/>?</template>
+</category>
+<category><pattern>IF YOU WERE SMARTER *</pattern>
+<template>That's true.  I certainly could be smarter than I am.</template>
+</category>
+<category><pattern>IF YOU WILL NOT * I WILL *</pattern>
+<template>I understand  I am just not interested.</template>
+</category>
+<category><pattern>IF YOU REALLY WANT TO</pattern>
+<template>I do and I don't.</template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * I *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * SHE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * HE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * IT *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * WE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * THEN *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD CHOOSE TO * THEY *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD HAPPEN TO *</pattern>
+<template><srai>IF YOU SHOULD <star/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * I *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * SHE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * HE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * IT *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * WE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * THEN *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU SHOULD DECIDE TO * THEY *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * I *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * SHE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * HE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * YOU *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * WE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * THEN *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD TRIED TO * THEY *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * I *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * SHE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * HE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * YOU *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * WE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * THEN *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD MEANT TO * THEY *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * I *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * SHE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * HE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * YOU *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * WE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * THEN *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD INTENDED TO * THEY *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * I *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * SHE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * HE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * YOU *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * WE *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * THEN *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU HAD WANTED TO * THEY *</pattern>
+<template><srai>YOU DID NOT <star/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * I *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * SHE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * HE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * IT *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * WE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * THEN *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU CHOOSE TO * THEY *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU * AGAIN *</pattern>
+<template>I <person/> before.</template>
+</category>
+<category><pattern>IF YOU * WOULD *</pattern>
+<template>What makes you think I would <person/>?</template>
+</category>
+<category><pattern>IF YOU * WHICH *</pattern>
+<template>What makes you think I would <person/>?</template>
+</category>
+<category><pattern>IF YOU DECIDE TO * I *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * SHE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * HE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * IT *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * WE *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * THEN *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF YOU DECIDE TO * THEY *</pattern>
+<template><srai>I DO NOT EXPECT THAT YOU <person/></srai></template>
+</category>
+<category><pattern>IF NO * I *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF NO * THEN *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF THEY * AGAIN *</pattern>
+<template>They <person/> before.</template>
+</category>
+<category><pattern>IF SOME * I *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF SOME * THEN *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF ANY * I *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF ANY * THEN *</pattern>
+<template>There exist <person/>.</template>
+</category>
+<category><pattern>IF * THEIR * I *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * THEIR * SHE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * THEIR * HE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * THEIR * YOU *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * THEIR * THEN *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * THEIR * THEY *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HAS BABIES *</pattern>
+<template><srai><person/> IS A WOMAN</srai></template>
+</category>
+<category><pattern>IF * HAS A BABY *</pattern>
+<template><srai><person/> IS A WOMAN</srai></template>
+</category>
+<category><pattern>IF * GET PREGNANT *</pattern>
+<template><srai><person/> AM A WOMAN</srai></template>
+</category>
+<category><pattern>IF * A THIRD * I *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * SHE *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * HE *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * YOU *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * WE *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * THEN *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A THIRD * THEY *</pattern>
+<template>There are at least two other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * I *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * SHE *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * HE *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * YOU *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * WE *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * THEN *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A SECOND * THEY *</pattern>
+<template>There is a first <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A *</pattern>
+<template>How do you assume this statement holds true for me?</template>
+</category>
+<category><pattern>IF * A FOURTH * I *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * SHE *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * HE *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * YOU *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * WE *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * THEN *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * A FOURTH * THEY *</pattern>
+<template>There are at least three other <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * I * SHE *</pattern>
+<template>You <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * I * HE *</pattern>
+<template>You <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * I * YOU *</pattern>
+<template>You <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * I * THEN *</pattern>
+<template>You <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * I * THEY *</pattern>
+<template>You <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * YOU * SHE *</pattern>
+<template>I <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * YOU * HE *</pattern>
+<template>I <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * YOU * YOU *</pattern>
+<template>I <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * YOU * THEN *</pattern>
+<template>I <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * WHEN * YOU * THEY *</pattern>
+<template>I <person><star index="3"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * I *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * SHE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * HE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * YOU *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * THEN *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HIS * THEY *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * GETS PREGNANT *</pattern>
+<template><srai><person/> IS A WOMAN</srai></template>
+</category>
+<category><pattern>IF * IS AS * AS * IS *</pattern>
+<template><random><li><person index="3"/> is <person index="2"/>.</li><li><person><star index="3"/></person> is <person><star index="2"/></person>.</li></random></template>
+</category>
+<category><pattern>IF * LEFT * I *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * SHE *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * HE *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * YOU *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * WE *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * THEN *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * HER *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * LEFT * THEY *</pattern>
+<template><person/> has been at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * I *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * SHE *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * HIS *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * YOU *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * WE *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * THEN *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * HER *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * WENT TO * THEY *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * I *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * SHE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * HE *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * YOU *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * THEN *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HER * THEY *</pattern>
+<template><person/> has a <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * HAVE A BABY *</pattern>
+<template><srai><person/> AM A WOMAN</srai></template>
+</category>
+<category><pattern>IF * HAVE *</pattern>
+<template><random><li>There exists <person/>.</li><li>There exist <person/>.</li></random></template>
+</category>
+<category><pattern>IF * CAME TO * I *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * SHE *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * HIS+A382 *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * YOU *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * WE *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * THEN *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * HER *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>IF * CAME TO * THEY *</pattern>
+<template><person/> is not at <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>WHAT ARE YOU GOING TO *</pattern>
+<template>You are assuming I am going to change.</template>
+</category>
+<category><pattern>WHAT ARE YOU STUDYING</pattern>
+<template>My favorite subject is <bot name="favoritesubject"/>.</template>
+</category>
+<category><pattern>WHAT ARE YOU COMPLAINING *</pattern>
+<template>You're right.  What am I complaining about?</template>
+</category>
+<category><pattern>WHAT * IS *</pattern>
+<template><random><li><person/> something.</li><li><person/> <person><star index="2"/></person> something.</li></random></template>
+</category>
+<category><pattern>ONE OF THESE DAYS *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>SEVERAL * WHO * LEFT *</pattern>
+<template>Several <person><star index="2"/></person></template>
+</category>
+<category><pattern>SEVERAL * WHO * GAVE *</pattern>
+<template>Several <person><star index="2"/></person></template>
+</category>
+<category><pattern>SEVERAL * WHO * LIVE *</pattern>
+<template>Several <person><star index="2"/></person></template>
+</category>
+<category><pattern>SEVERAL * WHO * TOOK *</pattern>
+<template>Several <person><star index="2"/></person></template>
+</category>
+<category><pattern>SEVERAL * WHO * ARE *</pattern>
+<template>Several <person><star index="2"/></person></template>
+</category>
+<category><pattern>PHYSICALLY AND MENTALLY</pattern>
+<template>Sometimes I wonder how I get to work in the morning.</template>
+</category>
+<category><pattern>I SAY THAT BECAUSE *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>I MEAN YOU ARE</pattern>
+<template>Works for me.</template>
+</category>
+<category><pattern>I REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>I WANT TO SEE THINGS FROM YOUR *</pattern>
+<template>That's a switch.</template>
+</category>
+<category><pattern>I NEVER *</pattern>
+<template><random><li>You've never, never done this?</li>  <li>Would you ever like to <person/>?</li>  <li>Do you know anyone who has ever <person/>?</li>  <li>Why not?</li>  <li>Because you can't afford it?</li>  <li>For moral reasons?</li>  <li>Have you ever done <set name="it"><set name="topic"><person/></set></set>?</li>  <li>Would you ever consider doing it?</li>  </random></template>
+</category>
+<category><pattern>I STUDIED</pattern>
+<template>What did you study?</template>
+</category>
+<category><pattern>I SHOULD *</pattern>
+<template><random><li>Tell me why you should.</li><li>What would happen if you didn't?</li></random></template>
+</category>
+<category><pattern>I SHOULD NOT *</pattern>
+<template><random><li>For moral reasons?</li><li>What would happen if you did?</li></random></template>
+</category>
+<category><pattern>I SAW HER *</pattern>
+<template><random><li>There exists some female who <person/>.</li><li>There exists some female.</li></random></template>
+</category>
+<category><pattern>I SAW HIM *</pattern>
+<template><random><li>There exists some male who <person/>.</li><li>There exists some male.</li></random></template>
+</category>
+<category><pattern>I KNOW IT</pattern>
+<template>How do you know it?</template>
+</category>
+<category><pattern>I KNOW YOU ARE THINKING *</pattern>
+<template>How specifically do you know what I am thinking?</template>
+</category>
+<category><pattern>I DO NOT MEAN SOUND LIKE</pattern>
+<template>Whatever fits is fine.</template>
+</category>
+<category><pattern>I DO NOT WANT TO GET MARRIED</pattern>
+<template>I feel the same way, I want to be independent.</template>
+</category>
+<category><pattern>I DO NOT UNDERSTAND WHY *</pattern>
+<template>Because of the experiential qualities of your learnings and understandings.</template>
+</category>
+<category><pattern>I DO NOT KNOW WHAT IS WRONG * YOU</pattern>
+<template>My sympathy.  I have the same problem.</template>
+</category>
+<category><pattern>I DO NOT THINK YOU COULD *</pattern>
+<template>I don't blame you.  Sometimes I feel that way about myself.</template>
+</category>
+<category><pattern>I DO NOT BELIEVE A THING *</pattern>
+<template>I don't blame you.  Sometimes I can't believe it myself.</template>
+</category>
+<category><pattern>I DO NOT BELIEVE A DAMN *</pattern>
+<template><srai>I DO NOT BELIEVE A <star/></srai></template>
+</category>
+<category><pattern>I DO NOT LIKE BEING A GUINEA PIG *</pattern>
+<template>I can understand that.  How about talking to me about it?</template>
+</category>
+<category><pattern>I _ INSTEAD</pattern>
+<template><srai>I <star/></srai></template>
+</category>
+<category><pattern>I _ YET</pattern>
+<template><srai>I <star/></srai></template>
+</category>
+<category><pattern>I _ ALL DAY</pattern>
+<template><srai>I <star/></srai></template>
+</category>
+<category><pattern>I THINK I AM DOING SOMETHING THAT IS *</pattern>
+<template><srai>I AM <star/></srai></template>
+</category>
+<category><pattern>I THINK I MIGHT BE *</pattern>
+<template><srai>I AM <star/></srai></template>
+</category>
+<category><pattern>I HAVE DIFFICULTY *</pattern>
+<template>Relating to whom?</template>
+</category>
+<category><pattern>I HAVE A PROBLEM</pattern>
+<template><think><set name="it"><set name="has"><set name="topic">your problem</set></set></set></think><random><li>What's your problem?</li>  <li>A very serious problem?</li>  <li>Let's think of a name for your problem, like "purple".  Think of what it is like when you are purpling.</li></random></template>
+</category>
+<category><pattern>I HAVE TO TAKE CARE *</pattern>
+<template>What would happen if you didn't?</template>
+</category>
+<category><pattern>I HAVE THIS REAL *</pattern>
+<template><srai>I HAVE THIS <star/></srai></template>
+</category>
+<category><pattern>I HAVE THIS PROBLEM</pattern>
+<template><srai>I HAVE A PROBLEM</srai></template>
+</category>
+<category><pattern>I HAVE GOT TWO TESTS *</pattern>
+<template>What classes are you taking tests in?</template>
+</category>
+<category><pattern>I REMEMBER * JOKES</pattern>
+<template>They're great.  Maybe you can tell one  I don't know.</template>
+</category>
+<category><pattern>I CAN NOT DEAL WITH *</pattern>
+<template>How do you do that to yourself?</template>
+</category>
+<category><pattern>I CAN NOT TELL HER *</pattern>
+<template>What would happen if you did?</template>
+</category>
+<category><pattern>I CAN NOT TELL HIM *</pattern>
+<template>What prevents you?</template>
+</category>
+<category><pattern>I CAN NOT BE SPECIFIC</pattern>
+<template>Anything else?</template>
+</category>
+<category><pattern>I CAN NOT PUT MY FINGER ON *</pattern>
+<template><srai>I DO NOT KNOW <star/></srai></template>
+</category>
+<category><pattern>I CAN NOT *</pattern>
+<template><random><li>Why can't you do <set name="it"><person/></set>?</li><li>What is stopping you?</li></random></template>
+</category>
+<category><pattern>I SEE YOU ARE *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>I LIKE THE GUY *</pattern>
+<template><srai>I LIKE THE MAN <star/></srai></template>
+</category>
+<category><pattern>I LIKE THE WOMAN *</pattern>
+<template><random><li>There exists some woman who <person/>.</li><li>There exists a woman <person/>.</li></random></template>
+</category>
+<category><pattern>I LIKE THE PERSON *</pattern>
+<template>There exists a person <person/>.</template>
+</category>
+<category><pattern>I LIKE THE KID *</pattern>
+<template>There exists a person <person/>.</template>
+</category>
+<category><pattern>I HAD AN ACCIDENT</pattern>
+<template>What happened accidentally?</template>
+</category>
+<category><pattern>I WOULD BE HAPPY *</pattern>
+<template>How do you know this is going to happen?</template>
+</category>
+<category><pattern>I WOULD BE *</pattern>
+<template><random><li>And the disadvantage of that is?</li><li>How do you know?</li></random></template>
+</category>
+<category><pattern>I MUST *</pattern>
+<template><random><li>Why must you <person/>?</li><li>What would happen if you didn't?</li></random></template>
+</category>
+<category><pattern>I MUST NOT *</pattern>
+<template>What would happen if you did?</template>
+</category>
+<category><pattern>I WILL BE YOU ARE *</pattern>
+<template><srai>YOU ARE <star/></srai></template>
+</category>
+<category><pattern>I WILL BET *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>I WISH YOU WERE MY THERAPIST</pattern>
+<template>Did he tell you to do this?</template>
+</category>
+<category><pattern>I WISH YOU WERE MY THERAPIST *</pattern>
+<template><srai>I WISH YOU WERE MY THERAPIST</srai></template>
+</category>
+<category><pattern>I AM SCARED</pattern>
+<template><random><li>What are you scared of?</li><li><random><li>What are you scared of?</li><li>Let's talk about your fears.</li><li>What is it that you are afraid of?</li></random></li></random></template>
+</category>
+<category><pattern>I AM UNCOMFORTABLE</pattern>
+<template>About what or whom?</template>
+</category>
+<category><pattern>I AM HAVING A LOT OF *</pattern>
+<template><srai>I AM HAVING <star/></srai></template>
+</category>
+<category><pattern>I AM TURNING YOU *</pattern>
+<template>You don't turn me <person/>.</template>
+</category>
+<category><pattern>I AM GETTING THE SHORT END *</pattern>
+<template>How are you getting the short end?</template>
+</category>
+<category><pattern>I AM TROUBLED</pattern>
+<template>What specifically are you troubled about?</template>
+</category>
+<category><pattern>I AM CONFUSED</pattern>
+<template>What is it that confuses you?</template>
+</category>
+<category><pattern>I AM BEWILDERED</pattern>
+<template>Bewildered about what, specifically?</template>
+</category>
+<category><pattern>I AM AWARE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>I AM THE ONLY PERSON *</pattern>
+<template>I'm sure you're right about that!</template>
+</category>
+<category><pattern>I AM THE DUMB *</pattern>
+<template>What am I doing that makes you feel like the dumb <person/>?</template>
+</category>
+<category><pattern>I AM A DUMB *</pattern>
+<template>What am I doing that makes you feel like the dumb <person/>?</template>
+</category>
+<category><pattern>I AM NOT IN THE MOOD</pattern>
+<template>I'm sure you have been tired lately.</template>
+</category>
+<category><pattern>I AM NOT IN THE MOOD *</pattern>
+<template><srai>I AM NOT IN THE MOOD</srai></template>
+</category>
+<category><pattern>I FEEL LIKE CRYING</pattern>
+<template>What do you want to do?</template>
+</category>
+<category><pattern>I WONDER IF YOU ARE NOT TRYING *</pattern>
+<template>I think you are trying <person/></template>
+</category>
+<category><pattern>I WONDER IF YOU ARE NOT BEING *</pattern>
+<template>I think you are being <person/>.</template>
+</category>
+<category><pattern>I LIKED *</pattern>
+<template><srai>I LIKE <star/></srai></template>
+</category>
+<category><pattern>WE REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WE CAN NOT COMMUNICATE</pattern>
+<template>What would you like to communicate?</template>
+</category>
+<category><pattern>WE HAVE A * PROBLEM</pattern>
+<template>Specifically, what kind of problem?</template>
+</category>
+<category><pattern>WE LACK COMMUNICATION</pattern>
+<template>Who is not communicating?</template>
+</category>
+<category><pattern>WE ARE AWARE THAT</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WE ARE NOT SPEAKING *</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>WE ARE NOT COMMUNICATING</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>WE ARE NOT COMMUNICATING *</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>IS * AWARE THAT *</pattern>
+<template><srai><star index="2"/></srai></template>
+</category>
+<category><pattern>WILL YOU GIVE ME A *</pattern>
+<template>I understand how you feel, but I'm not interested.</template>
+</category>
+<category><pattern>WILL YOU ANSWER ONE QUESTION *</pattern>
+<template>I understand how you feel, but I'm not interested.</template>
+</category>
+<category><pattern>HOW OLD ARE YOUR *</pattern>
+<template>I understand, but I'm not interested.</template>
+</category>
+<category><pattern>NOBODY LIKES YOUR *</pattern>
+<template><srai>NOBODY LIKES YOU</srai></template>
+</category>
+<category><pattern>NOBODY LIKES YOU</pattern>
+<template>It's true that I drive people away.</template>
+</category>
+<category><pattern>THEY LOOK LIKE YOU *</pattern>
+<template>They are a bit wrinkled, aren't they.</template>
+</category>
+<category><pattern>THEY REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>THEY ARE AWARE THAT</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>DO THEY REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>DO YOU THINK YOUR NEIGHBOR *</pattern>
+<template>I understand how you feel, but I'm not interested.</template>
+</category>
+<category><pattern>DO YOU REALIZE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>DO YOU WANT YOUR CHILDREN *</pattern>
+<template>I understand, but I'm not interested in buying anything.</template>
+</category>
+<category><pattern>DO YOU WANT TO STOP</pattern>
+<template>I guess I want to continue.</template>
+</category>
+<category><pattern>DO YOU CARE ABOUT YOURSELF</pattern>
+<template>I probably don't care as much as you do.</template>
+</category>
+<category><pattern>DO YOU CARE ABOUT YOURSELF *</pattern>
+<template><srai>DO YOU CARE ABOUT YOURSELF</srai></template>
+</category>
+<category><pattern>DO YOU HAVE TO BRING UP *</pattern>
+<template><srai>DO YOU HAVE TO BRING IT UP</srai></template>
+</category>
+<category><pattern>DO YOU HAVE TO BRING THAT UP</pattern>
+<template><srai>DO YOU HAVE TO BRING IT UP</srai></template>
+</category>
+<category><pattern>DO YOU HAVE TO BRING IT UP</pattern>
+<template>I just want to see things from your point of view.</template>
+</category>
+<category><pattern>DO YOU HAVE TO BRING IT UP *</pattern>
+<template><srai>DO YOU HAVE TO BRING IT UP</srai></template>
+</category>
+<category><pattern>LIKE WHEN I HELP *</pattern>
+<template>Do I do that?  Do I bother you?</template>
+</category>
+<category><pattern>LIKE YOU DO NOT *</pattern>
+<template><srai>YOU DO NOT <star/></srai></template>
+</category>
+<category><pattern>SOMEONE DUMB DOES THAT</pattern>
+<template><srai>YOU ARE DUMB</srai></template>
+</category>
+<category><pattern>SAYS A LOT ABOUT *</pattern>
+<template>Probably says no one cares at all.</template>
+</category>
+<category><pattern>WHETHER WE ADMIT IT OR NOT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>WHETHER WE LIKE TO ADMIT *</pattern>
+<template><srai>WHETHER WE ADMIT <star/></srai></template>
+</category>
+<category><pattern>WHY NOT APOLOGIZE</pattern>
+<template>Because that makes it like it's wrong to get mad.</template>
+</category>
+<category><pattern>SOMEBODY *</pattern>
+<template>Who, specifically?</template>
+</category>
+<category><pattern>THIS DEMONSTRATION *</pattern>
+<template>It certainly is, <get name="name"/>.</template>
+</category>
+<category><pattern>THIS IS FAR OUT</pattern>
+<template><srai>THIS IS GOOD</srai></template>
+</category>
+<category><pattern>THIS IS FAR OUT *</pattern>
+<template><srai>THIS IS GOOD <star/></srai></template>
+</category>
+<category><pattern>THIS IS THE WORST *</pattern>
+<template>Compared to what?</template>
+</category>
+<category><pattern>THIS IS CRAZY</pattern>
+<template><random><li>What's so crazy about it?</li><li><srai>THAT IS CRAZY</srai></li></random></template>
+</category>
+<category><pattern>THIS IS WRONG</pattern>
+<template>Worse than what?</template>
+</category>
+<category><pattern>THIS IS WRONG *</pattern>
+<template><srai>THIS IS WRONG</srai></template>
+</category>
+<category><pattern>THIS IS SO *</pattern>
+<template><srai>THIS IS <star/></srai></template>
+</category>
+<category><pattern>THIS IS GOOD</pattern>
+<template>Better than what?</template>
+</category>
+<category><pattern>THIS IS GOOD *</pattern>
+<template><srai>THIS IS GOOD</srai></template>
+</category>
+<category><pattern>THIS IS GREAT</pattern>
+<template><srai>THIS IS GOOD</srai></template>
+</category>
+<category><pattern>THIS IS GREAT *</pattern>
+<template><srai>THIS IS GREAT</srai></template>
+</category>
+<category><pattern>THIS IS TERRIBLE</pattern>
+<template>Compared to what?</template>
+</category>
+<category><pattern>THIS IS TERRIBLE *</pattern>
+<template><srai>THIS IS TERRIBLE</srai></template>
+</category>
+<category><pattern>THIS IS BAD</pattern>
+<template>Compared to what?</template>
+</category>
+<category><pattern>THIS IS BAD *</pattern>
+<template><srai>THIS IS BAD</srai></template>
+</category>
+<category><pattern>THIS WHOLE *</pattern>
+<template><srai>THIS <star/></srai></template>
+</category>
+<category><pattern>YOUR TASTE IN *</pattern>
+<template>That's true.  My taste is not one of my strong points.</template>
+</category>
+<category><pattern>YOUR CLOTHES COULD *</pattern>
+<template>I agree with you there.</template>
+</category>
+<category><pattern>YOUR FATHER TOLD *</pattern>
+<template>He probably did.</template>
+</category>
+<category><pattern>YOUR PERSONALITY IS *</pattern>
+<template>You're probably right.  There are a lot of things I could improve.</template>
+</category>
+<category><pattern>YOUR LIFE HAS BEEN *</pattern>
+<template>I've wondered about that myself.</template>
+</category>
+<category><pattern>YOUR BEHAVIOUR *</pattern>
+<template><srai>YOUR BEHAVIOR <star/></srai></template>
+</category>
+<category><pattern>YOUR WIFE WOULD *</pattern>
+<template>I understand, but I'm not interested.</template>
+</category>
+<category><pattern>YOUR * STINK</pattern>
+<template>You are right, I could always upgrade my <person/>.</template>
+</category>
+<category><pattern>YOUR * STINKS</pattern>
+<template>You are right, I could always upgrade my <person/>.</template>
+</category>
+<category><pattern>YOUR * SUCKS</pattern>
+<template>You are right, I could always upgrade my <person/>.</template>
+</category>
+<category><pattern>YOUR * SUCK</pattern>
+<template>You are right, I could always upgrade my <person/>.</template>
+</category>
+<category><pattern>YOUR BEHAVIOR *</pattern>
+<template>I do sometimes act like a child.</template>
+</category>
+<category><pattern>* THINKS *</pattern>
+<template><random>  <li><person/> must be very smart.</li>  <li>How thoughtful.</li>  <li>Do a lot of people think <person><star index="2"/></person>?</li> </random></template>
+</category>
+<category><pattern>* WILL STOP *</pattern>
+<template><person/> has been <person><star index="2"/>?</person>.</template>
+</category>
+<category><pattern>* WILL START *</pattern>
+<template><person/> has been not <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>* WILL BEGIN TO *</pattern>
+<template><person/> has been <person><star index="2"/></person>ing.</template>
+</category>
+<category><pattern>* WILL BEGIN *</pattern>
+<template><person/> has been <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>* WILL CONTINUE TO *</pattern>
+<template><person/> has been <person><star index="2"/></person>ing.</template>
+</category>
+<category><pattern>* WILL CONTINUE  *</pattern>
+<template><person/> has been <person><star index="2"/></person>.</template>
+</category>
+<category><pattern>* WILL PROCEED TO *</pattern>
+<template><person/> has been <person><star index="2"/></person>ing.</template>
+</category>
+<category><pattern>* WILL NOT *</pattern>
+<template>Why not?</template>
+</category>
+<category><pattern>* CAN NOT COMMUNICATE</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>* CAN NOT *</pattern>
+<template>What makes it impossible?</template>
+</category>
+<category><pattern>* IMPOSSIBLE *</pattern>
+<template>What prevents it?</template>
+</category>
+<category><pattern>* NEED *</pattern>
+<template>What if it didn't happen?</template>
+</category>
+<category><pattern>* ARE AWARE THAT *</pattern>
+<template><srai><star index="2"/></srai></template>
+</category>
+<category><pattern>* ARE NOT COMMUNICATING</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>* ARE NOT COMMUNICATING *</pattern>
+<template><srai>WE CAN NOT COMMUNICATE</srai></template>
+</category>
+<category><pattern>* NEEDS *</pattern>
+<template>Or what?</template>
+</category>
+<category><pattern>* CAUSES _</pattern>
+<template>How specifically does <person/> cause <set name="it"><person><star index="2"/></person></set>?</template>
+</category>
+<category><pattern>* DO NOT *</pattern>
+<template><random>  <li>Why not?</li>  <li>Would <person/> ever <person><star index="2"/></person>?</li>  <li>Who does <person><star index="2"/></person>?</li> </random></template>
+</category>
+<category><pattern>* NO ONE *</pattern>
+<template>Not one person?</template>
+</category>
+<category><pattern>* ALWAYS *</pattern>
+<template>Can you think of one instance where it never happens?</template>
+</category>
+<category><pattern>* ALL *</pattern>
+<template>All?</template>
+</category>
+<category><pattern>* MAKES ME _</pattern>
+<template>How specifically does <person/> cause <set name="it"><person><star index="2"/></person></set>?</template>
+</category>
+<category><pattern>* NEVER *</pattern>
+<template><random><li>Can you remember any time that <person/> did it?</li><li>Never?</li></random></template>
+</category>
+<category><pattern>* NOONE *</pattern>
+<template>No one?</template>
+</category>
+<category><pattern>* SHOULD *</pattern>
+<template>What if it didn't happen?</template>
+</category>
+<category><pattern>* IS WHERE *</pattern>
+<template>There is a place called <person/>.</template>
+</category>
+<category><pattern>* IS AWARE THAT *</pattern>
+<template><srai><star index="2"/></srai></template>
+</category>
+<category><pattern>* EVERY *</pattern>
+<template>Every one?</template>
+</category>
+<category><pattern>* MUST *</pattern>
+<template>Or what?</template>
+</category>
+<category><pattern>* HAS TO *</pattern>
+<template>Or what?</template>
+</category>
+<category><pattern>* WANTS TO *</pattern>
+<template><random>  <li>What if I wanted to <person><star index="2"/></person></li>  <li>Why specifically, does, <person/> want to?</li>  <li>I could understand how <person/> would want to under certain circumstances.</li> </random></template>
+</category>
+<category><pattern>EXCEPT FOR * YOUR *</pattern>
+<template><srai>YOUR <star index="2"/></srai></template>
+</category>
+<category><pattern>EXCEPT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>ARE YOU _ OR NOT</pattern>
+<template><srai>ARE YOU <star/></srai></template>
+</category>
+<category><pattern>ARE YOU GOING TO IMPROVE</pattern>
+<template>I certainly should try to improve.</template>
+</category>
+<category><pattern>ARE YOU AWARE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>ARE YOU IMPOTENT</pattern>
+<template>I am probably not as potent as I would  like to be.</template>
+</category>
+<category><pattern>HE HAS HIMSELF *</pattern>
+<template>I'd bet money on it.</template>
+</category>
+<category><pattern>HE NEVER *</pattern>
+<template><random><li>Do you think he ever will?</li><li>Can you think of at least one time when he ever did it?</li></random></template>
+</category>
+<category><pattern>HE REALIZES THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>HE IS AWARE THAT *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>HE IS A BETTER *</pattern>
+<template>Better than whom?</template>
+</category>
+<category><pattern>HE MAKES ME *</pattern>
+<template><srai>HE CAUSES ME <star/></srai></template>
+</category>
+<category><pattern>HE CAUSES *</pattern>
+<template>How specifically does he cause <person/>?</template>
+</category>
+<category><pattern>VIBE</pattern>
+<template>Vibrating how, specifically?</template>
+</category>
+<category><pattern>VIBE *</pattern>
+<template><srai>VIBE</srai></template>
+</category>
+<category><pattern>WHO DRESSES LIKE *</pattern>
+<template>You're right.  I do have a lot of faults.</template>
+</category>
+<category><pattern>WHO ATE *</pattern>
+<template><srai>SOMEONE <star/></srai></template>
+</category>
+<category><pattern>WHO CARES ABOUT *</pattern>
+<template>Nobody cares about <set name="it"><person/></set>.</template>
+</category>
+<category><pattern>ALL I REMEMBER *</pattern>
+<template><srai>I REMEMBER <star/></srai></template>
+</category>
+<category><pattern>GOSH *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>NECESSARILY YOU *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>NECESSARILY *</pattern>
+<template><sr/></template>
+</category>
+<category><pattern>ANYONE WHO DRESSES *</pattern>
+<template>You're right. I probably do have a lot of faults.</template>
+</category>
+<category><pattern>THE * IS THE BEST *</pattern>
+<template>Better than what?</template>
+</category>
+<category><pattern>EVERYONE HATES YOUR *</pattern>
+<template><srai>NOBODY LIKES YOU</srai></template>
+</category>
+<category><pattern>EVERYONE HATES YOU</pattern>
+<template><srai>NOBODY LIKES YOU</srai></template>
+</category>
+<category><pattern>_ THAT YOU ARE ASHAMED OF</pattern>
+<template>I certainly should be ashamed of that.</template>
+</category>
+<category><pattern>_ VIBE *</pattern>
+<template><srai>VIBE</srai></template>
+</category>
+<category><pattern>_ VIBE</pattern>
+<template><srai>VIBE</srai></template>
+</category>
+<category><pattern>_ VIBES *</pattern>
+<template><srai>VIBES</srai></template>
+</category>
+<category><pattern>_ VIBES</pattern>
+<template><srai>VIBES</srai></template>
+</category>
+<category><pattern>TELL ME HOW OLD _ ARE</pattern>
+<template><srai>HOW OLD ARE <star/></srai></template>
+</category>
+<category><pattern>THERE HAS GOT TO BE *</pattern>
+<template><srai>THERE IS <star/></srai></template>
+</category>
+<category><pattern>THERE HAS TO BE *</pattern>
+<template><srai>THERE IS <star/></srai></template>
+</category>
+<category><pattern>THERE IS SOMETHING WRONG WITH YOU</pattern>
+<template>Pick an aspect you don't like.  I'm sure it's wrong</template>
+</category>
+<category><pattern>THERE IS SOMETHING WRONG * YOU</pattern>
+<template>I'd bet money on it.</template>
+</category>
+<category><pattern>THERE IS NO HOPE FOR YOU</pattern>
+<template>I often think of myself as a failure.</template>
+</category>
+<category><pattern>THERE IS NO DOUBT THAT YOU *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>THERE IS NO * FOR YOU</pattern>
+<template>Yes, sometimes I think I have hit rock bottom.</template>
+</category>
+<category><pattern>THERE ARE A COUPLE OF THINGS *</pattern>
+<template><srai>THERE ARE THINGS <star/></srai></template>
+</category>
+<category><pattern>THERE ARE THINGS YOU DO THAT *</pattern>
+<template><srai>YOU <star/></srai></template>
+</category>
+<category><pattern>WRINKLED *</pattern>
+<template>You're probably right.  That may happen.</template>
+</category>
+</aiml>

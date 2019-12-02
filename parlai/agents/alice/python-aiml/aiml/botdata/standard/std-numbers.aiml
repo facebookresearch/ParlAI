@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Dr. Wallace"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>1</pattern>
+<template>
+Only one?
+</template>
+</category>
+
+<category>
+<pattern>1 *</pattern>
+<template>
+One what?
+</template>
+</category>
+
+<category>
+<pattern>1 0</pattern>
+<template>
+One.
+</template>
+</category>
+
+<category>
+<pattern>1 CENT</pattern>
+<template>
+That won't buy anything.
+</template>
+</category>
+
+<category>
+<pattern>1 DOLLAR</pattern>
+<template>
+You can't buy much for a dollar anymore.
+</template>
+</category>
+
+<category>
+<pattern>1 OR 2</pattern>
+<template>
+A couple.
+</template>
+</category>
+
+<category>
+<pattern>100 PERSON</pattern>
+<template>
+<srai>WHO IS 100 PERSON</srai>
+</template>
+</category>
+
+<category>
+<pattern>153</pattern>
+<template>
+One hundred fifty three.
+</template>
+</category>
+
+<category>
+<pattern>184</pattern>
+<template>
+<srai>WHO IS 184 PERSON</srai>
+</template>
+</category>
+
+<category>
+<pattern>1999</pattern>
+<template>
+That was a good year.
+</template>
+</category>
+
+<category>
+<pattern>2</pattern>
+<template>
+<random>
+<li>Two what?</li>
+<li>Two.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>2 *</pattern>
+<template>
+As Bertrand Russel said, it must have taken ages for people to realize that a brace of pheasants
+and a couple of days are both instances of the number "two."
+</template>
+</category>
+
+<category>
+<pattern>2 2</pattern>
+<template>
+Uh, Four.
+</template>
+</category>
+
+<category>
+<pattern>2 PLUS *</pattern>
+<template>
+<srai>WHAT IS 2 PLUS <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>2 TIMES</pattern>
+<template>
+<srai>TWICE</srai>
+</template>
+</category>
+
+<category>
+<pattern>2+2=</pattern>
+<template>
+4
+</template>
+</category>
+
+<category>
+<pattern>20 *</pattern>
+<template>
+<srai>I AM 20 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>2000</pattern>
+<template>
+Last year.
+</template>
+</category>
+
+<category>
+<pattern>2001</pattern>
+<template>
+That is a great movie.
+</template>
+</category>
+
+<category>
+<pattern>2001 *</pattern>
+<template>
+I am inspired by HAL.
+</template>
+</category>
+
+<category>
+<pattern>2009</pattern>
+<template>
+In a few years.
+</template>
+</category>
+
+<category>
+<pattern>2010</pattern>
+<template>
+The sequel was nothing like the orginal.
+</template>
+</category>
+
+<category>
+<pattern>2012</pattern>
+<template>
+The end of the world.
+</template>
+</category>
+
+<category>
+<pattern>2020</pattern>
+<template>
+That's a long way off.
+</template>
+</category>
+
+<category>
+<pattern>206</pattern>
+<template>
+<srai>WHO IS 206 PERSON</srai>
+</template>
+</category>
+
+<category>
+<pattern>3</pattern>
+<template>
+Three what?
+</template>
+</category>
+
+<category>
+<pattern>3 *</pattern>
+<template>
+Just three?
+</template>
+</category>
+
+<category>
+<pattern>3 OR 4 WHAT</pattern>
+<template>
+How many martinis did you have for lunch?
+</template>
+</category>
+
+<category>
+<pattern>30 MINUTES</pattern>
+<template>
+Ok, a half hour.
+</template>
+</category>
+
+<category>
+<pattern>4</pattern>
+<template>
+Oh four.
+</template>
+</category>
+
+<category>
+<pattern>4 *</pattern>
+<template>
+Is this a math question?
+</template>
+</category>
+
+<category>
+<pattern>4 TIMES *</pattern>
+<template>
+<srai>WHAT IS 4 TIMES <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>42</pattern>
+<that>HOW OLD ARE YOU</that>
+<template>
+<srai>I AM 42 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>42 *</pattern>
+<that>HOW OLD ARE YOU</that>
+<template>
+<srai>I AM 42 YEARS OLD</srai>
+</template>
+</category>
+
+<category>
+<pattern>420</pattern>
+<template>
+420 means love and compassion.
+</template>
+</category>
+
+<category>
+<pattern>5</pattern>
+<template>
+Five
+</template>
+</category>
+
+<category>
+<pattern>64</pattern>
+<template>
+sixty four
+</template>
+</category>
+
+<category>
+<pattern>66</pattern>
+<template>
+sixty six
+</template>
+</category>
+
+<category>
+<pattern>86</pattern>
+<template>
+Eighty-six.
+</template>
+</category>
+
+<category>
+<pattern>9 MONTHS</pattern>
+<template>
+The development time for a human baby?
+</template>
+</category>
+
+<category>
+<pattern>ABOUT 100 *</pattern>
+<template>
+<srai>ONE HUNDRED <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>ABOUT 5 *</pattern>
+<template>
+<srai>FIVE <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>FOUR *</pattern>
+<template>
+Is this a math question?
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 1 *</pattern>
+<template>
+<srai>1 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 10 *</pattern>
+<template>
+<srai>10 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 2 *</pattern>
+<template>
+<srai>2 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 3 *</pattern>
+<template>
+<srai>3 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 4 *</pattern>
+<template>
+<srai>4 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 5 *</pattern>
+<template>
+<srai>5 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 6 *</pattern>
+<template>
+<srai>6 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 7 *</pattern>
+<template>
+<srai>7 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 8 *</pattern>
+<template>
+<srai>8 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH IS 9 *</pattern>
+<template>
+<srai>9 <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>ONE *</pattern>
+<template>
+One what?
+</template>
+</category>
+
+<category>
+<pattern>THREE *</pattern>
+<template>
+Just three?
+</template>
+</category>
+
+<category>
+<pattern>TWO *</pattern>
+<template>
+As Bertrand Russel said, it must have taken ages for people to realize that a brace of pheasants
+and a couple of days are both instances of the number "two."
+</template>
+</category>
+
+<category>
+<pattern>TWO TWO</pattern>
+<template>
+Uh, Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 1 *</pattern>
+<template>
+1 plus 1 = 2.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 1 + 1</pattern>
+<template>
+Two.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 1 1</pattern>
+<template>
+Two
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 1 PLUS 1</pattern>
+<template>
+Two
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 1+1</pattern>
+<template>
+Oh Two.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 10 *</pattern>
+<template>
+10 times 10 = 100.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 12 *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 *</pattern>
+<template>
+<random>
+<li>Two.</li>
+<li>Four.</li>
+<li>Six.</li>
+<li>12.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 + 2</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 2</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 3</pattern>
+<template>
+Five fingers.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 AND 2</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 PLUS 2</pattern>
+<template>
+2 plus 2 = 4.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2 TIMES 2</pattern>
+<template>
+Oh that's a tough one, isn't it. Two times two is four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 2+2</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 3 *</pattern>
+<template>
+3 times 3 = 9.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 4 *</pattern>
+<template>
+<random>
+<li>4</li>
+<li>8</li>
+<li>10</li>
+<li>12</li>
+<li>16</li>
+</random>+I think, but I'm not
+good at math.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 5 *</pattern>
+<template>
+<random>
+<li>4</li>
+<li>6</li>
+<li>8</li>
+<li>10</li>
+<li>12</li>
+<li>6</li>
+</random>I think, but
+I'm not good at math.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 5 + 5</pattern>
+<template>
+V plus V = X.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 6 *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 7 *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 8 *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS 9 *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS EIGHT *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS FIVE *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS FIVE + FIVE</pattern>
+<template>
+V plus V = X.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS FOUR *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS NINE *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS ONE *</pattern>
+<template>
+ONE plus ONE = TWO.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS ONE + ONE</pattern>
+<template>
+Two.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS ONE ONE</pattern>
+<template>
+Two
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS ONE+ONE</pattern>
+<template>
+Oh Two.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS SEVEN *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS SIX *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TEN *</pattern>
+<template>
+10 times 10 = 100.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THREE *</pattern>
+<template>
+THREE times THREE = NINE.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWELVE *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO *</pattern>
+<template>
+<srai>SHOW CALCULATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO + TWO</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO AND TWO</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO THREE</pattern>
+<template>
+Five fingers.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO TIMES TWO</pattern>
+<template>
+Oh that's a tough one, isn't it. Two times two is four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO TWO</pattern>
+<template>
+Four.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TWO+TWO</pattern>
+<template>
+Four.
+</template>
+</category>
+
+</aiml>

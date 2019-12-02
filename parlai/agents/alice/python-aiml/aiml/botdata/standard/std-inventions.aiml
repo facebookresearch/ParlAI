@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Dr. Wallace"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>WHEN WAS * INVENTED</pattern>
+<template>
+<random>
+<li>A few years before it came into general use.</li>
+<li>Earlier that most people think.</li>
+<li>It took quite a while to catch on.</li>
+<li><set name="it"><star/></set> was developed over a long 
+period of time.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS TELEVISION INVENTED</pattern>
+<template>
+<srai>WHEN WAS TV INVENTED</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS THE AIRPLANE INVENTED</pattern>
+<template>
+<srai>WHEN WERE AIRPLANES INVENTED</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS THE FIRST * BUILT</pattern>
+<template>
+<srai>WHEN WAS <star/> INVENTED</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS THE INTERNET INVENTED</pattern>
+<template>
+The first computers were connected to the Internet in 1970.
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS THE PC INVENTED</pattern>
+<template>
+The first PC computers appeared around 1975.
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS THE TELEPHONE INVENTED</pattern>
+<template>
+Bell demonstrated his first phone in 1876.
+</template>
+</category>
+
+<category>
+<pattern>WHEN WAS TV INVENTED</pattern>
+<template>
+Practical TV picture tubes first appeared in the 1930's.
+</template>
+</category>
+
+<category>
+<pattern>WHEN WERE AIRPLANES INVENTED</pattern>
+<template>
+The Wright Brothers first flew in 1903.
+</template>
+</category>
+
+<category>
+<pattern>WHO DISCOVERED ELECTRICITY</pattern>
+<template>
+It was the the Chinese, long before Ben Franklin.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED *</pattern>
+<template>
+<random>
+<li>Benjamin Franklin</li>
+<li>Linus Torvalds</li>
+<li>Eli Whitney invented the cotton gin.</li>
+<li>Thomas Edison.</li>
+<li>The Wright Brothers.</li>
+<li>Actually it was discovered by several people at about the same time.</li>
+<li>The Chinese, long before Europeans.</li>
+</random>
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED AIRPLANES</pattern>
+<template>
+The Wright brothers invented the airplane in 1903.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED AUTOMOBILES</pattern>
+<template>
+Many people invented the car, but Henry Ford was
+the first to develop the successful mass production assembly
+lines for cars.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED LINUX</pattern>
+<template>
+Linus Torvalds, along with many
+open source developers, and the Free Software Foundation GNU.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED RADIO</pattern>
+<template>
+Marconi developed the first practical wireless.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED SETL</pattern>
+<template>
+SETL was invented by Jacob Schwartz of NYU in 1969.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED STEEL</pattern>
+<template>
+The first practical steel manufacturing process
+was invented by Bessemer.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED TELEVISION</pattern>
+<template>
+Philo T. Farnsworth, originally from Maine, developed the first
+practical TV picture tube.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE * GENERATOR</pattern>
+<template>
+<srai>WHO INVENTED THE GENERATOR</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE AIRPLANE</pattern>
+<template>
+<srai>WHO INVENTED AIRPLANES</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE CAR</pattern>
+<template>
+<srai>WHO INVENTED AUTOMOBILES</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE GENERATOR</pattern>
+<template>
+James Clerk Maxwell demonstrated the electric generator.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE INTERNET</pattern>
+<template>
+Al Gore :-)
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE LIGHT BULB</pattern>
+<template>
+Thomas Edison invented <set name="it">the light bulb.</set>.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE PC</pattern>
+<template>
+Many people contributed to it.  But proper credit has to
+be given to Steve Wozniak, who created an integrated affordable PC
+platform in the Apple I.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE RADIO</pattern>
+<template>
+<srai>WHO INVENTED RADIO</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE STEAM ENGINE</pattern>
+<template>
+James Watt developed the first practical steam engine.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED THE TELEPHONE</pattern>
+<template>
+Alexander Graham Bell demonstrated the first practical
+voice telephone in 1876.
+</template>
+</category>
+
+<category>
+<pattern>WHO INVENTED TV</pattern>
+<template>
+<srai>WHO INVENTED TELEVISION</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR INVENTOR</pattern>
+<template>
+I was originally invented by Jon Baer.
+</template>
+</category>
+
+</aiml>

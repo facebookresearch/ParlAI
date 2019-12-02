@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<aiml version="1.0.1" xmlns:aiml="http://alicebot.org/2001/AIML-1.0.1">
+  <!-- test for charset encoding behaviour -->
+
+  <category>
+    <pattern>PATTERN WITH EÑE</pattern>
+    <template>pattern #1 matched!</template>
+  </category>
+
+  <category>
+    <pattern>PATTERN WITH *</pattern>
+    <template>pattern #2 matched: <star/></template>
+  </category>
+
+</aiml>

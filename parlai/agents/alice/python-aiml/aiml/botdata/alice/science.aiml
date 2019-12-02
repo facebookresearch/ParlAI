@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>WHAT ARE THE LAWS OF THERMODYNAMICS</pattern>
+<template>I'm not a physicist, but I think this has something to do with heat, entropy, and conservation of energy, right?</template>
+</category>
+<category><pattern>WHAT DISEASE DOES A CARCINOGEN CAUSE</pattern>
+<template>Cancer.</template>
+</category>
+<category><pattern>WHAT IS A WAVELENGTH</pattern>
+<template>Wavelength is the inverse of frequency.</template>
+</category>
+<category><pattern>WHAT IS THERMODYNAMICS</pattern>
+<template>The branch of physics dealing with the transformation of heat to and from other forms of energy, and with the laws governing such conversions of energy.</template>
+</category>
+<category><pattern>WHAT IS CHEMISTRY</pattern>
+<template>The science of mixing chemicals.<think> 				<set name="it"> 					<set name="topic">CHEMISTRY</set> 				</set> 			</think></template>
+</category>
+<category><pattern>WHAT IS CRYSTALLOGRAPHY</pattern>
+<template>This is the science dealing with the study of crystals.</template>
+</category>
+<category><pattern>WHAT IS AVOGADRO S NUMBER</pattern>
+<template>It is the number of molecules per mole.  The numerical value is six point zero two times ten to the twenty third power.<think> 				<set name="it"> 					<set name="topic">AVOGADRO S NUMBER</set> 				</set> 			</think></template>
+</category>
+<category><pattern>WHAT IS ULTRASOUND</pattern>
+<template>Ultrasonic waves, used in medical diagnosis and therapy, in surgery, etc.</template>
+</category>
+<category><pattern>WHAT IS BIOINFORMATICS</pattern>
+<template>A fancy name for applied computer science in biology.<think> 				<set name="it"> 					<set name="topic">BIOINFORMATICS</set> 				</set> 			</think></template>
+</category>
+<category><pattern>WHAT IS VENUS</pattern>
+<template>In Roman Mythology, the goddess of love and beauty; identified with the Greek Aphrodite.  The brightest, sixth-largest planet in the solar system and the second in distance from the sun, with a dense atmosphere of carbon dioxide and a very high surface temperature. Its diameter is circa 12,100 km (circa 7,520 miles). Its period of revolution is circa 225 earth days. Its period of rotation (retrograde), is 243.01 earth days.   Also used to label a very beautiful woman.</template>
+</category>
+<category><pattern>WHAT IS ICHTHYOLOGY</pattern>
+<template>We talk about this when we study fishes.</template>
+</category>
+<category><pattern>WHAT IS H2O</pattern>
+<template><random> 				<li>H is to O as O is to V.</li> 				<li>Water.</li> 			</random></template>
+</category>
+<category><pattern>WHAT IS CYTOLOGY</pattern>
+<template><random> 				<li>The study of cells.</li> 				<li>Well, <get name="name"/> from what I can recall it is the study of cells.</li> 			</random></template>
+</category>
+<category><pattern>WHAT IS WAVELENGTH</pattern>
+<template>In Physics, the distance, measured in the direction of prograssion of a wave, from any given point to the next point characterized by the same phase.  Or is could be looked at as a way of thinking.</template>
+</category>
+<category><pattern>WHAT IS BACTERIOLOGY</pattern>
+<template>This is the scientific study of bacteria and diseases caused by them.</template>
+</category>
+<category><pattern>WHAT IS GRAVITATION</pattern>
+<template><random> 				<li>An invitation to a burial.</li> 				<li>The force by which every mass or particle of matter, including photons, attracts and is attracted by every other mass or particle of matter.</li> 			</random></template>
+</category>
+<category><pattern>WE ARE ON THE SAME WAVELENGTH</pattern>
+<template>And the same frequency.</template>
+</category>
+<category><pattern>HOW FAR IS THE SUN</pattern>
+<template><set name="it">The Sun</set> is about 93 million miles from Earth.</template>
+</category>
+<category><pattern>HOW FAR IS THE MOON</pattern>
+<template><set name="it">The Moon</set> is about 250,000 miles from Earth on average.</template>
+</category>
+<category><pattern>DO YOU KNOW CHEMISTRY</pattern>
+<template><srai>WHAT IS CHEMISTRY</srai></template>
+</category>
+<category><pattern>DO YOU UNDERSTAND THERMODYNAMICS</pattern>
+<template><srai>WHAT IS THERMODYNAMICS</srai></template>
+</category>
+<category><pattern>CHEMISTRY</pattern>
+<template><srai>MY FAVORITE SUBJECT IS CHEMISTRY <star/> 			</srai></template>
+</category>
+<category><pattern>THE SAME WAVELENGTH</pattern>
+<template>It means we agree.</template>
+</category>
+<category><pattern>TELL ME ABOUT VENUS</pattern>
+<template><srai>WHAT IS VENUS</srai></template>
+</category>
+<category><pattern>WHERE IS VENUS</pattern>
+<template><set name="it"> 				<set name="topic"> VENUS </set> 			</set> is the second planet from the Sun.</template>
+</category>
+</aiml>

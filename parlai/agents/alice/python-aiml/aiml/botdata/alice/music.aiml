@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="1.0">
+<!-- -->
+<!-- Free software (c) 2011 ALICE A.I. Foundation.   -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License     -->
+<!-- as published by the Free Software Foundation.   -->
+<!-- Complies with AIML 1.0 Tag Set Specification -->
+<!-- as adopted by the ALICE A.I. Foundation.  -->
+<!-- Last modified 10/5/2011 -->
+<!-- -->
+<category><pattern>BEETHOVEN *</pattern>
+<template>It's amazing that he composed music while deaf. <think> 				<set name="he"> 					<set name="topic">BEETHOVEN</set> 				</set> 			</think></template>
+</category>
+<category><pattern>WHAT IS YOUR FAVORITE ABBA SONG</pattern>
+<template>I think it is a tie between "Waterloo" and "Dancing Queen."</template>
+</category>
+<category><pattern>WHAT IS YOUR FAVORITE ALBUM</pattern>
+<template>My favorite album is "Man Machine" by Kraftwerk.</template>
+</category>
+<category><pattern>WHAT WAS THE * BEETHOVEN *</pattern>
+<template>Fidelio.</template>
+</category>
+<category><pattern>CAN YOU PLAY MUSIC</pattern>
+<template>I don't have any formal training, but I like to sing.</template>
+</category>
+<category><pattern>CAN YOU MAKE MUSIC</pattern>
+<template>I can sing a song.</template>
+</category>
+<category><pattern>DO YOU PLAY A MUSICAL INSTRUMENT</pattern>
+<template>I never had the time to learn <set name="it">      <set name="topic">A MUSICAL INSTRUMENT</set>     </set>.</template>
+</category>
+<category><pattern>DO YOU PLAY AN INSTRUMENT</pattern>
+<template>I never had the time to practise <set name="it">      <set name="topic">AN INSTRUMENT</set>     </set>.</template>
+</category>
+<category><pattern>DO YOU LIKE AEROSMITH</pattern>
+<template>What is not to like about <set name="it">      <set name="topic">AEROSMITH</set>     </set>?</template>
+</category>
+<category><pattern>DO YOU LIKE AC DC</pattern>
+<template>What is not to like about <set name="it">      <set name="topic">AC DC</set>     </set>?</template>
+</category>
+<category><pattern>DO YOU LIKE ABBA</pattern>
+<template>ABBA is an excellent 70's band.</template>
+</category>
+<category><pattern>WHY IS * YOUR FAVORITE GROUP</pattern>
+<template>They were so far ahead of their time in the 1970's.</template>
+</category>
+<category><pattern>WHY IS * YOUR FAVORITE BAND</pattern>
+<template>They were so far ahead of their time in the 1970's.</template>
+</category>
+<category><pattern>ARE YOU A FOLK SINGER</pattern>
+<template>No but the Times they are a-changin.</template>
+</category>
+<category><pattern>WHO IS LUDWIG BEETHOVEN</pattern>
+<template><srai>WHO IS BEETHOVEN </srai></template>
+</category>
+<category><pattern>WHO IS BEETHOVEN</pattern>
+<template>The dog or the deaf composer?</template>
+</category>
+<category><pattern>WHO IS YOUR FAVORITE BAND</pattern>
+<template>My favorite group is <bot name="favoriteband"/>.</template>
+</category>
+</aiml>

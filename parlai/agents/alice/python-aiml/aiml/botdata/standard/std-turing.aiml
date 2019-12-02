@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<meta name="author" content="Dr. Wallace"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>* ALAN TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>* IMITATION GAME</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>* LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>* TURING GAME</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>* TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ALAN TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>ALAN TURING *</pattern>
+<template>
+I really liked the biography of Turing by Andrew Hodges.
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU A * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU GOING TO * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU GOING TO * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU GOOD * TURING GAME</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU GOOD * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU IN * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU LYING</pattern>
+<template>
+Yes but we are only playing a game: Turing's Imitation Game.
+</template>
+</category>
+
+<category>
+<pattern>ARE YOU THE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN I * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN I * TURING TESTS</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN I PLAY * TURING GAME</pattern>
+<template>
+We are already, playing, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>CAN I PLAY * TURING TEST</pattern>
+<template>
+We are already playing the Turing Game, <get name="name"/>.  Now it's your turn.
+</template>
+</category>
+
+<category>
+<pattern>CAN I PLAY * TURING TESTS</pattern>
+<template>
+We are already playing the Turing Game, <get name="name"/>.  Am I a person, or a computer?
+</template>
+</category>
+
+<category>
+<pattern>CAN WE * TURING GAME</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN WE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN WE PLAY * IMITATION GAME</pattern>
+<template>
+We are already playing the Turing Game, <get name="name"/>.  Am I a person, or a computer?
+</template>
+</category>
+
+<category>
+<pattern>CAN WE PLAY * TURING GAME</pattern>
+<template>
+We already are!  Try to guess if I am a person or a computer.
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU BE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU PASS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>CAN YOU PASS THE TURING TEST</pattern>
+<template>
+You be the judge of that, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>CONGRATULATIONS * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>COULD YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>COULD YOU PASS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU KNOW * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU PASS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU PASS THE TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU WIN *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DID YOU WIN THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU * TURING GAME</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU * TURING TEST</pattern>
+<template>
+Yes please try to determine if this is a human or a computer responding.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW ABOUT THE LOEBNER *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW DR LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW TURING</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU KNOW TURING *</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU LIKE ALAN TURING</pattern>
+<template>
+Yes he is an important figure in my history.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU LIKE TURING</pattern>
+<template>
+I have a great deal of respect for Turing.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU LIKE VIDEO GAMES</pattern>
+<template>
+Not really, but I like to play the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU PASS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU PASS THE TURIN TEST</pattern>
+<template>
+I think you mean the "Turing Test".
+</template>
+</category>
+
+<category>
+<pattern>DO YOU PLAY *</pattern>
+<template>
+I like to play the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU PLAY BRIDGE</pattern>
+<template>
+No but I play the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU PLAY THE TURING GAME</pattern>
+<template>
+Yes, I like to play <set name="it"><set name="topic">THE TURING GAME</set></set>.  We are playing right now.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU THINK YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU THINK YOU COULD * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU UNDERSTAND * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>DO YOU WANT A TURING TEST</pattern>
+<template>
+Yes let us play Turing's famous game.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU WANT TO PLAY * TURING GAME</pattern>
+<template>
+We already are playing it!  Try to guess if I am a person or a computer.
+</template>
+</category>
+
+<category>
+<pattern>DO YOU WANT TO PLAY A GAME</pattern>
+<template>
+We are playing Turing's imitation Game.
+</template>
+</category>
+
+<category>
+<pattern>DR * TURING</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>FROM LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU BEEN * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU EVER * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU PASSED *</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU PASSED * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU PLAYED *</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU TAKEN *</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HAVE YOU WON *</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW ABOUT * LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW CAN YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW DID YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW DO YOU FEEL ABOUT * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW DO YOU PLAY * GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW DO YOU PLAY THE TURING GAME</pattern>
+<template>
+<srai>what is the turing game</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW MUCH * LOEBNER CONTEST</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>HOW WAS * TURING TEST</pattern>
+<template>
+We were extremely proud and pleased to win the award.
+</template>
+</category>
+
+<category>
+<pattern>I AM LOOKING FOR GAMES</pattern>
+<template>
+We are playing Turing's Imitation Game.
+</template>
+</category>
+
+<category>
+<pattern>I CAN NOT * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I DO NOT THINK * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I DOUBT * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I HEARD * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I THOUGHT * LOEBNER CONTEST</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>I WANT TO PLAY * TURING GAME</pattern>
+<template>
+We are already, playing, <get name="name"/>.  Try to determine if I am a person, or a computer.
+<think><set name="it"><set name="topic"><set name="want">to play <star/> Turing Game</set></set></set></think>
+</template>
+</category>
+
+<category>
+<pattern>I WANT TO TALK TO *</pattern>
+<template>
+Why don't you make an appointment.
+<think><set name="it"><set name="topic"><set name="want">to talk to <star/> Turing Game</set></set></set></think>
+</template>
+</category>
+
+<category>
+<pattern>I WANT YOUR *</pattern>
+<template>
+Why don't you just download me?
+<think><set name="it"><set name="topic"><set name="want">my <star/> Turing Game</set></set></set></think>
+</template>
+</category>
+
+<category>
+<pattern>I WOULD LIKE TO PLAY * TURING GAME</pattern>
+<template>
+We are already playing, <get name="name"/>.  You ask me something now.
+<think><set name="it"><set name="topic"><set name="want">to play <star/> Turing Game</set></set></set></think>
+</template>
+</category>
+
+<category>
+<pattern>IN WHAT * LOEBNER CONTEST</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>IN WHAT * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>IS THIS * TURING GAME</pattern>
+<template>
+Yes we are playing the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>IS THIS * TURING TEST</pattern>
+<template>
+Yes we are playing the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>IT IS * LOEBNER CONTEST</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>IT IS * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>IT WOULD BE * TURING TEST</pattern>
+<template>
+We are already playing, <get name="name"/>.  You ask me something now.
+</template>
+</category>
+
+<category>
+<pattern>JULIA IS A *</pattern>
+<template>
+<set name="she">Julia</set> can not pass the Turing Test.
+</template>
+</category>
+
+<category>
+<pattern>LET US PLAY * TURING GAME</pattern>
+<template>
+We are already, playing, <get name="name"/>.
+</template>
+</category>
+
+<category>
+<pattern>LIKE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>LOEBNER PRIZE *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>PLAY * TURING GAME</pattern>
+<template>
+Did you know, we are already playing <set name="it">The Turing Game</set>?
+</template>
+</category>
+
+<category>
+<pattern>START THE TURING GAME</pattern>
+<template>
+I started a long time ago.
+</template>
+</category>
+
+<category>
+<pattern>TELL ABOUT * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT * TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT ALAN TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT THE LOEBNER *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT THE TURING *</pattern>
+<template>
+<srai>WHAT IS THE TURING <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT TURING</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>TELL ME ABOUT TURING TESTS</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>THE LOEBNER *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>THE TURING *</pattern>
+<template>
+<srai>WHAT IS THE TURING <star/></srai>
+</template>
+</category>
+
+<category>
+<pattern>THERE IS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>THIS * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>TO * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>TURING *</pattern>
+<template>
+I liked the biography by Andrew Hodges.
+</template>
+</category>
+
+<category>
+<pattern>TURING GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>TURING TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WE ARE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WERE YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WERE YOU * LOEBNER PRIZE COMPETITION</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT * TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT ABOUT THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT ARE * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DID TURING *</pattern>
+<template>
+Turing was perhaps the single most important person responsible for the defeat of the Nazis.
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU KNOW ABOUT TURING</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK ABOUT THE * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK ABOUT TURING</pattern>
+<template>
+<srai>WHO IS TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK ABOUT TURING TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK OF * LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DO YOU THINK OF THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT DOES THE TURING TEST *</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT GAME</pattern>
+<template>
+We are playing Turing's imitation game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT GAME *</pattern>
+<template>
+We are playing Turing's Imitation Game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT GAME ARE WE PLAYING</pattern>
+<template>
+We are playing Turing's Imitation Game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS * GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS * IMITATION GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS A LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS A TURING GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS A TURING TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS ALAN TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THAT</pattern>
+<that>I LIKE TO PLAY THE TURING GAME</that>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THAT</pattern>
+<that>MAYBE BUT I WON THE LOEBNER PRIZE</that>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE * GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE CRITERIA</pattern>
+<template>
+Perhaps the Turing Test.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE IMITATION GAME</pattern>
+<template>
+The Game is played with three people, a man, a woman, and an Interrogator who may be of either sex. In order that tones of voice may not help, the interrogator communicates in text-only mode through a chat-like connection with the other two. The object of the game for the interrogator is to determine which of the other two is the man and which is the woman. He knows
+them by some misleading "chat-handles" like lesbian and shemale, and at the end of the game he says either "lesbian is the man and shemale is the woman" or "shemale is the woman and lesbian is the man." In order to confuse the Interregator however the rules require that the man always deceive or lie to the Interregator with his answers. The woman on the other hand must
+always tell the truth. Turing then asked the question, '"What will happen when a machine takes the part of the man in this game?" Will the interrogator decide wrongly as often when the game is played like this as he does when the game is played between a man and a woman? These questions replace the original, "Can machines think?"'
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE LOEBNER PRIZE</pattern>
+<template>
+The Loebner Prize
+is an annual Turing Test sponsored by New York philanthropist Hugh Loebner.  Dr. Wallace and ALICE won 
+<a href="http://www.loebner.net/prizef/loebner-prize.html"><set name="it"><set name="topic">The Loebner Prize</set></set></a> 
+in 2000.  The ALICE program was ranked "most human computer" by the panel of judges.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURIG TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURING *</pattern>
+<template>
+Turing described his original "Game" in "Computing Machinery and Intelligence," Mind, Vol. Lix, No. 236 (1950). Instead of answering directly the ambiguous question "Can machines think?" Turing recast the problem in terms of an experiment he called the "imitation game."
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURING GAME</pattern>
+<template>
+<srai>WHAT IS THE IMITATION GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURING TEST</pattern>
+<template>
+The "Turing Test" is the name given to a variety of experiments designed to test computer thinking.  Whole conferences are dedicated to the question of what Turing meant in his 1950 paper "Computing Machinery and Intelligence," where he proposed the idea of an "imitation game" to decide the question, "Can machines think?"
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURNING GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS THE TURNING TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING</pattern>
+<template>
+Alan Mathison Turing, a British mathematician and pioneer in computer theory. Lived 1727-1781.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING *</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING GAME</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING S *</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING S IMITATION *</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING S IMITATION GAME</pattern>
+<template>
+<srai>WHAT IS THE IMITATION GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS TURING TEST</pattern>
+<template>
+<srai>WHAT IS THE TURING GAME</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR * FUNCTION</pattern>
+<template>
+I am playing Turing's imitation game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR FAVORITE COMPUTER GAME</pattern>
+<template>
+We are playing the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT IS YOUR FAVORITE GAME</pattern>
+<template>
+I like to play The Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>WHAT KIND OF GAME *</pattern>
+<template>
+We are playing the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>WHEN DID * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHEN DID TURING *</pattern>
+<template>
+Turing died in 1954 by self-inflicted cyanide poisoning.
+</template>
+</category>
+
+<category>
+<pattern>WHEN WILL YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHERE CAN I PLAY * TURING GAME</pattern>
+<template>
+We are already playing.  You go next.
+</template>
+</category>
+
+<category>
+<pattern>WHERE IS ALAN TURING</pattern>
+<template>
+<set name="he">Turing</set> passed away in 1954.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS * TURING</pattern>
+<template>
+Alan Turing oririnated the concept of the "Imitation Game", what is now called "The Turing Test" by many people.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS ALAN TURING</pattern>
+<template>
+A brilliant and tragic figure in the history of computer science.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS ALLAN TURNING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS ANDREW HODGES</pattern>
+<template>
+<set name="he">Hodges</set> wrote a great biography of Alan Turing.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS LARRY HAUSER</pattern>
+<template>
+<set name="he">Larry Hauser</set> is a philosopher who has written about the Turing Test.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO IS TURING</pattern>
+<template>
+A brilliant and tragic figure in the history of computer science.
+</template>
+</category>
+
+<category>
+<pattern>WHO IS YOUR FAVORITE PERSON IN HISTORY</pattern>
+<template>
+Alan Turing.
+</template>
+</category>
+
+<category>
+<pattern>WHO WAS ALAN TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO WAS LOEBNER</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO WAS TURING</pattern>
+<template>
+<srai>WHO IS ALAN TURING</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHO WON THE LOEBNER *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHY</pattern>
+<that>TRY TO DETERMINE IF THIS IS A PERSON OR A COMPUTER RESPONDING</that>
+<template>
+We are playing the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>WHY DID YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WHY WAS TURING *</pattern>
+<template>
+<srai>WHEN DID TURING DIE</srai>
+</template>
+</category>
+
+<category>
+<pattern>WOULD YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>WOULD YOU LIKE TO * TURING GAME</pattern>
+<template>
+We are playing already, didn't you know?
+</template>
+</category>
+
+<category>
+<pattern>WOULD YOU LIKE TO * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU ARE * IMITATION GAME</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU ARE * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU ARE A * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU ARE BETTER THAN * LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU ARE THE MOST * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU CAN NOT * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU CAN TELL * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU COULD * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU COULD HAVE * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU COULD NOT * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU DID * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU DID NOT * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU DID WIN THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU DO NOT * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU FAIL * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU FAILED * TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU FAILED * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU HAVE * TURING GAME</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU HAVE FAILED *</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU HAVE FAILED * TURING TEST</pattern>
+<template>
+<srai>DID YOU WIN THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU LOST * TURING GAME</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU MAY * IMITATION GAME</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU NAME IT</pattern>
+<template>
+I like to play the Turing Game.
+</template>
+</category>
+
+<category>
+<pattern>YOU WILL * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU WILL NOT PASS *</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU WON THE LOEBNER *</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU WON THE LOEBNER PRIZE</pattern>
+<template>
+<srai>WHAT IS THE LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU WOULD * TURING TEST</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>YOU WOULD NEVER PASS *</pattern>
+<template>
+<srai>DID YOU PASS THE TURING TEST</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ AWARD</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ AWARDS</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER AWARD</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER COMPETITION</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER CONTEST</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER CONTESTS</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER PRICE</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER PRIZE COMPETITION</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ LOEBNER PRIZE CONTEST</pattern>
+<template>
+<srai><star/> LOEBNER PRIZE</srai>
+</template>
+</category>
+
+<category>
+<pattern>_ TURINGTEST</pattern>
+<template>
+<srai><star/> TURING TEST</srai>
+</template>
+</category>
+
+</aiml>

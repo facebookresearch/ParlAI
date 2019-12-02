@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<aiml version="1.0">
+
+<!-- Free software (c) 2001 ALICE AI Foundation -->
+<!-- This program is open source code released under -->
+<!-- the terms of the GNU General Public License -->
+<!-- as published by the Free Software Foundation. -->
+
+<!-- Find the USERS NAME, and determine the gender.  -->
+<!-- Place male names into the (set name gender male) category.  -->
+<!-- Place female names into the (set name gender female) category.  -->
+<!-- Names that can be both male or female should be left out of both groups.  -->
+
+<meta name="author" content="Thomas Ringate"/>
+<meta name="language" content="en"/>
+
+<category>
+<pattern>GET NAME GENDER</pattern>
+<template>
+<think><set name="gender">
+<condition name="name">
+<li value="jeb">male</li>
+<li value="anders">male</li>
+<li value="andre">male</li>
+<li value="aaron">male</li>
+<li value="ace">male</li>
+<li value="adam">male</li>
+<li value="adrian">male</li>
+<li value="al">male</li>
+<li value="alan">male</li>
+<li value="alex">male</li>
+<li value="alexander">male</li>
+<li value="allan">male</li>
+<li value="allen">male</li>
+<li value="amit">male</li>
+<li value="andreas">male</li>
+<li value="andrew">male</li>
+<li value="andy">male</li>
+<li value="anthony">male</li>
+<li value="anton">male</li>
+<li value="arne">male</li>
+<li value="benjamin">male</li>
+<li value="bill">male</li>
+<li value="billy">male</li>
+<li value="bob">male</li>
+<li value="bobby">male</li>
+<li value="brad">male</li>
+<li value="brandon">male</li>
+<li value="mark">male</li>
+<li value="max">male</li>
+<li value="jon">male</li>
+<li value="josh">male</li>
+<li value="jeremy">male</li>
+<li value="jim">male</li>
+<li value="joe">male</li>
+<li value="john">male</li>
+<li value="jeff">male</li>
+<li value="james">male</li>
+<li value="ben">male</li>
+<li value="brian">male</li>
+<li value="dan">male</li>
+<li value="dave">male</li>
+<li value="david">male</li>
+<li value="dick">male</li>
+<li value="doug">male</li>
+<li value="ed">male</li>
+<li value="eric">male</li>
+<li value="ernie">male</li>
+<li value="fred">male</li>
+<li value="gary">male</li>
+<li value="george">male</li>
+<li value="gordon">male</li>
+<li value="graham">male</li>
+<li value="harry">male</li>
+<li value="jason">male</li>
+<li value="jeffrey">male</li>
+<li value="jeff">male</li>
+<li value="todd">male</li>
+<li value="ken">male</li>
+<li value="matt">male</li>
+<li value="mel">male</li>
+<li value="michael">male</li>
+<li value="mike">male</li>
+<li value="mitch">male</li>
+<li value="nick">male</li>
+<li value="paul">male</li>
+<li value="pedro">male</li>
+<li value="pete">male</li>
+<li value="peter">male</li>
+<li value="rick">male</li>
+<li value="robert">male</li>
+<li value="sam">male</li>
+<li value="scott">male</li>
+<li value="steve">male</li>
+<li value="tim">male</li>
+<li value="tom">male</li>
+<li value="tommy">male</li>
+<li value="thomas">male</li>
+<li value="victor">male</li>
+<li value="wally">male</li>
+<li value="alison">female</li>
+<li value="alli">female</li>
+<li value="allie">female</li>
+<li value="allison">female</li>
+<li value="amanda">female</li>
+<li value="amber">female</li>
+<li value="amy">female</li>
+<li value="angel">female</li>
+<li value="angela">female</li>
+<li value="ann">female</li>
+<li value="anna">female</li>
+<li value="anne">female</li>
+<li value="annie">female</li>
+<li value="ashley">female</li>
+<li value="becky">female</li>
+<li value="beth">female</li>
+<li value="betty">female</li>
+<li value="brenda">female</li>
+<li value="britta">female</li>
+<li value="brittany">female</li>
+<li value="carol">female</li>
+<li value="carrie">female</li>
+<li value="cassie">female</li>
+<li value="catherine">female</li>
+<li value="cathy">female</li>
+<li value="christina">female</li>
+<li value="christine">female</li>
+<li value="cindy">female</li>
+<li value="claire">female</li>
+<li value="crystal">female</li>
+<li value="cynthia">female</li>
+<li value="danielle">female</li>
+<li value="dawn">female</li>
+<li value="deanna">female</li>
+<li value="debbie">female</li>
+<li value="dee">female</li>
+<li value="diana">female</li>
+<li value="elana">female</li>
+<li value="elizabeth">female</li>
+<li value="emily">female</li>
+<li value="emma">female</li>
+<li value="erica">female</li>
+<li value="erika">female</li>
+<li value="erin">female</li>
+<li value="eva">female</li>
+<li value="gina">female</li>
+<li value="heather">female</li>
+<li value="helen">female</li>
+<li value="jackie">female</li>
+<li value="jan">female</li>
+<li value="jane">female</li>
+<li value="jen">female</li>
+<li value="jenn">female</li>
+<li value="jenna">female</li>
+<li value="jennifer">female</li>
+<li value="jenny">female</li>
+<li value="jens">female</li>
+<li value="jessica">female</li>
+<li value="jill">female</li>
+<li value="joyce">female</li>
+<li value="judy">female</li>
+<li value="julia">female</li>
+<li value="julie">female</li>
+<li value="karen">female</li>
+<li value="kari">female</li>
+<li value="kate">female</li>
+<li value="kathleen">female</li>
+<li value="kathryn">female</li>
+<li value="kathy">female</li>
+<li value="katie">female</li>
+<li value="kristen">female</li>
+<li value="kristin">female</li>
+<li value="kristina">female</li>
+<li value="laura">female</li>
+<li value="lauren">female</li>
+<li value="leah">female</li>
+<li value="linda">female</li>
+<li value="lisa">female</li>
+<li value="liz">female</li>
+<li value="lucy">female</li>
+<li value="lulu">female</li>
+<li value="mandy">female</li>
+<li value="maria">female</li>
+<li value="marie">female</li>
+<li value="mary">female</li>
+<li value="meg">female</li>
+<li value="megan">female</li>
+<li value="melissa">female</li>
+<li value="melody">female</li>
+<li value="michelle">female</li>
+<li value="mimi">female</li>
+<li value="miriam">female</li>
+<li value="monica">female</li>
+<li value="nicole">female</li>
+<li value="nikki">female</li>
+<li value="noelle">female</li>
+<li value="pam">female</li>
+<li value="princess">female</li>
+<li value="rachel">female</li>
+<li value="rebecca">female</li>
+<li value="rose">female</li>
+<li value="rosie">female</li>
+<li value="sally">female</li>
+<li value="samantha">female</li>
+<li value="sara">female</li>
+<li value="sarah">female</li>
+<li value="shirley">female</li>
+<li value="stephanie">female</li>
+<li value="sue">female</li>
+<li value="susan">female</li>
+<li value="suzi">female</li>
+<li value="tammy">female</li>
+<li value="tara">female</li>
+<li value="teresa">female</li>
+<li value="tiffany">female</li>
+<li value="tina">female</li>
+<li value="valerie">female</li>
+<li>it</li>
+</condition>
+</set></think>
+<srai>setheshe</srai>
+</template>
+</category>
+
+<category>
+<pattern>SETHESHE</pattern>
+<template>
+<condition name="gender">
+<li value="male"><think><set name="heshe">he</set></think></li>
+<li value="female"><think><set name="heshe">she</set></think></li>
+<li><think><set name="heshe">it</set></think>Are you a man or a woman?</li>
+</condition>
+</template>
+</category>
+
+
+</aiml>
