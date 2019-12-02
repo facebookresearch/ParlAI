@@ -15,8 +15,9 @@ from parlai.utils.logging import logger
 
 
 class DocReaderModel(object):
-    """High level model that handles intializing the underlying network
-    architecture, saving, updating examples, and predicting examples.
+    """
+    High level model that handles intializing the underlying network architecture,
+    saving, updating examples, and predicting examples.
     """
 
     def __init__(self, opt, word_dict, feature_dict, state_dict=None):

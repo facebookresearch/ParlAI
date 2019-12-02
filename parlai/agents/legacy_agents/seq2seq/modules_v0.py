@@ -99,8 +99,9 @@ class Seq2seq(nn.Module):
 
     def unbeamize_hidden(self, hidden, beam_size, batch_size):
         """
-        Creates a view of the hidden where batch axis is collapsed with beam axis,
-        we need to do this for batched beam search, i.e. we emulate bigger mini-batch
+        Creates a view of the hidden where batch axis is collapsed with beam axis, we
+        need to do this for batched beam search, i.e. we emulate bigger mini-batch.
+
         :param hidden: hidden state of the decoder
         :param beam_size: beam size, i.e. num of hypothesis
         :param batch_size: number of samples in the mini batch
@@ -133,7 +134,8 @@ class Seq2seq(nn.Module):
         beam_size=1,
         topk=1,
     ):
-        """Get output predictions from the model.
+        """
+        Get output predictions from the model.
 
         Arguments:
         xs -- input to the encoder
@@ -639,8 +641,9 @@ class Ranker(object):
 
 
 class Linear(nn.Module):
-    """Custom Linear layer which allows for sharing weights (e.g. with an
-    nn.Embedding layer).
+    """
+    Custom Linear layer which allows for sharing weights (e.g. with an nn.Embedding
+    layer).
     """
 
     def __init__(self, in_features, out_features, bias=True, shared_weight=None):
@@ -695,7 +698,9 @@ class Linear(nn.Module):
 
 
 class RandomProjection(nn.Module):
-    """Randomly project input to different dimensionality."""
+    """
+    Randomly project input to different dimensionality.
+    """
 
     def __init__(self, in_features, out_features):
         super().__init__()

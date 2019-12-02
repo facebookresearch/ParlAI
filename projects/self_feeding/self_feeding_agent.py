@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""A self-feeding chatbot (a chatbot wrapped with an NRC and QGen)
+"""
+A self-feeding chatbot (a chatbot wrapped with an NRC and QGen)
 
 A self-feeding chatbot consists of three components:
 - dialog agent: this is a typical model for handlin a conversastion(e.g. Transformer)
@@ -54,7 +55,9 @@ NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 class SelfFeedingAgent(TransformerRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         super().add_cmdline_args(argparser)
         SelfFeedingModel.add_cmdline_args(argparser)
 
@@ -279,7 +282,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
     @classmethod
     def upgrade_opt(cls, opt_on_disk):
-        """Upgrade opts from older model files."""
+        """
+        Upgrade opts from older model files.
+        """
         super(SelfFeedingAgent, cls).upgrade_opt(opt_on_disk)
 
         # 2019-06-25: previous versions of the model did not add a CLS token
@@ -356,7 +361,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return action
 
     def observe(self, observation):
-        """Add to history, concatenate history-size utterances, and add person tokens"""
+        """
+        Add to history, concatenate history-size utterances, and add person tokens.
+        """
 
         # If their response is a response to a rating request, no work required
         if self.status == RATING_REQUESTED:
@@ -409,7 +416,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return obs
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         if batch.text_vec is None:
             return
 
@@ -609,7 +618,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.requested_rating = False
 
     def reset_metrics(self):
-        """Reset metrics."""
+        """
+        Reset metrics.
+        """
         super().reset_metrics()
         self.metrics['examples'] = 0
         if 'dialog' in self.subtasks:
@@ -631,7 +642,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.metrics['sat_fn'] = 0
 
     def report(self):
-        """Report metrics from model's perspective."""
+        """
+        Report metrics from model's perspective.
+        """
         m = TorchAgent.report(self)  # Skip TorchRankerAgent; totally redundant
         examples = self.metrics['examples']
         if examples > 0:
@@ -670,7 +683,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return m
 
     def encode_candidates(self, cands):
-        """Encodes a tensor of vectorized candidates
+        """
+        Encodes a tensor of vectorized candidates.
 
         :param cands: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
             candidates
@@ -678,7 +692,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return self.model.encode_dia_y(cands)
 
     def do_request_feedback(self, positivity):
-        """Decide whether to request an feedback this turn"""
+        """
+        Decide whether to request an feedback this turn.
+        """
         # If --request-feedback=False, then don't request an feedback
         if not self.opt['request_feedback'] or len(self.history.history_strings) == 1:
             return False
@@ -686,7 +702,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
             return positivity < self.opt['rating_threshold']
 
     def do_request_rating(self, positivity):
-        """Decide whether to request a rating this turn"""
+        """
+        Decide whether to request a rating this turn.
+        """
         # If --request-rating=False, then don't request a rating
         if not self.opt['request_rating']:
             return False
@@ -705,7 +723,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
             return gap < self.opt['rating_gap']
 
     def extract_rating(self):
-        """Convert user response to rating request from text to an integer rating"""
+        """
+        Convert user response to rating request from text to an integer rating.
+        """
         # TODO: Make this more robust!
         if self.last_rating == 'positive':
             return 1
@@ -822,7 +842,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
         opt['subtasks'] = subtasks  # Add to opt so that model module can see the list
 
     def load(self, path):
-        """Return opt and model states.
+        """
+        Return opt and model states.
 
         Overriding TorchAgent.load() to enable partial loading
         """

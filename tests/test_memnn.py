@@ -13,10 +13,14 @@ LR = 1
 
 
 class TestMemnn(unittest.TestCase):
-    """Checks that seq2seq can learn some very basic tasks."""
+    """
+    Checks that seq2seq can learn some very basic tasks.
+    """
 
     def test_labelcands_nomemnn(self):
-        """This test uses a single-turn task, so doesn't test memories."""
+        """
+        This test uses a single-turn task, so doesn't test memories.
+        """
 
         stdout, valid, test = testing_utils.train_model(
             dict(
@@ -48,7 +52,9 @@ class TestMemnn(unittest.TestCase):
 
     @testing_utils.skipIfGPU
     def test_labelcands_multi(self):
-        """This test uses a multi-turn task and multithreading."""
+        """
+        This test uses a multi-turn task and multithreading.
+        """
         stdout, valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:multiturn_candidate',
@@ -79,7 +85,7 @@ class TestMemnn(unittest.TestCase):
 
     def test_backcomp(self):
         """
-        Tests that the memnn model files continue to works over time
+        Tests that the memnn model files continue to works over time.
         """
         testing_utils.download_unittest_models()
 

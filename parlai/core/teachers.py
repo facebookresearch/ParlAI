@@ -83,7 +83,9 @@ class DataLoader(Thread):
         self.request_queue.put((receive_fn, load_fn, args))
 
     def run(self):
-        """Run the execution loop."""
+        """
+        Run the execution loop.
+        """
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers)
         with executor:
             while True:
@@ -182,7 +184,9 @@ class FixedDialogTeacher(Teacher):
             return no_lock()
 
     def reset(self):
-        """Reset the dialog to the start of the epoch, and reset all metrics."""
+        """
+        Reset the dialog to the start of the epoch, and reset all metrics.
+        """
         super().reset()
         self.metrics.clear()
         self.lastY = None
@@ -217,7 +221,9 @@ class FixedDialogTeacher(Teacher):
         self.data_queue.put(data)
 
     def share(self):
-        """Share the data and dataloader."""
+        """
+        Share the data and dataloader.
+        """
         shared = super().share()
 
         if hasattr(self, 'lastYs'):
@@ -266,9 +272,9 @@ class FixedDialogTeacher(Teacher):
         """
         Return the next example.
 
-        If there are multiple examples in the same episode, returns the next
-        one in that episode. If that episode is over, gets a new episode index
-        and returns the first example of that episode.
+        If there are multiple examples in the same episode, returns the next one in that
+        episode. If that episode is over, gets a new episode index and returns the first
+        example of that episode.
         """
         if self.episode_done:
             self.episode_idx = self.next_episode_idx()
@@ -294,7 +300,9 @@ class FixedDialogTeacher(Teacher):
         return ex, epoch_done
 
     def next_batch(self):
-        """Return the next batch of examples."""
+        """
+        Return the next batch of examples.
+        """
         # get next batch
         with self._lock():
             self.index.value += 1
@@ -315,7 +323,9 @@ class FixedDialogTeacher(Teacher):
         return self.batches[batch_idx]
 
     def num_episodes(self):
-        """Get the number of episodes in this dataset."""
+        """
+        Get the number of episodes in this dataset.
+        """
         if self.use_batch_act:
             # when using batch_act, this is length of sorted data
             return len(self.sorted_data)
@@ -323,7 +333,9 @@ class FixedDialogTeacher(Teacher):
 
     @lru_cache(maxsize=1)
     def num_examples(self):
-        """Get the total number of examples in this dataset."""
+        """
+        Get the total number of examples in this dataset.
+        """
         if self.use_batch_act:
             # when using batch_act, this is length of sorted data
             return len(self.sorted_data)
@@ -346,7 +358,9 @@ class FixedDialogTeacher(Teacher):
         raise RuntimeError('"Get" method must be overriden by children.')
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.use_batch_act:
             self.lastY = self.lastYs[self.batchindex]
             self.lastYs[self.batchindex] = None
@@ -390,7 +404,9 @@ class FixedDialogTeacher(Teacher):
         return batch
 
     def act(self):
-        """Send new dialog message."""
+        """
+        Send new dialog message.
+        """
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet
             self.reset()
@@ -466,14 +482,18 @@ class DialogTeacher(FixedDialogTeacher):
         self.reset()
 
     def reset(self):
-        """Reset the dialog to the start of the epoch, reset all metrics."""
+        """
+        Reset the dialog to the start of the epoch, reset all metrics.
+        """
         super().reset()
         if self.stream:
             self.data.reset()
             self.epochDone = False
 
     def share(self):
-        """Share the data."""
+        """
+        Share the data.
+        """
         shared = super().share()
         if hasattr(self, 'data'):
             shared['data'] = self.data.share()
@@ -483,8 +503,8 @@ class DialogTeacher(FixedDialogTeacher):
         """
         Provide consistent label candidates for all examples.
 
-        Default implementation returns ``None`` always, but this may be overriden
-        to provide candidates in all areas. See ``FbDialogueTeacher``.
+        Default implementation returns ``None`` always, but this may be overriden to
+        provide candidates in all areas. See ``FbDialogueTeacher``.
         """
         # TODO DEPRECATIONDAY: FbiDialogueTeacher is being deprecated, should we
         # remove this?
@@ -493,7 +513,9 @@ class DialogTeacher(FixedDialogTeacher):
         return None
 
     def num_episodes(self):
-        """Return the number of episodes in the data."""
+        """
+        Return the number of episodes in the data.
+        """
         try:
             return self.data.num_episodes()
         except AttributeError:
@@ -501,18 +523,24 @@ class DialogTeacher(FixedDialogTeacher):
 
     @lru_cache(maxsize=1)
     def num_examples(self):
-        """Return the number of examples in the data."""
+        """
+        Return the number of examples in the data.
+        """
         try:
             return self.data.num_examples()
         except AttributeError:
             return super().num_examples()
 
     def get(self, episode_idx, entry_idx=0):
-        """Get a specific example."""
+        """
+        Get a specific example.
+        """
         return self.data.get(episode_idx, entry_idx)[0]
 
     def next_example(self):
-        """Get the next example."""
+        """
+        Get the next example.
+        """
         if self.stream:
             action, epoch_done = self.data.get()
         else:
@@ -577,7 +605,9 @@ class DialogData(object):
         self.copied_cands = False
 
     def share(self):
-        """Share the data."""
+        """
+        Share the data.
+        """
         shared = {
             'data': self.data,
             'cands': self.cands,
@@ -669,7 +699,9 @@ class DialogData(object):
             self.data.append(episode)
 
     def num_episodes(self):
-        """Return number of episodes in the dataset."""
+        """
+        Return number of episodes in the dataset.
+        """
         return len(self.data)
 
     @lru_cache(maxsize=1)
@@ -806,7 +838,9 @@ class StreamDialogData(DialogData):
         self.num_exs = None
 
     def share(self):
-        """Share the stream."""
+        """
+        Share the stream.
+        """
         shared = super().share()
         # also share reset method to allow datastream to be reset
         shared['reset'] = self.reset
@@ -819,11 +853,15 @@ class StreamDialogData(DialogData):
         return shared
 
     def _load(self, data_loader, datafile):
-        """Load data generator into data field."""
+        """
+        Load data generator into data field.
+        """
         self.data = self._data_generator(data_loader, datafile)
 
     def _data_generator(self, data_loader, datafile):
-        """Generate data using the iterator over tuples constructed by data_loader."""
+        """
+        Generate data using the iterator over tuples constructed by data_loader.
+        """
         self.is_reset = False
         while True:
             for episode in self._read_episode(data_loader(datafile)):
@@ -836,8 +874,8 @@ class StreamDialogData(DialogData):
         """
         Calculate the length of the dataset and caches it in a file.
 
-        Note that this can take some time for large datasets. Episode and entry
-        indexes cannot be specified during streaming.
+        Note that this can take some time for large datasets. Episode and entry indexes
+        cannot be specified during streaming.
         """
         datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
         length_file = datafiles[0] + ".lengths"
@@ -855,13 +893,17 @@ class StreamDialogData(DialogData):
         return int(num_eps), int(num_exs)
 
     def num_examples(self):
-        """Return the number of examples in the data."""
+        """
+        Return the number of examples in the data.
+        """
         if not self.num_exs:
             self.num_eps, self.num_exs = self.load_length()
         return self.num_exs
 
     def num_episodes(self):
-        """Return the number of episodes in the data."""
+        """
+        Return the number of episodes in the data.
+        """
         if not self.num_eps:
             self.num_eps, self.num_exs = self.load_length()
         return self.num_eps
@@ -909,7 +951,9 @@ class StreamDialogData(DialogData):
         return table, end_of_data
 
     def reset(self):
-        """Reset the datastream to its beginning."""
+        """
+        Reset the datastream to its beginning.
+        """
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
@@ -993,22 +1037,26 @@ class FbDialogTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def share(self):
-        """Share the data and canidates."""
+        """
+        Share the data and canidates.
+        """
         shared = super().share()
         shared['cands'] = self.cands
         return shared
 
     def label_candidates(self):
-        """Return the candidates."""
+        """
+        Return the candidates.
+        """
         return self.cands
 
     def load_cands(self, path):
         """
         Load a global fixed set of candidates.
 
-        The candidates will be provided by the teacher for
-        every example (the true labels for a specific example are also added to
-        this set, so that it's possible to get the right answer).
+        The candidates will be provided by the teacher for every example (the true
+        labels for a specific example are also added to this set, so that it's possible
+        to get the right answer).
         """
         if path is None:
             return None
@@ -1226,21 +1274,29 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.reset()
 
     def share(self):
-        """Share the episodes."""
+        """
+        Share the episodes.
+        """
         shared = super().share()
         shared['episodes'] = self.episodes
         return shared
 
     def num_examples(self):
-        """Return the number of examples from the data."""
+        """
+        Return the number of examples from the data.
+        """
         return self.num_exs
 
     def num_episodes(self):
-        """Return the number of episodes from the data."""
+        """
+        Return the number of episodes from the data.
+        """
         return len(self.episodes)
 
     def get(self, episode_idx, entry_idx=None):
-        """Get a specific example from the dataset."""
+        """
+        Get a specific example from the dataset.
+        """
         return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
@@ -1340,10 +1396,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Available image model names.
 
-        resnet and resnext variants available from the ImageLoader.
-        resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k
-        hashtags, finetuned on ImageNet).
-
+        resnet and resnext variants available from the ImageLoader. resnext101_XXXXX_wsl
+        is the open-sourced FB AI model (960m images, 1.5k hashtags, finetuned on
+        ImageNet).
         """
         available_model_names = ImageLoader.get_available_model_names()
         return ['no_image_model'] + available_model_names
@@ -1352,8 +1407,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Validate the image_mode passed in.
 
-        Needed because image_mode used elsewhere in ParlAI is not always
-        consistent with what the image teacher allows.
+        Needed because image_mode used elsewhere in ParlAI is not always consistent with
+        what the image teacher allows.
         """
         if not isinstance(a, str):
             raise argparse.ArgumentTypeError(
@@ -1394,8 +1449,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Which key in the input data dict objects uniquely identify each image.
 
-        Common image keys are "image_id" or "image_num". May be implemented by
-        subclass.
+        Common image keys are "image_id" or "image_num". May be implemented by subclass.
         """
         return 'image_id'
 
@@ -1418,7 +1472,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         pass
 
     def get_data_path(self, opt):
-        """Determines path to the data file."""
+        """
+        Determines path to the data file.
+        """
         task_name = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         data_path = os.path.join(opt['datapath'], task_name)
         return data_path
@@ -1444,10 +1500,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Image features for the dataset images are stored here.
 
-        Can be overriden in subclass to use custom paths.
-        Image features can be manually copied into this directory or in the
-        case of ImageLoader eligible models, they will be built and stored here if not already there.
-
+        Can be overriden in subclass to use custom paths. Image features can be manually
+        copied into this directory or in the case of ImageLoader eligible models, they
+        will be built and stored here if not already there.
         """
         # In default implementation, self.data_path already has task name added
         image_features_path = os.path.join(self.data_path, 'image_features')
@@ -1463,9 +1518,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Is buildable if features can be calculated by ImageLoader.
 
-        Users may wish to compute features for the dataset offline and use in
-        the model, in which case, the image model should return False and
-        get_image_features() should be overriden in subclass.
+        Users may wish to compute features for the dataset offline and use in the model,
+        in which case, the image model should return False and get_image_features()
+        should be overriden in subclass.
         """
         return model_name in ImageLoader.get_available_model_names()
 
@@ -1555,9 +1610,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Build resne(x)t image features with ImageLoader.
 
-        (Or anything handleable by ImageLoader) and save to path.
-        Only called if we haven't already built the dict before.
-
+        (Or anything handleable by ImageLoader) and save to path. Only called if we
+        haven't already built the dict before.
         """
         image_features_dict = {}
         total = len(self.data)
@@ -1596,14 +1650,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     def get_image_features(self, example):
         """
-        Get image features for example
+        Get image features for example.
 
-        Can be overrided in subclass for different behavior.
-        For large datasets, it may be more appropriate to use the
-        ImageLoader.load() method to load image features (as this is essentially
-        streaming the features from disk, so that we do not have to load a
-        large image feature dict in memory).
-        #TODO Could be the default option if we are using -dt train:stream
+        Can be overrided in subclass for different behavior. For large datasets, it may
+        be more appropriate to use the ImageLoader.load() method to load image features
+        (as this is essentially streaming the features from disk, so that we do not have
+        to load a large image feature dict in memory). #TODO Could be the default option
+        if we are using -dt train:stream
         """
 
         key = str(example[self.image_id_key])
@@ -1615,8 +1668,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         """
-        Override this in subclass if your data should be handled in a
-        different format
+        Override this in subclass if your data should be handled in a different format.
         """
         example = self.data[episode_idx]
         image_features = self.get_image_features(example)
@@ -1628,11 +1680,11 @@ class AbstractImageTeacher(FixedDialogTeacher):
         }
 
     def next_example(self):
-        """Load queued example
+        """
+        Load queued example.
 
-        When self.image_features_dict is not `none`, this is essentially a
-        no-op. However, this is necessary/useful if self.image_mode is e.g. raw
-        or ascii.
+        When self.image_features_dict is not `none`, this is essentially a no-op.
+        However, this is necessary/useful if self.image_mode is e.g. raw or ascii.
         """
         return_result = None
         if self.include_image:

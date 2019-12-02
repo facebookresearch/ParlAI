@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""File for miscellaneous utility functions and constants."""
+"""
+File for miscellaneous utility functions and constants.
+"""
 
 from collections import deque
 from copy import deepcopy
@@ -55,7 +57,9 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
 
 
 def neginf(dtype: Type) -> float:
-    """Return a representable finite number near -inf for a dtype."""
+    """
+    Return a representable finite number near -inf for a dtype.
+    """
     if dtype is torch.float16:
         return -NEAR_INF_FP16
     else:
@@ -136,9 +140,8 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """
     Load global fixed set of candidate labels that the teacher provides.
 
-    Every example will include these as candidates. The true labels for a
-    specific example are also added to this set, so that it's possible to get
-    the right answer.
+    Every example will include these as candidates. The true labels for a specific
+    example are also added to this set, so that it's possible to get the right answer.
     """
     if path is None:
         return None
@@ -174,8 +177,8 @@ class Opt(dict):
     """
     Class for tracking options.
 
-    Functions like a dict, but allows us to track the history of arguments
-    as they are set.
+    Functions like a dict, but allows us to track the history of arguments as they are
+    set.
     """
 
     def __init__(self, *args, **kwargs):
@@ -199,7 +202,9 @@ class Opt(dict):
         return (Opt, (), self.__getstate__())
 
     def __deepcopy__(self, memo):
-        """Override deepcopy so that history is copied over to new object."""
+        """
+        Override deepcopy so that history is copied over to new object.
+        """
         # track location of deepcopy
         loc = traceback.format_stack()[-3]
         self.deepcopies.append(loc)
@@ -214,7 +219,9 @@ class Opt(dict):
         return memo
 
     def display_deepcopies(self):
-        """Display all deepcopies."""
+        """
+        Display all deepcopies.
+        """
         if len(self.deepcopies) == 0:
             print('No deepcopies performed on this opt.')
             return
@@ -223,7 +230,9 @@ class Opt(dict):
             print('{}. {}'.format(i + 1, loc))
 
     def display_history(self, key):
-        """Display the history for an item in the dict."""
+        """
+        Display the history for an item in the dict.
+        """
         if key not in self.history:
             print('No history for key {}.'.format(key))
             return
@@ -237,15 +246,17 @@ class Opt(dict):
 
 
 def load_opt_file(optfile: str) -> Opt:
-    """Load an Opt from disk."""
+    """
+    Load an Opt from disk.
+    """
     try:
         # try json first
         with open(optfile, 'r') as handle:
             opt = json.load(handle)
     except UnicodeDecodeError:
         # oops it's pickled
-        with open(optfile, 'rb') as bhandle:
-            opt = pickle.load(bhandle)
+        with open(optfile, 'rb') as handle:
+            opt = pickle.load(handle)
     return Opt(opt)
 
 
@@ -284,7 +295,9 @@ class Predictor(object):
         self.agent = create_agent(self.opt)
 
     def predict(self, observation):
-        """From a ParlAI-standard message dict, get model prediction."""
+        """
+        From a ParlAI-standard message dict, get model prediction.
+        """
         if 'episode_done' not in observation:
             observation['episode_done'] = True
         self.agent.observe(observation)
@@ -293,56 +306,76 @@ class Predictor(object):
 
 
 class Timer(object):
-    """Computes elapsed time."""
+    """
+    Computes elapsed time.
+    """
 
     def __init__(self):
-        """Initialize timer."""
+        """
+        Initialize timer.
+        """
         self.running = True
         self.total = 0
         self.start = time.time()
 
     def reset(self):
-        """Reset timer to zero."""
+        """
+        Reset timer to zero.
+        """
         self.running = True
         self.total = 0
         self.start = time.time()
         return self
 
     def resume(self):
-        """Resume timer."""
+        """
+        Resume timer.
+        """
         if not self.running:
             self.running = True
             self.start = time.time()
         return self
 
     def stop(self):
-        """Pause timer."""
+        """
+        Pause timer.
+        """
         if self.running:
             self.running = False
             self.total += time.time() - self.start
         return self
 
     def time(self):
-        """Get current timer time."""
+        """
+        Get current timer time.
+        """
         if self.running:
             return self.total + time.time() - self.start
         return self.total
 
 
 class TimeLogger:
-    """Class for logging time progress against a goal."""
+    """
+    Class for logging time progress against a goal.
+    """
 
     def __init__(self):
-        """Set up timer."""
+        """
+        Set up timer.
+        """
         self.timer = Timer()
         self.tot_time = 0
 
     def total_time(self):
-        """Return time elapsed at last log call."""
+        """
+        Return time elapsed at last log call.
+        """
         return self.tot_time
 
     def time(self):
-        """Return current timer time."""
+        """
+        Return current timer time.
+        """
         return self.timer.time()
 
     def log(self, done, total, report=None):
@@ -393,7 +426,9 @@ class AttrDict(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize AttrDict using input dict."""
+        """
+        Initialize AttrDict using input dict.
+        """
         super().__init__(*args, **kwargs)
         self.__dict__ = self
 
@@ -422,14 +457,22 @@ def round_sigfigs(x: Union[float, torch.Tensor], sigfigs=4) -> float:
 
 
 class NoLock(object):
-    """Empty `lock`. Does nothing when you enter or exit."""
+    """
+    Empty `lock`.
+
+    Does nothing when you enter or exit.
+    """
 
     def __enter__(self):
-        """No-op."""
+        """
+        No-op.
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        """No-op."""
+        """
+        No-op.
+        """
         pass
 
 
@@ -437,7 +480,9 @@ single_nolock = NoLock()
 
 
 def no_lock():
-    """Build a nolock for other classes to use for no-op locking."""
+    """
+    Build a nolock for other classes to use for no-op locking.
+    """
     return single_nolock
 
 
@@ -632,7 +677,9 @@ class PaddingUtils(object):
 
 
 def clip_text(text, max_len):
-    """Clip text to max length, adding ellipses."""
+    """
+    Clip text to max length, adding ellipses.
+    """
     if len(text) > max_len:
         begin_text = ' '.join(text[: math.floor(0.8 * max_len)].split(' ')[:-1])
         end_text = ' '.join(
@@ -672,16 +719,16 @@ def display_messages(
     """
     Return a string describing the set of messages provided.
 
-    If prettify is true, candidates are displayed using prettytable.
-    ignore_fields provides a list of fields in the msgs which should not be
-    displayed.
+    If prettify is true, candidates are displayed using prettytable. ignore_fields
+    provides a list of fields in the msgs which should not be displayed.
     """
 
     def _token_losses_line(
         msg: Dict[str, Any], ignore_fields: List[str], space: str
     ) -> Optional[str]:
         """
-        Displays the loss associated with each token. Can be used for debugging generative models.
+        Displays the loss associated with each token. Can be used for debugging
+        generative models.
 
         See TorchGeneratorAgent._construct_token_losses for an example implementation.
         """

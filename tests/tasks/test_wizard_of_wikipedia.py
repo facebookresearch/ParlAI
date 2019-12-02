@@ -21,7 +21,9 @@ def product_dict(dictionary):
 
 
 class TestWoW(unittest.TestCase):
-    """Basic tests on the train_model.py example."""
+    """
+    Basic tests on the train_model.py example.
+    """
 
     def test_output(self):
         dts = ['train', 'valid', 'test']

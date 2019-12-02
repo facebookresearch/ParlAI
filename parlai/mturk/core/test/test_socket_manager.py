@@ -72,7 +72,9 @@ shared_utils.THREAD_MEDIUM_SLEEP = 0.15
 
 
 class TestPacket(unittest.TestCase):
-    """Various unit tests for the AssignState class"""
+    """
+    Various unit tests for the AssignState class.
+    """
 
     ID = 'ID'
     SENDER_ID = 'SENDER_ID'
@@ -118,7 +120,9 @@ class TestPacket(unittest.TestCase):
         pass
 
     def test_packet_init(self):
-        '''Test proper initialization of packet fields'''
+        """
+        Test proper initialization of packet fields.
+        """
         self.assertEqual(self.packet_1.id, self.ID)
         self.assertEqual(self.packet_1.type, Packet.TYPE_MESSAGE)
         self.assertEqual(self.packet_1.sender_id, self.SENDER_ID)
@@ -154,7 +158,9 @@ class TestPacket(unittest.TestCase):
         self.assertEqual(self.packet_3.status, Packet.STATUS_INIT)
 
     def test_dict_conversion(self):
-        '''Ensure packets can be converted to and from a representative dict'''
+        """
+        Ensure packets can be converted to and from a representative dict.
+        """
         converted_packet = Packet.from_dict(self.packet_1.as_dict())
         self.assertEqual(self.packet_1.id, converted_packet.id)
         self.assertEqual(self.packet_1.type, converted_packet.type)
@@ -170,14 +176,18 @@ class TestPacket(unittest.TestCase):
         self.assertDictEqual(packet_dict, Packet.from_dict(packet_dict).as_dict())
 
     def test_connection_ids(self):
-        '''Ensure that connection ids are reported as we expect them'''
+        """
+        Ensure that connection ids are reported as we expect them.
+        """
         sender_conn_id = '{}_{}'.format(self.SENDER_ID, self.ASSIGNMENT_ID)
         receiver_conn_id = '{}_{}'.format(self.RECEIVER_ID, self.ASSIGNMENT_ID)
         self.assertEqual(self.packet_1.get_sender_connection_id(), sender_conn_id)
         self.assertEqual(self.packet_1.get_receiver_connection_id(), receiver_conn_id)
 
     def test_packet_conversions(self):
-        '''Ensure that packet copies and acts are produced properly'''
+        """
+        Ensure that packet copies and acts are produced properly.
+        """
         # Copy important packet
         message_packet_copy = self.packet_1.new_copy()
         self.assertNotEqual(message_packet_copy.id, self.ID)
@@ -225,7 +235,9 @@ class TestPacket(unittest.TestCase):
         self.assertEqual(ack_packet.status, Packet.STATUS_INIT)
 
     def test_packet_modifications(self):
-        '''Ensure that packet copies and acts are produced properly'''
+        """
+        Ensure that packet copies and acts are produced properly.
+        """
         # All operations return the packet
         self.assertEqual(self.packet_1.swap_sender(), self.packet_1)
         self.assertEqual(self.packet_1.set_type(Packet.TYPE_ACK), self.packet_1)
@@ -317,9 +329,11 @@ class MockSocket:
 
 
 class MockAgent(object):
-    """Class that pretends to be an MTurk agent interacting through the
-    webpage by simulating the same commands that are sent from the core.html
-    file. Exposes methods to use for testing and checking status
+    """
+    Class that pretends to be an MTurk agent interacting through the webpage by
+    simulating the same commands that are sent from the core.html file.
+
+    Exposes methods to use for testing and checking status
     """
 
     def __init__(self, hit_id, assignment_id, worker_id, task_group_id):
@@ -350,7 +364,9 @@ class MockAgent(object):
         self.ws.handlers[self.worker_id] = handler
 
     def make_packet_handler(self, on_ack, on_hb, on_msg):
-        """A packet handler that properly sends heartbeats"""
+        """
+        A packet handler that properly sends heartbeats.
+        """
 
         def handler_mock(pkt):
             if pkt['type'] == Packet.TYPE_ACK:
@@ -414,7 +430,9 @@ class MockAgent(object):
         return self.build_and_send_packet(Packet.TYPE_ALIVE, data)
 
     def send_heartbeat(self):
-        """Sends a heartbeat to the world"""
+        """
+        Sends a heartbeat to the world.
+        """
         hb = {
             'id': str(uuid.uuid4()),
             'receiver_id': '[World_' + self.task_group_id + ']',
@@ -441,7 +459,9 @@ class MockAgent(object):
 
 
 class TestSocketManagerSetupAndFunctions(unittest.TestCase):
-    """Unit/integration tests for starting up a socket"""
+    """
+    Unit/integration tests for starting up a socket.
+    """
 
     def setUp(self):
         self.fake_socket = MockSocket()
@@ -451,7 +471,9 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.fake_socket.close()
 
     def test_init_and_reg_shutdown(self):
-        '''Test initialization of a socket manager'''
+        """
+        Test initialization of a socket manager.
+        """
         self.assertFalse(self.fake_socket.connected)
 
         # Callbacks should never trigger during proper setup and shutdown
@@ -493,7 +515,9 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             time.sleep(0.1)
 
     def test_init_and_socket_shutdown(self):
-        '''Test initialization of a socket manager with a failed shutdown'''
+        """
+        Test initialization of a socket manager with a failed shutdown.
+        """
         self.assertFalse(self.fake_socket.connected)
 
         # Callbacks should never trigger during proper setup and shutdown
@@ -538,7 +562,9 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         socket_manager.shutdown()
 
     def test_init_and_socket_shutdown_then_restart(self):
-        '''Test restoring connection to a socket'''
+        """
+        Test restoring connection to a socket.
+        """
         self.assertFalse(self.fake_socket.connected)
 
         # Callbacks should never trigger during proper setup and shutdown
@@ -586,7 +612,9 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         socket_manager.shutdown()
 
     def test_init_world_dead(self):
-        '''Test initialization of a socket manager with a failed startup'''
+        """
+        Test initialization of a socket manager with a failed startup.
+        """
         self.assertFalse(self.fake_socket.connected)
         self.fake_socket.close()
 
@@ -722,7 +750,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.fake_socket.close()
 
     def test_init_state(self):
-        '''Ensure all of the initial state of the socket_manager is ready'''
+        """
+        Ensure all of the initial state of the socket_manager is ready.
+        """
         self.assertEqual(self.socket_manager.server_url, 'https://127.0.0.1')
         self.assertEqual(self.socket_manager.port, self.fake_socket.port)
         self.assertEqual(self.socket_manager.alive_callback, self.on_alive)
@@ -747,7 +777,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertEqual(self.socket_manager.get_my_sender_id(), self.WORLD_ID)
 
     def test_needed_heartbeat(self):
-        '''Ensure needed heartbeat sends heartbeats at the right time'''
+        """
+        Ensure needed heartbeat sends heartbeats at the right time.
+        """
         self.socket_manager._safe_send = mock.MagicMock()
         connection_id = self.AGENT_HEARTBEAT_PACKET.get_sender_connection_id()
 
@@ -798,7 +830,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertEqual(used_packet.blocking, False)
 
     def test_ack_send(self):
-        '''Ensure acks are being properly created and sent'''
+        """
+        Ensure acks are being properly created and sent.
+        """
         self.socket_manager._safe_send = mock.MagicMock()
         self.socket_manager._send_ack(self.AGENT_ALIVE_PACKET)
         used_packet_json = self.socket_manager._safe_send.call_args[0][0]
@@ -818,7 +852,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertEqual(self.AGENT_ALIVE_PACKET.status, Packet.STATUS_SENT)
 
     def _send_packet_in_background(self, packet, send_time):
-        '''creates a thread to handle waiting for a packet send'''
+        """
+        creates a thread to handle waiting for a packet send.
+        """
 
         def do_send():
             self.socket_manager._send_packet(
@@ -831,7 +867,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         time.sleep(0.02)
 
     def test_blocking_ack_packet_send(self):
-        '''Checks to see if ack'ed blocking packets are working properly'''
+        """
+        Checks to see if ack'ed blocking packets are working properly.
+        """
         self.socket_manager._safe_send = mock.MagicMock()
         self.socket_manager._safe_put = mock.MagicMock()
         self.sent = False
@@ -860,7 +898,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.socket_manager._safe_put.assert_not_called()
 
     def test_non_blocking_ack_packet_send(self):
-        '''Checks to see if ack'ed non-blocking packets are working'''
+        """
+        Checks to see if ack'ed non-blocking packets are working.
+        """
         self.socket_manager._safe_send = mock.MagicMock()
         self.socket_manager._safe_put = mock.MagicMock()
         self.sent = False
@@ -895,7 +935,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         )
 
     def test_non_ack_packet_send(self):
-        '''Checks to see if non-ack'ed packets are working'''
+        """
+        Checks to see if non-ack'ed packets are working.
+        """
         self.socket_manager._safe_send = mock.MagicMock()
         self.socket_manager._safe_put = mock.MagicMock()
         self.sent = False
@@ -919,9 +961,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         )
 
     def test_simple_packet_channel_management(self):
-        '''Ensure that channels are created, managed, and then removed
-        as expected
-        '''
+        """
+        Ensure that channels are created, managed, and then removed as expected.
+        """
         self.socket_manager._safe_put = mock.MagicMock()
         use_packet = self.MESSAGE_SEND_PACKET_1
         worker_id = use_packet.receiver_id
@@ -977,7 +1019,9 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertEqual(len(self.socket_manager.queues), 0)
 
     def test_safe_put(self):
-        '''Test safe put and queue retrieval mechanisms'''
+        """
+        Test safe put and queue retrieval mechanisms.
+        """
         self.socket_manager._send_packet = mock.MagicMock()
         use_packet = self.MESSAGE_SEND_PACKET_1
         worker_id = use_packet.receiver_id
@@ -1006,9 +1050,10 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
 
 
 class TestSocketManagerMessageHandling(unittest.TestCase):
-    '''Test sending messages to the world and then to each of two agents,
-    along with failure cases for each
-    '''
+    """
+    Test sending messages to the world and then to each of two agents, along with
+    failure cases for each.
+    """
 
     def on_alive(self, packet):
         self.alive_packet = packet
@@ -1144,9 +1189,10 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertGreater(hb_count, 1)
 
     def test_failed_ack_resend(self):
-        '''Ensures when a message from the manager is dropped, it gets
-        retried until it works as long as there hasn't been a disconnect
-        '''
+        """
+        Ensures when a message from the manager is dropped, it gets retried until it
+        works as long as there hasn't been a disconnect.
+        """
         acked_packet = None
         incoming_hb = None
         message_packet = None

@@ -58,7 +58,8 @@ def setup_args():
 
 
 def main(config):
-    """Extracts training data for the negative response classifier (NRC) from Mturk logs
+    """
+    Extracts training data for the negative response classifier (NRC) from Mturk logs.
 
     input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
         quality ratings 1-5

@@ -23,8 +23,12 @@ def sanitize(obs):
 
 
 class RemoteAgentAgent(Agent):
-    """Agent which connects over ZMQ to a paired agent. The other agent is
-    launched using the command line options set via `add_cmdline_args`."""
+    """
+    Agent which connects over ZMQ to a paired agent.
+
+    The other agent is launched using the command line options set via
+    `add_cmdline_args`.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -51,11 +55,13 @@ class RemoteAgentAgent(Agent):
         )
 
     def __init__(self, opt, shared=None):
-        """Runs subprocess command to set up remote partner.
-        Only run the subprocess command once: if using multiple threads, tell
-        the partner how many paired agents to set up so that they can manage
-        the multithreading effectively in their environment. (We don't run
-        subprocess.Popen for each thread.)
+        """
+        Runs subprocess command to set up remote partner.
+
+        Only run the subprocess command once: if using multiple threads, tell the
+        partner how many paired agents to set up so that they can manage the
+        multithreading effectively in their environment. (We don't run subprocess.Popen
+        for each thread.)
         """
         self.opt = copy.deepcopy(opt)
         self.address = opt['remote_address']
@@ -91,7 +97,11 @@ class RemoteAgentAgent(Agent):
         super().__init__(opt, shared)
 
     def connect(self):
-        """Bind or connect to ZMQ socket. Requires package zmq."""
+        """
+        Bind or connect to ZMQ socket.
+
+        Requires package zmq.
+        """
         context = zmq.Context()
         self.socket = context.socket(self.socket_type)
         self.socket.setsockopt(zmq.LINGER, 1)
@@ -103,7 +113,9 @@ class RemoteAgentAgent(Agent):
         print('python thread connected to ' + host)
 
     def act(self):
-        """Send message to paired agent listening over zmq."""
+        """
+        Send message to paired agent listening over zmq.
+        """
         if self.observation is not None:
             text = json.dumps(sanitize(self.observation))
             self.socket.send_unicode(text)
@@ -111,7 +123,9 @@ class RemoteAgentAgent(Agent):
         return json.loads(reply)
 
     def share(self):
-        """Increments port to use when using remote agents in Hogwild mode."""
+        """
+        Increments port to use when using remote agents in Hogwild mode.
+        """
         if not hasattr(self, 'lastport'):
             self.lastport = self.port
         shared = {}
@@ -122,7 +136,9 @@ class RemoteAgentAgent(Agent):
         return shared
 
     def shutdown(self):
-        """Shut down paired listener with <END> signal."""
+        """
+        Shut down paired listener with <END> signal.
+        """
         if hasattr(self, 'socket'):
             try:
                 self.socket.send_unicode('<END>', zmq.NOBLOCK)
@@ -143,8 +159,9 @@ class RemoteAgentAgent(Agent):
 
 
 class ParsedRemoteAgent(RemoteAgentAgent):
-    """Same as the regular remote agent, except that this agent converts all
-    text into vectors using its dictionary before sending them.
+    """
+    Same as the regular remote agent, except that this agent converts all text into
+    vectors using its dictionary before sending them.
     """
 
     @staticmethod
@@ -192,9 +209,11 @@ class ParsedRemoteAgent(RemoteAgentAgent):
         return unparsed
 
     def parse(self, s, split_lines=False):
-        """Returns a parsed (list of indices) version of a string s.
-        Optionally return list of vectors for each line in the string in case
-        you need to know where those are.
+        """
+        Returns a parsed (list of indices) version of a string s.
+
+        Optionally return list of vectors for each line in the string in case you need
+        to know where those are.
         """
         if split_lines:
             return [self.dict.parse(line, vec_type=list) for line in s.split('\n')]

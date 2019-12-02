@@ -18,10 +18,10 @@ import os
 
 def main():
     """
-        Image Chat data collection task.
+    Image Chat data collection task.
 
-        A worker is shown an image and part of a conversation, and is given a
-        personality with which the worker should continue the conversation.
+    A worker is shown an image and part of a conversation, and is given a personality
+    with which the worker should continue the conversation.
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

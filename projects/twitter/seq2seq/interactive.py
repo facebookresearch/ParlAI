@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Interact with a pre-trained model.
+"""
+Interact with a pre-trained model.
+
 This seq2seq model was trained on convai2:self.
 """
 
