@@ -937,11 +937,11 @@ class TreeSearch(object):
             hypothesis (i.e. self-blocking).
         """
         for beam_id, hyp in enumerate(self.partial_hyps):
-            if len(hyp) < self.block_ngram - 1:
+            if len(hyp) < ngram_size - 1:
                 continue
             source_ = hyp if source is None else source
             ngrams = self._find_ngrams(source_, ngram_size)
-            prefix = hyp[(-ngram_size - 1) :]
+            prefix = hyp[-(ngram_size - 1) :]
             for ngram in ngrams:
                 if ngram_size == 1 or prefix == list(ngram[:-1]):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)

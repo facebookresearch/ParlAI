@@ -476,6 +476,9 @@ class TestTransformerGenerator(unittest.TestCase):
     def test_beamsearch_contextblocking(self):
         """
         Test beamsearch context blocking.
+
+        General strategy: train a parrot model, then block it from doing the
+        parroting well. Measure how much context blocking affects performance.
         """
 
         with testing_utils.tempdir() as tmpdir:
@@ -497,51 +500,51 @@ class TestTransformerGenerator(unittest.TestCase):
                     embedding_size=32,
                     inference='beam',
                     beam_size=5,
+                    metrics='all',
                 )
             )
             self.assertGreaterEqual(valid['f1'], 0.99)
+            args = dict(
+                task='integration_tests', model_file=mf, dict_file=df, metrics='all',
+            )
 
             # first confirm all is good without blocking
             _, valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests',
-                    model_file=mf,
-                    dict_file=df,
-                    beam_context_block_ngram=-1,
-                )
+                dict(beam_context_block_ngram=-1, **args)
             )
             self.assertGreaterEqual(valid['f1'], 0.99)
+            self.assertGreaterEqual(valid['bleu-4'], 0.99)
 
             # there's a special case for block == 1
             _, valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests',
-                    model_file=mf,
-                    dict_file=df,
-                    beam_context_block_ngram=1,
-                )
+                dict(beam_context_block_ngram=1, **args)
             )
-            self.assertGreaterEqual(valid['f1'], 0.00)
+            # bleu and f1 should be totally wrecked.
+            self.assertLess(valid['f1'], 0.01)
+            self.assertLess(valid['bleu-4'], 0.01)
 
             # a couple general cases
             _, valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests',
-                    model_file=mf,
-                    dict_file=df,
-                    beam_context_block_ngram=2,
-                )
+                dict(beam_context_block_ngram=2, **args)
             )
-            self.assertGreaterEqual(valid['f1'], 0.25)
+            # should take a big hit here
+            self.assertLessEqual(valid['f1'], 0.85)
+            # bleu1 should be relatively okay
+            self.assertGreaterEqual(valid['bleu-1'], 0.50)
+            # and bleu-2 should be 0 at this point
+            self.assertLessEqual(valid['bleu-2'], 0.01)
+
+            # larger blocking, we can do better now
             _, valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests',
-                    model_file=mf,
-                    dict_file=df,
-                    beam_context_block_ngram=3,
-                )
+                dict(beam_context_block_ngram=3, **args)
             )
-            self.assertGreaterEqual(valid['f1'], 0.50)
+            # not as hard a hit from the larger hit
+            self.assertLessEqual(valid['f1'], 0.95)
+            # bleu-1 and bleu-2 should be relatively okay
+            self.assertGreaterEqual(valid['bleu-1'], 0.70)
+            self.assertGreaterEqual(valid['bleu-2'], 0.30)
+            # bleu-3 should bve totally screwed
+            self.assertLessEqual(valid['bleu-3'], 0.01)
 
     def test_nucleus(self):
         """
