@@ -21,7 +21,7 @@ def setup_args():
     """
     parser = ParlaiParser(False, False)
     parser.add_parlai_data_path()
-    parser.add_websockets_args()
+    parser.add_terminal_args()
     return parser.parse_args()
 
 

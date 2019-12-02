@@ -1,5 +1,0 @@
-Core Agents.py:
-    1. self.message_partners = [] should be a class variable
-
-Chat Service Manager:
-    1. Load model can be implemented in base

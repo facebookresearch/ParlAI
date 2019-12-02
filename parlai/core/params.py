@@ -495,6 +495,20 @@ class ParlaiParser(argparse.ArgumentParser):
             '--port', default=35496, type=int, help='Port to run the websocket handler'
         )
 
+    def add_terminal_args(self, is_client=False):
+        """
+        Add terminal chat server arguments.
+        """
+        if not is_client:
+            self.add_chatservice_args()
+        websockets = self.add_argument_group('Terminal Chat')
+        websockets.add_argument(
+            '--port',
+            default=35496,
+            type=int,
+            help='Port to run the terminal chat server',
+        )
+
     def add_messenger_args(self):
         """
         Add Facebook Messenger arguments.

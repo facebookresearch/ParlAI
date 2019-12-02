@@ -7,16 +7,13 @@
 import json
 import uuid
 import websocket
+from parlai.core.params import ParlaiParser
 
 try:
     import thread
 except ImportError:
     import _thread as thread
 import time
-
-# STEP 1: RUN: python parlai/chat_service/services/terminal_chat/run.py --config-path parlai/chat_service/tasks/chatbot/config.yml
-# STEP 2: RUN: python client.py
-# STEP 3: Interact
 
 
 def get_rand_id():
@@ -59,7 +56,7 @@ def on_open(ws):
             data['text'] = x
             json_data = json.dumps(data)
             ws.send(json_data)
-            time.sleep(1.5)
+            time.sleep(0.75)
             if x == "[DONE]":
                 break
         ws.close()
@@ -67,9 +64,20 @@ def on_open(ws):
     thread.start_new_thread(run, ())
 
 
+def setup_args():
+    """
+    Set up args.
+    """
+    parser = ParlaiParser(False, False)
+    parser.add_terminal_args(is_client=True)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    opt = setup_args()
+    port = opt.get('port', 34596)
     ws = websocket.WebSocketApp(
-        "ws://localhost:35496/websocket",
+        "ws://localhost:{}/websocket".format(port),
         on_message=on_message,
         on_error=on_error,
         on_close=on_close,
