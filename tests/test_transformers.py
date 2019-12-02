@@ -472,6 +472,77 @@ class TestTransformerGenerator(unittest.TestCase):
             ),
         )
 
+    @testing_utils.retry(ntries=3)
+    def test_beamsearch_contextblocking(self):
+        """
+        Test beamsearch context blocking.
+        """
+
+        with testing_utils.tempdir() as tmpdir:
+            mf = os.path.join(tmpdir, 'model')
+            df = os.path.join(tmpdir, 'model.dict')
+            _, valid, test = testing_utils.train_model(
+                dict(
+                    task='integration_tests',
+                    model='transformer/generator',
+                    model_file=mf,
+                    dict_file=df,
+                    optimizer='adamax',
+                    learningrate=7e-3,
+                    batchsize=32,
+                    num_epochs=20,
+                    n_layers=1,
+                    n_heads=1,
+                    ffn_size=32,
+                    embedding_size=32,
+                    inference='beam',
+                    beam_size=5,
+                )
+            )
+            self.assertGreaterEqual(valid['f1'], 0.99)
+
+            # first confirm all is good without blocking
+            _, valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests',
+                    model_file=mf,
+                    dict_file=df,
+                    beam_context_block_ngram=-1,
+                )
+            )
+            self.assertGreaterEqual(valid['f1'], 0.99)
+
+            # there's a special case for block == 1
+            _, valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests',
+                    model_file=mf,
+                    dict_file=df,
+                    beam_context_block_ngram=1,
+                )
+            )
+            self.assertGreaterEqual(valid['f1'], 0.00)
+
+            # a couple general cases
+            _, valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests',
+                    model_file=mf,
+                    dict_file=df,
+                    beam_context_block_ngram=2,
+                )
+            )
+            self.assertGreaterEqual(valid['f1'], 0.25)
+            _, valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests',
+                    model_file=mf,
+                    dict_file=df,
+                    beam_context_block_ngram=3,
+                )
+            )
+            self.assertGreaterEqual(valid['f1'], 0.50)
+
     def test_nucleus(self):
         """
         Test nucleus generation.
