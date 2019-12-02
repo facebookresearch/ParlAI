@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic example which iterates through the tasks specified and
-checks them for offensive language.
+"""
+Basic example which iterates through the tasks specified and checks them for offensive
+language.
 
 Examples
 --------
@@ -35,7 +36,8 @@ def setup_args(parser=None):
 
 
 def detect(opt, printargs=None, print_parser=None):
-    """Checks a task for offensive language.
+    """
+    Checks a task for offensive language.
     """
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):

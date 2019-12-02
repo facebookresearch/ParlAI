@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Test ParlaiParser and other opt/params.py code."""
+"""
+Test ParlaiParser and other opt/params.py code.
+"""
 
 import os
 import re
@@ -30,10 +32,14 @@ class _ExampleUpgradeOptAgent(agents.Agent):
 
 
 class TestParlaiParser(unittest.TestCase):
-    """Test ParlaiParser."""
+    """
+    Test ParlaiParser.
+    """
 
     def test_upgrade_opt(self):
-        """Test whether upgrade_opt works."""
+        """
+        Test whether upgrade_opt works.
+        """
         with testing_utils.tempdir() as tmp:
             with testing_utils.capture_output() as _:
                 modfn = os.path.join(tmp, 'model')
@@ -53,7 +59,9 @@ class TestParlaiParser(unittest.TestCase):
                 agents.create_agent(opt)
 
     def test_recommendations_single(self):
-        """Test whether recommended args work for non-group."""
+        """
+        Test whether recommended args work for non-group.
+        """
         parser = ParlaiParser()
         parser.add_argument(
             '-bs',
@@ -70,7 +78,9 @@ class TestParlaiParser(unittest.TestCase):
         assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
 
     def test_recommendations_group(self):
-        """Test whether recommended args work for a group."""
+        """
+        Test whether recommended args work for a group.
+        """
         parser = ParlaiParser()
         parser_grp = parser.add_argument_group('Test Group')
         parser_grp.add_argument(

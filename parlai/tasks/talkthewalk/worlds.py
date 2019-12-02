@@ -107,7 +107,9 @@ class Simulator:
         self.add_view_to_text(obs, action)
 
     def execute(self, text):
-        """move the tourist"""
+        """
+        move the tourist.
+        """
         if not is_action(text):
             return
 
@@ -181,7 +183,9 @@ class SimulateWorld(ExecutableWorld):
 
 
 class Map(object):
-    """Map with landmarks"""
+    """
+    Map with landmarks.
+    """
 
     def __init__(self, data_dir, include_empty_corners=True):
         super().__init__()

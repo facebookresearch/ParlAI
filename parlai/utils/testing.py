@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""General utilities for helping writing ParlAI unit and integration tests."""
+"""
+General utilities for helping writing ParlAI unit and integration tests.
+"""
 
 import sys
 import os
@@ -46,12 +48,16 @@ DEBUG = False  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
-    """Return if we are currently running in CircleCI."""
+    """
+    Return if we are currently running in CircleCI.
+    """
     return bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
-    """Decorate a test to skip if torch is not installed."""
+    """
+    Decorate a test to skip if torch is not installed.
+    """
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
 
 
@@ -65,17 +71,23 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 
 
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
-    """Decorate a test to skip if no GPU is available."""
+    """
+    Decorate a test to skip if no GPU is available.
+    """
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
 def skipUnlessBPE(testfn, reason='Test requires a GPU'):
-    """Decorate a test to skip if BPE is not installed."""
+    """
+    Decorate a test to skip if BPE is not installed.
+    """
     return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
-    """Decorate a test to skip if running on CircleCI."""
+    """
+    Decorate a test to skip if running on CircleCI.
+    """
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
@@ -101,7 +113,9 @@ class retry(object):
         self.log_retry = log_retry
 
     def __call__(self, testfn):
-        """Call testfn(), possibly multiple times on failureException."""
+        """
+        Call testfn(), possibly multiple times on failureException.
+        """
         from functools import wraps
 
         @wraps(testfn)
@@ -119,7 +133,9 @@ class retry(object):
 
 
 def git_ls_files(root=None, skip_nonexisting=True):
-    """List all files tracked by git."""
+    """
+    List all files tracked by git.
+    """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
@@ -127,7 +143,9 @@ def git_ls_files(root=None, skip_nonexisting=True):
 
 
 def git_ls_dirs(root=None):
-    """List all folders tracked by git."""
+    """
+    List all folders tracked by git.
+    """
     dirs = set()
     for fn in git_ls_files(root):
         dirs.add(os.path.dirname(fn))
@@ -150,7 +168,9 @@ def git_changed_files(skip_nonexisting=True):
 
 
 def git_commit_messages():
-    """Output each commit message between here and master."""
+    """
+    Output each commit message between here and master.
+    """
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     messages = git_.log(fork_point + '..HEAD')
     return messages
@@ -181,7 +201,9 @@ class TeeStringIO(io.StringIO):
         super().__init__(*args)
 
     def write(self, data):
-        """Write data to stdout and the buffer."""
+        """
+        Write data to stdout and the buffer.
+        """
         if DEBUG and self.stream:
             self.stream.write(data)
         super().write(data)
@@ -344,7 +366,9 @@ def display_model(opt) -> Tuple[str, str]:
 
 
 def download_unittest_models():
-    """Download the unittest pretrained models."""
+    """
+    Download the unittest pretrained models.
+    """
     from parlai.core.params import ParlaiParser
     from parlai.core.build_data import download_models
 

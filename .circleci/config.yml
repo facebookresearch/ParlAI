@@ -281,12 +281,30 @@ jobs:
           name: minimum black dependencies
           working_directory: ~/ParlAI
           command: |
-            pip install -q gitpython black  # only what's needd to lint
+            pip install -q gitpython black  # only what's needed to lint
       - run:
           name: black
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh -b
+            bash ./autoformat.sh -b -c
+
+  docformat:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: minimum docformat dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q gitpython docformatter  # only what's needed to lint
+      - run:
+          name: docformat
+          working_directory: ~/ParlAI
+          command: |
+            bash ./autoformat.sh -d -c
 
   lint:
     <<: *standard_cpu37
@@ -305,12 +323,12 @@ jobs:
           name: minimum lint dependencies
           working_directory: ~/ParlAI
           command: |
-            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
+            pip install -q flake8 gitpython flake8-bugbear  # only what's needed to lint
       - run:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            bash ./tests/lint_changed.sh
+            bash ./autoformat.sh -c -f
 
   nightly_gpu_tests:
     <<: *gpu
@@ -484,6 +502,7 @@ workflows:
     jobs:
       - black
       - lint
+      - docformat
       - unittests_gpu11
       - unittests_gpu12
       - unittests_37

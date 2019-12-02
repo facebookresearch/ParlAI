@@ -12,9 +12,11 @@ import json
 
 class SelfDialogueTeacher(FixedDialogTeacher):
     """
-    Teacher for written two-person dialogues with labels being responses for
-    the previous statement. The data is traversed twice (doubled), once for
-    modelling USER replies and once for modelling ASSISTANT replies.
+    Teacher for written two-person dialogues with labels being responses for the
+    previous statement.
+
+    The data is traversed twice (doubled), once for modelling USER replies and once for
+    modelling ASSISTANT replies.
     """
 
     def __init__(self, opt, shared=None):
@@ -96,9 +98,11 @@ class SelfDialogueTeacher(FixedDialogTeacher):
 
 class WozDialogueTeacher(FixedDialogTeacher):
     """
-    Teacher for spoken two-person dialogues with labels being responses for
-    the previous statement. The data is traversed twice (doubled), once for
-    modelling USER replies and once for modelling ASSISTANT replies.
+    Teacher for spoken two-person dialogues with labels being responses for the previous
+    statement.
+
+    The data is traversed twice (doubled), once for modelling USER replies and once for
+    modelling ASSISTANT replies.
     """
 
     def __init__(self, opt, shared=None):
@@ -221,9 +225,11 @@ class WozDialogueTeacher(FixedDialogTeacher):
 
 class SelfDialogueSegmentTeacher(FixedDialogTeacher):
     """
-    Teacher for written two-person dialogues with labels being relevant/useful
-    parts in the input sentence. The different datatypes of the labels within
-    the data have also been encoded as `label_types`
+    Teacher for written two-person dialogues with labels being relevant/useful parts in
+    the input sentence.
+
+    The different datatypes of the labels within the data have also been encoded as
+    `label_types`
     """
 
     def __init__(self, opt, shared=None):

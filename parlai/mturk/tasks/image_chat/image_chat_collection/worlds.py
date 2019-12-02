@@ -97,7 +97,9 @@ class PersonalityGenerator(object):
 
 
 class ExampleGenerator(object):
-    """Retrieve Example from Personality-Captions"""
+    """
+    Retrieve Example from Personality-Captions.
+    """
 
     def __init__(self, opt):
         self.second_resp = opt.get('second_response')
@@ -154,7 +156,9 @@ class ExampleGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    """A world that provides the appropriate instructions during onboarding"""
+    """
+    A world that provides the appropriate instructions during onboarding.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -182,9 +186,9 @@ class RoleOnboardWorld(MTurkOnboardWorld):
 
 
 class MTurkImageChatWorld(MultiAgentDialogWorld):
-    """World where an agent observes 5 images and 5 comments,
-       with 5 different personalities,
-       and writes engaging responses to the comments
+    """
+    World where an agent observes 5 images and 5 comments, with 5 different
+    personalities, and writes engaging responses to the comments.
     """
 
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
@@ -211,8 +215,10 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
         return self.chat_done
 
     def parley(self):
-        """RESPONDER is given an image and a comment, and is told to give a
-        response for to the comment"""
+        """
+        RESPONDER is given an image and a comment, and is told to give a response for to
+        the comment.
+        """
         # Initial Message Value
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -420,9 +426,9 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
         )
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

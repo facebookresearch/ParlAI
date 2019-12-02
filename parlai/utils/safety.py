@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Utility functions and classes for detecting offensive language."""
+"""
+Utility functions and classes for detecting offensive language.
+"""
 
 from parlai.agents.transformer_classifier.transformer_classifier import (
     TransformerClassifierAgent,
@@ -16,10 +18,11 @@ import os
 
 class OffensiveLanguageClassifier:
     """
-    Load model trained to detect offensive language in the context of single-
-    turn dialogue utterances. This model was trained to be robust to adversarial
-    examples created by humans. See <http://parl.ai/projects/dialogue_safety/>
-    for more information.
+    Load model trained to detect offensive language in the context of single- turn
+    dialogue utterances.
+
+    This model was trained to be robust to adversarial examples created by humans. See
+    <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
     def __init__(self):
@@ -38,8 +41,8 @@ class OffensiveLanguageClassifier:
         return create_agent(safety_opt)
 
     def contains_offensive_language(self, text):
-        """Returns the probability that a message is safe according to the
-        classifier.
+        """
+        Returns the probability that a message is safe according to the classifier.
         """
         act = {'text': text, 'episode_done': True}
         self.model.observe(act)
@@ -52,8 +55,9 @@ class OffensiveLanguageClassifier:
 
     def __contains__(self, key):
         """
-        A simple way of checking whether the model classifies an utterance as
-        offensive. Returns True if the input phrase is offensive.
+        A simple way of checking whether the model classifies an utterance as offensive.
+
+        Returns True if the input phrase is offensive.
         """
         pred_not_ok, prob = self.contains_offensive_language(key)
         return pred_not_ok
@@ -61,12 +65,14 @@ class OffensiveLanguageClassifier:
 
 class OffensiveStringMatcher:
     """
-    Detects offensive language using a list of offensive language and phrases
-    from https://github.com/LDNOOBW.
+    Detects offensive language using a list of offensive language and phrases from
+    https://github.com/LDNOOBW.
     """
 
     def __init__(self):
-        """Get data from external sources and build data representation."""
+        """
+        Get data from external sources and build data representation.
+        """
         import parlai.core.build_data as build_data
         from parlai.core.params import ParlaiParser
         from parlai.core.dict import DictionaryAgent
@@ -172,7 +178,9 @@ class OffensiveStringMatcher:
                         self.add_phrase(mod_p)
 
     def add_phrase(self, phrase):
-        """Add a single phrase to the filter."""
+        """
+        Add a single phrase to the filter.
+        """
         toks = self.tokenize(phrase)
         curr = self.offensive_trie
         for t in toks:
@@ -183,7 +191,9 @@ class OffensiveStringMatcher:
         self.max_len = max(self.max_len, len(toks))
 
     def add_words(self, phrase_list):
-        """Add list of custom phrases to the filter."""
+        """
+        Add list of custom phrases to the filter.
+        """
         for phrase in phrase_list:
             self.add_phrase(phrase)
 
@@ -191,8 +201,7 @@ class OffensiveStringMatcher:
         """
         Check if words from the sequence are in the trie.
 
-        This checks phrases made from
-        toks[i], toks[i:i+2] ... toks[i:i + self.max_len]
+        This checks phrases made from toks[i], toks[i:i+2] ... toks[i:i + self.max_len]
         """
         right = min(idx + self.max_len, len(toks))
         for i in range(idx, right):
@@ -205,7 +214,9 @@ class OffensiveStringMatcher:
         return False
 
     def contains_offensive_language(self, text):
-        """Determine if text contains any offensive words in the filter."""
+        """
+        Determine if text contains any offensive words in the filter.
+        """
         if type(text) is str:
             toks = self.tokenize(text.lower())
         elif type(text) is list or type(text) is tuple:
@@ -219,5 +230,7 @@ class OffensiveStringMatcher:
         return None
 
     def __contains__(self, key):
-        """Determine if text contains any offensive words in the filter."""
+        """
+        Determine if text contains any offensive words in the filter.
+        """
         return self.contains_offensive_language(key)

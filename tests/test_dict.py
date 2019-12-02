@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Dictionary testing."""
+"""
+Dictionary testing.
+"""
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
@@ -19,7 +21,9 @@ import unittest
 
 
 class TestDictionary(unittest.TestCase):
-    """Basic tests on the built-in parlai Dictionary."""
+    """
+    Basic tests on the built-in parlai Dictionary.
+    """
 
     def test_gpt2_bpe_tokenize(self):
         with testing_utils.capture_output():
@@ -58,21 +62,27 @@ class TestDictionary(unittest.TestCase):
         )
 
     def test_space_tokenize(self):
-        """Space tokenize assumes raw tokenization as input."""
+        """
+        Space tokenize assumes raw tokenization as input.
+        """
         self.assertEqual(
             DictionaryAgent.space_tokenize('   this is a test!   '),
             ['this', 'is', 'a', 'test!'],
         )
 
     def test_split_tokenize(self):
-        """Split tokenize specially handles some limited punctuation."""
+        """
+        Split tokenize specially handles some limited punctuation.
+        """
         self.assertEqual(
             DictionaryAgent.split_tokenize('   this is a test!   '),
             ['this', 'is', 'a', 'test', '!'],
         )
 
     def test_find_ngrams(self):
-        """Test the ngram class properly recognize uni, bi, and trigrams test."""
+        """
+        Test the ngram class properly recognize uni, bi, and trigrams test.
+        """
         s = set()
         s.add('hello world')
         s.add('ol boy')
@@ -89,7 +99,9 @@ class TestDictionary(unittest.TestCase):
         assert '-'.join(res) == 'hello world buddy-ol boy'
 
     def test_basic_parse(self):
-        """Check the dictionary is correctly adding and parsing short sentence."""
+        """
+        Check the dictionary is correctly adding and parsing short sentence.
+        """
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
         opt = argparser.parse_args(print_args=False)
@@ -116,7 +128,9 @@ class TestDictionary(unittest.TestCase):
         assert vec[1] == num_builtin + 1
 
     def test_set_model_file_without_dict_file(self):
-        """Check that moving a model without moving the dictfile raises an error."""
+        """
+        Check that moving a model without moving the dictfile raises an error.
+        """
         # Download model, move to a new location
         datapath = ParlaiParser().parse_args(print_args=False)['datapath']
         try:
@@ -139,7 +153,9 @@ class TestDictionary(unittest.TestCase):
             pass
 
     def test_train_model_with_no_dict_file(self):
-        """Ensure training a model requires a dict_file or model_file."""
+        """
+        Ensure training a model requires a dict_file or model_file.
+        """
         import parlai.scripts.train_model as tms
 
         with testing_utils.capture_output():
