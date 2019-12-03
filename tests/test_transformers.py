@@ -484,12 +484,13 @@ class TestTransformerGenerator(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             mf = os.path.join(tmpdir, 'model')
             df = os.path.join(tmpdir, 'model.dict')
-            _, valid, test = testing_utils.train_model(
+            # we'll reuse these
+            args = dict(
+                task='integration_tests', model_file=mf, dict_file=df, metrics='all',
+            )
+            _, noblock_valid, _ = testing_utils.train_model(
                 dict(
-                    task='integration_tests',
                     model='transformer/generator',
-                    model_file=mf,
-                    dict_file=df,
                     optimizer='adamax',
                     learningrate=7e-3,
                     batchsize=32,
@@ -500,13 +501,10 @@ class TestTransformerGenerator(unittest.TestCase):
                     embedding_size=32,
                     inference='beam',
                     beam_size=5,
-                    metrics='all',
+                    **args,
                 )
             )
-            self.assertGreaterEqual(valid['f1'], 0.99)
-            args = dict(
-                task='integration_tests', model_file=mf, dict_file=df, metrics='all',
-            )
+            self.assertGreaterEqual(noblock_valid['f1'], 0.99)
 
             # first confirm all is good without blocking
             _, valid, test = testing_utils.eval_model(
@@ -528,8 +526,9 @@ class TestTransformerGenerator(unittest.TestCase):
                 dict(beam_context_block_ngram=2, **args)
             )
             # should take a big hit here
-            self.assertLessEqual(valid['f1'], 0.85)
-            # bleu1 should be relatively okay
+            self.assertLessEqual(valid['f1'], noblock_valid['f1'])
+            # bleu-1 should be relatively okay
+            self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
             self.assertGreaterEqual(valid['bleu-1'], 0.50)
             # and bleu-2 should be 0 at this point
             self.assertLessEqual(valid['bleu-2'], 0.01)
