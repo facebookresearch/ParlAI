@@ -89,11 +89,13 @@ def self_chat(opt, print_parser=None):
         logger.log(world)
 
         if opt.get('display_examples'):
-            print("---")
             print(world.display())
         if log_time.time() > log_every_n_secs:
             text = log_time.log(cnt, max_cnt)
             print(text)
+
+    if opt.get('display_examples'):
+        print('-- end of episode --')
 
     logger.write(opt['outfile'], opt['format'])
 
