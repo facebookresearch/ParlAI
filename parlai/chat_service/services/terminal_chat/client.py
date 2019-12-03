@@ -35,6 +35,7 @@ def prBlueBG(text):
 def on_message(ws, message):
     """
     Prints a message.
+
     :param ws: a WebSocketApp
     :param message: json with 'text' field to be printed
     """
@@ -45,6 +46,7 @@ def on_message(ws, message):
 def on_error(ws, error):
     """
     Prints an error.
+
     :param ws: WebSocketApp
     :param error: aAn error
     """
@@ -59,9 +61,8 @@ def on_close(ws):
 
 def on_open(ws):
     """
-    Starts a new thread that loops, taking user input and sending it to the
-    websocket.
-    
+    Starts a new thread that loops, taking user input and sending it to the websocket.
+
     :param ws: websocket.WebSocketApp that sends messages to a terminal_manager
     """
     id = get_rand_id()
@@ -86,6 +87,7 @@ def on_open(ws):
 def setup_args():
     """
     Set up args, specifically for the port number.
+
     :return: A parser that parses the port from commandline arguments.
     """
     parser = ParlaiParser(False, False)

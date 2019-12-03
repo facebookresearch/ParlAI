@@ -18,9 +18,8 @@ SERVICE_NAME = 'terminal'
 def setup_args():
     """
     Set up args.
-    
-    :return: A parser that takes in command line arguments for chat services (debug, config-path, password),
-    and a port.
+
+    :return: A parser that takes in command line arguments for chat services (debug, config-path, password), and a port.
     """
     parser = ParlaiParser(False, False)
     parser.add_parlai_data_path()
