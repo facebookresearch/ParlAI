@@ -50,7 +50,7 @@ def main():
     argparser.add_argument(
         '--generative-setup',
         default=False,
-        help='mimic setup for the WoW generator task (use knowledge token)'
+        help='mimic setup for the WoW generator task (use knowledge token)',
     )
     argparser.add_argument(
         '--max-choice-time',
