@@ -12,14 +12,14 @@ import threading
 from parlai.core.params import ParlaiParser
 
 
-def get_rand_id():
+def _get_rand_id():
     """
     :return: The string of a random id using uuid4
     """
     return str(uuid.uuid4())
 
 
-def prBlueBG(text):
+def _prBlueBG(text):
     """
     Print given in text with a blue background.
 
@@ -86,7 +86,7 @@ def on_open(ws):
 
     :param ws: websocket.WebSocketApp that sends messages to a terminal_manager
     """
-    id = get_rand_id()
+    id = _get_rand_id()
     threading.Thread(target=_run, args=(ws, id)).start()
 
 
