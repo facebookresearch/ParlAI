@@ -26,20 +26,15 @@ WEB_HTML = """
     <script defer src={}></script>
     <head><title> Interactive Run </title></head>
     <body>
-        <div class="columns">
+        <div class="columns" style="height: 100%">
             <div class="column is-three-fifths is-offset-one-fifth">
-              <section class="hero is-info is-large has-background-light has-text-grey-dark">
-                <div id="parent" class="hero-body">
+              <section class="hero is-info is-large has-background-light has-text-grey-dark" style="height: 100%">
+                <div id="parent" class="hero-body" style="overflow: auto; height: calc(100% - 76px); padding-top: 1em; padding-bottom: 0;">
                     <article class="media">
-                      <figure class="media-left">
-                        <span class="icon is-large">
-                          <i class="fas fa-robot fas fa-2x"></i>
-                        </span>
-                      </figure>
                       <div class="media-content">
                         <div class="content">
                           <p>
-                            <strong>Model</strong>
+                            <strong>Instructions</strong>
                             <br>
                             Enter a message, and the model will respond interactively.
                           </p>
@@ -47,7 +42,7 @@ WEB_HTML = """
                       </div>
                     </article>
                 </div>
-                <div class="hero-foot column is-three-fifths is-offset-one-fifth">
+                <div class="hero-foot column is-three-fifths is-offset-one-fifth" style="height: 76px">
                   <form id = "interact">
                       <div class="field is-grouped">
                         <p class="control is-expanded">
@@ -106,7 +101,10 @@ WEB_HTML = """
                 span.appendChild(icon);
                 figure.appendChild(span);
 
-                article.appendChild(figure);
+                if (agent !== "Instructions") {{
+                    article.appendChild(figure);
+                }};
+
                 article.appendChild(media);
 
                 return article;
@@ -129,7 +127,7 @@ WEB_HTML = """
 
                     // Change info for Model response
                     parDiv.append(createChatRow("Model", data.text));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
             document.getElementById("interact").addEventListener("reset", function(event){{
@@ -146,8 +144,8 @@ WEB_HTML = """
                     var parDiv = document.getElementById("parent");
 
                     parDiv.innerHTML = '';
-                    parDiv.append(createChatRow("Model", "Enter a message, and the model will respond interactively."));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.append(createChatRow("Instructions", "Enter a message, and the model will respond interactively."));
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
         </script>
