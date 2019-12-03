@@ -477,8 +477,8 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test beamsearch context blocking.
 
-        General strategy: train a parrot model, then block it from doing the
-        parroting well. Measure how much context blocking affects performance.
+        General strategy: train a parrot model, then block it from doing the parroting
+        well. Measure how much context blocking affects performance.
         """
 
         with testing_utils.tempdir() as tmpdir:
