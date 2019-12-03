@@ -55,7 +55,8 @@ def on_error(ws, error):
 
 def on_close(ws):
     """
-    Cleanup before closing connection
+    Cleanup before closing connection.
+
     :param ws: WebSocketApp
     """
     # Reset color formatting if necessary
