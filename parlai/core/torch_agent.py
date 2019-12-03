@@ -668,6 +668,20 @@ class TorchAgent(ABC, Agent):
         super().__init__(opt, shared)
         opt = self.opt
 
+        print('CREATING OUTPUT ARRAY')
+        self.model_outputs = []
+        self.model_candidates = {}
+        task_names = [
+            'wizard_of_wikipedia',
+            'parlai_internal.tasks.empathetic_dialogues.agents:EmpatheticDialoguesTeacher', 
+            'convai2']
+        for t in task_names:
+            candidates_file = f'/checkpoint/marywilliamson/all_in_one_dialogue/{t}_valid_20191202.cands'
+            with open(candidates_file, 'rU') as f:
+                task_candidates = f.read().splitlines()
+                task_candidates = [t.strip() for t in task_candidates]
+                self.model_candidates[t] = task_candidates
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -1757,7 +1771,33 @@ class TorchAgent(ABC, Agent):
                 'act() will misbehave in batching mode. Set batchsize to 1, or '
                 '--interactive-mode true'
             )
-        return self.batch_act([self.observation])[0]
+        observation_text = self.observation['text']
+        action = self.batch_act([self.observation])[0]
+        act_text = action['text']
+        print(f'O: {observation_text}, A: {act_text}')
+
+        observation_dataset = None
+        act_dataset = None
+        for task_name, candidates in self.model_candidates.items():
+            # print(f'Had {len(candidates)} for {task_name}.')
+            if observation_text in candidates:
+                observation_dataset = task_name
+            if act_text in candidates:
+                act_dataset = task_name
+        if not act_dataset:
+            print(f'WARNING: Had no dataset for action: \"{act_text}\"')
+
+        d = {
+            'observation_text': self.opt['task'],
+            'act_text': act_text,
+            'observation_dataset': observation_dataset,
+            'act_dataset': act_dataset
+        }
+        self.model_outputs.append(d)
+        multi_task_model_outputs_file = f'/checkpoint/marywilliamson/all_in_one_dialogue/multi_task_output_{self.opt["task"]}_valid.json'
+        with open(multi_task_model_outputs_file, "w+") as f:
+            f.write(json.dumps({'data': self.model_outputs}))
+        return action
 
     def batch_act(self, observations):
         """
@@ -1812,7 +1852,7 @@ class TorchAgent(ABC, Agent):
         """
         [Abstract] Process one batch but do not train on it.
         """
-        pass
+        return super().eval_step(batch)
 
     def set_interactive_mode(self, mode, shared):
         """
