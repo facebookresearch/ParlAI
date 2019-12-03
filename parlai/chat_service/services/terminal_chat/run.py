@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 """
 Terminal Chat Runner.
+
+Used to run the terminal chat server.
 """
 
 from parlai.core.params import ParlaiParser
@@ -35,8 +37,6 @@ def run(opt):
     manager = TerminalManager(opt)
     try:
         manager.start_task()
-    except BaseException:
-        raise
     finally:
         manager.shutdown()
 

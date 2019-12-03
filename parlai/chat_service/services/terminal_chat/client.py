@@ -7,13 +7,9 @@
 import json
 import uuid
 import websocket
-from parlai.core.params import ParlaiParser
-
-try:
-    import thread
-except ImportError:
-    import _thread as thread
 import time
+import threading
+from parlai.core.params import ParlaiParser
 
 
 def get_rand_id():
@@ -64,6 +60,26 @@ def on_close(ws):
     print("Connection closed")
 
 
+def _run(ws, id):
+    """
+    Takes user input and sends it to a websocket.
+
+    :param ws: websocket.WebSocketApp
+    """
+    while True:
+        x = input("\033[44m Me: ")
+        print("\033[0m", end="")
+        data = {}
+        data['id'] = id
+        data['text'] = x
+        json_data = json.dumps(data)
+        ws.send(json_data)
+        time.sleep(1)
+        if x == "[DONE]":
+            break
+    ws.close()
+
+
 def on_open(ws):
     """
     Starts a new thread that loops, taking user input and sending it to the websocket.
@@ -71,22 +87,7 @@ def on_open(ws):
     :param ws: websocket.WebSocketApp that sends messages to a terminal_manager
     """
     id = get_rand_id()
-
-    def run(*args):
-        while True:
-            x = input("\033[44m Me: ")
-            print("\033[0m", end="")
-            data = {}
-            data['id'] = id
-            data['text'] = x
-            json_data = json.dumps(data)
-            ws.send(json_data)
-            time.sleep(0.75)
-            if x == "[DONE]":
-                break
-        ws.close()
-
-    thread.start_new_thread(run, ())
+    threading.Thread(target=_run, args=(ws, id)).start()
 
 
 def setup_args():
