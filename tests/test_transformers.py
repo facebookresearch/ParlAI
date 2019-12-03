@@ -542,7 +542,7 @@ class TestTransformerGenerator(unittest.TestCase):
             # bleu-1 and bleu-2 should be relatively okay
             self.assertGreaterEqual(valid['bleu-1'], 0.70)
             self.assertGreaterEqual(valid['bleu-2'], 0.30)
-            # bleu-3 should bve totally screwed
+            # bleu-3 should be totally screwed
             self.assertLessEqual(valid['bleu-3'], 0.01)
 
     def test_nucleus(self):
