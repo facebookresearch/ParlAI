@@ -34,7 +34,7 @@ def prBlueBG(text):
 
 def on_message(ws, message):
     """
-    Prints a message.
+    Prints the incoming message from the server.
 
     :param ws: a WebSocketApp
     :param message: json with 'text' field to be printed
@@ -45,15 +45,19 @@ def on_message(ws, message):
 
 def on_error(ws, error):
     """
-    Prints an error.
+    Prints an error, if occurs.
 
     :param ws: WebSocketApp
-    :param error: aAn error
+    :param error: An error
     """
     print(error)
 
 
 def on_close(ws):
+    """
+    Cleanup before closing connection
+    :param ws: WebSocketApp
+    """
     # Reset color formatting if necessary
     print("\033[0m")
     print("Connection closed")
