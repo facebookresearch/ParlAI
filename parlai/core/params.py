@@ -495,7 +495,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--port', default=35496, type=int, help='Port to run the websocket handler'
         )
 
-    def add_terminal_args(self, is_client=False):
+    def add_terminal_chat_args(self, is_client=False):
         """
         Add terminal chat server arguments.
         """

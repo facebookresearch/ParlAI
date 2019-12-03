@@ -17,6 +17,9 @@ import time
 
 
 def get_rand_id():
+    """
+    :return: The string of a random id using uuid4
+    """
     return str(uuid.uuid4())
 
 
@@ -30,11 +33,21 @@ def prBlueBG(text):
 
 
 def on_message(ws, message):
+    """
+    Prints a message.
+    :param ws: a WebSocketApp
+    :param message: json with 'text' field to be printed
+    """
     incoming_message = json.loads(message)
     print("\033[0m\nBot: " + incoming_message['text'], "\033[44m\n")
 
 
 def on_error(ws, error):
+    """
+    Prints an error.
+    :param ws: WebSocketApp
+    :param error: aAn error
+    """
     print(error)
 
 
@@ -45,6 +58,12 @@ def on_close(ws):
 
 
 def on_open(ws):
+    """
+    Starts a new thread that loops, taking user input and sending it to the
+    websocket.
+    
+    :param ws: websocket.WebSocketApp that sends messages to a terminal_manager
+    """
     id = get_rand_id()
 
     def run(*args):
@@ -66,10 +85,11 @@ def on_open(ws):
 
 def setup_args():
     """
-    Set up args.
+    Set up args, specifically for the port number.
+    :return: A parser that parses the port from commandline arguments.
     """
     parser = ParlaiParser(False, False)
-    parser.add_terminal_args(is_client=True)
+    parser.add_terminal_chat_args(is_client=True)
     return parser.parse_args()
 
 
