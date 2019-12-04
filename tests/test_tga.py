@@ -36,7 +36,7 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         testing_utils.download_unittest_models()
 
-        # we should have an exception if we mix beam size > 1 with greedy
+        # we should have an exception if we mix beam size > 1 with inference greedy
         with self.assertRaises(ValueError):
             testing_utils.display_model(
                 dict(
@@ -47,7 +47,7 @@ class TestUpgradeOpt(unittest.TestCase):
                 )
             )
 
-        # and we shouldn't if we have bug
+        # and we shouldn't if we have inference beam
         testing_utils.display_model(
             dict(
                 task='integration_tests:multipass',
