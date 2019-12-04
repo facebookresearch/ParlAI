@@ -97,13 +97,17 @@ def setup_args():
     :return: A parser that parses the port from commandline arguments.
     """
     parser = ParlaiParser(False, False)
-    parser.add_terminal_chat_args(is_client=True)
+    parser_grp = parser.add_argument_group('Terminal Chat')
+    parser_grp.add_argument(
+        '--port', default=35496, type=int, help='Port to run the terminal chat server'
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     opt = setup_args()
     port = opt.get('port', 34596)
+    print("port IS: ", port)
     ws = websocket.WebSocketApp(
         "ws://localhost:{}/websocket".format(port),
         on_message=on_message,
