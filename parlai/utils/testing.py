@@ -335,7 +335,7 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     return (output.getvalue(), valid, test)
 
 
-def eval_model_timeout(opt, skip_valid=False, skip_test=False, timeout_seconds=None, valid_datatype=None):
+def eval_model_timeout(opt, skip_valid=False, skip_test=False, valid_datatype=None, timeout_seconds=None):
     """
     Run through evaluation loop, with timeout.
 
@@ -345,6 +345,8 @@ def eval_model_timeout(opt, skip_valid=False, skip_test=False, timeout_seconds=N
         If true skips the valid evaluation, and the second return value will be None.
     :param bool skip_test:
         If true skips the test evaluation, and the third return value will be None.
+    :param str valid_datatype:
+        If custom datatype required for valid, e.g. train:evalmode, specify here
     :param int timeout:
         Seconds to wait before timeout. Fails if None
 

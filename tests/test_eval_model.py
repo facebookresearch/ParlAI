@@ -178,8 +178,8 @@ class TestEvalModel(unittest.TestCase):
                 d['batchsize'] = bs
                 stdout, valid, test = testing_utils.eval_model_timeout(
                     d,
-                    timeout_seconds=20,
                     valid_datatype=d['datatype']
+                    timeout_seconds=20,
                 )
                 self.assertEqual(
                     int(valid['exs']),
