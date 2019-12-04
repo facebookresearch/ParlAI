@@ -104,6 +104,8 @@ class DefaultTeacher(FixedDialogTeacher):
                 pass
             action[key] = entry[i]
         action['episode_done'] = True
+        action['text'] = entry[0]
+        action['labels'] = [entry[1]]
 
         return action
 
