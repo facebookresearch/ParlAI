@@ -7,10 +7,6 @@
 
 import parlai.core.build_data as build_data
 import os
-import subprocess
-import shutil
-import csv
-import time
 import gzip
 import json
 from parlai.core.build_data import DownloadableFile

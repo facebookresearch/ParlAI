@@ -101,7 +101,7 @@ class DefaultTeacher(FixedDialogTeacher):
         action['id'] = episode_idx
         for i, key in enumerate(self.existing_keys):
             if i < 2:
-                pass
+                continue
             action[key] = entry[i]
         action['episode_done'] = True
         action['text'] = entry[0]
