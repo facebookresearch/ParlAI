@@ -278,6 +278,12 @@ class TorchGeneratorAgent(TorchAgent):
             help='Size n-grams to block in beam search. val <= 0 implies no blocking',
         )
         agent.add_argument(
+            '--beam-length-penalty',
+            type=float,
+            default=0.65,
+            help='Applies a length penalty. Set to 0 for no penalty.',
+        )
+        agent.add_argument(
             '--skip-generation',
             type='bool',
             default=False,
@@ -667,6 +673,7 @@ class TorchGeneratorAgent(TorchAgent):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65)
             )
         elif method == 'topk':
             return TopKSampling(
@@ -806,6 +813,7 @@ class TreeSearch(object):
         eos_token=2,
         min_length=3,
         device='cpu',
+        length_penalty=0,
     ):
         """
         Instantiate Beam object.
@@ -1024,7 +1032,7 @@ class TreeSearch(object):
         for finished_item in self.finished:
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
-            length_penalty = math.pow((1 + current_length) / 6, 0.65)
+            length_penalty = math.pow((1 + current_length) / 6, self.length_penalty)
             rescored_finished.append(
                 _HypothesisTail(
                     timestep=finished_item.timestep,
