@@ -14,7 +14,8 @@ import random
 
 
 class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
-    """World where two agents have a dialogue to negotiate a deal.
+    """
+    World where two agents have a dialogue to negotiate a deal.
     """
 
     def __init__(self, opt, agents=None, shared=None):
@@ -32,8 +33,9 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
         self.num_negotiations = 0
 
     def parley(self):
-        """Alternate taking turns, until both agents have made a choice
-        (indicated by a turn starting with <selection>)
+        """
+        Alternate taking turns, until both agents have made a choice (indicated by a
+        turn starting with <selection>)
         """
         if self.first_turn:
             # Use NegotiationTeacher to load data for us
@@ -102,9 +104,9 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
         return self.episodeDone
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

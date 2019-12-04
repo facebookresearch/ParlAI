@@ -95,6 +95,11 @@ class InteractiveTeacher(SelfOriginalTeacher):
     pass
 
 
+class SelfchatTeacher(SelfOriginalTeacher):
+    # Dummy class to add arguments for interactive world.
+    pass
+
+
 def create_agents(opt, task):
     if not opt.get('interactive_task', False):
         return create_task_agent_from_taskname(opt)

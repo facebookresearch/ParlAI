@@ -3,9 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic template of training loop.
-We create an agent that will train on the training task, and be evaluated
-on the validation version of the task.
+"""
+Basic template of training loop. We create an agent that will train on the training
+task, and be evaluated on the validation version of the task.
 
 We then do one iteration over ten training examples and one validation example,
 printing reports from those tasks after completing those iterations.

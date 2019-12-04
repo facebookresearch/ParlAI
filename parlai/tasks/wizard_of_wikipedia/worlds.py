@@ -10,12 +10,9 @@ import random
 import os
 import string
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
 from parlai.core.message import Message
-from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 
 
 NO_TOPIC = '[NO TOPIC]'
@@ -104,3 +101,20 @@ class InteractiveWorld(DialogPartnerWorld):
             print('\n[ Preparing new chat... ]\n')
             self.cnt = 0
             self.model_agent.reset()
+
+
+class InteractiveSelfchatWorld(SelfChatBaseWorld):
+    def init_contexts(self):
+        print('[ loading topics.. ]')
+        # Load possible chosen topics
+        topics_path = os.path.join(
+            self.opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
+        )
+        # Get training set topics
+        datatype = self.opt['datatype'].split(':')[0]
+        self.topic_list = json.load(open(topics_path, 'rb'))[datatype]
+
+    def get_contexts(self):
+        random.seed()
+        topic = random.choice(self.topic_list)
+        return [topic, topic]

@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""World Runner Module.
+"""
+World Runner Module.
 
-The World Runner provides the manager with utility functions for running
-overworlds, onboard worlds, and task worlds.
+The World Runner provides the manager with utility functions for running overworlds,
+onboard worlds, and task worlds.
 """
 import parlai.chat_service.services.messenger.shared_utils as utils
 import time
@@ -16,7 +17,8 @@ import logging
 
 
 class MessengerWorldRunner:
-    """World Runner.
+    """
+    World Runner.
 
     Launches worlds, overworlds, etc. Helper for MessengerManager
     """
@@ -31,14 +33,42 @@ class MessengerWorldRunner:
         self.system_done = False
         self.opt = opt
         self.tasks = {}  # task ID to task
+        self.initialized = False
+
+        def _is_done_initializing(fut):
+            e = fut.exception()
+            if e is not None:
+                self._log('`module_initialize` returned with error {}'.format(repr(e)))
+                if self.debug:
+                    raise e
+            if fut.result():
+                print(fut.result())
+            if self.debug:
+                print("DEBUG: Call to `module_initialize` has completed...")
+            self.initialized = True
+
+        if hasattr(self._world_module, "module_initialize"):
+            self._log("Initializing world module...")
+            # perform any module intialization steps
+            init_fn = self._world_module.module_initialize
+            self.init_fut = self.executor.submit(init_fn, opt, manager)
+            self.init_fut.add_done_callback(_is_done_initializing)
+        else:
+            self._log("World module does not have `module initialize` function")
+            self.initialized = True
 
     def _log(self, text):
         if self.debug:
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print("{} DEBUG: {}".format(time, text))
 
+    def is_initialized(self):
+        return self.initialized
+
     def shutdown(self):
-        """Shutdown the world runner."""
+        """
+        Shutdown the world runner.
+        """
         for _, task in self.tasks.items():
             if task.world is not None:
                 task.world.shutdown()
@@ -49,7 +79,8 @@ class MessengerWorldRunner:
         self._log("Shutdown complete.")
 
     def _run_world(self, task, world_name, agents):
-        """Run a world until completion.
+        """
+        Run a world until completion.
 
         :param task:
             TaskState. State of the given task.
@@ -77,7 +108,8 @@ class MessengerWorldRunner:
         return ret_val, world_data
 
     def launch_task_world(self, task_name, world_name, agents):
-        """Launch a task world.
+        """
+        Launch a task world.
 
         Return the job's future.
 
@@ -103,7 +135,8 @@ class MessengerWorldRunner:
         return fut
 
     def launch_overworld(self, task_name, overworld_name, onboard_map, overworld_agent):
-        """Launch an overworld and a subsequent onboarding world.
+        """
+        Launch an overworld and a subsequent onboarding world.
 
         Return the job's future
 
@@ -135,7 +168,7 @@ class MessengerWorldRunner:
                 self._world_module, overworld_name, "generate_world"
             )
             overworld = world_generator(self.opt, [overworld_agent])
-            while not self.system_done:
+            while not overworld.episode_done() and not self.system_done:
                 world_type = overworld.parley()
                 if world_type is None:
                     time.sleep(0.5)
@@ -158,6 +191,7 @@ class MessengerWorldRunner:
                 while agent_state.get_active_agent() != overworld_agent:
                     time.sleep(2)
                 overworld.return_overworld()
+            utils.print_and_log(logging.INFO, 'exiting overworld')
             return world_type
 
         fut = self.executor.submit(_world_function)

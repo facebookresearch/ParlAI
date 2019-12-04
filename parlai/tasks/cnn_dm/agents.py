@@ -14,7 +14,9 @@ import unicodedata
 
 
 def _fix_missing_period(line):
-    """Adds a period to a line that is missing a period"""
+    """
+    Adds a period to a line that is missing a period.
+    """
     dm_single_close_quote = u'\u2019'
     dm_double_close_quote = u'\u201d'
     END_TOKENS = [

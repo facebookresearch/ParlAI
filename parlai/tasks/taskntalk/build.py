@@ -13,7 +13,9 @@ import parlai.core.build_data as build_data
 
 
 def build(opt):
-    """Create train and validation data for synthetic shapes described by attributes."""
+    """
+    Create train and validation data for synthetic shapes described by attributes.
+    """
     dpath = os.path.join(opt['datapath'], 'taskntalk')
 
     if not build_data.built(dpath):

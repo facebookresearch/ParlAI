@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Teachers for the MovieDialog task.
+"""
+Teachers for the MovieDialog task.
 
 From Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931
 
@@ -63,10 +64,14 @@ def _path(task, opt):
 
 # The knowledge base of facts that can be used to answer questions.
 class KBTeacher(FbDialogTeacher):
-    """Simple text entry with each movie's facts in the knowledge base."""
+    """
+    Simple text entry with each movie's facts in the knowledge base.
+    """
 
     def __init__(self, opt, shared=None):
-        """Initialize teacher."""
+        """
+        Initialize teacher.
+        """
         build(opt)
         opt['datafile'] = os.path.join(
             opt['datapath'], 'MovieDialog', 'movie_dialog_dataset', 'movie_kb.txt'
@@ -76,10 +81,14 @@ class KBTeacher(FbDialogTeacher):
 
 # Single task.
 class TaskTeacher(FbDialogTeacher):
-    """Teacher with single task, specified by moviedialog:task:N."""
+    """
+    Teacher with single task, specified by moviedialog:task:N.
+    """
 
     def __init__(self, opt, shared=None):
-        """Initialize teacher."""
+        """
+        Initialize teacher.
+        """
         try:
             # expecting "moviedialog:task:N"
             self.task = opt['task'].split(':')[2]
@@ -91,10 +100,14 @@ class TaskTeacher(FbDialogTeacher):
 
 # By default train on all tasks at once.
 class DefaultTeacher(core_agents.MultiTaskTeacher):
-    """By default will load teacher with all four tasks."""
+    """
+    By default will load teacher with all four tasks.
+    """
 
     def __init__(self, opt, shared=None):
-        """Initialize teacher."""
+        """
+        Initialize teacher.
+        """
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join(
             'moviedialog:Task:%d' % (i + 1) for i in range(len(tasks))
