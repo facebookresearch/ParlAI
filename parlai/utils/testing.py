@@ -247,7 +247,6 @@ def tempdir():
 
 @contextlib.contextmanager
 def timeout(time):
-
     def _handler(signum, frame):
         raise TimeoutError
 
@@ -335,7 +334,9 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     return (output.getvalue(), valid, test)
 
 
-def eval_model_timeout(opt, skip_valid=False, skip_test=False, valid_datatype=None, timeout_seconds=None):
+def eval_model_timeout(
+    opt, skip_valid=False, skip_test=False, valid_datatype=None, timeout_seconds=None
+):
     """
     Run through evaluation loop, with timeout.
 

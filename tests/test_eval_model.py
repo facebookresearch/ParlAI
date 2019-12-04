@@ -169,7 +169,7 @@ class TestEvalModel(unittest.TestCase):
             'datatype': 'train:evalmode',
         }
 
-        teachers = ['integration_tests:candidate_base', 'integration_tests']
+        teachers = ['integration_tests:fixed_dialog_candidate', 'integration_tests']
         batchsize = [1, 64]
         for bs in batchsize:
             for teacher in teachers:
@@ -178,7 +178,7 @@ class TestEvalModel(unittest.TestCase):
                 d['batchsize'] = bs
                 stdout, valid, test = testing_utils.eval_model_timeout(
                     d,
-                    valid_datatype=d['datatype']
+                    valid_datatype=d['datatype'],
                     timeout_seconds=20,
                 )
                 self.assertEqual(

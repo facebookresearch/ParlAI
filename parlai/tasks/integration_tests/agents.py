@@ -30,7 +30,7 @@ NUM_TRAIN = 500
 NUM_TEST = 100
 
 
-class CandidateBaseTeacher(FixedDialogTeacher):
+class FixedDialogCandidateTeacher(FixedDialogTeacher):
     """
     Base Candidate Teacher.
 
@@ -143,7 +143,7 @@ class CandidateBaseTeacher(FixedDialogTeacher):
         }
 
 
-class CandidateTeacher(CandidateBaseTeacher):
+class CandidateTeacher(DialogTeacher):
     """
     Candidate teacher produces several candidates, one of which is a repeat of the
     input.
@@ -151,7 +151,83 @@ class CandidateTeacher(CandidateBaseTeacher):
     A good ranker should easily identify the correct response.
     """
 
+    def __init__(
+        self,
+        opt,
+        shared=None,
+        vocab_size=VOCAB_SIZE,
+        example_size=EXAMPLE_SIZE,
+        num_candidates=NUM_CANDIDATES,
+        num_train=NUM_TRAIN,
+        num_test=NUM_TEST,
+    ):
+        """
+        :param int vocab_size: size of the vocabulary
+        :param int example_size: length of each example
+        :param int num_candidates: number of label_candidates generated
+        :param int num_train: size of the training set
+        :param int num_test: size of the valid/test sets
+        """
+        self.opt = opt
+        opt['datafile'] = opt['datatype'].split(':')[0]
+        self.datafile = opt['datafile']
+
+        self.vocab_size = vocab_size
+        self.example_size = example_size
+        self.num_candidates = num_candidates
+        self.num_train = num_train
+        self.num_test = num_test
+
+        # set up the vocabulary
+        self.words = list(map(str, range(self.vocab_size)))
+
+        super().__init__(opt, shared)
+
+    def num_episodes(self):
+        if self.datafile == 'train':
+            return self.num_train
+        else:
+            return self.num_test
+
+    def num_examples(self):
+        return self.num_episodes()
+
+    def build_corpus(self):
+        """
+        Build corpus; override for customization.
+        """
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
+
     def setup_data(self, fold):
+        # N words appearing in a random order
+        self.rng = random.Random(42)
+        full_corpus = self.build_corpus()
+        self.rng.shuffle(full_corpus)
+
+        it = iter(full_corpus)
+        self.train = list(itertools.islice(it, self.num_train))
+        self.val = list(itertools.islice(it, self.num_test))
+        self.test = list(itertools.islice(it, self.num_test))
+
+        # check we have enough data
+        assert len(self.train) == self.num_train, len(self.train)
+        assert len(self.val) == self.num_test, len(self.val)
+        assert len(self.test) == self.num_test, len(self.test)
+
+        # check every word appear in the training set
+        assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
+
+        # select which set we're using
+        if fold == "train":
+            self.corpus = self.train
+        elif fold == "valid":
+            self.corpus = self.val
+        elif fold == "test":
+            self.corpus = self.test
+
+        # make sure the corpus is actually text strings
+        self.corpus = [' '.join(x) for x in self.corpus]
+
         for i, text in enumerate(self.corpus):
             cands = []
             for j in range(NUM_CANDIDATES):
