@@ -15,6 +15,7 @@ import contextlib
 import tempfile
 import shutil
 import io
+import signal
 from typing import Tuple
 
 
@@ -244,6 +245,23 @@ def tempdir():
     shutil.rmtree(d)
 
 
+@contextlib.contextmanager
+def timeout(time):
+
+    def _handler(signum, frame):
+        raise TimeoutError
+
+    signal.signal(signal.SIGALRM, _handler)
+    signal.alarm(time)
+
+    try:
+        yield
+    except TimeoutError as e:
+        raise e
+    finally:
+        signal.signal(signal.SIGALRM, signal.SIG_IGN)
+
+
 def train_model(opt):
     """
     Run through a TrainLoop.
@@ -278,7 +296,7 @@ def train_model(opt):
     return (output.getvalue(), valid, test)
 
 
-def eval_model(opt, skip_valid=False, skip_test=False):
+def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     """
     Run through an evaluation loop.
 
@@ -288,6 +306,8 @@ def eval_model(opt, skip_valid=False, skip_test=False):
         If true skips the valid evaluation, and the second return value will be None.
     :param bool skip_test:
         If true skips the test evaluation, and the third return value will be None.
+    :param str valid_datatype:
+        If custom datatype required for valid, e.g. train:evalmode, specify here
 
     :return: (stdout, valid_results, test_results)
     :rtype: (str, dict, dict)
@@ -307,12 +327,35 @@ def eval_model(opt, skip_valid=False, skip_test=False):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
     with capture_output() as output:
-        popt['datatype'] = 'valid'
+        popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
         valid = None if skip_valid else ems.eval_model(popt)
         popt['datatype'] = 'test'
         test = None if skip_test else ems.eval_model(popt)
 
     return (output.getvalue(), valid, test)
+
+
+def eval_model_timeout(opt, skip_valid=False, skip_test=False, timeout_seconds=None, valid_datatype=None):
+    """
+    Run through evaluation loop, with timeout.
+
+    :param opt:
+        Any non-default options you wish to set.
+    :param bool skip_valid:
+        If true skips the valid evaluation, and the second return value will be None.
+    :param bool skip_test:
+        If true skips the test evaluation, and the third return value will be None.
+    :param int timeout:
+        Seconds to wait before timeout. Fails if None
+
+    :return: (stdout, valid_results, test_results)
+    :rtype: (str, dict, dict)
+    """
+    if timeout_seconds is None or timeout_seconds <= 0:
+        raise TypeError('Timeout must be positive')
+
+    with timeout(timeout_seconds):
+        return eval_model(opt, skip_valid, skip_test, valid_datatype)
 
 
 def display_data(opt):
