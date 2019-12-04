@@ -164,10 +164,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test that evaluating a model with train:evalmode completes an epoch.
         """
-        base_dict = {
-            'model': 'repeat_label',
-            'datatype': 'train:evalmode',
-        }
+        base_dict = {'model': 'repeat_label', 'datatype': 'train:evalmode'}
 
         teachers = ['integration_tests:fixed_dialog_candidate', 'integration_tests']
         batchsize = [1, 64]
@@ -177,17 +174,14 @@ class TestEvalModel(unittest.TestCase):
                 d['task'] = teacher
                 d['batchsize'] = bs
                 stdout, valid, test = testing_utils.eval_model_timeout(
-                    d,
-                    valid_datatype=d['datatype'],
-                    timeout_seconds=20,
+                    d, valid_datatype=d['datatype'], timeout_seconds=20
                 )
                 self.assertEqual(
                     int(valid['exs']),
                     500,
                     f'train:evalmode failed with bs {bs} and teacher {teacher}'
-                    f' stdout: {stdout}'
+                    f' stdout: {stdout}',
                 )
-
 
 
 if __name__ == '__main__':

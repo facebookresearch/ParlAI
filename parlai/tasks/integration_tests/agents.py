@@ -36,6 +36,7 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
 
     Useful if you'd like to test the FixedDialogTeacher
     """
+
     def __init__(
         self,
         opt,
@@ -139,7 +140,7 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
             'text': self.corpus[episode_idx],
             'episode_done': True,
             'labels': [self.corpus[episode_idx]],
-            'label_candidates': self.cands[episode_idx]
+            'label_candidates': self.cands[episode_idx],
         }
 
 
