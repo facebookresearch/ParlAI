@@ -11,6 +11,7 @@ can learn simple behavior easily. They are useful as unit tests for the basic mo
 The corpora are all randomly, but deterministically generated
 """
 
+from parlai.core.agents import Teacher
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
 from torch.utils.data import Dataset
 import copy
@@ -21,6 +22,8 @@ from PIL import Image
 import string
 import torch
 import json
+from abc import ABC
+from typing import TypeVar
 
 # default parameters
 VOCAB_SIZE = 7
@@ -30,22 +33,22 @@ NUM_TRAIN = 500
 NUM_TEST = 100
 
 
-class FixedDialogCandidateTeacher(FixedDialogTeacher):
+class CandidateBaseTeacher(Teacher, ABC):
     """
-    Base Candidate Teacher.
+    Base Teacher.
 
-    Useful if you'd like to test the FixedDialogTeacher
+    Contains some functions that are useful for all the subteachers.
     """
 
     def __init__(
         self,
-        opt,
-        shared=None,
-        vocab_size=VOCAB_SIZE,
-        example_size=EXAMPLE_SIZE,
-        num_candidates=NUM_CANDIDATES,
-        num_train=NUM_TRAIN,
-        num_test=NUM_TEST,
+        opt: dict,
+        shared: dict = None,
+        vocab_size: int = VOCAB_SIZE,
+        example_size: int = EXAMPLE_SIZE,
+        num_candidates: int = NUM_CANDIDATES,
+        num_train: int = NUM_TRAIN,
+        num_test: int = NUM_TEST,
     ):
         """
         :param int vocab_size: size of the vocabulary
@@ -66,20 +69,13 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
 
         # set up the vocabulary
         self.words = list(map(str, range(self.vocab_size)))
-        if not shared:
-            self._setup_data(opt['datatype'].split(':')[0])
-            self._build_candidates()
-        else:
-            self.corpus = shared['corpus']
-            self.cands = shared['cands']
         super().__init__(opt, shared)
-        self.reset()
 
-    def share(self):
-        shared = super().share()
-        shared['corpus'] = self.corpus
-        shared['cands'] = self.cands
-        return shared
+    def build_corpus(self):
+        """
+        Build corpus; override for customization.
+        """
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def num_episodes(self):
         if self.datafile == 'train':
@@ -90,13 +86,7 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
     def num_examples(self):
         return self.num_episodes()
 
-    def build_corpus(self):
-        """
-        Build corpus; override for customization.
-        """
-        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
-
-    def _setup_data(self, fold):
+    def _setup_data(self, fold: str):
         # N words appearing in a random order
         self.rng = random.Random(42)
         full_corpus = self.build_corpus()
@@ -125,6 +115,37 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
 
         # make sure the corpus is actually text strings
         self.corpus = [' '.join(x) for x in self.corpus]
+
+
+class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
+    """
+    Base Candidate Teacher.
+
+    Useful if you'd like to test the FixedDialogTeacher
+    """
+
+    def __init__(
+        self,
+        *args,
+        **kwargs
+    ):
+        """Override to build candidates."""
+        super().__init__(*args, **kwargs)
+        opt = args[0]
+        if 'shared' not in kwargs:
+            self._setup_data(opt['datatype'].split(':')[0])
+            self._build_candidates()
+        else:
+            shared = kwargs['shared']
+            self.corpus = shared['corpus']
+            self.cands = shared['cands']
+        self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['corpus'] = self.corpus
+        shared['cands'] = self.cands
+        return shared
 
     def _build_candidates(self):
         self.cands = []
@@ -135,7 +156,7 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
                 cands.append(self.corpus[offset])
             self.cands.append(cands)
 
-    def get(self, episode_idx, entry_idx=0):
+    def get(self, episode_idx: int, entry_idx: int = 0):
         return {
             'text': self.corpus[episode_idx],
             'episode_done': True,
@@ -144,7 +165,7 @@ class FixedDialogCandidateTeacher(FixedDialogTeacher):
         }
 
 
-class CandidateTeacher(DialogTeacher):
+class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):
     """
     Candidate teacher produces several candidates, one of which is a repeat of the
     input.
@@ -152,83 +173,8 @@ class CandidateTeacher(DialogTeacher):
     A good ranker should easily identify the correct response.
     """
 
-    def __init__(
-        self,
-        opt,
-        shared=None,
-        vocab_size=VOCAB_SIZE,
-        example_size=EXAMPLE_SIZE,
-        num_candidates=NUM_CANDIDATES,
-        num_train=NUM_TRAIN,
-        num_test=NUM_TEST,
-    ):
-        """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
-        """
-        self.opt = opt
-        opt['datafile'] = opt['datatype'].split(':')[0]
-        self.datafile = opt['datafile']
-
-        self.vocab_size = vocab_size
-        self.example_size = example_size
-        self.num_candidates = num_candidates
-        self.num_train = num_train
-        self.num_test = num_test
-
-        # set up the vocabulary
-        self.words = list(map(str, range(self.vocab_size)))
-
-        super().__init__(opt, shared)
-
-    def num_episodes(self):
-        if self.datafile == 'train':
-            return self.num_train
-        else:
-            return self.num_test
-
-    def num_examples(self):
-        return self.num_episodes()
-
-    def build_corpus(self):
-        """
-        Build corpus; override for customization.
-        """
-        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
-
     def setup_data(self, fold):
-        # N words appearing in a random order
-        self.rng = random.Random(42)
-        full_corpus = self.build_corpus()
-        self.rng.shuffle(full_corpus)
-
-        it = iter(full_corpus)
-        self.train = list(itertools.islice(it, self.num_train))
-        self.val = list(itertools.islice(it, self.num_test))
-        self.test = list(itertools.islice(it, self.num_test))
-
-        # check we have enough data
-        assert len(self.train) == self.num_train, len(self.train)
-        assert len(self.val) == self.num_test, len(self.val)
-        assert len(self.test) == self.num_test, len(self.test)
-
-        # check every word appear in the training set
-        assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
-
-        # select which set we're using
-        if fold == "train":
-            self.corpus = self.train
-        elif fold == "valid":
-            self.corpus = self.val
-        elif fold == "test":
-            self.corpus = self.test
-
-        # make sure the corpus is actually text strings
-        self.corpus = [' '.join(x) for x in self.corpus]
-
+        super()._setup_data(fold)
         for i, text in enumerate(self.corpus):
             cands = []
             for j in range(NUM_CANDIDATES):

@@ -173,9 +173,10 @@ class TestEvalModel(unittest.TestCase):
                 d = base_dict.copy()
                 d['task'] = teacher
                 d['batchsize'] = bs
-                stdout, valid, test = testing_utils.eval_model_timeout(
-                    d, valid_datatype=d['datatype'], timeout_seconds=20
-                )
+                with testing_utils.timeout(time=20):
+                    stdout, valid, test = testing_utils.eval_model(
+                        d, valid_datatype=d['datatype'],
+                    )
                 self.assertEqual(
                     int(valid['exs']),
                     500,

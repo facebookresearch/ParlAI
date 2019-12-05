@@ -246,7 +246,18 @@ def tempdir():
 
 
 @contextlib.contextmanager
-def timeout(time):
+def timeout(time: int = 30):
+    """
+    Raise a timeout if a function does not return in time `time`.
+
+    Use as a context manager, so that the signal class can reset it's alarm for
+    `SIGALARM`
+
+    :param int time:
+        Time in seconds to wait for timeout. Default is 30 seconds.
+    """
+    assert time >= 0, 'Time specified in timeout must be nonnegative.'
+
     def _handler(signum, frame):
         raise TimeoutError
 
@@ -332,33 +343,6 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
         test = None if skip_test else ems.eval_model(popt)
 
     return (output.getvalue(), valid, test)
-
-
-def eval_model_timeout(
-    opt, skip_valid=False, skip_test=False, valid_datatype=None, timeout_seconds=None
-):
-    """
-    Run through evaluation loop, with timeout.
-
-    :param opt:
-        Any non-default options you wish to set.
-    :param bool skip_valid:
-        If true skips the valid evaluation, and the second return value will be None.
-    :param bool skip_test:
-        If true skips the test evaluation, and the third return value will be None.
-    :param str valid_datatype:
-        If custom datatype required for valid, e.g. train:evalmode, specify here
-    :param int timeout:
-        Seconds to wait before timeout. Fails if None
-
-    :return: (stdout, valid_results, test_results)
-    :rtype: (str, dict, dict)
-    """
-    if timeout_seconds is None or timeout_seconds <= 0:
-        raise TypeError('Timeout must be positive')
-
-    with timeout(timeout_seconds):
-        return eval_model(opt, skip_valid, skip_test, valid_datatype)
 
 
 def display_data(opt):
