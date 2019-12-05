@@ -23,7 +23,6 @@ import string
 import torch
 import json
 from abc import ABC
-from typing import TypeVar
 
 # default parameters
 VOCAB_SIZE = 7
@@ -124,12 +123,10 @@ class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
     Useful if you'd like to test the FixedDialogTeacher
     """
 
-    def __init__(
-        self,
-        *args,
-        **kwargs
-    ):
-        """Override to build candidates."""
+    def __init__(self, *args, **kwargs):
+        """
+        Override to build candidates.
+        """
         super().__init__(*args, **kwargs)
         opt = args[0]
         if 'shared' not in kwargs:
