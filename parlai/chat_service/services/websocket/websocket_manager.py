@@ -240,10 +240,7 @@ class WebsocketManager(ChatServiceManager):
         :param socket_id:
             int identifier for agent socket to send message to
         :param message:
-            (dict) message to send through the socket. The keys should be:
-                'image': (True/False) whether the message is an image
-                'mime_type': str. Mime type of the message
-                'text': str. base64 encoded content
+            (str) message to send through the socket.
         :param quick_replies:
             (list) list of strings to send as quick replies.
 
@@ -269,14 +266,14 @@ class WebsocketManager(ChatServiceManager):
         :param socket_id:
             int identifier for agent socket to send message to
         :param payload:
-            (dict) payload to send through the socket. The keys should be:
-                'image': (True/False) whether the message is an image
-                'mime_type': str. Mime type of the message
-                'data': str. base64 encoded content
+            (dict) payload to send through the socket. The mandatory keys are:
+                    'type': (str) Type of the payload (e.g. 'image')
+                    'data': str. base64 encoded content
+                    If 'type' is 'image', the 'mime_type' (str) key can be provided
+                    to specify the Mime type of the image
 
         Returns a tornado future for tracking the `write_message` action.
         """
-        payload['data'] = payload['data'].replace('\n', '<br />')
         message = {'text': '', 'payload': payload, 'quick_replies': quick_replies}
         payload = json.dumps(message)
 
