@@ -258,8 +258,8 @@ class WebsocketManager(ChatServiceManager):
             (dict) payload to send through the socket. The mandatory keys are:
                     'type': (True/False) whether the message is an image
                     'data': str. base64 encoded content
-                If 'type' is 'image', the 'mime_type' (str) key can be provided
-                to specify the Mime type of the image
+                    If 'type' is 'image', the 'mime_type' (str) key can be provided
+                    to specify the Mime type of the image
 
         Returns a tornado future for tracking the `write_message` action.
         """
