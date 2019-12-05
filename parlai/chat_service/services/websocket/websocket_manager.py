@@ -46,7 +46,7 @@ class WebsocketManager(ChatServiceManager):
         self.subs = []
 
         self.app = None
-        self.debug = opt.get('debug', True)
+        self.debug = opt.get('is_debug', False)
 
         self.message_sender = WebsocketManager.MessageSender()
 
