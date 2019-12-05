@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Example of training the sequence to sequence model on a bAbI task."""
+"""
+Example of training the sequence to sequence model on a bAbI task.
+"""
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 

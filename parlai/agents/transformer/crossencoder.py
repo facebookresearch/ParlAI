@@ -12,8 +12,9 @@ import torch
 
 
 class CrossencoderAgent(TorchRankerAgent):
-    """ Equivalent of bert_ranker/crossencoder but does not rely on an external
-        library (hugging face).
+    """
+    Equivalent of bert_ranker/crossencoder but does not rely on an external library
+    (hugging face).
     """
 
     def __init__(self, opt, shared=None):
@@ -29,7 +30,9 @@ class CrossencoderAgent(TorchRankerAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         TransformerRankerAgent.add_cmdline_args(argparser)
         argparser.set_defaults(encode_candidate_vecs=False)
         return argparser
@@ -38,7 +41,8 @@ class CrossencoderAgent(TorchRankerAgent):
         return CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
 
     def vectorize(self, *args, **kwargs):
-        """ Add the start and end token to the text.
+        """
+        Add the start and end token to the text.
         """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
@@ -46,7 +50,8 @@ class CrossencoderAgent(TorchRankerAgent):
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
-        """ Add the start and end token to the text.
+        """
+        Add the start and end token to the text.
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs and 'added_start_end_tokens' not in obs:
@@ -79,8 +84,8 @@ class CrossencoderAgent(TorchRankerAgent):
 
 
 class CrossEncoderModule(torch.nn.Module):
-    """ A simple wrapper around the transformer encoder which adds a linear
-        layer.
+    """
+    A simple wrapper around the transformer encoder which adds a linear layer.
     """
 
     def __init__(self, opt, dict, null_idx):
@@ -113,7 +118,8 @@ class CrossEncoderModule(torch.nn.Module):
         self.linear_layer = torch.nn.Linear(opt['embedding_size'], 1)
 
     def forward(self, tokens, segments):
-        """ Scores each concatenation text + candidate.
+        """
+        Scores each concatenation text + candidate.
         """
         encoded = self.encoder(tokens, None, segments)
         res = self.linear_layer(encoded)

@@ -1,7 +1,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Transformer Agents."""
+"""
+Transformer Agents.
+"""
 from parlai.core.agents import Agent
 from parlai.utils.misc import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -14,7 +16,9 @@ import torch
 
 
 def add_common_cmdline_args(argparser):
-    """Add common command line args."""
+    """
+    Add common command line args.
+    """
     argparser.add_argument(
         '-esz',
         '--embedding-size',
@@ -96,10 +100,11 @@ def add_common_cmdline_args(argparser):
 
 
 class Transformer(Agent):
-    """Placeholder Transformer Agent.
+    """
+    Placeholder Transformer Agent.
 
-    Placeholder class, which just throws an error telling the user to specify
-    whether they want the ranker or the generator.
+    Placeholder class, which just throws an error telling the user to specify whether
+    they want the ranker or the generator.
     """
 
     def __init__(self, opt, shared=None):
@@ -110,14 +115,17 @@ class Transformer(Agent):
 
 
 class TransformerRankerAgent(TorchRankerAgent):
-    """Transformer Ranker Agent.
+    """
+    Transformer Ranker Agent.
 
     Implementation of a TorchRankerAgent, where the model is a Transformer
     """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
@@ -196,18 +204,24 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
 
     def build_model(self, states=None):
-        """Build and return model."""
+        """
+        Build and return model.
+        """
         model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
 
     def build_criterion(self):
-        """Build and return criterion, favoring average instead of sum for the loss."""
+        """
+        Build and return criterion, favoring average instead of sum for the loss.
+        """
         return torch.nn.CrossEntropyLoss(reduction='mean')
 
     def batchify(self, obs_batch, sort=False):
-        """Override so that we can add memories to the Batch object."""
+        """
+        Override so that we can add memories to the Batch object.
+        """
         batch = super().batchify(obs_batch, sort)
         if self.opt['use_memories']:
             valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
@@ -225,7 +239,9 @@ class TransformerRankerAgent(TorchRankerAgent):
         )
 
     def vectorize(self, *args, **kwargs):
-        """Override to include vectorization of memories."""
+        """
+        Override to include vectorization of memories.
+        """
         kwargs['add_start'] = False
         kwargs['add_end'] = False
         obs = super().vectorize(*args, **kwargs)
@@ -234,13 +250,17 @@ class TransformerRankerAgent(TorchRankerAgent):
         return obs
 
     def encode_candidates(self, padded_cands):
-        """Encode candidates."""
+        """
+        Encode candidates.
+        """
         _, cands = self.model(xs=None, mems=None, cands=padded_cands)
 
         return cands
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        """Score candidates."""
+        """
+        Score candidates.
+        """
         # convoluted check that not all memories are empty
         if (
             self.opt['use_memories']
@@ -267,14 +287,17 @@ class TransformerRankerAgent(TorchRankerAgent):
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):
-    """TransformerGeneratorAgent.
+    """
+    TransformerGeneratorAgent.
 
     Implementation of TorchGeneratorAgent, where the model is a Transformer
     """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         cls.dictionary_class().add_cmdline_args(argparser)
@@ -283,7 +306,9 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         return agent
 
     def build_model(self, states=None):
-        """Build and return model."""
+        """
+        Build and return model.
+        """
         model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(

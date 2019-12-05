@@ -45,7 +45,9 @@ class InteractiveEnd2endAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         EndToEndAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('InteractiveEnd2end Arguments')
         parser.add_argument(
@@ -132,8 +134,9 @@ class InteractiveEnd2endAgent(Agent):
         return passages
 
     def get_passages(self, act):
-        """Format passages retrieved by taking the first paragraph of the
-        top `num_retrieved` passages.
+        """
+        Format passages retrieved by taking the first paragraph of the top
+        `num_retrieved` passages.
         """
         retrieved_txt = act.get('text', '')
         cands = act.get('text_candidates', [])
@@ -159,9 +162,9 @@ class InteractiveEnd2endAgent(Agent):
         return passages
 
     def retriever_act(self, history):
-        """Combines and formats texts retrieved by the TFIDF retriever for the
-        chosen topic, the last thing the wizard said, and the last thing the
-        apprentice said.
+        """
+        Combines and formats texts retrieved by the TFIDF retriever for the chosen
+        topic, the last thing the wizard said, and the last thing the apprentice said.
         """
         # retrieve on chosen topic
         chosen_topic_txts = None
@@ -208,8 +211,9 @@ class InteractiveEnd2endAgent(Agent):
         self.observation = obs
 
     def maintain_retrieved_texts(self, history, observation):
-        """Maintain texts retrieved by the retriever to mimic the set-up
-        from the data collection for the task.
+        """
+        Maintain texts retrieved by the retriever to mimic the set-up from the data
+        collection for the task.
         """
         if 'chosen_topic' not in history:
             history['episode_done'] = False
@@ -254,7 +258,9 @@ class InteractiveEnd2endAgent(Agent):
         return responder_act
 
     def share(self):
-        """Share internal saved_model between parent and child instances."""
+        """
+        Share internal saved_model between parent and child instances.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['retriever'] = self.retriever

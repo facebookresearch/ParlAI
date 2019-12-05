@@ -2,7 +2,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""ParlAI Server file"""
+"""
+ParlAI Server file.
+"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -65,12 +67,16 @@ def get_rand_id():
 
 
 def force_dir(path):
-    """Make sure the parent dir exists for path so we can write a file."""
+    """
+    Make sure the parent dir exists for path so we can write a file.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
 def get_path(filename):
-    """Get the path to an asset."""
+    """
+    Get the path to an asset.
+    """
     cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
@@ -484,9 +490,11 @@ class BonusHandler(BaseHandler):
         self.mturk_manager = app.mturk_manager
 
     def post(self, worker_target):
-        """Requests to /bonus/{worker_id} will give a bonus to that worker.
-        Requires a reason, assignment_id, a unique token (for idempotence),
-        and the bonus amount IN CENTS
+        """
+        Requests to /bonus/{worker_id} will give a bonus to that worker.
+
+        Requires a reason, assignment_id, a unique token (for idempotence), and the
+        bonus amount IN CENTS
         """
         data = tornado.escape.json_decode(self.request.body)
         reason = data['reason']
@@ -585,9 +593,10 @@ class TaskRunHandler(BaseHandler):
         self.app = app
 
     def post(self, task_target):
-        """Requests to /run_task/{task_id} will launch a task locally
-        for the given task. It will die after 20 mins if it doesn't end
-        on its own.
+        """
+        Requests to /run_task/{task_id} will launch a task locally for the given task.
+
+        It will die after 20 mins if it doesn't end on its own.
         """
         try:
             # Load the run and task_config modules from the expected locations

@@ -95,7 +95,9 @@ def multiprocess_train(
 
 
 def launch_and_train(opt, port):
-    """Perform a fork() to many processes."""
+    """
+    Perform a fork() to many processes.
+    """
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,

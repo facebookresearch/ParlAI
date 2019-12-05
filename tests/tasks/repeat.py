@@ -3,8 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Class which creates a dummy dataset for testing purposes.
-   Used in test_train_model.py
+"""
+Class which creates a dummy dataset for testing purposes.
+
+Used in test_train_model.py
 """
 from parlai.core.teachers import DialogTeacher
 
