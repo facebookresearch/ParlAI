@@ -5,10 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
-import base64
-from io import BytesIO
 from parlai.chat_service.core.agents import ChatServiceAgent
-from PIL import Image
 
 
 class WebsocketAgent(ChatServiceAgent):
