@@ -10,6 +10,17 @@ tags associated with them.
 
 task_list = [
     {
+        "id": "AmazonQA",
+        "display_name": "AmazonQA",
+        "task": "amazon_qa",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Amazon, "
+            "totaling around 1.4 million answered questions."
+            "Link: http://jmcauley.ucsd.edu/data/amazon/qa/"
+        ),
+    },
+    {
         "id": "AQuA",
         "display_name": "AQuA",
         "task": "aqua",
