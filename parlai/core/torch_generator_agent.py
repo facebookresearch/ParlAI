@@ -661,7 +661,7 @@ class TorchGeneratorAgent(TorchAgent):
         beam_size = self.opt.get('beam_size', 1)
         if method == 'greedy':
             return GreedySearch(
-                1,
+                beam_size,
                 min_length=0,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,

@@ -152,7 +152,9 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'random'):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
-            self.training = self.datatype.startswith('train')
+            self.training = (
+                self.datatype.startswith('train') and 'evalmode' not in self.datatype
+            )
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
         # set up support for multithreaded data loading
@@ -462,7 +464,9 @@ class DialogTeacher(FixedDialogTeacher):
 
         self.startTime = time.time()
         self.datatype = opt['datatype']
-        self.training = self.datatype.startswith('train')
+        self.training = (
+            self.datatype.startswith('train') and 'evalmode' not in self.datatype
+        )
         self.stream = 'stream' in self.datatype.split(':')
 
         if not self.use_batch_act:
