@@ -26,6 +26,7 @@ class ChatServiceAgent(Agent, ABC):
         self.observed_packets = {}
         self.message_request_time = None
         self.stored_data = {}
+        self.message_partners = []
         # initialize stored data
         self.set_stored_data()
 
