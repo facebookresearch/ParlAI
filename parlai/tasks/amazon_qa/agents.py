@@ -5,10 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
-from .build import build
+from .build import build, RESOURCES
 import os
 import json
-from parlai.tasks.amazon_qa.build import RESOURCES
 
 
 class DefaultTeacher(FixedDialogTeacher):
@@ -89,6 +88,7 @@ class DefaultTeacher(FixedDialogTeacher):
                 json_data = json.loads(f'[{new_data}]')
 
             for ep in json_data:
+                # First 20 datasets have a different format than those later
                 if i < 21:
                     self.data.append([create_entry_single(ep)])
                 else:
