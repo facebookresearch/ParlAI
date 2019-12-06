@@ -201,6 +201,3 @@ class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
             'label_candidates': ex[8],
         }
 
-
-class DefaultTeacher(EmpatheticDialogueTeacher):
-    pass

@@ -1183,6 +1183,7 @@ class MTurkManager:
 
         Continue doing this until the desired number of conversations is had.
         """
+
         assert self.task_state >= self.STATE_HITS_MADE, (
             'Must have launched HITs with `mturk_manager.create_hits`'
             ' to start the task'
@@ -1254,6 +1255,7 @@ class MTurkManager:
                 'All agents joined the conversation {}!'.format(conversation_id),
             )
             self.started_conversations += 1
+            print(f'task_function is: {task_function}')
             save_data = task_function(mturk_manager=self, opt=opt, workers=agents)
 
             if save_data is not None:
