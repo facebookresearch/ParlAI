@@ -1,4 +1,0 @@
-include *.txt
-
-include test/*.py
-include test/*.aiml

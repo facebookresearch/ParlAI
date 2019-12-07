@@ -15,22 +15,9 @@ from parlai.core.agents import Agent
 
 class AliceAgent(Agent):
     """
-    Agent returns random candidate if available or repeats the label.
+    Agent returns the Alice AIML bot's reply to an observation.
     This is a strong rule-based baseline.
     """
-
-    @staticmethod
-    def add_cmdline_args(parser):
-        """
-        Add command line arguments for this agent.
-        """
-        parser = parser.add_argument_group('AliceAgent Arguments')
-        parser.add_argument(
-            '--label_candidates_file',
-            type=str,
-            default=None,
-            help='file of candidate responses to choose from',
-        )
 
     def __init__(self, opt, shared=None):
         """
@@ -38,21 +25,19 @@ class AliceAgent(Agent):
         """
         super().__init__(opt)
         self.id = 'Alice'
-        if opt.get('label_candidates_file'):
-            f = open(opt.get('label_candidates_file'))
-            self.label_candidates = f.read().split('\n')
         self.kern = None
         self.load_alice()
 
     def load_alice(self):
         self.kern = aiml.Kernel()
+        self.kern.verbose(False)
         self.kern.setTextEncoding(None)
         chdir = os.path.join( aiml.__path__[0],'botdata','alice' )
         self.kern.bootstrap(learnFiles="startup.xml", commands="load alice",
                             chdir=chdir)
     
-    def get_alice_response(self):
-        return self.kern.respond(self.observation['text'])
+    def get_alice_response(self, obs):
+        return self.kern.respond(obs)
 
     def act(self):
         """
@@ -62,20 +47,14 @@ class AliceAgent(Agent):
 
         :returns: message dict with reply
         """
-        if self.observation is None:
+
+        obs = self.observation
+        if obs is None:
             return {'text': 'Nothing to reply to yet.'}
         
         reply = {}
         reply['id'] = self.getID()
-        reply['text'] = self.get_alice_response()
-
-        label_candidates = None
-        if hasattr(self, 'label_candidates'):
-            # override label candidates with candidate file if set
-            label_candidates = self.label_candidates
-            
-        if label_candidates:
-            label_candidates = list(label_candidates)
-            reply['text_candidates'] = label_candidates
+        query = obs.get('text', "I don't know")
+        reply['text'] = self.get_alice_response(query)
 
         return reply
