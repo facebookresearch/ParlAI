@@ -1057,12 +1057,12 @@ task_list = [
         "id": "OneCommon",
         "display_name": "OneCommon",
         "task": "onecommon",
-        "tags": ["All", "CommonGrounding"],
+        "tags": ["All", "Goal"],
         "description": (
             "A collaborative referring task which requires advanced skills "
             "of common grounding under continuous and partially-observable context. "
             "This code also includes reference-resolution annotation "
-            "from Udagawa and Aizawa '19."
+            "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
         ),
     },
 ]

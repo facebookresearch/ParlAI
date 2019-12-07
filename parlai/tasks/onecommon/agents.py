@@ -8,9 +8,6 @@ from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
 import os
-import random
-
-WELCOME_MESSAGE = ''
 
 EOS_TOKEN = '<eos>'
 SELECTION_TOKEN = '<selection>'
@@ -32,15 +29,18 @@ N_OBJECT = 7
 
 
 def get_tag(tokens, tag):
-    """Extracts the value inside the given tag."""
+    """
+    Extracts the value inside the given tag.
+    """
     start = tokens.index('<' + tag + '>') + 1
     stop = tokens.index('</' + tag + '>')
     return tokens[start:stop]
 
 
 class OneCommonTeacher(FixedDialogTeacher):
-    """OneCommon teacher that loads the data from
-    https://github.com/Alab-NII/Reference-Resolution.
+    """
+    OneCommon teacher that loads the data from https://github.com/Alab-NII/Reference-
+    Resolution.
     """
 
     def __init__(self, opt, shared=None):
@@ -227,11 +227,10 @@ class OneCommonTeacher(FixedDialogTeacher):
         """
         Split the referents.
 
-        The first 3 values are begin idx, end idx, and eos idx
-        The next N_OBJECT values are booleans of if the object is referred
-        e.g. 3 4 10 0 1 0 0 0 0 0
-             means idx 3 to 4 is a markable of the utterance
-             that has <eos> at idx 10, and it refers to the 2nd dot
+        The first 3 values are begin idx, end idx, and eos idx The next N_OBJECT values
+        are booleans of if the object is referred e.g. 3 4 10 0 1 0 0 0 0 0 means idx 3
+        to 4 is a markable of an utterance with <eos> at idx 10, and it refers to the
+        2nd dot
         """
 
         referent_len = 3 + N_OBJECT
