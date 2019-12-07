@@ -16,6 +16,7 @@ from parlai.core.agents import Agent
 class AliceAgent(Agent):
     """
     Agent returns the Alice AIML bot's reply to an observation.
+
     This is a strong rule-based baseline.
     """
 
@@ -32,10 +33,11 @@ class AliceAgent(Agent):
         self.kern = aiml.Kernel()
         self.kern.verbose(False)
         self.kern.setTextEncoding(None)
-        chdir = os.path.join( aiml.__path__[0],'botdata','alice' )
-        self.kern.bootstrap(learnFiles="startup.xml", commands="load alice",
-                            chdir=chdir)
-    
+        chdir = os.path.join(aiml.__path__[0], 'botdata', 'alice')
+        self.kern.bootstrap(
+            learnFiles="startup.xml", commands="load alice", chdir=chdir
+        )
+
     def get_alice_response(self, obs):
         return self.kern.respond(obs)
 
@@ -51,7 +53,7 @@ class AliceAgent(Agent):
         obs = self.observation
         if obs is None:
             return {'text': 'Nothing to reply to yet.'}
-        
+
         reply = {}
         reply['id'] = self.getID()
         query = obs.get('text', "I don't know")
