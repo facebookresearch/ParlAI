@@ -42,11 +42,15 @@ This directory also contains subfolders for some of the projects which are house
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._
 
+- **Empathetic Dialogues** [[paper]](https://arxiv.org/abs/1811.00207) [[external website]](https://github.com/facebookresearch/EmpatheticDialogues) [[video]](https://ai.facebook.com/blog/making-conversation-models-more-empathetic/).
+_Task & models for chitchat displaying empathy._
+
 - **ConvAI2 Competition** [[external website]](http://convai.io/).
 _Competition on dialogue chitchat based on the PersonaChat task._
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
 _Task & models for chitchat with a given persona._
+
 
 ## Well-Behaved
 
