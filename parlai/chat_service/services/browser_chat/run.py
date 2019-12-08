@@ -14,7 +14,7 @@ from parlai.chat_service.services.browser_chat.browser_manager import BrowserMan
 from parlai.chat_service.services.messenger import shared_utils as utils
 
 
-SERVICE_NAME = 'browser'
+SERVICE_NAME = 'Browser'
 
 
 def setup_args():

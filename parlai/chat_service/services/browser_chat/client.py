@@ -5,11 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import json
-import uuid
 import websocket
-import time
 import threading
-import requests
 from parlai.core.params import ParlaiParser
 from parlai.scripts.interactive_web import (
     HOST_NAME,
