@@ -9,8 +9,6 @@ import websocket
 import threading
 from parlai.core.params import ParlaiParser
 from parlai.scripts.interactive_web import (
-    HOST_NAME,
-    PORT,
     WEB_HTML,
     STYLE_SHEET,
     FONT_AWESOME,
