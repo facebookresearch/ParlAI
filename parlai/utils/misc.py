@@ -764,8 +764,8 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
                 else:
                     line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
                 lines.append(space + line)
-        if type(msg.get('image')) == str:
-            lines.append(msg['image'])
+        if type(msg.get('image')) in [str, torch.Tensor]:
+            lines.append(f'[ image ]: {msg["image"]}')
         if msg.get('text', ''):
             text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
