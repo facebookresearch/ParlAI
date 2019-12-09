@@ -9,7 +9,7 @@ Agent uses the Free Alice AIML interpreter to generate replies to observations.
 
 import os
 from parlai.core.agents import Agent
-import importlib
+
 try:
     import aiml
 except ImportError:
