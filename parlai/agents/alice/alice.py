@@ -4,7 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Agent uses the Free Alice AIML interpreter to generate replies to observations.
+Agent uses the Free ALICE AIML interpreter to generate replies to observations.
+
+More information can be found at:
+https://en.wikipedia.org/wiki/Artificial_Linguistic_Internet_Computer_Entity
 """
 
 import os
@@ -35,9 +38,17 @@ class AliceAgent(Agent):
         super().__init__(opt)
         self.id = 'Alice'
         self.kern = None
-        self.load_alice()
+        if shared is None:
+            self._load_alice()
+        else:
+            self.kern = shared['kern']
 
-    def load_alice(self):
+    def share(self):
+        shared = super().share()
+        shared['kern'] = self.kern
+        return shared
+
+    def _load_alice(self):
         self.kern = aiml.Kernel()
         self.kern.verbose(False)
         self.kern.setTextEncoding(None)
@@ -45,9 +56,6 @@ class AliceAgent(Agent):
         self.kern.bootstrap(
             learnFiles="startup.xml", commands="load alice", chdir=chdir
         )
-
-    def get_alice_response(self, obs):
-        return self.kern.respond(obs)
 
     def act(self):
         """
@@ -65,6 +73,6 @@ class AliceAgent(Agent):
         reply = {}
         reply['id'] = self.getID()
         query = obs.get('text', "I don't know")
-        reply['text'] = self.get_alice_response(query)
+        reply['text'] = self.kern.respond(query)
 
         return reply
