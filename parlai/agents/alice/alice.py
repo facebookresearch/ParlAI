@@ -4,13 +4,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Agent uses the Free Alice AIML interpreter to answer..
+Agent uses the Free Alice AIML interpreter to generate replies to observations.
 """
 
-import aiml
 import os
-
 from parlai.core.agents import Agent
+import importlib
+try:
+    import aiml
+except ImportError:
+    raise ImportError(
+        (
+            "ALICE agent needs python-aiml installed. Please run:\n "
+            "pip install git+https://github.com/paulovn/python-aiml.git"
+        )
+    )
 
 
 class AliceAgent(Agent):
