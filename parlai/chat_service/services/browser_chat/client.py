@@ -8,11 +8,7 @@ import json
 import websocket
 import threading
 from parlai.core.params import ParlaiParser
-from parlai.scripts.interactive_web import (
-    WEB_HTML,
-    STYLE_SHEET,
-    FONT_AWESOME,
-)
+from parlai.scripts.interactive_web import WEB_HTML, STYLE_SHEET, FONT_AWESOME
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
