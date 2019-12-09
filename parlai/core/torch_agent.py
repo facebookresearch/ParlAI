@@ -1689,7 +1689,9 @@ class TorchAgent(ABC, Agent):
 
         if path:
             model_dict_path = path + '.dict'
-            if hasattr(self, 'dict') and not os.path.exists(model_dict_path):  # force save dictionary
+            if hasattr(self, 'dict') and not os.path.exists(
+                model_dict_path
+            ):  # force save dictionary
                 # TODO: Look into possibly overriding opt('dict_file') with new path
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
