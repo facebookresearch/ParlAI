@@ -15,7 +15,7 @@ import pickle
 import random
 import time
 import traceback
-from typing import Type, Union, Optional, Set, Tuple, Any, Dict, List, Sized
+from typing import Union, Optional, Set, Tuple, Any, Dict, List, Sized
 import warnings
 
 from parlai.core.message import Message
@@ -24,14 +24,8 @@ from parlai.core.message import Message
 try:
     import torch
     import torch.optim
-
-    # default type in padded3d needs to be protected if torch
-    # isn't installed.
-    TORCH_LONG: Optional[torch.dtype] = torch.long
-    __TORCH_AVAILABLE = True
 except ImportError:
-    TORCH_LONG = None
-    __TORCH_AVAILABLE = False
+    raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
@@ -945,11 +939,6 @@ def padded_tensor(
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
     """
-    # hard fail if we don't have torch
-    if not __TORCH_AVAILABLE:
-        raise ImportError(
-            "Cannot use padded_tensor without torch; go to http://pytorch.org"
-        )
 
     # number of items
     n = len(items)
@@ -995,7 +984,7 @@ def padded_3d(
     tensors: List[torch.LongTensor],
     pad_idx: int = 0,
     use_cuda: bool = False,
-    dtype: Optional[torch.dtype] = TORCH_LONG,
+    dtype: Optional[torch.dtype] = torch.long,
     fp16friendly: bool = False,
 ):
     """
@@ -1060,7 +1049,7 @@ def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
     output = []
     for lst in lists:
         # watch out in case we don't have torch installed
-        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
+        if isinstance(lst, torch.Tensor):
             output.append(lst[ind_sorted])
         else:
             output.append([lst[i] for i in ind_sorted])
