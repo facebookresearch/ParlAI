@@ -22,10 +22,11 @@ from parlai.core.message import Message
 
 try:
     import torch
+
+    __TORCH_AVAILABLE = True
 except ImportError:
-    # silence the error, we'll have other problems later.
-    # we only need the import for typing here
-    pass
+    # silence the error, we'll have other problems later
+    __TORCH_AVAILABLE = False
 
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
@@ -441,7 +442,7 @@ def round_sigfigs(x: Union[float, torch.Tensor], sigfigs=4) -> float:
 
     :returns: float number rounded to specified sigfigs
     """
-    if isinstance(x, torch.Tensor):
+    if __TORCH_AVAILABLE and isinstance(x, torch.Tensor):
         x = x.item()
 
     try:
