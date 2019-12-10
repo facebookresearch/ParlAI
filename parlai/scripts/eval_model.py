@@ -7,9 +7,12 @@
 """
 Basic example which iterates through the tasks specified and evaluates the given model
 on them.
+
 Examples
 --------
+
 .. code-block:: shell
+
   python eval_model.py -t "babi:Task1k:2" -m "repeat_label"
   python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
 """
@@ -95,6 +98,7 @@ def _eval_single_world(opt, agent, task):
 def eval_model(opt, print_parser=None):
     """
     Evaluates a model.
+
     :param opt: tells the evaluation function how to run
     :param bool print_parser: if provided, prints the options that are set within the
         model after loading the model
