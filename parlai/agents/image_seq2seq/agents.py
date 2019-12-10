@@ -129,9 +129,9 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         if 'text' not in obs or 'text_vec' not in obs:
             return obs
         if self.opt.get('include_image_token', False):
-            truncate = args[2]
+            truncate = args[2] - 1 if args[2] is not None else None
             vec = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate - 1, True)
+                self._check_truncate(obs['text_vec'], truncate, True)
             )
             token = TOKEN_NO_IMAGE
             if obs.get('image', None) is not None:
