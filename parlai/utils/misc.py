@@ -251,12 +251,12 @@ def load_opt_file(optfile: str) -> Opt:
     """
     try:
         # try json first
-        with open(optfile, 'r') as handle:
-            opt = json.load(handle)
+        with open(optfile, 'r') as t_handle:
+            opt = json.load(t_handle)
     except UnicodeDecodeError:
         # oops it's pickled
-        with open(optfile, 'rb') as handle:
-            opt = pickle.load(handle)
+        with open(optfile, 'rb') as b_handle:
+            opt = pickle.load(b_handle)
     return Opt(opt)
 
 
