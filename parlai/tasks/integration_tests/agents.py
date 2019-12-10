@@ -11,7 +11,8 @@ can learn simple behavior easily. They are useful as unit tests for the basic mo
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.teachers import DialogTeacher, AbstractImageTeacher
+from parlai.core.agents import Teacher
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
 from torch.utils.data import Dataset
 import copy
 import random
@@ -21,6 +22,7 @@ from PIL import Image
 import string
 import torch
 import json
+from abc import ABC
 
 # default parameters
 VOCAB_SIZE = 7
@@ -30,23 +32,22 @@ NUM_TRAIN = 500
 NUM_TEST = 100
 
 
-class CandidateTeacher(DialogTeacher):
+class CandidateBaseTeacher(Teacher, ABC):
     """
-    Candidate teacher produces several candidates, one of which is a repeat of the
-    input.
+    Base Teacher.
 
-    A good ranker should easily identify the correct response.
+    Contains some functions that are useful for all the subteachers.
     """
 
     def __init__(
         self,
-        opt,
-        shared=None,
-        vocab_size=VOCAB_SIZE,
-        example_size=EXAMPLE_SIZE,
-        num_candidates=NUM_CANDIDATES,
-        num_train=NUM_TRAIN,
-        num_test=NUM_TEST,
+        opt: dict,
+        shared: dict = None,
+        vocab_size: int = VOCAB_SIZE,
+        example_size: int = EXAMPLE_SIZE,
+        num_candidates: int = NUM_CANDIDATES,
+        num_train: int = NUM_TRAIN,
+        num_test: int = NUM_TEST,
     ):
         """
         :param int vocab_size: size of the vocabulary
@@ -67,8 +68,13 @@ class CandidateTeacher(DialogTeacher):
 
         # set up the vocabulary
         self.words = list(map(str, range(self.vocab_size)))
-
         super().__init__(opt, shared)
+
+    def build_corpus(self):
+        """
+        Build corpus; override for customization.
+        """
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def num_episodes(self):
         if self.datafile == 'train':
@@ -79,13 +85,7 @@ class CandidateTeacher(DialogTeacher):
     def num_examples(self):
         return self.num_episodes()
 
-    def build_corpus(self):
-        """
-        Build corpus; override for customization.
-        """
-        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
-
-    def setup_data(self, fold):
+    def _setup_data(self, fold: str):
         # N words appearing in a random order
         self.rng = random.Random(42)
         full_corpus = self.build_corpus()
@@ -115,6 +115,63 @@ class CandidateTeacher(DialogTeacher):
         # make sure the corpus is actually text strings
         self.corpus = [' '.join(x) for x in self.corpus]
 
+
+class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
+    """
+    Base Candidate Teacher.
+
+    Useful if you'd like to test the FixedDialogTeacher
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Override to build candidates.
+        """
+        super().__init__(*args, **kwargs)
+        opt = args[0]
+        if 'shared' not in kwargs:
+            self._setup_data(opt['datatype'].split(':')[0])
+            self._build_candidates()
+        else:
+            shared = kwargs['shared']
+            self.corpus = shared['corpus']
+            self.cands = shared['cands']
+        self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['corpus'] = self.corpus
+        shared['cands'] = self.cands
+        return shared
+
+    def _build_candidates(self):
+        self.cands = []
+        for i in range(len(self.corpus)):
+            cands = []
+            for j in range(NUM_CANDIDATES):
+                offset = (i + j) % len(self.corpus)
+                cands.append(self.corpus[offset])
+            self.cands.append(cands)
+
+    def get(self, episode_idx: int, entry_idx: int = 0):
+        return {
+            'text': self.corpus[episode_idx],
+            'episode_done': True,
+            'labels': [self.corpus[episode_idx]],
+            'label_candidates': self.cands[episode_idx],
+        }
+
+
+class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):
+    """
+    Candidate teacher produces several candidates, one of which is a repeat of the
+    input.
+
+    A good ranker should easily identify the correct response.
+    """
+
+    def setup_data(self, fold):
+        super()._setup_data(fold)
         for i, text in enumerate(self.corpus):
             cands = []
             for j in range(NUM_CANDIDATES):

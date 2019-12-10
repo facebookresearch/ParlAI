@@ -5,10 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
-import base64
-from io import BytesIO
 from parlai.chat_service.core.agents import ChatServiceAgent
-from PIL import Image
 
 
 class WebsocketAgent(ChatServiceAgent):
@@ -46,22 +43,6 @@ class WebsocketAgent(ChatServiceAgent):
             self.manager.observe_payload(self.id, act['payload'], quick_replies)
         else:
             self.manager.observe_message(self.id, act['text'], quick_replies)
-
-    def _get_message_from_image(self, image):
-        """
-        Gets the message dict for sending the provided image.
-
-        Args:
-            image: PIL Image. Image to be sent in the message
-
-        Returns a message struct with the fields `type`, `text` and `mime_type`.
-        See `observe` for more information
-        """
-        buffered = BytesIO()
-        image.save(buffered, format=image.format)
-        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-        msg = {'type': 'image', 'text': img_str, 'mime_type': Image.MIME[image.format]}
-        return msg
 
     def put_data(self, message):
         """

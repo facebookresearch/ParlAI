@@ -160,6 +160,30 @@ class TestEvalModel(unittest.TestCase):
             'Task accuracy is averaged incorrectly',
         )
 
+    def test_train_evalmode(self):
+        """
+        Test that evaluating a model with train:evalmode completes an epoch.
+        """
+        base_dict = {'model': 'repeat_label', 'datatype': 'train:evalmode'}
+
+        teachers = ['integration_tests:fixed_dialog_candidate', 'integration_tests']
+        batchsize = [1, 64]
+        for bs in batchsize:
+            for teacher in teachers:
+                d = base_dict.copy()
+                d['task'] = teacher
+                d['batchsize'] = bs
+                with testing_utils.timeout(time=20):
+                    stdout, valid, test = testing_utils.eval_model(
+                        d, valid_datatype=d['datatype']
+                    )
+                self.assertEqual(
+                    int(valid['exs']),
+                    500,
+                    f'train:evalmode failed with bs {bs} and teacher {teacher}'
+                    f' stdout: {stdout}',
+                )
+
 
 if __name__ == '__main__':
     unittest.main()
