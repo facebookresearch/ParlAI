@@ -13,6 +13,7 @@ EOS_TOKEN = '<eos>'
 SELECTION_TOKEN = '<selection>'
 YOU_TOKEN = 'YOU:'
 THEM_TOKEN = 'THEM:'
+SILENCE_TOKEN = '__SILENCE__'
 
 INPUT_TAG = 'input'
 DIALOGUE_TAG = 'dialogue'
@@ -73,7 +74,7 @@ class OneCommonTeacher(FixedDialogTeacher):
         super().reset()
 
     def num_examples(self):
-        num_exs = sum(len(episode['dialogue']) for episode in self.episodes)
+        num_exs = sum(len(episode['dialogue']) // 2 for episode in self.episodes)
         return num_exs
 
     def num_episodes(self):
@@ -140,7 +141,7 @@ class OneCommonTeacher(FixedDialogTeacher):
         # Fill in teacher's message (THEM)
         sentence = dialogue[entry_idx]
         if sentence is None:
-            action['text'] = None
+            action['text'] = SILENCE_TOKEN
         else:
             action['text'] = ' '.join(sentence[1:])
 
