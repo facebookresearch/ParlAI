@@ -20,7 +20,8 @@ import torch
 
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.utils.misc import round_sigfigs, padded_3d, warn_once, padded_tensor
+from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.utils.torch import padded_3d, padded_tensor
 
 
 class TorchRankerAgent(TorchAgent):

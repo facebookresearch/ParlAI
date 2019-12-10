@@ -9,7 +9,7 @@ BERT helpers.
 """
 
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.utils.misc import neginf, fp16_optimizer_wrapper
+from parlai.utils.torch import neginf, fp16_optimizer_wrapper
 
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig

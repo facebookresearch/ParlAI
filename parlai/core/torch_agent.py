@@ -24,6 +24,7 @@ import json
 import random
 import numpy as np
 import os
+import torch
 from torch import optim
 
 from parlai.core.agents import Agent
@@ -33,17 +34,14 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
 from parlai.utils.misc import (
     AttrDict,
-    argsort,
-    fp16_optimizer_wrapper,
-    padded_tensor,
     warn_once,
     round_sigfigs,
 )
-
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
+from parlai.utils.torch import (
+    argsort,
+    fp16_optimizer_wrapper,
+    padded_tensor,
+)
 
 
 class StopTrainException(Exception):

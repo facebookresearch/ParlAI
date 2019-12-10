@@ -28,7 +28,8 @@ import torch.nn.functional as F
 
 from parlai.utils.distributed import is_distributed, check_synced_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
-from parlai.utils.misc import padded_tensor, round_sigfigs, warn_once, neginf
+from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.utils.torch import padded_tensor, neginf
 
 
 class TorchGeneratorModel(nn.Module, ABC):
