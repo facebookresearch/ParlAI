@@ -433,7 +433,7 @@ class NoLock(object):
         pass
 
 
-def round_sigfigs(x: Union[float, torch.Tensor], sigfigs=4) -> float:
+def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
     """
     Round value to specified significant figures.
 

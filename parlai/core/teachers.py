@@ -324,23 +324,16 @@ class FixedDialogTeacher(Teacher):
 
         return self.batches[batch_idx]
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         """
         Get the number of episodes in this dataset.
         """
-        if self.use_batch_act:
-            # when using batch_act, this is length of sorted data
-            return len(self.sorted_data)
         raise RuntimeError('"num_episodes" must be overriden by children.')
 
-    @lru_cache(maxsize=1)
-    def num_examples(self):
+    def num_examples(self) -> int:
         """
         Get the total number of examples in this dataset.
         """
-        if self.use_batch_act:
-            # when using batch_act, this is length of sorted data
-            return len(self.sorted_data)
         raise RuntimeError('"num_examples" must be overriden by children.')
 
     def get(self, episode_idx, entry_idx=0):
@@ -516,7 +509,7 @@ class DialogTeacher(FixedDialogTeacher):
         # TODO: mark as optionally abstract?
         return None
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         """
         Return the number of episodes in the data.
         """
@@ -525,15 +518,17 @@ class DialogTeacher(FixedDialogTeacher):
         except AttributeError:
             return super().num_episodes()
 
-    @lru_cache(maxsize=1)
-    def num_examples(self):
+    def num_examples(self) -> int:
         """
         Return the number of examples in the data.
         """
+        if hasattr(self, '_num_examples_cache'):
+            return self._num_examples_cache
         try:
-            return self.data.num_examples()
+            self._num_examples_cache: int = self.data.num_examples()
         except AttributeError:
-            return super().num_examples()
+            self._num_examples_cache = super().num_examples()
+        return self._num_examples_cache
 
     def get(self, episode_idx, entry_idx=0):
         """
