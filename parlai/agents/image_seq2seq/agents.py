@@ -40,16 +40,16 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
             self._init_bleu_scorers()
         else:
             self.fairseq_bleu_scorer = shared['fairseq_bleu_scorer']
-            self.my_parlai_bleu = shared['my_parlai_bleu']
-            self.my_parlai_bleu_cnts = shared['my_parlai_bleu_cnts']
+            self.nltk_bleu = shared['nltk_bleu']
+            self.nltk_bleu_cnts = shared['nltk_bleu_cnts']
 
     def _init_bleu_scorers(self):
         if not hasattr(self, 'fairseq_bleu_scorer'):
             self.fairseq_bleu_scorer = bleu.Scorer(
                 self.NULL_IDX, self.END_IDX, self.dict[self.dict.unk_token]
             )
-        self.my_parlai_bleu = {f'bleu-{i}': 0 for i in range(1, 5)}
-        self.my_parlai_bleu_cnts = {f'bleu-{i}': 0 for i in range(1, 5)}
+        self.nltk_bleu = {f'bleu-{i}': 0 for i in range(1, 5)}
+        self.nltk_bleu_cnts = {f'bleu-{i}': 0 for i in range(1, 5)}
 
     def share(self) -> dict:
         """
@@ -57,8 +57,8 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         """
         shared = super().share()
         shared['fairseq_bleu_scorer'] = self.fairseq_bleu_scorer
-        shared['my_parlai_bleu'] = self.my_parlai_bleu
-        shared['my_parlai_bleu_cnts'] = self.my_parlai_bleu_cnts
+        shared['nltk_bleu'] = self.nltk_bleu
+        shared['nltk_bleu_cnts'] = self.nltk_bleu_cnts
         return shared
 
     def build_model(self) -> ImageSeq2seqModel:
@@ -257,7 +257,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
 
         texts = output.text
         self._compute_fairseq_bleu(batch, texts)
-        self._compute_parlai_bleu(batch, texts)
+        self._compute_nltk_bleu(batch, texts)
 
         return output
 
@@ -280,9 +280,9 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
                 k: v[v.index('= ') : v.index(',')]
                 for k, v in fairseq_bleu_scores.items()
             }
-            metrics['parlai_bleu_unnormalized'] = {
-                k: round_sigfigs(v / self.my_parlai_bleu_cnts[k], 4)
-                for k, v in self.my_parlai_bleu.items()
+            metrics['nltk_bleu_unnormalized'] = {
+                k: round_sigfigs(v / self.nltk_bleu_cnts[k], 4)
+                for k, v in self.nltk_bleu.items()
             }
         return metrics
 
@@ -301,7 +301,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
                 ),
             )
 
-    def _compute_parlai_bleu(self, batch: Batch, texts: List[str]):
+    def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
         def _bleu(guess: str, answers: List[str], weights: List[float]):
             """
             Compute approximate BLEU score between guess and a set of answers.
@@ -331,19 +331,5 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
                 )
             for i in range(4):
                 weights = [1 / (i + 1) for _ in range(i + 1)]
-                self.my_parlai_bleu[f'bleu-{i + 1}'] += _bleu(p, references, weights)
-                self.my_parlai_bleu_cnts[f'bleu-{i + 1}'] += 1
-
-    # def announce_bleu_score(self):
-    #     """
-    #     Announce final bleu scores.
-    #
-    #     The fairseq scorer works with just 1 reference, while the parlai bleu scorer
-    #     works with multiple
-    #     """
-    #     bleus = {k: self.fairseq_bleu_scorer.result_string(order=k) for k in range(1, 5)}
-    #     print(f'FINAL BLEU: {bleus}')
-    #     self.my_parlai_bleu = {
-    #         k: v / self.my_parlai_bleu_cnts[k] for k, v in self.my_parlai_bleu.items()
-    #     }
-    #     print(f'FINAL PARLAI BLEU: {self.my_parlai_bleu}')
+                self.nltk_bleu[f'bleu-{i + 1}'] += _bleu(p, references, weights)
+                self.nltk_bleu_cnts[f'bleu-{i + 1}'] += 1

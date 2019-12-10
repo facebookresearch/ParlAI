@@ -31,15 +31,10 @@ BASE_ARGS = {
 
 TEXT_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 4}
 
-IMAGE_ARGS = {
-    'task': 'integration_tests:ImageTeacher',
-    'validation_every_n_epochs': 50,
-    'num_epochs': 200,
-}
+IMAGE_ARGS = {'task': 'integration_tests:ImageTeacher', 'num_epochs': 200}
 
 MULTITASK_ARGS = {
     'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),
-    'validation_every_n_epochs': 2,
     'num_epochs': 10,
     'multitask_weights': [1, 50],
 }
@@ -50,6 +45,7 @@ EVAL_ARGS = {
     'inference': 'beam',
     'beam_size': 2,
     'metrics': 'all',
+    'compute_tokenized_bleu': True,
 }
 
 
@@ -111,7 +107,7 @@ class TestImageSeq2Seq(unittest.TestCase):
 
         stdout, valid, _ = testing_utils.eval_model(args, skip_test=True)
         self.assertIn('fairseq_bleu', valid)
-        self.assertIn('parlai_bleu_unnormalized', valid)
+        self.assertIn('nltk_bleu_unnormalized', valid)
 
 
 if __name__ == '__main__':
