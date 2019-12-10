@@ -8,6 +8,7 @@ import unittest
 import time
 import uuid
 import os
+import builtins
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
@@ -23,7 +24,6 @@ import json
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 MTurkManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
-MTurkManagerFile.input = mock.MagicMock()
 
 # Lets ignore the logging part
 MTurkManagerFile.shared_utils.print_and_log = mock.MagicMock()
@@ -335,6 +335,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
     """
 
     def setUp(self):
+        patcher = mock.patch('builtins.input', return_value='y')
+        self.addCleanup(patcher.stop)
+        patcher.start()
         # Mock functions that hit external APIs and such
         self.server_utils = MTurkManagerFile.server_utils
         self.mturk_utils = MTurkManagerFile.mturk_utils
@@ -1013,4 +1016,4 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(buffer=True)
+    unittest.main(buffer=False)

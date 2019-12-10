@@ -23,7 +23,7 @@ import json
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 MTurkManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
-MTurkManagerFile.input = mock.MagicMock()
+MTurkManagerFile.input = mock.MagicMock()  # type: ignore
 
 # Lets ignore the logging part
 MTurkManagerFile.shared_utils.print_and_log = mock.MagicMock()

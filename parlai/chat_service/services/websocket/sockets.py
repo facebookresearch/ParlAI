@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Dict
 from tornado.websocket import WebSocketHandler
 import uuid
 import logging
@@ -15,7 +16,7 @@ def get_rand_id():
 
 
 class MessageSocketHandler(WebSocketHandler):
-    subs = {}
+    subs: Dict[int, MessageSocketHandler] = {}
 
     def __init__(self, *args, **kwargs):
         def _default_callback(message, socketID):

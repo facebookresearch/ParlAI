@@ -7,7 +7,7 @@
 Talk with a model using a web UI.
 """
 
-
+from typing import Dict, Any
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
@@ -23,7 +23,7 @@ import os
 
 HOST_NAME = "0.0.0.0"
 PORT = 8082
-SHARED = {}
+SHARED: Dict[str, Any] = {}
 IMAGE_LOADER = None
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
