@@ -25,7 +25,7 @@ try:
 
     __TORCH_AVAILABLE = True
 except ImportError:
-    # silence the error, we'll have other problems later
+    # silence the error, we'll have other problems later if it's super necessary
     __TORCH_AVAILABLE = False
 
 
@@ -442,16 +442,19 @@ def round_sigfigs(x: Union[float, torch.Tensor], sigfigs=4) -> float:
 
     :returns: float number rounded to specified sigfigs
     """
+    x_: float
     if __TORCH_AVAILABLE and isinstance(x, torch.Tensor):
-        x = x.item()
+        x_ = x.item()
+    else:
+        x_ = x  # type: ignore
 
     try:
-        if x == 0:
+        if x_ == 0:
             return 0
-        return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
+        return round(x_, -math.floor(math.log10(abs(x_)) - sigfigs + 1))
     except (ValueError, OverflowError) as ex:
-        if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
-            return x
+        if x_ in [float('inf'), float('-inf')] or x_ != x_:  # inf or nan
+            return x_
         else:
             raise ex
 

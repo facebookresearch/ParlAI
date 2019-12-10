@@ -8,7 +8,6 @@ import unittest
 import time
 import uuid
 import os
-import builtins
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState

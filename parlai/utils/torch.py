@@ -3,9 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Utility methods for dealing with torch code."""
+"""
+Utility methods for dealing with torch code.
+"""
 
-import math
 from typing import Union, Optional, Tuple, Any, List, Sized
 
 try:
