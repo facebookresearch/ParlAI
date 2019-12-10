@@ -507,9 +507,9 @@ workflows:
       - unittests_gpu12
       - unittests_37
       - unittests_36
-      - unittests_osx
       - copyright
-      - mturk_tests:
+      - mturk_tests
+      - unittests_osx:
           filters:
             branches:
               only: master
