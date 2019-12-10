@@ -28,7 +28,7 @@ REPLACEMENT3 = """
 
 
 if __name__ == '__main__':
-    for root, dirs, files in os.walk("build/docs/"):
+    for root, _, files in os.walk("build/docs/"):
         for file in files:
             if file.endswith(".html"):
                 file_path = os.path.join(root, file)

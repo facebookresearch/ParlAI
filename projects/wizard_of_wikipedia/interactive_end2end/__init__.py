@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#!/usr/bin/python
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
