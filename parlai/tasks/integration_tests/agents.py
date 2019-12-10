@@ -20,7 +20,6 @@ import itertools
 import os
 from PIL import Image
 import string
-import torch
 import json
 from abc import ABC
 
@@ -494,7 +493,9 @@ class ImageTeacher(AbstractImageTeacher):
         """
         Return path to image on disk.
         """
-        return os.path.join(self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg')
+        return os.path.join(
+            self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg'
+        )
 
 
 class DefaultTeacher(CandidateTeacher):

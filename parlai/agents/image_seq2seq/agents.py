@@ -269,21 +269,20 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         if not self.skip_generation and self.compute_tokenized_bleu:
             try:
                 fairseq_bleu_scores = {
-                    k: self.fairseq_bleu_scorer.result_string(order=k) for k in range(1, 5)
+                    k: self.fairseq_bleu_scorer.result_string(order=k)
+                    for k in range(1, 5)
                 }
             except ZeroDivisionError:
                 # some preds are REAL bad
-                fairseq_bleu_scores = {
-                    k: 0 for k in range(1, 5)
-                }
+                fairseq_bleu_scores = {k: 0 for k in range(1, 5)}
 
             metrics['fairseq_bleu'] = {
-                k: v[v.index('= '):v.index(',')] for k, v in fairseq_bleu_scores.items()
+                k: v[v.index('= ') : v.index(',')]
+                for k, v in fairseq_bleu_scores.items()
             }
             metrics['parlai_bleu_unnormalized'] = {
-                k: round_sigfigs(
-                    v / self.my_parlai_bleu_cnts[k], 4
-                ) for k, v in self.my_parlai_bleu.items()
+                k: round_sigfigs(v / self.my_parlai_bleu_cnts[k], 4)
+                for k, v in self.my_parlai_bleu.items()
             }
         return metrics
 
@@ -303,7 +302,6 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
             )
 
     def _compute_parlai_bleu(self, batch: Batch, texts: List[str]):
-
         def _bleu(guess: str, answers: List[str], weights: List[float]):
             """
             Compute approximate BLEU score between guess and a set of answers.

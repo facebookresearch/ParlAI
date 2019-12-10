@@ -3,18 +3,24 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Modules for ImageSeq2seqAgent Agent."""
+"""
+Modules for ImageSeq2seqAgent Agent.
+"""
 import torch
 import torch.nn as nn
 from typing import List, Tuple
 
-from parlai.agents.transformer.modules import TransformerGeneratorModel, TransformerEncoder
+from parlai.agents.transformer.modules import (
+    TransformerGeneratorModel,
+    TransformerEncoder,
+)
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import Opt
 
 
 class ImageSeq2seqModel(TransformerGeneratorModel):
-    """ImageSeq2seqModel.
+    """
+    ImageSeq2seqModel.
 
     Just TGA that can encode image with encoder.
     """
@@ -56,12 +62,13 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
-            use_cuda=not opt['no_cuda'] and torch.cuda.is_available()
+            use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
         )
 
 
 class ContextWithImageEncoder(TransformerEncoder):
-    """ContextWithImage Module.
+    """
+    ContextWithImage Module.
 
     Encodes image and context via simple concatenation.
     """
@@ -70,8 +77,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         Override TransformerEncoder __init__.
 
-        Setup the image encoder; create some dummy tensors for inserting
-        image into input
+        Setup the image encoder; create some dummy tensors for inserting image into
+        input
         """
         self.n_img_layers = kwargs.pop('image_encoder_num_layers')
         self.img_dim = kwargs.pop('image_features_dim')
@@ -113,7 +120,9 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         image_masks = image_encoded = None
         valid_inds = [
-            i for i, img in enumerate(images) if img is not None and isinstance(img, torch.Tensor)
+            i
+            for i, img in enumerate(images)
+            if img is not None and isinstance(img, torch.Tensor)
         ]
 
         if valid_inds:
@@ -138,8 +147,11 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         return image_encoded, image_masks
 
-    def forward(self, src_tokens: torch.Tensor, image_features: List[object]) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Encode images with context.
+    def forward(
+        self, src_tokens: torch.Tensor, image_features: List[object]
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Encode images with context.
 
         Encodes tokens (if given) and images (if given) separately.
         Combines via concatenation, where images are added to the end of the tensor.
@@ -166,14 +178,16 @@ class ContextWithImageEncoder(TransformerEncoder):
                 'If you are using a text-based task, make sure the first turn '
                 'has text (e.g. a __SILENCE__ token if the model starts the convo).\n'
                 'If you are using an image-based task, make sure --image-mode is '
-                'set correctly.')
+                'set correctly.'
+            )
 
         full_enc = self.cat([context_encoded, image_encoded])
         full_mask = self.cat([context_mask, extra_masks])
         return full_enc, full_mask
 
     def cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
-        """Handle concatenation of None tensors.
+        """
+        Handle concatenation of None tensors.
 
         Smart concatenation. Concatenates tensors if they are not None.
 

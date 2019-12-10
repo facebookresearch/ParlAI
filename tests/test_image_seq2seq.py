@@ -29,10 +29,7 @@ BASE_ARGS = {
     'learn_positional_embeddings': True,
 }
 
-TEXT_ARGS = {
-    'task': 'integration_tests:nocandidate',
-    'num_epochs': 4
-}
+TEXT_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 4}
 
 IMAGE_ARGS = {
     'task': 'integration_tests:ImageTeacher',
@@ -44,7 +41,7 @@ MULTITASK_ARGS = {
     'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),
     'validation_every_n_epochs': 2,
     'num_epochs': 10,
-    'multitask_weights': [1, 50]
+    'multitask_weights': [1, 50],
 }
 
 EVAL_ARGS = {
@@ -52,7 +49,7 @@ EVAL_ARGS = {
     'skip_generation': False,
     'inference': 'beam',
     'beam_size': 2,
-    'metrics': 'all'
+    'metrics': 'all',
 }
 
 
@@ -62,28 +59,33 @@ class TestImageSeq2Seq(unittest.TestCase):
 
     Mostly testing that the agent cooperates with tasks accordingly.
     """
+
     @testing_utils.retry(ntries=3)
     def test_text_task(self):
-        """Test that model correctly handles text task"""
+        """
+        Test that model correctly handles text task.
+        """
         args = BASE_ARGS.copy()
         args.update(TEXT_ARGS)
         stdout, valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 1.5,
-            f'failed to train image_seq2seq on text task: {stdout}'
+            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task: {stdout}'
         )
 
     @testing_utils.retry(ntries=3)
     def test_image_task(self):
-        """Test that model correctly handles image task.
+        """
+        Test that model correctly handles image task.
+
         No training, only eval
         """
         args = BASE_ARGS.copy()
         args.update(IMAGE_ARGS)
 
         stdout, valid, test = testing_utils.train_model(args)
-        self.assertLessEqual(valid['ppl'], 6.6,
-            f'failed to train image_seq2seq on image task: {stdout}')
+        self.assertLessEqual(
+            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task: {stdout}'
+        )
 
     @testing_utils.retry(ntries=3)
     def test_multitask(self):
@@ -94,8 +96,10 @@ class TestImageSeq2Seq(unittest.TestCase):
         args.update(MULTITASK_ARGS)
 
         stdout, valid, test = testing_utils.train_model(args)
-        self.assertLessEqual(valid['ppl'], 5.0,
-            f'failed to train image_seq2seq on image+text task: {stdout}'
+        self.assertLessEqual(
+            valid['ppl'],
+            5.0,
+            f'failed to train image_seq2seq on image+text task: {stdout}',
         )
 
     def test_compute_tokenized_bleu(self):
