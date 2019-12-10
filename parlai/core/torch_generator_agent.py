@@ -673,7 +673,7 @@ class TorchGeneratorAgent(TorchAgent):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                length_penalty=self.opt.get('beam_length_penalty', 0.65)
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
             )
         elif method == 'topk':
             return TopKSampling(
@@ -834,6 +834,7 @@ class TreeSearch(object):
             What device to use for computations
         """
         self.beam_size = beam_size
+        self.length_penalty = length_penalty
         self.block_ngram = block_ngram
         self.min_length = min_length
         self.eos = eos_token
