@@ -56,7 +56,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
 }
 
 
-def neginf(dtype: Type) -> float:
+def neginf(dtype: torch.dtype) -> float:
     """
     Return a representable finite number near -inf for a dtype.
     """
