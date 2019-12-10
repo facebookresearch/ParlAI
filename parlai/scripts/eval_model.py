@@ -37,9 +37,9 @@ def setup_args(parser=None):
         '-rf',
         '--report-filename',
         type=str,
-        default='.eval_model',
+        default='',
         help='Saves a json file of the evaluation report either as an '
-        'extension to the model name (if begins with a ".") or a whole '
+        'extension to the model-file (if begins with a ".") or a whole '
         'file path. Set to the empty string to not save at all.',
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
@@ -76,7 +76,7 @@ def _save_eval_stats(opt, report):
     if fname.startswith('.'):
         fname = opt['model_file'] + fname
     with open(fname, 'w') as f:
-        json.dump({'opt': opt, 'eval_report': report}, f, indent=4)
+        json.dump({'opt': opt, 'report': report}, f, indent=4)
 
 
 def _eval_single_world(opt, agent, task):
