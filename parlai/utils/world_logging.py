@@ -62,7 +62,7 @@ class WorldLogger:
                     {
                         'id': msgs[0].get('id'),
                         'text': text,
-                        'label': label,
+                        'labels': [label],
                         'episode_done': False,
                     }
                 )

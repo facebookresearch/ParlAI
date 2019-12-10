@@ -4,8 +4,8 @@
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai.mturk.core.mturk_manager import MTurkManager
-import parlai.mturk.core.mturk_utils as mturk_utils
+from parlai.mturk.core.legacy_2018.mturk_manager import MTurkManager
+import parlai.mturk.core.legacy_2018.mturk_utils as mturk_utils
 
 from worlds import ControllableDialogEval, PersonasGenerator, PersonaAssignWorld
 from task_config import task_config
