@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""BERT helpers."""
+"""
+BERT helpers.
+"""
 
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.utils.misc import neginf, fp16_optimizer_wrapper
@@ -30,7 +32,9 @@ VOCAB_PATH = 'bert-base-uncased-vocab.txt'
 
 
 def add_common_args(parser):
-    """Add command line arguments for this agent."""
+    """
+    Add command line arguments for this agent.
+    """
     TorchRankerAgent.add_cmdline_args(parser)
     parser = parser.add_argument_group('Bert Ranker Arguments')
     parser.add_argument(
@@ -94,7 +98,9 @@ def add_common_args(parser):
 
 
 class BertWrapper(torch.nn.Module):
-    """Adds a optional transformer layer and a linear layer on top of BERT."""
+    """
+    Adds a optional transformer layer and a linear layer on top of BERT.
+    """
 
     def __init__(
         self,
@@ -124,7 +130,9 @@ class BertWrapper(torch.nn.Module):
         self.bert_model = bert_model
 
     def forward(self, token_ids, segment_ids, attention_mask):
-        """Forward pass."""
+        """
+        Forward pass.
+        """
         output_bert, output_pooler = self.bert_model(
             token_ids, segment_ids, attention_mask
         )
@@ -171,7 +179,9 @@ class BertWrapper(torch.nn.Module):
 
 
 def surround(idx_vector, start_idx, end_idx):
-    """Surround the vector by start_idx and end_idx."""
+    """
+    Surround the vector by start_idx and end_idx.
+    """
     start_tensor = idx_vector.new_tensor([start_idx])
     end_tensor = idx_vector.new_tensor([end_idx])
     return torch.cat([start_tensor, idx_vector, end_tensor], 0)
@@ -193,7 +203,9 @@ patterns_optimizer = {
 
 
 def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
-    """Optimizes the network with AdamWithDecay."""
+    """
+    Optimizes the network with AdamWithDecay.
+    """
     if type_optimization not in patterns_optimizer:
         print(
             'Error. Type optimizer must be one of %s' % (str(patterns_optimizer.keys()))

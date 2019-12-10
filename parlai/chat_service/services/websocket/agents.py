@@ -12,7 +12,9 @@ from PIL import Image
 
 
 class WebsocketAgent(ChatServiceAgent):
-    """Class for a person that can act in a ParlAI world via websockets"""
+    """
+    Class for a person that can act in a ParlAI world via websockets.
+    """
 
     def __init__(self, opt, manager, receiver_id, task_id):
         super().__init__(opt, manager, receiver_id, task_id)
@@ -20,7 +22,8 @@ class WebsocketAgent(ChatServiceAgent):
         self.action_id = 1
 
     def observe(self, act):
-        """Send an agent a message through the websocket manager
+        """
+        Send an agent a message through the websocket manager.
 
         Only attachments of type `image` are currently supported. In the case of
         images, the resultant message will have a `text` field which will be a
@@ -45,7 +48,8 @@ class WebsocketAgent(ChatServiceAgent):
             self.manager.observe_message(self.id, act['text'], quick_replies)
 
     def _get_message_from_image(self, image):
-        """Gets the message dict for sending the provided image
+        """
+        Gets the message dict for sending the provided image.
 
         Args:
             image: PIL Image. Image to be sent in the message
@@ -60,7 +64,8 @@ class WebsocketAgent(ChatServiceAgent):
         return msg
 
     def put_data(self, message):
-        """Put data into the message queue
+        """
+        Put data into the message queue.
 
         Args:
             message: dict. An incoming websocket message. See the chat_services

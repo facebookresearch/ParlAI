@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Rank documents with TF-IDF scores.
+"""
+Rank documents with TF-IDF scores.
 
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
@@ -20,7 +21,9 @@ from parlai.utils.logging import logger
 
 
 class TfidfDocRanker(object):
-    """Loads a pre-weighted inverted index of token/document terms.
+    """
+    Loads a pre-weighted inverted index of token/document terms.
+
     Scores new queries by taking sparse dot products.
     """
 
@@ -43,16 +46,21 @@ class TfidfDocRanker(object):
         self.strict = strict
 
     def get_doc_index(self, doc_id):
-        """Convert doc_id --> doc_index"""
+        """
+        Convert doc_id --> doc_index.
+        """
         return self.doc_dict[0][doc_id] if self.doc_dict else doc_id
 
     def get_doc_id(self, doc_index):
-        """Convert doc_index --> doc_id"""
+        """
+        Convert doc_index --> doc_id.
+        """
         return self.doc_dict[1][doc_index] if self.doc_dict else doc_index
 
     def closest_docs(self, query, k=1, matrix=None):
-        """Closest docs by dot product between query and documents
-        in tfidf weighted word vector space.
+        """
+        Closest docs by dot product between query and documents in tfidf weighted word
+        vector space.
 
         matrix arg can be provided to be used instead of internal doc matrix.
         """
@@ -70,7 +78,9 @@ class TfidfDocRanker(object):
         return doc_ids, doc_scores
 
     def batch_closest_docs(self, queries, k=1, num_workers=None):
-        """Process a batch of closest_docs requests multithreaded.
+        """
+        Process a batch of closest_docs requests multithreaded.
+
         Note: we can use plain threads here as scipy is outside of the GIL.
         """
         with ThreadPool(num_workers) as threads:
@@ -79,12 +89,15 @@ class TfidfDocRanker(object):
         return results
 
     def parse(self, query):
-        """Parse the query into tokens (either ngrams or tokens)."""
+        """
+        Parse the query into tokens (either ngrams or tokens).
+        """
         tokens = self.tokenizer.tokenize(query)
         return tokens.ngrams(n=self.ngrams, uncased=True, filter_fn=utils.filter_ngram)
 
     def text2spvec(self, query):
-        """Create a sparse tfidf-weighted word vector from query.
+        """
+        Create a sparse tfidf-weighted word vector from query.
 
         tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
         """

@@ -4,8 +4,8 @@
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai.mturk.core.mturk_manager import MTurkManager
-import parlai.mturk.core.mturk_utils as mturk_utils
+from parlai.mturk.core.legacy_2018.mturk_manager import MTurkManager
+import parlai.mturk.core.legacy_2018.mturk_utils as mturk_utils
 
 from worlds import ControllableDialogEval, PersonasGenerator, PersonaAssignWorld
 from task_config import task_config
@@ -58,7 +58,8 @@ responsiveness_model_bfw_setting_minus_10
 
 
 def main():
-    """This task consists of an MTurk agent evaluating a Controllable Dialog model.
+    """
+    This task consists of an MTurk agent evaluating a Controllable Dialog model.
     """
     start_time = datetime.datetime.today().strftime('%Y-%m-%d-%H-%M')
     argparser = ParlaiParser(False, add_model_args=True)

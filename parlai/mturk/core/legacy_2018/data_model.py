@@ -5,30 +5,25 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Commands to communicate between the agent manager and individual clients. The
-following describes the intended behavoir of each command
+Commands to communicate between the agent manager and individual clients. The following
+describes the intended behavoir of each command.
 
-COMMAND_SEND_MESSAGE ...... / MTurk web client is expected to send new message
-                            \\ to the server. Allow the user to send a message
-COMMAND_SHOW_DONE_BUTTON .. / MTurk web client should show the "DONE" button
-                            \\ with no special text
-COMMAND_EXPIRE_HIT ........ / MTurk web client should expire the hit and update
-                            |  the UI, additional text to display is in the
-                            \\ 'inactive_text' param
-COMMAND_SUBMIT_HIT ........ / MTurk web client should submit the HIT directly
-COMMAND_CHANGE_CONVERSATION / MTurk web client should change conversations
-                            | 'conversation_id' holds the new conversation_id
-                            \\'agent_id' holds the new display id for the agent
-COMMAND_RESTORE_STATE ..... / MTurk web client should restore the state of a
-                            |  disconnected conversation. The previously sent
-                            |  messages are in the 'messages' param, and the
-                            \\ last sent command is in 'last_command'
-COMMAND_INACTIVE_HIT ...... / MTurk web client should remove the done button
-                            |  and text box and instead display the contents of
-                            \\ 'inactive_text' param.
-COMMAND_INACTIVE_DONE ..... / MTurk web client should show the "DONE" button
-                            |  and display the contents of
-                            \\ 'inactive_text' param.
+COMMAND_SEND_MESSAGE ...... / MTurk web client is expected to send new message \\ to the
+server. Allow the user to send a message COMMAND_SHOW_DONE_BUTTON .. / MTurk web client
+should show the "DONE" button                             \\ with no special text
+COMMAND_EXPIRE_HIT ........ / MTurk web client should expire the hit and update |  the
+UI, additional text to display is in the                             \\ 'inactive_text'
+param COMMAND_SUBMIT_HIT ........ / MTurk web client should submit the HIT directly
+COMMAND_CHANGE_CONVERSATION / MTurk web client should change conversations |
+'conversation_id' holds the new conversation_id \\'agent_id' holds the new display id
+for the agent COMMAND_RESTORE_STATE ..... / MTurk web client should restore the state of
+a                             |  disconnected conversation. The previously sent |
+messages are in the 'messages' param, and the                             \\ last sent
+command is in 'last_command' COMMAND_INACTIVE_HIT ...... / MTurk web client should
+remove the done button                             |  and text box and instead display
+the contents of \\ 'inactive_text' param. COMMAND_INACTIVE_DONE ..... / MTurk web client
+should show the "DONE" button                             |  and display the contents of
+\\ 'inactive_text' param.
 """
 COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE'
 COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON'

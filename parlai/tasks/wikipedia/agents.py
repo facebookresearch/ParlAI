@@ -3,17 +3,16 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-'''
-    Provides a dump of Wikipedia articles from 2/3/18.
+"""
+Provides a dump of Wikipedia articles from 2/3/18.
 
-    One can either load full articles, using 'wikipedia:full',
-    or simply load the first paragraphs of the articles,
-    using 'wikipedia:summary'
+One can either load full articles, using 'wikipedia:full',
+or simply load the first paragraphs of the articles,
+using 'wikipedia:summary'
 
-    To put the article in the labels and the title in the text, specify
-    ':key-value' at the end (for a title/content key-value association)
-
-'''
+To put the article in the labels and the title in the text, specify
+':key-value' at the end (for a title/content key-value association)
+"""
 from parlai.core.teachers import DialogTeacher
 from .build import build
 
@@ -22,7 +21,8 @@ import os
 
 
 class FullTeacher(DialogTeacher):
-    """Reads Wikipedia pages one at a time
+    """
+    Reads Wikipedia pages one at a time.
     """
 
     def __init__(self, opt, shared=None):
@@ -55,7 +55,9 @@ class FullTeacher(DialogTeacher):
                             yield (text, ['']), True
 
     def get_extraction_instructions(self):
-        '''If one wants to run extraction themselves on a raw wikipedia dump'''
+        """
+        If one wants to run extraction themselves on a raw wikipedia dump.
+        """
         dpath = os.path.join(self.opt['datapath'], 'wikipedia', 'full')
         fname = 'enwiki-latest-pages-articles.xml.bz2'
         instructions = (
@@ -75,7 +77,8 @@ class FullTeacher(DialogTeacher):
 
 
 class SummaryTeacher(DialogTeacher):
-    """Reads Wikipedia pages one at a time, only uses summaries
+    """
+    Reads Wikipedia pages one at a time, only uses summaries.
     """
 
     def __init__(self, opt, shared=None):

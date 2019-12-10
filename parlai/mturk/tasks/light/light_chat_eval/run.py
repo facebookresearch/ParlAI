@@ -18,7 +18,8 @@ import random
 
 
 def main():
-    '''Main script for running an eval task against the LIGHT dataset.
+    """
+    Main script for running an eval task against the LIGHT dataset.
 
     special CLI arguments are
       --light-eval-task-type [speech, emote, action]
@@ -28,7 +29,7 @@ def main():
     from the training set. Then based on if the worker performs above a
     specified benchmark, they will either be soft blocked from evaluating or
     allowed to try against the test set.
-    '''
+    """
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

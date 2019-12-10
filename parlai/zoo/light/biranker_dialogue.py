@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 """
 Pretrained LIGHT BERT bi-Ranker dialogue model from:
+
 https://arxiv.org/pdf/1903.03094.pdf
 """
 

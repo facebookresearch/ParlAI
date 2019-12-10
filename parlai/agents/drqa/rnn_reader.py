@@ -9,7 +9,9 @@ from . import layers
 
 
 class RnnDocReader(nn.Module):
-    """Network for the Document Reader module of DrQA."""
+    """
+    Network for the Document Reader module of DrQA.
+    """
 
     RNN_TYPES = {'lstm': nn.LSTM, 'gru': nn.GRU, 'rnn': nn.RNN}
 
