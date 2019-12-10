@@ -31,7 +31,7 @@ def detect_osx():
     Check if we should run OSX tests.
     """
     commit_msg = '[OSX]' in testing_utils.git_commit_messages()
-    return commit_msg or test_changed
+    return commit_msg
 
 
 def detect_gpu():
