@@ -26,6 +26,14 @@ def detect_all():
     return any(kw in testing_utils.git_commit_messages() for kw in ['[all]', '[long]'])
 
 
+def detect_osx():
+    """
+    Check if we should run OSX tests.
+    """
+    commit_msg = '[OSX]' in testing_utils.git_commit_messages()
+    return commit_msg
+
+
 def detect_gpu():
     """
     Check if we should run GPU tests.
@@ -49,21 +57,10 @@ def detect_data():
     return commit_msg or test_changed
 
 
-def detect_mturk():
-    """
-    Check if we should run mturk tests.
-    """
-    commit_msg = '[mturk]' in testing_utils.git_commit_messages().lower()
-    mturk_changed = any(
-        'parlai/mturk' in fn for fn in testing_utils.git_changed_files()
-    )
-    return commit_msg or mturk_changed
-
-
 MAPPING = {
     'nightly_gpu_tests': detect_gpu,
     'datatests': detect_data,
-    'mturk_tests': detect_mturk,
+    'unittests_osx': detect_osx,
 }
 
 
