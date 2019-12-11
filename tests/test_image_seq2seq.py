@@ -21,7 +21,6 @@ BASE_ARGS = {
     'activation': 'gelu',
     'embeddings_scale': True,
     'gradient_clip': 0.1,
-    'image_mode': 'resnet152',
     # Train args
     'learningrate': 7e-3,
     'batchsize': 16,
@@ -31,12 +30,17 @@ BASE_ARGS = {
 
 TEXT_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 4}
 
-IMAGE_ARGS = {'task': 'integration_tests:ImageTeacher', 'num_epochs': 200}
+IMAGE_ARGS = {
+    'task': 'integration_tests:ImageTeacher',
+    'num_epochs': 200,
+    'image_mode': 'resnet152',
+}
 
 MULTITASK_ARGS = {
     'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),
     'num_epochs': 10,
     'multitask_weights': [1, 50],
+    'image_mode': 'resnet152',
 }
 
 EVAL_ARGS = {
