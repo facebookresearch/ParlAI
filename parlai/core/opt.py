@@ -18,8 +18,8 @@ class Opt(dict):
     """
     Class for tracking options.
 
-    Functions like a dict, but allows us to track the history of arguments
-    as they are set.
+    Functions like a dict, but allows us to track the history of arguments as they are
+    set.
     """
 
     def __init__(self, *args, **kwargs):
@@ -43,7 +43,9 @@ class Opt(dict):
         return (Opt, (), self.__getstate__())
 
     def __deepcopy__(self, memo):
-        """Override deepcopy so that history is copied over to new object."""
+        """
+        Override deepcopy so that history is copied over to new object.
+        """
         # track location of deepcopy
         loc = traceback.format_stack()[-3]
         self.deepcopies.append(loc)
@@ -58,7 +60,9 @@ class Opt(dict):
         return memo
 
     def display_deepcopies(self):
-        """Display all deepcopies."""
+        """
+        Display all deepcopies.
+        """
         if len(self.deepcopies) == 0:
             print('No deepcopies performed on this opt.')
             return
@@ -67,7 +71,9 @@ class Opt(dict):
             print('{}. {}'.format(i + 1, loc))
 
     def display_history(self, key):
-        """Display the history for an item in the dict."""
+        """
+        Display the history for an item in the dict.
+        """
         if key not in self.history:
             print('No history for key {}.'.format(key))
             return

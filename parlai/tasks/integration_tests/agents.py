@@ -13,6 +13,7 @@ The corpora are all randomly, but deterministically generated
 
 from parlai.core.agents import Teacher
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
+from parlai.core.opt import Opt
 from torch.utils.data import Dataset
 import copy
 import random
@@ -41,7 +42,7 @@ class CandidateBaseTeacher(Teacher, ABC):
 
     def __init__(
         self,
-        opt: dict,
+        opt: Opt,
         shared: dict = None,
         vocab_size: int = VOCAB_SIZE,
         example_size: int = EXAMPLE_SIZE,

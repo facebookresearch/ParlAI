@@ -7,6 +7,7 @@
 Contains code for parsing and building a dictionary from text.
 """
 
+from parlai.core.opt import Opt
 from parlai.core.build_data import modelzoo_path
 from .agents import Agent
 from .build_data import make_dir
@@ -219,7 +220,7 @@ class DictionaryAgent(Agent):
         )
         return dictionary
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         """
         Initialize DictionaryAgent.
         """
@@ -320,7 +321,7 @@ class DictionaryAgent(Agent):
         elif self.tokenizer == 'bpe':
             if not opt.get('dict_file'):
                 raise RuntimeError('--dict-file is mandatory.')
-            self.bpehelper = _BPEHelper(opt.get('dict_file') + '.codecs')
+            self.bpehelper = _BPEHelper(f"{opt['dict_file']}.codecs")
         elif self.tokenizer == 'gpt2':
             if self.lower:
                 raise ValueError(
