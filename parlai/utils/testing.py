@@ -45,7 +45,7 @@ except ImportError:
     BPE_INSTALLED = False
 
 try:
-    import fairseq
+    import fairseq  # noqa: F401
 
     FAIRSEQ_INSTALLED = True
 except ImportError:
