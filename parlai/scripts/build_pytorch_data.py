@@ -162,6 +162,11 @@ def build_data(opt):
                     ex = agent.observe(ex)
                     ex.pop('label_candidates', '')
                     ex['preprocessed'] = True
+                    if hasattr(agent, 'self_observe') and 'labels' in ex:
+                        # Lie to the agent and tell it that it spoke the gold label
+                        agent.self_observe(
+                            Message({'text': random.choice(ex['labels'])})
+                        )
                 num_eps += 1
                 num_exs += 1
                 pbar.update(1)
@@ -172,6 +177,7 @@ def build_data(opt):
             episode_done = False
             current.clear()
             context.clear()
+            agent.reset()
     pbar.close()
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)

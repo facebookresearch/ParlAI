@@ -790,16 +790,23 @@ class BatchWorld(World):
             if batch_actions[i] is None:
                 # shouldn't send None, should send empty observations
                 batch_actions[i] = [{}] * len(self.worlds)
+
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
                 # first goes through (agents receive messages via the world,
                 # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting:
-                    return None  # don't observe yourself talking
                 observation = validate(batch_actions[i])
-            observation = agents[index].observe(observation)
+
+            if index == index_acting:
+                # self_observe is distinguished from a normal observe
+                if hasattr(agents[index], 'self_observe'):
+                    agents[index].self_observe(observation)
+            else:
+                observation = agents[index].observe(observation)
+
+            # TODO: not so sure about this...
             if observation is None:
                 raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
@@ -813,7 +820,8 @@ class BatchWorld(World):
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
         if hasattr(a, 'batch_act') and not (
-            hasattr(a, 'use_batch_act') and not a.use_batch_act
+            hasattr(a, 'use_batch_act')  # TODO: remove use_batch_act
+            and not a.use_batch_act
         ):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.

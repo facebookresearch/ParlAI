@@ -26,7 +26,6 @@ from parlai.agents.transformer.transformer import TransformerRankerAgent
 
 from .feedback_classifier.feedback_classifier import FeedbackClassifierRegex
 from .modules import SelfFeedingModel
-from .utils import add_person_tokens
 
 EPS = 1e-9
 
@@ -369,21 +368,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if self.status == RATING_REQUESTED:
             self.last_rating = observation['text']
 
-        self.history.update_history(observation)
-        if (
-            self.opt['add_double_person_tokens']
-            and len(self.history.history_strings) > 0
-        ):
-            observation.force_set(
-                'text',
-                add_person_tokens(
-                    self.history.history_strings[-self.opt['history_size'] :],
-                    last_speaker=1,
-                ),
-            )
-
-        self.observation = observation
-        return self.vectorize(self.observation, self.history)
+        return super().observe(observation)
 
     def batchify(self, observations):
         batch = super().batchify(observations)
@@ -408,6 +393,11 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         # check truncation
         if 'text_vec' in obs:
+            if self.opt.get('add_double_person_tokens'):
+                # backwards compatibility madness, handle the fact that __p1__ was
+                # accidentally inserted into the training data of some old models on
+                # disk
+                obs['text_vec'].insert(0, self.dict['__p1__'])
             obs.force_set(
                 'text_vec',
                 torch.LongTensor(self._check_truncate(obs['text_vec'], truncate, True)),
