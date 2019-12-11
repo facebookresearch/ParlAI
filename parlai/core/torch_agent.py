@@ -1604,6 +1604,7 @@ class TorchAgent(ABC, Agent):
         # quick check everything is in order
         self._validate_self_observe_invariants()
 
+        assert self.observation is not None
         if self.observation['episode_done']:
             # oh this was the last example in the episode. reset the history
             self.history.reset()
