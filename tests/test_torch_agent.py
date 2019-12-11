@@ -906,7 +906,9 @@ class TestTorchAgent(unittest.TestCase):
         )
 
     def test_use_reply(self):
-        """Check that self-observe is correctly acting on labels."""
+        """
+        Check that self-observe is correctly acting on labels.
+        """
         # default is hybrid label-model, which uses the label if it's available, and
         # otherwise the label
         # first check if there is a label available

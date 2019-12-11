@@ -240,7 +240,9 @@ class History(object):
         self.history_vecs.append(self.parse(text))
 
     def add_reply(self, text):
-        """Add your own response to the history."""
+        """
+        Add your own response to the history.
+        """
         self._update_raw_strings(text)
         if self.add_person_tokens:
             text = self._add_person_tokens(text, self.p2_token)
@@ -250,7 +252,9 @@ class History(object):
         self._update_vecs(text)
 
     def update_history(self, obs):
-        """Update the history with the given observation."""
+        """
+        Update the history with the given observation.
+        """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
                 next_texts = obs[self.field].split('\n')
