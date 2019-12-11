@@ -8,9 +8,11 @@ from parlai.utils.misc import (
     Timer,
     round_sigfigs,
     set_namedtuple_defaults,
+    Opt,
+)
+from parlai.utils.torch import (
     padded_tensor,
     argsort,
-    Opt,
 )
 from copy import deepcopy
 import time

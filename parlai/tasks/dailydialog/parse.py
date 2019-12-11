@@ -14,6 +14,7 @@ import json
 import os
 import re
 from collections import Counter
+from typing import Counter as TCounter
 
 BADSENT = r'\.(\w)'
 
@@ -51,7 +52,7 @@ TOPICS = [
     'finance',
 ]
 
-ALL_COUNTS = Counter()
+ALL_COUNTS: TCounter[str] = Counter()
 
 
 def cleanup_text(text):
@@ -93,12 +94,12 @@ with open('topicmap') as f_tm:
 f_out = open('out/' + FOLD_OUT + '.json', 'w')
 
 for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
-    acts = [ACTS[int(x)] for x in acts.strip().split()]
-    emotions = [EMOTIONS[int(x)] for x in emotions.strip().split()]
+    acts_ = [ACTS[int(x)] for x in acts.strip().split()]
+    emotions_ = [EMOTIONS[int(x)] for x in emotions.strip().split()]
     raw_text = raw_text.strip()
     texts = raw_text.split("__eou__")[:-1]
-    assert len(acts) == len(emotions)
-    assert len(texts) == len(emotions)
+    assert len(acts_) == len(emotions_)
+    assert len(texts) == len(emotions_)
     # fix one topic lookup bug
     raw_text = raw_text.replace(
         "one here as well . I've been using",
@@ -111,7 +112,7 @@ for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
         'topic': topic_map[raw_text],
         'dialogue': [
             {'emotion': e, 'act': a, 'text': cleanup_text(t)}
-            for e, a, t in zip(emotions, acts, texts)
+            for e, a, t in zip(emotions_, acts_, texts)
         ],
     }
     outline = json.dumps(record)

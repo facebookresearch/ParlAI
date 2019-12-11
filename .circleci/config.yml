@@ -306,6 +306,34 @@ jobs:
           command: |
             bash ./autoformat.sh -d -c
 
+  mypy:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - restore_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+      - <<: *installdeps
+      - save_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
+      - <<: *installtorchcpu37
+      - run:
+          name: mypy dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q mypy mypy-extensions
+            pip install -q git+https://github.com/numpy/numpy-stubs.git
+      - run:
+          name: typechecking
+          working_directory: ~/ParlAI
+          command: |
+            # never fail, we're just doing this now for the logging
+            mypy || true
+
   lint:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
@@ -502,6 +530,7 @@ workflows:
     jobs:
       - black
       - lint
+      - mypy
       - docformat
       - unittests_gpu11
       - unittests_gpu12

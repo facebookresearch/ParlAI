@@ -6,7 +6,8 @@
 
 from collections import deque, namedtuple
 from collections.abc import MutableMapping
-from multiprocessing import Lock, RawArray
+from multiprocessing import Lock
+from multiprocessing import RawArray  # type: ignore
 from operator import attrgetter
 
 import ctypes
@@ -771,8 +772,7 @@ def modelzoo_path(datapath, path):
         module_name = 'parlai.zoo.{}'.format(animal)
         try:
             my_module = importlib.import_module(module_name)
-            download = getattr(my_module, 'download')
-            download(datapath)
+            my_module.download(datapath)
         except (ImportError, AttributeError):
             pass
 

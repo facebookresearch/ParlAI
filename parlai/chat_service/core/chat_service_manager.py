@@ -275,7 +275,7 @@ class ChatServiceManager(ABC):
         return valid_pools
 
     @abstractmethod
-    def restructure_message():
+    def restructure_message(self):
         """
         Use this function to restructure the message into the provided format.
         """

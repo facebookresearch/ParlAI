@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from typing import Optional
+
 import gzip
 import os
 
@@ -13,8 +15,8 @@ import parlai.core.build_data as build_data
 
 
 class ParseInsuranceQA(object):
-    version = None
-    label2answer_fname = None
+    version: Optional[str] = None
+    label2answer_fname: Optional[str] = None
 
     @classmethod
     def read_gz(cls, filename):

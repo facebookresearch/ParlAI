@@ -31,14 +31,14 @@ class StarspaceAgent(Agent):
     """
 
     OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
+        'adadelta': optim.Adadelta,  # type: ignore
+        'adagrad': optim.Adagrad,  # type: ignore
         'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
+        'adamax': optim.Adamax,  # type: ignore
+        'asgd': optim.ASGD,  # type: ignore
+        'lbfgs': optim.LBFGS,  # type: ignore
+        'rmsprop': optim.RMSprop,  # type: ignore
+        'rprop': optim.Rprop,  # type: ignore
         'sgd': optim.SGD,
     }
 

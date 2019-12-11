@@ -11,13 +11,6 @@ import os
 import json
 
 VERSION = '1.0'
-URLS = [
-    'https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',
-    'https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json',
-]
-FILE_NAMES = ['coqa-train-v1.0.json', 'coqa-dev-v1.0.json']
-SHA256 = []
-
 RESOURCES = [
     DownloadableFile(
         'https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',

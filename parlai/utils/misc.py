@@ -15,27 +15,18 @@ import pickle
 import random
 import time
 import traceback
-from typing import Any, Dict, List
+from typing import Union, Optional, Set, Any, Dict, List
 import warnings
 
 from parlai.core.message import Message
 
-# some of the utility methods are helpful for Torch
 try:
     import torch
 
-    # default type in padded3d needs to be protected if torch
-    # isn't installed.
-    TORCH_LONG = torch.long
     __TORCH_AVAILABLE = True
 except ImportError:
-    TORCH_LONG = None
+    # silence the error, we'll have other problems later if it's super necessary
     __TORCH_AVAILABLE = False
-
-
-"""Near infinity, useful as a large penalty for scoring when inf is bad."""
-NEAR_INF = 1e20
-NEAR_INF_FP16 = 65504
 
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
@@ -53,16 +44,6 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'label_candidates_vecs',
     'token_losses',
 }
-
-
-def neginf(dtype):
-    """
-    Return a representable finite number near -inf for a dtype.
-    """
-    if dtype is torch.float16:
-        return -NEAR_INF_FP16
-    else:
-        return -NEAR_INF
 
 
 def maintain_dialog_history(
@@ -172,21 +153,6 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     return cands
 
 
-def load_opt_file(optfile):
-    """
-    Load an Opt from disk.
-    """
-    try:
-        # try json first
-        with open(optfile, 'r') as handle:
-            opt = json.load(handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as handle:
-            opt = pickle.load(handle)
-    return Opt(opt)
-
-
 class Opt(dict):
     """
     Class for tracking options.
@@ -257,6 +223,21 @@ class Opt(dict):
                     i + 1, key, change[1], change[0]
                 )
             )
+
+
+def load_opt_file(optfile: str) -> Opt:
+    """
+    Load an Opt from disk.
+    """
+    try:
+        # try json first
+        with open(optfile, 'r') as t_handle:
+            opt = json.load(t_handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as b_handle:
+            opt = pickle.load(b_handle)
+    return Opt(opt)
 
 
 class Predictor(object):
@@ -432,33 +413,6 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-def round_sigfigs(x, sigfigs=4):
-    """
-    Round value to specified significant figures.
-
-    :param x: input number
-    :param sigfigs: number of significant figures to return
-
-    :returns: float number rounded to specified sigfigs
-    """
-    try:
-        if x == 0:
-            return 0
-        return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
-    except (RuntimeError, TypeError):
-        # handle 1D torch tensors
-        # if anything else breaks here please file an issue on Github
-        if hasattr(x, 'item'):
-            return round_sigfigs(x.item(), sigfigs)
-        else:
-            return round_sigfigs(x[0], sigfigs)
-    except (ValueError, OverflowError) as ex:
-        if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
-            return x
-        else:
-            raise ex
-
-
 class NoLock(object):
     """
     Empty `lock`.
@@ -477,6 +431,32 @@ class NoLock(object):
         No-op.
         """
         pass
+
+
+def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
+    """
+    Round value to specified significant figures.
+
+    :param x: input number
+    :param sigfigs: number of significant figures to return
+
+    :returns: float number rounded to specified sigfigs
+    """
+    x_: float
+    if __TORCH_AVAILABLE and isinstance(x, torch.Tensor):
+        x_ = x.item()
+    else:
+        x_ = x  # type: ignore
+
+    try:
+        if x_ == 0:
+            return 0
+        return round(x_, -math.floor(math.log10(abs(x_)) - sigfigs + 1))
+    except (ValueError, OverflowError) as ex:
+        if x_ in [float('inf'), float('-inf')] or x_ != x_:  # inf or nan
+            return x_
+        else:
+            raise ex
 
 
 single_nolock = NoLock()
@@ -695,7 +675,7 @@ def clip_text(text, max_len):
     return text
 
 
-def _ellipse(lst, max_display=5, sep='|'):
+def _ellipse(lst: List[str], max_display: int = 5, sep: str = '|') -> str:
     """
     Like join, but possibly inserts an ellipsis.
 
@@ -713,7 +693,12 @@ def _ellipse(lst, max_display=5, sep='|'):
     return sep.join(str(c) for c in choices)
 
 
-def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
+def display_messages(
+    msgs: List[Dict[str, Any]],
+    prettify: bool = False,
+    ignore_fields: str = '',
+    max_len: int = 1000,
+) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
 
@@ -723,7 +708,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
 
     def _token_losses_line(
         msg: Dict[str, Any], ignore_fields: List[str], space: str
-    ) -> str:
+    ) -> Optional[str]:
         """
         Displays the loss associated with each token. Can be used for debugging
         generative models.
@@ -742,9 +727,9 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
 
     lines = []
     episode_done = False
-    ignore_fields = ignore_fields.split(',')
+    ignore_fields_ = ignore_fields.split(',')
     for index, msg in enumerate(msgs):
-        if msg is None or (index == 1 and 'agent_reply' in ignore_fields):
+        if msg is None or (index == 1 and 'agent_reply' in ignore_fields_):
             # We only display the first agent (typically the teacher) if we
             # are ignoring the agent reply.
             continue
@@ -758,7 +743,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
-            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
+            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields_:
                 if type(msg[key]) is list:
                     line = '[' + key + ']:\n  ' + _ellipse(msg[key], sep='\n  ')
                 else:
@@ -771,10 +756,10 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
-            if msg.get(field) and field not in ignore_fields:
+            if msg.get(field) and field not in ignore_fields_:
                 lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
         # Handling this separately since we need to clean up the raw output before displaying.
-        token_loss_line = _token_losses_line(msg, ignore_fields, space)
+        token_loss_line = _token_losses_line(msg, ignore_fields_, space)
         if token_loss_line:
             lines.append(token_loss_line)
 
@@ -913,155 +898,10 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(
-    items,
-    pad_idx=0,
-    use_cuda=False,
-    left_padded=False,
-    max_len=None,
-    fp16friendly=False,
-):
-    """
-    Create a right-padded matrix from an uneven list of lists.
-
-    Returns (padded, lengths), where padded is the padded matrix, and lengths
-    is a list containing the lengths of each row.
-
-    Matrix is right-padded (filled to the right) by default, but can be
-    left padded if the flag is set to True.
-
-    Matrix can also be placed on cuda automatically.
-
-    :param list[iter[int]] items: List of items
-    :param bool sort: If True, orders by the length
-    :param int pad_idx: the value to use for padding
-    :param bool use_cuda: if true, places `padded` on GPU
-    :param bool left_padded:
-    :param int max_len: if None, the max length is the maximum item length
-    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
-
-    :returns: (padded, lengths) tuple
-    :rtype: (Tensor[int64], list[int])
-    """
-    # hard fail if we don't have torch
-    if not __TORCH_AVAILABLE:
-        raise ImportError(
-            "Cannot use padded_tensor without torch; go to http://pytorch.org"
-        )
-
-    # number of items
-    n = len(items)
-    # length of each item
-    lens = [len(item) for item in items]
-    # max in time dimension
-    t = max(lens) if max_len is None else max_len
-
-    # if input tensors are empty, we should expand to nulls
-    t = max(t, 1)
-
-    if fp16friendly and (t % 8 != 0):
-        # pad to be a multiple of 8 to ensure we use the tensor cores
-        t += 8 - (t % 8)
-
-    if isinstance(items[0], torch.Tensor):
-        # keep type of input tensors, they may already be cuda ones
-        output = items[0].new(n, t)
-    else:
-        output = torch.LongTensor(n, t)
-    output.fill_(pad_idx)
-
-    for i, (item, length) in enumerate(zip(items, lens)):
-        if length == 0:
-            # skip empty items
-            continue
-        if not isinstance(item, torch.Tensor):
-            # put non-tensors into a tensor
-            item = torch.LongTensor(item)
-        if left_padded:
-            # place at end
-            output[i, t - length :] = item
-        else:
-            # place at beginning
-            output[i, :length] = item
-
-    if use_cuda:
-        output = output.cuda()
-    return output, lens
+_seen_warnings: Set[str] = set()
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
-    """
-    Make 3D padded tensor for list of lists of 1D tensors or lists.
-
-    :param tensors:
-        list of lists of 1D tensors (or lists)
-    :param pad_idx:
-        padding to fill tensor with
-    :param use_cuda:
-        whether to call cuda() before returning
-    :param bool fp16friendly:
-        if True, pads the final dimension to be a multiple of 8.
-
-    :returns:
-        3D tensor with the maximum dimensions of the inputs
-    """
-    a = len(tensors)
-    b = max(len(row) for row in tensors)
-    c = max(len(item) for row in tensors for item in row)
-
-    # pad empty tensors
-    if fp16friendly and c % 8 != 0:
-        c += 8 - (c % 8)
-    c = max(c, 1)
-
-    output = torch.full((a, b, c), pad_idx, dtype=dtype)
-
-    for i, row in enumerate(tensors):
-        for j, item in enumerate(row):
-            if len(item) == 0:
-                continue
-            if not isinstance(item, torch.Tensor):
-                item = torch.Tensor(item, dtype=dtype)
-            output[i, j, : len(item)] = item
-
-    if use_cuda:
-        output = output.cuda()
-
-    return output
-
-
-def argsort(keys, *lists, descending=False):
-    """
-    Reorder each list in lists by the (descending) sorted order of keys.
-
-    :param iter keys:
-        Keys to order by.
-    :param list[list] lists:
-        Lists to reordered by keys's order.  Correctly handles lists and 1-D
-        tensors.
-    :param bool descending:
-        Use descending order if true.
-
-    :returns:
-        The reordered items.
-    """
-    ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
-    if descending:
-        ind_sorted = list(reversed(ind_sorted))
-    output = []
-    for lst in lists:
-        # watch out in case we don't have torch installed
-        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
-            output.append(lst[ind_sorted])
-        else:
-            output.append([lst[i] for i in ind_sorted])
-    return output
-
-
-_seen_warnings = set()
-
-
-def warn_once(msg, warningtype=None):
+def warn_once(msg: str, warningtype=None) -> None:
     """
     Raise a warning, but only once.
 
@@ -1072,45 +912,3 @@ def warn_once(msg, warningtype=None):
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
         warnings.warn(msg, warningtype, stacklevel=2)
-
-
-def fp16_optimizer_wrapper(
-    optimizer, verbose=False, dynamic_loss_scale=True, loss_initial_scale=2.0 ** 17
-):
-    """
-    Wrap the an optimizer with FP16 loss scaling protection.
-
-    Requires apex to be installed. Will throw an ImportError if it is not.
-
-    :param optimizer:
-        Any torch optimizer
-    :param bool verbose:
-        Enables verbose output in the FP16 optimizer. Turning this on can help
-        debug when FP16 is underperforming.
-    :param bool dynamic_loss_scaling:
-        FP16 requires loss scaling to avoid underflows. It is recommended this
-        stays on, but advanced users may want it off.
-    :param float loss_initial_scale:
-        Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
-
-    :returns:
-        An APEX FP16 optimizer. Please note this has different requirements on
-        how backward() and step() are called.
-    """
-    try:
-        import apex.fp16_utils
-    except ImportError:
-        raise ImportError(
-            'No fp16 support without apex. Please install it from '
-            'https://github.com/NVIDIA/apex'
-        )
-    return apex.fp16_utils.FP16_Optimizer(
-        optimizer,
-        dynamic_loss_scale=dynamic_loss_scale,
-        verbose=verbose,
-        # TODO: We may later want to remove this flag. Right now it
-        # empirically improves the first few backward passes, but future APEX
-        # improvements may make this unnecessary.
-        dynamic_loss_args={'init_scale': loss_initial_scale},
-    )

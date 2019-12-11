@@ -8,10 +8,6 @@ import os
 from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
-URLS = ['http://parl.ai/downloads/dstc7/dstc7.tar.gz']
-FILE_NAMES = ['dstc7.tar.gz']
-SHA256 = ['aa3acec0aedb660f1549cdd802f01e5bc9c5b9dc06f10764c5e20686aa4d5571']
-
 RESOURCES = [
     DownloadableFile(
         'http://parl.ai/downloads/dstc7/dstc7.tar.gz',
