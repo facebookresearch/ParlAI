@@ -3,8 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Generates a pytorch data file from the training data; for use in the
-PytorchDataTeacher.
+"""
+Generates a pytorch data file from the training data; for use in the PytorchDataTeacher.
 
 For more documentation, see parlai.scripts.build_pytorch_data.
 """

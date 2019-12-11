@@ -95,7 +95,9 @@ class SharedTable(MutableMapping):
         return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
-        """Return shared value if key is available."""
+        """
+        Return shared value if key is available.
+        """
         if key in self.tensors:
             return self.tensors[key]
         elif key in self.idx:
@@ -149,7 +151,9 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __str__(self):
-        """Return simple dict representation of the mapping."""
+        """
+        Return simple dict representation of the mapping.
+        """
         lhs = [
             '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
             for key, (idx, typ) in self.idx.items()
@@ -158,17 +162,23 @@ class SharedTable(MutableMapping):
         return '{{{}}}'.format(', '.join(lhs + rhs))
 
     def __repr__(self):
-        """Return the object type and memory location with the mapping."""
+        """
+        Return the object type and memory location with the mapping.
+        """
         representation = super().__repr__()
         return representation.replace('>', ': {}>'.format(str(self)))
 
     def get_lock(self):
-        """Return the lock."""
+        """
+        Return the lock.
+        """
         return self.lock
 
 
 def is_tensor(v):
-    """Return if an object is a torch Tensor, without importing torch."""
+    """
+    Return if an object is a torch Tensor, without importing torch.
+    """
     if type(v).__module__.startswith('torch'):
         import torch
 

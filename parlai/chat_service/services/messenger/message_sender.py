@@ -20,7 +20,9 @@ MAX_POSTBACK_CHARS = 1000
 
 # Message builders
 def create_attachment(payload):
-    """Create a simple url-based attachment"""
+    """
+    Create a simple url-based attachment.
+    """
     # TODO support data-based attachments?
     assert payload['type'] in [
         'image',
@@ -41,8 +43,10 @@ def create_attachment(payload):
 
 
 def create_reply_option(title, payload=''):
-    """Create a quick reply option. Takes in display title and optionally extra
-    custom data.
+    """
+    Create a quick reply option.
+
+    Takes in display title and optionally extra custom data.
     """
     assert (
         len(title) <= MAX_QUICK_REPLY_TITLE_CHARS
@@ -58,9 +62,11 @@ def create_reply_option(title, payload=''):
 
 
 def create_text_message(text, quick_replies=None):
-    """Return a list of text messages from the given text. If the message is
-    too long it is split into multiple messages.
-    quick_replies should be a list of options made with create_reply_option.
+    """
+    Return a list of text messages from the given text.
+
+    If the message is too long it is split into multiple messages. quick_replies should
+    be a list of options made with create_reply_option.
     """
 
     def _message(text_content, replies):
@@ -96,7 +102,9 @@ def create_text_message(text, quick_replies=None):
 
 
 def create_attachment_message(attachment_item, quick_replies=None):
-    """Create a message list made with only an attachment.
+    """
+    Create a message list made with only an attachment.
+
     quick_replies should be a list of options made with create_reply_option.
     """
     payload = {'attachment': attachment_item}
@@ -139,8 +147,9 @@ def create_compact_list_message(raw_elems):
 
 
 class MessageSender:
-    """MesageSender is a wrapper around the facebook messenger requests that
-    simplifies the process of sending content.
+    """
+    MesageSender is a wrapper around the facebook messenger requests that simplifies the
+    process of sending content.
     """
 
     def __init__(self, secret_token):
@@ -168,7 +177,9 @@ class MessageSender:
     def send_fb_payload(
         self, receiver_id, payload, quick_replies=None, persona_id=None
     ):
-        """Sends a payload to messenger, processes it if we can"""
+        """
+        Sends a payload to messenger, processes it if we can.
+        """
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
@@ -204,7 +215,9 @@ class MessageSender:
     def send_fb_message(
         self, receiver_id, message, is_response, quick_replies=None, persona_id=None
     ):
-        """Sends a message directly to messenger"""
+        """
+        Sends a message directly to messenger.
+        """
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if quick_replies is not None:
             quick_replies = [create_reply_option(x, x) for x in quick_replies]
@@ -236,7 +249,9 @@ class MessageSender:
         return results
 
     def create_persona(self, name, image_url):
-        """Creates a new persona and returns persona_id"""
+        """
+        Creates a new persona and returns persona_id.
+        """
         api_address = 'https://graph.facebook.com/me/personas'
         message = {'name': name, "profile_picture_url": image_url}
         response = requests.post(api_address, params=self.auth_args, json=message)
@@ -247,7 +262,9 @@ class MessageSender:
         return result
 
     def delete_persona(self, persona_id):
-        """Deletes the persona"""
+        """
+        Deletes the persona.
+        """
         api_address = 'https://graph.facebook.com/' + persona_id
         response = requests.delete(api_address, params=self.auth_args)
         result = response.json()
@@ -257,8 +274,9 @@ class MessageSender:
         return result
 
     def upload_fb_attachment(self, payload):
-        """Uploads an attachment using the Attachment Upload API and returns
-        an attachment ID.
+        """
+        Uploads an attachment using the Attachment Upload API and returns an attachment
+        ID.
         """
         api_address = 'https://graph.facebook.com/v2.6/me/message_attachments'
         assert payload['type'] in [

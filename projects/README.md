@@ -6,6 +6,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
+- **Unlikelihood Training for Consistent Dialogue** [[project]](https://parl.ai/projects/dialogue_unlikelihood/).
+  _Methods to reduce copies & repeats, correct vocab usage, and avoiding contradiction via unlikelihood training._
+  
 - **What makes a good conversation? How controllable attributes affect human judgments** [[website]](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue) [[paper]](https://arxiv.org/abs/1902.08654).
   _Optimizing for multi-turn engaging conversations -- by controlling question-asking, specificity, response-relatedness and repetition._
 
@@ -14,6 +17,7 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
   _Analysis of the performance of search in generative models for chitchat tasks._
+ 
 
 ## Retrieval Models
 - **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
@@ -24,20 +28,37 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
   _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
+  
+- **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
+  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._  
+  
+  
 
 ## Chit-chat
 
-- **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
-  _Task and method for improving the detection of offensive language in the context of dialogue._
+- **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
+  _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
 
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._
+
+- **Empathetic Dialogues** [[paper]](https://arxiv.org/abs/1811.00207) [[external website]](https://github.com/facebookresearch/EmpatheticDialogues) [[video]](https://ai.facebook.com/blog/making-conversation-models-more-empathetic/).
+_Task & models for chitchat displaying empathy._
 
 - **ConvAI2 Competition** [[external website]](http://convai.io/).
 _Competition on dialogue chitchat based on the PersonaChat task._
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
 _Task & models for chitchat with a given persona._
+
+
+## Well-Behaved
+
+- **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
+  _Task and method for improving the detection of offensive language in the context of dialogue._
+
+- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/).
+  _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
 
 ## Knowledge Grounded
 

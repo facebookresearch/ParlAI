@@ -71,8 +71,9 @@ class TaskTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        """ Reads feedback for an example along with text and labels
-        if 'feedback' argument is specified
+        """
+        Reads feedback for an example along with text and labels if 'feedback' argument
+        is specified.
         """
         if self.opt['task'].split(':')[-1] == 'feedback':
             return self.setup_data_with_feedback(path)
@@ -80,11 +81,11 @@ class TaskTeacher(FbDialogTeacher):
             return super().setup_data(path)
 
     def setup_data_with_feedback(self, path):
-        """Reads data in the fbdialog format.
-        This method is very similar to FbDialogTeacher.setup_data(..).
-        The difference is that in this method the feedback is appended to the query
-        from the current example; in the default setup the feedback is appended to
-        the x from the next example.
+        """
+        Reads data in the fbdialog format. This method is very similar to
+        FbDialogTeacher.setup_data(..). The difference is that in this method the
+        feedback is appended to the query from the current example; in the default setup
+        the feedback is appended to the x from the next example.
 
         The data would look something like this:
 
@@ -98,7 +99,6 @@ class TaskTeacher(FbDialogTeacher):
           python examples/display_data.py -t dbll_babi:task:2_p0.5:f
         Default setup:
           python examples/display_data.py -t dbll_babi:task:2_p0.5
-
         """
         print("[loading fbdialog data:" + path + "]")
         with open(path) as read:

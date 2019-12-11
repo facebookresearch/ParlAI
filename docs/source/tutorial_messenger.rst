@@ -75,7 +75,7 @@ Then, you would simply run the world via the following command (while in ``parla
 
 .. code-block:: bash
 
-  python run.py --config-path ../tasks/chatbot/config.yml
+  python run.py --config-path ../../tasks/chatbot/config.yml
 
 This code will allow users to talk with a bot in conversations like the one displayed above.
 
@@ -137,7 +137,7 @@ Running a Task
 
 - When the guide asks you to configure your webhook URL, you're ready to run the task. This can be done by running the ``run.py`` file in with python.
 
-- After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``.
+- After the heroku server is setup, the script will print out your webhook URL to the console, this should be used to continue the tutorial. The default verify token is ``Messenger4ParlAI``. This URL should be added in the Webhook section. The webhook subscription fields should also be edited to subscribe to the ``messages`` field.
 
 - On the first run, the page will ask you for a "Page Access Token," which is also referred to on the messenger setup page. Paste this in to finish the setup. You should now be able to communicate with your ParlAI world by messaging your page.
 

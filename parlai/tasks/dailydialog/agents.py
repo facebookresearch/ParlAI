@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Daily Dialog
-https://arxiv.org/abs/1710.03957
+Daily Dialog https://arxiv.org/abs/1710.03957.
 
 Original data is copyright by the owners of the paper, and free for use in research.
 
@@ -89,6 +88,7 @@ class Convai2Teacher(FixedDialogTeacher):
 class NoStartTeacher(Convai2Teacher):
     """
     Same as default teacher, but it doesn't contain __SILENCE__ entries.
+
     If we are the first speaker, then the first utterance is skipped.
     """
 

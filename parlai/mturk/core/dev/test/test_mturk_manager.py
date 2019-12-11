@@ -13,7 +13,7 @@ import pickle
 from unittest import mock
 from parlai.mturk.core.dev.worker_manager import WorkerManager
 from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
-from parlai.mturk.core.dev.worlds import MTurkOnboardWorld, MTurkTaskWorld
+from parlai.mturk.core.dev.worlds import MTurkOnboardWorld
 from parlai.mturk.core.dev.mturk_manager import MTurkManager
 from parlai.mturk.core.dev.socket_manager import SocketManager, Packet
 from parlai.core.params import ParlaiParser
@@ -132,7 +132,9 @@ class MockSocket:
 
 
 class InitTestMTurkManager(unittest.TestCase):
-    '''Unit tests for MTurkManager setup'''
+    """
+    Unit tests for MTurkManager setup.
+    """
 
     def setUp(self):
         argparser = ParlaiParser(False, False)
@@ -198,8 +200,10 @@ class InitTestMTurkManager(unittest.TestCase):
 
 
 class TestMTurkManagerUnitFunctions(unittest.TestCase):
-    '''Tests some of the simpler MTurkManager functions that don't require
-    much additional state to run'''
+    """
+    Tests some of the simpler MTurkManager functions that don't require much additional
+    state to run.
+    """
 
     def setUp(self):
         self.fake_socket = MockSocket()
@@ -278,9 +282,9 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         )
 
     def test_socket_setup(self):
-        '''Basic socket setup should fail when not in correct state,
-        but succeed otherwise
-        '''
+        """
+        Basic socket setup should fail when not in correct state, but succeed otherwise.
+        """
         self.mturk_manager.task_state = self.mturk_manager.STATE_CREATED
         with self.assertRaises(AssertionError):
             self.mturk_manager._setup_socket()
@@ -415,7 +419,9 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.force_expire_hit.reset_mock()
 
     def test_mturk_messages(self):
-        '''Ensure incoming messages work as expected'''
+        """
+        Ensure incoming messages work as expected.
+        """
         # Setup for test
         manager = self.mturk_manager
         manager.task_group_id = 'TEST_GROUP_ID'
@@ -497,7 +503,9 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.assertTrue(agent.hit_is_complete)
 
     def test_new_message(self):
-        '''test on_new_message'''
+        """
+        test on_new_message.
+        """
         alive_packet = Packet(
             '',
             TEST_WORKER_ID_1,
@@ -610,8 +618,10 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             self.assertFalse(manager.is_task_world(world_type))
 
     def test_turk_timeout(self):
-        '''Timeout should send expiration message to worker and be treated as
-        a disconnect event.'''
+        """
+        Timeout should send expiration message to worker and be treated as a disconnect
+        event.
+        """
         manager = self.mturk_manager
         manager.force_expire_hit = mock.MagicMock()
         manager._handle_agent_disconnect = mock.MagicMock()
@@ -626,7 +636,9 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         )
 
     def test_wait_for_task_expirations(self):
-        '''Ensure waiting for expiration time actually works out'''
+        """
+        Ensure waiting for expiration time actually works out.
+        """
         manager = self.mturk_manager
         manager.opt['assignment_duration_in_seconds'] = 0.5
         manager.expire_all_unassigned_hits = mock.MagicMock()
@@ -713,7 +725,9 @@ class TestMTurkManagerPoolHandling(unittest.TestCase):
         self.mturk_manager.shutdown()
 
     def test_pool_add_get_remove_and_expire(self):
-        '''Ensure the pool properly adds and releases workers'''
+        """
+        Ensure the pool properly adds and releases workers.
+        """
         all_are_eligible = {'multiple': True, 'func': lambda workers: workers}
         manager = self.mturk_manager
 
@@ -1020,8 +1034,10 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
 
 
 class TestMTurkManagerConnectedFunctions(unittest.TestCase):
-    '''Semi-unit semi-integration tests on the more state-dependent
-    MTurkManager functionality'''
+    """
+    Semi-unit semi-integration tests on the more state-dependent MTurkManager
+    functionality.
+    """
 
     def setUp(self):
         self.fake_socket = MockSocket()
@@ -1086,7 +1102,9 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.fake_socket.close()
 
     def test_socket_dead(self):
-        '''Test all states of socket dead calls'''
+        """
+        Test all states of socket dead calls.
+        """
         manager = self.mturk_manager
         agent = self.agent_1
         worker_id = agent.worker_id

@@ -11,9 +11,15 @@ import subprocess
 import shutil
 import csv
 import time
+from parlai.core.build_data import DownloadableFile
 
-
-NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/deepmind/narrativeqa/archive/master.zip',
+        'narrative_qa.zip',
+        '9f6c484664394e0275944a4630a3de6294ba839162765d2839cc3d31a0b47a0e',
+    )
+]
 
 
 def get_rows_for_set(reader, req_set):
@@ -130,14 +136,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'narrative_qa.zip'
-        # dataset URL
-        url = NARRATIVE_QA_DOWNLOAD_URL
-        build_data.download(url, dpath, fname)
-
-        # uncompress it
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')

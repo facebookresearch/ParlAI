@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -19,7 +20,9 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         super(WizardTransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Wizard Transformer Ranker Arguments')
         agent.add_argument(
@@ -60,7 +63,9 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
 
         super().__init__(opt, shared)
         self.use_knowledge = opt.get('use_knowledge', False)
@@ -84,8 +89,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         return obs
 
     def _vectorize_memories(self, observation):
-        """Override abstract method from TransformerRankerAgent to use
-        knowledge field as memories."""
+        """
+        Override abstract method from TransformerRankerAgent to use knowledge field as
+        memories.
+        """
 
         if not self.use_knowledge:
             return observation
@@ -127,10 +134,11 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         return observation
 
     def load(self, path):
-        """Return opt and model states.
+        """
+        Return opt and model states.
 
-        Override this method from TorchAgent to allow us to load partial
-        weights from pre-trained models.
+        Override this method from TorchAgent to allow us to load partial weights from
+        pre-trained models.
         """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
 

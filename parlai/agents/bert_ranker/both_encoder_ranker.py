@@ -12,10 +12,12 @@ from parlai.core.torch_agent import TorchAgent, Output, Batch
 
 
 class BothEncoderRankerAgent(TorchAgent):
-    """ A Bi Encoder followed by a Cross Encoder.
-        Although it's trainable by itself, I'd recommend training the crossencoder
-        and the biencoder separately which can be done in parallel or sequentially
-        and thus requiring less memory on the GPU.
+    """
+    A Bi Encoder followed by a Cross Encoder.
+
+    Although it's trainable by itself, I'd recommend training the crossencoder and the
+    biencoder separately which can be done in parallel or sequentially and thus
+    requiring less memory on the GPU.
     """
 
     @staticmethod
@@ -96,7 +98,8 @@ class BothEncoderRankerAgent(TorchAgent):
         return Output(text=[text for out in outc for text in out.text])
 
     def eval_step(self, batch):
-        """ We pass the batch first in the biencoder, then filter with crossencoder
+        """
+        We pass the batch first in the biencoder, then filter with crossencoder.
         """
         output_biencoder = self.biencoder.eval_step(batch)
         if output_biencoder is None:

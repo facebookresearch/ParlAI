@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Creates supplementary training examples using a trained model and unused train file.
+"""
+Creates supplementary training examples using a trained model and unused train file.
 
 Input:
     model: a trained agent
@@ -73,7 +74,8 @@ def setup_args(parser=None):
 
 
 def create_supp(opt):
-    """Evaluates a model.
+    """
+    Evaluates a model.
 
     :param opt: tells the evaluation function how to run
     :param bool print_parser: if provided, prints the options that are set within the

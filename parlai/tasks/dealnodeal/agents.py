@@ -29,14 +29,17 @@ OUTPUT_TAG = 'output'
 
 
 def get_tag(tokens, tag):
-    """Extracts the value inside the given tag."""
+    """
+    Extracts the value inside the given tag.
+    """
     start = tokens.index('<' + tag + '>') + 1
     stop = tokens.index('</' + tag + '>')
     return tokens[start:stop]
 
 
 class NegotiationTeacher(Teacher):
-    """End-to-end negotiation teacher that loads the data from
+    """
+    End-to-end negotiation teacher that loads the data from
     https://github.com/facebookresearch/end-to-end-negotiator.
     """
 
@@ -101,7 +104,9 @@ class NegotiationTeacher(Teacher):
             self.episodes = data_file.readlines()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.expected_reponse is not None:
             self.metrics.update(observation, self.expected_reponse)
             self.expected_reponse = None

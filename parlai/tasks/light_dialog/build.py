@@ -7,6 +7,28 @@
 import parlai.core.build_data as build_data
 import os
 from parlai.tasks.light_dialog.builder import build_from_db
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/light/light-dialog-processed-small7.pkl',
+        'light_data.pkl',
+        '7c83cf49818586db9999ea67a4a6ad087afbd91c26ed629a9f00e21d0b84058f',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/light/light-unseen-processed2.pkl',
+        'light_unseen_data.pkl',
+        '489b98d08dd94eaf1ba95439d04200ccc54623ade056839f87a5c4207bc5699c',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/light/light-environment.pkl',
+        'light_environment.pkl',
+        '162389202f22063e1c32af7f9261aac13d20fc05598388d1e9748735996ec016',
+        zipped=False,
+    ),
+]
 
 
 def download(opt):
@@ -19,19 +41,10 @@ def download(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        # Download the data.
-        url = 'http://parl.ai/downloads/light/' + 'light-dialog-processed-small7.pkl'
-        fname = 'light_data.pkl'
-        build_data.download(url, dpath, fname)
-        # Download the unseen data.
-        url = 'http://parl.ai/downloads/light/light-unseen-processed2.pkl'
-        fname = 'light_unseen_data.pkl'
-        build_data.download(url, dpath, fname)
 
-        # Download the environment dataset.
-        url = 'http://parl.ai/downloads/light/light-environment.pkl'
-        fname = 'light_environment.pkl'
-        build_data.download(url, dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)
@@ -41,7 +54,8 @@ def download(opt):
 
 def build(opt):
     dpath, version = download(opt)
-
+    if 'light_use_speech_prefix' not in opt:
+        opt['light_use_speech_prefix'] = True
     # create particular instance of dataset depending on flags..
     fields = [
         'setting',
@@ -56,6 +70,7 @@ def build(opt):
         'cands',
         'current_self_output',
         'clip_cands',
+        'speech_prefix',
     ]
     fpath = ''
     for f in fields:

@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Test Teachers.
+"""
+Test Teachers.
 
 A module for testing various teacher types in ParlAI
 """
@@ -15,10 +16,14 @@ import regex as re
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
-    """Test AbstractImageTeacher."""
+    """
+    Test AbstractImageTeacher.
+    """
 
     def test_display_data(self):
-        """Test that, with pre-loaded image features, all examples are different."""
+        """
+        Test that, with pre-loaded image features, all examples are different.
+        """
 
         def _test_display_output(opt):
             output = testing_utils.display_data(opt)
@@ -35,7 +40,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
             os.makedirs(os.path.join(data_path, 'ImageTeacher'))
 
             opt = {'task': 'integration_tests:ImageTeacher', 'datapath': data_path}
-            for image_mode in ['resnet152', 'none']:
+            for image_mode in ['resnet152', 'no_image_model']:
                 opt['image_mode'] = image_mode
                 _test_display_output(opt)
 

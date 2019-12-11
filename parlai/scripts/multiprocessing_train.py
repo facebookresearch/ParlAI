@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -95,7 +95,9 @@ def multiprocess_train(
 
 
 def launch_and_train(opt, port):
-    """Perform a fork() to many processes."""
+    """
+    Perform a fork() to many processes.
+    """
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,

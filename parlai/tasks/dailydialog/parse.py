@@ -1,11 +1,13 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 """
-This preprocessing script was used to create ParlAI's version of the
-data. It was run in a script called parse.py inside ijcnlp_dailydialog/ after
-uncompressing the original directory and all subdirectories.
+This preprocessing script was used to create ParlAI's version of the data.
+
+It was run in a script called parse.py inside ijcnlp_dailydialog/ after uncompressing
+the original directory and all subdirectories.
 """
 
 import json

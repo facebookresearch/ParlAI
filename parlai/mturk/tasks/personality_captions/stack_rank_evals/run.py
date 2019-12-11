@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -16,44 +17,44 @@ import os
 
 def main():
     """
-        Human Evaluation of various image captions/comments.
+    Human Evaluation of various image captions/comments.
 
-        A turker is shown an image and two possible comments/captions, and
-        optionally the personality used to create these captions. Then, the
-        turker is asked to choose which caption they think is more engaging.
+    A turker is shown an image and two possible comments/captions, and
+    optionally the personality used to create these captions. Then, the
+    turker is asked to choose which caption they think is more engaging.
 
-        In this example, we will just be comparing the original comment twice
-        (this is just to demonstrate the task for future use).
+    In this example, we will just be comparing the original comment twice
+    (this is just to demonstrate the task for future use).
 
-        To use your own data, please specify `--eval-data-path` to an
-        appropriate json file with a list of examples, where each example
-        has the following structure:
-            {
-                'image_hash': <hash of image>,
-                'personality': <personality, if applicable>,
-                '<compare_key_1>': <first option to compare>,
-                '<compare_key_2>': <second option to compare>,
-                .
-                .
-                .
-            }
-        Note that compare_key_1 and compare_key_2 can be any field, as long as they
-        map to a string comment/caption.
+    To use your own data, please specify `--eval-data-path` to an
+    appropriate json file with a list of examples, where each example
+    has the following structure:
+        {
+            'image_hash': <hash of image>,
+            'personality': <personality, if applicable>,
+            '<compare_key_1>': <first option to compare>,
+            '<compare_key_2>': <second option to compare>,
+            .
+            .
+            .
+        }
+    Note that compare_key_1 and compare_key_2 can be any field, as long as they
+    map to a string comment/caption.
 
-        Example Scenario:
-            Suppose you have the original Personality-Captions dataset, and
-            you would like to compare the outputs of your model called `model`.
+    Example Scenario:
+        Suppose you have the original Personality-Captions dataset, and
+        you would like to compare the outputs of your model called `model`.
 
-            Your data may look like the following:
-            [{
-                'image_hash': hashforimageofcat,
-                'personality': 'Sweet',
-                'comment': 'Look at the cute cat!', # Human Comment
-                'model_comment': 'That's a weird looking dog' # Model Comment
-            }, ...]
+        Your data may look like the following:
+        [{
+            'image_hash': hashforimageofcat,
+            'personality': 'Sweet',
+            'comment': 'Look at the cute cat!', # Human Comment
+            'model_comment': 'That's a weird looking dog' # Model Comment
+        }, ...]
 
-            Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
-            the outputs of the model vs. the human comments from Personality-Captions
+        Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
+        the outputs of the model vs. the human comments from Personality-Captions
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

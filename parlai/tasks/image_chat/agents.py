@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,7 +12,6 @@ An example is given as follows:
            'image': <image features if specified else image>,
            'label': <comment/response>,
           }
-
 """
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
@@ -41,12 +41,14 @@ def _path(opt):
 
 
 class DefaultDataset(Dataset):
-    """A Pytorch Dataset"""
+    """
+    A Pytorch Dataset.
+    """
 
     def __init__(self, opt):
         self.opt = opt
         opt['image_load_task'] = 'image_chat'
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.include_image = opt.get('include_image')
@@ -116,17 +118,16 @@ class DefaultDataset(Dataset):
 
 class ImageChatTeacher(FixedDialogTeacher):
     """
-        Provides the personality in the `text` field, and
-        response in the `labels` field
+    Provides the personality in the `text` field, and response in the `labels` field.
 
-        To specify your own path to the YFCC100m images, please use the
-        `--yfcc-path` command line argument.
+    To specify your own path to the YFCC100m images, please use the `--yfcc-path`
+    command line argument.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.data_path, personalities_data_path, self.image_path = _path(opt)
         self.datatype = opt.get('datatype').split(':')[0]
         self.include_personality = opt.get('include_personality')
@@ -212,11 +213,12 @@ class ImageChatTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
-        load_image = self.image_mode != 'none' and self.include_image
+        load_image = self.image_mode != 'no_image_model' and self.include_image
         # pull up the currently queued example
         if self.example is not None:
             # if self.image_mode != 'none' and 'image_id' in self.example:
@@ -247,7 +249,9 @@ class ImageChatTeacher(FixedDialogTeacher):
 
 
 class ImageChatTestTeacher(ImageChatTeacher):
-    """Test ImageChat teacher for ensuring pretrained model does not break."""
+    """
+    Test ImageChat teacher for ensuring pretrained model does not break.
+    """
 
     def _setup_data(self, data_path, personalities_data_path):
         super()._setup_data(data_path, personalities_data_path)
@@ -263,16 +267,22 @@ class ImageChatTestTeacher(ImageChatTeacher):
         self.image_features = torch.load(image_features_path)
 
     def reset(self):
-        """Reset teacher."""
+        """
+        Reset teacher.
+        """
         super().reset()
         self.example = None
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         return len(self.image_features)
 
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         return len(self.image_features)
 
     def get(self, episode_idx, entry_idx=0):
