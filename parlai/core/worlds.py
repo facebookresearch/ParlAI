@@ -653,6 +653,34 @@ def _override_opts_in_shared(table, overrides):
     return table
 
 
+class BatchMultiwWorld(MultiWorld):
+    def __init__(self, opt, worlds):
+        World.__init__(self, opt)
+        self.worlds = worlds
+        self.world_idx = 0
+        self.new_world = True
+        self.parleys = -1
+        self.random = opt.get('datatype', None) == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.worlds)
+        self.task_choices = range(len(self.worlds))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
+
+    def parley_init(self):
+        """
+        Flipping world id
+        """
+        self.world_idx = (self.world_idx + 1) % len(self.worlds)
+
+
 class BatchWorld(World):
     """
     BatchWorld contains many copies of the same world.
@@ -1236,20 +1264,37 @@ def create_task(opt, user_agents, default_world=None):
     print('[creating task(s): ' + opt['task'] + ']')
 
     # check if single or multithreaded, and single-example or batched examples
+    worlds = []
     if ',' not in opt['task']:
         # Single task
         world = create_task_world(opt, user_agents, default_world=default_world)
     else:
         # Multitask teacher/agent
         # TODO: remove and replace with multiteachers only?
-        world = MultiWorld(opt, user_agents, default_world=default_world)
-
-    if opt.get('numthreads', 1) > 1:
-        # use hogwild world if more than one thread requested
-        # hogwild world will create sub batch worlds as well if bsz > 1
-        world = HogwildWorld(opt, world)
-    elif opt.get('batchsize', 1) > 1:
-        # otherwise check if should use batchworld
-        world = BatchWorld(opt, world)
+        # world = MultiWorld(opt, user_agents, default_world=default_world)
+        for index, k in enumerate(opt['task'].split(',')):
+            k = k.strip()
+            if k:
+                opt_singletask = copy.deepcopy(opt)
+                opt_singletask['task'] = k
+                # Agents are already specified.
+                worlds.append(
+                    BatchWorld(
+                        opt_singletask,
+                        create_task_world(
+                            opt_singletask, user_agents, default_world=default_world
+                        ),
+                    )
+                )
+    if len(worlds) != 0:
+        world = BatchMultiwWorld(opt, worlds)
+    else:
+        if opt.get('numthreads', 1) > 1:
+            # use hogwild world if more than one thread requested
+            # hogwild world will create sub batch worlds as well if bsz > 1
+            world = HogwildWorld(opt, world)
+        elif opt.get('batchsize', 1) > 1:
+            # otherwise check if should use batchworld
+            world = BatchWorld(opt, world)
 
     return world
