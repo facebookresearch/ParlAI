@@ -666,9 +666,9 @@ class TorchRankerAgent(TorchAgent):
                 use_cuda=self.use_cuda,
                 fp16friendly=self.fp16,
             )
-            if (
-                label_vecs is not None
-                and batch.id != 'internal:vqa_v2:PersonalityTeacher'
+            if label_vecs is not None and (
+                batch.id != 'internal:vqa_v2:PersonalityTeacherClassifier'
+                and batch.id != 'internal:vqa_v2:PersonalityTeacherRanking'
             ):
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
@@ -707,9 +707,9 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
-            if (
-                label_vecs is not None
-                and batch.id != 'internal:vqa_v2:PersonalityTeacher'
+            if label_vecs is not None and (
+                batch.id != 'internal:vqa_v2:PersonalityTeacherClassifier'
+                and batch.id != 'internal:vqa_v2:PersonalityTeacherRanking'
             ):
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False

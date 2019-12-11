@@ -809,6 +809,9 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 _seen_warnings: Set[str] = set()
 
+    if fp16friendly and (t % 4 != 0):
+        # pad to be a multiple of 4 to ensure we use the tensor cores
+        t += 4 - (t % 4)
 
 def warn_once(msg: str, warningtype=None) -> None:
     """
