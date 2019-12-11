@@ -22,13 +22,17 @@ class TestAbstractImageTeacher(unittest.TestCase):
 
     def test_display_output(self, image_mode):
         """
-        Test display data output with given image_mode
+        Test display data output with given image_mode.
         """
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
             os.makedirs(os.path.join(data_path, 'ImageTeacher'))
 
-            opt = {'task': 'integration_tests:ImageTeacher', 'datapath': data_path, 'image_mode': image_mode}
+            opt = {
+                'task': 'integration_tests:ImageTeacher',
+                'datapath': data_path,
+                'image_mode': image_mode,
+            }
             output = testing_utils.display_data(opt)
             train_labels = re.findall(r"\[labels: .*\]", output[0])
             valid_labels = re.findall(r"\[eval_labels: .*\]", output[1])
