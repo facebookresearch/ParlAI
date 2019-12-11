@@ -68,7 +68,7 @@ installtorchgpu11: &installtorchgpu11
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch<1.2.0'
+      pip3 install --progress-bar off 'torch<1.2.0 torchvision'
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
@@ -78,7 +78,7 @@ installtorchgpu12: &installtorchgpu12
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch>=1.2.0'
+      pip3 install --progress-bar off 'torch>=1.2.0 torchvision'
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
