@@ -20,7 +20,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
     Test AbstractImageTeacher.
     """
 
-    def test_display_output(self, image_mode):
+    def _test_display_output(self, image_mode):
         """
         Test display data output with given image_mode.
         """

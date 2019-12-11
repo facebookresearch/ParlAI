@@ -44,6 +44,13 @@ try:
 except ImportError:
     BPE_INSTALLED = False
 
+try:
+    import fairseq
+
+    FAIRSEQ_INSTALLED = True
+except ImportError:
+    FAIRSEQ_INSTALLED = False
+
 
 DEBUG = False  # change this to true to print to stdout anyway
 
@@ -90,6 +97,13 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     Decorate a test to skip if running on CircleCI.
     """
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
+
+
+def skipUnlessFairseq(testfn, reason='Test requires Fairseq'):
+    """
+    Decorate a test to skip if Fairseq is not installed.
+    """
+    return unittest.skipUnless(FAIRSEQ_INSTALLED, reason)(testfn)
 
 
 class retry(object):

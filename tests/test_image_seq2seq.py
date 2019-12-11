@@ -53,6 +53,7 @@ EVAL_ARGS = {
 }
 
 
+@testing_utils.skipUnlessFairseq
 class TestImageSeq2Seq(unittest.TestCase):
     """
     Unit tests for the ImageSeq2Seq Agent.
