@@ -1,11 +1,13 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.agents import create_agent_from_shared
-from parlai.mturk.core.agents import TIMEOUT_MESSAGE
+from parlai.mturk.core.legacy_2018.agents import TIMEOUT_MESSAGE
 from parlai.core.worlds import validate, MultiAgentDialogWorld
-from parlai.mturk.core.worlds import MTurkOnboardWorld
+from parlai.mturk.core.legacy_2018.worlds import MTurkOnboardWorld
+from parlai.core.message import Message
 
 from joblib import Parallel, delayed
 import numpy as np
@@ -15,6 +17,12 @@ import random
 import time
 import torch
 import copy
+
+
+# ASK_DETAILED decides whether we ask human evaluators to select individual
+# utterances they found bad. The See et al. 2019 paper has this as True; it is
+# set False in later works as it adds overhead that isn't used in analysis.
+ASK_DETAILED = False
 
 # INSTRUCTIONS
 ONBOARD_MSG = '\nWelcome! Below is your persona \
@@ -151,7 +159,7 @@ def _strip_tensors(act):
     """
     Remove all tensor objects from an act to ensure we don't try to serialize them.
     """
-    return {k: v for k, v in act.items() if not torch.is_tensor(v)}
+    return Message({k: v for k, v in act.items() if not torch.is_tensor(v)})
 
 
 def _random_delay():
@@ -204,7 +212,9 @@ class PersonasGenerator(object):
 
 
 class PersonaAssignWorld(MTurkOnboardWorld):
-    """A world that assigns a persona to an agent."""
+    """
+    A world that assigns a persona to an agent.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.max_persona_time = opt['max_persona_time']
@@ -429,8 +439,8 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 self.model_agent.observe(persona_act)
                 self.bot_seen_persona = True
                 model_act = copy.deepcopy(self.model_agent.act())
-                model_act['text'] = self.format_model_reply(model_act['text'])
-                model_act['id'] = 'PERSON_2'
+                model_act.force_set('text', self.format_model_reply(model_act['text']))
+                model_act.force_set('id', 'PERSON_2')
                 self.dialog.append((1, model_act.get('text')))
                 _random_delay()
                 self.eval_agent.observe(_strip_tensors(model_act))
@@ -446,11 +456,11 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 else:
                     self.dialog.append((1, act.get('text')))
                     act = copy.deepcopy(act)
-                    act['text'] = self.format_model_reply(act['text'])
+                    act.force_set('text', self.format_model_reply(act['text']))
                     self.eval_agent.observe(act)
 
         # Eval agent turn
-        act = self.get_human_agent_act(self.eval_agent)
+        act = Message(self.get_human_agent_act(self.eval_agent))
         timeout = self.check_timeout(act)
         if timeout:
             if self.model_agent is None:
@@ -484,13 +494,13 @@ class ControllableDialogEval(MultiAgentDialogWorld):
 
         if not self.bot_seen_persona and self.model_agent is not None:
             # Add persona for model to observe
-            act['text'] = '\n'.join([self.model_persona_text, act['text']])
+            act.force_set('text', '\n'.join([self.model_persona_text, act['text']]))
             self.bot_seen_persona = True
         if self.model_agent is not None:
             self.model_agent.observe(act)
         else:
             act = copy.deepcopy(act)
-            act['text'] = self.format_model_reply(act['text'])
+            act.force_set('text', self.format_model_reply(act['text']))
             self.other_agent.observe(act)
 
         # Model_agent turn
@@ -498,8 +508,8 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             if self.model_agent is not None:
                 _random_delay()
                 act = _strip_tensors(copy.deepcopy(self.model_agent.act()))
-                act['text'] = self.format_model_reply(act['text'])
-                act['id'] = 'PERSON_2'
+                act.force_set('text', self.format_model_reply(act['text']))
+                act.force_set('id', 'PERSON_2')
                 # NOTE: your model may or may not need to observe itself here
                 # If it does, call model_observes_itself or some other specialized
                 # function
@@ -515,7 +525,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
 
             self.dialog.append((1, act.get('text')))
             act = copy.deepcopy(act)
-            act['text'] = self.format_model_reply(act['text'])
+            act.force_set('text', self.format_model_reply(act['text']))
             self.eval_agent.observe(act)
 
     def _evaluate_characteristic(self, question, choices, addto):
@@ -569,7 +579,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             return False
         act_choice = REPETITIVENESS_CHOICES.index(act.get('text'))
         self.repetitiveness_scores.append(act_choice)
-        if act_choice != 2:
+        if ASK_DETAILED and act_choice != 2:
             control_msg = self.get_control_msg()
             control_msg['text'] = REPETITIVENESS_MSGS[1]
             control_msg['good_rounds'] = True
@@ -608,7 +618,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             return False
         act_choice = FLUENCY_CHOICES.index(act.get('text'))
         self.fluency_scores.append(act_choice)
-        if act_choice != 3:
+        if ASK_DETAILED and act_choice != 3:
             control_msg = self.get_control_msg()
             control_msg['text'] = FLUENCY_MSGS[1]
             control_msg['good_rounds'] = True
@@ -633,7 +643,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             return False
         act_choice = CONSISTENCY_CHOICES.index(act.get('text'))
         self.consistency_scores.append(act_choice)
-        if act_choice != 0:
+        if ASK_DETAILED and act_choice != 0:
             control_msg = self.get_control_msg()
             control_msg['text'] = CONSISTENCY_MSGS[1]
             control_msg['good_rounds'] = True
@@ -683,9 +693,11 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         return True
 
     def parallel_eval_mode(self):
-        """Parallel function that shuts one agent down and asks the other
-        to do the evaluation if their are two agents. If there is only
-        one agent, it performs the evaluation.
+        """
+        Parallel function that shuts one agent down and asks the other to do the
+        evaluation if their are two agents.
+
+        If there is only one agent, it performs the evaluation.
         """
 
         def eval_or_shutdown(agent):

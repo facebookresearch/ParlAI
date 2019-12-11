@@ -16,10 +16,14 @@ BATCHSIZE_CHOICES = [1, 8]
 
 @testing_utils.skipIfGPU
 class TestHogwild(unittest.TestCase):
-    """Check that hogwild is doing the right number of examples."""
+    """
+    Check that hogwild is doing the right number of examples.
+    """
 
     def test_hogwild_train(self):
-        """Test the trainer eval with numthreads > 1 and batchsize in [1,2,3]."""
+        """
+        Test the trainer eval with numthreads > 1 and batchsize in [1,2,3].
+        """
         opt = dict(
             task='tasks.repeat:RepeatTeacher:{}'.format(1),
             evaltask='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
@@ -37,7 +41,9 @@ class TestHogwild(unittest.TestCase):
                 self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
 
     def test_hogwild_eval(self):
-        """Test eval with numthreads > 1 and batchsize in [1,2,3]."""
+        """
+        Test eval with numthreads > 1 and batchsize in [1,2,3].
+        """
         opt = dict(
             task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS), model='repeat_label'
         )

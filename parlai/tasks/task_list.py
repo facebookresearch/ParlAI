@@ -3,11 +3,23 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""This file contains a list of all the tasks, their id and task name, description
-and the tags associated with them.
+"""
+This file contains a list of all the tasks, their id and task name, description and the
+tags associated with them.
 """
 
 task_list = [
+    {
+        "id": "AmazonQA",
+        "display_name": "AmazonQA",
+        "task": "amazon_qa",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Amazon, "
+            "totaling around 1.4 million answered questions."
+            "Link: http://jmcauley.ucsd.edu/data/amazon/qa/"
+        ),
+    },
     {
         "id": "AQuA",
         "display_name": "AQuA",
@@ -1039,6 +1051,18 @@ task_list = [
             "Not a dataset, but a generic world for model self-chats. "
             "(see parlai/scripts/self_chat.py"
             " for more information). "
+        ),
+    },
+    {
+        "id": "OneCommon",
+        "display_name": "OneCommon",
+        "task": "onecommon",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A collaborative referring task which requires advanced skills "
+            "of common grounding under continuous and partially-observable context. "
+            "This code also includes reference-resolution annotation "
+            "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
         ),
     },
 ]

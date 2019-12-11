@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Does human evaluation on a task with label_candidates.
+"""
+Does human evaluation on a task with label_candidates.
 
 Human can exit with ctrl + c and metrics will be computed and displayed.
 

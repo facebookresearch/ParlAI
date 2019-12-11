@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Basic example which iterates through the tasks specified and load/extract
-the image features.
+"""
+Basic example which iterates through the tasks specified and load/extract the image
+features.
 
 For more documentation, use parlai.scripts.extract_image_feature.
 """

@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Unit tests for TorchAgent."""
+"""
+Unit tests for TorchAgent.
+"""
 
 import os
 import unittest
@@ -44,21 +46,29 @@ def get_agent(**kwargs):
 
 @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
 class TestTorchAgent(unittest.TestCase):
-    """Basic tests on the util functions in TorchAgent."""
+    """
+    Basic tests on the util functions in TorchAgent.
+    """
 
     def test_mock(self):
-        """Just make sure we can instantiate a mock agent."""
+        """
+        Just make sure we can instantiate a mock agent.
+        """
         agent = get_agent()
         self.assertTrue(isinstance(agent.dict, MockDict))
 
     def test_share(self):
-        """Make sure share works and shares dictionary."""
+        """
+        Make sure share works and shares dictionary.
+        """
         agent = get_agent()
         shared = agent.share()
         self.assertTrue('dict' in shared)
 
     def test__vectorize_text(self):
-        """Test _vectorize_text and its different options."""
+        """
+        Test _vectorize_text and its different options.
+        """
         agent = get_agent()
         text = "I'm sorry, Dave"
 
@@ -149,7 +159,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
     def test__check_truncate(self):
-        """Make sure we are truncating when needed."""
+        """
+        Make sure we are truncating when needed.
+        """
         agent = get_agent()
         inp = torch.LongTensor([1, 2, 3])
         self.assertEqual(agent._check_truncate(inp, None).tolist(), [1, 2, 3])
@@ -160,10 +172,11 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
     def test_vectorize(self):
-        """Test the vectorization of observations.
+        """
+        Test the vectorization of observations.
 
-        Make sure they do not recompute results, and respect the different
-        param options.
+        Make sure they do not recompute results, and respect the different param
+        options.
         """
         agent = get_agent()
         obs_labs = Message(
@@ -251,7 +264,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
     def test_batchify(self):
-        """Make sure the batchify function sets up the right fields."""
+        """
+        Make sure the batchify function sets up the right fields.
+        """
         agent = get_agent(rank_candidates=True)
         obs_labs = [
             Message(
@@ -466,7 +481,9 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
     def test_match_batch(self):
-        """Make sure predictions are correctly aligned when available."""
+        """
+        Make sure predictions are correctly aligned when available.
+        """
         agent = get_agent()
 
         # first try empty outputs
@@ -575,7 +592,9 @@ class TestTorchAgent(unittest.TestCase):
         )
 
     def test__add_person_tokens(self):
-        """Make sure person tokens are added to the write place in text."""
+        """
+        Make sure person tokens are added to the write place in text.
+        """
         agent = get_agent()
         text = (
             "I've seen things you people wouldn't believe.\n"
@@ -591,7 +610,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
     def test_history(self):
-        """Test different dialog history settings."""
+        """
+        Test different dialog history settings.
+        """
         # try with unlimited history
         agent = get_agent(history_size=-1)
         obs = {'text': 'I am Groot.', 'labels': ['I am Groot?'], 'episode_done': False}
@@ -723,7 +744,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
     def test_observe(self):
-        """Make sure agent stores and returns observation."""
+        """
+        Make sure agent stores and returns observation.
+        """
         agent = get_agent()
         # text could be none
         obs = {'text': None, 'episode_done': True}
@@ -753,7 +776,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out['full_text'], "I'll be back.\nI'm back.\nI'll be back.")
 
     def test_batch_act(self):
-        """Make sure batch act calls the right step."""
+        """
+        Make sure batch act calls the right step.
+        """
         agent = get_agent()
 
         obs_labs = [
@@ -821,7 +846,9 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
     def test_interactive_mode(self):
-        """Test if conversation history is destroyed in MTurk mode."""
+        """
+        Test if conversation history is destroyed in MTurk mode.
+        """
         # both manually setting bs to 1 and interactive mode true
         agent = get_agent(batchsize=1, interactive_mode=True)
         agent.observe(Message({'text': 'foo', 'episode_done': True}))
@@ -911,7 +938,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.history.get_history_str(), 'Call')
 
     def test_mturk_racehistory(self):
-        """Emulate a setting where batch_act misappropriately handles mturk."""
+        """
+        Emulate a setting where batch_act misappropriately handles mturk.
+        """
         agent = get_agent(batchsize=16, interactive_mode=True, echo=True)
         share1 = create_agent_from_shared(agent.share())
 
@@ -935,7 +964,8 @@ class TestTorchAgent(unittest.TestCase):
         self.assertNotIn('thread2-msg2', share1.history.get_history_str())
 
     def test_resume_checkpoint(self):
-        """Make sure when resuming training that model uses appropriate mf.
+        """
+        Make sure when resuming training that model uses appropriate mf.
 
         Copy train_model from testing_utils to directly access agent.
         """

@@ -17,7 +17,9 @@ from parlai.mturk.core.dev.agents import AssignState
 
 
 def force_dir(path):
-    """Make sure the parent dir exists for path so we can write a file."""
+    """
+    Make sure the parent dir exists for path so we can write a file.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
@@ -100,8 +102,9 @@ CREATE_PAIRING_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS pairings (
 
 
 class MTurkDataHandler:
-    """Handles logging data to and reading data from a SQLite3 table for
-    observation across processes and for controlled restarts
+    """
+    Handles logging data to and reading data from a SQLite3 table for observation across
+    processes and for controlled restarts.
     """
 
     def __init__(self, task_group_id=None, file_name='pmt_data.db'):
@@ -142,8 +145,8 @@ class MTurkDataHandler:
                 json.dump(w_data, outfile)
 
     def _get_connection(self):
-        """Returns a singular database connection to be shared amongst all
-        calls
+        """
+        Returns a singular database connection to be shared amongst all calls.
         """
         curr_thread = threading.get_ident()
         if curr_thread not in self.conn or self.conn[curr_thread] is None:
@@ -161,14 +164,18 @@ class MTurkDataHandler:
         return self.conn[curr_thread]
 
     def _force_task_group_id(self, task_group_id):
-        """Throw an error if a task group id is neither provided nor stored"""
+        """
+        Throw an error if a task group id is neither provided nor stored.
+        """
         if task_group_id is None:
             task_group_id = self.task_group_id
         assert task_group_id is not None, 'Default task_group_id not set'
         return task_group_id
 
     def create_default_tables(self):
-        """Prepares the default tables in the database if they don't exist"""
+        """
+        Prepares the default tables in the database if they don't exist.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -200,7 +207,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_new_run(self, target_hits, taskname, task_group_id=None):
-        """Add a new run to the runs table"""
+        """
+        Add a new run to the runs table.
+        """
         with self.table_access_condition:
             task_group_id = self._force_task_group_id(task_group_id)
             conn = self._get_connection()
@@ -212,7 +221,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_hit_status(self, mturk_hit_creation_response, task_group_id=None):
-        """Create or update an entry in the hit status table"""
+        """
+        Create or update an entry in the hit status table.
+        """
         task_group_id = self._force_task_group_id(task_group_id)
 
         hit_details = mturk_hit_creation_response['HIT']
@@ -251,8 +262,9 @@ class MTurkDataHandler:
     def log_worker_accept_assignment(
         self, worker_id, assignment_id, hit_id, task_group_id=None
     ):
-        """Log a worker accept, update assignment state and pairings to match
-        the acceptance
+        """
+        Log a worker accept, update assignment state and pairings to match the
+        acceptance.
         """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -311,7 +323,9 @@ class MTurkDataHandler:
     def log_complete_assignment(
         self, worker_id, assignment_id, approve_time, complete_type, task_group_id=None
     ):
-        """Note that an assignment was completed"""
+        """
+        Note that an assignment was completed.
+        """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
             conn = self._get_connection()
@@ -353,7 +367,9 @@ class MTurkDataHandler:
         disconnect_type,
         task_group_id=None,
     ):
-        """Note that an assignment was disconnected from"""
+        """
+        Note that an assignment was disconnected from.
+        """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
             conn = self._get_connection()
@@ -388,7 +404,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_expire_assignment(self, worker_id, assignment_id, task_group_id=None):
-        """Note that an assignment was expired by us"""
+        """
+        Note that an assignment was expired by us.
+        """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
             conn = self._get_connection()
@@ -423,7 +441,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_submit_assignment(self, worker_id, assignment_id):
-        """To be called whenever a worker hits the "submit hit" button"""
+        """
+        To be called whenever a worker hits the "submit hit" button.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -436,7 +456,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_abandon_assignment(self, worker_id, assignment_id):
-        """To be called whenever a worker returns a hit"""
+        """
+        To be called whenever a worker returns a hit.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -455,7 +477,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_start_onboard(self, worker_id, assignment_id, conversation_id):
-        """Update a pairing state to reflect onboarding status"""
+        """
+        Update a pairing state to reflect onboarding status.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -474,7 +498,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_finish_onboard(self, worker_id, assignment_id):
-        """Update a pairing state to reflect waiting status"""
+        """
+        Update a pairing state to reflect waiting status.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -486,7 +512,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_start_task(self, worker_id, assignment_id, conversation_id):
-        """Update a pairing state to reflect in_task status"""
+        """
+        Update a pairing state to reflect in_task status.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -505,8 +533,10 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_award_amount(self, worker_id, assignment_id, amount, reason):
-        """Update a pairing state to add a task bonus to be paid,
-        appends reason. To be used for automatic evaluation bonuses
+        """
+        Update a pairing state to add a task bonus to be paid, appends reason.
+
+        To be used for automatic evaluation bonuses
         """
         with self.table_access_condition:
             conn = self._get_connection()
@@ -523,7 +553,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_pay_extra_bonus(self, worker_id, assignment_id, amount, reason):
-        """Update a pairing state to add a bonus to be paid, appends reason.
+        """
+        Update a pairing state to add a bonus to be paid, appends reason.
+
         To be used for extra bonuses awarded at the discretion of the requester
         """
         with self.table_access_condition:
@@ -542,8 +574,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_bonus_paid(self, worker_id, assignment_id):
-        """Update to show that the intended bonus amount awarded for work
-        in the task has been paid
+        """
+        Update to show that the intended bonus amount awarded for work in the task has
+        been paid.
         """
         with self.table_access_condition:
             conn = self._get_connection()
@@ -556,8 +589,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_approve_assignment(self, assignment_id):
-        """Update assignment state to reflect approval, update worker state to
-        increment number of accepted assignments
+        """
+        Update assignment state to reflect approval, update worker state to increment
+        number of accepted assignments.
         """
         with self.table_access_condition:
             conn = self._get_connection()
@@ -599,8 +633,9 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_reject_assignment(self, assignment_id):
-        """Update assignment state to reflect rejection, update worker state to
-        increment number of rejected assignments
+        """
+        Update assignment state to reflect rejection, update worker state to increment
+        number of rejected assignments.
         """
         with self.table_access_condition:
             conn = self._get_connection()
@@ -628,8 +663,10 @@ class MTurkDataHandler:
             conn.commit()
 
     def log_worker_note(self, worker_id, assignment_id, note):
-        """Append a note to the worker notes for a particular worker-assignment
-        pairing. Adds newline to the note.
+        """
+        Append a note to the worker notes for a particular worker-assignment pairing.
+
+        Adds newline to the note.
         """
         note += '\n'
         with self.table_access_condition:
@@ -646,7 +683,9 @@ class MTurkDataHandler:
                 print(repr(e))
 
     def get_all_worker_data(self, start=0, count=100):
-        """get all the worker data for all worker_ids."""
+        """
+        get all the worker data for all worker_ids.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -655,7 +694,9 @@ class MTurkDataHandler:
             return results
 
     def get_worker_data(self, worker_id):
-        """get all worker data for a particular worker_id."""
+        """
+        get all worker data for a particular worker_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -664,7 +705,9 @@ class MTurkDataHandler:
             return results
 
     def get_assignments_for_run(self, task_group_id):
-        """get all assignments for a particular run by task_group_id"""
+        """
+        get all assignments for a particular run by task_group_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -680,7 +723,9 @@ class MTurkDataHandler:
             return results
 
     def get_assignment_data(self, assignment_id):
-        """get assignment data for a particular assignment by assignment_id"""
+        """
+        get assignment data for a particular assignment by assignment_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -691,7 +736,9 @@ class MTurkDataHandler:
             return results
 
     def get_worker_assignment_pairing(self, worker_id, assignment_id):
-        """get a pairing data structure between a worker and an assignment"""
+        """
+        get a pairing data structure between a worker and an assignment.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -704,7 +751,9 @@ class MTurkDataHandler:
             return results
 
     def get_all_run_data(self, start=0, count=1000):
-        """get all the run data for all task_group_ids."""
+        """
+        get all the run data for all task_group_ids.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -713,8 +762,8 @@ class MTurkDataHandler:
             return results
 
     def get_run_data(self, task_group_id):
-        """get the run data for the given task_group_id, return None if not
-        found.
+        """
+        get the run data for the given task_group_id, return None if not found.
         """
         with self.table_access_condition:
             conn = self._get_connection()
@@ -724,7 +773,9 @@ class MTurkDataHandler:
             return results
 
     def get_hits_for_run(self, run_id):
-        """Get the full list of HITs for the given run_id"""
+        """
+        Get the full list of HITs for the given run_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -733,7 +784,9 @@ class MTurkDataHandler:
             return results
 
     def get_hit_data(self, hit_id):
-        """get the hit data for the given hit_id, return None if not"""
+        """
+        get the hit data for the given hit_id, return None if not.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -742,7 +795,9 @@ class MTurkDataHandler:
             return results
 
     def get_pairings_for_assignment(self, assignment_id):
-        """get all pairings attached to a particular assignment_id"""
+        """
+        get all pairings attached to a particular assignment_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -753,7 +808,9 @@ class MTurkDataHandler:
             return results
 
     def get_pairings_for_run(self, task_group_id):
-        """get all pairings from a particular run by task_group_id"""
+        """
+        get all pairings from a particular run by task_group_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -766,8 +823,9 @@ class MTurkDataHandler:
             return results
 
     def get_pairings_for_conversation(self, conversation_id, task_group_id=None):
-        """get all pairings for a singular conversation in a run by
-        conversation_id and task_group_id
+        """
+        get all pairings for a singular conversation in a run by conversation_id and
+        task_group_id.
         """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -782,7 +840,9 @@ class MTurkDataHandler:
             return results
 
     def get_all_assignments_for_worker(self, worker_id):
-        """get all assignments associated with a particular worker_id"""
+        """
+        get all assignments associated with a particular worker_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -791,7 +851,9 @@ class MTurkDataHandler:
             return results
 
     def get_all_pairings_for_worker(self, worker_id):
-        """get all pairings associated with a particular worker_id"""
+        """
+        get all pairings associated with a particular worker_id.
+        """
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
@@ -800,8 +862,9 @@ class MTurkDataHandler:
             return results
 
     def get_all_task_assignments_for_worker(self, worker_id, task_group_id=None):
-        """get all assignments for a particular worker within a
-        particular run by worker_id and task_group_id
+        """
+        get all assignments for a particular worker within a particular run by worker_id
+        and task_group_id.
         """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -821,8 +884,9 @@ class MTurkDataHandler:
             return results
 
     def get_all_task_pairings_for_worker(self, worker_id, task_group_id=None):
-        """get all pairings for a particular worker within a
-        particular run by worker_id and task_group_id
+        """
+        get all pairings for a particular worker within a particular run by worker_id
+        and task_group_id.
         """
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -838,7 +902,9 @@ class MTurkDataHandler:
 
     @staticmethod
     def get_conversation_data(task_group_id, conv_id, worker_id, is_sandbox):
-        """A poorly named function that gets conversation data for a worker"""
+        """
+        A poorly named function that gets conversation data for a worker.
+        """
         result = {
             'had_data_dir': False,
             'had_run_dir': False,
@@ -875,7 +941,9 @@ class MTurkDataHandler:
 
     @staticmethod
     def get_full_conversation_data(task_group_id, conv_id, is_sandbox):
-        """Gets all conversation data saved for a world"""
+        """
+        Gets all conversation data saved for a world.
+        """
         target = 'sandbox' if is_sandbox else 'live'
         return_data = {'custom_data': {}, 'worker_data': {}}
 

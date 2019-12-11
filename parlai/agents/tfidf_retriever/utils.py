@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Various retriever utilities."""
+"""
+Various retriever utilities.
+"""
 
 import regex
 import unicodedata
@@ -66,7 +68,9 @@ def load_sparse_tensor(filename):
 
 
 def hash(token, num_buckets):
-    """Unsigned 32 bit murmurhash for feature hashing."""
+    """
+    Unsigned 32 bit murmurhash for feature hashing.
+    """
     return murmurhash3_32(token, positive=True) % num_buckets
 
 
@@ -242,14 +246,18 @@ STOPWORDS = {
 
 
 def normalize(text):
-    """Resolve different type of unicode encodings."""
+    """
+    Resolve different type of unicode encodings.
+    """
     if type(text) != str:
         return text
     return unicodedata.normalize('NFD', text)
 
 
 def filter_word(text):
-    """Take out english stopwords, punctuation, and compound endings."""
+    """
+    Take out english stopwords, punctuation, and compound endings.
+    """
     text = normalize(text)
     if regex.match(r'^\p{P}+$', text):
         return True
@@ -259,7 +267,8 @@ def filter_word(text):
 
 
 def filter_ngram(gram, mode='any'):
-    """Decide whether to keep or discard an n-gram.
+    """
+    Decide whether to keep or discard an n-gram.
 
     Args:
         gram: list of tokens (length N)

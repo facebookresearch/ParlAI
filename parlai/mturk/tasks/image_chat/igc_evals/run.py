@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -14,31 +15,30 @@ round_choices = ['questions', 'responses']
 
 def main():
     """
-        IGC Human Evaluation.
+    IGC Human Evaluation.
 
-        Specify the `--eval-data-path` to load examples for evaluation.
+    Specify the `--eval-data-path` to load examples for evaluation.
 
-        The data in `--eval-data-path` should be formatted as a dictionary
-        mapping IGC image ids to dicts with the following fields:
-        {
-            'questions': list of (<generator_name>, <generated_question>) tuples,
-            'responses': list of (<generator_name>, <generated_response>) tuples,
-            'question': question to use when evaluating responses,
-            'context': context for the image
-        }
+    The data in `--eval-data-path` should be formatted as a dictionary
+    mapping IGC image ids to dicts with the following fields:
+    {
+        'questions': list of (<generator_name>, <generated_question>) tuples,
+        'responses': list of (<generator_name>, <generated_response>) tuples,
+        'question': question to use when evaluating responses,
+        'context': context for the image
+    }
 
-        If not data path specified, loads a demo_example specified in worlds.py
+    If not data path specified, loads a demo_example specified in worlds.py
 
-        Specify `--image-path` for the path to the IGC images, where each example
-        is saved as <image_id>.jpg
+    Specify `--image-path` for the path to the IGC images, where each example
+    is saved as <image_id>.jpg
 
 
-        NOTE: You can download the IGC Test Set from
-            https://www.microsoft.com/en-us/download/details.aspx?id=55324
+    NOTE: You can download the IGC Test Set from
+        https://www.microsoft.com/en-us/download/details.aspx?id=55324
 
-        And you can use the `download_igc_images.py` script to download the images
-        (please put the IGC_crowd_test.csv file in this directory to use the script)
-
+    And you can use the `download_igc_images.py` script to download the images
+    (please put the IGC_crowd_test.csv file in this directory to use the script)
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

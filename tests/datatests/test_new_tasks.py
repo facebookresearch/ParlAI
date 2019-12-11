@@ -17,7 +17,9 @@ BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
 
 
 class TestNewTasks(unittest.TestCase):
-    """Make sure any changes to tasks pass verify_data test."""
+    """
+    Make sure any changes to tasks pass verify_data test.
+    """
 
     def test_verify_data(self):
         parser = setup_args()

@@ -50,14 +50,15 @@ class ControllableSeq2seqAgent(TorchAgent):
     """
     Seq2Seq withattribute control via Conditional Training and/or Weighted Decoding.
 
-    See the paper:
-    "What makes a good conversation? How controllable attributes affect human judgments"
-    https://arxiv.org/pdf/1902.08654.pdf
+    See the paper: "What makes a good conversation? How controllable attributes affect
+    human judgments" https://arxiv.org/pdf/1902.08654.pdf
     """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('ControllableSeq2seqAgent Arguments')
         agent.add_argument(
             '--init-model',
@@ -259,17 +260,19 @@ class ControllableSeq2seqAgent(TorchAgent):
 
     @staticmethod
     def model_version():
-        """Return current version of this model, counting up from 0.
+        """
+        Return current version of this model, counting up from 0.
 
-        Models may not be backwards-compatible with older versions.
-        Version 1 split from version 0 on Aug 29, 2018.
-        To use version 0, use --model legacy:seq2seq:0
+        Models may not be backwards-compatible with older versions. Version 1 split from
+        version 0 on Aug 29, 2018. To use version 0, use --model legacy:seq2seq:0
         (legacy agent code is located in parlai/agents/legacy_agents).
         """
         return 1
 
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
         init_model = None
         if not shared:  # only do this on first setup
             initialize_control_information(opt)
@@ -392,7 +395,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         states['model'][key] = init_decoder_ih_l0
 
     def build_model(self, states=None):
-        """Initialize model, override to change model setup."""
+        """
+        Initialize model, override to change model setup.
+        """
         opt = self.opt
 
         kwargs = opt_to_kwargs(opt)
@@ -554,7 +559,9 @@ class ControllableSeq2seqAgent(TorchAgent):
             self.wd_features, self.wd_wts = [], []
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -566,11 +573,15 @@ class ControllableSeq2seqAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         if self.opt['gradient_clip'] > 0:
             torch.nn.utils.clip_grad_norm_(
                 self.model.parameters(), self.opt['gradient_clip']
@@ -578,17 +589,20 @@ class ControllableSeq2seqAgent(TorchAgent):
         self.optimizer.step()
 
     def reset_metrics(self):
-        """Reset metrics for reporting loss and perplexity."""
+        """
+        Reset metrics for reporting loss and perplexity.
+        """
         super().reset_metrics()
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
+        """
+        Report loss and perplexity from model's perspective.
 
-        Note that this includes predicting __END__ and __UNK__ tokens and may
-        differ from a truly independent measurement.
+        Note that this includes predicting __END__ and __UNK__ tokens and may differ
+        from a truly independent measurement.
         """
         m = {}
         num_tok = self.metrics['num_tokens']
@@ -608,7 +622,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return m
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['model'] = self.model
         if self.opt.get('numthreads', 1) > 1:
@@ -626,13 +642,17 @@ class ControllableSeq2seqAgent(TorchAgent):
         return shared
 
     def vectorize(self, *args, **kwargs):
-        """Override vectorize for seq2seq."""
+        """
+        Override vectorize for seq2seq.
+        """
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
 
     def batchify(self, *args, **kwargs):
-        """Override batchify options for seq2seq."""
+        """
+        Override batchify options for seq2seq.
+        """
         kwargs['sort'] = True  # need sorted for pack_padded
         batch = super().batchify(*args, **kwargs)
 
@@ -686,7 +706,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return batch
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        """
+        Pre-initialize CUDA buffer by doing fake forward pass.
+        """
         if self.use_cuda and not hasattr(self, 'buffer_initialized'):
             try:
                 print('preinitializing pytorch cuda buffer')
@@ -714,7 +736,9 @@ class ControllableSeq2seqAgent(TorchAgent):
                     raise e
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         batchsize = batch.text_vec.size(0)
         if self.multigpu and batchsize % 2 != 0:
             # throw out one training example
@@ -783,7 +807,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return cand_replies
 
     def greedy_search(self, batch):
-        """Perform greedy search."""
+        """
+        Perform greedy search.
+        """
         cand_params = self._build_cands(batch)
         seq_len = None if not self.multigpu else batch.text_vec.size(1)
         out = self.model(
@@ -1004,7 +1030,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return beam_preds_scores, n_best_beam_preds_scores, beams
 
     def extend_input(self, batch):
-        """Extend the input."""
+        """
+        Extend the input.
+        """
         # add pad tensor to text vec
         pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
         text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
@@ -1026,7 +1054,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return batch
 
     def truncate_input(self, batch):
-        """Truncate the input."""
+        """
+        Truncate the input.
+        """
         # truncate batch for multigpu
         text_vec = batch.text_vec[:-1]
         batch = batch._replace(text_vec=text_vec)
@@ -1036,14 +1066,18 @@ class ControllableSeq2seqAgent(TorchAgent):
         return batch
 
     def truncate_output(self, out):
-        """Truncate the output."""
+        """
+        Truncate the output.
+        """
         new_out_0 = out[0][:-1]
         new_out_1 = None if out[1] is None else out[1][:-1]
         new_out_2 = [vec[:-1] for vec in out[2]]
         return tuple([new_out_0, new_out_1, new_out_2])
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None:
             return
         orig_batch = batch  # save for evaluation
@@ -1142,7 +1176,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         return Output(text, cand_choices)
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path and hasattr(self, 'model'):
@@ -1162,7 +1198,9 @@ class ControllableSeq2seqAgent(TorchAgent):
                 json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
 
         # check opt file for multigpu
@@ -1183,7 +1221,11 @@ class ControllableSeq2seqAgent(TorchAgent):
 
 
 class Beam(object):
-    """Generic beam class. It keeps information about beam_size hypothesis."""
+    """
+    Generic beam class.
+
+    It keeps information about beam_size hypothesis.
+    """
 
     def __init__(
         self,
@@ -1198,6 +1240,7 @@ class Beam(object):
     ):
         """
         Instantiate Beam object.
+
         :param beam_size:
             number of hypothesis in the beam
         :param min_length:
@@ -1244,19 +1287,27 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1."""
+        """
+        Get list of ngrams with context length n-1.
+        """
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
-        """Get the outputput at the current step."""
+        """
+        Get the outputput at the current step.
+        """
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """Get the backtrack at the current step."""
+        """
+        Get the backtrack at the current step.
+        """
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
-        """Advance the beam one step."""
+        """
+        Advance the beam one step.
+        """
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -1331,12 +1382,15 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
-        """Return whether beam search is complete."""
+        """
+        Return whether beam search is complete.
+        """
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
         """
         Get single best hypothesis.
+
         :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
@@ -1348,6 +1402,7 @@ class Beam(object):
     def get_hyp_from_finished(self, hypothesis_tail):
         """
         Extract hypothesis ending with EOS at timestep with hyp_id.
+
         :param timestep:
             timestep with range up to len(self.outputs)-1
         :param hyp_id:
@@ -1374,7 +1429,9 @@ class Beam(object):
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
-        """Return prettier version of the hypotheses."""
+        """
+        Return prettier version of the hypotheses.
+        """
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
@@ -1386,6 +1443,7 @@ class Beam(object):
     def get_rescored_finished(self, n_best=None):
         """
         Return finished hypotheses in rescored order.
+
         :param n_best:
             how many n best hypothesis to return
         :return:
@@ -1415,6 +1473,7 @@ class Beam(object):
     def check_finished(self):
         """
         Check if self.finished is empty and add hyptail in that case.
+
         This will be suboptimal hypothesis since the model did not get any EOS
         """
         if len(self.finished) == 0:
@@ -1434,6 +1493,7 @@ class Beam(object):
     def get_beam_dot(self, dictionary=None, n_best=None):
         """
         Create pydot graph representation of the beam.
+
         :param outputs:
             self.outputs from the beam
         :param dictionary:

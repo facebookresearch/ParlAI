@@ -124,7 +124,8 @@ class SelfFeedingModel(nn.Module):
         return self.score_similarity(x_enc, y_enc)
 
     def encode_dia_y(self, y_vecs):
-        """Encodes a tensor of vectorized candidates
+        """
+        Encodes a tensor of vectorized candidates.
 
         :param y_vecs: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
             candidates
@@ -147,7 +148,9 @@ class SelfFeedingModel(nn.Module):
         return torch.sigmoid(self.x_sat_head(self.x_sat_encoder(x_vecs))).squeeze(1)
 
     def score_similarity(self, context_h, cand_h):
-        """Returns the dot product of encoded contexts and encoded candidates"""
+        """
+        Returns the dot product of encoded contexts and encoded candidates.
+        """
         if self.opt['normalize_sent_emb']:
             context_h /= context_h.norm(2, dim=1, keepdim=True)
             cand_h /= cand_h.norm(2, dim=1, keepdim=True)

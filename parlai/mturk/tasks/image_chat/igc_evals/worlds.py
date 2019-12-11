@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -54,7 +55,9 @@ demo_example = {
 
 
 class IGCExampleGenerator(object):
-    """Retrieve Example from Comment Battle Dataset"""
+    """
+    Retrieve Example from Comment Battle Dataset.
+    """
 
     def __init__(self, opt):
         handle = './examples_stack{}{}.pkl'.format(
@@ -98,7 +101,9 @@ class IGCExampleGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    """A world that provides the appropriate instructions during onboarding"""
+    """
+    A world that provides the appropriate instructions during onboarding.
+    """
 
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -130,8 +135,9 @@ class RoleOnboardWorld(MTurkOnboardWorld):
 
 
 class MTurkIGCEvalWorld(MultiAgentDialogWorld):
-    """World where an agent observes 5 images and 3 comments about the images,
-       and ranks the comments
+    """
+    World where an agent observes 5 images and 3 comments about the images, and ranks
+    the comments.
     """
 
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
@@ -156,8 +162,9 @@ class MTurkIGCEvalWorld(MultiAgentDialogWorld):
         return self.chat_done
 
     def parley(self):
-        """RATER is given an image, context (and possibly some questions)
-           and is asked to rate the responses.
+        """
+        RATER is given an image, context (and possibly some questions) and is asked to
+        rate the responses.
         """
         # Initial Message Value
         control_msg = {'episode_done': False}
@@ -314,9 +321,9 @@ class MTurkIGCEvalWorld(MultiAgentDialogWorld):
         )
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

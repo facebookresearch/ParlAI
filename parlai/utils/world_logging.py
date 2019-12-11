@@ -62,12 +62,13 @@ class WorldLogger:
                     {
                         'id': msgs[0].get('id'),
                         'text': text,
-                        'label': label,
+                        'labels': [label],
                         'episode_done': False,
                     }
                 )
                 text = ''
-        out[-1]['episode_done'] = True
+        if len(out) > 0:
+            out[-1]['episode_done'] = True
         return out
 
     def write_parlai_format(self, outfile):

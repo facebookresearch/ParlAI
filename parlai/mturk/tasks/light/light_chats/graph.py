@@ -31,7 +31,9 @@ def rm(d, val):
 def format_observation(
     self, graph, viewing_agent, action, telling_agent=None, is_constraint=False
 ):
-    """Return the observation text to display for an action"""
+    """
+    Return the observation text to display for an action.
+    """
     use_actors = action['actors']
     if is_constraint:
         use_actors = use_actors[1:]
@@ -83,8 +85,10 @@ def is_equipped_item(item_idx):
 
 # Functions
 class GraphFunction(object):
-    """Initial description of function should only contain what the arguments
-    are as set up by init, establishing a number to type relationship like:
+    """
+    Initial description of function should only contain what the arguments are as set up
+    by init, establishing a number to type relationship like:
+
     [Actor, item actor is carrying, container in same room as actor]
     """
 
@@ -190,16 +194,19 @@ class GraphFunction(object):
         raise NotImplementedError
 
     def get_action_observation_format(self, action, descs):
-        """Given the action, return text to be filled by the parsed args
-        Allowed to alter the descriptions if necessary
-        Allowed to use the descriptions to determine the correct format as well
+        """
+        Given the action, return text to be filled by the parsed args Allowed to alter
+        the descriptions if necessary Allowed to use the descriptions to determine the
+        correct format as well.
         """
         if action['name'] in self.formats:
             return self.formats[action['name']]
         raise NotImplementedError
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        """Returns an action for if the resolution of this function fails"""
+        """
+        Returns an action for if the resolution of this function fails.
+        """
         return {
             'caller': self.get_name(),
             'name': spec_fail,
@@ -208,10 +215,11 @@ class GraphFunction(object):
         }
 
     def get_find_fail_text(self, arg_idx):
-        """Text displayed when an arg find during parse_text_to_args call
-        fails to find valid targets for the function.
-        Can be overridden to provide different messages for different failed
-        arguments.
+        """
+        Text displayed when an arg find during parse_text_to_args call fails to find
+        valid targets for the function.
+
+        Can be overridden to provide different messages for different failed arguments.
         """
         return 'That isn\'t here'
 
@@ -219,9 +227,10 @@ class GraphFunction(object):
         return 'Couldn\'t understand that. Try help for help with commands'
 
     def evaluate_constraint_set(self, graph, args, constraints):
-        """Check a particular set of arguments against the given constraints
-        returns (True, cons_passed, None) if the constraints all pass
-        returns (False, cons_passed, failure_action) if any constraint fails
+        """
+        Check a particular set of arguments against the given constraints returns (True,
+        cons_passed, None) if the constraints all pass returns (False, cons_passed,
+        failure_action) if any constraint fails.
         """
         cons_passed = 0
         failure_action = None
@@ -243,11 +252,11 @@ class GraphFunction(object):
     def check_possibilites_vs_constraints(
         self, graph, output_args, arg_idx, possible_ids
     ):
-        """Iterate through the given possible ids for a particular arg index
-        and see if any match all the constraints for that argument
+        """
+        Iterate through the given possible ids for a particular arg index and see if any
+        match all the constraints for that argument.
 
-        Returns (True, valid_ID) on success
-        Returns (False, violator_action) on failure
+        Returns (True, valid_ID) on success Returns (False, violator_action) on failure
         """
         constraints = self.arg_constraints[arg_idx]
         most_constraints = -1
@@ -384,8 +393,9 @@ class GraphFunction(object):
         return True, '', output_args  # base case, all filled
 
     def parse_descs_to_args(self, graph, args):
-        """iterates through the args and the constraints, solving dependency
-        order on the fly.
+        """
+        iterates through the args and the constraints, solving dependency order on the
+        fly.
         """
         # TODO improve performance by instead constructing a dependency graph
         # at runtime to avoid repeat passes through the loop and to prevent
@@ -426,14 +436,18 @@ class GraphFunction(object):
             return success, res, output_args
 
     def get_name(self):
-        """Get the canonical name of this function"""
+        """
+        Get the canonical name of this function.
+        """
         name = self.name
         if type(name) is list:
             name = name[0]
         return name
 
     def get_canonical_form(self, graph, args):
-        """Get canonical form for the given args on this function"""
+        """
+        Get canonical form for the given args on this function.
+        """
         if 'ALL' in self.possible_arg_nums:
             # All is reserved for functions that take all arguments
             return ' '.join(args)
@@ -450,13 +464,16 @@ class GraphFunction(object):
         )
 
     def get_reverse(self, graph, args):
-        """Function to parse the graph and args and return the reverse
-        function and args"""
+        """
+        Function to parse the graph and args and return the reverse function and args.
+        """
         return None, []
 
 
 class SayFunction(GraphFunction):
-    """Output all the following arguments [Actor, raw text]"""
+    """
+    Output all the following arguments [Actor, raw text]
+    """
 
     def __init__(self):
         super().__init__(
@@ -470,7 +487,9 @@ class SayFunction(GraphFunction):
         )
 
     def func(self, graph, args):
-        """<Actor> sends message history to room [or specified <recipient>]"""
+        """
+        <Actor> sends message history to room [or specified <recipient>]
+        """
         actor = args[0]
         words = args[1].strip()
         if words.startswith('"') and words.endswith('"'):
@@ -489,7 +508,9 @@ class SayFunction(GraphFunction):
         return True
 
     def format_observation(self, graph, viewing_agent, action, telling_agent=None):
-        """Parse the observations to recount, then return them"""
+        """
+        Parse the observations to recount, then return them.
+        """
         actor = action['actors'][0]
         content = action['content']
         if viewing_agent == actor:
@@ -502,7 +523,9 @@ class SayFunction(GraphFunction):
 
 
 class TellFunction(GraphFunction):
-    """Output all the following arguments [Actor, Target, raw text]"""
+    """
+    Output all the following arguments [Actor, Target, raw text]
+    """
 
     def __init__(self):
         super().__init__(
@@ -516,7 +539,9 @@ class TellFunction(GraphFunction):
         )
 
     def func(self, graph, args):
-        """<Actor> sends message history to room [or specified <recipient>]"""
+        """
+        <Actor> sends message history to room [or specified <recipient>]
+        """
         actor = args[0]
         words = args[2]
         room_id = graph.location(actor)
@@ -534,7 +559,9 @@ class TellFunction(GraphFunction):
         return True
 
     def format_observation(self, graph, viewing_agent, action, telling_agent=None):
-        """Parse the observations to recount, then return them"""
+        """
+        Parse the observations to recount, then return them.
+        """
         actor = action['actors'][0]
         target = action['actors'][1]
         content = action['content']
@@ -576,7 +603,9 @@ class TellFunction(GraphFunction):
             return False
 
     def evaluate_constraint_set(self, graph, args, constraints):
-        """Can't talk to yourself, only constraint"""
+        """
+        Can't talk to yourself, only constraint.
+        """
         if args[0] == args[1]:
             return (
                 False,
@@ -623,14 +652,18 @@ class TellFunction(GraphFunction):
             return None, "You couldn't talk to that now", None
 
     def get_name(self):
-        """Get the canonical name of this function"""
+        """
+        Get the canonical name of this function.
+        """
         name = self.name
         if type(name) is list:
             name = name[0]
         return name
 
     def get_canonical_form(self, graph, args):
-        """Get canonical form for the given args on this function"""
+        """
+        Get canonical form for the given args on this function.
+        """
         loc = graph.location(args[0])
         target_text = graph.node_to_desc_raw(args[1], from_id=loc)
         return 'tell {} "{}"'.format(target_text, args[2])
@@ -672,7 +705,9 @@ class UseFunction(GraphFunction):
         return 'That isn\'t here. '
 
     def func(self, graph, args):
-        """<Actor> uses <held object> with <other object>"""
+        """
+        <Actor> uses <held object> with <other object>
+        """
         # held_obj = args[1]
         # callbacks = graph.get_prop(held_obj, 'callbacks', {})
         # if 'use_with' in callbacks:
@@ -709,7 +744,9 @@ class UseFunction(GraphFunction):
 
 
 class MoveAgentFunction(GraphFunction):
-    """[actor, destination room or path name from actor's room]"""
+    """
+    [actor, destination room or path name from actor's room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -743,7 +780,9 @@ class MoveAgentFunction(GraphFunction):
         }
 
     def follow_agent(self, graph, args, followed):
-        """handler for all following actions"""
+        """
+        handler for all following actions.
+        """
         agent_id = args[0]
         old_room_id = graph.location(agent_id)
         followers = graph.get_followers(agent_id)
@@ -820,7 +859,9 @@ class MoveAgentFunction(GraphFunction):
         return True
 
     def func(self, graph, args):
-        """<Actor> moves to <location>"""
+        """
+        <Actor> moves to <location>
+        """
         agent_id = args[0]
         old_room_id = graph.location(agent_id)
         followers = graph.get_followers(agent_id)
@@ -896,8 +937,9 @@ class MoveAgentFunction(GraphFunction):
         return True
 
     def parse_text_to_args(self, graph, actor_id, text):
-        """Wraps the super parse_text_to_args to be able to handle the special
-        case of "go back"
+        """
+        Wraps the super parse_text_to_args to be able to handle the special case of "go
+        back".
         """
         actor_id = actor_id.lower()
         if len(text) == 0:
@@ -938,7 +980,9 @@ class MoveAgentFunction(GraphFunction):
 
 
 class FollowFunction(GraphFunction):
-    """[Actor, agent actor should follow in same room]"""
+    """
+    [Actor, agent actor should follow in same room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -965,7 +1009,9 @@ class FollowFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<actor> start following [<agent>] (unfollow if no agent supplied)"""
+        """
+        <actor> start following [<agent>] (unfollow if no agent supplied)
+        """
         agent_id = args[0]
         room_id = graph.location(args[0])
         following = graph.get_following(agent_id)
@@ -993,7 +1039,9 @@ class FollowFunction(GraphFunction):
 
 
 class HitFunction(GraphFunction):
-    """[Actor, victim in same room]"""
+    """
+    [Actor, victim in same room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1043,7 +1091,9 @@ class HitFunction(GraphFunction):
         return is_successful
 
     def func(self, graph, args):
-        """<Actor> attempts attack on <enemy>"""
+        """
+        <Actor> attempts attack on <enemy>
+        """
         agent_id = args[0]
         room_id = graph.location(args[0])
         victim_id = args[1]
@@ -1097,7 +1147,9 @@ class HitFunction(GraphFunction):
 
 
 class HugFunction(GraphFunction):
-    """[Actor, target in same room]"""
+    """
+    [Actor, target in same room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1121,7 +1173,9 @@ class HugFunction(GraphFunction):
         self.formats = {'hug': '{0} hugged {1}. ', 'failed': '{0} couldn\'t hug that. '}
 
     def func(self, graph, args):
-        """<Actor> hugs <target>"""
+        """
+        <Actor> hugs <target>
+        """
         room_id = graph.location(args[0])
         action = {
             'caller': self.get_name(),
@@ -1140,7 +1194,9 @@ class HugFunction(GraphFunction):
 
 
 class GetObjectFunction(GraphFunction):
-    """[Actor, object attainable by actor, optional container for object]"""
+    """
+    [Actor, object attainable by actor, optional container for object]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1200,7 +1256,9 @@ class GetObjectFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> gets <item> [from <container>]"""
+        """
+        <Actor> gets <item> [from <container>]
+        """
         agent_id, object_id = args[0], args[1]
         container_id = graph.location(object_id)
         room_id = graph.location(agent_id)
@@ -1248,7 +1306,9 @@ class GetObjectFunction(GraphFunction):
         return super().parse_descs_to_args(graph, args)
 
     def get_canonical_form(self, graph, args):
-        """Get canonical form for the given args on this function"""
+        """
+        Get canonical form for the given args on this function.
+        """
         if len(args) == 3 and graph.get_prop(args[2], 'container') is True:
             return super().get_canonical_form(graph, args)
         else:
@@ -1263,7 +1323,9 @@ class GetObjectFunction(GraphFunction):
 
 # TODO override get_canonical_form for on/in
 class PutObjectInFunction(GraphFunction):
-    """[Actor, object actor is carrying, container]"""
+    """
+    [Actor, object actor is carrying, container]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1299,7 +1361,9 @@ class PutObjectInFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> puts <object> in or on <container>"""
+        """
+        <Actor> puts <object> in or on <container>
+        """
         agent_id, object_id, container_id = args[0], args[1], args[2]
         graph.move_object(object_id, container_id)
         act_name = 'put_' + graph.get_prop(container_id, 'surface_type', 'in')
@@ -1324,7 +1388,9 @@ class PutObjectInFunction(GraphFunction):
 
 
 class DropObjectFunction(GraphFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1349,7 +1415,9 @@ class DropObjectFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> drops <object>"""
+        """
+        <Actor> drops <object>
+        """
         agent_id, object_id, room_id = args[0], args[1], args[2]
         graph.move_object(object_id, room_id)
         put_action = {
@@ -1374,7 +1442,9 @@ class DropObjectFunction(GraphFunction):
 
 
 class GiveObjectFunction(GraphFunction):
-    """[Actor, object actor is carrying, other agent in same room]"""
+    """
+    [Actor, object actor is carrying, other agent in same room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1416,7 +1486,9 @@ class GiveObjectFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> gives <object> to <agent>"""
+        """
+        <Actor> gives <object> to <agent>
+        """
         agent_id, object_id, receiver_id = args[0], args[1], args[2]
         graph.move_object(object_id, receiver_id)
         room_id = graph.location(agent_id)
@@ -1440,7 +1512,9 @@ class GiveObjectFunction(GraphFunction):
 
 
 class StealObjectFunction(GraphFunction):
-    """[Actor, object other agent is carrying, other agent in same room]"""
+    """
+    [Actor, object other agent is carrying, other agent in same room]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1482,7 +1556,9 @@ class StealObjectFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> steals <object> from <agent>"""
+        """
+        <Actor> steals <object> from <agent>
+        """
         agent_id, object_id, victim_id = args[0], args[1], args[2]
         graph.move_object(object_id, agent_id)
         room_id = graph.location(agent_id)
@@ -1525,7 +1601,9 @@ class StealObjectFunction(GraphFunction):
 
 
 class EquipObjectFunction(GraphFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(
         self, function_name='equip', action='equipped', additional_constraints=None
@@ -1551,7 +1629,9 @@ class EquipObjectFunction(GraphFunction):
         self.action = action
 
     def func(self, graph, args):
-        """<Agent> equips <object>"""
+        """
+        <Agent> equips <object>
+        """
         agent_id, object_id = args[0], args[1]
         graph.set_prop(object_id, 'equipped', self.name)
         for n, s in graph.get_prop(object_id, 'stats', {'defense': 1}).items():
@@ -1574,7 +1654,9 @@ class EquipObjectFunction(GraphFunction):
 
 
 class WearObjectFunction(EquipObjectFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1591,7 +1673,9 @@ class WearObjectFunction(EquipObjectFunction):
 
 
 class WieldObjectFunction(EquipObjectFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1608,7 +1692,9 @@ class WieldObjectFunction(EquipObjectFunction):
 
 
 class RemoveObjectFunction(GraphFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1629,7 +1715,9 @@ class RemoveObjectFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> unequips <object>"""
+        """
+        <Actor> unequips <object>
+        """
         agent_id, object_id = args[0], args[1]
         graph.set_prop(object_id, 'equipped', None)
         for n, s in graph.get_prop(object_id, 'stats', {'defense': 1}).items():
@@ -1652,7 +1740,9 @@ class RemoveObjectFunction(GraphFunction):
 
 
 class IngestFunction(GraphFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(
         self, function_name='ingest', action='ingested', additional_constraints=None
@@ -1678,7 +1768,9 @@ class IngestFunction(GraphFunction):
         self.action = action
 
     def func(self, graph, args):
-        """<Actor> consumes <object>"""
+        """
+        <Actor> consumes <object>
+        """
         agent_id, object_id = args[0], args[1]
         fe = graph.get_prop(object_id, 'food_energy')
         thing_desc = graph.node_to_desc(object_id, use_the=True)
@@ -1721,7 +1813,9 @@ class IngestFunction(GraphFunction):
 
 
 class EatFunction(IngestFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1738,7 +1832,9 @@ class EatFunction(IngestFunction):
 
 
 class DrinkFunction(IngestFunction):
-    """[Actor, object actor is carrying]"""
+    """
+    [Actor, object actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1755,7 +1851,9 @@ class DrinkFunction(IngestFunction):
 
 
 class LockFunction(GraphFunction):
-    """[Actor, lockable thing in same location, key actor is carrying]"""
+    """
+    [Actor, lockable thing in same location, key actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1796,7 +1894,9 @@ class LockFunction(GraphFunction):
             return 'Lock is used with "lock <object/path> with <key>"'
 
     def func(self, graph, args):
-        """<Actor> locks <object> using <key>"""
+        """
+        <Actor> locks <object> using <key>
+        """
         actor_id, target_id, key_id = args[0], args[1], args[2]
         room_id = graph.location(actor_id)
         if 'room' in graph.get_prop(target_id, 'classes'):
@@ -1818,7 +1918,9 @@ class LockFunction(GraphFunction):
 
 
 class UnlockFunction(GraphFunction):
-    """[Actor, lockable thing in same location, key actor is carrying]"""
+    """
+    [Actor, lockable thing in same location, key actor is carrying]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1853,7 +1955,9 @@ class UnlockFunction(GraphFunction):
         }
 
     def func(self, graph, args):
-        """<Actor> unlocks <object> using <key>"""
+        """
+        <Actor> unlocks <object> using <key>
+        """
         actor_id, target_id, key_id = args[0], args[1], args[2]
         room_id = graph.location(actor_id)
         if 'room' in graph.get_prop(target_id, 'classes'):
@@ -1881,7 +1985,9 @@ class UnlockFunction(GraphFunction):
 
 
 class ExamineFunction(GraphFunction):
-    """[Actor, anything accessible to the actor]"""
+    """
+    [Actor, anything accessible to the actor]
+    """
 
     def __init__(self):
         super().__init__(
@@ -1895,7 +2001,9 @@ class ExamineFunction(GraphFunction):
         )
 
     def func(self, graph, args):
-        """<Actor> examines <thing>"""
+        """
+        <Actor> examines <thing>
+        """
         agent_id, object_id = args[0], args[1]
         room_id = graph.location(agent_id)
         examine_action = {
@@ -1969,7 +2077,9 @@ class ExamineFunction(GraphFunction):
 
 
 class SoloFunction(GraphFunction):
-    """[Actor]"""
+    """
+    [Actor]
+    """
 
     def __init__(self, function_name, callback_triggers):
         super().__init__(
@@ -2136,9 +2246,11 @@ class LookFunction(SoloFunction):
     def format_observation(
         self, graph, viewing_agent, action, telling_agent=None, is_constraint=False
     ):
-        """Return the observation text to display for an action for the case
-        of look. Look is a special case, as the description can change more
-        than just tense based on who or what was seen and who you tell it to.
+        """
+        Return the observation text to display for an action for the case of look.
+
+        Look is a special case, as the description can change more than just tense based
+        on who or what was seen and who you tell it to.
         """
         if action['name'] != 'list_room':
             return super().format_observation(
@@ -2249,8 +2361,9 @@ class UnfollowFunction(SoloFunction):
 
 # Constraints
 class GraphConstraint(object):
-    """Stub class to define standard for graph constraints, implements shared
-    code for executing them
+    """
+    Stub class to define standard for graph constraints, implements shared code for
+    executing them.
     """
 
     def format_observation(self, graph, viewing_agent, action, telling_agent=None):
@@ -2259,27 +2372,30 @@ class GraphConstraint(object):
         )
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        """Given the args, return an action to represent the failure of
-        meeting this constraint
+        """
+        Given the args, return an action to represent the failure of meeting this
+        constraint.
         """
         raise NotImplementedError
 
     def get_action_observation_format(self, action, descs):
-        """Given the action, return text to be filled by the parsed args"""
+        """
+        Given the action, return text to be filled by the parsed args.
+        """
         raise NotImplementedError
 
     def evaluate_constraint(self, graph, args):
-        """Evaluates a constraint, returns true or false for if it is met"""
+        """
+        Evaluates a constraint, returns true or false for if it is met.
+        """
         raise NotImplementedError
 
 
 class FitsConstraint(GraphConstraint):
-    """Determining if one object will fit into another
+    """
+    Determining if one object will fit into another.
 
-    args are:
-        0 => actor_id
-        1 => object_id
-        2 => container_id
+    args are:     0 => actor_id     1 => object_id     2 => container_id
     """
 
     name = 'fits_in'
@@ -2316,14 +2432,16 @@ class FitsConstraint(GraphConstraint):
             return '{1} does not fit. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object would fit in the
-        container
+        """
+        Return true or false for whether the object would fit in the container.
         """
         return graph.obj_fits(args[1], args[2])
 
 
 class IsTypeConstraint(GraphConstraint):
-    """Determining if an object has inherited a particular type"""
+    """
+    Determining if an object has inherited a particular type.
+    """
 
     name = 'is_type'
 
@@ -2347,13 +2465,11 @@ class IsTypeConstraint(GraphConstraint):
             return 'You couldn\'t find that. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object has any wanted class
+        """
+        Return true or false for whether the object has any wanted class.
 
-        args are:
-            0 => actor_id
-            1 => found_id
-            2 => expected_class/es
-            3 => alternate failure text
+        args are:     0 => actor_id     1 => found_id     2 => expected_class/es     3
+        => alternate failure text
         """
         found_id = args[1]
         expected_classes = args[2]
@@ -2367,7 +2483,9 @@ class IsTypeConstraint(GraphConstraint):
 
 
 class NotTypeConstraint(GraphConstraint):
-    """Determining if an object has inherited a particular type"""
+    """
+    Determining if an object has inherited a particular type.
+    """
 
     name = 'not_type'
 
@@ -2391,13 +2509,11 @@ class NotTypeConstraint(GraphConstraint):
             return 'You couldn\'t find that. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object has any wanted class
+        """
+        Return true or false for whether the object has any wanted class.
 
-        args are:
-            0 => actor_id
-            1 => found_id
-            2 => expected_class/es
-            3 => alternate failure text
+        args are:     0 => actor_id     1 => found_id     2 => expected_class/es     3
+        => alternate failure text
         """
         found_id = args[1]
         expected_classes = args[2]
@@ -2411,7 +2527,9 @@ class NotTypeConstraint(GraphConstraint):
 
 
 class HasPropConstraint(GraphConstraint):
-    """Determining if an object doesn't have a prop it should have"""
+    """
+    Determining if an object doesn't have a prop it should have.
+    """
 
     name = 'has_prop'
 
@@ -2439,18 +2557,18 @@ class HasPropConstraint(GraphConstraint):
             return '{1} isn\'t {2}'
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object doesn't have a prop
+        """
+        Return true or false for whether the object doesn't have a prop.
 
-        args are:
-            0 => viewer
-            1 => prop_id
-            2 => bad_prop
+        args are:     0 => viewer     1 => prop_id     2 => bad_prop
         """
         return graph.has_prop(args[1], args[2])
 
 
 class NoPropConstraint(GraphConstraint):
-    """Determining if an object has a prop it shouldn't have"""
+    """
+    Determining if an object has a prop it shouldn't have.
+    """
 
     name = 'no_prop'
 
@@ -2478,23 +2596,19 @@ class NoPropConstraint(GraphConstraint):
             return '{1} is {2}'
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object doesn't have a prop
+        """
+        Return true or false for whether the object doesn't have a prop.
 
-        args are:
-            0 => viewer
-            1 => prop_id
-            2 => bad_prop
+        args are:     0 => viewer     1 => prop_id     2 => bad_prop
         """
         return not graph.has_prop(args[1], args[2])
 
 
 class LockableConstraint(GraphConstraint):
-    """Determining if a path has a particular status
+    """
+    Determining if a path has a particular status.
 
-    args are:
-        0 => actor_id
-        1 => target_id
-        2 => should be lockable
+    args are:     0 => actor_id     1 => target_id     2 => should be lockable
     """
 
     name = 'is_lockable'
@@ -2515,8 +2629,8 @@ class LockableConstraint(GraphConstraint):
             return '{1} is lockable. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object would fit in the
-        container
+        """
+        Return true or false for whether the object would fit in the container.
         """
         actor_id, target_id, want_lockable = args[0], args[1], args[2]
         if 'room' in graph.get_prop(target_id, 'classes'):
@@ -2528,12 +2642,10 @@ class LockableConstraint(GraphConstraint):
 
 
 class LockedConstraint(GraphConstraint):
-    """Determining if a path has a particular status
+    """
+    Determining if a path has a particular status.
 
-    args are:
-        0 => actor_id
-        1 => target_id
-        2 => should be locked
+    args are:     0 => actor_id     1 => target_id     2 => should be locked
     """
 
     name = 'is_locked'
@@ -2554,8 +2666,8 @@ class LockedConstraint(GraphConstraint):
             return '{1} is locked. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object would fit in the
-        container
+        """
+        Return true or false for whether the object would fit in the container.
         """
         actor_id, target_id, want_locked = args[0], args[1], args[2]
         if 'room' in graph.get_prop(target_id, 'classes'):
@@ -2569,12 +2681,10 @@ class LockedConstraint(GraphConstraint):
 
 
 class LockedWithConstraint(GraphConstraint):
-    """Determining if a path has a particular status
+    """
+    Determining if a path has a particular status.
 
-    args are:
-        0 => actor_id
-        1 => target_id
-        2 => key_id
+    args are:     0 => actor_id     1 => target_id     2 => key_id
     """
 
     name = 'locked_with'
@@ -2594,8 +2704,8 @@ class LockedWithConstraint(GraphConstraint):
         return '{2} doesn\'t work with that. '
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object would fit in the
-        container
+        """
+        Return true or false for whether the object would fit in the container.
         """
         actor_id, target_id, key_id = args[0], args[1], args[2]
         if 'room' in graph.get_prop(target_id, 'classes'):
@@ -2607,11 +2717,10 @@ class LockedWithConstraint(GraphConstraint):
 
 
 class NotLocationOfConstraint(GraphConstraint):
-    """Ensuring a location isn't the same one as the actor
+    """
+    Ensuring a location isn't the same one as the actor.
 
-    args are:
-        0 => actor_id
-        1 => target_id
+    args are:     0 => actor_id     1 => target_id
     """
 
     name = 'not_location_of'
@@ -2629,8 +2738,8 @@ class NotLocationOfConstraint(GraphConstraint):
         return "You're already in that location. "
 
     def evaluate_constraint(self, graph, args):
-        """Return true or false for whether the object would fit in the
-        container
+        """
+        Return true or false for whether the object would fit in the container.
         """
         actor_id, target_id = args[0], args[1]
         return graph.location(actor_id) != target_id
@@ -2693,14 +2802,13 @@ FUNC_IGNORE_LIST = ['tell', 'say']
 class Graph(object):
     def __init__(self, opt):
         """
-        Initialize a graph for the game to run on. Creates all of the
-        required bookkeeping members and initializes them to empty. Most
-        members of the graph are keyed by a node's unique ids.
+        Initialize a graph for the game to run on. Creates all of the required
+        bookkeeping members and initializes them to empty. Most members of the graph are
+        keyed by a node's unique ids.
 
-        Development of this graph is very much still a work in progress,
-        and it is only provided in this form to be used for the light_dialog
-        task as collected in the 'Learning to Speak and Act in a Fantasy
-        Text Adventure Game' paper
+        Development of this graph is very much still a work in progress, and it is only
+        provided in this form to be used for the light_dialog task as collected in the
+        'Learning to Speak and Act in a Fantasy Text Adventure Game' paper
         """
 
         # callbacks hold custom registered functions for the graph to execute
@@ -2770,7 +2878,9 @@ class Graph(object):
     # -- Graph properties -- #
 
     def copy(self):
-        """return a copy of this graph"""
+        """
+        return a copy of this graph.
+        """
         return deepcopy(self)
 
     def __deepcopy__(self, memo):
@@ -2816,7 +2926,9 @@ class Graph(object):
         return self.unique_hash() == other.unique_hash()
 
     def all_node_ids(self):
-        """return a list of all the node ids in the graph"""
+        """
+        return a list of all the node ids in the graph.
+        """
         return list(self._node_to_prop.keys())
 
     def freeze(self, freeze=None):
@@ -2829,19 +2941,22 @@ class Graph(object):
 
     def add_message_callback(self, id, func):
         """
-        Register a message callback to a given agent by their node id. This
-        function will be called on the graph and an action when the subscribed
+        Register a message callback to a given agent by their node id.
+
+        This function will be called on the graph and an action when the subscribed
         actor is the subject of an action
         """
         self.__message_callbacks[id] = func
 
     def has_remaining_player_slots(self):
-        """Note if the graph has any space for new players to play a role"""
+        """
+        Note if the graph has any space for new players to play a role.
+        """
         return len(self._player_ids) != 0
 
     def get_unused_player_id(self):
         """
-        Return one of the unused player ids randomly and mark it as registered
+        Return one of the unused player ids randomly and mark it as registered.
         """
         player_id = random.choice(self._player_ids)
         self._player_ids.remove(player_id)
@@ -2851,15 +2966,17 @@ class Graph(object):
     # -- Callbacks and variables -- #
 
     def register_callbacks(self, callbacks, variables):
-        """ Documentation not yet available"""
+        """
+        Documentation not yet available.
+        """
         self.callbacks = callbacks
         self.variables = variables
 
     # -- Full node editors/creators/getters/deleters -- #
 
     def get_player(self, id):
-        """Get the state of a player (along with everything they carry) from
-        the graph
+        """
+        Get the state of a player (along with everything they carry) from the graph.
         """
         state = {}
         state['id'] = id
@@ -2880,7 +2997,9 @@ class Graph(object):
         return state
 
     def get_obj(self, id):
-        """Get the state of an object from the graph"""
+        """
+        Get the state of an object from the graph.
+        """
         state = {}
         state['id'] = id
         if id in self._node_contains:
@@ -2897,7 +3016,9 @@ class Graph(object):
         return state
 
     def set_player(self, state):
-        """Instantiate a player into the graph with the given state"""
+        """
+        Instantiate a player into the graph with the given state.
+        """
         id = state['id']
         if 'node_to_text_buffer' in state:
             self._node_to_text_buffer[id] = (
@@ -2911,7 +3032,9 @@ class Graph(object):
             self._node_to_prop[id] = state['node_to_prop']
 
     def set_obj(self, state):
-        """Instantiate an object into the graph with the given state"""
+        """
+        Instantiate an object into the graph with the given state.
+        """
         id = state['id']
         self._node_to_edges[id] = []
         self._node_to_prop[id] = state['node_to_prop']
@@ -2958,7 +3081,7 @@ class Graph(object):
 
     def new_agent(self, id):
         """
-        Initialize special state for the given agent
+        Initialize special state for the given agent.
         """
         self._node_to_text_buffer[id] = ''  # clear buffer
         self._node_to_observations[id] = []  # clear buffer
@@ -2967,7 +3090,9 @@ class Graph(object):
         self._last_tell_target[id] = None
 
     def delete_node(self, id):
-        """Remove a node from the graph, keeping the reference for printing"""
+        """
+        Remove a node from the graph, keeping the reference for printing.
+        """
         # Remove from the container
         loc = self.location(id)
         if loc is not None and id in self._node_contains[loc]:
@@ -3011,8 +3136,10 @@ class Graph(object):
         edge_desc=None,
         full_label=False,
     ):
-        """Add an edge of the given type from id1 to id2. Optionally can set
-        a label for that edge
+        """
+        Add an edge of the given type from id1 to id2.
+
+        Optionally can set a label for that edge
         """
         if edge_desc is None:
             edge_desc = self.get_props_from_either(id2, id1, 'path_desc')[0]
@@ -3046,7 +3173,9 @@ class Graph(object):
         examine1=None,
         examine2=None,
     ):
-        """Create a path between two rooms"""
+        """
+        Create a path between two rooms.
+        """
         if id1 == id2:
             return False
         self.add_edge(id1, 'path_to', id2, desc1, locked_with, examine1)
@@ -3054,11 +3183,15 @@ class Graph(object):
         return True
 
     def is_path_to(self, id1, id2):
-        """determine if there is a path from id1 to id2"""
+        """
+        determine if there is a path from id1 to id2.
+        """
         return ('path_to', id2) in self._node_to_edges[id1]
 
     def node_contains(self, loc):
-        """Get the set of all things that a node contains"""
+        """
+        Get the set of all things that a node contains.
+        """
         if loc in self._node_contains:
             return set(self._node_contains[loc])
         else:
@@ -3078,8 +3211,9 @@ class Graph(object):
         return self._node_contained_in[id]
 
     def set_follow(self, id1, id2):
-        """Set id1 to be following id2, unfollowing whatever id1 followed
-        before if necessary
+        """
+        Set id1 to be following id2, unfollowing whatever id1 followed before if
+        necessary.
         """
         if id1 in self._node_follows:
             i_follow = self._node_follows[id1]
@@ -3095,13 +3229,17 @@ class Graph(object):
                 self._node_follows.pop(id1)
 
     def get_followers(self, agent_id):
-        """Get the nodes following the given agent"""
+        """
+        Get the nodes following the given agent.
+        """
         if agent_id in self._node_followed_by:
             return self._node_followed_by[agent_id]
         return []
 
     def get_following(self, agent_id):
-        """get the node that the given agent is following, if any"""
+        """
+        get the node that the given agent is following, if any.
+        """
         if agent_id in self._node_follows:
             return self._node_follows[agent_id]
         return None
@@ -3124,7 +3262,9 @@ class Graph(object):
         return last_round_descs
 
     def lock_path(self, id1, id2, key_id):
-        """lock the edge from id1 to id2 using the given key"""
+        """
+        lock the edge from id1 to id2 using the given key.
+        """
         self._node_to_edges[id1][('path_to', id2)]['is_locked'] = True
         self._node_to_edges[id1][('path_to', id2)][
             'examine_desc'
@@ -3135,7 +3275,9 @@ class Graph(object):
         ] = self._node_to_edges[id2][('path_to', id1)]['locked_desc']
 
     def unlock_path(self, id1, id2, key_id):
-        """unlock the edge from id1 to id2 using the given key"""
+        """
+        unlock the edge from id1 to id2 using the given key.
+        """
         self._node_to_edges[id1][('path_to', id2)]['is_locked'] = False
         self._node_to_edges[id1][('path_to', id2)][
             'examine_desc'
@@ -3164,7 +3306,9 @@ class Graph(object):
     # -- Prop accessors -- #
 
     def get_prop(self, id, prop, default=None):
-        """Get the given prop, return None if it doesn't exist"""
+        """
+        Get the given prop, return None if it doesn't exist.
+        """
         if id in self._node_to_prop:
             if prop in self._node_to_prop[id]:
                 return self._node_to_prop[id][prop]
@@ -3196,25 +3340,34 @@ class Graph(object):
         return val
 
     def get_props_from_either(self, id1, id2, prop):
-        """Try to get ones own prop, fallback to other's prop. Do this for
-        both provided ids symmetrically"""
+        """
+        Try to get ones own prop, fallback to other's prop.
+
+        Do this for both provided ids symmetrically
+        """
         resp1 = self.get_prop(id1, prop, self.get_prop(id2, prop))
         resp2 = self.get_prop(id2, prop, self.get_prop(id1, prop))
         return resp1, resp2
 
     def set_prop(self, id, prop, val=True):
-        """Set a prop to a given value, True otherwise"""
+        """
+        Set a prop to a given value, True otherwise.
+        """
         if id in self._node_to_prop:
             self._node_to_prop[id][prop] = val
 
     def has_prop(self, id, prop):
-        """Return whether or not id has the given prop"""
+        """
+        Return whether or not id has the given prop.
+        """
         if self.get_prop(id, prop) is not None:
             return True
         return False
 
     def inc_prop(self, id, prop, val=1):
-        """Increment a given prop by the given value"""
+        """
+        Increment a given prop by the given value.
+        """
         if id in self._node_to_prop:
             if prop not in self._node_to_prop[id]:
                 self.set_prop(id, prop, 0)
@@ -3223,7 +3376,9 @@ class Graph(object):
             self._node_to_prop[id][prop] += val
 
     def delete_prop(self, id, prop):
-        """Remove a prop from the node_to_prop map"""
+        """
+        Remove a prop from the node_to_prop map.
+        """
         if id in self._node_to_prop:
             if prop in self._node_to_prop[id]:
                 del self._node_to_prop[id][prop]
@@ -3239,14 +3394,18 @@ class Graph(object):
     # -- Graph locators -- #
 
     def location(self, thing):
-        """Get whatever the immediate container of a node is"""
+        """
+        Get whatever the immediate container of a node is.
+        """
         if thing in self._node_contained_in:
             return self._node_contained_in[thing]
         else:
             return None
 
     def room(self, thing):
-        """Get the room that contains a given node"""
+        """
+        Get the room that contains a given node.
+        """
         if thing not in self._node_contained_in:
             return None
         id = self._node_contained_in[thing]
@@ -3255,7 +3414,9 @@ class Graph(object):
         return id
 
     def desc_to_nodes(self, desc, nearbyid=None, nearbytype=None):
-        """Get nodes nearby to a given node from that node's perspective"""
+        """
+        Get nodes nearby to a given node from that node's perspective.
+        """
         from_id = self.location(nearbyid)
         if nearbyid is not None:
             o = set()
@@ -3336,7 +3497,9 @@ class Graph(object):
         return new_o
 
     def get_local_ids(self, actor_id):
-        """Return all accessible ids for an actor given the current area"""
+        """
+        Return all accessible ids for an actor given the current area.
+        """
         loc = self.location(actor_id)
         o1 = self.node_contains(actor_id)
         o2 = self.node_contains(loc)
@@ -3352,7 +3515,9 @@ class Graph(object):
     # -- Text creators -- #
 
     def get_inventory_text_for(self, id, give_empty=True):
-        """Get a description of what id is carrying or equipped with"""
+        """
+        Get a description of what id is carrying or equipped with.
+        """
         s = ''
         carry_ids = []
         wear_ids = []
@@ -3381,7 +3546,9 @@ class Graph(object):
         return s + '.'
 
     def health(self, id):
-        """Return the text description of someone's numeric health"""
+        """
+        Return the text description of someone's numeric health.
+        """
         health = self.get_prop(id, 'health')
         if health is None or health is False:
             health = 1
@@ -3441,8 +3608,10 @@ class Graph(object):
             return id
 
     def get_path_ex_desc(self, id1, id2, looker_id=None):
-        """Return a path description. If both ids are the same return the
-        room description instead.
+        """
+        Return a path description.
+
+        If both ids are the same return the room description instead.
         """
         if id1 == id2:
             if looker_id is not None:
@@ -3460,7 +3629,9 @@ class Graph(object):
         return val
 
     def path_to_desc(self, id1, id2):
-        """get the description for a path from the perspective of id2"""
+        """
+        get the description for a path from the perspective of id2.
+        """
         rooms = self._node_to_edges[id2]
         for r in rooms:
             if r[0] == 'path_to' and r[1] == id1:
@@ -3479,7 +3650,9 @@ class Graph(object):
         return self._node_to_desc[id]
 
     def name_prefix(self, id, txt, use_the):
-        """Get the prefix to prepend an object with in text form"""
+        """
+        Get the prefix to prepend an object with in text form.
+        """
         # Get the preferred prefix type.
         pre = self.get_prop(id, 'name_prefix')
 
@@ -3497,7 +3670,9 @@ class Graph(object):
     # -- Messaging commands -- #
 
     def send_action(self, agent_id, action):
-        """Parse the action and send it to the agent with send_msg"""
+        """
+        Parse the action and send it to the agent with send_msg.
+        """
         if action['caller'] is None:
             val = self.extract_classed_from_dict(action['txt'], agent_id, '')
             if type(val) is dict and 'iter' in val:
@@ -3520,7 +3695,9 @@ class Graph(object):
         self.send_msg(agent_id, t, action)
 
     def send_msg(self, agent_id, txt, action=None):
-        """Send an agent an action and a message"""
+        """
+        Send an agent an action and a message.
+        """
         if agent_id in self._node_to_text_buffer:
             if action is None:
                 action = {
@@ -3540,7 +3717,9 @@ class Graph(object):
             self.__message_callbacks[agent_id](self, action)
 
     def broadcast_to_room(self, action, exclude_agents=None, told_by=None):
-        """send a message to everyone in a room"""
+        """
+        send a message to everyone in a room.
+        """
         if exclude_agents is None:
             exclude_agents = []
         else:
@@ -3568,8 +3747,9 @@ class Graph(object):
     # -- Helpers -- #
 
     def clean_props(self, object_id):
-        """ensures all necessary props are set on items that might not have
-        been on earlier versions of graphworld
+        """
+        ensures all necessary props are set on items that might not have been on earlier
+        versions of graphworld.
         """
         # TODO remove when all samples are converted
         size = self.get_prop(object_id, 'size')
@@ -3743,7 +3923,9 @@ class Graph(object):
     # -- GraphFunction Helpers -- #
 
     def obj_fits(self, object_id, container_id):
-        """Return if one object will fit into another"""
+        """
+        Return if one object will fit into another.
+        """
         size = self.get_prop(object_id, 'size')
         max_size = self.get_prop(container_id, 'contain_size')
         if size is None or max_size is None:
@@ -3755,7 +3937,9 @@ class Graph(object):
         return size <= max_size
 
     def move_object(self, object_id, container_id):
-        """Move an object from wherever it is into somewhere else"""
+        """
+        Move an object from wherever it is into somewhere else.
+        """
         size = self.get_prop(object_id, 'size')
         # Remove from the old container
         old_id = self.node_contained_in(object_id)
@@ -3770,7 +3954,9 @@ class Graph(object):
         self.add_contained_in(object_id, container_id)
 
     def die(self, id):
-        """Update an agent into a dead state"""
+        """
+        Update an agent into a dead state.
+        """
         if not self.has_prop(id, 'agent'):
             return False
         if self.get_prop(id, 'is_player', False) is True:
@@ -3832,7 +4018,9 @@ class Graph(object):
         return True
 
     def get_room_edge_text(self, room_descs, past=False):
-        """Get text for all the edges outside of a room"""
+        """
+        Get text for all the edges outside of a room.
+        """
         if len(room_descs) == 1:
             if past:
                 return 'There was ' + room_descs[0] + '.\n'
@@ -3874,7 +4062,9 @@ class Graph(object):
         return s
 
     def get_room_object_text(self, object_descs, ents, past=False, give_empty=True):
-        """Get text for all the objects in a room"""
+        """
+        Get text for all the objects in a room.
+        """
         s = ''
         tensed_is = 'was' if past else 'is'
         tensed_are = 'were' if past else 'are'
@@ -3892,7 +4082,9 @@ class Graph(object):
         return s
 
     def get_room_agent_text(self, agent_descs, past=False):
-        """Get text for all the agents in a room"""
+        """
+        Get text for all the agents in a room.
+        """
         loc = 'there' if past else 'here'
         you_are = 'You were ' if past else 'You are '
         is_tensed = ' was ' if past else ' is '
@@ -3914,14 +4106,18 @@ class Graph(object):
             return all_descs + are_tensed + loc + '.\n'
 
     def get_room_edges(self, room_id):
-        """Return a list of edges from a room and their current descriptions"""
+        """
+        Return a list of edges from a room and their current descriptions.
+        """
         rooms = self._node_to_edges[room_id]
         rooms = [r[1] for r in rooms if r[0] == 'path_to']
         room_descs = [self.node_to_desc(ent, room_id) for ent in rooms]
         return rooms, room_descs
 
     def get_nondescribed_room_objects(self, room_id):
-        """Return a list of objects in a room and their current descriptions"""
+        """
+        Return a list of objects in a room and their current descriptions.
+        """
         objects = self.node_contains(room_id)
         objects = [o for o in objects if self.get_prop(o, 'object')]
         objects = [o for o in objects if 'described' not in self.get_prop(o, 'classes')]
@@ -3929,15 +4125,19 @@ class Graph(object):
         return objects, object_descs
 
     def get_room_objects(self, room_id):
-        """Return a list of objects in a room and their current descriptions"""
+        """
+        Return a list of objects in a room and their current descriptions.
+        """
         objects = self.node_contains(room_id)
         objects = [o for o in objects if self.get_prop(o, 'object')]
         object_descs = [self.node_to_desc(o) for o in objects]
         return objects, object_descs
 
     def get_nondescribed_room_agents(self, room):
-        """Return a list of agents in a room and their current descriptions
-        if those agents aren't described in the room text"""
+        """
+        Return a list of agents in a room and their current descriptions if those agents
+        aren't described in the room text.
+        """
         agents = self.node_contains(room)
         agents = [a for a in agents if self.get_prop(a, 'agent')]
         agents = [a for a in agents if 'described' not in self.get_prop(a, 'classes')]
@@ -3945,7 +4145,9 @@ class Graph(object):
         return agents, agent_descs
 
     def get_room_agents(self, room):
-        """Return a list of agents in a room and their current descriptions"""
+        """
+        Return a list of agents in a room and their current descriptions.
+        """
         agents = self.node_contains(room)
         agents = [a for a in agents if self.get_prop(a, 'agent')]
         agent_descs = [self.node_to_desc(a) for a in agents]
@@ -3961,7 +4163,9 @@ class Graph(object):
         return txt
 
     def cnt_obj(self, obj, c, ents=None):
-        """Return a text form of the count of an object"""
+        """
+        Return a text form of the count of an object.
+        """
         cnt = c[obj]
         if cnt == 1:
             return obj
@@ -4059,7 +4263,7 @@ class Graph(object):
 
     def get_possible_actions(self, my_agent_id='dragon', use_actions=None):
         """
-        Get all actions that are possible from a given agent
+        Get all actions that are possible from a given agent.
         """
         # TODO rather than iterating over objects and checking validity for
         # all functions, iterate over functions and query valid objects
@@ -4138,8 +4342,11 @@ class Graph(object):
         return False, inst
 
     def get_reverse_action(self, agentid, action, old_g):
-        """Attempts to get the reverse action for the given action. Makes no
-        guarantees, could fail miserably"""
+        """
+        Attempts to get the reverse action for the given action.
+
+        Makes no guarantees, could fail miserably
+        """
         inst, symb_points = self.parse(action)
         j, k = symb_points[0], symb_points[1]
         if inst[j].lower() in GRAPH_FUNCTIONS.keys():
@@ -4254,7 +4461,7 @@ class Graph(object):
 
     def update_world(self):
         """
-        Move agents, do basic actions with npcs, handle telling npcs things
+        Move agents, do basic actions with npcs, handle telling npcs things.
         """
         if self.freeze():
             return

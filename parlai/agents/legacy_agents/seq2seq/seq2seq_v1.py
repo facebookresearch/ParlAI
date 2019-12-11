@@ -22,7 +22,8 @@ import tempfile
 
 
 class Seq2seqAgent(TorchAgent):
-    """Agent which takes an input sequence and produces an output sequence.
+    """
+    Agent which takes an input sequence and produces an output sequence.
 
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
@@ -42,7 +43,9 @@ class Seq2seqAgent(TorchAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument(
             '--init-model',
@@ -184,17 +187,19 @@ class Seq2seqAgent(TorchAgent):
 
     @staticmethod
     def model_version():
-        """Return current version of this model, counting up from 0.
+        """
+        Return current version of this model, counting up from 0.
 
-        Models may not be backwards-compatible with older versions.
-        Version 1 split from version 0 on Aug 29, 2018.
-        To use version 0, use --model legacy:seq2seq:0
+        Models may not be backwards-compatible with older versions. Version 1 split from
+        version 0 on Aug 29, 2018. To use version 0, use --model legacy:seq2seq:0
         (legacy agent code is located in parlai/agents/legacy_agents).
         """
         return 1
 
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
         init_model = None
         if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
@@ -273,7 +278,9 @@ class Seq2seqAgent(TorchAgent):
         self.reset()
 
     def _init_model(self, states=None):
-        """Initialize model, override to change model setup."""
+        """
+        Initialize model, override to change model setup.
+        """
         opt = self.opt
 
         kwargs = opt_to_kwargs(opt)
@@ -322,7 +329,9 @@ class Seq2seqAgent(TorchAgent):
         return self.model
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -334,27 +343,34 @@ class Seq2seqAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         if self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset_metrics(self):
-        """Reset metrics for reporting loss and perplexity."""
+        """
+        Reset metrics for reporting loss and perplexity.
+        """
         super().reset_metrics()
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
+        """
+        Report loss and perplexity from model's perspective.
 
-        Note that this includes predicting __END__ and __UNK__ tokens and may
-        differ from a truly independent measurement.
+        Note that this includes predicting __END__ and __UNK__ tokens and may differ
+        from a truly independent measurement.
         """
         m = {}
         num_tok = self.metrics['num_tokens']
@@ -374,7 +390,9 @@ class Seq2seqAgent(TorchAgent):
         return m
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['model'] = self.model
         if self.opt.get('numthreads', 1) > 1:
@@ -392,18 +410,24 @@ class Seq2seqAgent(TorchAgent):
         return shared
 
     def vectorize(self, *args, **kwargs):
-        """Override vectorize for seq2seq."""
+        """
+        Override vectorize for seq2seq.
+        """
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
 
     def batchify(self, *args, **kwargs):
-        """Override batchify options for seq2seq."""
+        """
+        Override batchify options for seq2seq.
+        """
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        """
+        Pre-initialize CUDA buffer by doing fake forward pass.
+        """
         if self.use_cuda and not hasattr(self, 'buffer_initialized'):
             try:
                 print('preinitializing pytorch cuda buffer')
@@ -425,7 +449,9 @@ class Seq2seqAgent(TorchAgent):
                     raise e
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         batchsize = batch.text_vec.size(0)
         if self.multigpu and batchsize % 2 != 0:
             # throw out one training example
@@ -510,8 +536,10 @@ class Seq2seqAgent(TorchAgent):
         max_ts=40,
         block_ngram=0,
     ):
-        """ Beam search given the model and Batch
-        This function uses model with the following reqs:
+        """
+        Beam search given the model and Batch This function uses model with the
+        following reqs:
+
         - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
         - model.decoder takes decoder params and returns decoder outputs after attn
         - model.output takes decoder outputs and returns distr over dictionary
@@ -689,7 +717,9 @@ class Seq2seqAgent(TorchAgent):
         return tuple([new_out_0, new_out_1, new_out_2])
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None:
             return
         orig_batch = batch  # save for evaluation
@@ -768,7 +798,9 @@ class Seq2seqAgent(TorchAgent):
         return Output(text, cand_choices)
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path and hasattr(self, 'model'):
@@ -788,7 +820,9 @@ class Seq2seqAgent(TorchAgent):
                 json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
 
         # check opt file for multigpu
@@ -809,13 +843,15 @@ class Seq2seqAgent(TorchAgent):
 
 
 class mydefaultdict(defaultdict):
-    """Get function also uses default_factory for this defaultdict.
+    """
+    Get function also uses default_factory for this defaultdict.
 
     This makes dict.get() behave like dict[] if a default is not provided.
     """
 
     def get(self, key, default=None):
-        """Return value at key or default if key is not in dict.
+        """
+        Return value at key or default if key is not in dict.
 
         If a default is not provided, return the default factory value.
         """
@@ -824,15 +860,18 @@ class mydefaultdict(defaultdict):
 
 
 class PerplexityEvaluatorAgent(Seq2seqAgent):
-    """Subclass for doing standardized perplexity evaluation.
+    """
+    Subclass for doing standardized perplexity evaluation.
 
     This is designed to be used in conjunction with the PerplexityWorld at
-    parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
-    to calculate the probability of tokens one token at a time.
+    parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function to
+    calculate the probability of tokens one token at a time.
     """
 
     def __init__(self, opt, shared=None):
-        """Initialize evaluator."""
+        """
+        Initialize evaluator.
+        """
         if opt.get('multigpu'):
             print(
                 '| WARNING: Multi-GPU is not supported for the Perplexity '
@@ -844,7 +883,8 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words.
+        """
+        Return probability distribution over next words.
 
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.

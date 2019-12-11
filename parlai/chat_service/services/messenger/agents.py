@@ -11,7 +11,9 @@ from parlai.core.agents import Agent
 
 
 class MessengerAgent(Agent):
-    """Base class for a person on messenger that can act in a ParlAI world"""
+    """
+    Base class for a person on messenger that can act in a ParlAI world.
+    """
 
     def __init__(self, opt, manager, task_id, messenger_psid, page_id):
         super().__init__(opt)
@@ -34,7 +36,9 @@ class MessengerAgent(Agent):
         self.set_stored_data()
 
     def observe(self, act):
-        """Send an agent a message through the mturk manager"""
+        """
+        Send an agent a message through the mturk manager.
+        """
         if 'payload' in act:
             resp = self.manager.observe_payload(
                 self.id,
@@ -61,11 +65,15 @@ class MessengerAgent(Agent):
             print('{} could not be extracted to an observed message'.format(resp))
 
     def observe_typing_on(self, persona_id=None):
-        """Allow agent to observe typing indicator"""
+        """
+        Allow agent to observe typing indicator.
+        """
         self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
     def put_data(self, message):
-        """Put data into the message queue if it hasn't already been seen"""
+        """
+        Put data into the message queue if it hasn't already been seen.
+        """
         mid = message['message']['mid']
         seq = message['message'].get('seq', None)
         if 'text' not in message['message']:
@@ -97,13 +105,17 @@ class MessengerAgent(Agent):
             self.msg_queue.put(action)
 
     def set_stored_data(self):
-        """Gets agent state data from manager"""
+        """
+        Gets agent state data from manager.
+        """
         agent_state = self.manager.get_agent_state(self.id)
         if agent_state is not None and hasattr(agent_state, 'stored_data'):
             self.stored_data = agent_state.stored_data
 
     def get_new_act_message(self):
-        """Get a new act message if one exists, return None otherwise"""
+        """
+        Get a new act message if one exists, return None otherwise.
+        """
         # Check if person has sent a message
         if not self.msg_queue.empty():
             return self.msg_queue.get()
@@ -122,8 +134,10 @@ class MessengerAgent(Agent):
         pass
 
     def act(self, timeout=None):
-        """Pulls a message from the message queue. If none exist returns None
-        unless the timeout has expired.
+        """
+        Pulls a message from the message queue.
+
+        If none exist returns None unless the timeout has expired.
         """
         # if this is the first act since last sent message start timing
         if self.message_request_time is None:
@@ -160,7 +174,9 @@ class MessengerAgent(Agent):
         return msg
 
     def act_blocking(self, timeout=None):
-        """Repeatedly loop until we retrieve a message from the queue"""
+        """
+        Repeatedly loop until we retrieve a message from the queue.
+        """
         while True:
             msg = self.act(timeout=timeout)
             if msg is not None:
@@ -168,8 +184,9 @@ class MessengerAgent(Agent):
             time.sleep(0.2)
 
     def episode_done(self):
-        """Return whether or not this agent believes the conversation to
-        be done"""
+        """
+        Return whether or not this agent believes the conversation to be done.
+        """
         return self.manager.shutting_down
 
     def shutdown(self):

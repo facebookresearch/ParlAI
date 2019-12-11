@@ -13,7 +13,8 @@ import torch.nn as nn
 
 
 class Seq2seqAgent(TorchGeneratorAgent):
-    """Agent which takes an input sequence and produces an output sequence.
+    """
+    Agent which takes an input sequence and produces an output sequence.
 
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
@@ -33,7 +34,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument(
             '-hs',
@@ -137,24 +140,27 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
     @staticmethod
     def model_version():
-        """Return current version of this model, counting up from 0.
+        """
+        Return current version of this model, counting up from 0.
 
-        Models may not be backwards-compatible with older versions.
-        Version 1 split from version 0 on Aug 29, 2018.
-        Version 2 split from version 1 on Nov 13, 2018
-        To use version 0, use --model legacy:seq2seq:0
-        To use version 1, use --model legacy:seq2seq:1
-        (legacy agent code is located in parlai/agents/legacy_agents).
+        Models may not be backwards-compatible with older versions. Version 1 split from
+        version 0 on Aug 29, 2018. Version 2 split from version 1 on Nov 13, 2018 To use
+        version 0, use --model legacy:seq2seq:0 To use version 1, use --model
+        legacy:seq2seq:1 (legacy agent code is located in parlai/agents/legacy_agents).
         """
         return 2
 
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
         super().__init__(opt, shared)
         self.id = 'Seq2Seq'
 
     def build_model(self, states=None):
-        """Initialize model, override to change model setup."""
+        """
+        Initialize model, override to change model setup.
+        """
         opt = self.opt
         if not states:
             states = {}
@@ -204,12 +210,18 @@ class Seq2seqAgent(TorchGeneratorAgent):
             return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
 
     def batchify(self, *args, **kwargs):
-        """Override batchify options for seq2seq."""
+        """
+        Override batchify options for seq2seq.
+        """
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
     def state_dict(self):
-        """Get the model states for saving. Overriden to include longest_label"""
+        """
+        Get the model states for saving.
+
+        Overriden to include longest_label
+        """
         states = super().state_dict()
         if hasattr(self.model, 'module'):
             states['longest_label'] = self.model.module.longest_label
@@ -219,7 +231,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
         return states
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
         self.model.load_state_dict(states['model'])

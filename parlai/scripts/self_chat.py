@@ -35,6 +35,12 @@ def setup_args(parser=None):
         default=True,
         help='Create interactive version of task',
     )
+    parser.add_argument(
+        '--selfchat-max-turns',
+        type=int,
+        default=10,
+        help="The number of dialogue turns before self chat ends.",
+    )
     parser.add_argument('--outfile', type=str, default='/tmp/selfchat.json')
     parser.add_argument(
         '--format', type=str, default='json', choices={'parlai', 'json'}
@@ -83,11 +89,13 @@ def self_chat(opt, print_parser=None):
         logger.log(world)
 
         if opt.get('display_examples'):
-            print("---")
             print(world.display())
         if log_time.time() > log_every_n_secs:
             text = log_time.log(cnt, max_cnt)
             print(text)
+
+    if opt.get('display_examples'):
+        print('-- end of episode --')
 
     logger.write(opt['outfile'], opt['format'])
 

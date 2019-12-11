@@ -40,7 +40,9 @@ class StackedBRNN(nn.Module):
             )
 
     def forward(self, x, x_mask):
-        """Can choose to either handle or ignore variable length sequences.
+        """
+        Can choose to either handle or ignore variable length sequences.
+
         Always handle padding in eval.
         """
         # No padding necessary.
@@ -53,7 +55,9 @@ class StackedBRNN(nn.Module):
         return self._forward_unpadded(x, x_mask)
 
     def _forward_unpadded(self, x, x_mask):
-        """Faster encoding that ignores any padding."""
+        """
+        Faster encoding that ignores any padding.
+        """
         # Transpose batch and sequence dims
         x = x.transpose(0, 1).contiguous()
 
@@ -86,8 +90,9 @@ class StackedBRNN(nn.Module):
         return output
 
     def _forward_padded(self, x, x_mask):
-        """Slower (significantly), but more precise,
-        encoding that handles padding."""
+        """
+        Slower (significantly), but more precise, encoding that handles padding.
+        """
         # Compute sorted sequence lengths
         lengths = x_mask.data.eq(0).long().sum(1).squeeze()
         _, idx_sort = torch.sort(lengths, dim=0, descending=True)
@@ -142,7 +147,9 @@ class StackedBRNN(nn.Module):
 
 
 class SeqAttnMatch(nn.Module):
-    """Given sequences X and Y, match sequence Y to each element in X.
+    """
+    Given sequences X and Y, match sequence Y to each element in X.
+
     * o_i = sum(alpha_j * y_j) for i in X
     * alpha_j = softmax(y_j * x_i)
     """
@@ -155,7 +162,9 @@ class SeqAttnMatch(nn.Module):
             self.linear = None
 
     def forward(self, x, y, y_mask):
-        """Input shapes:
+        """
+        Input shapes:
+
             x = batch * len1 * h
             y = batch * len2 * h
             y_mask = batch * len2
@@ -189,7 +198,9 @@ class SeqAttnMatch(nn.Module):
 
 
 class BilinearSeqAttn(nn.Module):
-    """A bilinear attention layer over a sequence X w.r.t y:
+    """
+    A bilinear attention layer over a sequence X w.r.t y:
+
     * o_i = softmax(x_i'Wy) for x_i in X.
 
     Optionally don't normalize output weights.
@@ -226,7 +237,9 @@ class BilinearSeqAttn(nn.Module):
 
 
 class LinearSeqAttn(nn.Module):
-    """Self attention over a sequence:
+    """
+    Self attention over a sequence:
+
     * o_i = softmax(Wx_i) for x_i in X.
     """
 
@@ -252,7 +265,9 @@ class LinearSeqAttn(nn.Module):
 
 
 def uniform_weights(x, x_mask):
-    """Return uniform weights over non-masked input."""
+    """
+    Return uniform weights over non-masked input.
+    """
     alpha = Variable(torch.ones(x.size(0), x.size(1)))
     if x.data.is_cuda:
         alpha = alpha.cuda()

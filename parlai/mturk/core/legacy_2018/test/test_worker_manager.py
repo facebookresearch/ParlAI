@@ -33,7 +33,9 @@ FAKE_ID = 'BOGUS'
 
 
 class TestWorkerState(unittest.TestCase):
-    """Various unit tests for the WorkerState class"""
+    """
+    Various unit tests for the WorkerState class.
+    """
 
     def setUp(self):
         self.work_state_1 = WorkerState(TEST_WORKER_ID_1, 10)
@@ -52,14 +54,18 @@ class TestWorkerState(unittest.TestCase):
         self.mturk_manager.shutdown()
 
     def test_worker_state_init(self):
-        '''Test proper initialization of worker states'''
+        """
+        Test proper initialization of worker states.
+        """
         self.assertEqual(self.work_state_1.worker_id, TEST_WORKER_ID_1)
         self.assertEqual(self.work_state_2.worker_id, TEST_WORKER_ID_2)
         self.assertEqual(self.work_state_1.disconnects, 10)
         self.assertEqual(self.work_state_2.disconnects, 0)
 
     def test_worker_state_agent_management(self):
-        '''Test public state management methods of worker_state'''
+        """
+        Test public state management methods of worker_state.
+        """
         agent_1 = MTurkAgent(
             self.opt,
             self.mturk_manager,
@@ -122,7 +128,9 @@ class TestWorkerState(unittest.TestCase):
 
 
 class TestWorkerManager(unittest.TestCase):
-    """Various unit tests for the WorkerManager class"""
+    """
+    Various unit tests for the WorkerManager class.
+    """
 
     def setUp(self):
         disconnect_path = os.path.join(parent_dir, 'disconnect-test.pickle')
@@ -153,7 +161,9 @@ class TestWorkerManager(unittest.TestCase):
             os.remove(disconnect_path)
 
     def test_private_create_agent(self):
-        '''Check create agent method used internally in worker_manager'''
+        """
+        Check create agent method used internally in worker_manager.
+        """
         test_agent = self.worker_manager._create_agent(
             TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1
         )
@@ -163,7 +173,9 @@ class TestWorkerManager(unittest.TestCase):
         self.assertEqual(test_agent.assignment_id, TEST_ASSIGNMENT_ID_1)
 
     def test_agent_task_management(self):
-        '''Ensure agents and tasks have proper bookkeeping'''
+        """
+        Ensure agents and tasks have proper bookkeeping.
+        """
         self.worker_manager.assign_task_to_worker(
             TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1
         )
@@ -228,7 +240,9 @@ class TestWorkerManager(unittest.TestCase):
         )
 
     def test_shutdown(self):
-        '''Ensure shutdown clears required resources'''
+        """
+        Ensure shutdown clears required resources.
+        """
         self.worker_manager.save_disconnects = mock.MagicMock()
         self.worker_manager.un_time_block_workers = mock.MagicMock()
         self.worker_manager.shutdown()
@@ -244,7 +258,9 @@ class TestWorkerManager(unittest.TestCase):
         )
 
     def test_time_blocks(self):
-        '''Check to see if time blocking and clearing works'''
+        """
+        Check to see if time blocking and clearing works.
+        """
         self.mturk_manager.soft_block_worker = mock.MagicMock()
         self.mturk_manager.un_soft_block_worker = mock.MagicMock()
 
@@ -337,9 +353,10 @@ class TestWorkerManager(unittest.TestCase):
         worker_manager2.shutdown()
 
     def test_conversation_management(self):
-        '''Tests handling conversation state, moving agents to the correct
-        conversations, and disconnecting one worker in an active convo
-        '''
+        """
+        Tests handling conversation state, moving agents to the correct conversations,
+        and disconnecting one worker in an active convo.
+        """
         self.worker_manager.assign_task_to_worker(
             TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1
         )

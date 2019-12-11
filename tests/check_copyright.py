@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -15,6 +15,7 @@ COPYRIGHT = [
     "This source code is licensed under the MIT license found in the",
     "LICENSE file in the root directory of this source tree.",
 ]
+PYTHON_SHEBANG = '#!/usr/bin/env python3'
 
 
 def main():
@@ -35,14 +36,17 @@ def main():
             # skip a few things we don't have the copyright on
             continue
 
-        for i, msg in enumerate(COPYRIGHT):
-            if "mlb_vqa" in fn and i < 2:
+        for i, msg in enumerate(COPYRIGHT, 1):
+            if "mlb_vqa" in fn and i < 3:
                 # very special exception for mlb_vqa
                 continue
 
             if msg not in src:
-                print('{} missing copyright "{}"'.format(fn, msg))
+                print(f'{fn}:{i}: Missing copyright "{msg}"')
                 allgood = False
+
+        if fn.endswith('.py') and not src.startswith(PYTHON_SHEBANG):
+            print(f'{fn}:1: Bad python3 shebang, use "{PYTHON_SHEBANG}"')
 
     if not allgood:
         sys.exit(1)
