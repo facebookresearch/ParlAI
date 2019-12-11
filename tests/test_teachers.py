@@ -46,7 +46,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         Test that, with no images loaded, all examples are different.
         """
-        self.test_display_output('no_image_model')
+        self._test_display_output('no_image_model')
 
     @testing_utils.skipUnlessTorch
     @testing_utils.skipUnlessGPU
@@ -54,7 +54,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         Test that, with pre-loaded image features, all examples are different.
         """
-        self.test_display_output('resnet152')
+        self._test_display_output('resnet152')
 
 
 if __name__ == '__main__':
