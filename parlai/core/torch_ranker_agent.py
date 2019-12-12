@@ -10,6 +10,7 @@ Torch Ranker Agents provide functionality for building ranking models.
 See the TorchRankerAgent tutorial for examples.
 """
 
+from typing import Dict, Any
 from abc import abstractmethod
 from itertools import islice
 import os
@@ -18,6 +19,8 @@ import random
 
 import torch
 
+
+from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
@@ -149,15 +152,16 @@ class TorchRankerAgent(TorchAgent):
             help='K used in Top K sampling inference, when selected',
         )
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
         super().__init__(opt, shared)
 
+        states: Dict[str, Any]
         if shared:
-            states = None
+            states = {}
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here

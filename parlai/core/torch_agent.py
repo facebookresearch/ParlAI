@@ -17,6 +17,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+from typing import Dict, Any
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -27,6 +28,7 @@ import os
 import torch
 from torch import optim
 
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
@@ -645,7 +647,7 @@ class TorchAgent(ABC, Agent):
 
         cls.dictionary_class().add_cmdline_args(argparser)
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         """
         Initialize agent.
         """
@@ -679,7 +681,7 @@ class TorchAgent(ABC, Agent):
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
-            self.metrics = {}
+            self.metrics: Dict[str, Any] = {}
             # gradient norms
             self.metrics['gnorm'] = 0.0
             # gradient clipping rate
@@ -701,7 +703,7 @@ class TorchAgent(ABC, Agent):
         self.id = type(self).__name__.replace("Agent", "")
 
         # now set up any fields that all instances may need
-        self.EMPTY = torch.LongTensor([])
+        self.EMPTY = torch.zeros(0, dtype=torch.long)
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
@@ -755,7 +757,7 @@ class TorchAgent(ABC, Agent):
             d[self.P2_TOKEN] = 999_999_998
         return d
 
-    def _get_init_model(self, opt, shared):
+    def _get_init_model(self, opt: Opt, shared):
         """
         Get model file to initialize with.
 
@@ -1602,6 +1604,7 @@ class TorchAgent(ABC, Agent):
         # quick check everything is in order
         self._validate_self_observe_invariants()
 
+        assert self.observation is not None
         if self.observation['episode_done']:
             # oh this was the last example in the episode. reset the history
             self.history.reset()
@@ -1760,7 +1763,7 @@ class TorchAgent(ABC, Agent):
         """
         self.model.load_state_dict(state_dict)
 
-    def load(self, path):
+    def load(self, path: str) -> Dict[str, Any]:
         """
         Return opt and model states.
 

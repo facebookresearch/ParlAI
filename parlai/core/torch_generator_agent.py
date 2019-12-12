@@ -26,6 +26,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, check_synced_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import round_sigfigs, warn_once
@@ -238,7 +239,7 @@ class TorchGeneratorAgent(TorchAgent):
     """
 
     @classmethod
-    def upgrade_opt(cls, opt_from_disk):
+    def upgrade_opt(cls, opt_from_disk: Opt):
         # call the parent upgrades
         opt_from_disk = super(TorchGeneratorAgent, cls).upgrade_opt(opt_from_disk)
 
@@ -312,7 +313,7 @@ class TorchGeneratorAgent(TorchAgent):
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         init_model, is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 

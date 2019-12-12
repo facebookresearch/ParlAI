@@ -9,6 +9,7 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
+from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
@@ -92,7 +93,7 @@ class TorchClassifierAgent(TorchAgent):
             help='loads the list of classes from a file',
         )
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
