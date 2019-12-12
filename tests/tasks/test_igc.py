@@ -21,7 +21,7 @@ def product_dict(dictionary):
 VARIANT_TO_EX_EP_COUNTS = {
     'IGC': [(2902, 4353), (324, 486), (5182, 7773)],
     'ResponseOnly': [(1451, 1451), (162, 162), (2591, 2591)],
-    'QuestionOnly': [(1451, 1451), (162, 162), (2591, 2591)]
+    'QuestionOnly': [(1451, 1451), (162, 162), (2591, 2591)],
 }
 
 
@@ -31,8 +31,12 @@ class TestIGC(unittest.TestCase):
     Basic tests for IGC Teacher to ensure it works for every given variant.
     """
 
-    def run_display_output(self, opt: Dict[str, Union[str, bool]], ep_ex_counts: List[Tuple[int, int]]):
-        """Run display output, """
+    def run_display_output(
+        self, opt: Dict[str, Union[str, bool]], ep_ex_counts: List[Tuple[int, int]]
+    ):
+        """
+        Run display output,
+        """
         output = testing_utils.display_data(opt)
         stats = [o.split('\n')[-2] for o in output]
 
@@ -40,11 +44,13 @@ class TestIGC(unittest.TestCase):
             self.assertEqual(
                 out,
                 f'[ loaded {ep} episodes with a total of {ex} examples ]',
-                output[i]
+                output[i],
             )
 
     def test_display_data(self):
-        """Test all variants of IGC with a few standard image modes."""
+        """
+        Test all variants of IGC with a few standard image modes.
+        """
         igc_multi_ref_opts = [True, False]
         image_modes = ['no_image_model', 'ascii']
 
@@ -54,18 +60,17 @@ class TestIGC(unittest.TestCase):
                     opt = {
                         'task': f'igc:{task}',
                         'igc_multi_ref': igc_multi_ref,
-                        'image_mode': image_mode
+                        'image_mode': image_mode,
                     }
                     self.run_display_output(opt, ep_ex_counts)
 
     @testing_utils.skipUnlessGPU
     def test_display_data_resnet(self):
-        """Test with resnet image mode."""
+        """
+        Test with resnet image mode.
+        """
         for task, ep_ex_counts in VARIANT_TO_EX_EP_COUNTS.items():
-            opt = {
-                'task': f'igc:{task}',
-                'image_mode': 'resnet152'
-            }
+            opt = {'task': f'igc:{task}', 'image_mode': 'resnet152'}
             self.run_display_output(opt, ep_ex_counts)
 
 

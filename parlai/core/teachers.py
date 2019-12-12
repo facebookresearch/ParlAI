@@ -1327,21 +1327,22 @@ class AbstractImageTeacher(FixedDialogTeacher):
     path as per get_image_features_path().
 
     Important methods and properties (override in subclass if needed):
-    - get_data_path(): where data file is found (default: <datapath>/<task>)
-    - get_image_path(): where images found (default: <datapath>/<task>/images)
-    - get_image_features_path(): dict of image features (default:
+    -get_data_path(): where data file is found (default: <datapath>/<task>)
+    -get_image_path(): where images found (default: <datapath>/<task>/images)
+    -get_image_features_path(): dict of image features (default:
       <datapath>/<task>/image_features)
-    - @property image_id_key: which key in data file objects represents image_id
-    - @property text_key: which key in data file objects represents text
+    -@property image_id_key: which key in data file objects represents image_id
+    -@property text_key: which key in data file objects represents text
+
     Note: Assumes data files are named <dt>.json
 
-    @abstractmethod image_id_to_image_path() must be implemented in
-    subclass
+    @abstractmethod image_id_to_image_path() must be implemented in subclass
 
     Example with the key defaults (but the keys can be customized):
-    obs = {'text': <caption>,
+    obs = {
+        'text': <caption>,
         'image': <image features if specified else image>
-        }
+    }
     """
 
     def __init__(self, opt, shared=None):
@@ -1660,7 +1661,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         if self.image_mode in ['raw', 'ascii']:
             try:
-                image = self.image_loader.load(self.image_id_to_image_path(example['image_id']))
+                image = self.image_loader.load(
+                    self.image_id_to_image_path(example['image_id'])
+                )
             except FileNotFoundError:
                 # No Image Here
                 image = None

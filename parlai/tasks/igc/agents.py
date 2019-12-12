@@ -28,11 +28,15 @@ from parlai.core.teachers import AbstractImageTeacher
 
 
 class IGCTeacher(AbstractImageTeacher):
-    """Teacher for IGC Task.
+    """
+    Teacher for IGC Task.
 
     See https://arxiv.org/abs/1701.08251 for more details
     """
-    def __init__(self: AbstractImageTeacher, opt: Dict[str, Any], shared: Dict[str, Any] = None):
+
+    def __init__(
+        self: AbstractImageTeacher, opt: Dict[str, Any], shared: Dict[str, Any] = None
+    ):
         self.blank_image_id = '0000'
         super().__init__(opt, shared)
         if shared is not None:
@@ -43,7 +47,11 @@ class IGCTeacher(AbstractImageTeacher):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Include arg. for multi-reference labels."""
+        """
+        Include arg.
+
+        for multi-reference labels.
+        """
         AbstractImageTeacher.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('IGC Arguments')
         agent.add_argument(
@@ -54,7 +62,8 @@ class IGCTeacher(AbstractImageTeacher):
         )
 
     def image_id_to_image_path(self, image_id: str) -> str:
-        """Return image path given image id.
+        """
+        Return image path given image id.
 
         As this function is used in building the image features, and some of the
 
@@ -82,15 +91,16 @@ class IGCTeacher(AbstractImageTeacher):
         return data_path
 
     def num_episodes(self) -> int:
-        """Number of episodes.
+        """
+        Number of episodes.
 
-        Iterate through each episode twice, playing each side of the conversation
-        once.
+        Iterate through each episode twice, playing each side of the conversation once.
         """
         return 2 * len(self.data)
 
     def num_examples(self) -> int:
-        """Number of examples.
+        """
+        Number of examples.
 
         There are three turns of dialogue in the IGC task -
         Context, Question, Response.
@@ -100,7 +110,9 @@ class IGCTeacher(AbstractImageTeacher):
         return 3 * len(self.data)
 
     def get(self, episode_idx: int, entry_idx: int = 0) -> dict:
-        """Override to handle corrupt images and multi-reference labels."""
+        """
+        Override to handle corrupt images and multi-reference labels.
+        """
         entry_idx *= 2
 
         if episode_idx >= len(self.data):
@@ -132,7 +144,9 @@ class IGCTeacher(AbstractImageTeacher):
         return action
 
     def load_data(self, data_path: str, opt: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Override to load CSV files."""
+        """
+        Override to load CSV files.
+        """
 
         dt = opt['datatype'].split(':')[0]
         dt_str = 'test' if dt == 'test' else 'val'
@@ -143,7 +157,10 @@ class IGCTeacher(AbstractImageTeacher):
                 'https://www.microsoft.com/en-us/download/details.aspx?id=55324. '
                 'Then, make sure to put the two .csv files in ParlAI/data/igc/'
             )
-        if not os.path.exists(self.get_image_path(opt)) or len(os.listdir(self.get_image_path(opt))) <= 1:
+        if (
+            not os.path.exists(self.get_image_path(opt))
+            or len(os.listdir(self.get_image_path(opt))) <= 1
+        ):
             self._download_images(opt)
 
         self.data = []
@@ -160,9 +177,9 @@ class IGCTeacher(AbstractImageTeacher):
 
         if dt == 'train':
             # Take first 90% of valid set as train
-            self.data = self.data[:int(len(self.data) * .9)]
+            self.data = self.data[: int(len(self.data) * 0.9)]
         elif dt == 'valid':
-            self.data = self.data[int(len(self.data) * .9):]
+            self.data = self.data[int(len(self.data) * 0.9) :]
 
         self.valid_image_ids = []
         for d in self.data:
@@ -174,7 +191,9 @@ class IGCTeacher(AbstractImageTeacher):
         return self.data
 
     def _download_images(self, opt: Dict[str, Any]):
-        """Download available IGC images."""
+        """
+        Download available IGC images.
+        """
         urls = []
         ids = []
         for dt in ['test', 'val']:
@@ -212,7 +231,9 @@ class IGCTeacher(AbstractImageTeacher):
 
 
 class IGCOneSideTeacher(ABC, IGCTeacher):
-    """Override to only return one side of the conversation."""
+    """
+    Override to only return one side of the conversation.
+    """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
@@ -233,16 +254,22 @@ class IGCOneSideTeacher(ABC, IGCTeacher):
 
     @abstractmethod
     def get_label_key(self) -> str:
-        """Return key into data dictionary for the label."""
+        """
+        Return key into data dictionary for the label.
+        """
         pass
 
     @abstractmethod
     def get_text(self, data) -> str:
-        """Return text for an example."""
+        """
+        Return text for an example.
+        """
         pass
 
     def get(self, episode_idx: int, entry_idx: int = 0) -> Dict[str, Any]:
-        """Override to handle one-sided conversation."""
+        """
+        Override to handle one-sided conversation.
+        """
         data = self.data[episode_idx]
 
         image_id = data[self.image_id_key]
@@ -268,7 +295,9 @@ class IGCOneSideTeacher(ABC, IGCTeacher):
 
 
 class ResponseOnlyTeacher(IGCOneSideTeacher):
-    """Responses Only."""
+    """
+    Responses Only.
+    """
 
     def get_label_key(self) -> str:
         return 'response'
@@ -278,7 +307,9 @@ class ResponseOnlyTeacher(IGCOneSideTeacher):
 
 
 class QuestionOnlyTeacher(IGCOneSideTeacher):
-    """Questions Only."""
+    """
+    Questions Only.
+    """
 
     def get_label_key(self) -> str:
         return 'question'
