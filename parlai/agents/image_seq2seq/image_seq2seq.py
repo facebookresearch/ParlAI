@@ -6,7 +6,6 @@
 """
 Image+Seq2Seq Agent.
 """
-from fairseq import bleu
 import torch
 from typing import Dict, List, Tuple
 
@@ -19,8 +18,15 @@ from parlai.utils.misc import round_sigfigs, Opt
 
 try:
     from nltk.translate import bleu_score as nltkbleu
+
 except ImportError:
     nltkbleu = None
+
+try:
+    from fairseq import bleu as fairseq_bleu
+
+except ImportError:
+    fairseq_bleu = None
 
 TOKEN_IMAGE = '__image__'
 TOKEN_NO_IMAGE = '__no_image__'
@@ -45,9 +51,12 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
 
     def _init_bleu_scorers(self):
         if not hasattr(self, 'fairseq_bleu_scorer'):
-            self.fairseq_bleu_scorer = bleu.Scorer(
-                self.NULL_IDX, self.END_IDX, self.dict[self.dict.unk_token]
-            )
+            if fairseq_bleu is None:
+                self.fairseq_bleu_scorer = None
+            else:
+                self.fairseq_bleu_scorer = fairseq_bleu.Scorer(
+                    self.NULL_IDX, self.END_IDX, self.dict[self.dict.unk_token]
+                )
         self.nltk_bleu = {f'bleu-{i}': 0 for i in range(1, 5)}
         self.nltk_bleu_cnts = {f'bleu-{i}': 0 for i in range(1, 5)}
 
@@ -252,7 +261,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         Override to compute correct BLEU scores.
         """
         output = super().eval_step(batch)
-        if self.skip_generation and not self.compute_tokenized_bleu:
+        if output is None or (self.skip_generation and not self.compute_tokenized_bleu):
             return output
 
         texts = output.text
@@ -292,6 +301,8 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
 
         :param batch:
         """
+        if fairseq_bleu is None:
+            return 0
         aa = torch.IntTensor(1)
         for i, t in enumerate(texts):
             self.fairseq_bleu_scorer.add(
