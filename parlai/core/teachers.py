@@ -1327,12 +1327,12 @@ class AbstractImageTeacher(FixedDialogTeacher):
     path as per get_image_features_path().
 
     Important methods and properties (override in subclass if needed):
-    -get_data_path(): where data file is found (default: <datapath>/<task>)
-    -get_image_path(): where images found (default: <datapath>/<task>/images)
-    -get_image_features_path(): dict of image features (default:
+    - get_data_path(): where data file is found (default: <datapath>/<task>)
+    - get_image_path(): where images found (default: <datapath>/<task>/images)
+    - get_image_features_path(): dict of image features (default:
       <datapath>/<task>/image_features)
-    -@property image_id_key: which key in data file objects represents image_id
-    -@property text_key: which key in data file objects represents text
+    - @property image_id_key: which key in data file objects represents image_id
+    - @property text_key: which key in data file objects represents text
 
     Note: Assumes data files are named <dt>.json
 
