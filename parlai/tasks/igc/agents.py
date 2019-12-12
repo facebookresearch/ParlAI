@@ -90,6 +90,20 @@ class IGCTeacher(AbstractImageTeacher):
         data_path = os.path.join(opt['datapath'], 'igc')
         return data_path
 
+    def get_image_features_path(self, task, image_model_name, dt):
+        """
+        Override so that subclasses can see same image features.
+        """
+        # In default implementation, self.data_path already has task name added
+        image_features_path = os.path.join(self.data_path, 'image_features')
+
+        if not os.path.isdir(image_features_path):
+            os.makedirs(image_features_path)
+
+        return os.path.join(
+            image_features_path, '%s_%s_features_dict' % (image_model_name, dt)
+        )
+
     def num_episodes(self) -> int:
         """
         Number of episodes.
