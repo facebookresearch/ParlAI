@@ -275,12 +275,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         Override to include custom BLEU computations.
         """
         metrics = super().report()
-        metrics.update(
-            {
-                'fairseq_bleu': 'N/A',
-                'nltk_bleu_unnormalized': 'N/A'
-            }
-        )
+        metrics.update({'fairseq_bleu': 'N/A', 'nltk_bleu_unnormalized': 'N/A'})
         if not self.skip_generation and self.compute_tokenized_bleu:
             if fairseq_bleu is not None:
                 try:

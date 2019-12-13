@@ -9,6 +9,7 @@ import parlai.utils.testing as testing_utils
 
 try:
     import torch
+
     version = float('.'.join(torch.__version__.split('.')[:2]))
     TORCH_AVAILABLE = version >= 1.2
 except ImportError:
