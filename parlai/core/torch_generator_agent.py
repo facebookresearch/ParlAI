@@ -746,15 +746,17 @@ class TorchGeneratorAgent(TorchAgent):
         else:
             dev = batch.label_vec.device
 
-        bsz = len(batch.text_lengths) if batch.text_lengths is not None else len(batch.image)
+        bsz = (
+            len(batch.text_lengths)
+            if batch.text_lengths is not None
+            else len(batch.image)
+        )
         if batch.text_vec is not None:
             beams = [
                 self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
             ]
         else:
-            beams = [
-                self._treesearch_factory(dev) for _ in range(bsz)
-            ]
+            beams = [self._treesearch_factory(dev) for _ in range(bsz)]
 
         # repeat encoder outputs and decoder inputs
         decoder_input = (
