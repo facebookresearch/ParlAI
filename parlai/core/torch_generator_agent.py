@@ -552,7 +552,10 @@ class TorchGeneratorAgent(TorchAgent):
         """
         Train on a single batch of examples.
         """
-        batchsize = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
+        elif batch.image is not None:
+            batchsize = len(batch.image)
         # helps with memory usage
         self._init_cuda_buffer(batchsize, self.truncate or 256)
         self.model.train()
@@ -601,9 +604,12 @@ class TorchGeneratorAgent(TorchAgent):
         """
         Evaluate a single batch of examples.
         """
-        if batch.text_vec is None:
+        if batch.text_vec is None and batch.image is None:
             return
-        bsz = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            bsz = batch.text_vec.size(0)
+        else:
+            bsz = len(batch.image)
         self.model.eval()
         cand_scores = None
         token_losses = None
@@ -735,12 +741,20 @@ class TorchGeneratorAgent(TorchAgent):
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
         encoder_states = model.encoder(*self._model_input(batch))
-        dev = batch.text_vec.device
+        if batch.text_vec is not None:
+            dev = batch.text_vec.device
+        else:
+            dev = batch.label_vec.device
 
-        bsz = len(batch.text_lengths)
-        beams = [
-            self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
-        ]
+        bsz = len(batch.text_lengths) if batch.text_lengths is not None else len(batch.image)
+        if batch.text_vec is not None:
+            beams = [
+                self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
+            ]
+        else:
+            beams = [
+                self._treesearch_factory(dev) for _ in range(bsz)
+            ]
 
         # repeat encoder outputs and decoder inputs
         decoder_input = (
