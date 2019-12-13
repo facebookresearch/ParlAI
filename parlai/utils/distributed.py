@@ -230,7 +230,7 @@ def sync_object(data, max_size=16384):
     return data
 
 
-def sync_parameters(model: torch.nn.Module):
+def sync_parameters(model: torch.nn.Module) -> bool:
     """
     Sync all parameters across all workers are the same.
 
@@ -246,7 +246,9 @@ def sync_parameters(model: torch.nn.Module):
     # syncrhonize all the parameters
     with torch.no_grad():
         for p in model.parameters():
-            p.data.set_(dist.all_reduce(p.data if is_primary_worker() else 0 * p.data))
+            if not is_primary_worker():
+                p.data.zero_()
+            dist.all_reduce(p.data)
 
     # double check everything synced
     norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
