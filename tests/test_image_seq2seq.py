@@ -7,6 +7,13 @@
 import unittest
 import parlai.utils.testing as testing_utils
 
+try:
+    import torch
+    version = float('.'.join(torch.__version__.split('.')[:2]))
+    TORCH_AVAILABLE = version >= 1.2
+except ImportError:
+    TORCH_AVAILABLE = False
+
 BASE_ARGS = {
     # Model Args
     'model': 'image_seq2seq',
@@ -53,6 +60,7 @@ EVAL_ARGS = {
 }
 
 
+@unittest.skipUnless(TORCH_AVAILABLE, 'Must use torch 1.2 or above')
 class TestImageSeq2Seq(unittest.TestCase):
     """
     Unit tests for the ImageSeq2Seq Agent.
