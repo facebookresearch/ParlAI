@@ -24,6 +24,7 @@ def _forced_parse(parser, opt):
     return popt
 
 
+@testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
     def _distributed_train_model(self, opt):
         with testing_utils.capture_output() as output:
