@@ -275,24 +275,32 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         Override to include custom BLEU computations.
         """
         metrics = super().report()
+        metrics.update(
+            {
+                'fairseq_bleu': 'N/A',
+                'nltk_bleu_unnormalized': 'N/A'
+            }
+        )
         if not self.skip_generation and self.compute_tokenized_bleu:
-            try:
-                fairseq_bleu_scores = {
-                    k: self.fairseq_bleu_scorer.result_string(order=k)
-                    for k in range(1, 5)
-                }
-            except ZeroDivisionError:
-                # some preds are REAL bad
-                fairseq_bleu_scores = {k: 0 for k in range(1, 5)}
+            if fairseq_bleu is not None:
+                try:
+                    fairseq_bleu_scores = {
+                        k: self.fairseq_bleu_scorer.result_string(order=k)
+                        for k in range(1, 5)
+                    }
+                except ZeroDivisionError:
+                    # some preds are REAL bad
+                    fairseq_bleu_scores = {k: 0 for k in range(1, 5)}
 
-            metrics['fairseq_bleu'] = {
-                k: v[v.index('= ') : v.index(',')]
-                for k, v in fairseq_bleu_scores.items()
-            }
-            metrics['nltk_bleu_unnormalized'] = {
-                k: round_sigfigs(v / self.nltk_bleu_cnts[k], 4)
-                for k, v in self.nltk_bleu.items()
-            }
+                metrics['fairseq_bleu'] = {
+                    k: v[v.index('= ') : v.index(',')]
+                    for k, v in fairseq_bleu_scores.items()
+                }
+            if nltkbleu is not None:
+                metrics['nltk_bleu_unnormalized'] = {
+                    k: round_sigfigs(v / self.nltk_bleu_cnts[k], 4)
+                    for k, v in self.nltk_bleu.items()
+                }
         return metrics
 
     def _compute_fairseq_bleu(self, batch: Batch, texts: List[str]):
