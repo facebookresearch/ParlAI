@@ -31,7 +31,7 @@ class TestIGC(unittest.TestCase):
     Basic tests for IGC Teacher to ensure it works for every given variant.
     """
 
-    def run_display_output(
+    def _run_display_output(
         self, opt: Dict[str, Union[str, bool]], ep_ex_counts: List[Tuple[int, int]]
     ):
         """
@@ -62,7 +62,7 @@ class TestIGC(unittest.TestCase):
                         'igc_multi_ref': igc_multi_ref,
                         'image_mode': image_mode,
                     }
-                    self.run_display_output(opt, ep_ex_counts)
+                    self._run_display_output(opt, ep_ex_counts)
 
     @testing_utils.skipUnlessGPU
     def test_display_data_resnet(self):
@@ -71,7 +71,7 @@ class TestIGC(unittest.TestCase):
         """
         for task, ep_ex_counts in VARIANT_TO_EX_EP_COUNTS.items():
             opt = {'task': f'igc:{task}', 'image_mode': 'resnet152'}
-            self.run_display_output(opt, ep_ex_counts)
+            self._run_display_output(opt, ep_ex_counts)
 
 
 if __name__ == '__main__':

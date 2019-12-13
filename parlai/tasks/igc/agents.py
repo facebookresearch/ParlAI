@@ -24,18 +24,20 @@ from PIL import Image
 from typing import List, Dict, Any
 
 from parlai.core.build_data import download_multiprocess
+from parlai.core.params import Opt
 from parlai.core.teachers import AbstractImageTeacher
+from parlai.utils.typing import ParlAITypes as PT
 
 
 class IGCTeacher(AbstractImageTeacher):
     """
-    Teacher for IGC Task.
+    Teacher for Image Grounded Conversations (IGC) Task.
 
     See https://arxiv.org/abs/1701.08251 for more details
     """
 
     def __init__(
-        self: AbstractImageTeacher, opt: Dict[str, Any], shared: Dict[str, Any] = None
+        self: AbstractImageTeacher, opt: Opt, shared: PT.TShared = None
     ):
         self.blank_image_id = '0000'
         super().__init__(opt, shared)
@@ -52,7 +54,7 @@ class IGCTeacher(AbstractImageTeacher):
 
         for multi-reference labels.
         """
-        AbstractImageTeacher.add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('IGC Arguments')
         agent.add_argument(
             '--igc-multi-ref',
@@ -77,7 +79,7 @@ class IGCTeacher(AbstractImageTeacher):
             image_id = self.blank_image_id
         return os.path.join(self.get_image_path(self.opt), image_id)
 
-    def get_data_path(self, opt: Dict[str, Any]) -> str:
+    def get_data_path(self, opt: Opt) -> str:
         """
         Determines path to the data file.
 
@@ -101,7 +103,7 @@ class IGCTeacher(AbstractImageTeacher):
             os.makedirs(image_features_path)
 
         return os.path.join(
-            image_features_path, '%s_%s_features_dict' % (image_model_name, dt)
+            image_features_path, f'{image_model_name}_{dt}_features_dict'
         )
 
     def num_episodes(self) -> int:
@@ -157,7 +159,7 @@ class IGCTeacher(AbstractImageTeacher):
 
         return action
 
-    def load_data(self, data_path: str, opt: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def load_data(self, data_path: str, opt: Opt) -> List[Dict[str, Any]]:
         """
         Override to load CSV files.
         """
@@ -169,7 +171,9 @@ class IGCTeacher(AbstractImageTeacher):
             raise RuntimeError(
                 'Please download the IGC Dataset from '
                 'https://www.microsoft.com/en-us/download/details.aspx?id=55324. '
-                'Then, make sure to put the two .csv files in ParlAI/data/igc/'
+                'Then, make sure to put the two .csv files in {}'.format(
+                    self.get_data_path(opt)
+                )
             )
         if (
             not os.path.exists(self.get_image_path(opt))
@@ -204,7 +208,7 @@ class IGCTeacher(AbstractImageTeacher):
         self.valid_image_ids = set(self.valid_image_ids)
         return self.data
 
-    def _download_images(self, opt: Dict[str, Any]):
+    def _download_images(self, opt: Opt):
         """
         Download available IGC images.
         """
@@ -238,7 +242,7 @@ class IGCTeacher(AbstractImageTeacher):
                 except OSError:
                     os.remove(img_path)
 
-    def share(self) -> Dict[str, Any]:
+    def share(self) -> PT.TShared:
         shared = super().share()
         shared['valid_image_ids'] = self.valid_image_ids
         return shared
@@ -251,7 +255,7 @@ class IGCOneSideTeacher(ABC, IGCTeacher):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        IGCTeacher.add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('IGCResponseOnly Arguments')
         agent.add_argument(
             '--igc-multi-ref',
