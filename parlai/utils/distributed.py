@@ -232,23 +232,23 @@ def sync_object(data, max_size=16384):
 
 def sync_parameters(model: torch.nn.Module):
     """
-    Check that all parameters across all workers are the same.
+    Sync all parameters across all workers are the same.
 
-    Always returns True, or raises an AssertionError if they are not
-    synchronized.
+    Always returns True, or raises an AssertionError if there was a failure.
 
-    :param torch.nn.Module model: A pytorch model.
-    :return: True
+    :param model: A pytorch model.
+    :return: always True
     """
     if not is_distributed():
         # if things aren't distributed, of course things are in sync
         return True
 
+    # syncrhonize all the parameters
     with torch.no_grad():
         for p in model.parameters():
             p.data.set_(dist.all_reduce(p.data if is_primary_worker() else 0 * p.data))
 
-    # compute the local norm:
+    # double check everything synced
     norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
     all_versions = all_gather_list(norm2)
     if not all(n == norm2 for n in all_versions):
