@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Definitions of general ParlAI types
+Definitions of general ParlAI types.
 """
 from typing import TypeVar
 
