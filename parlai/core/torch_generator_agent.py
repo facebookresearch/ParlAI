@@ -27,7 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.opt import Opt
-from parlai.utils.distributed import is_distributed, check_synced_parameters
+from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.torch import padded_tensor, neginf
@@ -347,7 +347,7 @@ class TorchGeneratorAgent(TorchAgent):
                 self.model.cuda()
                 self.criterion.cuda()
 
-            check_synced_parameters(self.model)
+            sync_parameters(self.model)
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
 
