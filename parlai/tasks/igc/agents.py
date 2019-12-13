@@ -36,9 +36,7 @@ class IGCTeacher(AbstractImageTeacher):
     See https://arxiv.org/abs/1701.08251 for more details
     """
 
-    def __init__(
-        self: AbstractImageTeacher, opt: Opt, shared: PT.TShared = None
-    ):
+    def __init__(self: AbstractImageTeacher, opt: Opt, shared: PT.TShared = None):
         self.blank_image_id = '0000'
         super().__init__(opt, shared)
         if shared is not None:
