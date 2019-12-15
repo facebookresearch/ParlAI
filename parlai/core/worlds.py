@@ -998,16 +998,26 @@ class DynamicBatchWorld(World):
         if not hasattr(world, 'agents'):
             raise TypeError("World doesn't have access to the agents.")
 
-        if opt.get('text_truncate', None) is None:
+        if len(world.agents) != 2:
+            raise AssertionError(
+                "Dynamic batch only works in a fixed dialog world with two agents."
+            )
+
+        if not hasattr(world.agents[1], 'batch_act'):
+            raise TypeError("Model agent doesn't have batch_act.")
+
+        self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
+        if self.truncate is None or self.truncate < 0:
             raise ValueError(
-                'You must use text_truncate in order to use dynamic batching.'
+                'You must use --text-truncate or --truncate in order to use '
+                'dynamic batching.'
             )
 
         # TODO: check to ensure the agent has self_observe
         shared = world.share()
         self.world = world
         # TODO: maybe generalize this
-        self.max_size = opt['text_truncate'] * opt['batchsize']
+        self.max_size = self.truncate * opt['batchsize']
 
         # buffer worlds
         self.worlds = [
@@ -1031,7 +1041,10 @@ class DynamicBatchWorld(World):
         super().reset_metrics()
         self.world.reset_metrics()
         for w in self.worlds:
-            w.reset_mterics()
+            w.reset_metrics()
+
+    def epoch_done(self):
+        return all(w.epoch_done() for w in self.worlds)
 
     def num_examples(self):
         return self.world.num_examples()
@@ -1049,10 +1062,25 @@ class DynamicBatchWorld(World):
         # round up to 4, all things are equal
         return ((n + r - 1) // r) * r
 
+    def _score(self, obs):
+        if 'text_vec' in obs:
+            # note that all examples have a cost that is based on their
+            # nearest multiple of 4. We can therefore mix-and-match
+            # anything with the same cost for increased stochasticity,
+            # while not really wasting much padding.
+            return self._ceil(len(obs['text_vec']))
+        else:
+            return None
+
     def parley(self):
         # first make sure that all the worlds are processed in the queue
+        assert not self.epoch_done()
+        indices = []
         for i in range(self._BUFFER_SIZE):
-            if self._obs[i] is not None:
+            if self._scores[i] is not None:
+                indices.append(i)
+                continue
+            if self.worlds[i].epoch_done():
                 continue
 
             act = self.worlds[i].agents[0].act()
@@ -1064,13 +1092,15 @@ class DynamicBatchWorld(World):
                 # the epoch
                 raise TypeError("This is unexpected.")
 
-            # TODO: generalize this
-            # note that all examples have a cost that is based on their nearest
-            # multiple of 4. We can therefore mix-and-match anything with the same
-            # cost for increased stochasticity, while not really wasting much padding.
-            self._scores[i] = self._ceil(len(obs['text_vec']))
+            self._scores[i] = self._score(obs)
+            if self._scores[i] is not None:
+                indices.append(i)
 
-        indices = list(range(self._BUFFER_SIZE))
+        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+
+        for i in indices:
+            assert self._scores is not None
+
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
         indices = sorted(indices, key=lambda i: (self._scores[i], random.random()))
@@ -1114,15 +1144,17 @@ class DynamicBatchWorld(World):
         batch_obs = self.world.agents[1].batch_act([self._obs[i] for i in batch])
         # batch act, and broadcast the results back to all the models
         acts = self.world.agents[1].batch_act(batch_obs)
-        print(len(acts))
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result
             self.worlds[i].agents[0].observe(act)
             # and that the agent copies saw their own voice
             self.worlds[i].agents[1].self_observe(act)
-            # mark these items as needing to progress to be useful for next parley
-            self._scores[i] = None
-            self._obs[i] = None
+
+            # move these worlds forward
+            act = self.worlds[i].agents[0].act()
+            obs = self.worlds[i].agents[1].observe(act)
+            self._scores[i] = self._score(obs)
+            self._obs[i] = obs
 
         # update metrics
         self.total_parleys += 1

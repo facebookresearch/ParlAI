@@ -181,6 +181,15 @@ class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):
             yield (text, [text], 0, cands), True
 
 
+class VariableLengthTeacher(CandidateTeacher):
+    def build_corpus(self):
+        corpus = super().build_corpus()
+        for i in range(len(corpus)):
+            length = len(corpus[i]) - i % 3
+            corpus[i] = corpus[i][:length]
+        return corpus
+
+
 class CandidateTeacherDataset(Dataset):
     """
     Candidate Teacher, in Pytorch Dataset form.
