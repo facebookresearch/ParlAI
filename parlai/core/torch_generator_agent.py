@@ -60,6 +60,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         super().__init__()
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
+        self.START_IDX = start_idx
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
@@ -90,6 +91,13 @@ class TorchGeneratorModel(nn.Module, ABC):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
+        if (ys[:, 0] == self.START_IDX).any():
+            raise AssertionError(
+                "The Beginning of Sentence token is automatically added to the "
+                "label in decode_forced, but you included it in the label. This means "
+                "your model will have a double BOS token, which is probably not what "
+                "you intended."
+            )
         inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
