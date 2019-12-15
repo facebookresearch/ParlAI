@@ -47,7 +47,7 @@ import random
 import time
 
 from functools import lru_cache
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
@@ -975,6 +975,156 @@ class BatchWorld(World):
         self.world.shutdown()
 
 
+class DynamicBatchWorld(World):
+    def __init__(self, opt: Opt, world: Union[DialogPartnerWorld, MultiWorld]):
+        super().__init__(opt)
+        self.opt = opt
+
+        # size of the buffer we will use to find worlds
+        self._BUFFER_SIZE = 1024
+
+        # agents is a placeholder just for super.reset
+        self.agents = []
+
+        # check some assumptions
+        if isinstance(
+            world, (ExecutableWorld, BatchWorld, HogwildWorld, MultiAgentDialogWorld)
+        ):
+            raise TypeError(
+                'World must be a DialogPartnerWorld or a '
+                'MultiWorld of DialogPartnerWorld'
+            )
+
+        if not hasattr(world, 'agents'):
+            raise TypeError("World doesn't have access to the agents.")
+
+        if opt.get('text_truncate', None) is None:
+            raise ValueError(
+                'You must use text_truncate in order to use dynamic batching.'
+            )
+
+        # TODO: check to ensure the agent has self_observe
+        shared = world.share()
+        self.world = world
+        # TODO: maybe generalize this
+        self.max_size = opt['text_truncate'] * opt['batchsize']
+
+        # buffer worlds
+        self.worlds = [
+            shared['world_class'](opt, None, shared) for _ in range(self._BUFFER_SIZE)
+        ]
+
+        self.reset()
+
+    def reset(self):
+        super().reset()
+        self._obs = [None for _ in range(self._BUFFER_SIZE)]
+        self._scores = [None for _ in range(self._BUFFER_SIZE)]
+
+        self.number_parleys = 0
+        self.total_exs = 0
+        for w in self.worlds:
+            self.world.reset()
+
+    def reset_metrics(self):
+        super().reset_metrics()
+        self.world.reset_metrics()
+
+    def num_examples(self):
+        return self.world.num_examples()
+
+    def num_episodes(self):
+        return self.world.num_episodes()
+
+    def _ceil(self, n, r=4):
+        # round up to 4, all things are equal
+        return ((n + r - 1) // r) * r
+
+    def parley(self):
+        # first make sure that all the worlds are processed in the queue
+        for i in range(self._BUFFER_SIZE):
+            if self._obs[i] is not None:
+                continue
+
+            act = self.worlds[i].agents[0].act()
+            obs = self.worlds[i].agents[1].observe(act)
+            self._obs[i] = obs
+
+            if act is None:
+                # TODO: we might need to do something special here around the end of
+                # the epoch
+                raise TypeError("This is unexpected.")
+
+            # TODO: generalize this
+            self._scores[i] = len(obs['text_vec'])
+
+        indices = list(range(self._BUFFER_SIZE))
+        # sort all the indices by their score, so that we can find similarly lengthed
+        # items in O(1)
+        indices = sorted(indices, key=lambda i: (self._scores[i], random.random()))
+
+        # now let's build the batch
+        batch = []
+
+        # start with a random item. index_index is the lookup into indices, but
+        # index is the actual world.
+        width = 0
+        index_index = random.randint(0, len(indices) - 1)
+
+        # we picked a random spot, but we can get better packing if we start at the
+        # last example with the same score, since we always pick move down to smaller examples.
+        while index_index < len(indices) - 1 and (
+            self._scores[indices[index_index]] == self._scores[indices[index_index + 1]]
+        ):
+            index_index += 1
+
+        # quit early if we eat our full buffer
+        while indices:
+            index = indices[index_index]
+            this_width = self._ceil(self._scores[index])
+            new_width = max(width, this_width)
+            # compute the cost of the new batch
+            new_size = new_width * self._ceil(len(batch) + 1)
+            if new_size <= self.max_size:
+                # cool, this one fits, let's add it
+                width = new_width
+                batch.append(index)
+                indices.pop(index_index)
+                index_index = max(index_index - 1, 0)
+            else:
+                # we'd overfill our buffer, give up
+                break
+
+        # double check our assumed invariant
+        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
+
+        # great, this batch is good to go! let's run it!
+        batch_obs = self.world.agents[1].batch_act([self._obs[i] for i in batch])
+        # batch act, and broadcast the results back to all the models
+        acts = self.world.agents[1].batch_act(batch_obs)
+        print(len(acts))
+        for i, act in zip(batch, acts):
+            # we need to make sure that the teachers saw the result
+            self.worlds[i].agents[0].observe(act)
+            # and that the agent copies saw their own voice
+            self.worlds[i].agents[1].self_observe(act)
+            # mark these items as needing to progress to be useful for next parley
+            self._scores[i] = None
+            self._obs[i] = None
+
+        # update metrics
+        self.total_parleys += 1
+        self.total_exs += len(batch)
+
+    def get_total_epochs(self):
+        return self.total_exs / self.num_examples()
+
+    def report(self):
+        report = self.world.report()
+        # override that world's view of 'exs'
+        return report
+
+
 class HogwildProcess(Process):
     """
     Process child used for ``HogwildWorld``.
@@ -1393,6 +1543,8 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching', False):
+        world = DynamicBatchWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)

@@ -634,6 +634,13 @@ class ParlaiParser(argparse.ArgumentParser):
             type=int,
             help='batch size for minibatch training schemes',
         )
+        parlai.add_argument(
+            '-dynb',
+            '--dynamic-batching',
+            default=False,
+            type='bool',
+            help='Use dynamic batching',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
