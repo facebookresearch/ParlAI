@@ -1023,12 +1023,15 @@ class DynamicBatchWorld(World):
 
         self.number_parleys = 0
         self.total_exs = 0
+        self.world.reset()
         for w in self.worlds:
-            self.world.reset()
+            w.reset()
 
     def reset_metrics(self):
         super().reset_metrics()
         self.world.reset_metrics()
+        for w in self.worlds:
+            w.reset_mterics()
 
     def num_examples(self):
         return self.world.num_examples()
@@ -1037,6 +1040,12 @@ class DynamicBatchWorld(World):
         return self.world.num_episodes()
 
     def _ceil(self, n, r=4):
+        """
+        Round to the nearest multiple of 4.
+
+        TensorCores only work when a tensor is a multiple of 4 in all dimensions. This
+        means all examples cost is related to their nearest multiple of 4.
+        """
         # round up to 4, all things are equal
         return ((n + r - 1) // r) * r
 
@@ -1056,7 +1065,10 @@ class DynamicBatchWorld(World):
                 raise TypeError("This is unexpected.")
 
             # TODO: generalize this
-            self._scores[i] = len(obs['text_vec'])
+            # note that all examples have a cost that is based on their nearest
+            # multiple of 4. We can therefore mix-and-match anything with the same
+            # cost for increased stochasticity, while not really wasting much padding.
+            self._scores[i] = self._ceil(len(obs['text_vec']))
 
         indices = list(range(self._BUFFER_SIZE))
         # sort all the indices by their score, so that we can find similarly lengthed
