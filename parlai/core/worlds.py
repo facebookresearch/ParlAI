@@ -1104,6 +1104,7 @@ class DynamicBatchWorld(World):
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
         indices = sorted(indices, key=lambda i: (self._scores[i], random.random()))
+        # indices = sorted(indices, key=lambda i: (random.random()))
 
         # now let's build the batch
         batch = []
@@ -1127,6 +1128,8 @@ class DynamicBatchWorld(World):
             new_width = max(width, this_width)
             # compute the cost of the new batch
             new_size = new_width * self._ceil(len(batch) + 1)
+            # TODO: delete this:
+            # if len(batch) < self.opt['batchsize']:
             if new_size <= self.max_size:
                 # cool, this one fits, let's add it
                 width = new_width
@@ -1141,9 +1144,8 @@ class DynamicBatchWorld(World):
         assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
 
         # great, this batch is good to go! let's run it!
-        batch_obs = self.world.agents[1].batch_act([self._obs[i] for i in batch])
-        # batch act, and broadcast the results back to all the models
-        acts = self.world.agents[1].batch_act(batch_obs)
+        acts = self.world.agents[1].batch_act([self._obs[i] for i in batch])
+        # broadcast the results back to all the models
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result
             self.worlds[i].agents[0].observe(act)

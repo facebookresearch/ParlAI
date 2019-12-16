@@ -49,6 +49,24 @@ class TestDynamicBatching(unittest.TestCase):
             )
         )
 
+    def test_streaming(self):
+        testing_utils.train_model(
+            dict(
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                num_epochs=1,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='beam',
+                truncate=8,
+                datatype='train:stream',
+                **_BASE_OPTIONS,
+            )
+        )
+
     def test_multiworld(self):
         testing_utils.train_model(
             Opt(
@@ -56,6 +74,19 @@ class TestDynamicBatching(unittest.TestCase):
                     'model': 'transformers/generator',
                     'task': 'integration_tests:variable_length,integration_tests',
                     'truncate': 8,
+                    **_BASE_OPTIONS,
+                }
+            )
+        )
+
+    def test_multiworld_stream(self):
+        testing_utils.train_model(
+            Opt(
+                {
+                    'model': 'transformers/generator',
+                    'task': 'integration_tests:variable_length,integration_tests',
+                    'truncate': 8,
+                    'datatype': 'train:stream',
                     **_BASE_OPTIONS,
                 }
             )
