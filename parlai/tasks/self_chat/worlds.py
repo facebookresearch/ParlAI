@@ -5,51 +5,82 @@
 # LICENSE file in the root directory of this source tree.
 
 import random
+from typing import Any, Dict, List
 
+from parlai.core.agents import Agent
 from parlai.core.worlds import DialogPartnerWorld, validate
 
 
-class InteractiveWorld(DialogPartnerWorld):
+class SelfChatBaseWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.init_contexts()
-        self.max_cnt = self.opt.get('selfchat_max_turns', 10)
-        self.cnt = 0
+        self.init_openers()
+        self.max_turn_cnt = self.opt.get('selfchat_max_turns', 10)
+        self.turn_cnt = 0
+        self.episode_cnt = 0
 
     def init_contexts(self):
         pass
 
-    def get_contexts(self):
+    def get_contexts(self, episode_num: int) -> List[str]:
         return ['__SILENCE__', '']
+
+    def init_openers(self) -> None:
+        pass
+
+    def get_openers(self, episode_num: int) -> List[str]:
+        pass
 
     def display(self):
         s = ''
         s += super().display()
-        if self.cnt == 0:
+        if self.turn_cnt == 0:
             s += '\n==============================\n'
         return s
 
     def episode_done(self):
-        if self.cnt > self.max_cnt:
+        if self.turn_cnt >= self.max_turn_cnt:
             return True
         else:
             return False
 
+    def _get_seed_utt_acts(self, episode_num: int, agents: List[Agent]) -> List[Dict[str, Any]]:
+
+        def make_agent_action(utterance: str, agent: Agent) -> Dict[str, Any]:
+            return {
+                'text': utterance,
+                'episode_done': False,
+                'id': agent.id,
+            }
+        
+        openers = self.get_openers(episode_num)
+        if not openers:
+            return []
+        return list(map(make_agent_action, openers, agents))
+
     def parley(self):
         if self.episode_done():
-            self.cnt = 0
+            self.turn_cnt = 0
+            self.episode_cnt += 1
+            self.contexts = None
+            self.seed_utterances = None
             agents = self.get_agents()
             for a in agents:
                 a.reset()
 
-        if self.cnt == 0:
+        if self.turn_cnt == 0:
             self.acts = [None, None]
             # choose speaking order:
             if random.choice([0, 1]):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]
-            self.contexts = self.get_contexts()
+            # get the beginning of the conversation
+            self.contexts = self.get_contexts(self.episode_cnt)
+            self.seed_utterances = self._get_seed_utt_acts(self.episode_cnt, self.agents_ordered)
+
+        if self.contexts:
             # initial context
             for i in range(0, 2):
                 context = {
@@ -59,6 +90,13 @@ class InteractiveWorld(DialogPartnerWorld):
                 }
                 self.acts[1 - i] = context
                 self.agents_ordered[i].observe(validate(context))
+            self.contexts = None
+        elif self.seed_utterances:
+            utts = self.seed_utterances[:2]
+            for i in [0, 1]:
+                self.acts[i] = utts[i] if len(utts) > i else self.agents_ordered[i].act()
+                self.agents_ordered[1 - i].observe(validate(self.acts[i]))
+            self.seed_utterances = self.seed_utterances[2:]
         else:
             # do regular loop
             acts = self.acts
@@ -69,4 +107,8 @@ class InteractiveWorld(DialogPartnerWorld):
             agents[0].observe(validate(acts[1]))
 
         self.update_counters()
-        self.cnt += 1
+        self.turn_cnt += 1
+
+
+class InteractiveWorld(SelfChatBaseWorld):
+    pass
