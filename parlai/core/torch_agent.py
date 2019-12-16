@@ -667,8 +667,9 @@ class TorchAgent(ABC, Agent):
         """
         super().__init__(opt, shared)
         opt = self.opt
-
-        print('TORCH AGENT INIT')
+        print('\n\n-------------------------------')
+        print(f'TORCH AGENT INIT: {opt["model_file"]}')
+        print('-------------------------------')
         self.model_outputs = []
         self.model_candidates = {}
 
