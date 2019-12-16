@@ -45,15 +45,12 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         else:
             return False
 
-    def _get_seed_utt_acts(self, episode_num: int, agents: List[Agent]) -> List[Dict[str, Any]]:
-
+    def _get_seed_utt_acts(
+        self, episode_num: int, agents: List[Agent]
+    ) -> List[Dict[str, Any]]:
         def make_agent_action(utterance: str, agent: Agent) -> Dict[str, Any]:
-            return {
-                'text': utterance,
-                'episode_done': False,
-                'id': agent.id,
-            }
-        
+            return {'text': utterance, 'episode_done': False, 'id': agent.id}
+
         openers = self.get_openers(episode_num)
         if not openers:
             return []
@@ -78,7 +75,9 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 self.agents_ordered = [self.agents[1], self.agents[0]]
             # get the beginning of the conversation
             self.contexts = self.get_contexts(self.episode_cnt)
-            self.seed_utterances = self._get_seed_utt_acts(self.episode_cnt, self.agents_ordered)
+            self.seed_utterances = self._get_seed_utt_acts(
+                self.episode_cnt, self.agents_ordered
+            )
 
         if self.contexts:
             # initial context
@@ -94,7 +93,9 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         elif self.seed_utterances:
             utts = self.seed_utterances[:2]
             for i in [0, 1]:
-                self.acts[i] = utts[i] if len(utts) > i else self.agents_ordered[i].act()
+                self.acts[i] = (
+                    utts[i] if len(utts) > i else self.agents_ordered[i].act()
+                )
                 self.agents_ordered[1 - i].observe(validate(self.acts[i]))
             self.seed_utterances = self.seed_utterances[2:]
         else:
