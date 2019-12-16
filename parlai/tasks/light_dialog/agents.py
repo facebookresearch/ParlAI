@@ -171,7 +171,7 @@ class SimpleTeacher(DefaultTeacher):
         agent.add_argument('--light_use_speech_prefix', type='bool', default=False)
 
 
-def create_agents(opt, task):
+def create_agents(opt):
     if not opt.get('interactive_task', False):
         return create_task_agent_from_taskname(opt)
     else:

@@ -15,10 +15,10 @@ import datetime
 import parlai
 import git
 
-from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
+from parlai.core.loader import load_task_module, load_agent_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.opt import Opt, load_opt_file
+from parlai.utils.misc import Opt, load_opt_file
 
 from typing import List, Optional
 
@@ -789,7 +789,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add arguments specific to a particular model.
         """
-        agent = get_agent_module(model)
+        agent = load_agent_module(model)
         try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
@@ -809,13 +809,19 @@ class ParlaiParser(argparse.ArgumentParser):
         Add arguments specific to the specified task.
         """
         for t in ids_to_tasks(task).split(','):
-            agent = get_task_module(t)
+            agent = load_task_module(t)
             try:
                 if hasattr(agent, 'add_cmdline_args'):
                     agent.add_cmdline_args(self)
             except argparse.ArgumentError:
                 # already added
                 pass
+
+    def add_world_args(self):
+        """
+        Add arguments specific to the specified task.
+        """
+
 
     def add_pyt_dataset_args(self, opt):
         """

@@ -15,6 +15,6 @@ class InteractiveTeacher:
     pass
 
 
-def create_agents(opt, task):
+def create_agents(opt):
     # interactive task has no task agents (they are attached as user agents)
     return []
