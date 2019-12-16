@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -24,7 +25,7 @@ import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.misc import neginf
+from parlai.utils.torch import neginf
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm

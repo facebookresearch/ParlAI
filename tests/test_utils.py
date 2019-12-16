@@ -4,13 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.opt import Opt
 from parlai.utils.misc import (
     Timer,
     round_sigfigs,
     set_namedtuple_defaults,
+)
+from parlai.utils.torch import (
     padded_tensor,
     argsort,
-    Opt,
 )
 from copy import deepcopy
 import time

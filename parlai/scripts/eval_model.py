@@ -24,6 +24,7 @@ from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 
+import json
 import random
 
 
@@ -32,6 +33,15 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True, 'Evaluate a model')
     parser.add_pytorch_datateacher_args()
     # Get command line arguments
+    parser.add_argument(
+        '-rf',
+        '--report-filename',
+        type=str,
+        default='',
+        help='Saves a json file of the evaluation report either as an '
+        'extension to the model-file (if begins with a ".") or a whole '
+        'file path. Set to the empty string to not save at all.',
+    )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -57,6 +67,16 @@ def setup_args(parser=None):
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
+
+
+def _save_eval_stats(opt, report):
+    fname = opt['report_filename']
+    if fname == '':
+        return
+    if fname.startswith('.'):
+        fname = opt['model_file'] + fname
+    with open(fname, 'w') as f:
+        json.dump({'opt': opt, 'report': report}, f, indent=4)
 
 
 def _eval_single_world(opt, agent, task):
@@ -105,6 +125,11 @@ def eval_model(opt, print_parser=None):
     :return: the final result of calling report()
     """
     random.seed(42)
+    if 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']:
+        raise ValueError(
+            'You should use --datatype train:evalmode if you want to evaluate on '
+            'the training set.'
+        )
 
     # load model and possibly print opt
     agent = create_agent(opt, requireModelExists=True)
@@ -131,7 +156,7 @@ def eval_model(opt, print_parser=None):
         )
     )
     print(report)
-
+    _save_eval_stats(opt, report)
     return report
 
 

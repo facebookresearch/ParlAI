@@ -19,7 +19,8 @@ for the paper, we have kept this file mostly the same.
 """
 
 from parlai.core.torch_agent import TorchAgent, Output, Batch
-from parlai.utils.misc import padded_tensor, round_sigfigs, argsort, neginf
+from parlai.utils.misc import round_sigfigs
+from parlai.utils.torch import padded_tensor, argsort, neginf
 from parlai.utils.thread import SharedTable
 from .modules import Seq2seq, opt_to_kwargs
 from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn

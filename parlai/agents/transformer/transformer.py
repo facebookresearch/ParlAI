@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -5,7 +6,7 @@
 Transformer Agents.
 """
 from parlai.core.agents import Agent
-from parlai.utils.misc import padded_3d
+from parlai.utils.torch import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 

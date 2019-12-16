@@ -166,9 +166,9 @@ class SocketManager:
     """
 
     # Default pings without pong before socket considered dead
-    DEF_MISSED_PONGS = 20
-    PING_RATE = 4
-    DEF_DEAD_TIME = 30
+    DEF_MISSED_PONGS: int = 20
+    PING_RATE: float = 4
+    DEF_DEAD_TIME: float = 30
 
     def __init__(
         self,

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -13,7 +13,8 @@ from functools import lru_cache
 import torch as th
 import numpy as np
 
-from parlai.utils.misc import padded_tensor, round_sigfigs
+from parlai.utils.torch import padded_tensor
+from parlai.utils.misc import round_sigfigs
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 

@@ -9,21 +9,20 @@ BERT helpers.
 """
 
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.utils.misc import neginf, fp16_optimizer_wrapper
+from parlai.utils.torch import neginf, fp16_optimizer_wrapper
 
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
     raise ImportError(
-        'This model requires that pytorch-pretrained-bert is '
-        'installed. Install with:\n `pip install pytorch-pretrained-bert`.'
+        'This model requires that huggingface\'s transformers is '
+        'installed. Install with:\n `pip install transformers`.'
     )
 
 
 import torch
-from torch.optim import Optimizer
-from torch.optim.optimizer import required
+from torch.optim.optimizer import Optimizer
 from torch.nn.utils import clip_grad_norm_
 
 
@@ -261,14 +260,14 @@ class AdamWithDecay(Optimizer):
     def __init__(
         self,
         params,
-        lr=required,
+        lr,
         b1=0.9,
         b2=0.999,
         e=1e-6,
         weight_decay=0.01,
         max_grad_norm=1.0,
     ):
-        if lr is not required and lr < 0.0:
+        if lr < 0.0:
             raise ValueError('Invalid learning rate: {} - should be >= 0.0'.format(lr))
         if not 0.0 <= b1 < 1.0:
             raise ValueError(

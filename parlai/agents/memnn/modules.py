@@ -6,7 +6,7 @@
 
 import torch
 import torch.nn as nn
-from parlai.utils.misc import neginf
+from parlai.utils.torch import neginf
 from functools import lru_cache
 
 

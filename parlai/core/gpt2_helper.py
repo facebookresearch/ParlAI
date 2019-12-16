@@ -12,6 +12,8 @@ This is an implemtation from fairseq : https://github.com/pytorch/fairseq/blob/m
 Implemtation license: MIT
 """
 
+from typing import List
+from parlai.core.opt import Opt
 from functools import lru_cache
 import json
 from .build_data import download, make_dir
@@ -64,7 +66,7 @@ def get_pairs(word):
 
 
 class Gpt2BpeHelper:
-    def __init__(self, opt, errors='replace'):
+    def __init__(self, opt: Opt, errors='replace'):
         data_path = os.path.join(opt['datapath'], 'gpt2')
         vocab_path = os.path.join(data_path, 'vocab.bpe')
         json_path = os.path.join(data_path, 'encoder.json')
@@ -91,7 +93,6 @@ class Gpt2BpeHelper:
         self.byte_encoder = bytes_to_unicode()
         self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
         self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
-        self.cache = {}
         try:
             import regex as re
 
@@ -104,9 +105,8 @@ class Gpt2BpeHelper:
             r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
         )
 
-    def bpe(self, token):
-        if token in self.cache:
-            return self.cache[token]
+    @lru_cache(maxsize=10240)
+    def bpe(self, token: str) -> str:
         word = tuple(token)
         pairs = get_pairs(word)
 
@@ -118,7 +118,7 @@ class Gpt2BpeHelper:
             if bigram not in self.bpe_ranks:
                 break
             first, second = bigram
-            new_word = []
+            new_word: List[str] = []
             i = 0
             while i < len(word):
                 try:
@@ -135,18 +135,15 @@ class Gpt2BpeHelper:
                 else:
                     new_word.append(word[i])
                     i += 1
-            new_word = tuple(new_word)
-            word = new_word
+            word = tuple(new_word)
             if len(word) == 1:
                 break
             else:
                 pairs = get_pairs(word)
-        word = ' '.join(word)
-        self.cache[token] = word
-        return word
+        return ' '.join(word)
 
-    def encode(self, text):
-        bpe_tokens = []
+    def encode(self, text: str) -> List[str]:
+        bpe_tokens: List[str] = []
         for token in self.re.findall(self.pat, text):
             token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
             bpe_tokens.extend(
@@ -154,7 +151,7 @@ class Gpt2BpeHelper:
             )
         return bpe_tokens
 
-    def decode(self, tokens):
+    def decode(self, tokens: List[str]) -> str:
         text = ''.join([self.decoder[token] for token in tokens])
         text = bytearray([self.byte_decoder[c] for c in text]).decode(
             'utf-8', errors=self.errors

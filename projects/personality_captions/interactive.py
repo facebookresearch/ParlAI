@@ -13,6 +13,7 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.image_featurizers import ImageLoader
+from typing import Dict, Any
 
 import json
 import cgi
@@ -23,7 +24,7 @@ import os
 
 HOST_NAME = 'localhost'
 PORT = 8080
-SHARED = {}
+SHARED: Dict[str, Any] = {}
 IMAGE_LOADER = None
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"

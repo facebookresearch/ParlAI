@@ -486,7 +486,7 @@ class TestTransformerGenerator(unittest.TestCase):
             df = os.path.join(tmpdir, 'model.dict')
             # we'll reuse these
             args = dict(
-                task='integration_tests', model_file=mf, dict_file=df, metrics='all'
+                task='integration_tests', model_file=mf, dict_file=df, metrics='all',
             )
             _, noblock_valid, _ = testing_utils.train_model(
                 dict(
@@ -542,6 +542,7 @@ class TestTransformerGenerator(unittest.TestCase):
             # bleu-1 and bleu-2 should be relatively okay
             self.assertGreaterEqual(valid['bleu-1'], 0.70)
             self.assertGreaterEqual(valid['bleu-2'], 0.30)
+
             # bleu-3 should bve totally screwed
             self.assertLessEqual(valid['bleu-3'], 0.01)
 

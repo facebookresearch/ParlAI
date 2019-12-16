@@ -16,8 +16,8 @@ RESOURCES = [
         '9b168d30111f13b9cc50e6a15885adae8f86bc0bb7a124d435c43fd0f7e2a9c7',
     ),
     DownloadableFile(
-        'http://tinyurl.com/p6tyohj',
-        'p6tyohj.tgz',
+        'http://cs.nyu.edu/~xiang/task4_reddit.tgz',
+        'task4_reddit.tgz',
         '6316a6a5c563bc3c133a4a1e611d8ca638c61582f331c500697d9090efd215bb',
     ),
 ]
@@ -25,7 +25,8 @@ RESOURCES = [
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MovieDialog')
-    version = '3'
+    # 2019-12-11 bump version with changed url
+    version = '3.01'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

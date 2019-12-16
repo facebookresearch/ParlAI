@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -29,6 +29,33 @@ class TestUpgradeOpt(unittest.TestCase):
 
             upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 5})
             self.assertEqual(upgraded['inference'], 'beam')
+
+    def test_no_greedy_largebeam(self):
+        """
+        Ensures that --beam-size > 1 and --inference greedy causes a failure.
+        """
+        testing_utils.download_unittest_models()
+
+        # we should have an exception if we mix beam size > 1 with inference greedy
+        with self.assertRaises(ValueError):
+            testing_utils.display_model(
+                dict(
+                    task='integration_tests:multipass',
+                    model_file='zoo:unittest/transformer_generator2/model',
+                    beam_size=5,
+                    inference='greedy',
+                )
+            )
+
+        # and we shouldn't if we have inference beam
+        testing_utils.display_model(
+            dict(
+                task='integration_tests:multipass',
+                model_file='zoo:unittest/transformer_generator2/model',
+                beam_size=5,
+                inference='beam',
+            )
+        )
 
     def test_file_inference(self):
         """
