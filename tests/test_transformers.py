@@ -486,7 +486,7 @@ class TestTransformerGenerator(unittest.TestCase):
             df = os.path.join(tmpdir, 'model.dict')
             # we'll reuse these
             args = dict(
-                task='integration_tests', model_file=mf, dict_file=df, metrics='all',
+                task='integration_tests', model_file=mf, dict_file=df, metrics='all'
             )
             _, noblock_valid, _ = testing_utils.train_model(
                 dict(
