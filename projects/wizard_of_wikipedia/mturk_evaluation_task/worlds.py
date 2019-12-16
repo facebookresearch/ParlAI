@@ -83,8 +83,121 @@ class TopicsGenerator(object):
             build(self.opt)
         with open(self.topics_path) as f:
             self.data = json.load(f)
-        self.seen_topics = self.data['train']
-        self.unseen_topics = self.data['valid'] + self.data['test']
+        # self.seen_topics = self.data['train']
+        # self.unseen_topics = self.data['valid'] + self.data['test']
+        self.seen_topics = [
+            'Culture of Chicago',
+            'Courtship',
+            'Colorado',
+            'Agriculture',
+            'Marathon',
+            'Medical school',
+            'Hair',
+            'Party City',
+            'Ravioli',
+            'Iced tea',
+            'Tiny house movement',
+            'Piano',
+            'My Little Pony',
+            'Divorce',
+            'Chocolate brownie',
+            'Ed Sheeran',
+            'Samsung Galaxy',
+            'Sibling',
+            'Body piercing',
+            'Take-out',
+            'Parsons School of Design',
+            'Ex (relationship)',
+            'Whisky',
+            'Go-kart',
+            'Disability',
+            'Creed (band)',
+            'Carrie Underwood',
+            'Circus',
+            'Pork',
+            'Puzzle',
+            'Parachuting',
+            'Photography',
+            'Del Taco',
+            'Vanilla',
+            'Dog',
+            'Chocolate',
+            'BMW',
+            'Mental disorder',
+            'Granny Smith',
+            'Alpaca',
+            'Dust',
+            'Birth order',
+            'Parrot',
+            'General Electric',
+            'Snorkeling',
+            'Lifeguard',
+            'Anxiety',
+            'Spaghetti with meatballs',
+            'Teapot',
+            'Robert De Niro',
+            'Mansion',
+            'Barbados',
+            'Yellow',
+            'Grilling',
+            'A Song of Ice and Fire',
+            'Food allergy',
+            'Internet',
+            'Baseball',
+            'Pittsburgh Steelers',
+            'Netflix',
+            'Pretty Woman',
+            'Chicken',
+            'Risk (game)',
+            'Near-death experience',
+            'List of tourist attractions in Paris',
+        ]
+        self.unseen_topics = [
+            'Soldier',
+            'List of national parks of the United States',
+            'Motivation',
+            'Dog biscuit',
+            'Online shopping',
+            'Bowling',
+            'Dog training',
+            'Rock and roll',
+            'Conductor (rail)',
+            'Conductor (rail)',
+            'Discovery Channel',
+            'Medical billing',
+            'Neurosurgery',
+            'Online shopping',
+            'Target Corporation',
+            'Cardigan (sweater)',
+            'Anthony Michael Hall',
+            'Dairy farming',
+            'Online shopping',
+            'The Walking Dead (TV series)',
+            'Online shopping',
+            'Gymnastics',
+            'Niagara Falls',
+            'Skittles (sport)',
+            'Shower',
+            'Dog training',
+            'Preterm birth',
+            'Target Corporation',
+            'Baker',
+            'Automobile repair shop',
+            'Hot dog',
+            'Motivation',
+            'Kendrick Lamar',
+            'Red',
+            'Animals in sport',
+            'Cardigan (sweater)',
+            'On-again, off-again relationship',
+            'Superman',
+            'Online shopping',
+            'Preschool',
+            'Gouda cheese',
+            'Welding',
+            'Overeating',
+            'Cycling',
+        ]
 
     def get_topics(self, seen=True, num=3):
         if seen:
@@ -217,14 +330,14 @@ class WizardEval(MultiAgentDialogWorld):
         )
         act['title'] = knowledge_act['title']
         if self.opt.get('prepend_gold_knowledge', False):
-            new_text = ' '.join(
+            knowledge_text = ' '.join(
                 [
                     TOKEN_KNOWLEDGE,
                     knowledge_act['checked_sentence'],
                     TOKEN_END_KNOWLEDGE,
-                    act['text'],
                 ]
             )
+            new_text = '\n'.join([knowledge_text, act['text']])
             if isinstance(act, Message):
                 act.force_set('text', new_text)
             else:
@@ -465,6 +578,7 @@ class WizardEval(MultiAgentDialogWorld):
                 'bad_workers': bad_workers,
                 'n_turn': self.n_turn,
                 'gmark_score': self.gmark_score,
+                'inference': 'nucleus',
             },
             open(filename, 'wb'),
         )

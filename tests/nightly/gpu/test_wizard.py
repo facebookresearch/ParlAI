@@ -86,7 +86,6 @@ class TestWizardModel(unittest.TestCase):
         )
 
 
-@testing_utils.skipUnlessGPU
 class TestKnowledgeRetriever(unittest.TestCase):
     """
     Checks that the Knowledge Retriever module returns the correct results

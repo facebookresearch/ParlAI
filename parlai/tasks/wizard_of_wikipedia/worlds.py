@@ -180,25 +180,12 @@ class InteractiveGeneratorWorld(InteractiveWorld):
         self._set_up_knowledge_agent(add_token_knowledge=True)
 
     def _add_knowledge_to_act(self, act):
-        self.knowledge_agent.observe(act, actor_id='apprentice')
-        knowledge_act = self.knowledge_agent.act()
-        act['knowledge'] = knowledge_act['text']
-        act['checked_sentence'] = knowledge_act['checked_sentence']
-        print(
-            '[ Using chosen sentence from Wikpedia ]: {}'.format(
-                knowledge_act['checked_sentence']
-            )
-        )
-        act['title'] = knowledge_act['title']
+        act = super()._add_knowledge_to_act(act)
         if self.opt.get('prepend_gold_knowledge', False):
-            new_text = ' '.join(
-                [
-                    TOKEN_KNOWLEDGE,
-                    knowledge_act['checked_sentence'],
-                    TOKEN_END_KNOWLEDGE,
-                    act['text'],
-                ]
+            knowledge_text = ' '.join(
+                [TOKEN_KNOWLEDGE, act['checked_sentence'], TOKEN_END_KNOWLEDGE]
             )
+            new_text = '\n'.join([knowledge_text, act['text']])
             act.force_set('text', new_text)
         return act
 

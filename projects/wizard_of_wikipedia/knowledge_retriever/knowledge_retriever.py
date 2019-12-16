@@ -16,23 +16,19 @@ from parlai.zoo.wizard_of_wikipedia.knowledge_retriever import download
 import json
 import os
 
-
+RETRIEVER_FILE = 'models:wikipedia_full/tfidf_retriever/model'
 SELECTOR_FILE = 'models:wizard_of_wikipedia/knowledge_retriever/model'
 
 
 class KnowledgeRetrieverAgent(Agent):
-    @staticmethod
+    @classmethod
     def add_cmdline_args(argparser):
         """
         Add command-line arguments specifically for this agent.
         """
         TorchRankerAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('KnowledgeRetriever Arguments')
-        parser.add_argument(
-            '--retriever-model-file',
-            type=str,
-            default='models:wikipedia_full/tfidf_retriever/model',
-        )
+        parser.add_argument('--retriever-model-file', type=str, default=RETRIEVER_FILE)
         parser.add_argument('--selector-model-file', type=str, default=SELECTOR_FILE)
         parser.add_argument(
             '--num-retrieved',

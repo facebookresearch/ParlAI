@@ -132,13 +132,37 @@ def main():
 
     # MODEL CONFIG
     # NOTE: please edit this to test your own models
+    # config = {
+    #     'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
+    #     'generative_setup': True,
+    #     'prepend_gold_knowledge': True,
+    #     'model': 'projects:wizard_of_wikipedia:generator',
+    #     'beam_size': 10,  # add inference arguments here
+    #     'beam_block_ngram': 3,
+    # }
+    # config = {
+    #     #'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
+    #     #'model': 'projects:wizard_of_wikipedia:generator',
+    #     'model_file': '/checkpoint/kshuster/projects/parlall/parlall_multi_12/parlall_multi_12_sweep10_Fri_Oct_25/5eae/model',
+    #     'dict_file': '/checkpoint/kshuster/projects/parlall/dict/parlall_agent.dict',
+    #     'model': 'internal:parlall',
+    #     'generative_setup': True,
+    #     'prepend_gold_knowledge': True,
+    #     'inference': 'beam',  # add inference arguments here
+    #     'beam_size': 10,
+    #     'beam_block_ngram': 3,
+    #     'beam_context_block_ngram': 3,
+    # }
     config = {
-        'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
+        #'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
+        #'model': 'projects:wizard_of_wikipedia:generator',
+        'model_file': '/checkpoint/kshuster/projects/parlall/parlall_multi_12/parlall_multi_12_sweep10_Fri_Oct_25/5eae/model',
+        'dict_file': '/checkpoint/kshuster/projects/parlall/dict/parlall_agent.dict',
+        'model': 'internal:parlall',
         'generative_setup': True,
         'prepend_gold_knowledge': True,
-        'model': 'projects:wizard_of_wikipedia:generator',
-        'beam_size': 10,  # add inference arguments here
-        'beam_block_ngram': 3,
+        'inference': 'nucleus',  # add inference arguments here
+        'topp': 0.7,
     }
 
     # add dialogue model args
