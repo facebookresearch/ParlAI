@@ -104,8 +104,7 @@ class InteractiveWorld(DialogPartnerWorld):
             print("\nCHAT DONE.\n")
             if self.display_partner_persona:
                 partner_persona = self.p2.replace(
-                    'your persona:',
-                    'partner\'s persona:'
+                    'your persona:', 'partner\'s persona:'
                 )
                 print(
                     f"Your partner was playing the following persona:\n{partner_persona}"

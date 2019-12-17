@@ -1283,7 +1283,7 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
         opt['task'],
         opt.get('interactive_task', False),
         len(user_agents + task_agents),
-        default_world=default_world
+        default_world=default_world,
     )
 
     return world_class(opt, task_agents + user_agents)

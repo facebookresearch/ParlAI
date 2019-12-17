@@ -222,7 +222,10 @@ def get_default_world(default_world=None, num_agents=None):
         world_class = default_world
     elif num_agents is not None:
         import parlai.core.worlds as core_worlds
-        world_name = "DialogPartnerWorld" if num_agents == 2 else "MultiAgentDialogWorld"
+
+        world_name = (
+            "DialogPartnerWorld" if num_agents == 2 else "MultiAgentDialogWorld"
+        )
         world_class = getattr(core_worlds, world_name)
     else:
         return None

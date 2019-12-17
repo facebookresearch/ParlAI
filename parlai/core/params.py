@@ -909,8 +909,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # add world args, if we know a priori which world is being used
         if task is not None:
             self.add_world_args(
-                task,
-                parsed.get('interactive_task', False),
+                task, parsed.get('interactive_task', False),
             )
 
         # reset parser-level defaults over any model-level defaults
