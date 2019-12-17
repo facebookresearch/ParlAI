@@ -176,3 +176,60 @@ def load_task_module(taskname: str):
     my_module = importlib.import_module(module_name)
     teacher_class = getattr(my_module, teacher)
     return teacher_class
+
+
+# WORLD LOADER
+def load_world_module(
+    taskname: str,
+    interactive_task: bool,
+    num_agents=None,  # a priori may not know the number of agents
+    default_world=None
+):
+    sp = taskname.strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
+    if '.' in sp[0]:
+        # TODO: clean this logic up, kinda messy
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
+        if default_world is not None:
+            world_class = default_world
+        elif num_agents is not None:
+            import parlai.core.worlds as core_worlds
+            world_name = "DialogPartnerWorld" if num_agents == 2 else "MultiAgentDialogWorld"
+            world_class = getattr(core_worlds, world_name)
+        else:
+            return None
+    else:
+        task = sp[0].lower()
+        if len(sp) > 1:
+            sp[1] = sp[1][0].upper() + sp[1][1:]
+            world_name = sp[1] + "World"
+            if interactive_task:
+                world_name = "Interactive" + world_name
+        else:
+            if interactive_task:
+                world_name = "InteractiveWorld"
+            else:
+                world_name = "DefaultWorld"
+        module_name = "%s.tasks.%s.worlds" % (repo, task)
+        try:
+            my_module = importlib.import_module(module_name)
+            world_class = getattr(my_module, world_name)
+        except (ModuleNotFoundError, AttributeError):
+            # Defaults to this if you did not specify a world for your task.
+            if default_world is not None:
+                world_class = default_world
+            elif num_agents is not None:
+                import parlai.core.worlds as core_worlds
+                world_name = "DialogPartnerWorld" if num_agents == 2 else "MultiAgentDialogWorld"
+                world_class = getattr(core_worlds, world_name)
+            else:
+                world_class = None
+
+    return world_class

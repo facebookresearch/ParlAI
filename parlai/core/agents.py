@@ -519,7 +519,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         print('*' * 75)
 
 
-def load_agent_module(opt: Opt):
+def create_agent_from_file_opt(opt: Opt):
     """
     Load agent options and module from file if opt file exists.
 
@@ -551,7 +551,7 @@ def load_agent_module(opt: Opt):
                     )
                 new_opt[k] = v
 
-        model_class = get_agent_module(new_opt['model'])
+        model_class = load_agent_module(new_opt['model'])
 
         # check for model version
         if hasattr(model_class, 'model_version'):
@@ -645,7 +645,7 @@ def create_agent(opt: Opt, requireModelExists=False):
             )
         # Attempt to load the model from the model file first (this way we do
         # not even have to specify the model name as a parameter)
-        model = load_agent_module(opt)
+        model = create_agent_from_file_opt(opt)
         if model is not None:
             return model
         else:

@@ -18,7 +18,7 @@ import git
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_task_module, load_agent_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.utils.misc import Opt, load_opt_file
+from parlai.core.opt import Opt, load_opt_file
 
 from typing import List, Optional
 
@@ -821,7 +821,8 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add arguments specific to the specified task.
         """
-
+        # TODO: fill this out:
+        pass
 
     def add_pyt_dataset_args(self, opt):
         """
