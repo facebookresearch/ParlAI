@@ -34,16 +34,8 @@ from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.utils.misc import (
-    AttrDict,
-    warn_once,
-    round_sigfigs,
-)
-from parlai.utils.torch import (
-    argsort,
-    fp16_optimizer_wrapper,
-    padded_tensor,
-)
+from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
+from parlai.utils.torch import argsort, fp16_optimizer_wrapper, padded_tensor
 
 
 class StopTrainException(Exception):
