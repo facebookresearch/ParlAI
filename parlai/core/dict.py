@@ -292,6 +292,9 @@ class DictionaryAgent(Agent):
                 # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
 
+        # cache unk token for later
+        self._unk_token_idx = self.tok2ind.get(self.unk_token)
+
         # initialize tokenizers
         if self.tokenizer == 'nltk':
             try:
@@ -378,6 +381,14 @@ class DictionaryAgent(Agent):
         elif type(key) == str:
             return key in self.tok2ind
 
+    def _word_lookup(self, key):
+        # return index from token, or unk_token's index, or None
+        return self.tok2ind.get(key, self._unk_token_idx)
+
+    def _int_lookup(self, key):
+        # return token from index, or unk_token
+        return self.ind2tok.get(key, self.unk_token)
+
     def __getitem__(self, key):
         """
         Lookup the word or ID.
@@ -387,12 +398,10 @@ class DictionaryAgent(Agent):
         not in the dictionary, return the index of the unknown token. If there is no
         unknown token, return ``None``.
         """
+        if type(key) == str:
+            return self._word_lookup(key)
         if type(key) == int:
-            # return token from index, or unk_token
-            return self.ind2tok.get(key, self.unk_token)
-        elif type(key) == str:
-            # return index from token, or unk_token's index, or None
-            return self.tok2ind.get(key, self.tok2ind.get(self.unk_token, None))
+            return self._int_lookup(key)
 
     def __len__(self):
         return len(self.tok2ind)
@@ -741,10 +750,11 @@ class DictionaryAgent(Agent):
             The type of the returned vector if the input is a string. Suggested
             ``list``, ``tuple``, ``set``, or ``np.ndarray``.
         """
+        itr = (self._word_lookup(token) for token in self.tokenize(str(text)))
         if vec_type == list or vec_type == tuple or vec_type == set:
-            res = vec_type((self[token] for token in self.tokenize(str(text))))
+            res = vec_type(itr)
         elif vec_type == np.ndarray:
-            res = np.fromiter((self[token] for token in self.tokenize(text)), np.int)
+            res = np.fromiter(itr, np.int)
         else:
             raise RuntimeError('Type {} not supported by dict'.format(vec_type))
         return res
