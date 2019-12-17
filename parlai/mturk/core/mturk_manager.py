@@ -1590,14 +1590,13 @@ class MTurkManager:
                 'Hits could not be created as block qualification could not be'
                 ' acquired. Shutting down server.'
             )
-            if not self.is_sandbox:
-                qualifications.append(
-                    {
-                        'QualificationTypeId': block_qual_id,
-                        'Comparator': 'DoesNotExist',
-                        'ActionsGuarded': 'DiscoverPreviewAndAccept',
-                    }
-                )
+            qualifications.append(
+                {
+                    'QualificationTypeId': block_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         if self.has_time_limit:
             block_qual_name = '{}-max-daily-time'.format(self.task_group_id)
@@ -1615,14 +1614,13 @@ class MTurkManager:
                 'Hits could not be created as a time block qualification could'
                 ' not be acquired. Shutting down server.'
             )
-            if not self.is_sandbox:
-                qualifications.append(
-                    {
-                        'QualificationTypeId': block_qual_id,
-                        'Comparator': 'DoesNotExist',
-                        'ActionsGuarded': 'DiscoverPreviewAndAccept',
-                    }
-                )
+            qualifications.append(
+                {
+                    'QualificationTypeId': block_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         if self.is_unique or self.max_hits_per_worker > 0:
             self.unique_qual_name = self.opt.get('unique_qual_name')
@@ -1633,14 +1631,20 @@ class MTurkManager:
                 'Prevents workers from completing a task too frequently',
                 self.is_sandbox,
             )
-            if not self.is_sandbox:
-                qualifications.append(
-                    {
-                        'QualificationTypeId': self.unique_qual_id,
-                        'Comparator': 'DoesNotExist',
-                        'ActionsGuarded': 'DiscoverPreviewAndAccept',
-                    }
-                )
+            qualifications.append(
+                {
+                    'QualificationTypeId': self.unique_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
+
+        if self.is_sandbox and not self.is_test:
+            # Qualifications are not set in sandbox mode.
+            # We still create the qualifications above (if requested) so that
+            # assigning these qualifications to users works.
+            shared_utils.print_and_log('Qualifications are not set in sandbox mode.')
+            qualifications = []
 
         self.qualifications = qualifications
         return qualifications.copy()
