@@ -4,15 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Functions for loading modules for tasks, agents, and worlds.
-TODO: make this description nicer
+Functions for loading modules for agents, tasks and teachers, and worlds.
+
+These functions are largely for converting strings specified in opts (like
+for --task) to the appropriate module.
 """
 
 import importlib
 
 
 ##############################################################
-### WORLD LOADER
+### AGENT LOADER
 ##############################################################
 def _name_to_agent_class(name: str):
     """
@@ -22,9 +24,11 @@ def _name_to_agent_class(name: str):
     and the first letter appearing after each underscore (underscores are
     removed).
 
-    :param name: name of agent, e.g. local_human
+    :param name:
+        name of agent, e.g. local_human
 
-    Returns class of agent, e.g. LocalHumanAgent.
+    :return:
+        class of agent, e.g. LocalHumanAgent.
     """
     words = name.split('_')
     class_name = ''
@@ -62,7 +66,11 @@ def load_agent_module(agent_path: str):
     project folder to model arguments, e.g. "projects:personachat:kvmemnn"
     will translate to ``projects/personachat/kvmemnn``.
 
-    :param agent_path: path to model class in one of the above formats.
+    :param agent_path:
+        path to model class in one of the above formats.
+
+    :return:
+        module of agent
     """
     repo = 'parlai'
     if agent_path.startswith('internal:'):
@@ -129,15 +137,22 @@ def load_agent_module(agent_path: str):
 
 
 ##############################################################
-### TASK LOADER
+### TASK AND TEACHER LOADERS
 ##############################################################
 def _get_task_path_and_repo(taskname: str):
+    """
+    Returns the task path list and repository containing the task as specified
+    by `--task`.
+
+    :param taskname: path to task class (specified in format detailed below)
+    """
     task = taskname.strip()
     repo = 'parlai'
     if task.startswith('internal:'):
         # To switch to local repo, useful for non-public projects
         # (make a directory called 'parlai_internal' with your private agents)
         repo = 'parlai_internal'
+        task = task[:9]
 
     task_path_list = task.split(':')
 
@@ -149,7 +164,15 @@ def load_task_module(taskname: str):
     Get the module containing all teacher agents for the task specified
     by `--task`.
 
-    :param taskname: path to task class in one of the above formats.
+    :param taskname: path to task class in one of the following formats:
+        * full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
+        * shorthand: ``-t babi``, which will check
+            ``parlai.tasks.babi.agents:DefaultTeacher``
+        * shorthand specific: ``-t babi:task10k``, which will check
+            ``parlai.tasks.babi.agents:Task10kTeacher``
+
+    :return:
+        module containing all teacher agents for a task
     """
     task_path_list, repo = _get_task_path_and_repo(taskname)
     task_path = task_path_list[0]
@@ -167,9 +190,6 @@ def load_task_module(taskname: str):
     return task_module
 
 
-##############################################################
-### TEACHER LOADER
-##############################################################
 def load_teacher_module(taskname: str):
     """
     Get the module of the teacher agent specified by `--task`.
@@ -191,6 +211,9 @@ def load_teacher_module(taskname: str):
     task number 1.
 
     :param taskname: path to task class in one of the above formats.
+
+    :return:
+        teacher module
     """
     task_module = load_task_module(taskname)
     task_path_list, repo = _get_task_path_and_repo(taskname)
@@ -216,8 +239,19 @@ def load_teacher_module(taskname: str):
 ##############################################################
 ### WORLD LOADER
 ##############################################################
-# TODO: needs documentation
-def get_default_world(default_world=None, num_agents=None):
+def _get_default_world(default_world=None, num_agents=None):
+    """
+    Get default world if a world is not already specified by the task.
+
+    If a default world is provided, return this. Otherwise, return
+    DialogPartnerWorld if there are 2 agents and MultiAgentDialogWorld if
+    there are more.
+
+    :param default_world:
+        default world to return
+    :param num_agents:
+        number of agents in the environment
+    """
     if default_world is not None:
         world_class = default_world
     elif num_agents is not None:
@@ -233,13 +267,28 @@ def get_default_world(default_world=None, num_agents=None):
     return world_class
 
 
-# TODO: needs documentation
 def load_world_module(
     taskname: str,
     interactive_task: bool,
     num_agents: int = None,  # a priori may not know the number of agents
     default_world=None,
 ):
+    """
+    Load the world module for the specific environment. If not enough
+    information is to determine which world should be loaded, returns None.
+
+    :param taskname:
+        path to task class in one of the above formats
+    :param interactive_task:
+        whether or not the task is interactive
+    :param num_agents:
+        number of agents in the world; this may not be known a priori
+    :param default_world:
+        default world to return if specified
+
+    :return:
+        World module (or None, if not enough info to determine is present)
+    """
     task = taskname.strip()
     repo = 'parlai'
     if task.startswith('internal:'):
@@ -251,7 +300,7 @@ def load_world_module(
     if '.' in task_path_list[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        return get_default_world(default_world, num_agents)
+        return _get_default_world(default_world, num_agents)
 
     task = task_path_list[0].lower()
     if len(task_path_list) > 1:
@@ -271,6 +320,6 @@ def load_world_module(
         world_class = getattr(my_module, world_name)
     except (ModuleNotFoundError, AttributeError):
         # Defaults to this if you did not specify a world for your task.
-        world_class = get_default_world(default_world, num_agents)
+        world_class = _get_default_world(default_world, num_agents)
 
     return world_class
