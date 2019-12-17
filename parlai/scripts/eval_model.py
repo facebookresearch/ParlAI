@@ -26,6 +26,7 @@ from parlai.utils.misc import TimeLogger
 
 import json
 import random
+from tqdm import tqdm
 
 
 def setup_args(parser=None):
@@ -41,6 +42,13 @@ def setup_args(parser=None):
         help='Saves a json file of the evaluation report either as an '
         'extension to the model-file (if begins with a ".") or a whole '
         'file path. Set to the empty string to not save at all.',
+    )
+    parser.add_argument(
+        '--save-model-replies',
+        type='bool',
+        default=False,
+        help='Saves a jsonl file containing all of the task examples and '
+        'model replies. Must also specify --report-filename.',
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -69,14 +77,28 @@ def setup_args(parser=None):
     return parser
 
 
-def _save_eval_stats(opt, report):
-    fname = opt['report_filename']
-    if fname == '':
+def _save_eval_stats(opt, report, replies):
+    report_fname = opt['report_filename']
+    if report_fname == '':
         return
-    if fname.startswith('.'):
-        fname = opt['model_file'] + fname
-    with open(fname, 'w') as f:
+    if report_fname.startswith('.'):
+        report_fname = opt['model_file'] + report_fname
+
+    # Save report
+    with open(report_fname, 'w') as f:
+        print(f'[ Saving model report to {report_fname} ... ]')
         json.dump({'opt': opt, 'report': report}, f, indent=4)
+
+    # Save model replies
+    if opt['save_model_replies']:
+        for task, replies in replies.items():
+            base_name = report_fname.split('.')[0]
+            replies_fname = base_name + f'.{task}_replies.jsonl'
+            print(f'[ Saving model replies for task {task} to {replies_fname} ... ]')
+            with open(replies_fname, 'w') as f:
+                for reply in tqdm(replies):
+                    json_reply = json.dumps(reply)
+                    f.write(json_reply + '\n')
 
 
 def _eval_single_world(opt, agent, task):
@@ -99,9 +121,13 @@ def _eval_single_world(opt, agent, task):
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
 
+    model_replies = []
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
         world.parley()
+        if opt['save_model_replies']:
+            acts = world.get_acts()
+            model_replies.append(acts)
         if opt['display_examples']:
             # display examples
             print(world.display() + '\n~~')
@@ -112,7 +138,7 @@ def _eval_single_world(opt, agent, task):
 
     report = world.report()
     world.reset()
-    return report
+    return report, model_replies
 
 
 def eval_model(opt, print_parser=None):
@@ -131,6 +157,12 @@ def eval_model(opt, print_parser=None):
             'the training set.'
         )
 
+    if opt['save_model_replies'] and not opt['report_filename']:
+        raise RuntimeError(
+            'In order to save model replies, please specify the save path '
+            'with --report-filename'
+        )
+
     # load model and possibly print opt
     agent = create_agent(opt, requireModelExists=True)
     if print_parser:
@@ -140,9 +172,12 @@ def eval_model(opt, print_parser=None):
 
     tasks = opt['task'].split(',')
     reports = []
+    replies = {}
     for task in tasks:
-        task_report = _eval_single_world(opt, agent, task)
+        task_report, model_replies = _eval_single_world(opt, agent, task)
         reports.append(task_report)
+        if opt['save_model_replies']:
+            replies[task] = model_replies
 
     report = aggregate_task_reports(
         reports, tasks, micro=opt.get('aggregate_micro', True)
@@ -156,7 +191,7 @@ def eval_model(opt, print_parser=None):
         )
     )
     print(report)
-    _save_eval_stats(opt, report)
+    _save_eval_stats(opt, report, replies)
     return report
 
 
