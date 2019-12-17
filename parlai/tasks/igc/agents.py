@@ -26,7 +26,8 @@ from typing import List, Dict, Any
 from parlai.core.build_data import download_multiprocess
 from parlai.core.params import Opt
 from parlai.core.teachers import AbstractImageTeacher
-from parlai.utils.typing import ParlAITypes as PT
+
+import parlai.utils.typing as PT
 
 
 class IGCTeacher(AbstractImageTeacher):

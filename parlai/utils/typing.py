@@ -10,12 +10,15 @@ Definitions of general ParlAI types.
 from typing import TypeVar
 
 
-class ParlAITypes(object):
+class _Shared(dict):
     """
-    Typing definitions of general ParlAI structures.
+    ParlAI ``shared`` Structure.
 
-    Attributes:
-        TShared: type of the "shared" structure in ParlAI
+    The `shared` dict that is used to instantiate shared agents in ParlAI,
+    e.g. when using batching, distributed training, etc.
+
+    Type is ``TShared``.
     """
 
-    TShared = TypeVar('TShared', bound=dict)
+
+TShared = TypeVar('TShared', bound=_Shared)
