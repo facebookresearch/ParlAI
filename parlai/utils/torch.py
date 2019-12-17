@@ -56,7 +56,7 @@ def padded_tensor(
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
-    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
+    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 4.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -72,9 +72,9 @@ def padded_tensor(
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
 
-    if fp16friendly and (t % 8 != 0):
-        # pad to be a multiple of 8 to ensure we use the tensor cores
-        t += 8 - (t % 8)
+    if fp16friendly and (t % 4 != 0):
+        # pad to be a multiple of 4 to ensure we use the tensor cores
+        t += 4 - (t % 4)
 
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones

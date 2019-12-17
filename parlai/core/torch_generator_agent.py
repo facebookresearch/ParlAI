@@ -556,7 +556,7 @@ class TorchGeneratorAgent(TorchAgent):
         """
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
-        self._init_cuda_buffer(batchsize, self.label_truncate or 256)
+        self._init_cuda_buffer(self.opt['batchsize'], self.label_truncate or 256)
         self.model.train()
         self.zero_grad()
 
