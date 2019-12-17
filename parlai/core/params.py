@@ -16,7 +16,7 @@ import parlai
 import git
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import load_task_module, load_agent_module
+from parlai.core.loader import load_task_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt, load_opt_file
 
@@ -817,12 +817,17 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_world_args(self):
+    def add_world_args(self, task, interactive_task):
         """
-        Add arguments specific to the specified task.
+        Add arguments specific to the world.
         """
-        # TODO: fill this out:
-        pass
+        world_class = load_world_module(task, interactive_task)
+        if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
+            try:
+                world_class.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
 
     def add_pyt_dataset_args(self, opt):
         """
@@ -900,6 +905,13 @@ class ParlaiParser(argparse.ArgumentParser):
         model = get_model_name(parsed)
         if model is not None:
             self.add_model_subargs(model)
+
+        # add world args, if we know a priori which world is being used
+        if task is not None:
+            self.add_world_args(
+                task,
+                parsed.get('interactive_task', False),
+            )
 
         # reset parser-level defaults over any model-level defaults
         try:

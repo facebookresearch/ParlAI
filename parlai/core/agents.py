@@ -431,26 +431,6 @@ class MultiTaskTeacher(Teacher):
             t.shutdown()
 
 
-def name_to_agent_class(name):
-    """
-    Convert agent name to class.
-
-    This adds "Agent" to the end of the name and uppercases the first letter
-    and the first letter appearing after each underscore (underscores are
-    removed).
-
-    :param name: name of agent, e.g. local_human
-
-    Returns class of agent, e.g. LocalHumanAgent.
-    """
-    words = name.split('_')
-    class_name = ''
-    for w in words:
-        class_name += w[0].upper() + w[1:]
-    class_name += 'Agent'
-    return class_name
-
-
 def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     """
     Print loud warning when `init_model` opts differ from previous configuration.
