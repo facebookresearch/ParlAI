@@ -21,7 +21,7 @@ SELECTOR_FILE = 'models:wizard_of_wikipedia/knowledge_retriever/model'
 
 
 class KnowledgeRetrieverAgent(Agent):
-    @classmethod
+    @staticmethod
     def add_cmdline_args(argparser):
         """
         Add command-line arguments specifically for this agent.
@@ -220,9 +220,10 @@ class KnowledgeRetrieverAgent(Agent):
         # retrieve on chosen topic
         chosen_topic_txts = None
         if self.retriever_history.get('chosen_topic'):
-            chosen_topic_txts, chosen_topic_txts_no_title = self.get_chosen_topic_passages(
-                self.retriever_history['chosen_topic']
-            )
+            (
+                chosen_topic_txts,
+                chosen_topic_txts_no_title,
+            ) = self.get_chosen_topic_passages(self.retriever_history['chosen_topic'])
 
         # retrieve on apprentice
         apprentice_txts = None
