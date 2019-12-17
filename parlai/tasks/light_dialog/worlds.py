@@ -43,7 +43,8 @@ class InteractiveSimpleWorld(DialogPartnerWorld):
             p[t.split(' ')[0]] = t
 
         a1_persona = (
-            p['_setting_name']
+            ' _task_speech\n'
+            + p['_setting_name']
             + '\n'
             + p['_setting_desc']
             + '\n'
@@ -57,9 +58,11 @@ class InteractiveSimpleWorld(DialogPartnerWorld):
         )
 
         a2_persona = (
-            p['_setting_name']
+            ' _task_speech\n'
+            + p['_setting_name']
             + '\n'
             + p['_setting_desc']
+            + '\n'
             + p['_partner_name']
             + '\n'
             + p['_self_name']
