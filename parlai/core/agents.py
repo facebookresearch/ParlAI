@@ -41,7 +41,7 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import load_task_module, load_agent_module
+from parlai.core.loader import load_teacher_module, load_agent_module
 from parlai.utils.misc import warn_once
 from parlai.core.opt import Opt, load_opt_file
 from .metrics import Metrics, aggregate_metrics
@@ -714,7 +714,7 @@ def create_task_agent_from_taskname(opt: Opt):
         opt['task'] = 'pytorch_teacher'
     if ',' not in opt['task']:
         # Single task
-        teacher_class = load_task_module(opt['task'])
+        teacher_class = load_teacher_module(opt['task'])
         _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
         task_agents = teacher_class(opt)
         if type(task_agents) != list:

@@ -859,7 +859,7 @@ class DefaultTeacher(PytorchDataTeacher):
     """
     Alias for PytorchDataTeacher.
 
-    This exists to simplify loading code in parlai.core.loader.load_task_module.
+    This exists to simplify loading code in parlai.core.loader.load_teacher_module.
     """
 
     pass

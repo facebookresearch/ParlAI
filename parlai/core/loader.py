@@ -11,8 +11,10 @@ TODO: make this description nicer
 import importlib
 
 
-# AGENT LOADER
-def name_to_agent_class(name: str):
+##############################################################
+### WORLD LOADER
+##############################################################
+def _name_to_agent_class(name: str):
     """
     Convert agent name to class.
 
@@ -84,7 +86,7 @@ def load_agent_module(agent_path: str):
         module_name = 'parlai.agents.legacy_agents.{m}.{m}_v{v}'.format(
             m=model_name, v=path_list[2]
         )
-        class_name = name_to_agent_class(model_name)
+        class_name = _name_to_agent_class(model_name)
     elif agent_path.startswith('projects:'):
         # e.g. -m projects:personachat:kvmemnn
         path_list = agent_path.split(':')
@@ -97,7 +99,7 @@ def load_agent_module(agent_path: str):
         folder_name = path_list[1]
         model_name = path_list[2]
         module_name = 'projects.{p}.{m}.{m}'.format(m=model_name, p=folder_name)
-        class_name = name_to_agent_class(model_name)
+        class_name = _name_to_agent_class(model_name)
     elif ':' in agent_path:
         # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
         path_list = agent_path.split(':')
@@ -108,12 +110,12 @@ def load_agent_module(agent_path: str):
         # will check parlai.agents.my_agent.special_variant:SpecialVariantAgent
         path_list = agent_path.split('/')
         module_name = "%s.agents.%s.%s" % (repo, path_list[0], path_list[1])
-        class_name = name_to_agent_class(path_list[1])
+        class_name = _name_to_agent_class(path_list[1])
     else:
         # e.g. -m seq2seq
         # will check parlai.agents.seq2seq.agents for Seq2seqAgent first
         # then check parlai.agents.seq2seq.seq2seq for Seq2seqAgent second
-        class_name = name_to_agent_class(agent_path)
+        class_name = _name_to_agent_class(agent_path)
         try:
             module_name = "%s.agents.%s.agents" % (repo, agent_path)
             importlib.import_module(module_name)  # check if it's there
@@ -126,10 +128,51 @@ def load_agent_module(agent_path: str):
     return model_class
 
 
-# TASK LOADER
+##############################################################
+### TASK LOADER
+##############################################################
+def _get_task_path_and_repo(taskname: str):
+    task = taskname.strip()
+    repo = 'parlai'
+    if task.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+
+    task_path_list = task.split(':')
+
+    return task_path_list, repo
+
+
 def load_task_module(taskname: str):
     """
-    Get the module of the task agent specified by `--task`.
+    Get the module containing all teacher agents for the task specified
+    by `--task`.
+
+    :param taskname: path to task class in one of the above formats.
+    """
+    task_path_list, repo = _get_task_path_and_repo(taskname)
+    task_path = task_path_list[0]
+
+    if '.' in task_path:
+        module_name = task_path
+    elif task_path == 'pytorch_teacher':
+        module_name = 'parlai.core.pytorch_data_teacher'
+    else:
+        task = task_path.lower()
+        module_name = "%s.tasks.%s.agents" % (repo, task)
+
+    task_module = importlib.import_module(module_name)
+
+    return task_module
+
+
+##############################################################
+### TEACHER LOADER
+##############################################################
+def load_teacher_module(taskname: str):
+    """
+    Get the module of the teacher agent specified by `--task`.
 
     Can be formatted in several different ways:
 
@@ -149,21 +192,9 @@ def load_task_module(taskname: str):
 
     :param taskname: path to task class in one of the above formats.
     """
-    task = taskname.strip()
-    repo = 'parlai'
-    if task.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        repo = 'parlai_internal'
-        task = task[9:]
-    task_path_list = task.split(':')
-    if '.' in task_path_list[0]:
-        module_name = task_path_list[0]
-    elif task_path_list[0] == 'pytorch_teacher':
-        module_name = 'parlai.core.pytorch_data_teacher'
-    else:
-        task = task_path_list[0].lower()
-        module_name = "%s.tasks.%s.agents" % (repo, task)
+    task_module = load_task_module(taskname)
+    task_path_list, repo = _get_task_path_and_repo(taskname)
+
     if len(task_path_list) > 1 and '=' not in task_path_list[1]:
         task_path_list[1] = task_path_list[1][0].upper() + task_path_list[1][1:]
         teacher = task_path_list[1]
@@ -177,11 +208,15 @@ def load_task_module(taskname: str):
             teacher = teacher_name + "Teacher"
     else:
         teacher = "DefaultTeacher"
-    my_module = importlib.import_module(module_name)
-    teacher_class = getattr(my_module, teacher)
+
+    teacher_class = getattr(task_module, teacher)
     return teacher_class
 
 
+##############################################################
+### WORLD LOADER
+##############################################################
+# TODO: needs documentation
 def get_default_world(default_world=None, num_agents=None):
     if default_world is not None:
         world_class = default_world
@@ -195,7 +230,7 @@ def get_default_world(default_world=None, num_agents=None):
     return world_class
 
 
-# WORLD LOADER
+# TODO: needs documentation
 def load_world_module(
     taskname: str,
     interactive_task: bool,

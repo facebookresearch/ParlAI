@@ -57,7 +57,7 @@ from parlai.core.agents import (
     create_agents_from_shared,
     create_task_agent_from_taskname,
 )
-from parlai.core.loader import load_task_module, load_world_module
+from parlai.core.loader import load_task_module, load_teacher_module, load_world_module
 from parlai.core.metrics import aggregate_metrics
 from parlai.utils.misc import Timer, display_messages
 from parlai.core.opt import Opt
@@ -1263,6 +1263,7 @@ def _create_task_agents(opt: Opt):
     try:
         # Tries to call the create_agent function in agents.py
         task_agents = my_module.create_agents(opt)  # type: ignore
+
     except AttributeError:
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
