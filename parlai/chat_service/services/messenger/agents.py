@@ -10,7 +10,9 @@ from parlai.chat_service.core.agents import ChatServiceAgent
 
 
 class MessengerAgent(ChatServiceAgent):
-    """Base class for a person on messenger that can act in a ParlAI world"""
+    """
+    Base class for a person on messenger that can act in a ParlAI world.
+    """
 
     def __init__(self, opt, manager, task_id, receiver_id, page_id):
         super().__init__(opt, manager, receiver_id, task_id)

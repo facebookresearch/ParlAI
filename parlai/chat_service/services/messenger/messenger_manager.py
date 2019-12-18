@@ -25,8 +25,9 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class MessengerManager(ChatServiceManager):
-    """Manages interactions between agents on messenger as well as direct
-    interactions between agents and the messenger overworld
+    """
+    Manages interactions between agents on messenger as well as direct interactions
+    between agents and the messenger overworld.
     """
 
     def __init__(self, opt):
@@ -251,6 +252,7 @@ class MessengerManager(ChatServiceManager):
         shared_utils.print_and_log(
             logging.INFO, 'done with websocket', should_print=True
         )
+
     # Agent Interaction Functions #
 
     def observe_message(self, receiver_id, text, quick_replies=None, persona_id=None):
