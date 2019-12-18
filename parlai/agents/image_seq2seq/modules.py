@@ -15,7 +15,7 @@ from parlai.agents.transformer.modules import (
     TransformerEncoder,
 )
 from parlai.core.dict import DictionaryAgent
-from parlai.utils.misc import Opt
+from parlai.core.opt import Opt
 
 
 class ImageSeq2seqModel(TransformerGeneratorModel):

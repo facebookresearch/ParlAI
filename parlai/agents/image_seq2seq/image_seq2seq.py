@@ -13,8 +13,10 @@ from .modules import ImageSeq2seqModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
+from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch, Output
-from parlai.utils.misc import round_sigfigs, Opt
+from parlai.utils.misc import round_sigfigs
+
 
 try:
     from nltk.translate import bleu_score as nltkbleu

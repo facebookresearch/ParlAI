@@ -73,7 +73,6 @@ installtorchgpu11: &installtorchgpu11
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
       pip3 install --progress-bar off torchvision
-      pip3 install --progress-bar off fairseq
 
 
 installtorchgpu12: &installtorchgpu12
@@ -85,7 +84,6 @@ installtorchgpu12: &installtorchgpu12
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
       pip3 install --progress-bar off torchvision
-      pip3 install --progress-bar off fairseq
 
 
 installtorchcpuosx: &installtorchcpuosx
