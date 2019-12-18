@@ -13,7 +13,7 @@ You can train this agent to a reasonable accuracy with:
 
 .. code-block:: bash
 
-    python examples/train_model.py -m example_tga \
+    python examples/train_model.py -m examples/seq2seq \
         -mf /tmp/example_model \
         -t convai2 -bs 32 -eps 2 --truncate 128
 
