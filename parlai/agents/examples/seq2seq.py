@@ -198,7 +198,5 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
         # we're responsible for setting the embeddings ourselves, but TorchAgent
         # gives us a nice helper
         if self.opt['embedding_type'] != 'random':
-            self._copy_embeddings(
-                model.embeddings.weight, self.opt['embedding_type']
-            )
+            self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
