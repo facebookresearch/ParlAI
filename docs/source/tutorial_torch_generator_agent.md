@@ -26,7 +26,7 @@ This tutorial will walk you through creating a simple generative model, found at
 
 A minimal `TorchGeneratorAgent` only needs to implement `build_model()`, but if you want to specify any command-line arguments, you'll need to add `add_cmdline_args()` as well. This method first adds flags for the agent's superclass and then adds a `--hidden-size` flag for the hidden dimension of the LSTMs.
 
-In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict <<< where this comes from >>> and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding module.
+In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict (set by `TorchAgent`) and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding module.
 
 Altogether, our example agent is defined as follows:
 
@@ -55,19 +55,121 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
 
 ### Extending `TorchGeneratorModel`
 
-<<<>>>
+We now subclass `TorchGeneratorModel` to create `ExampleModel`. We initialize this by first calling `super().__init__()` and passing in dictionary tokens for padding, start, end, and UNKs; we then create an embedding lookup table with `nn.Embedding` and instantiate the encoder and decoder, described in the following sections.
+
+```
+import torch.nn as nn
+import torch.nn.functional as F
+
+class ExampleModel(tga.TorchGeneratorModel):
+
+    def __init__(self, dictionary, esz=256, hidden_size=1024):
+        super().__init__(
+            padding_idx=dictionary[dictionary.null_token],
+            start_idx=dictionary[dictionary.start_token],
+            end_idx=dictionary[dictionary.end_token],
+            unknown_idx=dictionary[dictionary.unk_token],
+        )
+        self.embeddings = nn.Embedding(len(dictionary), esz)
+        self.encoder = Encoder(self.embeddings, hidden_size)
+        self.decoder = Decoder(self.embeddings, hidden_size)
+```
+
+We next define a function to project the output of the decoder back into the space of tokens:
+
+```
+    def output(self, decoder_output):
+        return F.linear(decoder_output, self.embeddings.weight)
+```
+
+Lastly, we need to define two functions to reindex the latent states of the encoder and decoder. We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each token step of beam search. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
+```
+    def reorder_encoder_states(self, encoder_states, indices):
+        h, c = encoder_states
+        return h[:, indices, :], c[:, indices, :]
+
+    def reorder_decoder_incremental_state(self, incr_state, indices):
+        h, c = incr_state
+        return h[:, indices, :], c[:, indices, :]
+```
 
 ### Writing the encoder
 
-<<<>>>
+The encoder is straightfoward: it comprises an embedding layer and an LSTM, and a forward pass through the encoder consists of passing the sequences of input tokens through both of them sequentially. The final hidden state is returned.
+
+```
+class Encoder(nn.Module):
+
+    def __init__(self, embeddings, hidden_size):
+        super().__init__()
+        _vocab_size, esz = embeddings.weight.shape
+        self.embeddings = embeddings
+        self.lstm = nn.LSTM(
+            input_size=esz, hidden_size=hidden_size, num_layers=1, batch_first=True
+        )
+
+    def forward(self, input_tokens):
+        embedded = self.embeddings(input_tokens)
+        _output, hidden = self.lstm(embedded)
+        return hidden
+```
 
 ### Writing the decoder
 
-<<<>>>
+The decoder is initialized in the same way as the encoder, but now the forward pass reflects the fact that the input tokens need to be passed through the embedder and LSTM one token at a time rather than all at once. If this is the first pass through the decoder, we pass a tuple `encoder_state` to the LSTM that consists of the initial hidden and cell state, as taken from the output of the encoder. If this is a subsequent pass through the decoder, the LSTM will have given us the current values of the hidden and cell states, so we pass that back in to the LSTM, after potentially having reindexed the states with `ExampleModel().reorder_decoder_incremental_state()`.
+
+```
+class Decoder(nn.Module):
+    """
+    Basic example Decoder.
+
+    Pay particular note to the ``forward``.
+    """
+
+    def __init__(self, embeddings, hidden_size):
+        """
+        Initialization.
+
+        Arguments here can be used to provide hyperparameters.
+        """
+        super().__init__()
+        _vocab_size, self.esz = embeddings.weight.shape
+        self.embeddings = embeddings
+        self.lstm = nn.LSTM(
+            input_size=self.esz, hidden_size=hidden_size, num_layers=1, batch_first=True
+        )
+
+    def forward(self, input, encoder_state, incr_state=None):
+        """
+        Run forward pass.
+
+        :param input:
+            The currently generated tokens from the decoder.
+        :param encoder_state:
+            The output from the encoder module.
+        :parm incr_state:
+            The previous hidden state of the decoder.
+        """
+        embedded = self.embeddings(input)
+        if incr_state is None:
+            # this is our very first call. We want to seed the LSTM with the
+            # hidden state of the decoder
+            state = encoder_state
+        else:
+            # We've generated some tokens already, so we can reuse the existing
+            # decoder state
+            state = incr_state
+
+        # get the new output and decoder incremental state
+        output, incr_state = self.lstm(embedded, state)
+
+        return output, incr_state
+```
+
 
 ### Training
 
-Finally, call training on the agent:
+The full code for the agent can be seen at <<< add >>>. Once finished, call training:
 
 ```
 python examples/train_model.py -m example_tga \

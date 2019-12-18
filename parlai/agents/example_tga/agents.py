@@ -89,7 +89,6 @@ class Decoder(nn.Module):
         self.lstm = nn.LSTM(
             input_size=self.esz, hidden_size=hidden_size, num_layers=1, batch_first=True
         )
-        self.lin_out = nn.Linear(hidden_size, self.esz)
 
     def forward(self, input, encoder_state, incr_state=None):
         """
