@@ -143,7 +143,7 @@ class Decoder(nn.Module):
 
 ### Training
 
-The full code for the agent can be seen at https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py. Once finished, call training:
+The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
 
 ```
 python examples/train_model.py -m examples.seq2seq \
@@ -151,4 +151,4 @@ python examples/train_model.py -m examples.seq2seq \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```
 
-You should get a perplexity of 139 and a token accuracy of 28% on the validation set (which is equal to the test set for the ConvAI2 dataset).
+You should get a perplexity of 139 and a token accuracy of 28% on the ConvAI2 validation/test set.
