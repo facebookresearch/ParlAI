@@ -109,6 +109,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
             )
 
         if self.contexts:
+            assert len(self.contexts) == 2
             # initial context
             for i in range(0, 2):
                 context = {

@@ -45,6 +45,22 @@ class TestSelfChat(unittest.TestCase):
         assert_seed_utts_match(['hey'])
         assert_seed_utts_match(['hey', 'hi'])
 
+    def test_contexts(self):
+        def assert_contexts_match(contexts):
+            self.world.get_contexts = MagicMock()
+            self.world.get_contexts.return_value = contexts
+            self.world.get_openers = MagicMock()
+            self.world.get_openers.return_value = []
+
+            # Run a self chat
+            self.world.parley()
+            acts = self.world.get_acts()
+            utterances = [a['text'] for a in acts]
+            self.assertSetEqual(set(contexts), set(utterances[: len(contexts)]))
+
+        assert_contexts_match(['you are a seal', 'you are an ostrich'])
+        assert_contexts_match([])
+
 
 if __name__ == '__main__':
     unittest.main()
