@@ -45,10 +45,7 @@ class Encoder(nn.Module):
         _vocab_size, esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
-            input_size=esz,
-            hidden_size=hidden_size,
-            num_layers=1,
-            batch_first=True
+            input_size=esz, hidden_size=hidden_size, num_layers=1, batch_first=True
         )
 
     def forward(self, input_tokens):
@@ -90,10 +87,7 @@ class Decoder(nn.Module):
         _vocab_size, self.esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
-            input_size=self.esz,
-            hidden_size=hidden_size,
-            num_layers=1,
-            batch_first=True
+            input_size=self.esz, hidden_size=hidden_size, num_layers=1, batch_first=True
         )
         self.lin_out = nn.Linear(hidden_size, self.esz)
 
@@ -137,7 +131,7 @@ class ExampleModel(tga.TorchGeneratorModel):
             padding_idx=dictionary[dictionary.null_token],
             start_idx=dictionary[dictionary.start_token],
             end_idx=dictionary[dictionary.end_token],
-            unknown_idx=dictionary[dictionary.unk_token]
+            unknown_idx=dictionary[dictionary.unk_token],
         )
         self.embeddings = nn.Embedding(len(dictionary), esz)
         self.encoder = Encoder(self.embeddings, hidden_size)
@@ -188,8 +182,7 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
         # Add custom arguments only for this model.
         group = argparser.add_argument_group('Example TGA Agent')
         group.add_argument(
-            '-hid', '--hidden-size', type=int, default=1024,
-            help='Hidden size.'
+            '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'
         )
 
     def build_model(self):
@@ -202,4 +195,3 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
             self._copy_embeddings(
                 self.model.embeddings.weight, self.opt['embedding_type']
             )
-
