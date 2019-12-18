@@ -14,7 +14,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from .modules import (
     TransformerMemNetModel,
     TransformerGeneratorModel,
-    TransformerLinearWrapper
+    TransformerLinearWrapper,
 )
 
 import torch

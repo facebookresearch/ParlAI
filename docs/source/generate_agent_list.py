@@ -55,7 +55,7 @@ def write_agent(fout, agent_readme):
         header = ''
         is_header = split[0].count('#') > 0
         if i == 0 and is_header:
-            header = '*'  #  title
+            header = '*'  # title
         elif is_header:
             header = '-'
         if header:  # Format Headings
@@ -87,7 +87,8 @@ def write_all_agents(fout):
         file object to write to
     """
     agents = [
-        name for _, name, _ in pkgutil.iter_modules(
+        name
+        for _, name, _ in pkgutil.iter_modules(
             [os.path.dirname(parlai.agents.__file__)]
         )
     ]
