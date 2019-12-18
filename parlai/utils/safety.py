@@ -7,7 +7,7 @@
 Utility functions and classes for detecting offensive language.
 """
 
-from parlai.agents.transformer_classifier.transformer_classifier import (
+from parlai.agents.transformer.transformer import (
     TransformerClassifierAgent,
 )
 from parlai.core.agents import create_agent

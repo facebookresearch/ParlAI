@@ -412,7 +412,7 @@ model_list = [
         "title": "Transformer Classifier Single-turn Dialogue Safety Model",
         "id": "dialogue_safety",
         "path": "zoo:dialogue_safety/single_turn/model",
-        "agent": "transformer_classifier",  # noqa: E501
+        "agent": "transformer/classifier",  # noqa: E501
         "task": "dialogue_safety:adversarial,dialogue_safety:standard",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
         "description": (
