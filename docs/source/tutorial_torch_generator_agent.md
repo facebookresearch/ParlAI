@@ -35,11 +35,11 @@ Altogether, our example agent is defined as follows:
 import parlai.core.torch_generator_agent as tga
 
 
-class ExampleTgaAgent(tga.TorchGeneratorAgent):
+class Seq2seqAgent(tga.TorchGeneratorAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        super(ExampleTgaAgent, cls).add_cmdline_args(argparser)
+        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         group = argparser.add_argument_group('Example TGA Agent')
         group.add_argument(
             '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'
@@ -146,7 +146,7 @@ class Decoder(nn.Module):
 The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
 
 ```
-python examples/train_model.py -m examples.seq2seq \
+python examples/train_model.py -m examples/seq2seq \
     -mf /tmp/example_model \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```
