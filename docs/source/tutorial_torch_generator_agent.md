@@ -25,9 +25,9 @@ This tutorial will walk you through creating a simple generative model, found at
 
 ### Extending `TorchGeneratorAgent`
 
-A minimal `TorchGeneratorAgent` only needs to implement `build_model()`, but if you want to specify any command-line arguments, you'll need to add `add_cmdline_args()` as well. This method first adds flags for the agent's superclass and then adds a `--hidden-size` flag for the hidden dimension of the LSTMs.
+A minimal `TorchGeneratorAgent` only needs to implement `build_model()`, but if you want to specify any command-line arguments, you'll need to add `add_cmdline_args()` as well. This method first adds flags for `TorchGeneratorAgent` and then adds a `--hidden-size` flag for the hidden dimension of the LSTMs.
 
-In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict (set by `TorchAgent`) and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding module.
+In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict (set by `TorchAgent`) and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding table.
 
 Altogether, our example agent is defined as follows:
 
