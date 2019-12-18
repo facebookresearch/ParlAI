@@ -120,18 +120,8 @@ The decoder is initialized in the same way as the encoder, but now the forward p
 
 ```
 class Decoder(nn.Module):
-    """
-    Basic example Decoder.
-
-    Pay particular note to the ``forward``.
-    """
 
     def __init__(self, embeddings, hidden_size):
-        """
-        Initialization.
-
-        Arguments here can be used to provide hyperparameters.
-        """
         super().__init__()
         _vocab_size, self.esz = embeddings.weight.shape
         self.embeddings = embeddings
@@ -140,27 +130,12 @@ class Decoder(nn.Module):
         )
 
     def forward(self, input, encoder_state, incr_state=None):
-        """
-        Run forward pass.
-
-        :param input:
-            The currently generated tokens from the decoder.
-        :param encoder_state:
-            The output from the encoder module.
-        :parm incr_state:
-            The previous hidden state of the decoder.
-        """
         embedded = self.embeddings(input)
         if incr_state is None:
-            # this is our very first call. We want to seed the LSTM with the
-            # hidden state of the decoder
             state = encoder_state
         else:
-            # We've generated some tokens already, so we can reuse the existing
-            # decoder state
             state = incr_state
 
-        # get the new output and decoder incremental state
         output, incr_state = self.lstm(embedded, state)
 
         return output, incr_state
