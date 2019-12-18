@@ -2,15 +2,16 @@
 
 **Authors**: Stephen Roller, Eric Smith
 
-`parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract parent class that provides functionality for building autoregressive generative models. Extending TorchGeneratorAgent requires your model conform to a strict interface, but then provides you rich functionality like beam search and sampling.
+`parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract parent class that provides functionality for building autoregressive generative models. Extending `TorchGeneratorAgent` requires your model conform to a strict interface, but then provides you rich functionality like beam search and sampling.
 
 
 ## Example Models
 
-Two major models in ParlAI inherit from TorchGeneratorAgent: seq2seq and transformer. You can try one of these with the example below:
+Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try one of these with the example below:
 
 ```
-python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtransformer --beam-size 5 -bs 16
+python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtransformer \
+  --beam-size 5 -bs 16
 ```
 
 ## Creating a Model
@@ -20,7 +21,7 @@ In order to write a generative model, your agent should extend `parlai.core.torc
 
 ## Tutorial
 
-This tutorial will walk you through creating a simple generative model, found at `parlai.agents.example_tga.agents`, that consists of an LSTM-based encoder and decoder.
+This tutorial will walk you through creating a simple generative model, found at `parlai.agents.examples.seq2seq`, that consists of an LSTM-based encoder and decoder.
 
 ### Extending `TorchGeneratorAgent`
 
@@ -93,7 +94,7 @@ Lastly, we need to define two functions to reindex the latent states of the enco
         return h[:, indices, :], c[:, indices, :]
 ```
 
-### Writing the encoder
+### Creating the encoder
 
 The encoder is straightfoward: it comprises an embedding layer and an LSTM, and a forward pass through the encoder consists of passing the sequences of input tokens through both of them sequentially. The final hidden state is returned.
 
@@ -114,7 +115,7 @@ class Encoder(nn.Module):
         return hidden
 ```
 
-### Writing the decoder
+### Creating the decoder
 
 The decoder is initialized in the same way as the encoder, but now the forward pass reflects the fact that the input tokens need to be passed through the embedder and LSTM one token at a time rather than all at once. If this is the first pass through the decoder, we pass a tuple `encoder_state` to the LSTM that consists of the initial hidden and cell state, as taken from the output of the encoder. If this is a subsequent pass through the decoder, the LSTM will have given us the current values of the hidden and cell states, so we pass that back in to the LSTM, after potentially having reindexed the states with `ExampleModel().reorder_decoder_incremental_state()`.
 
