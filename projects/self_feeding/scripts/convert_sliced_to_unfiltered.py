@@ -23,7 +23,8 @@ def setup_args():
 
 
 def main(config):
-    """Creates .unfiltered files from .sliced files
+    """
+    Creates .unfiltered files from .sliced files.
 
     input: a .sliced file of logs (in ParlaiDialog format) from Mturk task 1, each of
         which starts with an initial prompt or topic request, and ends with a y_exp
@@ -57,12 +58,14 @@ def main(config):
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} self-feeding episodes out of "
-          f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}.")
+    print(
+        f"Extracted {len(examples)} self-feeding episodes out of "
+        f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}."
+    )
 
 
 if __name__ == '__main__':
     config = setup_args()
-    assert(config['infile'].endswith('.sliced'))
-    assert(config['outfile'].endswith('.unfiltered'))
+    assert config['infile'].endswith('.sliced')
+    assert config['outfile'].endswith('.unfiltered')
     main(config)

@@ -25,7 +25,8 @@ def setup_args():
 
 
 def main(config):
-    """Creates input files for y_exp mturk task from conversation/rating mturk task
+    """
+    Creates input files for y_exp mturk task from conversation/rating mturk task.
 
     input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
         quality ratings 1-5
@@ -36,9 +37,10 @@ def main(config):
     old_episodes = [e for e in extract_parlai_episodes(config['infile'])]
     for episode in old_episodes:
         for parley in episode:
-            if any(parley.context.startswith(x) for x in (
-                    NEW_TOPIC_REQUEST.lower(),
-                    INITIAL_PROMPT.lower())):
+            if any(
+                parley.context.startswith(x)
+                for x in (NEW_TOPIC_REQUEST.lower(), INITIAL_PROMPT.lower())
+            ):
                 new_episode = []
             new_episode.append(parley)
             if parley.context.startswith(SUGGESTION_REQUEST.lower()):
@@ -52,8 +54,10 @@ def main(config):
                 if i == num_parleys - 1:
                     parley.episode_done = True
                 f.write(f"{i}\t{parley.to_parlai()}\n")
-    print(f"Extracted {len(new_episodes)} episodes out of {len(old_episodes)} "
-          f"original episodes and wrote them to {config['outfile']}.")
+    print(
+        f"Extracted {len(new_episodes)} episodes out of {len(old_episodes)} "
+        f"original episodes and wrote them to {config['outfile']}."
+    )
 
 
 if __name__ == '__main__':

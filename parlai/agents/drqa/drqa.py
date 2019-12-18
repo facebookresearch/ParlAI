@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""(A partial) implementation of the DrQa Document Reader from:
+"""
+(A partial) implementation of the DrQa Document Reader from:
 
 Danqi Chen, Adam Fisch, Jason Weston, Antoine Bordes. 2017.
 Reading Wikipedia to Answer Open-Domain Questions.
@@ -41,15 +42,20 @@ from .model import DocReaderModel
 # Dictionary.
 # ------------------------------------------------------------------------------
 
+
 class SimpleDictionaryAgent(DictionaryAgent):
-    """Override DictionaryAgent to use spaCy tokenizer."""
+    """
+    Override DictionaryAgent to use spaCy tokenizer.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
         group = DictionaryAgent.add_cmdline_args(argparser)
         group.add_argument(
-            '--pretrained_words', type='bool', default=True,
-            help='Use only words found in provided embedding_file'
+            '--pretrained_words',
+            type='bool',
+            default=True,
+            help='Use only words found in provided embedding_file',
         )
         group.set_defaults(dict_tokenizer='spacy')
 
@@ -57,27 +63,32 @@ class SimpleDictionaryAgent(DictionaryAgent):
         super().__init__(*args, **kwargs)
 
         # Index words in embedding file
-        if (self.opt['pretrained_words'] and self.opt.get('embedding_file') and
-                not self.opt.get('trained', False)):
+        if (
+            self.opt['pretrained_words']
+            and self.opt.get('embedding_file')
+            and not self.opt.get('trained', False)
+        ):
             print('[ Indexing words with embeddings... ]')
             self.embedding_words = set()
             self.opt['embedding_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['embedding_file'])
+                self.opt.get('datapath'), self.opt['embedding_file']
+            )
             with open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])
                     self.embedding_words.add(w)
-            print('[ Num words in set = %d ]' %
-                  len(self.embedding_words))
+            print('[ Num words in set = %d ]' % len(self.embedding_words))
         else:
             self.embedding_words = None
 
     def add_to_dict(self, tokens):
-        """Builds dictionary from the list of provided tokens.
+        """
+        Builds dictionary from the list of provided tokens.
+
         Only adds words contained in self.embedding_words, if not None.
         """
         for token in tokens:
-            if (self.embedding_words is not None and token not in self.embedding_words):
+            if self.embedding_words is not None and token not in self.embedding_words:
                 continue
             self.freq[token] += 1
             if token not in self.tok2ind:
@@ -92,7 +103,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
 
 class DrqaAgent(Agent):
-
     @staticmethod
     def add_cmdline_args(argparser):
         config.add_cmdline_args(argparser)
@@ -155,8 +165,9 @@ class DrqaAgent(Agent):
         self.feature_dict = saved_params['feature_dict']
         self.state_dict = saved_params['state_dict']
         config.override_args(self.opt, saved_params['config'])
-        self.model = DocReaderModel(self.opt, self.word_dict,
-                                    self.feature_dict, self.state_dict)
+        self.model = DocReaderModel(
+            self.opt, self.word_dict, self.feature_dict, self.state_dict
+        )
 
     def share(self):
         shared = super().share()
@@ -183,8 +194,9 @@ class DrqaAgent(Agent):
         ex = self._build_ex(self.observation)
         if ex is None:
             return reply
-        batch = batchify([ex], null=self.word_dict[self.word_dict.null_token],
-                         cuda=self.opt['cuda'])
+        batch = batchify(
+            [ex], null=self.word_dict[self.word_dict.null_token], cuda=self.opt['cuda']
+        )
 
         # Either train or predict
         if 'labels' in self.observation:
@@ -200,7 +212,9 @@ class DrqaAgent(Agent):
         return reply
 
     def batch_act(self, observations):
-        """Update or predict on a batch of examples.
+        """
+        Update or predict on a batch of examples.
+
         More efficient than act().
         """
         batchsize = len(observations)
@@ -216,9 +230,11 @@ class DrqaAgent(Agent):
             return batch_reply
 
         # Else, use what we have (hopefully everything).
-        batch = batchify(examples,
-                         null=self.word_dict[self.word_dict.null_token],
-                         cuda=self.opt['cuda'])
+        batch = batchify(
+            examples,
+            null=self.word_dict[self.word_dict.null_token],
+            cuda=self.opt['cuda'],
+        )
 
         # Either train or predict
         if 'labels' in observations[0]:
@@ -228,12 +244,12 @@ class DrqaAgent(Agent):
             except RuntimeError as e:
                 # catch out of memory exceptions during fwd/bck (skip batch)
                 if 'out of memory' in str(e):
-                    print('| WARNING: ran out of memory, skipping batch. '
-                          'if this happens frequently, decrease batchsize or '
-                          'truncate the inputs to the model.')
-                    batch_reply[0]['metrics'] = {
-                        'skipped_batches': 1,
-                    }
+                    print(
+                        '| WARNING: ran out of memory, skipping batch. '
+                        'if this happens frequently, decrease batchsize or '
+                        'truncate the inputs to the model.'
+                    )
+                    batch_reply[0]['metrics'] = {'skipped_batches': 1}
                     return batch_reply
                 else:
                     raise e
@@ -246,12 +262,14 @@ class DrqaAgent(Agent):
                 batch_reply[valid_inds[i]]['candidate_scores'] = [scores[i]]
 
         batch_reply[0]['metrics'] = {
-            'train_loss': self.model.train_loss.avg * batchsize,
+            'train_loss': self.model.train_loss.avg * batchsize
         }
         return batch_reply
 
     def save(self, fname=None):
-        """Save the parameters of the agent to a file."""
+        """
+        Save the parameters of the agent to a file.
+        """
         fname = self.opt.get('model_file', None) if fname is None else fname
         if fname:
             print("[ saving model: " + fname + " ]")
@@ -266,7 +284,9 @@ class DrqaAgent(Agent):
     # --------------------------------------------------------------------------
 
     def _build_ex(self, ex):
-        """Find the token span of the answer in the context for this example.
+        """
+        Find the token span of the answer in the context for this example.
+
         If a token span cannot be found, return None. Otherwise, torchify.
         """
         # Check if empty input (end of epoch)
@@ -303,14 +323,14 @@ class DrqaAgent(Agent):
                 for ans, ch_idx in labels_with_inds:
                     # try to find an answer_start matching a tokenized answer
                     start_idx = bisect.bisect_left(
-                        list(x[0] for x in doc_spans), ch_idx)
+                        list(x[0] for x in doc_spans), ch_idx
+                    )
                     end_idx = start_idx + len(self.word_dict.tokenize(ans)) - 1
                     if end_idx < len(doc_spans):
                         inputs['target'] = (start_idx, end_idx)
                         break
             else:
-                inputs['target'] = self._find_target(inputs['document'],
-                                                     ex['labels'])
+                inputs['target'] = self._find_target(inputs['document'], ex['labels'])
             if inputs['target'] is None:
                 return
 
@@ -321,14 +341,18 @@ class DrqaAgent(Agent):
         return inputs + (document, doc_spans)
 
     def _find_target(self, document, labels):
-        """Find the start/end token span for all labels in document.
+        """
+        Find the start/end token span for all labels in document.
+
         Return a random one for training.
         """
+
         def _positions(d, l):
             for i in range(len(d)):
                 for j in range(i, min(len(d) - 1, i + len(l))):
-                    if l == d[i:j + 1]:
-                        yield(i, j)
+                    if l == d[i : j + 1]:
+                        yield (i, j)
+
         targets = []
         for label in labels:
             targets.extend(_positions(document, self.word_dict.tokenize(label)))
@@ -337,7 +361,8 @@ class DrqaAgent(Agent):
         return targets[np.random.choice(len(targets))]
 
     def _subsample_doc(self, paras, labels, subsample):
-        """Subsample paragraphs from the document (mostly for training speed).
+        """
+        Subsample paragraphs from the document (mostly for training speed).
         """
         # first find a valid paragraph (with a label)
         pi = -1

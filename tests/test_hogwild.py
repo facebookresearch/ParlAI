@@ -6,7 +6,7 @@
 
 import unittest
 
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 NUM_EXS = 100
 # ideally we want one choice which is a nice modulo with NUM_EXS, and one that isn't
@@ -16,10 +16,14 @@ BATCHSIZE_CHOICES = [1, 8]
 
 @testing_utils.skipIfGPU
 class TestHogwild(unittest.TestCase):
-    """Check that hogwild is doing the right number of examples."""
+    """
+    Check that hogwild is doing the right number of examples.
+    """
 
     def test_hogwild_train(self):
-        """Test the trainer eval with numthreads > 1 and batchsize in [1,2,3]."""
+        """
+        Test the trainer eval with numthreads > 1 and batchsize in [1,2,3].
+        """
         opt = dict(
             task='tasks.repeat:RepeatTeacher:{}'.format(1),
             evaltask='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
@@ -33,22 +37,15 @@ class TestHogwild(unittest.TestCase):
                 opt['batchsize'] = bs
 
                 stdout, valid, test = testing_utils.train_model(opt)
-                self.assertEqual(
-                    valid['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
-                self.assertEqual(
-                    test['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
+                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
 
     def test_hogwild_eval(self):
-        """Test eval with numthreads > 1 and batchsize in [1,2,3]."""
+        """
+        Test eval with numthreads > 1 and batchsize in [1,2,3].
+        """
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
-            model='repeat_label',
+            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS), model='repeat_label'
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
@@ -56,16 +53,8 @@ class TestHogwild(unittest.TestCase):
                 opt['batchsize'] = bs
 
                 stdout, valid, test = testing_utils.eval_model(opt)
-                self.assertEqual(
-                    valid['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
-                self.assertEqual(
-                    test['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
+                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
 
 
 if __name__ == '__main__':

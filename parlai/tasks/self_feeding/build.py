@@ -5,19 +5,29 @@
 # LICENSE file in the root directory of this source tree.
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/self_feeding/self_feeding_v031.tar.gz',
+        'self_feeding_v031.tar.gz',
+        '223d867c72f8b8c173fce86d49d099a56ca002f1a39886c407caee661417a5b4',
+    )
+]
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'dialogue_sf')
-    fname = 'dialogue_sf_v01.tgz'
-    version = '1.0'
+    dpath = os.path.join(opt['datapath'], 'self_feeding')
+    version = '3.1'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/dialogue_sf/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
+
         build_data.mark_done(dpath, version)

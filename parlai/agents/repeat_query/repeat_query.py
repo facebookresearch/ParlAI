@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Simple agent which repeats back the last thing said to it.
+"""
+Simple agent which repeats back the last thing said to it.
+
 Useful as a baseline for metrics like F1.
 """
 
@@ -11,7 +13,6 @@ from parlai.core.agents import Agent
 
 
 class RepeatQueryAgent(Agent):
-
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'RepeatQueryAgent'

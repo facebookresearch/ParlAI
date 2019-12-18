@@ -8,7 +8,7 @@ import random
 import io
 import os
 import pickle
-from parlai.core.utils import msg_to_str
+from parlai.utils.misc import msg_to_str
 
 rand = random.Random(42)
 
@@ -37,6 +37,47 @@ def fix_labels(act, opt):
         if has is False:
             print("***ADDING A LABEL CAND****")
             act['label_candidates'].append(l)
+
+
+def get_no_affordance_actions(in_room, carrying, other_carrying, other_name):
+    all_actions = []
+    # Drop "a" prefix from all
+    in_room = [i[2:] for i in in_room]
+    carrying = [i[2:] for i in carrying]
+    other_carrying = [i[2:] for i in other_carrying]
+    for obj in other_carrying:
+        all_actions.append('steal {} from {}'.format(obj, other_name))
+    for obj in in_room:
+        all_actions.append('get {}'.format(obj))
+    for obj in carrying:
+        for f in ['drop {}', 'wield {}', 'wear {}', 'remove {}', 'eat {}', 'drink {}']:
+            all_actions.append(f.format(obj))
+        all_actions.append('give {} to {}'.format(obj, other_name))
+        for obj2 in in_room:
+            all_actions.append('put {} in {}'.format(obj, obj2))
+        for obj2 in carrying:
+            if obj2 == obj:
+                continue
+            all_actions.append('put {} in {}'.format(obj, obj2))
+    return list(set(all_actions))
+
+
+def gen_no_affordance_actions_for_dialogue(d):
+    characters = [d['agents'][0]['name'], d['agents'][1]['name']]
+    other_char = 1
+    no_affordance_actions = []
+    last_carry = []
+    for idx in range(len(d['speech'])):
+        char = characters[other_char]
+        curr_carry = d['carrying'][idx] + d['wearing'][idx] + d['wielding'][idx]
+        no_affordance_actions_turn = get_no_affordance_actions(
+            d['room_objects'][idx], curr_carry, last_carry, char
+        )
+        no_affordance_actions_turn += d['available_actions'][idx]
+        no_affordance_actions.append(list(set(no_affordance_actions_turn)))
+        last_carry = curr_carry
+        other_char = 1 - other_char
+    d['no_affordance_actions'] = no_affordance_actions
 
 
 def write_dialog(opt, fw, d, label_type, split):
@@ -77,7 +118,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 use_feat(opt, 'light_use_speech', 'partner')
                 and d['speech'][i] is not None
             ):
-                text += '_partner_say ' + str(d['speech'][i]) + '\n'
+                if opt['light_use_speech_prefix']:
+                    text += '_partner_say '
+                text += str(d['speech'][i]) + '\n'
             if (
                 use_feat(opt, 'light_use_action', 'partner')
                 and d['action'][i] is not None
@@ -110,7 +153,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
-                    text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
+                    if opt['light_use_speech_prefix']:
+                        text += '_self_say '
+                    text += str(d['speech'][i + 1]) + '\n'
                     shown['speech'] = True
                 used_current = True
             if (
@@ -149,6 +194,7 @@ def write_dialog(opt, fw, d, label_type, split):
                     label_type,
                     split,
                     int(opt.get('light_use_cands', 100)),
+                    opt.get('light_use_affordances', True),
                 )
                 msgs.append(msg)
                 text = ''
@@ -157,7 +203,9 @@ def write_dialog(opt, fw, d, label_type, split):
                 and d['speech'][i + 1] is not None
                 and ('speech' not in shown)
             ):
-                text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
+                if opt['light_use_speech_prefix']:
+                    text += '_self_say '
+                text += str(d['speech'][i + 1]) + '\n'
             if (
                 use_feat(opt, 'light_use_action', 'self')
                 and d['action'][i + 1] is not None
@@ -206,15 +254,20 @@ def write_alldata(opt, db, dpath, ltype, split):
         d2['action'].insert(0, None)
         d2['available_actions'] = list(d2['available_actions'])
         d2['available_actions'].insert(0, None)
+        d2['no_affordance_actions'] = list(d2['no_affordance_actions'])
+        d2['no_affordance_actions'].insert(0, None)
         write_dialog(opt, fw_tst, d2, ltype, split)
     fw_tst.close()
 
 
-def add_negs(msg, d, ind, label_type, split, num_cands):
+def add_negs(msg, d, ind, label_type, split, num_cands, use_affordances):
     if label_type == 'emote':
         msg['label_candidates'] = cands['emote']
     if label_type == 'action':
-        msg['label_candidates'] = d['available_actions'][ind]
+        if use_affordances:
+            msg['label_candidates'] = d['available_actions'][ind]
+        else:
+            msg['label_candidates'] = d['no_affordance_actions'][ind]
     if label_type == 'speech':
         cnt = 0
         label = msg['labels']
@@ -246,6 +299,7 @@ def write_out_candidates(db, dpath, dtype):
     cands['action'] = []
     cands['speech'] = []
     for d in db:
+        gen_no_affordance_actions_for_dialogue(d)
         if d['split'] != dtype:
             continue
         for e in d['emote']:

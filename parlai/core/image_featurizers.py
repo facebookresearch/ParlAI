@@ -4,120 +4,129 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Provide functionality for loading images.
+"""
+
 import parlai.core.build_data as build_data
 
 import os
 from PIL import Image
 from zipfile import ZipFile
-from functools import wraps
-from threading import Lock, Condition
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
 
 
-def first_n_cache(function):
-    cache = {}
-    cache_monitor = CacheMonitor()
-
-    @wraps(function)
-    def wrapper(*args):
-        path = args[1]
-        loader = args[0]
-        if path in cache:
-            img = cache[path]
-        else:
-            img = function(*args)
-            if img is not None and len(cache) < _cache_size:
-                cache_monitor.waitForCache()
-                cache[path] = img
-                cache_monitor.doneWithCache()
-        if loader.use_cuda and loader.im not in [None, 'none', 'raw', 'ascii']:
-            img = loader.torch.from_numpy(img).cuda()
-        return img
-    return wrapper
-
-
-class CacheMonitor():
-    def __init__(self):
-        self.cache_lock = Lock()
-        self.cache_available = Condition(self.cache_lock)
-        self.cache_busy = False
-
-    def waitForCache(self):
-        with self.cache_lock:
-            while self.cache_busy:
-                self.cache_available.wait()
-            self.cache_busy = True
-
-    def doneWithCache(self):
-        with self.cache_lock:
-            self.cache_busy = False
-            self.cache_available.notify_all()
-
-
-class ImageLoader():
+class ImageLoader:
     """
     Extract image feature using pretrained CNN network.
     """
+
     def __init__(self, opt):
         self.opt = opt.copy()
         self.use_cuda = False
         self.netCNN = None
-        self.im = opt.get('image_mode', 'none')
-        if self.im not in ['none', 'raw', 'ascii']:
-            self.init_cnn(self.opt)
+        self.im = opt.get('image_mode', 'no_image_model')
+        if self.im not in ['no_image_model', 'raw', 'ascii']:
+            if 'image_mode' not in opt or 'image_size' not in opt:
+                raise RuntimeError(
+                    'Need to add image arguments to opt. See '
+                    'parlai.core.params.ParlaiParser.add_image_args'
+                )
+            self.image_mode = opt['image_mode']
+            self.image_size = opt['image_size']
+            self.crop_size = opt['image_cropsize']
+            self._lazy_import_torch()
+            self._init_transform()
+            if 'resnet' in self.image_mode:
+                self._init_resnet_cnn()
+            elif 'resnext' in self.image_mode:
+                self._init_resnext_cnn()
+            else:
+                raise RuntimeError(
+                    'Image mode {} not supported'.format(self.image_mode)
+                )
 
-    def init_cnn(self, opt):
-        """
-        Lazy initialization of preprocessor model in case we don't need any
-        image preprocessing.
-        """
+    def _lazy_import_torch(self):
         try:
             import torch
-            self.use_cuda = (
-                not opt.get('no_cuda', False) and torch.cuda.is_available()
-            )
-            self.torch = torch
         except ImportError:
             raise ImportError('Need to install Pytorch: go to pytorch.org')
         import torchvision
         import torchvision.transforms as transforms
         import torch.nn as nn
 
-        if 'image_mode' not in opt or 'image_size' not in opt:
-            raise RuntimeError(
-                'Need to add image arguments to opt. See '
-                'parlai.core.params.ParlaiParser.add_image_args')
-        self.image_mode = opt['image_mode']
-        self.image_size = opt['image_size']
-        self.crop_size = opt['image_cropsize']
-
+        self.use_cuda = not self.opt.get('no_cuda', False) and torch.cuda.is_available()
         if self.use_cuda:
             print('[ Using CUDA ]')
-            torch.cuda.set_device(opt.get('gpu', -1))
+            torch.cuda.set_device(self.opt.get('gpu', -1))
+        self.torch = torch
+        self.torchvision = torchvision
+        self.transforms = transforms
+        self.nn = nn
 
-        cnn_type, layer_num = self.image_mode_switcher()
+    def _init_transform(self):
+        # initialize the transform function using torch vision.
+        self.transform = self.transforms.Compose(
+            [
+                self.transforms.Scale(self.image_size),
+                self.transforms.CenterCrop(self.crop_size),
+                self.transforms.ToTensor(),
+                self.transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
 
+    def _init_resnet_cnn(self):
+        """
+        Lazily initialize preprocessor model.
+
+        When image_mode is one of the ``resnet`` varieties
+        """
+        cnn_type, layer_num = self._image_mode_switcher()
         # initialize the pretrained CNN using pytorch.
-        CNN = getattr(torchvision.models, cnn_type)
+        CNN = getattr(self.torchvision.models, cnn_type)
 
         # cut off the additional layer.
-        self.netCNN = nn.Sequential(
-            *list(CNN(pretrained=True).children())[:layer_num])
+        self.netCNN = self.nn.Sequential(
+            *list(CNN(pretrained=True).children())[:layer_num]
+        )
 
-        # initialize the transform function using torch vision.
-        self.transform = transforms.Compose([
-            transforms.Scale(self.image_size),
-            transforms.CenterCrop(self.crop_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ])
         if self.use_cuda:
             self.netCNN.cuda()
 
-    def image_mode_switcher(self):
+    def _init_resnext_cnn(self):
+        """
+        Lazily initialize preprocessor model.
+
+        When image_mode is one of the ``resnext101_..._wsl`` varieties
+        """
+        try:
+            model = self.torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
+            # cut off layer for ImageNet classification
+            self.netCNN = self.nn.Sequential(*list(model.children())[:-1])
+        except RuntimeError as e:
+            # Perhaps specified one of the wrong model names
+            print(
+                'If you have specified one of the resnext101 wsl models, '
+                'please make sure it is one of the following: \n'
+                'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
+                'resnext101_32x32d_wsl, resnext101_32x48d_wsl'
+            )
+            raise e
+        except AttributeError:
+            # E.g. "module 'torch' has no attribute 'hub'"
+            raise RuntimeError(
+                'Please install the latest pytorch distribution to have access '
+                'to the resnext101 wsl models (pytorch 1.1.0, torchvision 0.3.0)'
+            )
+
+        if self.use_cuda:
+            self.netCNN.cuda()
+
+    def _image_mode_switcher(self):
         switcher = {
             'resnet152': ['resnet152', -1],
             'resnet101': ['resnet101', -1],
@@ -132,12 +141,36 @@ class ImageLoader():
         }
 
         if self.image_mode not in switcher:
-            raise NotImplementedError('image preprocessing mode' +
-                                      '{} not supported yet'.format(self.image_mode))
+            raise NotImplementedError(
+                'image preprocessing mode'
+                + '{} not supported yet'.format(self.image_mode)
+            )
 
         return switcher.get(self.image_mode)
 
-    def extract(self, image, path):
+    @classmethod
+    def get_available_model_names(cls):
+        """
+        Get a list of the available model variants in this ImageLoader.
+        """
+        return [
+            'resnet152',
+            'resnet101',
+            'resnet50',
+            'resnet34',
+            'resnet18',
+            'resnet152_spatial',
+            'resnet101_spatial',
+            'resnet50_spatial',
+            'resnet34_spatial',
+            'resnet18_spatial',
+            'resnext101_32x8d_wsl',
+            'resnext101_32x16d_wsl',
+            'resnext101_32x32d_wsl',
+            'resnext101_32x48d_wsl',
+        ]
+
+    def extract(self, image, path=None):
         # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn(self.opt)
@@ -145,12 +178,14 @@ class ImageLoader():
         transform = self.transform(image).unsqueeze(0)
         if self.use_cuda:
             transform = transform.cuda()
-        feature = self.netCNN(transform)
+        with self.torch.no_grad():
+            feature = self.netCNN(transform)
         # save the feature
-        self.torch.save(feature.cpu(), path)
+        if path is not None:
+            self.torch.save(feature.cpu(), path)
         return feature
 
-    def img_to_ascii(self, path):
+    def _img_to_ascii(self, path):
         im = Image.open(path)
         im.thumbnail((60, 40), Image.BICUBIC)
         im = im.convert('L')
@@ -162,12 +197,14 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    # @first_n_cache
     def load(self, path):
+        """
+        Load from a given path.
+        """
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
         is_zip = False
-        if mode is None or mode == 'none':
+        if mode is None or mode == 'no_image_model':
             # don't need to load images
             return None
         elif '.zip' in path:
@@ -175,7 +212,7 @@ class ImageLoader():
             is_zip = True
             sep = path.index('.zip') + 4
             zipname = path[:sep]
-            file_name = path[sep + 1:]
+            file_name = path[sep + 1 :]
             path = ZipFile(zipname, 'r').open(file_name)
             if opt['task'] != 'pytorch_teacher':
                 task = opt['task']
@@ -188,7 +225,7 @@ class ImageLoader():
             return Image.open(path).convert('RGB')
         elif mode == 'ascii':
             # convert images to ascii ¯\_(ツ)_/¯
-            return self.img_to_ascii(path)
+            return self._img_to_ascii(path)
         else:
             # otherwise, looks for preprocessed version under 'mode' directory
             if not is_zip:

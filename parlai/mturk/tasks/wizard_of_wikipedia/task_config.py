@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -58,8 +59,9 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-    '''
+task_config[
+    'task_description'
+] = '''
 <h2><b>Description</b></h2>
 In this task, you will have a conversation with another person. The goal of
 this task is to go into depth about something that interests you or the other
@@ -83,10 +85,13 @@ and it takes forever
 <br>
 {}
 If you are ready, please click "Accept HIT" to start this task.
-'''.format(end_info)
+'''.format(
+    end_info
+)
 
-task_config['wizard_onboarding'] = \
-    '''
+task_config[
+    'wizard_onboarding'
+] = '''
 <h2>You have just met the other person, who seems quite curious, and you are
 eager to discuss a topic with them!</h2>
 <br>
@@ -163,9 +168,12 @@ takes forever
 {}
 <br>
 <br>
-'''.format(end_info)
-task_config['apprentice_onboarding'] = \
-    '''
+'''.format(
+    end_info
+)
+task_config[
+    'apprentice_onboarding'
+] = '''
 <h2> You have just met the other person, who seems quite knowledgable, and you are
 curious to discuss a topic with them!</h2>
 <br>
@@ -213,4 +221,6 @@ and it takes forever
 <br>
 <br>
 {}
-'''.format(end_info)
+'''.format(
+    end_info
+)

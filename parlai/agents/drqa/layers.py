@@ -15,9 +15,17 @@ from torch.autograd import Variable
 
 
 class StackedBRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers,
-                 dropout_rate=0, dropout_output=False, rnn_type=nn.LSTM,
-                 concat_layers=False, padding=False):
+    def __init__(
+        self,
+        input_size,
+        hidden_size,
+        num_layers,
+        dropout_rate=0,
+        dropout_output=False,
+        rnn_type=nn.LSTM,
+        concat_layers=False,
+        padding=False,
+    ):
         super(StackedBRNN, self).__init__()
         self.padding = padding
         self.dropout_output = dropout_output
@@ -27,12 +35,14 @@ class StackedBRNN(nn.Module):
         self.rnns = nn.ModuleList()
         for i in range(num_layers):
             input_size = input_size if i == 0 else 2 * hidden_size
-            self.rnns.append(rnn_type(input_size, hidden_size,
-                                      num_layers=1,
-                                      bidirectional=True))
+            self.rnns.append(
+                rnn_type(input_size, hidden_size, num_layers=1, bidirectional=True)
+            )
 
     def forward(self, x, x_mask):
-        """Can choose to either handle or ignore variable length sequences.
+        """
+        Can choose to either handle or ignore variable length sequences.
+
         Always handle padding in eval.
         """
         # No padding necessary.
@@ -45,7 +55,9 @@ class StackedBRNN(nn.Module):
         return self._forward_unpadded(x, x_mask)
 
     def _forward_unpadded(self, x, x_mask):
-        """Faster encoding that ignores any padding."""
+        """
+        Faster encoding that ignores any padding.
+        """
         # Transpose batch and sequence dims
         x = x.transpose(0, 1).contiguous()
 
@@ -56,9 +68,9 @@ class StackedBRNN(nn.Module):
 
             # Apply dropout to hidden input
             if self.dropout_rate > 0:
-                rnn_input = F.dropout(rnn_input,
-                                      p=self.dropout_rate,
-                                      training=self.training)
+                rnn_input = F.dropout(
+                    rnn_input, p=self.dropout_rate, training=self.training
+                )
             # Forward
             rnn_output = self.rnns[i](rnn_input)[0]
             outputs.append(rnn_output)
@@ -74,14 +86,13 @@ class StackedBRNN(nn.Module):
 
         # Dropout on output layer
         if self.dropout_output and self.dropout_rate > 0:
-            output = F.dropout(output,
-                               p=self.dropout_rate,
-                               training=self.training)
+            output = F.dropout(output, p=self.dropout_rate, training=self.training)
         return output
 
     def _forward_padded(self, x, x_mask):
-        """Slower (significantly), but more precise,
-        encoding that handles padding."""
+        """
+        Slower (significantly), but more precise, encoding that handles padding.
+        """
         # Compute sorted sequence lengths
         lengths = x_mask.data.eq(0).long().sum(1).squeeze()
         _, idx_sort = torch.sort(lengths, dim=0, descending=True)
@@ -107,11 +118,12 @@ class StackedBRNN(nn.Module):
 
             # Apply dropout to input
             if self.dropout_rate > 0:
-                dropout_input = F.dropout(rnn_input.data,
-                                          p=self.dropout_rate,
-                                          training=self.training)
-                rnn_input = nn.utils.rnn.PackedSequence(dropout_input,
-                                                        rnn_input.batch_sizes)
+                dropout_input = F.dropout(
+                    rnn_input.data, p=self.dropout_rate, training=self.training
+                )
+                rnn_input = nn.utils.rnn.PackedSequence(
+                    dropout_input, rnn_input.batch_sizes
+                )
             outputs.append(self.rnns[i](rnn_input)[0])
 
         # Unpack everything
@@ -130,17 +142,18 @@ class StackedBRNN(nn.Module):
 
         # Dropout on output layer
         if self.dropout_output and self.dropout_rate > 0:
-            output = F.dropout(output,
-                               p=self.dropout_rate,
-                               training=self.training)
+            output = F.dropout(output, p=self.dropout_rate, training=self.training)
         return output
 
 
 class SeqAttnMatch(nn.Module):
-    """Given sequences X and Y, match sequence Y to each element in X.
+    """
+    Given sequences X and Y, match sequence Y to each element in X.
+
     * o_i = sum(alpha_j * y_j) for i in X
     * alpha_j = softmax(y_j * x_i)
     """
+
     def __init__(self, input_size, identity=False):
         super(SeqAttnMatch, self).__init__()
         if not identity:
@@ -149,7 +162,9 @@ class SeqAttnMatch(nn.Module):
             self.linear = None
 
     def forward(self, x, y, y_mask):
-        """Input shapes:
+        """
+        Input shapes:
+
             x = batch * len1 * h
             y = batch * len2 * h
             y_mask = batch * len2
@@ -183,11 +198,14 @@ class SeqAttnMatch(nn.Module):
 
 
 class BilinearSeqAttn(nn.Module):
-    """A bilinear attention layer over a sequence X w.r.t y:
+    """
+    A bilinear attention layer over a sequence X w.r.t y:
+
     * o_i = softmax(x_i'Wy) for x_i in X.
 
     Optionally don't normalize output weights.
     """
+
     def __init__(self, x_size, y_size, identity=False):
         super(BilinearSeqAttn, self).__init__()
         if not identity:
@@ -219,9 +237,12 @@ class BilinearSeqAttn(nn.Module):
 
 
 class LinearSeqAttn(nn.Module):
-    """Self attention over a sequence:
+    """
+    Self attention over a sequence:
+
     * o_i = softmax(Wx_i) for x_i in X.
     """
+
     def __init__(self, input_size):
         super(LinearSeqAttn, self).__init__()
         self.linear = nn.Linear(input_size, 1)
@@ -244,7 +265,9 @@ class LinearSeqAttn(nn.Module):
 
 
 def uniform_weights(x, x_mask):
-    """Return uniform weights over non-masked input."""
+    """
+    Return uniform weights over non-masked input.
+    """
     alpha = Variable(torch.ones(x.size(0), x.size(1)))
     if x.data.is_cuda:
         alpha = alpha.cuda()

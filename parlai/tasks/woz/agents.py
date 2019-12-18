@@ -31,8 +31,7 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'WoZ',
-                             FILE_START + suffix + FILE_END)
+    data_path = os.path.join(opt['datapath'], 'WoZ', FILE_START + suffix + FILE_END)
     return data_path
 
 

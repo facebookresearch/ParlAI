@@ -11,7 +11,6 @@ import numpy as np
 
 
 class EmpatheticDialogueTeacher(FixedDialogTeacher):
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
@@ -22,7 +21,7 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
             fold = opt.get('datatype', 'train').split(':')[0]
             self._setup_data(fold)
 
-        self.num_exs = sum([(len(d)+1)//2 for d in self.data])
+        self.num_exs = sum([(len(d) + 1) // 2 for d in self.data])
         self.num_eps = len(self.data)
         self.reset()
 
@@ -37,10 +36,7 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         if self.opt.get('deepmoji') is not None:
             self.embed = np.load(self.opt['deepmoji'] + fold + ".npy")
 
-        if (
-            self.opt.get('fasttextloc') is not None and
-            self.opt.get('prepend', -1) > 0
-        ):
+        if self.opt.get('fasttextloc') is not None and self.opt.get('prepend', -1) > 0:
             try:
                 import fastText
             except ImportError:
@@ -49,7 +45,9 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
             ftmodel = fastText.FastText.load_model(ftpath)
 
         fpath = os.path.join(
-            self.opt['datapath'], 'empatheticdialogues', 'empatheticdialogues',
+            self.opt['datapath'],
+            'empatheticdialogues',
+            'empatheticdialogues',
             fold + '.csv',
         )
         df = open(fpath).readlines()
@@ -58,7 +56,7 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         dialog = []
         for i in range(1, len(df)):
 
-            cparts = df[i-1].strip().split(",")
+            cparts = df[i - 1].strip().split(",")
             sparts = df[i].strip().split(",")
 
             if cparts[0] == sparts[0]:
@@ -75,19 +73,17 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                 elif len(sparts) == 8:
                     inline_label_candidates = []
                 else:
-                    raise ValueError(
-                        f'Line {i:d} has the wrong number of fields!'
-                    )
+                    raise ValueError(f'Line {i:d} has the wrong number of fields!')
 
                 context_emb, cand_emb = None, None
                 if self.opt.get('deepmoji') is not None:
-                    context_emb = self.embed[i-2]
-                    cand_emb = self.embed[i-1]
+                    context_emb = self.embed[i - 2]
+                    cand_emb = self.embed[i - 1]
 
                 ft_ctx, ft_cand = None, None
                 if (
-                    self.opt.get('fasttextloc') is not None and
-                    self.opt.get('prepend', -1) > 0
+                    self.opt.get('fasttextloc') is not None
+                    and self.opt.get('prepend', -1) > 0
                 ):
                     ft_ctx = ""
                     gettop, _ = ftmodel.predict(contextt, k=self.opt['prepend'])
@@ -98,10 +94,19 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                     for f in gettop:
                         ft_cand = f.split("_")[-1] + " " + ft_cand
 
-                dialog.append((
-                    contextt, label, prompt, sit, context_emb, cand_emb, ft_ctx,
-                    ft_cand, inline_label_candidates,
-                ))
+                dialog.append(
+                    (
+                        contextt,
+                        label,
+                        prompt,
+                        sit,
+                        context_emb,
+                        cand_emb,
+                        ft_ctx,
+                        ft_cand,
+                        inline_label_candidates,
+                    )
+                )
 
             else:
 
@@ -111,9 +116,9 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
-        i = entry_idx*2
+        i = entry_idx * 2
         ep_i = ep[i]
-        episode_done = (i >= (len(ep)-2))
+        episode_done = i >= (len(ep) - 2)
         action = {
             'situation': ep_i[3],
             'emotion': ep_i[2],
@@ -132,6 +137,69 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['data'] = self.data
         return shared
+
+
+class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
+    """
+    Class for detecting the emotion based on the utterance.
+    """
+
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('Emotion Classification Args')
+        parser.add_argument(
+            '--single-turn',
+            type='bool',
+            default=True,
+            help='Single turn classification task',
+        )
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.single_turn = opt['single_turn']
+        if not shared and self.single_turn:
+            self._make_single_turn()
+
+    def num_episodes(self):
+        return len(self.data)
+
+    def num_examples(self):
+        if not self.single_turn:
+            return super().num_examples()
+        return len(self.data)
+
+    def _make_single_turn(self):
+        new_data = []
+        for ep in self.data:
+            for ex in ep:
+                new_data.append(ex)
+        self.data = new_data
+
+    def get(self, episode_idx, entry_idx=0):
+        if not self.single_turn:
+            # get the specific episode from the example
+            ep = self.data[episode_idx]
+            i = entry_idx * 2
+            ex = ep[i]
+            episode_done = i >= (len(ep) - 2)
+        else:
+            # each episode is a singular example, we use both sides of the
+            # conversation
+            ex = self.data[episode_idx]
+            episode_done = True
+
+        return {
+            'situation': ex[3],
+            'labels': [ex[2]],
+            'text': ex[0],
+            'next_utt': ex[1],
+            'prepend_ctx': ex[6],
+            'prepend_cand': ex[7],
+            'deepmoji_ctx': ex[4],
+            'deepmoji_cand': ex[5],
+            'episode_done': episode_done,
+            'label_candidates': ex[8],
+        }
 
 
 class DefaultTeacher(EmpatheticDialogueTeacher):

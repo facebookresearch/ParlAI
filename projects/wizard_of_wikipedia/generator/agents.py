@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -13,7 +13,8 @@ from functools import lru_cache
 import torch as th
 import numpy as np
 
-from parlai.core.utils import padded_tensor, round_sigfigs
+from parlai.utils.torch import padded_tensor
+from parlai.utils.misc import round_sigfigs
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 
@@ -109,7 +110,9 @@ class EndToEndAgent(_GenericWizardAgent):
     def _dummy_batch(self, bsz, maxlen):
         batch = super()._dummy_batch(bsz, maxlen)
         batch['know_vec'] = th.zeros(bsz, 2, 2).long().cuda()
-        batch['ck_mask'] = th.ones(bsz, 2).byte().cuda()
+        # bool/uint8 backwards for pytorch 1.0/1.2 compatibility
+        ck_mask = (th.ones(bsz, 2, dtype=th.uint8) != 0).cuda()
+        batch['ck_mask'] = ck_mask
         batch['cs_ids'] = th.zeros(bsz).long().cuda()
         batch['use_cs_ids'] = True
         return batch
@@ -133,18 +136,15 @@ class EndToEndAgent(_GenericWizardAgent):
             self.metrics['bsz'] += batch.text_vec.size(0)
             self.metrics['know_acc'] += know_acc
             know_loss = th.nn.functional.cross_entropy(
-                ctx_know_attn,
-                batch.cs_ids,
-                reduction='mean',
+                ctx_know_attn, batch.cs_ids, reduction='mean'
             )
             self.metrics['know_loss'] += know_loss.item() * batch.text_vec.size(0)
             # in the original paper the loss was scaled by num_tokens for both
             # know_loss and token_loss
             know_loss /= num_tokens
             loss = (
-                (1 - self.knowledge_alpha) * token_loss +
-                self.knowledge_alpha * know_loss
-            )
+                1 - self.knowledge_alpha
+            ) * token_loss + self.knowledge_alpha * know_loss
         if return_output:
             return (loss, model_output)
         else:
@@ -170,6 +170,13 @@ class EndToEndAgent(_GenericWizardAgent):
             # make a copy of the list to prevent the future padding step from
             # being destructive
             return list(obs['knowledge_parsed'])
+
+        if 'checked_sentence' not in obs:
+            # interactive time. we're totally on our own
+            obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+            obs_know = [k for k in obs_know if k]
+            obs['knowledge_parsed'] = obs_know
+            return obs['knowledge_parsed']
 
         checked_sentence = '{} {} {}'.format(
             obs['title'], TOKEN_KNOWLEDGE, obs['checked_sentence']
@@ -205,7 +212,7 @@ class EndToEndAgent(_GenericWizardAgent):
         """
         batch = super().batchify(obs_batch)
         reordered_observations = [obs_batch[i] for i in batch.valid_indices]
-        is_training = not ('eval_labels' in reordered_observations[0])
+        is_training = 'labels' in reordered_observations[0]
 
         # first parse and compile all the knowledge together
         all_knowledges = []  # list-of-lists knowledge items for each observation
@@ -213,8 +220,11 @@ class EndToEndAgent(_GenericWizardAgent):
         for obs in reordered_observations:
             obs_know = self._parse_knowledge(obs)
             # downsample if desired
-            if (is_training and self.max_knowledge and
-                    len(obs_know) > self.max_knowledge):
+            if (
+                is_training
+                and self.max_knowledge
+                and len(obs_know) > self.max_knowledge
+            ):
                 # offset by one so that we don't choose 0
                 keepers = 1 + np.random.choice(
                     len(obs_know) - 1, self.max_knowledge, False
@@ -236,12 +246,15 @@ class EndToEndAgent(_GenericWizardAgent):
         knowledge_vec = [
             self._vectorize_text(
                 # the beginning of the sentence is more useful
-                k, truncate=self.knowledge_truncate, add_end=True, truncate_left=False,
+                k,
+                truncate=self.knowledge_truncate,
+                add_end=True,
+                truncate_left=False,
             )
             for k in flattened_knowledge
         ]
         knowledge_vec, _ = padded_tensor(
-            knowledge_vec, self.NULL_IDX, self.use_cuda, left_padded=True,
+            knowledge_vec, self.NULL_IDX, self.use_cuda, left_padded=True
         )
         knowledge_vec[:, -1] = self.END_IDX
         T = knowledge_vec.size(-1)
@@ -250,9 +263,10 @@ class EndToEndAgent(_GenericWizardAgent):
         # knowledge mask is a N x K tensor saying which items we're allowed to
         # attend over
         bsz = len(reordered_observations)
-        ck_mask = th.zeros(bsz, K).byte()
+        ck_mask = th.zeros(bsz, K, dtype=th.uint8)
         for i, klen in enumerate(knowledge_counts):
             ck_mask[i, :klen] = 1
+        ck_mask = ck_mask != 0  # for pytorch 1.0/1.2 uint8/bool compatibility
         # and the correct labels
         cs_ids = th.LongTensor(bsz).zero_()
 
@@ -273,20 +287,27 @@ class EndToEndAgent(_GenericWizardAgent):
         super(EndToEndAgent, cls).add_cmdline_args(argparser)
         group = argparser.add_argument_group("EndToEnd Agent")
         group.add_argument(
-            '--knowledge-alpha', type=float, default=0.95,
-            help='Weight on the knowledge-attn loss'
+            '--knowledge-alpha',
+            type=float,
+            default=0.95,
+            help='Weight on the knowledge-attn loss',
         )
         group.add_argument(
-            '--knowledge-truncate', type=int, default=32,
-            help='Knowledge truncation field. Defaults to same as --truncate.'
+            '--knowledge-truncate',
+            type=int,
+            default=32,
+            help='Knowledge truncation field. Defaults to same as --truncate.',
         )
         group.add_argument(
-            '--max-knowledge', type=int,
-            help='Reduce the amount of negative knowledge at train time.'
+            '--max-knowledge',
+            type=int,
+            help='Reduce the amount of negative knowledge at train time.',
         )
         argparser.add_argument(
-            '--knowledge-alpha', type=float, default=0.95,
-            help='Weight on the knowledge-attn loss'
+            '--knowledge-alpha',
+            type=float,
+            default=0.95,
+            help='Weight on the knowledge-attn loss',
         )
 
     def _model_input(self, batch):

@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-task_config = {}
+from typing import Dict, Any
+
+task_config: Dict[str, Any] = {}
 
 
 task_config['frontend_version'] = 1
@@ -32,8 +34,9 @@ task_config['hit_keywords'] = 'chat,question,answer'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''\'\'\'
+task_config[
+    'task_description'
+] = '''\'\'\'
 In this task, you will need to ask a question about a paragraph, and then provide your own answer to it.<br><br>
 Example:<br><br>
 ------------------- Task Begin ------------------- <br><br>

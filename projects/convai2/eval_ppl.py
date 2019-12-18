@@ -3,9 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Base script for running official ConvAI2 validation eval for perplexity.
-This uses a the version of the dataset which does not contain candidates.
-Leaderboard scores will be run in the same form but on a hidden test set.
+"""
+Base script for running official ConvAI2 validation eval for perplexity. This uses a the
+version of the dataset which does not contain candidates. Leaderboard scores will be run
+in the same form but on a hidden test set.
 
 The official vocabulary for the competition is based on using the
 "split_tokenize" method on in the ParlAI core dictionary (parlai/core/dict.py)
@@ -40,27 +41,30 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import Agent
 
-from parlai.scripts.eval_ppl import eval_ppl as run_eval_ppl, setup_args as setup_ppl_args
+from parlai.scripts.eval_ppl import (
+    eval_ppl as run_eval_ppl,
+    setup_args as setup_ppl_args,
+)
 from projects.convai2.build_dict import build_dict
 
 
 def setup_args(parser=None):
     parser = setup_ppl_args(parser)
     parser.set_defaults(
-        task='convai2:self:no_cands',
-        datatype='valid',
-        dict_tokenizer='split',
+        task='convai2:self:no_cands', datatype='valid', dict_tokenizer='split'
     )
     return parser
 
 
 class WordFrequencyEntry(Agent):
-    """This is an example entry which tries to use the RepeatLabelAgent.
-    Since no labels are given to the model, it will guess something useless.
-
-    It builds the official dictionary first, so that it can provide a minimum
-    probablity for each word as well as use the official tokenizer.
     """
+    This is an example entry which tries to use the RepeatLabelAgent. Since no labels
+    are given to the model, it will guess something useless.
+
+    It builds the official dictionary first, so that it can provide a minimum probablity
+    for each word as well as use the official tokenizer.
+    """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
@@ -81,7 +85,9 @@ class WordFrequencyEntry(Agent):
         return shared
 
     def next_word_probability(self, partial_out):
-        """Example implementation of next word probability."""
+        """
+        Example implementation of next word probability.
+        """
         obs = self.observation
         # initialize probabilities with inverse word frequency
         freqs = self.freqs.copy()
@@ -106,5 +112,7 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     eval_ppl(opt)
     if opt['model'] == 'projects.convai2.eval_ppl:WordFrequencyEntry':
-        print('This run just used the example filler model. To get better '
-              'results, try implementing your own!')
+        print(
+            'This run just used the example filler model. To get better '
+            'results, try implementing your own!'
+        )

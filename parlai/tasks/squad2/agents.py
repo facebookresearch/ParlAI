@@ -12,13 +12,14 @@ import os
 
 
 class IndexTeacher(FixedDialogTeacher):
-    """Hand-written SQuAD teacher, which loads the json squad data and
-    implements its own `act()` method for interacting with student agent,
-    rather than inheriting from the core Dialog Teacher. This code is here as
-    an example of rolling your own without inheritance.
+    """
+    Hand-written SQuAD teacher, which loads the json squad data and implements its own
+    `act()` method for interacting with student agent, rather than inheriting from the
+    core Dialog Teacher. This code is here as an example of rolling your own without
+    inheritance.
 
-    This teacher also provides access to the "answer_start" indices that
-    specify the location of the answer in the context.
+    This teacher also provides access to the "answer_start" indices that specify the
+    location of the answer in the context.
     """
 
     def __init__(self, opt, shared=None):
@@ -29,11 +30,7 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(
-            opt['datapath'],
-            'SQuAD2',
-            suffix + '-v2.0.json'
-        )
+        datapath = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.data = self._setup_data(datapath)
 
         self.id = 'squad2'
@@ -66,7 +63,7 @@ class IndexTeacher(FixedDialogTeacher):
             'labels': answers,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': answer_starts
+            'answer_starts': answer_starts,
         }
         return action
 
@@ -85,9 +82,11 @@ class IndexTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 
@@ -98,8 +97,7 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2',
-                                       suffix + '-v2.0.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.id = 'squad2'
         super().__init__(opt, shared)
 
@@ -122,9 +120,11 @@ class DefaultTeacher(DialogTeacher):
 
 
 class OpenSquadTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     Note: This teacher omits the context paragraph
     """
 
@@ -135,8 +135,7 @@ class OpenSquadTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2',
-                                       suffix + '-v2.0.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.id = 'squad2'
         super().__init__(opt, shared)
 
@@ -158,7 +157,10 @@ class OpenSquadTeacher(DialogTeacher):
 
 
 class TitleTeacher(DefaultTeacher):
-    """This version of SquAD inherits from the Default Teacher. The only
+    """
+    This version of SquAD inherits from the Default Teacher.
+
+    The only
     difference is that the 'text' field of an observation will contain
     the title of the article separated by a newline from the paragraph and the
     query.
@@ -189,16 +191,14 @@ class TitleTeacher(DefaultTeacher):
                         ans_iter = qa['answers']
                     answers = (a['text'] for a in ans_iter)
                     context = paragraph['context']
-                    yield (
-                        '\n'.join([title, context, question]),
-                        answers
-                    ), True
+                    yield ('\n'.join([title, context, question]), answers), True
 
 
 class SentenceIndexTeacher(IndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
     """
+    Index teacher where the labels are the sentences the contain the true answer.
+    """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -230,8 +230,7 @@ class SentenceIndexTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -266,18 +265,19 @@ class SentenceIndexTeacher(IndexTeacher):
             'labels': labels,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
         return action
 
 
 class SentenceIndexEditTeacher(SentenceIndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
-
-    Some punctuation may be removed from the context and the answer for
-    tokenization purposes.
     """
+    Index teacher where the labels are the sentences the contain the true answer.
+
+    Some punctuation may be removed from the context and the answer for tokenization
+    purposes.
+    """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -297,8 +297,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -322,17 +321,19 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
             'labels': labels,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
         return action
 
 
 class SentenceLabelsTeacher(IndexTeacher):
-    """Teacher which contains the question as the text, the sentences as the
-    label candidates, and the label as the sentence containing the answer.
+    """
+    Teacher which contains the question as the text, the sentences as the label
+    candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -364,8 +365,7 @@ class SentenceLabelsTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 

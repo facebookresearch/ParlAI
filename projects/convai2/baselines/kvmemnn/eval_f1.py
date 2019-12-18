@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Evaluate pre-trained model trained for f1 metric
-Key-Value Memory Net model trained on convai2:self
+"""
+Evaluate pre-trained model trained for f1 metric Key-Value Memory Net model trained on
+convai2:self.
 """
 
 from parlai.core.build_data import download_models
@@ -23,7 +24,7 @@ def main():
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn'  # for builder
     download_models(opt, fnames, 'convai2')
-    return eval_f1(parser, print_parser=parser)
+    return eval_f1(opt, print_parser=parser)
 
 
 if __name__ == '__main__':

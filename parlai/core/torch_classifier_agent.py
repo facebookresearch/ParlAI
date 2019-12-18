@@ -4,12 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Torch Classifier Agents classify text into a fixed set of labels."""
+"""
+Torch Classifier Agents classify text into a fixed set of labels.
+"""
 
 
-from parlai.core.distributed_utils import is_distributed
+from parlai.core.opt import Opt
+from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.utils import round_sigfigs, warn_once
+from parlai.utils.misc import round_sigfigs, warn_once
 from collections import defaultdict
 
 import torch
@@ -20,49 +23,91 @@ class TorchClassifierAgent(TorchAgent):
     """
     Abstract Classifier agent. Only meant to be extended.
 
-    TorchClassifierAgent aims to handle much of the bookkeeping any
-    classification model.
+    TorchClassifierAgent aims to handle much of the bookkeeping any classification
+    model.
     """
 
     @staticmethod
     def add_cmdline_args(parser):
-        """Add CLI args."""
+        """
+        Add CLI args.
+        """
         TorchAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('Torch Classifier Arguments')
         # class arguments
-        parser.add_argument('--classes', type=str, nargs='*', default=None,
-                            help='the name of the classes.')
-        parser.add_argument('--class-weights', type=float, nargs='*', default=None,
-                            help='weight of each of the classes for the softmax')
-        parser.add_argument('--ref-class', type=str, default=None, hidden=True,
-                            help='the class that will be used to compute '
-                                 'precision and recall. By default the first '
-                                 'class.')
-        parser.add_argument('--threshold', type=float, default=0.5,
-                            help='during evaluation, threshold for choosing '
-                                 'ref class; only applies to binary '
-                                 'classification')
+        parser.add_argument(
+            '--classes',
+            type=str,
+            nargs='*',
+            default=None,
+            help='the name of the classes.',
+        )
+        parser.add_argument(
+            '--class-weights',
+            type=float,
+            nargs='*',
+            default=None,
+            help='weight of each of the classes for the softmax',
+        )
+        parser.add_argument(
+            '--ref-class',
+            type=str,
+            default=None,
+            hidden=True,
+            help='the class that will be used to compute '
+            'precision and recall. By default the first '
+            'class.',
+        )
+        parser.add_argument(
+            '--threshold',
+            type=float,
+            default=0.5,
+            help='during evaluation, threshold for choosing '
+            'ref class; only applies to binary '
+            'classification',
+        )
         # interactive mode
-        parser.add_argument('--print-scores', type='bool', default=False,
-                            help='print probability of chosen class during '
-                                 'interactive mode')
+        parser.add_argument(
+            '--print-scores',
+            type='bool',
+            default=False,
+            help='print probability of chosen class during ' 'interactive mode',
+        )
         # miscellaneous arguments
-        parser.add_argument('--data-parallel', type='bool', default=False,
-                            help='uses nn.DataParallel for multi GPU')
-        parser.add_argument('--get-all-metrics', type='bool', default=True,
-                            help='give prec/recall metrics for all classes')
+        parser.add_argument(
+            '--data-parallel',
+            type='bool',
+            default=False,
+            help='uses nn.DataParallel for multi GPU',
+        )
+        parser.add_argument(
+            '--get-all-metrics',
+            type='bool',
+            default=True,
+            help='give prec/recall metrics for all classes',
+        )
+        parser.add_argument(
+            '--classes-from-file',
+            type=str,
+            default=None,
+            help='loads the list of classes from a file',
+        )
 
-    def __init__(self, opt, shared=None):
-        init_model, _ = self._get_init_model(opt, shared)
+    def __init__(self, opt: Opt, shared=None):
+        init_model, self.is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
         # set up classes
-        if opt.get('classes') is None:
+        if opt.get('classes') is None and opt.get('classes_from_file') is None:
             raise RuntimeError(
-                'Must specify --classes argument.'
+                'Must specify --classes or --classes-from-file argument.'
             )
         if not shared:
-            self.class_list = opt['classes']
+            if opt['classes_from_file'] is not None:
+                with open(opt['classes_from_file']) as f:
+                    self.class_list = f.read().splitlines()
+            else:
+                self.class_list = opt['classes']
             self.class_dict = {val: i for i, val in enumerate(self.class_list)}
             if opt.get('class_weights', None) is not None:
                 self.class_weights = opt['class_weights']
@@ -77,8 +122,7 @@ class TorchClassifierAgent(TorchAgent):
         # get reference class; if opt['get_all_metrics'] is False, this is
         # used to compute metrics
         # in binary classfication, opt['threshold'] applies to ref class
-        if (opt['ref_class'] is None or opt['ref_class'] not in
-                self.class_dict):
+        if opt['ref_class'] is None or opt['ref_class'] not in self.class_dict:
             self.ref_class = self.class_list[0]
         else:
             self.ref_class = opt['ref_class']
@@ -87,8 +131,9 @@ class TorchClassifierAgent(TorchAgent):
                 # move to the front of the class list
                 self.class_list.insert(0, self.class_list.pop(ref_class_id))
         if not opt['get_all_metrics']:
-            warn_once('Using %s as the class for computing P, R, and F1' %
-                      self.ref_class)
+            warn_once(
+                'Using %s as the class for computing P, R, and F1' % self.ref_class
+            )
 
         # set up threshold, only used in binary classification
         if len(self.class_list) == 2 and opt.get('threshold', 0.5) != 0.5:
@@ -97,24 +142,29 @@ class TorchClassifierAgent(TorchAgent):
             self.threshold = None
 
         # set up model and optimizers
-        weight_tensor = torch.FloatTensor(self.class_weights)
-        self.classifier_loss = torch.nn.CrossEntropyLoss(weight_tensor)
+
         if shared:
             self.model = shared['model']
         else:
-            self.build_model()
+            self.model = self.build_model()
+            self.criterion = self.build_criterion()
+            if self.model is None or self.criterion is None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
-        if self.use_cuda:
-            self.model.cuda()
-            self.classifier_loss.cuda()
-            if self.opt['data_parallel']:
-                if is_distributed():
-                    raise ValueError(
-                        'Cannot combine --data-parallel and distributed mode'
-                    )
-                self.model = torch.nn.DataParallel(self.model)
+            if self.use_cuda:
+                if self.opt['data_parallel']:
+                    if is_distributed():
+                        raise ValueError(
+                            'Cannot combine --data-parallel and distributed mode'
+                        )
+                    self.model = torch.nn.DataParallel(self.model)
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
@@ -124,13 +174,18 @@ class TorchClassifierAgent(TorchAgent):
             self.init_optim(optim_params)
             self.build_lr_scheduler()
 
+    def build_criterion(self):
+        weight_tensor = torch.FloatTensor(self.class_weights)
+        return torch.nn.CrossEntropyLoss(weight_tensor)
+
     def share(self):
-        """Share model parameters."""
+        """
+        Share model parameters.
+        """
         shared = super().share()
         shared['class_dict'] = self.class_dict
         shared['class_list'] = self.class_list
         shared['class_weights'] = self.class_weights
-        shared['metrics'] = self.metrics
         shared['model'] = self.model
         shared['optimizer'] = self.optimizer
         return shared
@@ -142,8 +197,7 @@ class TorchClassifierAgent(TorchAgent):
         Raises a ``KeyError`` if one of the labels is not in the class list.
         """
         try:
-            labels_indices_list = [self.class_dict[label] for label in
-                                   batch.labels]
+            labels_indices_list = [self.class_dict[label] for label in batch.labels]
         except KeyError as e:
             print('One of your labels is not in the class list.')
             raise e
@@ -167,16 +221,23 @@ class TorchClassifierAgent(TorchAgent):
             self.metrics['confusion_matrix'][(label, pred)] += 1
 
     def _format_interactive_output(self, probs, prediction_id):
-        """Format interactive mode output with scores."""
+        """
+        Format interactive mode output with scores.
+        """
         preds = []
         for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
-            preds.append('Predicted class: {}\nwith probability: {}'.format(
-                         self.class_list[pred_id], prob))
+            preds.append(
+                'Predicted class: {}\nwith probability: {}'.format(
+                    self.class_list[pred_id], prob
+                )
+            )
         return preds
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         if batch.text_vec is None:
             return Output()
         self.model.train()
@@ -185,7 +246,7 @@ class TorchClassifierAgent(TorchAgent):
         # calculate loss
         labels = self._get_labels(batch)
         scores = self.score(batch)
-        loss = self.classifier_loss(scores, labels)
+        loss = self.criterion(scores, labels)
         loss.backward()
         self.update_params()
 
@@ -201,7 +262,9 @@ class TorchClassifierAgent(TorchAgent):
         return Output(preds)
 
     def eval_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         if batch.text_vec is None:
             return
 
@@ -222,7 +285,7 @@ class TorchClassifierAgent(TorchAgent):
                 preds = self._format_interactive_output(probs, prediction_id)
         else:
             labels = self._get_labels(batch)
-            loss = self.classifier_loss(scores, labels)
+            loss = self.criterion(scores, labels)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += len(batch.text_vec)
             self._update_confusion_matrix(batch, preds)
@@ -230,8 +293,9 @@ class TorchClassifierAgent(TorchAgent):
         return Output(preds)
 
     def reset_metrics(self):
-        """Reset metrics."""
-        self.metrics = {}
+        """
+        Reset metrics.
+        """
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
         self.metrics['examples'] = 0
@@ -253,10 +317,12 @@ class TorchClassifierAgent(TorchAgent):
         # TODO: document these parameter types.
         eps = 0.00001  # prevent divide by zero errors
         true_positives = confmat[(class_name, class_name)]
-        num_actual_positives = sum([confmat[(class_name, c)]
-                                   for c in self.class_list]) + eps
-        num_predicted_positives = sum([confmat[(c, class_name)]
-                                      for c in self.class_list]) + eps
+        num_actual_positives = (
+            sum([confmat[(class_name, c)] for c in self.class_list]) + eps
+        )
+        num_predicted_positives = (
+            sum([confmat[(c, class_name)] for c in self.class_list]) + eps
+        )
 
         recall_str = 'class_{}_recall'.format(class_name)
         prec_str = 'class_{}_prec'.format(class_name)
@@ -265,13 +331,17 @@ class TorchClassifierAgent(TorchAgent):
         # update metrics dict
         metrics[recall_str] = true_positives / num_actual_positives
         metrics[prec_str] = true_positives / num_predicted_positives
-        metrics[f1_str] = 2 * ((metrics[recall_str] * metrics[prec_str]) /
-                               (metrics[recall_str] + metrics[prec_str] + eps))
+        metrics[f1_str] = 2 * (
+            (metrics[recall_str] * metrics[prec_str])
+            / (metrics[recall_str] + metrics[prec_str] + eps)
+        )
 
         return num_actual_positives
 
     def report(self):
-        """Report loss as well as precision, recall, and F1 metrics."""
+        """
+        Report loss as well as precision, recall, and F1 metrics.
+        """
         m = super().report()
         examples = self.metrics['examples']
         if examples > 0:
@@ -288,8 +358,7 @@ class TorchClassifierAgent(TorchAgent):
 
             examples_per_class = []
             for class_i in metrics_list:
-                class_total = self._report_prec_recall_metrics(confmat,
-                                                               class_i, m)
+                class_total = self._report_prec_recall_metrics(confmat, class_i, m)
                 examples_per_class.append(class_total)
 
             if len(examples_per_class) > 1:
@@ -297,8 +366,9 @@ class TorchClassifierAgent(TorchAgent):
                 f1 = 0
                 total_exs = sum(examples_per_class)
                 for i in range(len(self.class_list)):
-                    f1 += ((examples_per_class[i] / total_exs) *
-                           m['class_{}_f1'.format(self.class_list[i])])
+                    f1 += (examples_per_class[i] / total_exs) * m[
+                        'class_{}_f1'.format(self.class_list[i])
+                    ]
                 m['weighted_f1'] = f1
 
         for k, v in m.items():
@@ -316,10 +386,4 @@ class TorchClassifierAgent(TorchAgent):
             a [bsz, num_classes] FloatTensor containing the score of each
             class.
         """
-        raise NotImplementedError(
-            'Abstract class: user must implement score()')
-
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
-        raise NotImplementedError(
-            'Abstract class: user must implement build_model()')
+        raise NotImplementedError('Abstract class: user must implement score()')

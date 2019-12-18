@@ -10,7 +10,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import maintain_dialog_history, load_cands
+from parlai.utils.misc import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
 from .modules import Starspace
 
@@ -26,18 +26,19 @@ import json
 
 
 class StarspaceAgent(Agent):
-    """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
+    """
+    Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856.
     """
 
     OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
+        'adadelta': optim.Adadelta,  # type: ignore
+        'adagrad': optim.Adagrad,  # type: ignore
         'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
+        'adamax': optim.Adamax,  # type: ignore
+        'asgd': optim.ASGD,  # type: ignore
+        'lbfgs': optim.LBFGS,  # type: ignore
+        'rmsprop': optim.RMSprop,  # type: ignore
+        'rprop': optim.Rprop,  # type: ignore
         'sgd': optim.SGD,
     }
 
@@ -47,7 +48,9 @@ class StarspaceAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('StarSpace Arguments')
         agent.add_argument(
             '-emb',
@@ -174,7 +177,9 @@ class StarspaceAgent(Agent):
         StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """
+        Set up model if shared params not set, otherwise no work to do.
+        """
         super().__init__(opt, shared)
         opt = self.opt
         self.reset_metrics()
@@ -226,7 +231,8 @@ class StarspaceAgent(Agent):
             print("[loaded candidates]")
 
     def _init_embeddings(self, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
@@ -251,7 +257,9 @@ class StarspaceAgent(Agent):
             )
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.episode_done = True
         # set up optimizer
@@ -261,17 +269,20 @@ class StarspaceAgent(Agent):
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['dict'] = self.dict
         shared['model'] = self.model
         return shared
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
+        """
+        Set overridable opts from loaded opt file.
 
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
+        Print out each added key and each overriden key. Only override args specific to
+        the model.
         """
         model_args = {'embeddingsize', 'optimizer'}
         for k, v in new_opt.items():
@@ -290,7 +301,9 @@ class StarspaceAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         vec = self.dict.txt2vec(text)
         if vec == []:
             vec = [self.dict[self.dict.null_token]]
@@ -301,7 +314,9 @@ class StarspaceAgent(Agent):
         return torch.LongTensor(p).unsqueeze(1)
 
     def v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         for i in vec:
             new_vec.append(i)
@@ -399,10 +414,11 @@ class StarspaceAgent(Agent):
         return xs2, ys2, negs2
 
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
-        """Produce a prediction from our model.
+        """
+        Produce a prediction from our model.
 
-        Update the model using the targets if available, otherwise rank
-        candidates as well if they are available and param is set.
+        Update the model using the targets if available, otherwise rank candidates as
+        well if they are available and param is set.
         """
         is_training = ys is not None
         if is_training:
@@ -463,7 +479,9 @@ class StarspaceAgent(Agent):
         return [{'id': self.getID()}]
 
     def vectorize(self, observations):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
 
         def valid(obs):
             # check if this is an example our model should actually process
@@ -560,7 +578,9 @@ class StarspaceAgent(Agent):
         super().shutdown()
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
         if path and hasattr(self, 'model'):
             data = {}
@@ -573,7 +593,9 @@ class StarspaceAgent(Agent):
                 json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         print('Loading existing model params from ' + path)
         data = torch.load(path, map_location=lambda cpu, _: cpu)
         self.model.load_state_dict(data['model'])

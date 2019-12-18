@@ -1,4 +1,4 @@
-#!/usr/bin/env/python3
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -12,8 +12,10 @@ import os
 import unittest
 import parlai
 import subprocess
+
 try:
     import sphinx  # noqa: F401
+
     SKIP_TEST = False
 except ImportError:
     SKIP_TEST = True
@@ -34,8 +36,7 @@ class TestDocs(unittest.TestCase):
             universal_newlines=True,
         )
         self.assertEqual(
-            call.returncode, 0,
-            'Failed to compile docs:\n{}'.format(call.stderr)
+            call.returncode, 0, 'Failed to compile docs:\n{}'.format(call.stderr)
         )
 
 

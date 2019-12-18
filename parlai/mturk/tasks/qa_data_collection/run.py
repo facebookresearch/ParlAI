@@ -4,8 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.qa_data_collection.worlds import \
-    QADataCollectionOnboardWorld, QADataCollectionWorld
+from parlai.mturk.tasks.qa_data_collection.worlds import (
+    QADataCollectionOnboardWorld,
+    QADataCollectionWorld,
+)
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.qa_data_collection.task_config import task_config
 import os
@@ -13,9 +15,10 @@ import importlib
 
 
 def main():
-    '''Handles setting up and running a ParlAI-MTurk task by instantiating
-    an MTurk manager and configuring it for the qa_data_collection task
-    '''
+    """
+    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
+    and configuring it for the qa_data_collection task.
+    """
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -42,11 +45,7 @@ def main():
 
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=[mturk_agent_id],
-        use_db=True,
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=[mturk_agent_id], use_db=True)
     mturk_manager.setup_server()
 
     # Create an onboard_function, which will be run for workers who have
@@ -78,10 +77,7 @@ def main():
         def check_workers_eligibility(workers):
             return workers
 
-        eligibility_function = {
-            'func': check_workers_eligibility,
-            'multiple': True,
-        }
+        eligibility_function = {'func': check_workers_eligibility, 'multiple': True}
 
         # Assign worker roles is used to determine what the role each worker
         # in the given worker list will play. Setting `id` to None will return
@@ -99,11 +95,7 @@ def main():
             # create a task agent to ask the questions
             task = task_class(task_opt)
             # Create the task world
-            world = QADataCollectionWorld(
-                opt=opt,
-                task=task,
-                mturk_agent=workers[0]
-            )
+            world = QADataCollectionWorld(opt=opt, task=task, mturk_agent=workers[0])
             # run the world to completion
             while not world.episode_done():
                 world.parley()
@@ -120,7 +112,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
     except BaseException:
         raise

@@ -12,7 +12,9 @@ import os
 
 
 class DefaultTeacher(DialogTeacher):
-    """MutualFriends dataset."""
+    """
+    MutualFriends dataset.
+    """
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -20,20 +22,23 @@ class DefaultTeacher(DialogTeacher):
 
         if not opt['datatype'].startswith('train'):
             raise RuntimeError('MutualFriends only has a training set.')
-        opt['datafile'] = os.path.join(opt['datapath'], 'MutualFriends',
-                                       'data.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'MutualFriends', 'data.json')
         self.id = 'mutualfriends'
         super().__init__(opt, shared)
 
     def act(self):
-        """Use DialogTeacher act but set id to "Teacher" for intro message."""
+        """
+        Use DialogTeacher act but set id to "Teacher" for intro message.
+        """
         reply = super().act()
         if reply.get('text', '').startswith('You have the following friends'):
             reply['id'] = 'Teacher'
         return reply
 
     def setup_data(self, path):
-        """Load json data of conversations."""
+        """
+        Load json data of conversations.
+        """
         print('loading: ' + path)
         with open(path) as data_file:
             self.loaded_data = json.load(data_file)
@@ -43,12 +48,12 @@ class DefaultTeacher(DialogTeacher):
                 curr_agent = ex['events'][0]['agent']
                 conversation = [
                     (
-                        'You have the following friends:\n' +
-                        '\n'.join(
+                        'You have the following friends:\n'
+                        + '\n'.join(
                             ', '.join('{}={}'.format(k, v) for k, v in person.items())
                             for person in ex['scenario']['kbs'][int(curr_agent)]
-                        ) +
-                        '\nTry to find out which friend the other person has in common.'
+                        )
+                        + '\nTry to find out which friend the other person has in common.'
                     )
                 ]
                 curr = ''
@@ -57,9 +62,7 @@ class DefaultTeacher(DialogTeacher):
                     msg = ex['events'][idx]['data']
                     if type(msg) == dict:
                         msg = 'SELECT({})'.format(
-                            ', '.join(
-                                '{}={}'.format(k, v) for k, v in msg.items()
-                            )
+                            ', '.join('{}={}'.format(k, v) for k, v in msg.items())
                         )
                     next_agent = ex['events'][idx]['agent']
                     if curr_agent == next_agent:
@@ -77,7 +80,7 @@ class DefaultTeacher(DialogTeacher):
                     elif i + 1 == len(conversation) - 1:
                         yield (
                             (conversation[i], [conversation[i + 1]], ex['outcome']),
-                            False
+                            False,
                         )
                     else:
                         yield (conversation[i], None, ex['outcome']), False

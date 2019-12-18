@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""General utility code for building PyTorch-based agents in ParlAI.
+"""
+General utility code for building PyTorch-based agents in ParlAI.
 
 Contains the following main utilities:
 
@@ -73,10 +74,21 @@ parent function to set up these fields as a base.
                        the input text on newlines, with the last line put in the
                        text field and the remaining put in this one.
 """
-Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lengths', 'labels', 'valid_indices',
-                             'candidates', 'candidate_vecs', 'image',
-                             'memory_vecs'])
+Batch = namedtuple(
+    'Batch',
+    [
+        'text_vec',
+        'text_lengths',
+        'label_vec',
+        'label_lengths',
+        'labels',
+        'valid_indices',
+        'candidates',
+        'candidate_vecs',
+        'image',
+        'memory_vecs',
+    ],
+)
 set_namedtuple_defaults(Batch, default=None)
 
 
@@ -97,7 +109,8 @@ set_namedtuple_defaults(Output, default=None)
 
 
 class TorchAgent(Agent):
-    """A provided base agent for any model that wants to use Torch.
+    """
+    A provided base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -116,15 +129,19 @@ class TorchAgent(Agent):
     For example:
     'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
-    OPTIM_OPTS = {k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()}
+    OPTIM_OPTS = {
+        k.lower(): v
+        for k, v in optim.__dict__.items()
+        if not k.startswith('__') and k[0].isupper()
+    }
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
 
     @staticmethod
     def dictionary_class():
-        """Return the dictionary class that this agent expects to use.
+        """
+        Return the dictionary class that this agent expects to use.
 
         Can be overriden if a more complex dictionary is required.
         """
@@ -132,84 +149,144 @@ class TorchAgent(Agent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """Add the default commandline args we expect most agents to want."""
+        """
+        Add the default commandline args we expect most agents to want.
+        """
         agent = argparser.add_argument_group('TorchAgent Arguments')
         # pretrained embedding arguments
         agent.add_argument(
-            '-emb', '--embedding-type', default='random',
-            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
-                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
-                     'fasttext_cc-fixed'],
+            '-emb',
+            '--embedding-type',
+            default='random',
+            choices=[
+                'random',
+                'glove',
+                'glove-fixed',
+                'glove-twitter-fixed',
+                'fasttext',
+                'fasttext-fixed',
+                'fasttext_cc',
+                'fasttext_cc-fixed',
+            ],
             help='Choose between different strategies for initializing word '
-                 'embeddings. Default is random, but can also preinitialize '
-                 'from Glove or Fasttext. Preinitialized embeddings can also '
-                 'be fixed so they are not updated during training.')
+            'embeddings. Default is random, but can also preinitialize '
+            'from Glove or Fasttext. Preinitialized embeddings can also '
+            'be fixed so they are not updated during training.',
+        )
         agent.add_argument(
-            '-embp', '--embedding-projection', default='random',
+            '-embp',
+            '--embedding-projection',
+            default='random',
             help='If pretrained embeddings have a different dimensionality '
-                 'than your embedding size, strategy for projecting to the '
-                 'correct size. If the dimensions are the same, this is '
-                 'ignored unless you append "-force" to your choice.')
+            'than your embedding size, strategy for projecting to the '
+            'correct size. If the dimensions are the same, this is '
+            'ignored unless you append "-force" to your choice.',
+        )
         # optimizer arguments
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd', choices=cls.OPTIM_OPTS,
+            '-opt',
+            '--optimizer',
+            default='sgd',
+            choices=cls.OPTIM_OPTS,
             help='Choose between pytorch optimizers. Any member of torch.optim'
-                 ' should be valid.')
+            ' should be valid.',
+        )
         agent.add_argument(
-            '-lr', '--learningrate', type=float, default=1,
-            help='learning rate')
+            '-lr', '--learningrate', type=float, default=1, help='learning rate'
+        )
         agent.add_argument(
-            '-clip', '--gradient-clip', type=float, default=0.1,
-            help='gradient clipping using l2 norm')
+            '-clip',
+            '--gradient-clip',
+            type=float,
+            default=0.1,
+            help='gradient clipping using l2 norm',
+        )
         agent.add_argument(
-            '-mom', '--momentum', default=0, type=float,
-            help='if applicable, momentum value for optimizer.')
+            '-mom',
+            '--momentum',
+            default=0,
+            type=float,
+            help='if applicable, momentum value for optimizer.',
+        )
         # preprocessing arguments
         agent.add_argument(
-            '-rc', '--rank-candidates', type='bool', default=False,
-            help='Whether the model should parse candidates for ranking.')
+            '-rc',
+            '--rank-candidates',
+            type='bool',
+            default=False,
+            help='Whether the model should parse candidates for ranking.',
+        )
         agent.add_argument(
-            '-tr', '--truncate', default=-1, type=int,
-            help='Truncate input lengths to increase speed / use less memory.')
+            '-tr',
+            '--truncate',
+            default=-1,
+            type=int,
+            help='Truncate input lengths to increase speed / use less memory.',
+        )
         agent.add_argument(
-            '-histsz', '--history-size', default=-1, type=int,
-            help='Number of past dialog utterances to remember.')
+            '-histsz',
+            '--history-size',
+            default=-1,
+            type=int,
+            help='Number of past dialog utterances to remember.',
+        )
         agent.add_argument(
-            '-pt', '--person-tokens', type='bool', default=False,
+            '-pt',
+            '--person-tokens',
+            type='bool',
+            default=False,
             help='add person tokens to history. adds __p1__ in front of input '
-                 'text and __p2__ in front of past labels when available or '
-                 'past utterances generated by the model. these are added to '
-                 'the dictionary during initialization.')
+            'text and __p2__ in front of past labels when available or '
+            'past utterances generated by the model. these are added to '
+            'the dictionary during initialization.',
+        )
         agent.add_argument(
-            '--use-reply', default='label', hidden=True,
+            '--use-reply',
+            default='label',
+            hidden=True,
             choices=['label', 'model'],
             help='Which previous replies to use as history. If label, use '
-            'gold dataset replies. If model, use model\'s own replies.')
+            'gold dataset replies. If model, use model\'s own replies.',
+        )
         agent.add_argument(
-            '--add-p1-after-newln', type='bool', default=False, hidden=True,
+            '--add-p1-after-newln',
+            type='bool',
+            default=False,
+            hidden=True,
             help='Add the other speaker token before the last newline in the '
-                 'input instead of at the beginning of the input. this is '
-                 'useful for tasks that include some kind of context before '
-                 'the actual utterance (e.g. squad, babi, personachat).')
+            'input instead of at the beginning of the input. this is '
+            'useful for tasks that include some kind of context before '
+            'the actual utterance (e.g. squad, babi, personachat).',
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
         gpugroup = agent.add_mutually_exclusive_group()
         gpugroup.add_argument(
-            '-gpu', '--gpu', type=int, default=-1, help='which GPU to use')
+            '-gpu', '--gpu', type=int, default=-1, help='which GPU to use'
+        )
         gpugroup.add_argument(
-            '--multigpu', type='bool', default=False,
+            '--multigpu',
+            type='bool',
+            default=False,
             help='Suggest model should employ multiple GPUs. Not all models '
-                 'respect this flag.')
+            'respect this flag.',
+        )
         gpugroup.add_argument(
-            '--no-cuda', default=False, action='store_true', dest='no_cuda',
+            '--no-cuda',
+            default=False,
+            action='store_true',
+            dest='no_cuda',
             help='disable GPUs even if available. otherwise, will use GPUs if '
-                 'available on the device.')
+            'available on the device.',
+        )
 
         cls.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
-        """Initialize agent."""
+        """
+        Initialize agent.
+        """
         super().__init__(opt, shared)
         opt = self.opt
 
@@ -262,7 +339,8 @@ class TorchAgent(Agent):
         self.add_person_tokens = opt.get('person_tokens', False)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        """Initialize optimizer with model parameters.
+        """
+        Initialize optimizer with model parameters.
 
         :param params:       parameters from the model, for example:
                              [p for p in model.parameters() if p.requires_grad]
@@ -291,14 +369,15 @@ class TorchAgent(Agent):
         self.optimizer = optim_class(params, **kwargs)
         if optim_states:
             if saved_optim_type != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
+                print('WARNING: not loading optim state since optim class ' 'changed.')
             else:
                 try:
                     self.optimizer.load_state_dict(optim_states)
                 except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
+                    print(
+                        'WARNING: not loading optim state since model '
+                        'params changed.'
+                    )
                 if self.use_cuda:
                     for state in self.optimizer.state.values():
                         for k, v in state.items():
@@ -306,14 +385,15 @@ class TorchAgent(Agent):
                                 state[k] = v.cuda()
         # TODO: Move scheduler params to command line args
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+            self.optimizer, 'min', factor=0.5, patience=3, verbose=True
+        )
 
     def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule.
+        """
+        Use the metrics to decide when to adjust LR schedule.
 
-        This uses the loss as the validation metric if present, if not this
-        function does nothing. Note that the model must be reporting loss for
-        this to work.
+        This uses the loss as the validation metric if present, if not this function
+        does nothing. Note that the model must be reporting loss for this to work.
         Override this to override the behavior.
         """
         if 'loss' in metrics_dict:
@@ -336,29 +416,37 @@ class TorchAgent(Agent):
                 init = 'glove'
                 name = '840B'
             embs = vocab.GloVe(
-                name=name, dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
+                name=name,
+                dim=pretrained_dim,
+                cache=modelzoo_path(self.opt.get('datapath'), 'models:glove_vectors'),
+            )
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             embs = vocab.FastText(
                 language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_cc_vectors'
+                ),
+            )
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             embs = vocab.FastText(
                 language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_vectors'
+                ),
+            )
         else:
-            raise RuntimeError('embedding type {} not implemented. check arg, '
-                               'submit PR to this function, or override it.'
-                               ''.format(emb_type))
+            raise RuntimeError(
+                'embedding type {} not implemented. check arg, '
+                'submit PR to this function, or override it.'
+                ''.format(emb_type)
+            )
         return embs, init
 
     def _project_vec(self, vec, target_dim, method='random'):
-        """If needed, project vector to target dimensionality.
+        """
+        If needed, project vector to target dimensionality.
 
         Projection methods implemented are the following:
 
@@ -383,13 +471,15 @@ class TorchAgent(Agent):
                 # TODO: PCA
                 # TODO: PCA + RP
                 # TODO: copy
-                raise RuntimeError('Projection method not implemented: {}'
-                                   ''.format(method))
+                raise RuntimeError(
+                    'Projection method not implemented: {}' ''.format(method)
+                )
         else:
             return vec
 
     def _copy_embeddings(self, weight, emb_type, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
@@ -398,17 +488,19 @@ class TorchAgent(Agent):
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = self._project_vec(embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
+                vec = self._project_vec(embs.vectors[embs.stoi[w]], weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
 
         if log:
-            print('Initialized embeddings for {} tokens ({}%) from {}.'
-                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
+            print(
+                'Initialized embeddings for {} tokens ({}%) from {}.'
+                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            )
 
     def share(self):
-        """Share fields from parent as well as useful objects in this class.
+        """
+        Share fields from parent as well as useful objects in this class.
 
         Subclasses will likely want to share their model as well.
         """
@@ -419,7 +511,9 @@ class TorchAgent(Agent):
         return shared
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -429,9 +523,11 @@ class TorchAgent(Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(self, text, add_start=False, add_end=False,
-                        truncate=None, truncate_left=True):
-        """Return vector from text.
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
+        """
+        Return vector from text.
 
         :param text:          String to vectorize.
         :param add_start:     Add the start token to the front of the tensor.
@@ -453,11 +549,11 @@ class TorchAgent(Agent):
             if add_end:
                 # add the end token first
                 vec.append(self.END_IDX)
-            vec = vec[len(vec) - truncate:]
+            vec = vec[len(vec) - truncate :]
         else:
             # truncate from the right side
             # don't check add_end, we know we are truncating it
-            vec = vec[:truncate - add_start]
+            vec = vec[: truncate - add_start]
             if add_start:
                 # always keep the start token if it's there
                 vec.insert(0, self.START_IDX)
@@ -465,7 +561,9 @@ class TorchAgent(Agent):
         return tensor
 
     def _check_truncate(self, vec, truncate):
-        """Check that vector is truncated correctly."""
+        """
+        Check that vector is truncated correctly.
+        """
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -474,16 +572,19 @@ class TorchAgent(Agent):
             return vec[:truncate]
 
     def _set_text_vec(self, obs, truncate, split_lines):
-        """Sets the 'text_vec' field in the observation.
+        """
+        Sets the 'text_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
             if split_lines and 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate)
-                                      for m in obs['memory_vecs']]
+                obs['memory_vecs'] = [
+                    self._check_truncate(m, truncate) for m in obs['memory_vecs']
+                ]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
             # we don't add start and end to the input
@@ -492,18 +593,20 @@ class TorchAgent(Agent):
                 obs['memory_vecs'] = []
                 for line in obs['text'].split('\n'):
                     obs['memory_vecs'].append(
-                        self._vectorize_text(line, truncate=truncate))
+                        self._vectorize_text(line, truncate=truncate)
+                    )
                 # the last line is treated as the normal input
                 obs['text_vec'] = obs['memory_vecs'].pop()
             else:
-                obs['text_vec'] = self._vectorize_text(obs['text'],
-                                                       truncate=truncate)
+                obs['text_vec'] = self._vectorize_text(obs['text'], truncate=truncate)
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'labels_vec' field in the observation.
+        """
+        Sets the 'labels_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         # convert 'labels' or 'eval_labels' into vectors
         if 'labels' in obs:
@@ -519,22 +622,24 @@ class TorchAgent(Agent):
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
             obs[label_type + '_vec'] = self._check_truncate(
-                obs[label_type + '_vec'], truncate)
+                obs[label_type + '_vec'], truncate
+            )
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end,
-                                             truncate, False)
+            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
         return obs
 
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'label_candidates_vec' field in the observation.
+        """
+        Sets the 'label_candidates_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
 
         if 'label_candidates_vecs' in obs:
             if truncate is not None:
@@ -546,12 +651,15 @@ class TorchAgent(Agent):
             obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
-                for c in obs['label_candidates']]
+                for c in obs['label_candidates']
+            ]
         return obs
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
-        """Make vectors out of observation fields and store in the observation.
+    def vectorize(
+        self, obs, add_start=True, add_end=True, truncate=None, split_lines=False
+    ):
+        """
+        Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
         processed and a new field is added to the observation with the suffix
@@ -577,9 +685,14 @@ class TorchAgent(Agent):
         self._set_label_cands_vec(obs, add_start, add_end, truncate)
         return obs
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
-        """Create a batch of valid observations from an unchecked batch.
+    def batchify(
+        self,
+        obs_batch,
+        sort=False,
+        is_valid=lambda obs: 'text_vec' in obs or 'image' in obs,
+    ):
+        """
+        Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
         function, which defaults to checking if the preprocessed 'text_vec'
@@ -628,8 +741,7 @@ class TorchAgent(Agent):
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
-        some_labels_avail = (labels_avail or
-                             any('eval_labels_vec' in ex for ex in exs))
+        some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
         ys, y_lens, labels = None, None, None
         if some_labels_avail:
@@ -642,8 +754,7 @@ class TorchAgent(Agent):
             ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
-                    y_lens, ys, valid_inds, label_vecs, labels, y_lens,
-                    descending=True
+                    y_lens, ys, valid_inds, label_vecs, labels, y_lens, descending=True
                 )
 
         # LABEL_CANDIDATES
@@ -662,13 +773,22 @@ class TorchAgent(Agent):
         if any('memory_vecs' in ex for ex in exs):
             mems = [ex.get('memory_vecs', None) for ex in exs]
 
-        return Batch(text_vec=xs, text_lengths=x_lens, label_vec=ys,
-                     label_lengths=y_lens, labels=labels,
-                     valid_indices=valid_inds, candidates=cands,
-                     candidate_vecs=cand_vecs, image=imgs, memory_vecs=mems)
+        return Batch(
+            text_vec=xs,
+            text_lengths=x_lens,
+            label_vec=ys,
+            label_lengths=y_lens,
+            labels=labels,
+            valid_indices=valid_inds,
+            candidates=cands,
+            candidate_vecs=cand_vecs,
+            image=imgs,
+            memory_vecs=mems,
+        )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
-        """Match sub-batch of predictions to the original batch indices.
+        """
+        Match sub-batch of predictions to the original batch indices.
 
         Batches may be only partially filled (i.e when completing the remainder
         at the end of the validation or test set), or we may want to sort by
@@ -712,9 +832,11 @@ class TorchAgent(Agent):
         else:
             return token + ' ' + text
 
-    def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False):
-        """Retrieve dialog history and add current observations to it.
+    def get_dialog_history(
+        self, observation, reply=None, add_person_tokens=False, add_p1_after_newln=False
+    ):
+        """
+        Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
         :param reply:              past utterance from the model to add to the
@@ -743,9 +865,9 @@ class TorchAgent(Agent):
         if 'text' in obs:
             if add_person_tokens:
                 # add person1 token to text
-                obs['text'] = self._add_person_tokens(obs['text'],
-                                                      self.P1_TOKEN,
-                                                      add_p1_after_newln)
+                obs['text'] = self._add_person_tokens(
+                    obs['text'], self.P1_TOKEN, add_p1_after_newln
+                )
             # add text to history
             self.history.append(obs['text'])
 
@@ -757,7 +879,8 @@ class TorchAgent(Agent):
         return obs
 
     def last_reply(self, use_label=True):
-        """Retrieve the last reply from the model.
+        """
+        Retrieve the last reply from the model.
 
         If available, we use the true label instead of the model's prediction.
 
@@ -774,13 +897,16 @@ class TorchAgent(Agent):
 
         if use_label:
             # first look for the true label, if we aren't on a new episode
-            label_key = ('labels' if 'labels' in self.observation else
-                         'eval_labels' if 'eval_labels' in self.observation
-                         else None)
+            label_key = (
+                'labels'
+                if 'labels' in self.observation
+                else 'eval_labels'
+                if 'eval_labels' in self.observation
+                else None
+            )
             if label_key is not None:
                 lbls = self.observation[label_key]
-                last_reply = (lbls[0] if len(lbls) == 1
-                              else self.random.choice(lbls))
+                last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 return last_reply
         # otherwise, we use the last reply the model generated
         batch_reply = self.replies.get('batch_reply')
@@ -789,7 +915,9 @@ class TorchAgent(Agent):
         return None
 
     def _save_history(self, observations, replies):
-        """Save the model replies to the history."""
+        """
+        Save the model replies to the history.
+        """
         # make sure data structure is set up
         if 'predictions' not in self.replies:
             self.replies['predictions'] = {}
@@ -809,7 +937,8 @@ class TorchAgent(Agent):
             preds[i].append(replies[i].get('text'))
 
     def reply_history(self):
-        """Get the model's predicted reply history within this episode.
+        """
+        Get the model's predicted reply history within this episode.
 
         :param batch: (default False) return the reply history for every
                       row in the batch, otherwise will return just for this
@@ -824,19 +953,25 @@ class TorchAgent(Agent):
         return [p for b, p in preds]
 
     def observe(self, observation):
-        """Process incoming message in preparation for producing a response.
+        """
+        Process incoming message in preparation for producing a response.
 
         This includes remembering the past history of the conversation.
         """
         reply = self.last_reply(
-            use_label=(self.opt.get('use_reply', 'label') == 'label'))
+            use_label=(self.opt.get('use_reply', 'label') == 'label')
+        )
         self.observation = self.get_dialog_history(
-            observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
+            observation,
+            reply=reply,
+            add_person_tokens=self.add_person_tokens,
+            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
+        )
         return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):
-        """Save model parameters to path (or default to model_file arg).
+        """
+        Save model parameters to path (or default to model_file arg).
 
         Override this method for more specific saving.
         """
@@ -860,7 +995,8 @@ class TorchAgent(Agent):
                     json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states.
+        """
+        Return opt and model states.
 
         Override this method for more specific loading.
         """
@@ -872,18 +1008,23 @@ class TorchAgent(Agent):
         return states
 
     def reset(self):
-        """Clear internal states."""
+        """
+        Clear internal states.
+        """
         self.observation = None
         self.history.clear()
         self.replies.clear()
         self.reset_metrics()
 
     def act(self):
-        """Call batch_act with the singleton batch."""
+        """
+        Call batch_act with the singleton batch.
+        """
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
-        """Process a batch of observations (batchsize list of message dicts).
+        """
+        Process a batch of observations (batchsize list of message dicts).
 
         These observations have been preprocessed by the observe method.
 
@@ -918,22 +1059,38 @@ class TorchAgent(Agent):
         return batch_reply
 
     def train_step(self, batch):
-        """Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step')
+        """
+        Process one batch with training labels.
+        """
+        raise NotImplementedError('Abstract class: user must implement train_step')
 
     def eval_step(self, batch):
-        """Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step')
+        """
+        Process one batch but do not train on it.
+        """
+        raise NotImplementedError('Abstract class: user must implement eval_step')
 
 
 class Beam(object):
-    """Generic beam class. It keeps information about beam_size hypothesis."""
+    """
+    Generic beam class.
 
-    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
-                 eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
-        """Instantiate Beam object.
+    It keeps information about beam_size hypothesis.
+    """
+
+    def __init__(
+        self,
+        beam_size,
+        min_length=3,
+        padding_token=0,
+        bos_token=1,
+        eos_token=2,
+        min_n_best=3,
+        cuda='cpu',
+        block_ngram=0,
+    ):
+        """
+        Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
         :param min_length: minimum length of the predicted sequence
@@ -951,19 +1108,20 @@ class Beam(object):
         self.pad = padding_token
         self.device = cuda
         # recent score for each hypo in the beam
-        self.scores = torch.Tensor(self.beam_size).float().zero_().to(
-            self.device)
+        self.scores = torch.Tensor(self.beam_size).float().zero_().to(self.device)
         # self.scores values per each time step
         self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]
         # backtracking id to hypothesis at previous time step
         self.bookkeep = []
         # output tokens at each time step
-        self.outputs = [torch.Tensor(self.beam_size).long()
-                        .fill_(self.bos).to(self.device)]
+        self.outputs = [
+            torch.Tensor(self.beam_size).long().fill_(self.bos).to(self.device)
+        ]
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.HypothesisTail = namedtuple(
-            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
+            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid']
+        )
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
@@ -973,19 +1131,27 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1"""
+        """
+        Get list of ngrams with context length n-1.
+        """
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
-        """Get the outputput at the current step."""
+        """
+        Get the outputput at the current step.
+        """
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """Get the backtrack at the current step."""
+        """
+        Get the backtrack at the current step.
+        """
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
-        """Advance the beam one step."""
+        """
+        Advance the beam one step.
+        """
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -999,8 +1165,9 @@ class Beam(object):
         else:
             # we need to sum up hypo scores and curr softmax scores before topk
             # [beam_size, voc_size]
-            beam_scores = (softmax_probs +
-                           self.scores.unsqueeze(1).expand_as(softmax_probs))
+            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(
+                softmax_probs
+            )
             for i in range(self.outputs[-1].size(0)):
                 if self.block_ngram > 0:
                     current_hypo = self.partial_hyps[i][1:]
@@ -1023,7 +1190,8 @@ class Beam(object):
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
             best_scores, best_idxs = torch.topk(
-                flatten_beam_scores, self.beam_size, dim=-1)
+                flatten_beam_scores, self.beam_size, dim=-1
+            )
 
         self.scores = best_scores
         self.all_scores.append(self.scores)
@@ -1034,17 +1202,21 @@ class Beam(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
-        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] +
-                             [tok_ids[i].item()] for i in range(self.beam_size)]
+        self.partial_hyps = [
+            self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()]
+            for i in range(self.beam_size)
+        ]
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
                 #  this is finished hypo, adding to finished
-                eostail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                              hypid=hypid,
-                                              score=self.scores[hypid],
-                                              tokenid=self.eos)
+                eostail = self.HypothesisTail(
+                    timestep=len(self.outputs) - 1,
+                    hypid=hypid,
+                    score=self.scores[hypid],
+                    tokenid=self.eos,
+                )
                 self.finished.append(eostail)
                 self.n_best_counter += 1
 
@@ -1054,41 +1226,53 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
-        """Return whether beam search is complete."""
+        """
+        Return whether beam search is complete.
+        """
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
-        return (self.get_hyp_from_finished(top_hypothesis_tail),
-                top_hypothesis_tail.score)
+        return (
+            self.get_hyp_from_finished(top_hypothesis_tail),
+            top_hypothesis_tail.score,
+        )
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-        assert (self.outputs[hypothesis_tail.timestep]
-                [hypothesis_tail.hypid] == self.eos)
+        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i, hypid=endback, score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
+            hyp_idx.append(
+                self.HypothesisTail(
+                    timestep=i,
+                    hypid=endback,
+                    score=self.all_scores[i][endback],
+                    tokenid=self.outputs[i][endback],
+                )
+            )
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
-        """Return prettier version of the hypotheses."""
+        """
+        Return prettier version of the hypotheses.
+        """
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
@@ -1102,21 +1286,26 @@ class Beam(object):
             timestep=ts,
             hypid=torch.Tensor([hypid]).long(),
             score=self.all_scores[ts][hypid],
-            tokenid=self.outputs[ts][hypid])
+            tokenid=self.outputs[ts][hypid],
+        )
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i,
-                hypid=endback,
-                score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
+            hyp_idx.append(
+                self.HypothesisTail(
+                    timestep=i,
+                    hypid=endback,
+                    score=self.all_scores[i][endback],
+                    tokenid=self.outputs[i][endback],
+                )
+            )
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
 
     def get_rescored_finished(self, n_best=None):
-        """Return finished hypotheses in rescored order.
+        """
+        Return finished hypotheses in rescored order.
 
         :param n_best: how many n best hypothesis to return
         :return: list with hypothesis
@@ -1126,13 +1315,16 @@ class Beam(object):
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
             length_penalty = math.pow((1 + current_length) / 6, 0.65)
-            rescored_finished.append(self.HypothesisTail(
-                timestep=finished_item.timestep, hypid=finished_item.hypid,
-                score=finished_item.score / length_penalty,
-                tokenid=finished_item.tokenid))
+            rescored_finished.append(
+                self.HypothesisTail(
+                    timestep=finished_item.timestep,
+                    hypid=finished_item.hypid,
+                    score=finished_item.score / length_penalty,
+                    tokenid=finished_item.tokenid,
+                )
+            )
 
-        srted = sorted(rescored_finished, key=attrgetter('score'),
-                       reverse=True)
+        srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
@@ -1140,7 +1332,8 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Check if self.finished is empty and add hyptail in that case.
+        """
+        Check if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
 
@@ -1151,15 +1344,18 @@ class Beam(object):
             # to pass assert in L102, it is ok since empty self.finished
             # means junk prediction anyway
             self.outputs[-1][0] = self.eos
-            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                          hypid=0,
-                                          score=self.all_scores[-1][0],
-                                          tokenid=self.outputs[-1][0])
+            hyptail = self.HypothesisTail(
+                timestep=len(self.outputs) - 1,
+                hypid=0,
+                score=self.all_scores[-1][0],
+                tokenid=self.outputs[-1][0],
+            )
 
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Create pydot graph representation of the beam.
+        """
+        Create pydot graph representation of the beam.
 
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes
@@ -1179,23 +1375,24 @@ class Beam(object):
 
         # get top nbest hyp
         top_hyp_idx_n_best = []
-        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue',
-                         'green2', 'tan']
+        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
             # do not include EOS since it has rescored score not from original
             # self.all_scores, we color EOS with black
-            top_hyp_idx_n_best.append(self.get_hyp_from_finished(
-                hyptail))
+            top_hyp_idx_n_best.append(self.get_hyp_from_finished(hyptail))
 
         # create nodes
         for tstep, lis in enumerate(outputs):
             for hypid, token in enumerate(lis):
                 if tstep == 0:
                     hypid = 0  # collapse all __NULL__ nodes
-                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid,
-                                                score=all_scores[tstep][hypid],
-                                                tokenid=token)
+                node_tail = self.HypothesisTail(
+                    timestep=tstep,
+                    hypid=hypid,
+                    score=all_scores[tstep][hypid],
+                    tokenid=token,
+                )
                 color = 'white'
                 rank = None
                 for i, hypseq in enumerate(top_hyp_idx_n_best):
@@ -1205,29 +1402,46 @@ class Beam(object):
                         rank = i
                         break
                 label = (
-                    "<{}".format(dictionary.vec2txt([token])
-                                 if dictionary is not None else token) +
-                    " : " +
-                    "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3))
+                    "<{}".format(
+                        dictionary.vec2txt([token]) if dictionary is not None else token
+                    )
+                    + " : "
+                    + "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3)
+                )
 
-                graph.add_node(pydot.Node(
-                    node_tail.__repr__(), label=label, fillcolor=color,
-                    style='filled',
-                    xlabel='{}'.format(rank) if rank is not None else ''))
+                graph.add_node(
+                    pydot.Node(
+                        node_tail.__repr__(),
+                        label=label,
+                        fillcolor=color,
+                        style='filled',
+                        xlabel='{}'.format(rank) if rank is not None else '',
+                    )
+                )
 
         # create edges
         for revtstep, lis in reversed(list(enumerate(bookkeep))):
             for i, prev_id in enumerate(lis):
                 from_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep, hypid=prev_id,
-                        score=all_scores[revtstep][prev_id],
-                        tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep,
+                            hypid=prev_id,
+                            score=all_scores[revtstep][prev_id],
+                            tokenid=outputs[revtstep][prev_id],
+                        ).__repr__()
+                    )
+                )[0]
                 to_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep + 1, hypid=i,
-                        score=all_scores[revtstep + 1][i],
-                        tokenid=outputs[revtstep + 1][i]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep + 1,
+                            hypid=i,
+                            score=all_scores[revtstep + 1][i],
+                            tokenid=outputs[revtstep + 1][i],
+                        ).__repr__()
+                    )
+                )[0]
                 newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
                 graph.add_edge(newedge)
 

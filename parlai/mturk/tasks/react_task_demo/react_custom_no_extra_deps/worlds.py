@@ -8,9 +8,13 @@ import threading
 
 
 class AskerOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
     """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
+    """
+
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -25,9 +29,13 @@ class AskerOnboardingWorld(MTurkOnboardWorld):
 
 
 class AnswererOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
     """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
+    """
+
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -43,9 +51,13 @@ class AnswererOnboardingWorld(MTurkOnboardWorld):
 
 
 class EvaluatorOnboardingWorld(MTurkOnboardWorld):
-    """Example onboarding world. Sends a message from the world to the
-    worker and then exits as complete after the worker uses the interface
     """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
+    """
+
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -61,9 +73,10 @@ class EvaluatorOnboardingWorld(MTurkOnboardWorld):
 
 class MultiRoleAgentWorld(MTurkTaskWorld):
     """
-    World to demonstrate workers with assymetric roles. This task amounts
-    to three rounds and then an evaluation step. It is purposefully created
-    as a task to demo multiple views and has no other purpose.
+    World to demonstrate workers with assymetric roles.
+
+    This task amounts to three rounds and then an evaluation step. It is purposefully
+    created as a task to demo multiple views and has no other purpose.
     """
 
     collector_agent_id = 'Moderator'
@@ -86,10 +99,7 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
     def parley(self):
         if self.turns == 0:
             # Instruction for evaluator
-            ad = {
-                'id': 'System',
-                'text': "Please observe the chat for accuracy.",
-            }
+            ad = {'id': 'System', 'text': "Please observe the chat for accuracy."}
             self.evaluator.observe(ad)
         if self.turns < 3:
             # QA pairing
@@ -99,10 +109,7 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
             }
             self.asker.observe(ad)
             question = self.asker.act()
-            ad = {
-                'id': 'System',
-                'text': 'Please answer this question.',
-            }
+            ad = {'id': 'System', 'text': 'Please answer this question.'}
             self.answerer.observe(ad)
             self.answerer.observe(question)
             self.evaluator.observe(question)
@@ -114,15 +121,9 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
             self.turns += 1
         else:
             # evaluate
-            ad = {
-                'id': 'System',
-                'text': "Please provide your evaluation.",
-            }
+            ad = {'id': 'System', 'text': "Please provide your evaluation."}
             self.evaluator.observe(ad)
-            ad = {
-                'id': 'System',
-                'text': "Please wait for evaluation.",
-            }
+            ad = {'id': 'System', 'text': "Please wait for evaluation."}
             self.answerer.observe(ad)
             self.asker.observe(ad)
             self.accepter = self.evaluator.act()
@@ -138,6 +139,7 @@ class MultiRoleAgentWorld(MTurkTaskWorld):
                 agent.shutdown(timeout=None)
             except Exception:
                 agent.shutdown()  # not MTurkAgent
+
         threads = []
         for agent in self.mturk_agents:
             t = threading.Thread(target=shutdown_agent, args=(agent,))

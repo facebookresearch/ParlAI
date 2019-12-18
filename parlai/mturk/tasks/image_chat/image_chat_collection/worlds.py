@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.utils import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.tasks.image_chat.build import build as build_ic
 from parlai.tasks.personality_captions.build import build as build_pc
@@ -55,11 +56,11 @@ def load_image(path):
 class PersonalityGenerator(object):
     def __init__(self, opt):
         self.personalities_path = os.path.join(
-            opt['datapath'],
-            'personality_captions/personalities.json')
+            opt['datapath'], 'personality_captions/personalities.json'
+        )
         self.personalities_idx_stack_path = os.path.join(
-            os.getcwd(),
-            './personalities_idx_stack.pkl')
+            os.getcwd(), './personalities_idx_stack.pkl'
+        )
 
         self.personalities = []
 
@@ -97,21 +98,25 @@ class PersonalityGenerator(object):
 
 
 class ExampleGenerator(object):
-    """Retrieve Example from Personality-Captions"""
+    """
+    Retrieve Example from Personality-Captions.
+    """
+
     def __init__(self, opt):
         self.second_resp = opt.get('second_response')
         self.examples_idx_stack_path = os.path.join(
             os.getcwd(),
             './{}_examples_stack{}.pkl'.format(
                 'second_response' if self.second_resp else 'first_response',
-                '_sandbox' if opt['is_sandbox'] else ''))
-        self.OLD = OffensiveLanguageDetector()
+                '_sandbox' if opt['is_sandbox'] else '',
+            ),
+        )
+        self.OLD = OffensiveStringMatcher()
         self.opt = opt
         build_pc(opt)
         build_ic(opt)
         df = 'personality_captions' if not self.second_resp else 'image_chat'
-        data_path = os.path.join(self.opt['datapath'],
-                                 '{}/{}.json')
+        data_path = os.path.join(self.opt['datapath'], '{}/{}.json')
         self.data = []
         for dt in ['train', 'val', 'test']:
             if self.second_resp and dt == 'val':
@@ -152,7 +157,10 @@ class ExampleGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    """A world that provides the appropriate instructions during onboarding"""
+    """
+    A world that provides the appropriate instructions during onboarding.
+    """
+
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
@@ -160,9 +168,7 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         super().__init__(opt, mturk_agent)
 
     def parley(self):
-        onboard_msg = {
-            'id': 'SYSTEM',
-            'text': ONBOARD_MSG}
+        onboard_msg = {'id': 'SYSTEM', 'text': ONBOARD_MSG}
         config = config_first if not self.second_resp else config_second
         onboard_msg['task_description'] = config['task_description']
         self.mturk_agent.observe(onboard_msg)
@@ -170,23 +176,22 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
 
         # timeout
-        if act['episode_done'] or (('text' in act and
-                                    act['text'] == TIMEOUT_MESSAGE)):
+        if act['episode_done'] or (('text' in act and act['text'] == TIMEOUT_MESSAGE)):
             self.episodeDone = True
             return
 
         if 'text' not in act:
-            control_msg = {'id': 'SYSTEM',
-                           'text': WAITING_MSG}
+            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
 
 
 class MTurkImageChatWorld(MultiAgentDialogWorld):
-    """World where an agent observes 5 images and 5 comments,
-       with 5 different personalities,
-       and writes engaging responses to the comments
     """
+    World where an agent observes 5 images and 5 comments, with 5 different
+    personalities, and writes engaging responses to the comments.
+    """
+
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
         self.turn_idx = 0
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -196,7 +201,7 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
         super().__init__(opt, agents, shared)
         self.agents = agents
         self.agent = agents[0]
-        self.offensive_lang_detector = OffensiveLanguageDetector()
+        self.offensive_lang_detector = OffensiveStringMatcher()
         self.data = []
         self.exact_match = False
         self.num_images = opt['num_images']
@@ -211,8 +216,10 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
         return self.chat_done
 
     def parley(self):
-        """RESPONDER is given an image and a comment, and is told to give a
-        response for to the comment"""
+        """
+        RESPONDER is given an image and a comment, and is told to give a response for to
+        the comment.
+        """
         # Initial Message Value
         control_msg = {'episode_done': False}
         control_msg['id'] = 'SYSTEM'
@@ -228,25 +235,27 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
 
             self.example_num, example = self.agent.example_generator.pop_example()
             control_msg['text'] = self.get_instruction(
-                                       tag='start',
-                                       agent_id=agent.id,
-                                       turn_num=self.turn_idx + 1)
+                tag='start', agent_id=agent.id, turn_num=self.turn_idx + 1
+            )
 
             if self.second_resp:
-                control_msg['comment_text'] = '<b><span style="color:red">' \
-                                              '{}\n</span></b>'.format(
-                                              example['dialog'][0][1].strip())
-                control_msg['response_text'] = '<b><span style="color:blue">' \
-                                               '{}\n</span></b>'.format(
-                                               example['dialog'][1][1].strip())
+                control_msg['comment_text'] = (
+                    '<b><span style="color:red">'
+                    '{}\n</span></b>'.format(example['dialog'][0][1].strip())
+                )
+                control_msg['response_text'] = (
+                    '<b><span style="color:blue">'
+                    '{}\n</span></b>'.format(example['dialog'][1][1].strip())
+                )
             else:
-                control_msg['comment_text'] = '<b><span style="color:red">' \
-                                              '{}\n</span></b>'.format(
-                                              example['comment'].strip())
+                control_msg['comment_text'] = (
+                    '<b><span style="color:red">'
+                    '{}\n</span></b>'.format(example['comment'].strip())
+                )
 
-            img = load_image(os.path.join(
-                                self.image_path,
-                                '{}.jpg'.format(example['image_hash'])))
+            img = load_image(
+                os.path.join(self.image_path, '{}.jpg'.format(example['image_hash']))
+            )
             buffered = BytesIO()
             img.save(buffered, format='JPEG')
             encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
@@ -256,10 +265,9 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
             else:
                 pers_tup = self.agent.personality_generator.pop_personality()
                 self.pers_idx, personality = pers_tup
-            personality_text = '<b><span style="color:{}">' \
-                               '{}\n</span></b>'.format(
-                                    'blue' if not self.second_resp else 'red',
-                                    personality.strip())
+            personality_text = '<b><span style="color:{}">' '{}\n</span></b>'.format(
+                'blue' if not self.second_resp else 'red', personality.strip()
+            )
             control_msg['personality_text'] = personality_text
             control_msg['description'] = self.config['task_description']
             agent.observe(validate(control_msg))
@@ -276,16 +284,14 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
                     break
                 response = acts[idx]['text']
                 offensive = self.offensive_lang_detector.contains_offensive_language(
-                    response)
+                    response
+                )
                 if offensive:
                     # Tell Turker to not be offensive!
                     offensive_counter += 1
                     if offensive_counter == 3:
                         break
-                    offensive_msg = {
-                        'id': 'SYSTEM',
-                        'text': OFFENSIVE_MSG,
-                    }
+                    offensive_msg = {'id': 'SYSTEM', 'text': OFFENSIVE_MSG}
                     agent.observe(validate(offensive_msg))
                 else:
                     break
@@ -332,17 +338,19 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
     def save_data(self):
         convo_finished = True
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or
-                    ag.disconnected or ag.hit_is_expired):
+            if (
+                ag.hit_is_abandoned
+                or ag.hit_is_returned
+                or ag.disconnected
+                or ag.hit_is_expired
+            ):
                 convo_finished = False
         if not convo_finished:
             if not self.second_resp:
                 ag.personality_generator.push_personality(self.pers_idx)
             ag.example_generator.push_example(self.example_num)
-            print('\n**Push personality {} back to stack. **\n'.format(
-                    self.pers_idx))
-            print('\n**Push image {} back to stack. **\n'.format(
-                    self.example_num))
+            print('\n**Push personality {} back to stack. **\n'.format(self.pers_idx))
+            print('\n**Push image {} back to stack. **\n'.format(self.example_num))
         if not self.second_resp:
             self.agents[0].personality_generator.save_idx_stack()
         self.agents[0].example_generator.save_idx_stack()
@@ -355,14 +363,18 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
                 '{}_{}_{}.pkl'.format(
                     time.strftime('%Y%m%d-%H%M%S'),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
         else:
             filename = os.path.join(
                 data_path,
                 '{}_{}_{}_incomplete.pkl'.format(
                     time.strftime('%Y%m%d-%H%M%S'),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
         key = 'second_response' if self.second_resp else 'first_response'
         responses = [d[key] for d in self.data]
 
@@ -370,49 +382,60 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
             c = responses[0]
             if _exact_match(c, responses[1:]):
                 self.exact_match = True
-        data_to_save = [d for d in self.data
-                        if d['contains_offensive_language'] is None]
-        pickle.dump({'data': data_to_save,
-                     'worker': self.agents[0].worker_id,
-                     'hit_id': self.agents[0].hit_id,
-                     'assignment_id': self.agents[0].assignment_id,
-                     'exact_match': self.exact_match}, open(filename, 'wb'))
-        print('{}: Data successfully saved at {}.'.format(
-            self.world_tag,
-            filename))
+        data_to_save = [
+            d for d in self.data if d['contains_offensive_language'] is None
+        ]
+        pickle.dump(
+            {
+                'data': data_to_save,
+                'worker': self.agents[0].worker_id,
+                'hit_id': self.agents[0].hit_id,
+                'assignment_id': self.agents[0].assignment_id,
+                'exact_match': self.exact_match,
+            },
+            open(filename, 'wb'),
+        )
+        print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
     def review_work(self):
         global review_agent
 
         def review_agent(ag):
-            contains_offense = any(d['contains_offensive_language']
-                                   for d in self.data)
+            contains_offense = any(d['contains_offensive_language'] for d in self.data)
             if contains_offense:
-                ag.reject_work(reason='We have rejected this HIT because at '
-                                      'least one of your comments '
-                                      'contains offensive language')
-                print('Rejected work for agent {} for offensive language'.format(
-                      ag.worker_id))
+                ag.reject_work(
+                    reason='We have rejected this HIT because at '
+                    'least one of your comments '
+                    'contains offensive language'
+                )
+                print(
+                    'Rejected work for agent {} for offensive language'.format(
+                        ag.worker_id
+                    )
+                )
             elif self.exact_match:
-                ag.reject_work(reason='We have rejected this HIT because '
-                               'all of your comments are the exact same')
-                print('Rejected work for agent {} for same comments'.format(
-                      ag.worker_id))
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
+                ag.reject_work(
+                    reason='We have rejected this HIT because '
+                    'all of your comments are the exact same'
+                )
+                print(
+                    'Rejected work for agent {} for same comments'.format(ag.worker_id)
+                )
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(review_agent)(agent) for agent in self.agents
+        )
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 
         def shutdown_agent(agent):
             agent.shutdown()
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )

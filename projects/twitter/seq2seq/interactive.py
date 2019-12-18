@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Interact with a pre-trained model.
+"""
+Interact with a pre-trained model.
+
 This seq2seq model was trained on convai2:self.
 """
 
@@ -22,8 +24,10 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     if opt.get('model_file', '').startswith('models:convai2'):
         opt['model_type'] = 'seq2seq'
-        fnames = ['convai2_self_seq2seq_model.tgz',
-                  'convai2_self_seq2seq_model.dict',
-                  'convai2_self_seq2seq_model.opt']
+        fnames = [
+            'convai2_self_seq2seq_model.tgz',
+            'convai2_self_seq2seq_model.dict',
+            'convai2_self_seq2seq_model.opt',
+        ]
         download_models(opt, fnames, 'convai2', version='v3.0')
     interactive(opt)

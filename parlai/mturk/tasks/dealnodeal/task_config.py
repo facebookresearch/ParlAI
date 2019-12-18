@@ -17,8 +17,10 @@ task_config['hit_title'] = 'Negotiate a deal with another user!'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = 'You will have a conversation with another user to agree how to divide some objects' \
-                                 'between you. Negotiate hard to get a deal worth as many points as possible!'
+task_config['hit_description'] = (
+    'You will have a conversation with another user to agree how to divide some objects'
+    'between you. Negotiate hard to get a deal worth as many points as possible!'
+)
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -30,7 +32,9 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = '''
+task_config[
+    'task_description'
+] = '''
 <div id="preview">
 You will have a conversation with another user to agree how to divide some objects between you. Negotiate hard to
 get a deal worth as many points as possible<br><br>

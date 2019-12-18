@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Base script for model-agnostic perplexity evaluation.
+"""
+Base script for model-agnostic perplexity evaluation.
 
 While resistent to choices of model-added tokens like START and END, this
 requires fixing a specific vocabulary. Be sure to use the same build_dict
@@ -35,8 +36,8 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.misc import Timer, round_sigfigs, no_lock
+from parlai.utils.thread import SharedTable
 from parlai.core.worlds import create_task, World
 
 import copy
@@ -47,15 +48,14 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Evaluate perplexity')
     parser.add_pytorch_datateacher_args()
-    parser.set_defaults(
-        datatype='valid',
-    )
+    parser.set_defaults(datatype='valid')
     return parser
 
 
 class PerplexityWorld(World):
-    """Instead of just calling act/observe on each agent, this world just calls
-    act on the teacher and then calls `next_word_probability` on the agent.
+    """
+    Instead of just calling act/observe on each agent, this world just calls act on the
+    teacher and then calls `next_word_probability` on the agent.
 
     The label for each example is parsed by the provided tokenizer, and then
     for each word in the parsed label the model is given the input and all of
@@ -69,6 +69,7 @@ class PerplexityWorld(World):
     The API of the next_word_probability function which agents must implement
     is mentioned in the documentation for this file.
     """
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt)
         if shared:
@@ -81,12 +82,15 @@ class PerplexityWorld(World):
             if len(agents) != 3:
                 raise RuntimeError('There must be exactly three agents.')
             if opt.get('batchsize', 1) > 1:
-                raise RuntimeError('This world only works with bs=1. Try '
-                                   'using multiple threads instead, nt>1.')
+                raise RuntimeError(
+                    'This world only works with bs=1. Try '
+                    'using multiple threads instead, nt>1.'
+                )
             self.task, self.agent, self.dict = agents
             if not hasattr(self.agent, 'next_word_probability'):
-                raise RuntimeError('Agent must implement function '
-                                   '`next_word_probability`.')
+                raise RuntimeError(
+                    'Agent must implement function ' '`next_word_probability`.'
+                )
             self.metrics = {'exs': 0, 'loss': 0.0, 'num_tokens': 0, 'num_unk': 0}
             if opt.get('numthreads', 1) > 1:
                 self.metrics = SharedTable(self.metrics)
@@ -167,18 +171,17 @@ class PerplexityWorld(World):
                 # m['num_unk'] = self.metrics['num_unk']
                 # m['num_tokens'] = self.metrics['num_tokens']
                 m['loss'] = round_sigfigs(
-                    self.metrics['loss'] / self.metrics['num_tokens'],
-                    3
+                    self.metrics['loss'] / self.metrics['num_tokens'], 3
                 )
                 m['ppl'] = round_sigfigs(
-                    math.exp(self.metrics['loss'] / self.metrics['num_tokens']),
-                    4
+                    math.exp(self.metrics['loss'] / self.metrics['num_tokens']), 4
                 )
         return m
 
 
 def eval_ppl(opt, build_dict=None, dict_file=None):
-    """Evaluates the the perplexity of a model.
+    """
+    Evaluates the the perplexity of a model.
 
     This uses a dictionary which implements the following functions:
     - tokenize(text): splits string up into list of tokens
@@ -196,8 +199,10 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
     determine the dictionary used for the evaluation.
     """
     if not build_dict and not dict_file:
-        raise RuntimeError('eval_ppl script either needs a dictionary build '
-                           'function or a dictionary file.')
+        raise RuntimeError(
+            'eval_ppl script either needs a dictionary build '
+            'function or a dictionary file.'
+        )
 
     if build_dict:
         dict_agent = build_dict()
@@ -225,10 +230,13 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
         if log_time.time() > 1:  # log every 1 sec
             tot_time += log_time.time()
             report = world.report()
-            print('{}s elapsed, {}%% complete, {}'.format(
-                int(tot_time),
-                round_sigfigs(report['exs'] / world.num_examples() * 100, 3),
-                report))
+            print(
+                '{}s elapsed, {}%% complete, {}'.format(
+                    int(tot_time),
+                    round_sigfigs(report['exs'] / world.num_examples() * 100, 3),
+                    report,
+                )
+            )
             log_time.reset()
     print('EPOCH DONE')
     tot_time += log_time.time()
@@ -237,10 +245,12 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
     print("============================")
     print("FINAL PPL: " + str(final_report['ppl']))
     if final_report.get('ppl', 0) == float('inf'):
-        print('Note: you got inf perplexity. Consider adding (or raising) the '
-              'minimum probability you assign to each possible word. If you '
-              'assign zero probability to the correct token in the evaluation '
-              'vocabulary, you get inf probability immediately.')
+        print(
+            'Note: you got inf perplexity. Consider adding (or raising) the '
+            'minimum probability you assign to each possible word. If you '
+            'assign zero probability to the correct token in the evaluation '
+            'vocabulary, you get inf probability immediately.'
+        )
 
 
 if __name__ == '__main__':

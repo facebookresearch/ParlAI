@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Simple agent which repeats back the labels sent to it.
+"""
+Simple agent which repeats back the labels sent to it.
 
 By default, replies with a single random label from the list of labels sent to
 it, if any. If the ``label_candidates`` field is set, will fill the ``text_candidates``
@@ -28,13 +29,25 @@ class RepeatLabelAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         group = argparser.add_argument_group('RepeatLabel Arguments')
-        group.add_argument('--return_one_random_answer', type='bool', default=True,
-                           help='return one answer from the set of labels')
-        group.add_argument('--cant_answer_percent', type=float, default=0,
-                           help='set value in range[0,1] to set chance of '
-                                'replying with special message')
-        group.add_argument('--cant_answer_message', type=str, default="I don't know.",
-                           help='Message sent when the model cannot answer')
+        group.add_argument(
+            '--return_one_random_answer',
+            type='bool',
+            default=True,
+            help='return one answer from the set of labels',
+        )
+        group.add_argument(
+            '--cant_answer_percent',
+            type=float,
+            default=0,
+            help='set value in range[0,1] to set chance of '
+            'replying with special message',
+        )
+        group.add_argument(
+            '--cant_answer_message',
+            type=str,
+            default="I don't know.",
+            help='Message sent when the model cannot answer',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

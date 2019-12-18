@@ -11,7 +11,7 @@ Make a copy of the ConvAI2 dataset with CT control variables annotated.
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import msg_to_str, TimeLogger
+from parlai.utils.misc import msg_to_str, TimeLogger
 from controllable_seq2seq.util import ConvAI2History
 from controllable_seq2seq.controls import eval_attr, initialize_control_information
 import random
@@ -47,7 +47,8 @@ def make_dataset(opt):
     for _ in range(num_examples):
         world.parley()
         world.acts[0]['labels'] = world.acts[0].get(
-            'labels', world.acts[0].pop('eval_labels', None))
+            'labels', world.acts[0].pop('eval_labels', None)
+        )
 
         # Need to get history in order to compute control values
         hist = ConvAI2History(world.acts[0]['text'], assume_persontokens=False)
@@ -89,19 +90,38 @@ if __name__ == '__main__':
     random.seed(42)
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=-1, type=int,
-                        help='Total number of exs to convert, -1 to convert \
-                                all examples')
-    parser.add_argument('-of', '--outfile', default=None, type=str,
-                        help='Output file where to save, by default will be \
-                                created in /tmp')
-    parser.add_argument('-if', '--ignore-fields', default='id', type=str,
-                        help='Ignore these fields from the message (returned\
-                                with .act() )')
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert \
+                                all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be \
+                                created in /tmp',
+    )
+    parser.add_argument(
+        '-if',
+        '--ignore-fields',
+        default='id',
+        type=str,
+        help='Ignore these fields from the message (returned\
+                                with .act() )',
+    )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
 
-    parser.add_argument('--controls', type=str, default='',
-                        help='comma-separated controls to be included')
+    parser.add_argument(
+        '--controls',
+        type=str,
+        default='',
+        help='comma-separated controls to be included',
+    )
 
     parser.set_defaults(task="fromfile:parlaiformat")
     parser.set_defaults(datatype="train:stream")

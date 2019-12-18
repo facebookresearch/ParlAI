@@ -4,15 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Basic tokenizer that splits text into alpha-numeric tokens and
-non-whitespace tokens.
+"""
+Basic tokenizer that splits text into alpha-numeric tokens and non-whitespace tokens.
 """
 
 import regex
-import logging
 from .tokenizer import Tokens, Tokenizer
-
-logger = logging.getLogger(__name__)
+from parlai.utils.logging import logger
 
 
 class SimpleTokenizer(Tokenizer):
@@ -26,11 +24,13 @@ class SimpleTokenizer(Tokenizer):
         """
         self._regexp = regex.compile(
             '(%s)|(%s)' % (self.ALPHA_NUM, self.NON_WS),
-            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE
+            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE,
         )
         if len(kwargs.get('annotators', {})) > 0:
-            logger.warning('%s only tokenizes! Skipping annotators: %s' %
-                           (type(self).__name__, kwargs.get('annotators')))
+            logger.warning(
+                '%s only tokenizes! Skipping annotators: %s'
+                % (type(self).__name__, kwargs.get('annotators'))
+            )
         self.annotators = set()
 
     def tokenize(self, text):
@@ -49,9 +49,5 @@ class SimpleTokenizer(Tokenizer):
                 end_ws = span[1]
 
             # Format data
-            data.append((
-                token,
-                text[start_ws: end_ws],
-                span,
-            ))
+            data.append((token, text[start_ws:end_ws], span))
         return Tokens(data, self.annotators)

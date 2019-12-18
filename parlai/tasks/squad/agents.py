@@ -14,7 +14,7 @@ import os
 
 def get_sentence_tokenizer():
     """
-    Loads the nltk sentence tokenizer
+    Loads the nltk sentence tokenizer.
     """
     try:
         import nltk
@@ -31,13 +31,14 @@ def get_sentence_tokenizer():
 
 
 class IndexTeacher(FixedDialogTeacher):
-    """Hand-written SQuAD teacher, which loads the json squad data and
-    implements its own `act()` method for interacting with student agent,
-    rather than inheriting from the core Dialog Teacher. This code is here as
-    an example of rolling your own without inheritance.
+    """
+    Hand-written SQuAD teacher, which loads the json squad data and implements its own
+    `act()` method for interacting with student agent, rather than inheriting from the
+    core Dialog Teacher. This code is here as an example of rolling your own without
+    inheritance.
 
-    This teacher also provides access to the "answer_start" indices that
-    specify the location of the answer in the context.
+    This teacher also provides access to the "answer_start" indices that specify the
+    location of the answer in the context.
     """
 
     def __init__(self, opt, shared=None):
@@ -48,11 +49,7 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(
-            opt['datapath'],
-            'SQuAD',
-            suffix + '-v1.1.json'
-        )
+        datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.data = self._setup_data(datapath)
 
         self.id = 'squad'
@@ -82,7 +79,7 @@ class IndexTeacher(FixedDialogTeacher):
             'text': context + '\n' + question,
             'labels': answers,
             'episode_done': True,
-            'answer_starts': answer_starts
+            'answer_starts': answer_starts,
         }
         return action
 
@@ -101,9 +98,11 @@ class IndexTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 
@@ -114,8 +113,7 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
-                                       suffix + '-v1.1.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
 
@@ -135,9 +133,11 @@ class DefaultTeacher(DialogTeacher):
 
 
 class OpensquadTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     Note: This teacher omits the context paragraph
     """
 
@@ -148,8 +148,7 @@ class OpensquadTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
-                                       suffix + '-v1.1.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
 
@@ -168,7 +167,10 @@ class OpensquadTeacher(DialogTeacher):
 
 
 class TitleTeacher(DefaultTeacher):
-    """This version of SquAD inherits from the Default Teacher. The only
+    """
+    This version of SquAD inherits from the Default Teacher.
+
+    The only
     difference is that the 'text' field of an observation will contain
     the title of the article separated by a newline from the paragraph and the
     query.
@@ -196,10 +198,7 @@ class TitleTeacher(DefaultTeacher):
                     question = qa['question']
                     answers = (a['text'] for a in qa['answers'])
                     context = paragraph['context']
-                    yield (
-                        '\n'.join([title, context, question]),
-                        answers
-                    ), True
+                    yield ('\n'.join([title, context, question]), answers), True
 
 
 class FulldocTeacher(ParlAIDialogTeacher):
@@ -210,9 +209,9 @@ class FulldocTeacher(ParlAIDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'valid'
-        datafile = os.path.join(opt['datapath'],
-                                'SQuAD-fulldoc',
-                                "squad_fulldocs." + suffix + ":ordered")
+        datafile = os.path.join(
+            opt['datapath'], 'SQuAD-fulldoc', "squad_fulldocs." + suffix + ":ordered"
+        )
         opt['parlaidialogteacher_datafile'] = datafile
         super().__init__(opt, shared)
         self.id = 'squad-fulldoc'
@@ -220,8 +219,8 @@ class FulldocTeacher(ParlAIDialogTeacher):
 
 
 class SentenceTeacher(IndexTeacher):
-    """Teacher where the label(s) are the sentences that contain the true
-    answer.
+    """
+    Teacher where the label(s) are the sentences that contain the true answer.
 
     Some punctuation may be removed from the context and the answer for
     tokenization purposes.
@@ -247,12 +246,13 @@ class SentenceTeacher(IndexTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group(
-            'SQuAD Sentence Teacher Arguments'
+        agent = argparser.add_argument_group('SQuAD Sentence Teacher Arguments')
+        agent.add_argument(
+            '--include-context',
+            type='bool',
+            default=False,
+            help='include context within text instead of as a ' 'separate field',
         )
-        agent.add_argument('--include-context', type='bool', default=False,
-                           help='include context within text instead of as a '
-                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -268,8 +268,7 @@ class SentenceTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -290,7 +289,7 @@ class SentenceTeacher(IndexTeacher):
             'labels': labels,
             'label_candidates': edited_sentences,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
 
         if self.include_context:
@@ -301,8 +300,9 @@ class SentenceTeacher(IndexTeacher):
 
 
 class FulldocsentenceTeacher(FulldocTeacher):
-    """Teacher which contains the question as the text, the sentences as the
-    label candidates, and the label as the sentence containing the answer.
+    """
+    Teacher which contains the question as the text, the sentences as the label
+    candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
 
@@ -327,25 +327,25 @@ class FulldocsentenceTeacher(FulldocTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group(
-            'SQuAD Fulldoc Sentence Teacher Arguments'
+        agent = argparser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
+        agent.add_argument(
+            '--include-context',
+            type='bool',
+            default=False,
+            help='include context within text instead of as a ' 'separate field',
         )
-        agent.add_argument('--include-context', type='bool', default=False,
-                           help='include context within text instead of as a '
-                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         action = {}
         episode = self.episodes[episode_idx][entry_idx]
-        context = ' '.join(
-            episode['text'].split('\n')[:-1]
-        ).replace('\xa0', ' ')  # get rid of non breaking space characters
+        context = ' '.join(episode['text'].split('\n')[:-1]).replace(
+            '\xa0', ' '
+        )  # get rid of non breaking space characters
         question = episode['text'].split('\n')[-1]
         label_field = 'labels' if 'labels' in episode else 'eval_labels'
         answers = []
         for answer in episode[label_field]:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             answers.append(new_answer)
         sentences = self.sent_tok.tokenize(context)
@@ -363,7 +363,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
             label_field: labels,
             'answer_starts': label_starts,
             'label_candidates': sentences,
-            'episode_done': episode['episode_done']
+            'episode_done': episode['episode_done'],
         }
 
         if self.include_context:

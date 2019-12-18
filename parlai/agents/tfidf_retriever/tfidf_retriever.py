@@ -11,11 +11,13 @@ try:
     import unicodedata  # noqa: F401
     import pexpect  # noqa: F401
 except ImportError:
-    raise ImportError('Please `pip install regex scipy scikit-learn pexpect`'
-                      ' to use the tfidf_retriever agent.')
+    raise ImportError(
+        'Please `pip install regex scipy scikit-learn pexpect`'
+        ' to use the tfidf_retriever agent.'
+    )
 
 from parlai.core.agents import Agent
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_tfidf import run as build_tfidf
@@ -30,7 +32,8 @@ import sqlite3
 
 
 class TfidfRetrieverAgent(Agent):
-    """TFIDF-based retriever agent.
+    """
+    TFIDF-based retriever agent.
 
     If given a task to specify, will first store entries of that task into
     a SQLite database and then build a sparse tfidf matrix of those entries.
@@ -52,49 +55,80 @@ class TfidfRetrieverAgent(Agent):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
-            '--retriever-numworkers', type=int, default=None,
-            help='Number of CPU processes (for tokenizing, etc)')
-        parser.add_argument(
-            '--retriever-ngram', type=int, default=2,
-            help='Use up to N-size n-grams (e.g. 2 = unigrams + bigrams)')
-        parser.add_argument(
-            '--retriever-hashsize', type=int, default=int(math.pow(2, 24)),
-            help='Number of buckets to use for hashing ngrams')
-        parser.add_argument(
-            '--retriever-tokenizer', type=str, default='simple',
-            help='String option specifying tokenizer type to use '
-                 '(e.g. "corenlp")')
-        parser.add_argument(
-            '--retriever-num-retrieved', default=5, type=int,
-            help='How many docs to retrieve.')
-        parser.add_argument(
-            '--retriever-mode', choices=['keys', 'values'], default='values',
-            help='Whether to retrieve the stored key or the stored value.'
+            '--retriever-numworkers',
+            type=int,
+            default=None,
+            help='Number of CPU processes (for tokenizing, etc)',
         )
         parser.add_argument(
-            '--remove-title', type='bool', default=False,
-            help='Whether to remove the title from the retrieved passage')
+            '--retriever-ngram',
+            type=int,
+            default=2,
+            help='Use up to N-size n-grams (e.g. 2 = unigrams + bigrams)',
+        )
         parser.add_argument(
-            '--retriever-mode', choices=['keys', 'values'], default='values',
+            '--retriever-hashsize',
+            type=int,
+            default=int(math.pow(2, 24)),
+            help='Number of buckets to use for hashing ngrams',
+        )
+        parser.add_argument(
+            '--retriever-tokenizer',
+            type=str,
+            default='simple',
+            help='String option specifying tokenizer type to use ' '(e.g. "corenlp")',
+        )
+        parser.add_argument(
+            '--retriever-num-retrieved',
+            default=5,
+            type=int,
+            help='How many docs to retrieve.',
+        )
+        parser.add_argument(
+            '--retriever-mode',
+            choices=['keys', 'values'],
+            default='values',
+            help='Whether to retrieve the stored key or the stored value.',
+        )
+        parser.add_argument(
+            '--remove-title',
+            type='bool',
+            default=False,
+            help='Whether to remove the title from the retrieved passage',
+        )
+        parser.add_argument(
+            '--retriever-mode',
+            choices=['keys', 'values'],
+            default='values',
             help='Whether to retrieve the stored key or the stored value. For '
-                 'example, if you want to return the text of an example, use '
-                 'keys here; if you want to return the label, use values here.'
+            'example, if you want to return the text of an example, use '
+            'keys here; if you want to return the label, use values here.',
         )
         parser.add_argument(
-            '--index-by-int-id', type='bool', default=True,
+            '--index-by-int-id',
+            type='bool',
+            default=True,
             help='Whether to index into database by doc id as an integer. This \
                   defaults to true for DBs built using ParlAI; for the DrQA \
                   wiki dump, it is necessary to set this to False to \
-                  index into the DB appropriately')
-        parser.add_argument('--tfidf-context-length', default=-1, type=int,
-                            help='Number of past utterances to remember when '
-                                 'building flattened batches of data in multi-'
-                                 'example episodes.')
-        parser.add_argument('--tfidf-include-labels',
-                            default=True, type='bool',
-                            help='Specifies whether or not to include labels '
-                                 'as past utterances when building flattened '
-                                 'batches of data in multi-example episodes.')
+                  index into the DB appropriately',
+        )
+        parser.add_argument(
+            '--tfidf-context-length',
+            default=-1,
+            type=int,
+            help='Number of past utterances to remember when '
+            'building flattened batches of data in multi-'
+            'example episodes.',
+        )
+        parser.add_argument(
+            '--tfidf-include-labels',
+            default=True,
+            type='bool',
+            help='Specifies whether or not to include labels '
+            'as past utterances when building flattened '
+            'batches of data in multi-example episodes.',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -108,27 +142,34 @@ class TfidfRetrieverAgent(Agent):
         self.db_path = opt['retriever_dbpath']
         self.tfidf_path = opt['retriever_tfidfpath']
 
-        self.tfidf_args = AttrDict({
-            'db_path': opt['retriever_dbpath'],
-            'out_dir': opt['retriever_tfidfpath'],
-            'ngram': opt['retriever_ngram'],
-            'hash_size': opt['retriever_hashsize'],
-            'tokenizer': opt['retriever_tokenizer'],
-            'num_workers': opt['retriever_numworkers'],
-        })
+        self.tfidf_args = AttrDict(
+            {
+                'db_path': opt['retriever_dbpath'],
+                'out_dir': opt['retriever_tfidfpath'],
+                'ngram': opt['retriever_ngram'],
+                'hash_size': opt['retriever_hashsize'],
+                'tokenizer': opt['retriever_tokenizer'],
+                'num_workers': opt['retriever_numworkers'],
+            }
+        )
 
         if not os.path.exists(self.db_path):
             conn = sqlite3.connect(self.db_path)
             c = conn.cursor()
-            c.execute('CREATE TABLE documents '
-                      '(id INTEGER PRIMARY KEY, text, value);')
+            c.execute(
+                'CREATE TABLE documents ' '(id INTEGER PRIMARY KEY, text, value);'
+            )
             conn.commit()
             conn.close()
 
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         if os.path.exists(self.tfidf_path + '.npz'):
-            self.ranker = TfidfDocRanker(
-                tfidf_path=opt['retriever_tfidfpath'], strict=False)
+            if shared is None:
+                self.ranker = TfidfDocRanker(
+                    tfidf_path=opt['retriever_tfidfpath'], strict=False
+                )
+            else:
+                self.ranker = shared['doc_ranker']
         self.ret_mode = opt['retriever_mode']
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
@@ -137,6 +178,11 @@ class TfidfRetrieverAgent(Agent):
         self.context_length = clen if clen >= 0 else None
         self.include_labels = opt.get('tfidf_include_labels', True)
         self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['doc_ranker'] = self.ranker
+        return shared
 
     def reset(self):
         super().reset()
@@ -158,8 +204,9 @@ class TfidfRetrieverAgent(Agent):
         elif self.ret_mode == 'values':
             return self.db.get_doc_value(docid)
         else:
-            raise RuntimeError('Retrieve mode {} not yet supported.'.format(
-                self.ret_mode))
+            raise RuntimeError(
+                'Retrieve mode {} not yet supported.'.format(self.ret_mode)
+            )
 
     def rebuild(self):
         if len(self.triples_to_add) > 0:
@@ -167,8 +214,7 @@ class TfidfRetrieverAgent(Agent):
             self.triples_to_add.clear()
             # rebuild tfidf
             build_tfidf(self.tfidf_args)
-            self.ranker = TfidfDocRanker(
-                tfidf_path=self.tfidf_path, strict=False)
+            self.ranker = TfidfDocRanker(tfidf_path=self.tfidf_path, strict=False)
 
     def save(self, path=None):
         self.rebuild()
@@ -178,12 +224,16 @@ class TfidfRetrieverAgent(Agent):
             f.write('\n')
 
     def train_act(self):
-        if ('ordered' not in self.opt.get('datatype', 'train:ordered') or
-                self.opt.get('batchsize', 1) != 1 or
-                self.opt.get('numthreads', 1) != 1 or
-                self.opt.get('num_epochs', 1) != 1):
-            raise RuntimeError('Need to set --batchsize 1, --numthreads 1, \
-            --datatype train:ordered, --num_epochs 1')
+        if (
+            'ordered' not in self.opt.get('datatype', 'train:ordered')
+            or self.opt.get('batchsize', 1) != 1
+            or self.opt.get('numthreads', 1) != 1
+            or self.opt.get('num_epochs', 1) != 1
+        ):
+            raise RuntimeError(
+                'Need to set --batchsize 1, --numthreads 1, \
+            --datatype train:ordered, --num_epochs 1'
+            )
         obs = self.observation
         self.current.append(obs)
         self.episode_done = obs.get('episode_done', False)
@@ -211,8 +261,7 @@ class TfidfRetrieverAgent(Agent):
             self.current.clear()
             self.context.clear()
 
-        return {'id': self.getID(),
-                'text': obs.get('labels', ['I don\'t know'])[0]}
+        return {'id': self.getID(), 'text': obs.get('labels', ['I don\'t know'])[0]}
 
     def act(self):
         obs = self.observation
@@ -223,8 +272,7 @@ class TfidfRetrieverAgent(Agent):
         if 'text' in obs:
             self.rebuild()  # no-op if nothing has been queued to store
             doc_ids, doc_scores = self.ranker.closest_docs(
-                obs['text'],
-                self.opt.get('retriever_num_retrieved', 5)
+                obs['text'], self.opt.get('retriever_num_retrieved', 5)
             )
 
             if False and obs.get('label_candidates'):  # TODO: Alex (doesn't work)
@@ -237,15 +285,13 @@ class TfidfRetrieverAgent(Agent):
                     # will not update if cand set changes contents
                     c_list = list(cands)
                     self.cands_hash[cands_id] = (
-                        get_tfidf_matrix(
-                            live_count_matrix(self.tfidf_args, c_list)
-                        ),
-                        c_list
+                        get_tfidf_matrix(live_count_matrix(self.tfidf_args, c_list)),
+                        c_list,
                     )
                 c_ids, c_scores = self.ranker.closest_docs(
                     obs['text'],
                     self.opt.get('retriever_num_retrieved', 5),
-                    matrix=self.cands_hash[cands_id][0]
+                    matrix=self.cands_hash[cands_id][0],
                 )
                 reply['text_candidates'] = [
                     self.cands_hash[cands_id][1][cid] for cid in c_ids
@@ -275,11 +321,13 @@ class TfidfRetrieverAgent(Agent):
                 reply['text'] = pick
             else:
                 # no cands and nothing found, return generic response
-                reply['text'] = choice([
-                    'Can you say something more interesting?',
-                    'Why are you being so short with me?',
-                    'What are you really thinking?',
-                    'Can you expand on that?',
-                ])
+                reply['text'] = choice(
+                    [
+                        'Can you say something more interesting?',
+                        'Why are you being so short with me?',
+                        'What are you really thinking?',
+                        'Can you expand on that?',
+                    ]
+                )
 
         return reply

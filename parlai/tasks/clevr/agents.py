@@ -22,8 +22,7 @@ def _path(opt):
 
     prefix = os.path.join(opt['datapath'], 'CLEVR', 'CLEVR_v1.0')
     questions_path = os.path.join(
-        prefix, 'questions',
-        'CLEVR_' + dt + '_questions.json'
+        prefix, 'questions', 'CLEVR_' + dt + '_questions.json'
     )
     images_path = os.path.join(prefix, 'images', dt)
 

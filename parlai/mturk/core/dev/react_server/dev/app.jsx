@@ -19,7 +19,6 @@ import SocketHandler from './components/socket_handler.jsx';
 import {
   MTurkSubmitForm,
   allDoneCallback,
-  staticAllDoneCallback,
 } from './components/mturk_submit_form.jsx';
 import 'fetch';
 import $ from 'jquery';
@@ -105,7 +104,7 @@ class MainApp extends React.Component {
       task_description: null,
       mturk_submit_url: null,
       frame_height: FRAME_HEIGHT,
-      socket_status: null,
+      socket_status: null,  // TODO improve this functionality for disconnects
       hit_id: HIT_ID, // gotten from template
       assignment_id: ASSIGNMENT_ID, // gotten from template
       worker_id: WORKER_ID, // gotten from template
@@ -198,7 +197,12 @@ class MainApp extends React.Component {
             })
           }
           onRequestMessage={() => this.setState({ chat_state: 'text_input' })}
-          onForceDone={allDoneCallback}
+          onForceDone={() => allDoneCallback(
+            this.state.agent_id,
+            this.state.assignment_id,
+            this.state.worker_id,
+            [],
+          )}
           onSuccessfulSend={() =>
             this.setState({
               chat_state: 'waiting',
@@ -247,7 +251,12 @@ class MainApp extends React.Component {
           task_data={this.state.task_data}
           world_state={this.state.agent_state}
           v_id={this.state.agent_id}
-          allDoneCallback={() => allDoneCallback()}
+          allDoneCallback={() => allDoneCallback(
+            this.state.agent_id,
+            this.state.assignment_id,
+            this.state.worker_id,
+            [],
+          )}
           volume={this.state.volume}
           onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}
@@ -267,7 +276,6 @@ class MainApp extends React.Component {
 
 // TODO consolidate shared functionality from SocketManager in a way that
 // prevents this class from setting a whole lot of dummy methods
-// TODO update static functionality to cover socket changes
 class StaticApp extends React.Component {
   constructor(props) {
     super(props);
@@ -416,7 +424,7 @@ class StaticApp extends React.Component {
           task_data={this.state.task_data}
           world_state={this.state.world_state}
           v_id={this.state.agent_id}
-          allDoneCallback={() => staticAllDoneCallback(
+          allDoneCallback={() => allDoneCallback(
             this.state.agent_id,
             this.state.assignment_id,
             this.state.worker_id,

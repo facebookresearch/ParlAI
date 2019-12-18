@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""A script to build the tf-idf document matrices for retrieval.
+"""
+A script to build the tf-idf document matrices for retrieval.
 
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
@@ -14,7 +15,6 @@ import scipy.sparse as sp
 import argparse
 import os
 import math
-import logging
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -24,15 +24,10 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
+from parlai.utils.logging import logger
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
-
-
+fmt = '%(asctime)s: [ %(message)s ]'
+logger.set_format(fmt)
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
 # ------------------------------------------------------------------------------
@@ -71,8 +66,10 @@ def truncate(data, row, col):
     if len(data) > MAX_SZ:
         over = len(data) - MAX_SZ
         pct = over / len(data)
-        logger.info('Data size is too large for scipy to index all of it. '
-                    'Throwing out {} entries ({}%% of data).'.format(over, pct))
+        logger.info(
+            'Data size is too large for scipy to index all of it. '
+            'Throwing out {} entries ({}%% of data).'.format(over, pct)
+        )
         data = data[:MAX_SZ]
         row = row[:MAX_SZ]
         col = col[:MAX_SZ]
@@ -105,9 +102,7 @@ def live_count_matrix(args, cands):
         data += cur_data
 
     data, row, col = truncate(data, row, col)
-    count_matrix = sp.csr_matrix(
-        (data, (row, col)), shape=(args.hash_size, len(cands))
-    )
+    count_matrix = sp.csr_matrix((data, (row, col)), shape=(args.hash_size, len(cands)))
     count_matrix.sum_duplicates()
     return count_matrix
 
@@ -124,22 +119,23 @@ def live_count_matrix_t(args, cands):
         data += cur_data
 
     count_matrix = torch.sparse.FloatTensor(
-        torch.LongTensor([row, col]), torch.FloatTensor(data),
-        torch.Size([args.hash_size, len(cands)])
+        torch.LongTensor([row, col]),
+        torch.FloatTensor(data),
+        torch.Size([args.hash_size, len(cands)]),
     ).coalesce()
     return count_matrix
 
 
 def count_text(ngram, hash_size, doc_id, text=None):
-    """Compute hashed ngram counts of text."""
+    """
+    Compute hashed ngram counts of text.
+    """
     row, col, data = [], [], []
     # Tokenize
     tokens = tokenize(utils.normalize(text))
 
     # Get ngrams from tokens, with stopword/punctuation filtering.
-    ngrams = tokens.ngrams(
-        n=ngram, uncased=True, filter_fn=utils.filter_ngram
-    )
+    ngrams = tokens.ngrams(n=ngram, uncased=True, filter_fn=utils.filter_ngram)
 
     # Hash ngrams and count occurences
     counts = Counter([utils.hash(gram, hash_size) for gram in ngrams])
@@ -152,12 +148,15 @@ def count_text(ngram, hash_size, doc_id, text=None):
 
 
 def count(ngram, hash_size, doc_id):
-    """Fetch the text of a document and compute hashed ngrams counts."""
+    """
+    Fetch the text of a document and compute hashed ngrams counts.
+    """
     return count_text(ngram, hash_size, doc_id, text=fetch_text(doc_id))
 
 
 def get_count_matrix_t(args, db_opts):
-    """Form a sparse word to document count matrix (inverted index, torch ver).
+    """
+    Form a sparse word to document count matrix (inverted index, torch ver).
 
     M[i, j] = # times word i appears in document j.
     """
@@ -168,16 +167,14 @@ def get_count_matrix_t(args, db_opts):
     # Setup worker pool
     tok_class = tokenizers.get_class(args.tokenizer)
     workers = ProcessPool(
-        args.num_workers,
-        initializer=init,
-        initargs=(tok_class, db_opts)
+        args.num_workers, initializer=init, initargs=(tok_class, db_opts)
     )
 
     # Compute the count matrix in steps (to keep in memory)
     logger.info('Mapping...')
     row, col, data = [], [], []
     step = max(int(len(doc_ids) / 10), 1)
-    batches = [doc_ids[i:i + step] for i in range(0, len(doc_ids), step)]
+    batches = [doc_ids[i : i + step] for i in range(0, len(doc_ids), step)]
     _count = partial(count, args.ngram, args.hash_size)
     for i, batch in enumerate(batches):
         logger.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
@@ -190,14 +187,16 @@ def get_count_matrix_t(args, db_opts):
 
     logger.info('Creating sparse matrix...')
     count_matrix = torch.sparse.FloatTensor(
-        torch.LongTensor([row, col]), torch.FloatTensor(data),
-        torch.Size([args.hash_size, len(doc_ids) + 1])
+        torch.LongTensor([row, col]),
+        torch.FloatTensor(data),
+        torch.Size([args.hash_size, len(doc_ids) + 1]),
     ).coalesce()
     return count_matrix
 
 
 def get_count_matrix(args, db_opts):
-    """Form a sparse word to document count matrix (inverted index).
+    """
+    Form a sparse word to document count matrix (inverted index).
 
     M[i, j] = # times word i appears in document j.
     """
@@ -208,16 +207,14 @@ def get_count_matrix(args, db_opts):
     # Setup worker pool
     tok_class = tokenizers.get_class(args.tokenizer)
     workers = ProcessPool(
-        args.num_workers,
-        initializer=init,
-        initargs=(tok_class, db_opts)
+        args.num_workers, initializer=init, initargs=(tok_class, db_opts)
     )
 
     # Compute the count matrix in steps (to keep in memory)
     logger.info('Mapping...')
     row, col, data = [], [], []
     step = max(int(len(doc_ids) / 10), 1)
-    batches = [doc_ids[i:i + step] for i in range(0, len(doc_ids), step)]
+    batches = [doc_ids[i : i + step] for i in range(0, len(doc_ids), step)]
     _count = partial(count, args.ngram, args.hash_size)
     for i, batch in enumerate(batches):
         logger.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
@@ -249,7 +246,8 @@ def get_count_matrix(args, db_opts):
 
 
 def get_tfidf_matrix_t(cnts):
-    """Convert the word count matrix into tfidf one (torch version).
+    """
+    Convert the word count matrix into tfidf one (torch version).
 
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
@@ -268,7 +266,8 @@ def get_tfidf_matrix_t(cnts):
 
 
 def get_tfidf_matrix(cnts):
-    """Convert the word count matrix into tfidf one.
+    """
+    Convert the word count matrix into tfidf one.
 
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
@@ -286,13 +285,18 @@ def get_tfidf_matrix(cnts):
 
 
 def get_doc_freqs_t(cnts):
-    """Return word --> # of docs it appears in (torch version)."""
-    return torch.histc(cnts._indices()[0].float(), bins=cnts.size(0),
-                       min=0, max=cnts.size(0))
+    """
+    Return word --> # of docs it appears in (torch version).
+    """
+    return torch.histc(
+        cnts._indices()[0].float(), bins=cnts.size(0), min=0, max=cnts.size(0)
+    )
 
 
 def get_doc_freqs(cnts):
-    """Return word --> # of docs it appears in."""
+    """
+    Return word --> # of docs it appears in.
+    """
     binary = (cnts > 0).astype(int)
     freqs = np.array(binary.sum(1)).squeeze()
     return freqs
@@ -305,7 +309,7 @@ def get_doc_freqs(cnts):
 
 def run(args):
     # ParlAI version of run method, modified slightly
-    logging.info('Counting words...')
+    logger.info('Counting words...')
     count_matrix = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
@@ -330,26 +334,43 @@ def run(args):
 if __name__ == '__main__':
     # not used in ParlAI but kept for reference
     parser = argparse.ArgumentParser()
-    parser.add_argument('db_path', type=str, default=None,
-                        help='Path to sqlite db holding document texts')
-    parser.add_argument('out_dir', type=str, default=None,
-                        help='Directory for saving output files')
-    parser.add_argument('--ngram', type=int, default=2,
-                        help=('Use up to N-size n-grams '
-                              '(e.g. 2 = unigrams + bigrams)'))
-    parser.add_argument('--hash-size', type=int, default=int(math.pow(2, 24)),
-                        help='Number of buckets to use for hashing ngrams')
-    parser.add_argument('--tokenizer', type=str, default='simple',
-                        help=("String option specifying tokenizer type to use "
-                              "(e.g. 'corenlp')"))
-    parser.add_argument('--num-workers', type=int, default=None,
-                        help='Number of CPU processes (for tokenizing, etc)')
+    parser.add_argument(
+        'db_path',
+        type=str,
+        default=None,
+        help='Path to sqlite db holding document texts',
+    )
+    parser.add_argument(
+        'out_dir', type=str, default=None, help='Directory for saving output files'
+    )
+    parser.add_argument(
+        '--ngram',
+        type=int,
+        default=2,
+        help=('Use up to N-size n-grams ' '(e.g. 2 = unigrams + bigrams)'),
+    )
+    parser.add_argument(
+        '--hash-size',
+        type=int,
+        default=int(math.pow(2, 24)),
+        help='Number of buckets to use for hashing ngrams',
+    )
+    parser.add_argument(
+        '--tokenizer',
+        type=str,
+        default='simple',
+        help=("String option specifying tokenizer type to use " "(e.g. 'corenlp')"),
+    )
+    parser.add_argument(
+        '--num-workers',
+        type=int,
+        default=None,
+        help='Number of CPU processes (for tokenizing, etc)',
+    )
     args = parser.parse_args()
 
-    logging.info('Counting words...')
-    count_matrix, doc_dict = get_count_matrix(
-        args, {'db_path': args.db_path}
-    )
+    logger.info('Counting words...')
+    count_matrix, doc_dict = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
     tfidf = get_tfidf_matrix(count_matrix)
@@ -358,8 +379,11 @@ if __name__ == '__main__':
     freqs = get_doc_freqs(count_matrix)
 
     basename = os.path.splitext(os.path.basename(args.db_path))[0]
-    basename += ('-tfidf-ngram=%d-hash=%d-tokenizer=%s' %
-                 (args.ngram, args.hash_size, args.tokenizer))
+    basename += '-tfidf-ngram=%d-hash=%d-tokenizer=%s' % (
+        args.ngram,
+        args.hash_size,
+        args.tokenizer,
+    )
     filename = os.path.join(args.out_dir, basename)
 
     logger.info('Saving to %s.npz' % filename)
@@ -368,6 +392,6 @@ if __name__ == '__main__':
         'tokenizer': args.tokenizer,
         'hash_size': args.hash_size,
         'ngram': args.ngram,
-        'doc_dict': doc_dict
+        'doc_dict': doc_dict,
     }
     utils.save_sparse_csr(filename, tfidf, metadata)

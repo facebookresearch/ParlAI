@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -8,7 +8,7 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
-from parlai.core.utils import neginf
+from parlai.utils.torch import neginf
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
@@ -27,8 +27,7 @@ def universal_sentence_embedding(sentences, mask, sqrt=True):
     """
     # need to mask out the padded chars
     sentence_sums = th.bmm(
-        sentences.permute(0, 2, 1),
-        mask.float().unsqueeze(-1)
+        sentences.permute(0, 2, 1), mask.float().unsqueeze(-1)
     ).squeeze(-1)
     divisor = mask.sum(dim=1).view(-1, 1).float()
     if sqrt:

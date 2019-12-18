@@ -31,19 +31,35 @@ def setup_args():
     parser = ArgumentParser()
     parser.add_argument('-if', '--infile', type=str, default=DEFAULT_IN)
     parser.add_argument('-of', '--outfile', type=str, default=DEFAULT_OUT)
-    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                        help="The number of turns to include in the prompt.")
-    parser.add_argument('-pos', '--positives', type=str, default='3,4,5',
-                        help="A comma-separated list of ratings with positive label")
-    parser.add_argument('-neg', '--negatives', type=str, default='1',
-                        help="A comma-separated list of ratings with negative label")
+    parser.add_argument(
+        '-histsz',
+        '--history-size',
+        type=int,
+        default=-1,
+        help="The number of turns to include in the prompt.",
+    )
+    parser.add_argument(
+        '-pos',
+        '--positives',
+        type=str,
+        default='3,4,5',
+        help="A comma-separated list of ratings with positive label",
+    )
+    parser.add_argument(
+        '-neg',
+        '--negatives',
+        type=str,
+        default='1',
+        help="A comma-separated list of ratings with negative label",
+    )
     config = vars(parser.parse_args())
 
     return config
 
 
 def main(config):
-    """Extracts training data for the negative response classifier (NRC) from Mturk logs
+    """
+    Extracts training data for the negative response classifier (NRC) from Mturk logs.
 
     input: file of logs (in ParlaiDialog format) from Mturk task 1 with turn-by-turn
         quality ratings 1-5
@@ -53,7 +69,7 @@ def main(config):
     examples = []
     positives = config['positives'].split(',')
     negatives = config['negatives'].split(',')
-    assert(len(set(positives).intersection(set(negatives))) == 0)
+    assert len(set(positives).intersection(set(negatives))) == 0
 
     num_episodes = 0
     num_parleys = 0
@@ -91,7 +107,7 @@ def main(config):
                 elif config['history_size'] == 0:
                     utterances = ['__null__']
                 else:
-                    utterances = history[-config['history_size']:]
+                    utterances = history[-config['history_size'] :]
 
                 context = add_person_tokens(utterances, last_speaker=1)
 
@@ -104,9 +120,11 @@ def main(config):
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} ratings out of {num_episodes} episodes "
-          f"({num_parleys} parleys) and wrote them to {config['outfile']} with "
-          f"histsz == {config['history_size']}.")
+    print(
+        f"Extracted {len(examples)} ratings out of {num_episodes} episodes "
+        f"({num_parleys} parleys) and wrote them to {config['outfile']} with "
+        f"histsz == {config['history_size']}."
+    )
 
 
 if __name__ == '__main__':

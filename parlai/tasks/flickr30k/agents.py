@@ -7,6 +7,7 @@
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build
+
 try:
     import torch  # noqa: F401
 except ImportError:
@@ -26,15 +27,17 @@ QUESTION = "Describe the above picture in a sentence."
 def _path(opt):
     build(opt)
 
-    data_path = os.path.join(opt['datapath'], 'Flickr30k',
-                             'dataset.json')
+    data_path = os.path.join(opt['datapath'], 'Flickr30k', 'dataset.json')
     image_path = os.path.join(opt['datapath'], 'Flickr30k', 'flickr30k_images')
 
     return data_path, image_path
 
 
 class FlickrDataset(Dataset):
-    """A Pytorch Dataset utilizing streaming"""
+    """
+    A Pytorch Dataset utilizing streaming.
+    """
+
     def __init__(self, opt, shared=None):
         self.opt = opt
         self.datatype = self.opt.get('datatype')
@@ -52,11 +55,7 @@ class FlickrDataset(Dataset):
     def __getitem__(self, index):
         cap = self.data[index]
         image_id = int(cap['filename'].replace('.jpg', ''))
-        ep = {
-            'text': QUESTION,
-            'image': self.get_image(image_id),
-            'episode_done': True,
-        }
+        ep = {'text': QUESTION, 'image': self.get_image(image_id), 'episode_done': True}
         if self.opt.get('extract_image', False):
             ep['image_id'] = image_id
             return ep
@@ -108,11 +107,12 @@ class DefaultDataset(FlickrDataset):
 
 class DefaultTeacher(FixedDialogTeacher):
     """
-    Flickr default teacher that expects open-ended descriptions of images
+    Flickr default teacher that expects open-ended descriptions of images.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.use_intro = opt.get('use_intro', False)
         self.num_cands = opt.get('num_cands', -1)
         data_path, self.image_path = _path(opt)
@@ -133,15 +133,21 @@ class DefaultTeacher(FixedDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Flickr30k arguments')
-        agent.add_argument('--use_intro', type='bool',
-                           default=False,
-                           help='Include an intro question with each image \
+        agent.add_argument(
+            '--use_intro',
+            type='bool',
+            default=False,
+            help='Include an intro question with each image \
                                 for readability (e.g. for coco_caption, \
-                                Describe the above picture in a sentence.)')
-        agent.add_argument('--num_cands', type=int,
-                           default=-1,
-                           help='Number of candidates to use during \
-                                evaluation, setting to -1 uses all.')
+                                Describe the above picture in a sentence.)',
+        )
+        agent.add_argument(
+            '--num_cands',
+            type=int,
+            default=-1,
+            help='Number of candidates to use during \
+                                evaluation, setting to -1 uses all.',
+        )
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -156,16 +162,16 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def submit_load_request(self, image_id):
         img_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
-        self.data_loader.request_load(self.receive_data,
-                                      self.image_loader.load,
-                                      (img_path,))
+        self.data_loader.request_load(
+            self.receive_data, self.image_loader.load, (img_path,)
+        )
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
         action = {
             'image_id': int(ep['filename'].replace('.jpg', '')),
             'episode_done': True,
-            'labels': [s['raw'] for s in ep['sentences']]
+            'labels': [s['raw'] for s in ep['sentences']],
         }
         if self.use_intro:
             action['text'] = QUESTION
@@ -174,8 +180,8 @@ class DefaultTeacher(FixedDialogTeacher):
                 labels = action['labels']
                 cands_to_sample = [c for c in self.cands if c not in labels]
                 cands = (
-                    random.Random(episode_idx).sample(cands_to_sample, self.num_cands) +
-                    labels
+                    random.Random(episode_idx).sample(cands_to_sample, self.num_cands)
+                    + labels
                 )
                 random.shuffle(cands)
                 action['label_candidates'] = cands
@@ -184,20 +190,21 @@ class DefaultTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none' and 'image_id' in self.example:
+            if self.image_mode != 'no_image_model' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)

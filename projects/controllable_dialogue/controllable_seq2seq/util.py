@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This file contains some useful code for handling history in ConvAI2 dialogues,
-and for inspecting and reordering the n-best candidates after beam search.
+This file contains some useful code for handling history in ConvAI2 dialogues, and for
+inspecting and reordering the n-best candidates after beam search.
 """
 
 from parlai.core.torch_agent import TorchAgent
@@ -45,7 +45,7 @@ class ConvAI2History(object):
         persona_lines = [fix_personaline_period(pl) for pl in persona_lines]
 
         # Identify the dialogue lines. It's assumed that p1 goes first.
-        utts = lines[len(persona_lines):]
+        utts = lines[len(persona_lines) :]
         p1_utts = [utts[i] for i in range(0, len(utts), 2)]
         p2_utts = [utts[i] for i in range(1, len(utts), 2)]
 
@@ -78,20 +78,22 @@ def remove_prefix(utt, prefix):
       new utt: utt with the prefix+" " removed.
     """
     try:
-        assert utt[:len(prefix)+1] == prefix+" "
+        assert utt[: len(prefix) + 1] == prefix + " "
     except AssertionError as e:
         print("ERROR: utterance '%s' does not start with '%s '" % (utt, prefix))
-        print(repr(utt[:len(prefix)+1]))
-        print(repr(prefix+" "))
+        print(repr(utt[: len(prefix) + 1]))
+        print(repr(prefix + " "))
         raise e
-    return utt[len(prefix)+1:]
+    return utt[len(prefix) + 1 :]
 
 
 def fix_personaline_period(line):
     """
     Sometimes the tokenized persona lines have a period at the end but no space before
-    the period. This function fixes it, e.g. changes
-      'my favorite color is blue.' to 'my favorite color is blue .'
+    the period.
+
+    This function fixes it, e.g. changes 'my favorite color is blue.' to 'my favorite
+    color is blue .'
     """
     assert len(line) >= 2
     assert line[-1] == "." and line[-2] != " "
@@ -101,7 +103,7 @@ def fix_personaline_period(line):
 
 def show_beam_cands(n_best_beam_preds, history, dictionary):
     """
-    Pretty-print the n-best candidates from beam search, along with their probabilities
+    Pretty-print the n-best candidates from beam search, along with their probabilities.
 
     Inputs:
       n_best_beam_preds: list length num_candidates of (prediction, score) pairs.

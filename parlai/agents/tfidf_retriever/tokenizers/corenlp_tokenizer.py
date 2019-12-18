@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Simple wrapper around the Stanford CoreNLP pipeline.
+"""
+Simple wrapper around the Stanford CoreNLP pipeline.
 
 Serves commands to a java subprocess running the jar. Requires java 8.
 """
@@ -17,7 +18,6 @@ from . import DEFAULTS
 
 
 class CoreNLPTokenizer(Tokenizer):
-
     def __init__(self, **kwargs):
         """
         Args:
@@ -25,14 +25,15 @@ class CoreNLPTokenizer(Tokenizer):
             classpath: Path to the corenlp directory of jars
             mem: Java heap memory
         """
-        self.classpath = (kwargs.get('classpath') or
-                          DEFAULTS['corenlp_classpath'])
+        self.classpath = kwargs.get('classpath') or DEFAULTS['corenlp_classpath']
         self.annotators = copy.deepcopy(kwargs.get('annotators', set()))
         self.mem = kwargs.get('mem', '2g')
         self._launch()
 
     def _launch(self):
-        """Start the CoreNLP jar with pexpect."""
+        """
+        Start the CoreNLP jar with pexpect.
+        """
         annotators = ['tokenize', 'ssplit']
         if 'ner' in self.annotators:
             annotators.extend(['pos', 'lemma', 'ner'])
@@ -41,12 +42,22 @@ class CoreNLPTokenizer(Tokenizer):
         elif 'pos' in self.annotators:
             annotators.extend(['pos'])
         annotators = ','.join(annotators)
-        options = ','.join(['untokenizable=noneDelete',
-                            'invertible=true'])
-        cmd = ['java', '-mx' + self.mem, '-cp', '"%s"' % self.classpath,
-               'edu.stanford.nlp.pipeline.StanfordCoreNLP', '-annotators',
-               annotators, '-tokenize.options', options,
-               '-outputFormat', 'json', '-prettyPrint', 'false']
+        options = ','.join(['untokenizable=noneDelete', 'invertible=true'])
+        cmd = [
+            'java',
+            '-mx' + self.mem,
+            '-cp',
+            '"%s"' % self.classpath,
+            'edu.stanford.nlp.pipeline.StanfordCoreNLP',
+            '-annotators',
+            annotators,
+            '-tokenize.options',
+            options,
+            '-outputFormat',
+            'json',
+            '-prettyPrint',
+            'false',
+        ]
 
         # We use pexpect to keep the subprocess alive and feed it commands.
         # Because we don't want to get hit by the max terminal buffer size,
@@ -109,13 +120,17 @@ class CoreNLPTokenizer(Tokenizer):
             else:
                 end_ws = tokens[i]['characterOffsetEnd']
 
-            data.append((
-                self._convert(tokens[i]['word']),
-                text[start_ws: end_ws],
-                (tokens[i]['characterOffsetBegin'],
-                 tokens[i]['characterOffsetEnd']),
-                tokens[i].get('pos', None),
-                tokens[i].get('lemma', None),
-                tokens[i].get('ner', None)
-            ))
+            data.append(
+                (
+                    self._convert(tokens[i]['word']),
+                    text[start_ws:end_ws],
+                    (
+                        tokens[i]['characterOffsetBegin'],
+                        tokens[i]['characterOffsetEnd'],
+                    ),
+                    tokens[i].get('pos', None),
+                    tokens[i].get('lemma', None),
+                    tokens[i].get('ner', None),
+                )
+            )
         return Tokens(data, self.annotators)

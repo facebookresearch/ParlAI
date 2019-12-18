@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Creates supplementary training examples using a trained model and unused train file.
+"""
+Creates supplementary training examples using a trained model and unused train file.
 
 Input:
     model: a trained agent
@@ -44,14 +45,28 @@ def setup_args(parser=None):
     # Get command line arguments
     if parser is None:
         parser = ParlaiParser(True, True, 'Display data from a task')
-    parser.add_argument('-mf', '--model-file', type=str,
-                        default='/private/home/bhancock/metadialog/models/unknown.mdl')
+    parser.add_argument(
+        '-mf',
+        '--model-file',
+        type=str,
+        default='/private/home/bhancock/metadialog/models/unknown.mdl',
+    )
     parser.add_argument('-dfile', '--deploy-file', type=str, default='train_c')
     parser.add_argument('-sfile', '--supp-file', type=str, default='supp_c')
-    parser.add_argument('-cr', '--conversion-rate', type=float, default=1.0,
-                        help="The fraction of misses converted into new training data")
-    parser.add_argument('-ca', '--conversion-acc', type=float, default=1.0,
-                        help="The fraction of converted data that have a correct label")
+    parser.add_argument(
+        '-cr',
+        '--conversion-rate',
+        type=float,
+        default=1.0,
+        help="The fraction of misses converted into new training data",
+    )
+    parser.add_argument(
+        '-ca',
+        '--conversion-acc',
+        type=float,
+        default=1.0,
+        help="The fraction of converted data that have a correct label",
+    )
     parser.set_defaults(bs=1)
     parser.set_defaults(ecands='inline')
     parser.set_defaults(datatype='valid')
@@ -59,7 +74,8 @@ def setup_args(parser=None):
 
 
 def create_supp(opt):
-    """Evaluates a model.
+    """
+    Evaluates a model.
 
     :param opt: tells the evaluation function how to run
     :param bool print_parser: if provided, prints the options that are set within the
@@ -104,15 +120,10 @@ def create_supp(opt):
                 else:
                     # Example will be converted incorrectly (e.g., bad user response)
                     response = random.choice(
-                        world.acts[0]['label_candidates'][:NUM_INLINE_CANDS - 1])
+                        world.acts[0]['label_candidates'][: NUM_INLINE_CANDS - 1]
+                    )
 
-                example = Parley(
-                    context,
-                    response,
-                    reward,
-                    candidates,
-                    memories,
-                )
+                example = Parley(context, response, reward, candidates, memories)
                 examples.append(example)
         world.reset_metrics()
 
@@ -125,10 +136,14 @@ def create_supp(opt):
 
     acc = 1 - (num_misses / num_seen)
     print(f"Accuracy (% of deploy): {acc * 100:.1f}% ({num_misses} misses)")
-    print(f"Conversion rate (% of misses): {num_supp/num_misses * 100:.2f}% "
-          f"({num_supp}/{num_misses})")
-    print(f"Conversion acc (% of converted): {num_supp_correct/num_supp * 100:.2f}% "
-          f"({num_supp_correct}/{num_supp})")
+    print(
+        f"Conversion rate (% of misses): {num_supp/num_misses * 100:.2f}% "
+        f"({num_supp}/{num_misses})"
+    )
+    print(
+        f"Conversion acc (% of converted): {num_supp_correct/num_supp * 100:.2f}% "
+        f"({num_supp_correct}/{num_supp})"
+    )
 
     with open(opt['outfile'], 'w') as outfile:
         for ex in examples:

@@ -12,7 +12,9 @@ import parlai.mturk.core.shared_utils as shared_utils
 
 
 class MockTurkAgent(MTurkAgent):
-    """Mock turk agent that can act in a parlai mturk world"""
+    """
+    Mock turk agent that can act in a parlai mturk world.
+    """
 
     def __init__(self, opt, mturk_manager, hit_id, assignment_id, worker_id):
         super().__init__(opt, mturk_manager, hit_id, assignment_id, worker_id)
@@ -23,15 +25,15 @@ class MockTurkAgent(MTurkAgent):
         self.timed_out = False
 
     def get_update_packet(self):
-        """Produce an update packet that represents the state change
-        of this agent"""
+        """
+        Produce an update packet that represents the state change of this agent.
+        """
         send_messages = []
         while len(self.unread_messages) > 0:
             pkt = self.unread_messages.pop(0)
             send_messages.append(pkt.data)
         done_text = None
-        if self.state.is_final() and \
-                self.get_status() != AssignState.STATUS_DONE:
+        if self.state.is_final() and self.get_status() != AssignState.STATUS_DONE:
             done_text = self.state.get_inactive_command_text()[0]
         return {
             'new_messages': send_messages,
@@ -47,42 +49,51 @@ class MockTurkAgent(MTurkAgent):
         }
 
     def log_reconnect(self):
-        """We aren't logging behavior in the mock"""
+        """
+        We aren't logging behavior in the mock.
+        """
         pass
 
     def is_in_task(self):
         return self.status == AssignState.STATUS_IN_TASK
 
     def put_data(self, id, data):
-        """Put data into the message queue"""
+        """
+        Put data into the message queue.
+        """
         self.msg_queue.put(data)
 
     def flush_msg_queue(self):
-        """Clear all messages in the message queue"""
+        """
+        Clear all messages in the message queue.
+        """
         if self.msg_queue is None:
             return
         while not self.msg_queue.empty():
             self.msg_queue.get()
 
     def prepare_timeout(self):
-        """Log a timeout event, tell mturk manager it occurred, return message
-        to return for the act call
+        """
+        Log a timeout event, tell mturk manager it occurred, return message to return
+        for the act call.
         """
         shared_utils.print_and_log(
-            logging.INFO,
-            '{} timed out before sending.'.format(self.id)
+            logging.INFO, '{} timed out before sending.'.format(self.id)
         )
         self.timed_out = True
         return self._get_episode_done_msg(TIMEOUT_MESSAGE)
 
     def request_message(self):
-        if not (self.disconnected or self.some_agent_disconnected or
-                self.hit_is_expired):
+        if not (
+            self.disconnected or self.some_agent_disconnected or self.hit_is_expired
+        ):
             self.wants_message = True
 
     def act(self, timeout=None, blocking=True):
-        """Retrieve an act in the normal expected way (out of the queue), but
-        clear the act request if we do end up getting an act."""
+        """
+        Retrieve an act in the normal expected way (out of the queue), but clear the act
+        request if we do end up getting an act.
+        """
         gotten_act = super().act(timeout, blocking)
         if gotten_act is not None:
             self.wants_message = False
@@ -90,8 +101,9 @@ class MockTurkAgent(MTurkAgent):
         return gotten_act
 
     def episode_done(self):
-        """Return whether or not this agent believes the conversation to
-        be done"""
+        """
+        Return whether or not this agent believes the conversation to be done.
+        """
         if self.get_status() == AssignState.STATUS_DONE:
             return False
         else:
@@ -101,16 +113,17 @@ class MockTurkAgent(MTurkAgent):
         print('[mock] Worker {} approved'.format(self.worker_id))
 
     def reject_work(self, reason='unspecified'):
-        print('[mock] Worker {} rejected for reason {}'.format(
-            self.worker_id, reason))
+        print('[mock] Worker {} rejected for reason {}'.format(self.worker_id, reason))
 
     def block_worker(self, reason='unspecified'):
-        print('[mock] Worker {} blocked for reason {}'.format(
-            self.worker_id, reason))
+        print('[mock] Worker {} blocked for reason {}'.format(self.worker_id, reason))
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
-        print('[mock] Worker {} bonused {} for reason {}'.format(
-            self.worker_id, bonus_amount, reason))
+        print(
+            '[mock] Worker {} bonused {} for reason {}'.format(
+                self.worker_id, bonus_amount, reason
+            )
+        )
 
     def email_worker(self, subject, message_text):
         return True
@@ -125,7 +138,8 @@ class MockTurkAgent(MTurkAgent):
         pass
 
     def update_agent_id(self, agent_id):
-        """State is sent directly from the agent, so no need to send like
-        MTurkAgent does in the full version
+        """
+        State is sent directly from the agent, so no need to send like MTurkAgent does
+        in the full version.
         """
         self.id = agent_id

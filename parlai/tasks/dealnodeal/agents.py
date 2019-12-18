@@ -15,7 +15,8 @@ WELCOME_MESSAGE = (
     'You must both agree on the distribution of items (or you both get zero), '
     'but try to get as much value as you can. There are {book_cnt} book(s), '
     'each with a value of {book_val}, {hat_cnt} hat(s), each with a value of '
-    '{hat_val}, and {ball_cnt} ball(s), each with a value of {ball_val}.')
+    '{hat_val}, and {ball_cnt} ball(s), each with a value of {ball_val}.'
+)
 
 EOS_TOKEN = '<eos>'
 SELECTION_TOKEN = '<selection>'
@@ -28,14 +29,17 @@ OUTPUT_TAG = 'output'
 
 
 def get_tag(tokens, tag):
-    """Extracts the value inside the given tag."""
+    """
+    Extracts the value inside the given tag.
+    """
     start = tokens.index('<' + tag + '>') + 1
     stop = tokens.index('</' + tag + '>')
     return tokens[start:stop]
 
 
 class NegotiationTeacher(Teacher):
-    """End-to-end negotiation teacher that loads the data from
+    """
+    End-to-end negotiation teacher that loads the data from
     https://github.com/facebookresearch/end-to-end-negotiator.
     """
 
@@ -47,9 +51,14 @@ class NegotiationTeacher(Teacher):
 
         filename = 'val' if self.datatype == 'valid' else self.datatype
         data_path = os.path.join(
-            opt['datapath'], 'negotiation',
-            'end-to-end-negotiator-master', 'src',
-            'data', 'negotiate', filename + '.txt')
+            opt['datapath'],
+            'negotiation',
+            'end-to-end-negotiator-master',
+            'src',
+            'data',
+            'negotiate',
+            filename + '.txt',
+        )
 
         if shared and 'data' in shared:
             self.episodes = shared['episodes']
@@ -72,8 +81,9 @@ class NegotiationTeacher(Teacher):
             self._split_dialogue(get_tag(episode.strip().split(), DIALOGUE_TAG))
             for episode in self.episodes
         ]
-        num_exs = sum(len([d for d in dialogue if YOU_TOKEN in d]) + 1
-                      for dialogue in dialogues)
+        num_exs = sum(
+            len([d for d in dialogue if YOU_TOKEN in d]) + 1 for dialogue in dialogues
+        )
         return num_exs
 
     def reset(self):
@@ -94,7 +104,9 @@ class NegotiationTeacher(Teacher):
             self.episodes = data_file.readlines()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.expected_reponse is not None:
             self.metrics.update(observation, self.expected_reponse)
             self.expected_reponse = None
@@ -136,12 +148,15 @@ class NegotiationTeacher(Teacher):
         # The dialogue should end with a selection token
         assert self.dialogue[-1][1] == SELECTION_TOKEN
 
-        (book_cnt, book_val, hat_cnt,
-            hat_val, ball_cnt, ball_val) = self.values
+        (book_cnt, book_val, hat_cnt, hat_val, ball_cnt, ball_val) = self.values
         welcome = WELCOME_MESSAGE.format(
-            book_cnt=book_cnt, book_val=book_val,
-            hat_cnt=hat_cnt, hat_val=hat_val,
-            ball_cnt=ball_cnt, ball_val=ball_val)
+            book_cnt=book_cnt,
+            book_val=book_val,
+            hat_cnt=hat_cnt,
+            hat_val=hat_val,
+            ball_cnt=ball_cnt,
+            ball_val=ball_val,
+        )
 
         self.dialogue_idx = -1
         if self.dialogue[0][0] == THEM_TOKEN:
@@ -157,7 +172,7 @@ class NegotiationTeacher(Teacher):
             "hat_cnt": hat_cnt,
             "hat_val": hat_val,
             "ball_cnt": ball_cnt,
-            "ball_val": ball_val
+            "ball_val": ball_val,
         }
 
         return action

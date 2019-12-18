@@ -6,8 +6,9 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import PaddingUtils, round_sigfigs
-from parlai.core.thread_utils import SharedTable
+from parlai.core.message import Message
+from parlai.utils.misc import PaddingUtils, round_sigfigs
+from parlai.utils.thread import SharedTable
 from .modules import RNNModel
 
 import torch
@@ -20,7 +21,9 @@ import json
 
 
 class LanguageModelAgent(Agent):
-    """ Agent which trains an RNN on a language modeling task.
+    """
+    Agent which trains an RNN on a language modeling task.
+
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
     """
@@ -31,64 +34,135 @@ class LanguageModelAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Language Model Arguments')
-        agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/features/weights/opts from this file')
-        agent.add_argument('-hs', '--hiddensize', type=int, default=200,
-                           help='size of the hidden layers')
-        agent.add_argument('-esz', '--embeddingsize', type=int, default=200,
-                           help='size of the token embeddings')
-        agent.add_argument('-nl', '--numlayers', type=int, default=2,
-                           help='number of hidden layers')
-        agent.add_argument('-dr', '--dropout', type=float, default=0.2,
-                           help='dropout rate')
-        agent.add_argument('-clip', '--gradient-clip', type=float, default=0.25,
-                           help='gradient clipping')
-        agent.add_argument('--no-cuda', action='store_true', default=False,
-                           help='disable GPUs even if available')
-        agent.add_argument('-rnn', '--rnn-class', default='LSTM',
-                           help='type of recurrent net (RNN_TANH, RNN_RELU, LSTM, GRU)')
-        agent.add_argument('-sl', '--seq-len', type=int, default=35,
-                           help='sequence length')
-        agent.add_argument('-tied', '--emb-tied', action='store_true',
-                           help='tie the word embedding and softmax weights')
-        agent.add_argument('-seed', '--random-seed', type=int, default=1111,
-                           help='random seed')
-        agent.add_argument('--gpu', type=int, default=-1,
-                           help='which GPU device to use')
-        agent.add_argument('-tr', '--truncate-pred', type=int, default=50,
-                           help='truncate predictions')
-        agent.add_argument('-rf', '--report-freq', type=float, default=0.1,
-                           help='report frequency of prediction during eval')
-        agent.add_argument('-pt', '--person-tokens', type='bool', default=True,
-                           help='append person1 and person2 tokens to text')
+        agent.add_argument(
+            '--init-model',
+            type=str,
+            default=None,
+            help='load dict/features/weights/opts from this file',
+        )
+        agent.add_argument(
+            '-hs',
+            '--hiddensize',
+            type=int,
+            default=200,
+            help='size of the hidden layers',
+        )
+        agent.add_argument(
+            '-esz',
+            '--embeddingsize',
+            type=int,
+            default=200,
+            help='size of the token embeddings',
+        )
+        agent.add_argument(
+            '-nl', '--numlayers', type=int, default=2, help='number of hidden layers'
+        )
+        agent.add_argument(
+            '-dr', '--dropout', type=float, default=0.2, help='dropout rate'
+        )
+        agent.add_argument(
+            '-clip',
+            '--gradient-clip',
+            type=float,
+            default=0.25,
+            help='gradient clipping',
+        )
+        agent.add_argument(
+            '--no-cuda',
+            action='store_true',
+            default=False,
+            help='disable GPUs even if available',
+        )
+        agent.add_argument(
+            '-rnn',
+            '--rnn-class',
+            default='LSTM',
+            help='type of recurrent net (RNN_TANH, RNN_RELU, LSTM, GRU)',
+        )
+        agent.add_argument(
+            '-sl', '--seq-len', type=int, default=35, help='sequence length'
+        )
+        agent.add_argument(
+            '-tied',
+            '--emb-tied',
+            action='store_true',
+            help='tie the word embedding and softmax weights',
+        )
+        agent.add_argument(
+            '-seed', '--random-seed', type=int, default=1111, help='random seed'
+        )
+        agent.add_argument(
+            '--gpu', type=int, default=-1, help='which GPU device to use'
+        )
+        agent.add_argument(
+            '-tr', '--truncate-pred', type=int, default=50, help='truncate predictions'
+        )
+        agent.add_argument(
+            '-rf',
+            '--report-freq',
+            type=float,
+            default=0.1,
+            help='report frequency of prediction during eval',
+        )
+        agent.add_argument(
+            '-pt',
+            '--person-tokens',
+            type='bool',
+            default=True,
+            help='append person1 and person2 tokens to text',
+        )
         # learning rate parameters
-        agent.add_argument('-lr', '--learningrate', type=float, default=20,
-                           help='initial learning rate')
-        agent.add_argument('-lrf', '--lr-factor', type=float, default=1.0,
-                           help='mutliply learning rate by this factor when the \
-                           validation loss does not decrease')
-        agent.add_argument('-lrp', '--lr-patience', type=int, default=10,
-                           help='wait before decreasing learning rate')
-        agent.add_argument('-lrm', '--lr-minimum', type=float, default=0.1,
-                           help='minimum learning rate')
-        agent.add_argument('-sm', '--sampling-mode', type='bool', default=False,
-                           help='sample when generating tokens instead of taking \
-                           the max and do not produce UNK token (when bs=1)')
+        agent.add_argument(
+            '-lr',
+            '--learningrate',
+            type=float,
+            default=20,
+            help='initial learning rate',
+        )
+        agent.add_argument(
+            '-lrf',
+            '--lr-factor',
+            type=float,
+            default=1.0,
+            help='mutliply learning rate by this factor when the \
+                           validation loss does not decrease',
+        )
+        agent.add_argument(
+            '-lrp',
+            '--lr-patience',
+            type=int,
+            default=10,
+            help='wait before decreasing learning rate',
+        )
+        agent.add_argument(
+            '-lrm',
+            '--lr-minimum',
+            type=float,
+            default=0.1,
+            help='minimum learning rate',
+        )
+        agent.add_argument(
+            '-sm',
+            '--sampling-mode',
+            type='bool',
+            default=False,
+            help='sample when generating tokens instead of taking \
+                           the max and do not produce UNK token (when bs=1)',
+        )
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """
+        Set up model if shared params not set, otherwise no work to do.
+        """
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
-        self.metrics = {
-            'loss': 0,
-            'num_tokens': 0,
-            'lmloss': 0,
-            'lm_num_tokens': 0
-        }
+        self.metrics = {'loss': 0, 'num_tokens': 0, 'lmloss': 0, 'lm_num_tokens': 0}
         self.states = {}
         # check for cuda
         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
@@ -133,22 +207,19 @@ class LanguageModelAgent(Agent):
 
             # for backwards compatibility: will only be called for older models
             # for which .opt file does not exist
-            if (init_model is not None and
-                    not os.path.isfile(init_model + '.opt')):
+            if init_model is not None and not os.path.isfile(init_model + '.opt'):
                 new_opt = self.load_opt(init_model)
                 # load model parameters if available
-                print('[ Setting opt from {} ]'.format(
-                    init_model
-                ))
+                print('[ Setting opt from {} ]'.format(init_model))
                 # since .opt file does not exist, save one for future use
                 print("Saving opt file at:", init_model + ".opt")
                 with open(init_model + '.opt', 'w') as handle:
                     json.dump(new_opt, handle)
                 opt = self.override_opt(new_opt)
 
-            if ((init_model is not None and
-                    os.path.isfile(init_model + '.dict')) or
-                    opt['dict_file'] is None):
+            if (init_model is not None and os.path.isfile(init_model + '.dict')) or opt[
+                'dict_file'
+            ] is None:
                 opt['dict_file'] = init_model + '.dict'
 
             # load dictionary and basic tokens & vectors
@@ -180,8 +251,9 @@ class LanguageModelAgent(Agent):
 
         self.clip = opt.get('gradient_clip', 0.25)
         # set up criteria
-        self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                             size_average=False)
+        self.criterion = nn.CrossEntropyLoss(
+            ignore_index=self.NULL_IDX, size_average=False
+        )
         if self.use_cuda:
             # push to cuda
             self.criterion.cuda()
@@ -200,8 +272,12 @@ class LanguageModelAgent(Agent):
             self.lr_patience = opt['lr_patience']
             self.lr_min = opt['lr_minimum']
             self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, factor=self.lr_factor, verbose=True,
-                patience=self.lr_patience, min_lr=self.lr_min)
+                self.optimizer,
+                factor=self.lr_factor,
+                verbose=True,
+                patience=self.lr_patience,
+                min_lr=self.lr_min,
+            )
             # initial step for scheduler if self.best_val_loss is initialized
             if self.best_val_loss is not None:
                 self.scheduler.step(self.best_val_loss)
@@ -211,13 +287,24 @@ class LanguageModelAgent(Agent):
         self.reset()
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
         """
-        model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'dropout',
-                      'seq_len', 'emb_tied', 'truncate_pred', 'report_freq',
-                      'person_tokens', 'learningrate'}
+        Set overridable opts from loaded opt file.
+
+        Print out each added key and each overriden key. Only override args specific to
+        the model.
+        """
+        model_args = {
+            'hiddensize',
+            'embeddingsize',
+            'numlayers',
+            'dropout',
+            'seq_len',
+            'emb_tied',
+            'truncate_pred',
+            'report_freq',
+            'person_tokens',
+            'learningrate',
+        }
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -225,26 +312,37 @@ class LanguageModelAgent(Agent):
             if k not in self.opt:
                 print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print('Overriding option [ {k}: {old} => {v}]'.format(
-                      k=k, old=self.opt[k], v=v))
+                print(
+                    'Overriding option [ {k}: {old} => {v}]'.format(
+                        k=k, old=self.opt[k], v=v
+                    )
+                )
             self.opt[k] = v
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         return self.dict.txt2vec(text)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.reset_metrics()
 
@@ -269,7 +367,9 @@ class LanguageModelAgent(Agent):
         return m
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['dict'] = self.dict
@@ -282,17 +382,20 @@ class LanguageModelAgent(Agent):
                 self.metrics = SharedTable(self.metrics)
                 self.model.share_memory()
             shared['states'] = {  # only need to pass optimizer states
-                'optimizer': self.optimizer.state_dict(),
+                'optimizer': self.optimizer.state_dict()
             }
         shared['metrics'] = self.metrics
         return shared
 
     def observe(self, observation):
-        """Save observation for act.
+        """
+        Save observation for act.
+
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
-        obs = observation.copy()
+        obs = Message(observation.copy())  # TODO: all teachers should return
+        # messages, so this should be eventually unecessary
         seq_len = self.opt['seq_len']
         is_training = True
         if 'labels' not in obs:
@@ -301,18 +404,16 @@ class LanguageModelAgent(Agent):
         if is_training:
             if 'text' in obs:
                 if self.use_person_tokens:
-                    obs['text'] = 'PERSON1 ' + obs['text']
+                    obs.force_set('text', 'PERSON1 ' + obs['text'])
                 vec = self.parse(obs['text'])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
             if 'labels' in obs:
                 if self.use_person_tokens:
                     labels = [
-                        'PERSON2 ' + label
-                        for label in obs['labels']
-                        if label != ''
+                        'PERSON2 ' + label for label in obs['labels'] if label != ''
                     ]
-                    obs['labels'] = tuple(labels)
+                    obs.force_set('labels', tuple(labels))
                 vec = self.parse(obs['labels'][0])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
@@ -326,16 +427,16 @@ class LanguageModelAgent(Agent):
                 vecs_to_return = []
                 total = len(self.next_observe) // (seq_len + 1)
                 for _ in range(total):
-                    observe = self.next_observe[:(seq_len + 1)]
-                    self.next_observe = self.next_observe[(seq_len + 1):]
+                    observe = self.next_observe[: (seq_len + 1)]
+                    self.next_observe = self.next_observe[(seq_len + 1) :]
                     vecs_to_return.append(observe)
                 dict_to_return = {'text': '', 'labels': '', 'text2vec': vecs_to_return}
-                self.observation = dict_to_return
+                self.observation = Message(dict_to_return)
                 return dict_to_return
         else:
             if 'text' in obs:
                 if self.use_person_tokens:
-                    obs['text'] = 'PERSON1 ' + obs['text']
+                    obs.force_set('text', 'PERSON1 ' + obs['text'])
             if 'eval_labels' in obs:
                 if self.use_person_tokens:
                     eval_labels = [
@@ -343,21 +444,23 @@ class LanguageModelAgent(Agent):
                         for label in obs['eval_labels']
                         if label != ''
                     ]
-                    obs['eval_labels'] = tuple(eval_labels)
+                    obs.force_set('eval_labels', tuple(eval_labels))
             self.observation = obs
             return obs
 
     def repackage_hidden(self, h):
-        """Wraps hidden states in new Variables, to detach them from their history."""
+        """
+        Wraps hidden states in new Variables, to detach them from their history.
+        """
         if isinstance(h, Variable):
             return Variable(h.data)
         else:
             return tuple(self.repackage_hidden(v) for v in h)
 
     def get_target_loss(self, data, hidden, targets):
-        """Calculates the loss with respect to the targets, token by token,
-           where each output token is conditioned on either the input or the
-           previous target token.
+        """
+        Calculates the loss with respect to the targets, token by token, where each
+        output token is conditioned on either the input or the previous target token.
         """
         loss = 0.0
         bsz = data.size(0)
@@ -377,9 +480,7 @@ class LanguageModelAgent(Agent):
 
         for i in range(1, targets.size(1)):
             output, hidden = self.model(
-                targets.select(1, i - 1).view(1, bsz),
-                self.hidden,
-                no_pack=True
+                targets.select(1, i - 1).view(1, bsz), self.hidden, no_pack=True
             )
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
@@ -388,8 +489,9 @@ class LanguageModelAgent(Agent):
         return loss
 
     def get_predictions(self, data):
-        """Generates predictions word by word until we either reach the end token
-           or some max length (opt['truncate_pred']).
+        """
+        Generates predictions word by word until we either reach the end token or some
+        max length (opt['truncate_pred']).
         """
         token_list = []
         bsz = data.size(0)
@@ -447,7 +549,9 @@ class LanguageModelAgent(Agent):
         return torch.cat(token_list, 1)
 
     def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
-        """Produce a prediction from our model."""
+        """
+        Produce a prediction from our model.
+        """
         output = None
         predictions = None
         if is_training:
@@ -477,7 +581,9 @@ class LanguageModelAgent(Agent):
         return output, hidden, predictions
 
     def vectorize(self, observations, seq_len, is_training):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
         labels = None
         valid_inds = None
         y_lens = None
@@ -494,8 +600,8 @@ class LanguageModelAgent(Agent):
                 # total is the number of batches
                 total = len(self.next_batch) // self.batchsize
                 for _ in range(total):
-                    batch = self.next_batch[:self.batchsize]
-                    self.next_batch = self.next_batch[self.batchsize:]
+                    batch = self.next_batch[: self.batchsize]
+                    self.next_batch = self.next_batch[self.batchsize :]
 
                     source = torch.LongTensor(batch).t().contiguous()
                     data = Variable(source[:seq_len])
@@ -510,8 +616,8 @@ class LanguageModelAgent(Agent):
         else:
             # here we get valid examples and pad them with zeros
             xs, ys, labels, valid_inds, _, y_lens = PaddingUtils.pad_text(
-                observations, self.dict, end_idx=self.END_IDX,
-                null_idx=self.NULL_IDX)
+                observations, self.dict, end_idx=self.END_IDX, null_idx=self.NULL_IDX
+            )
 
             if self.use_cuda:
                 if xs is not None:
@@ -560,16 +666,21 @@ class LanguageModelAgent(Agent):
             # ignore case when we do not return any valid indices
             if data_list[i] is not None:
                 output, hidden, predictions = self.predict(
-                    data_list[i], self.hidden, targets_list[i],
-                    self.is_training, y_lens
+                    data_list[i], self.hidden, targets_list[i], self.is_training, y_lens
                 )
                 self.hidden = self.repackage_hidden(hidden)
 
                 if predictions is not None:
                     # map predictions back to the right order
                     PaddingUtils.map_predictions(
-                        predictions.cpu(), valid_inds, temp_dicts, observations,
-                        self.dict, self.END_IDX, report_freq=self.opt['report_freq'])
+                        predictions.cpu(),
+                        valid_inds,
+                        temp_dicts,
+                        observations,
+                        self.dict,
+                        self.END_IDX,
+                        report_freq=self.opt['report_freq'],
+                    )
 
             batch_reply += temp_dicts
 
@@ -587,7 +698,9 @@ class LanguageModelAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path and hasattr(self, 'model'):
@@ -603,7 +716,9 @@ class LanguageModelAgent(Agent):
                 json.dump(self.opt, handle)
 
     def shutdown(self):
-        """Save the state of the model when shutdown."""
+        """
+        Save the state of the model when shutdown.
+        """
         path = self.opt.get('model_file', None)
         if path is not None:
             self.save(path + '.shutdown_state')
@@ -614,12 +729,16 @@ class LanguageModelAgent(Agent):
             self.scheduler.step(metrics_dict['loss'])
 
     def load_opt(self, path):
-        """Return opt, states."""
+        """
+        Return opt, states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states['opt']
 
     def load(self, path):
-        """Load model states."""
+        """
+        Load model states.
+        """
         if os.path.isfile(path):
             # load model parameters if available
             print('[ Loading existing model params from {} ]'.format(path))

@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+skip-string-normalization = true
+target-version = ['py36', 'py37', 'py38']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | parlai_internal
+)/
+'''

@@ -3,28 +3,25 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.thread import SharedTable
 from multiprocessing import Process
+import parlai.utils.testing as testing_utils
 import unittest
 import random
 import time
 
 
+@testing_utils.skipIfGPU
 class TestSharedTable(unittest.TestCase):
-    """Make sure the package is alive."""
+    """
+    Make sure the package is alive.
+    """
 
     def test_init_from_dict(self):
-        d = {
-            'a': 0,
-            'b': 1,
-            'c': 1.0,
-            'd': True,
-            1: False,
-            2: 2.0
-        }
+        d = {'a': 0, 'b': 1, 'c': 1.0, 'd': True, 1: False, 2: 2.0}
         st = SharedTable(d)
         for k, v in d.items():
-            assert(st[k] == v)
+            assert st[k] == v
 
     def test_get_set_del(self):
         st = SharedTable({'key': 0})
@@ -99,10 +96,9 @@ class TestSharedTable(unittest.TestCase):
         assert len(st) == 1
 
         if torch.cuda.is_available():
-            st = SharedTable({
-                'a': torch.cuda.FloatTensor([1]),
-                'b': torch.cuda.LongTensor(2),
-            })
+            st = SharedTable(
+                {'a': torch.cuda.FloatTensor([1]), 'b': torch.cuda.LongTensor(2)}
+            )
             assert st['a'][0] == 1.0
             assert len(st) == 2
             assert 'b' in st

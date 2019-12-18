@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Verify data doesn't have basic mistakes, like empty text fields
-or empty label candidates.
+"""
+Verify data doesn't have basic mistakes, like empty text fields or empty label
+candidates.
 
 Examples
 --------
@@ -13,10 +14,11 @@ Examples
 
   python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
 """
-from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.message import Message
+from parlai.core.params import ParlaiParser
+from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger, warn_once
 
 
 def setup_args(parser=None):
@@ -36,10 +38,11 @@ def report(world, counts, log_time):
         'missing_text': counts['missing_text'],
         'missing_labels': counts['missing_labels'],
         'missing_label_candidates': counts['missing_label_candidates'],
-        'empty_label_candidates': counts['empty_label_candidates'],
+        'empty_string_label_candidates': counts['empty_string_label_candidates'],
         'label_candidates_with_missing_label': counts[
             'label_candidates_with_missing_label'
         ],
+        'did_not_return_message': counts['did_not_return_message'],
     }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     return text, log
@@ -69,14 +72,19 @@ def verify(opt, printargs=None, print_parser=None):
     counts['missing_text'] = 0
     counts['missing_labels'] = 0
     counts['missing_label_candidates'] = 0
-    counts['empty_label_candidates'] = 0
+    counts['empty_string_label_candidates'] = 0
     counts['label_candidates_with_missing_label'] = 0
+    counts['did_not_return_message'] = 0
 
     # Show some example dialogs.
     while not world.epoch_done():
         world.parley()
 
         act = world.acts[0]
+
+        if not isinstance(act, Message):
+            counts['did_not_return_message'] += 1
+
         if 'text' not in act:
             warn("warning: missing text field:\n", act, opt)
             counts['missing_text'] += 1
@@ -95,7 +103,7 @@ def verify(opt, printargs=None, print_parser=None):
                 for c in act['label_candidates']:
                     if c == '':
                         warn("warning: empty string label_candidate:\n", act, opt)
-                        counts['empty_label_candidates'] += 1
+                        counts['empty_string_label_candidates'] += 1
                     if c in is_label_cand:
                         if is_label_cand[c] is True:
                             warn(
@@ -123,6 +131,7 @@ def verify(opt, printargs=None, print_parser=None):
         )
     except Exception:
         pass
+
     return report(world, counts, log_time)
 
 

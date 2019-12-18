@@ -30,8 +30,8 @@ class QualificationFlowOnboardWorld(MTurkOnboardWorld):
 
 class QualificationFlowSoloWorld(MTurkTaskWorld):
     """
-    World that asks a user 5 math questions, first from a test set if the user
-    is entering for the first time, and then randomly for all subsequent times
+    World that asks a user 5 math questions, first from a test set if the user is
+    entering for the first time, and then randomly for all subsequent times.
 
     Users who don't get enough correct in the test set are assigned a
     qualification that blocks them from completing more HITs during shutdown
@@ -43,6 +43,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
     second would require the passing qualification. The first world could then
     be runnable using the --unique flag.
     """
+
     test_set = [
         ['What is 1+1?', '2'],
         ['What is 3+2?', '5'],
@@ -71,10 +72,9 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
         for _ in range(num):
             num1 = random.randint(1, 20)
             num2 = random.randint(3, 16)
-            questions.append([
-                'What is {} + {}?'.format(num1, num2),
-                '{}'.format(num1 + num2)
-            ])
+            questions.append(
+                ['What is {} + {}?'.format(num1, num2), '{}'.format(num1 + num2)]
+            )
         return questions
 
     def parley(self):
@@ -94,7 +94,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
             }
             self.mturk_agent.observe(validate(ad))
             answer = self.mturk_agent.act()
-            if answer == self.questions[self.curr_question][1]:
+            if answer['text'] == self.questions[self.curr_question][1]:
                 self.correct += 1
             self.curr_question += 1
 
@@ -106,9 +106,10 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
 
     def shutdown(self):
         """
-        Here is where the filtering occurs. If a worker hasn't successfully
-        answered all the questions correctly, they are given the qualification
-        that marks that they should be blocked from this task.
+        Here is where the filtering occurs.
+
+        If a worker hasn't successfully answered all the questions correctly, they are
+        given the qualification that marks that they should be blocked from this task.
         """
         if self.firstTime and self.correct != len(self.questions):
             mturk_utils.give_worker_qualification(

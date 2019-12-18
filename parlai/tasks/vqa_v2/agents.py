@@ -40,14 +40,15 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-v2',
-                             ques_suffix + '_questions.json')
+    data_path = os.path.join(opt['datapath'], 'VQA-v2', ques_suffix + '_questions.json')
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-v2',
-                                   annotation_suffix + '_annotations.json')
+    annotation_path = os.path.join(
+        opt['datapath'], 'VQA-v2', annotation_suffix + '_annotations.json'
+    )
 
-    image_path = os.path.join(opt['datapath'],
-                              'COCO-IMG-{}'.format(img_version), img_suffix)
+    image_path = os.path.join(
+        opt['datapath'], 'COCO-IMG-{}'.format(img_version), img_suffix
+    )
 
     return data_path, annotation_path, image_path
 
@@ -57,12 +58,14 @@ class DefaultDataset(VQADataset):
 
 
 class OeTeacher(FixedDialogTeacher):
-    """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
-    implements the ``get`` method to return additional metadata.
     """
+    VQA v2.0 Open-Ended teacher, which loads the json VQA data and implements the
+    ``get`` method to return additional metadata.
+    """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             # another instance was set up already, just reference its data
@@ -98,11 +101,7 @@ class OeTeacher(FixedDialogTeacher):
         qa = self.ques['questions'][episode_idx]
         question = qa['question']
 
-        action = {
-            'text': question,
-            'image_id': qa['image_id'],
-            'episode_done': True
-        }
+        action = {'text': question, 'image_id': qa['image_id'], 'episode_done': True}
 
         if not self.datatype.startswith('test'):
             # test set annotations are not available for this dataset
@@ -112,20 +111,21 @@ class OeTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none':
+            if self.image_mode != 'no_image_model':
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.epochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.epochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
@@ -156,8 +156,8 @@ class OeTeacher(FixedDialogTeacher):
 
 class AllTeacher(OeTeacher):
     """
-    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and
-    gives access to the multiple choice answer.
+    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and gives access to the
+    multiple choice answer.
     """
 
     def act(self):

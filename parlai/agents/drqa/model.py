@@ -7,18 +7,17 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
-import logging
 
 from torch.autograd import Variable
 from .utils import load_embeddings, AverageMeter
 from .rnn_reader import RnnDocReader
-
-logger = logging.getLogger('DrQA')
+from parlai.utils.logging import logger
 
 
 class DocReaderModel(object):
-    """High level model that handles intializing the underlying network
-    architecture, saving, updating examples, and predicting examples.
+    """
+    High level model that handles intializing the underlying network architecture,
+    saving, updating examples, and predicting examples.
     """
 
     def __init__(self, opt, word_dict, feature_dict, state_dict=None):
@@ -41,20 +40,23 @@ class DocReaderModel(object):
         # Building optimizer.
         parameters = [p for p in self.network.parameters() if p.requires_grad]
         if opt['optimizer'] == 'sgd':
-            self.optimizer = optim.SGD(parameters, opt['learning_rate'],
-                                       momentum=opt['momentum'],
-                                       weight_decay=opt['weight_decay'])
+            self.optimizer = optim.SGD(
+                parameters,
+                opt['learning_rate'],
+                momentum=opt['momentum'],
+                weight_decay=opt['weight_decay'],
+            )
         elif opt['optimizer'] == 'adamax':
-            self.optimizer = optim.Adamax(parameters,
-                                          weight_decay=opt['weight_decay'])
+            self.optimizer = optim.Adamax(parameters, weight_decay=opt['weight_decay'])
         else:
             raise RuntimeError('Unsupported optimizer: %s' % opt['optimizer'])
 
     def set_embeddings(self):
         # Read word embeddings.
         if not self.opt.get('embedding_file'):
-            logger.warning('[ WARNING: No embeddings provided. '
-                           'Keeping random initialization. ]')
+            logger.warning(
+                '[ WARNING: No embeddings provided. ' 'Keeping random initialization. ]'
+            )
             return
         logger.info('[ Loading pre-trained embeddings ]')
         embeddings = load_embeddings(self.opt, self.word_dict)
@@ -67,8 +69,8 @@ class DocReaderModel(object):
             raise RuntimeError('Embedding dimensions do not match.')
         if new_size[0] != old_size[0]:
             logger.warning(
-                '[ WARNING: Number of embeddings changed (%d->%d) ]' %
-                (old_size[0], new_size[0])
+                '[ WARNING: Number of embeddings changed (%d->%d) ]'
+                % (old_size[0], new_size[0])
             )
 
         # Swap weights
@@ -77,7 +79,7 @@ class DocReaderModel(object):
         # If partially tuning the embeddings, keep the old values
         if self.opt['tune_partial'] > 0:
             if self.opt['tune_partial'] + 2 < embeddings.size(0):
-                fixed_embedding = embeddings[self.opt['tune_partial'] + 2:]
+                fixed_embedding = embeddings[self.opt['tune_partial'] + 2 :]
                 self.network.fixed_embedding = fixed_embedding
 
     def update(self, ex):
@@ -106,8 +108,9 @@ class DocReaderModel(object):
         loss.backward()
 
         # Clip gradients
-        torch.nn.utils.clip_grad_norm(self.network.parameters(),
-                                      self.opt['grad_clipping'])
+        torch.nn.utils.clip_grad_norm(
+            self.network.parameters(), self.opt['grad_clipping']
+        )
 
         # Update parameters
         self.optimizer.step()
@@ -122,8 +125,9 @@ class DocReaderModel(object):
 
         # Transfer to GPU
         if self.opt['cuda']:
-            inputs = [Variable(e.cuda(non_blocking=True), volatile=True)
-                      for e in ex[:5]]
+            inputs = [
+                Variable(e.cuda(non_blocking=True), volatile=True) for e in ex[:5]
+            ]
         else:
             inputs = [Variable(e, volatile=True) for e in ex[:5]]
 
@@ -156,21 +160,20 @@ class DocReaderModel(object):
         if self.opt['tune_partial'] > 0:
             offset = self.opt['tune_partial'] + 2
             if offset < self.network.embedding.weight.data.size(0):
-                self.network.embedding.weight.data[offset:] \
-                    = self.network.fixed_embedding
+                self.network.embedding.weight.data[
+                    offset:
+                ] = self.network.fixed_embedding
 
     def save(self, filename):
         params = {
-            'state_dict': {
-                'network': self.network.state_dict(),
-            },
+            'state_dict': {'network': self.network.state_dict()},
             'feature_dict': self.feature_dict,
             'config': self.opt,
         }
         try:
             torch.save(params, filename)
         except BaseException:
-            logger.warn('[ WARN: Saving failed... continuing anyway. ]')
+            logger.warning('[ WARN: Saving failed... continuing anyway. ]')
 
     def cuda(self):
         self.network.cuda()

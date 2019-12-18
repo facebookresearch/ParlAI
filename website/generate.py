@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -21,8 +21,7 @@ OUT_DIR = os.path.join(WEBSITE_ROOT, 'build')
 
 def ghmarkdown(source):
     return markdown.markdown(
-        source,
-        extensions=[PartialGithubFlavoredMarkdownExtension()]
+        source, extensions=[PartialGithubFlavoredMarkdownExtension()]
     )
 
 
@@ -32,7 +31,9 @@ def _read_file(filename):
 
 
 def _mkdirp(directory):
-    """Equivalent to mkdir -p"""
+    """
+    Equivalent to mkdir -p.
+    """
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -64,10 +65,9 @@ def make_aboutpage():
     template = _read_file(os.path.join(TEMPLATES, 'about.html'))
     readme = _read_file(os.path.join(GIT_ROOT_LEVEL, 'README.md'))
     # filter out the circleci badge from the about page
-    readme = "\n".join([
-        l for l in readme.split("\n")
-        if not l.startswith("[![CircleCI]")
-    ])
+    readme = "\n".join(
+        [l for l in readme.split("\n") if not l.startswith("[![CircleCI]")]
+    )
     readme_html = ghmarkdown(readme)
     readme_html = readme_html.replace("docs/source/\\", "/docs/")
     content = template.replace('{{{CONTENT}}}', readme_html)
@@ -93,7 +93,7 @@ def make_projects_landing():
         'housed in the ParlAI repo, others are maintained via external websites. '
         'Please also refer',
         'See the [ParlAI projects](https://github.com/facebookresearch/ParlAI/'
-        'tree/master/projects) page on GitHub for more information. Refer'
+        'tree/master/projects) page on GitHub for more information. Refer',
     )
     landing_html = template.replace('{{{CONTENT}}}', ghmarkdown(landing))
     html = wrap_base(landing_html, "Projects | ParlAI")
@@ -105,7 +105,8 @@ def make_projects_individual():
     projects_dir = os.path.join(GIT_ROOT_LEVEL, 'projects')
     possible_projects = os.listdir(projects_dir)
     projects = [
-        pp for pp in possible_projects
+        pp
+        for pp in possible_projects
         if os.path.exists(os.path.join(projects_dir, pp, 'README.md'))
     ]
     for p in projects:
@@ -114,8 +115,7 @@ def make_projects_individual():
         content_html = content_html.replace(
             'src="',
             'src="https://raw.githubusercontent.com/facebookresearch/'
-            'ParlAI/master/projects/{}'
-            .format(p + '/' if p else '')
+            'ParlAI/master/projects/{}'.format(p + '/' if p else ''),
         )
         title = p.title().replace("_", " ")
         html = wrap_base(content_html, title)

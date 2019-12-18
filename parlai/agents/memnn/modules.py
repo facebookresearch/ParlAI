@@ -6,12 +6,14 @@
 
 import torch
 import torch.nn as nn
-from parlai.core.utils import neginf
+from parlai.utils.torch import neginf
 from functools import lru_cache
 
 
 def opt_to_kwargs(opt):
-    """Get kwargs for seq2seq from opt."""
+    """
+    Get kwargs for seq2seq from opt.
+    """
     kwargs = {}
     for k in ['memsize', 'time_features', 'position_encoding', 'hops']:
         if k in opt:
@@ -20,14 +22,23 @@ def opt_to_kwargs(opt):
 
 
 class MemNN(nn.Module):
-    """Memory Network module."""
+    """
+    Memory Network module.
+    """
 
     def __init__(
-        self, num_features, embedding_size, hops=1,
-        memsize=32, time_features=False, position_encoding=False,
-        dropout=0, padding_idx=0,
+        self,
+        num_features,
+        embedding_size,
+        hops=1,
+        memsize=32,
+        time_features=False,
+        position_encoding=False,
+        dropout=0,
+        padding_idx=0,
     ):
-        """Initialize memnn model.
+        """
+        Initialize memnn model.
 
         See cmdline args in MemnnAgent for description of arguments.
         """
@@ -37,9 +48,12 @@ class MemNN(nn.Module):
         self.hops = hops
 
         def embedding(use_extra_feats=True):
-            return Embed(num_features, embedding_size,
-                         position_encoding=position_encoding,
-                         padding_idx=padding_idx)
+            return Embed(
+                num_features,
+                embedding_size,
+                position_encoding=position_encoding,
+                padding_idx=padding_idx,
+            )
 
         # TODO: add token dropout?
         # TODO: add dropout
@@ -50,16 +64,6 @@ class MemNN(nn.Module):
         self.out_memory_lt = embedding()
         self.answer_embedder = embedding()
         self.memory_hop = Hop(embedding_size)
-
-    def _score(self, output, cands):
-        if cands.dim() == 2:
-            return torch.matmul(output, cands.t())
-        elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
-        else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
 
     def forward(self, xs, mems, cands=None, pad_mask=None):
         """
@@ -91,8 +95,9 @@ class MemNN(nn.Module):
             out_memory_embs = self.out_memory_lt(mems)
 
             for _ in range(self.hops):
-                state = self.memory_hop(state, in_memory_embs, out_memory_embs,
-                                        pad_mask)
+                state = self.memory_hop(
+                    state, in_memory_embs, out_memory_embs, pad_mask
+                )
 
         if cands is not None:
             # embed candidates
@@ -101,8 +106,7 @@ class MemNN(nn.Module):
             # rank all possible tokens
             cand_embs = self.answer_embedder.weight
 
-        scores = self._score(state, cand_embs)
-        return scores
+        return state, cand_embs
 
 
 class Embed(nn.Embedding):
@@ -112,8 +116,7 @@ class Embed(nn.Embedding):
     Applies Position Encoding if enabled and currently applies BOW sum.
     """
 
-    def __init__(self, *args, position_encoding=False, reduction='mean',
-                 **kwargs):
+    def __init__(self, *args, position_encoding=False, reduction='mean', **kwargs):
         """
         Initialize custom Embedding layer.
 
@@ -134,12 +137,14 @@ class Embed(nn.Embedding):
         elif self.reduction == 'mean':
             # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
-            lens = input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float()\
-                .clamp_(min=1)
+            lens = (
+                input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float().clamp_(min=1)
+            )
             return sum / lens
         else:
             raise RuntimeError(
-                'reduction method {} not supported'.format(self.reduction))
+                'reduction method {} not supported'.format(self.reduction)
+            )
 
     def forward(self, input):
         """
@@ -193,17 +198,19 @@ class Embed(nn.Embedding):
 
 
 class Hop(nn.Module):
-    """Memory Network hop outputs attention-weighted sum of memory embeddings.
+    """
+    Memory Network hop outputs attention-weighted sum of memory embeddings.
 
-    0) rotate the query embeddings
-    1) compute the dot product between the input vector and each memory vector
-    2) compute a softmax over the memory scores
-    3) compute the weighted sum of the memory embeddings using the probabilities
-    4) add the query embedding to the memory output and return the result
+    0) rotate the query embeddings 1) compute the dot product between the input vector
+    and each memory vector 2) compute a softmax over the memory scores 3) compute the
+    weighted sum of the memory embeddings using the probabilities 4) add the query
+    embedding to the memory output and return the result
     """
 
     def __init__(self, embedding_size, rotate=True):
-        """Initialize linear rotation."""
+        """
+        Initialize linear rotation.
+        """
         super().__init__()
         if rotate:
             self.rotate = nn.Linear(embedding_size, embedding_size, bias=False)

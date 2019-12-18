@@ -17,9 +17,13 @@ def _path(exsz, task, opt, dt=''):
     build(opt)
     if dt == '':
         dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'bAbI', 'tasks_1-20_v1-2',
-                        'en-valid{exsz}-nosf'.format(exsz=exsz),
-                        'qa{task}_{type}.txt'.format(task=task, type=dt))
+    return os.path.join(
+        opt['datapath'],
+        'bAbI',
+        'tasks_1-20_v1-2',
+        'en-valid{exsz}-nosf'.format(exsz=exsz),
+        'qa{task}_{type}.txt'.format(task=task, type=dt),
+    )
 
 
 def mod_labels(ys, task):

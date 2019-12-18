@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -7,7 +7,7 @@
 
 import unittest
 import parlai.scripts.display_data as display_data
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
@@ -28,13 +28,16 @@ RETRIEVAL_OPTIONS = {
     'embeddings_scale': False,
     'delimiter': ' __SOC__ ',
     'n_positions': 1000,
-    'legacy': True
+    'legacy': True,
 }
 
 
 @testing_utils.skipUnlessGPU
 class TestWizardModel(unittest.TestCase):
-    """Checks that pre-trained Wizard models give the correct results"""
+    """
+    Checks that pre-trained Wizard models give the correct results.
+    """
+
     @classmethod
     def setUpClass(cls):
         # go ahead and download things here
@@ -48,31 +51,33 @@ class TestWizardModel(unittest.TestCase):
     def test_end2end(self):
         stdout, valid, _ = testing_utils.eval_model(END2END_OPTIONS)
         self.assertEqual(
-            valid['ppl'], 61.21,
-            'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout)
+            valid['ppl'], 61.21, 'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout)
         )
         self.assertEqual(
-            valid['f1'], 0.1717,
-            'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
+            valid['f1'], 0.1717, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
         )
         self.assertGreaterEqual(
-            valid['know_acc'], 0.2201,
-            'valid know_acc = {}\nLOG:\n{}'.format(valid['know_acc'], stdout)
+            valid['know_acc'],
+            0.2201,
+            'valid know_acc = {}\nLOG:\n{}'.format(valid['know_acc'], stdout),
         )
 
     def test_retrieval(self):
         stdout, _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
         self.assertGreaterEqual(
-            test['accuracy'], 0.86,
-            'test acc = {}\nLOG:\n{}'.format(test['accuracy'], stdout)
+            test['accuracy'],
+            0.86,
+            'test acc = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
         )
         self.assertGreaterEqual(
-            test['hits@5'], 0.98,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout)
+            test['hits@5'],
+            0.98,
+            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
         )
         self.assertGreaterEqual(
-            test['hits@10'], 0.99,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout)
+            test['hits@10'],
+            0.99,
+            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
         )
 
 

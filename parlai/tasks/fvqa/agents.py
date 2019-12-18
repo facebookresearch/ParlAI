@@ -20,9 +20,7 @@ def _path(opt):
     questions_path = os.path.join(
         opt['datapath'], 'FVQA', 'new_dataset_release', 'all_qs_dict_release.json'
     )
-    trainset_path = os.path.join(
-        opt['datapath'], 'FVQA', 'Name_Lists'
-    )
+    trainset_path = os.path.join(opt['datapath'], 'FVQA', 'Name_Lists')
     image_path = os.path.join(
         opt['datapath'], 'FVQA', 'new_dataset_release', 'images', ''
     )
@@ -31,11 +29,12 @@ def _path(opt):
 
 
 class SplitTeacher(Teacher):
-    """FVQA Teacher, which loads the json VQA data and implements its own
-    `act` method for interacting with student agent.
+    """
+    FVQA Teacher, which loads the json VQA data and implements its own `act` method for
+    interacting with student agent.
 
-    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just
-    "fvqa" to use the default split (0).
+    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just "fvqa" to use
+    the default split (0).
     """
 
     def __init__(self, opt, shared=None):
@@ -101,7 +100,9 @@ class SplitTeacher(Teacher):
         self.factmetrics.clear()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.lastY is not None:
             if self.asked_question:
                 self.metrics.update(observation, self.lastY[0])
@@ -117,8 +118,8 @@ class SplitTeacher(Teacher):
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
             if (
-                self.datatype != 'train' and
-                self.episode_idx + self.step_size >= self.num_episodes()
+                self.datatype != 'train'
+                and self.episode_idx + self.step_size >= self.num_episodes()
             ):
                 self.epochDone = True
             return action
@@ -136,7 +137,7 @@ class SplitTeacher(Teacher):
         action = {
             'image': self.image_loader.load(img_path),
             'text': question,
-            'episode_done': False
+            'episode_done': False,
         }
 
         human_readable = qa['fact_surface'].replace('[', '').replace(']', '')

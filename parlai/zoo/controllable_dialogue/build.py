@@ -13,10 +13,8 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    opt = {
-        'datapath': datapath,
-    }
+    opt = {'datapath': datapath}
     fnames = ['models_v1.tar.gz']
     download_models(
-        opt, fnames, 'controllable_dialogue', version='v1.0', use_model_type=False,
+        opt, fnames, 'controllable_dialogue', version='v1.0', use_model_type=False
     )

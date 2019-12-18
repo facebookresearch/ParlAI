@@ -26,7 +26,7 @@ if logging_enabled:
         filemode='w',
         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
         datefmt='%H:%M:%S',
-        level=logging.DEBUG
+        level=logging.DEBUG,
     )
     logger = logging.getLogger('mturk')
 
@@ -54,23 +54,28 @@ def print_and_log(level, message, should_print=False):
 
 
 def generate_event_id(worker_id):
-    """Return a unique id to use for identifying a packet for a worker"""
+    """
+    Return a unique id to use for identifying a packet for a worker.
+    """
     return '{}_{}'.format(worker_id, uuid.uuid4())
 
 
 def get_mturk_dir():
     import parlai.mturk
+
     return os.path.dirname(os.path.abspath(parlai.mturk.__file__))
 
 
 def get_core_dir():
     import parlai.mturk.core
+
     return os.path.dirname(os.path.abspath(parlai.mturk.core.__file__))
 
 
 def get_tmp_dir():
-    """Return the location of the temporary directory in which we store
-    things related to a run but that can be safely deleted
+    """
+    Return the location of the temporary directory in which we store things related to a
+    run but that can be safely deleted.
     """
     tmp_dir = os.path.join(get_mturk_dir(), 'tmp')
     if not os.path.exists(tmp_dir):

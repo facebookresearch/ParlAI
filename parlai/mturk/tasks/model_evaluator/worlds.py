@@ -18,9 +18,10 @@ class ModelEvaluatorOnboardWorld(MTurkOnboardWorld):
 
 
 class ModelEvaluatorWorld(MTurkTaskWorld):
-    """World for letting Turkers evaluate a dialog model's performance given a
-    context. Assumes the context is a context from a given task, e.g.
-    from SQuAD, CBT, etc.
+    """
+    World for letting Turkers evaluate a dialog model's performance given a context.
+
+    Assumes the context is a context from a given task, e.g. from SQuAD, CBT, etc.
     """
 
     evaluator_agent_id = 'Model Evaluator'
@@ -38,9 +39,11 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
         # to rate the response
         ad['id'] = self.__class__.evaluator_agent_id
         ad['text'] = (
-            self.task_world.get_acts()[0]['text'] + "\n\n" +
-            "How would you rate the following response (from 0 to 10):\n\n" +
-            self.task_world.get_acts()[1]['text'])
+            self.task_world.get_acts()[0]['text']
+            + "\n\n"
+            + "How would you rate the following response (from 0 to 10):\n\n"
+            + self.task_world.get_acts()[1]['text']
+        )
 
         # TODO: deal with multi-turn dialogs, for now we will just deal
         # with 1-turn dialogs in this task.

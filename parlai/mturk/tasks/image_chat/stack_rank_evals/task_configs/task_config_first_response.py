@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -28,8 +29,9 @@ task_config['hit_keywords'] = 'image'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-    '''
+task_config[
+    'task_description'
+] = '''
 <h2><b>Description</b></h2>
 In this task, you will be shown 5 images, and a comment about each image.
 The goal of this task is to pick which of two responses is the

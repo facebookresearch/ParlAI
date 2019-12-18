@@ -5,5 +5,5 @@
 
 core.utils
 ===================================
-.. automodule:: parlai.core.utils
+.. automodule:: parlai.utils.misc
   :members:

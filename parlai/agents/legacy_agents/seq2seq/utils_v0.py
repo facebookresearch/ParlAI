@@ -6,7 +6,8 @@
 
 from collections import deque, namedtuple
 from collections.abc import MutableMapping
-from multiprocessing import Lock, RawArray
+from multiprocessing import Lock
+from multiprocessing import RawArray  # type: ignore
 from operator import attrgetter
 
 import ctypes
@@ -19,11 +20,24 @@ import torch
 
 
 class Beam(object):
-    """Generic beam class. It keeps information about beam_size hypothesis."""
+    """
+    Generic beam class.
 
-    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
-                 eos_token=2, min_n_best=3, cuda='cpu'):
-        """Instantiate Beam object.
+    It keeps information about beam_size hypothesis.
+    """
+
+    def __init__(
+        self,
+        beam_size,
+        min_length=3,
+        padding_token=0,
+        bos_token=1,
+        eos_token=2,
+        min_n_best=3,
+        cuda='cpu',
+    ):
+        """
+        Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
         :param min_length: minimum length of the predicted sequence
@@ -41,19 +55,20 @@ class Beam(object):
         self.pad = padding_token
         self.device = cuda
         # recent score for each hypo in the beam
-        self.scores = torch.Tensor(self.beam_size).float().zero_().to(
-            self.device)
+        self.scores = torch.Tensor(self.beam_size).float().zero_().to(self.device)
         # self.scores values per each time step
         self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]
         # backtracking id to hypothesis at previous time step
         self.bookkeep = []
         # output tokens at each time step
-        self.outputs = [torch.Tensor(self.beam_size).long()
-                        .fill_(padding_token).to(self.device)]
+        self.outputs = [
+            torch.Tensor(self.beam_size).long().fill_(padding_token).to(self.device)
+        ]
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.HypothesisTail = namedtuple(
-            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
+            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid']
+        )
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
@@ -74,8 +89,9 @@ class Beam(object):
         else:
             # we need to sum up hypo scores and curr softmax scores before topk
             # [beam_size, voc_size]
-            beam_scores = (softmax_probs +
-                           self.scores.unsqueeze(1).expand_as(softmax_probs))
+            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(
+                softmax_probs
+            )
             for i in range(self.outputs[-1].size(0)):
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
@@ -86,7 +102,8 @@ class Beam(object):
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
             best_scores, best_idxs = torch.topk(
-                flatten_beam_scores, self.beam_size, dim=-1)
+                flatten_beam_scores, self.beam_size, dim=-1
+            )
 
         self.scores = best_scores
         self.all_scores.append(self.scores)
@@ -102,10 +119,12 @@ class Beam(object):
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
                 #  this is finished hypo, adding to finished
-                eostail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                              hypid=hypid,
-                                              score=self.scores[hypid],
-                                              tokenid=self.eos)
+                eostail = self.HypothesisTail(
+                    timestep=len(self.outputs) - 1,
+                    hypid=hypid,
+                    score=self.scores[hypid],
+                    tokenid=self.eos,
+                )
                 self.finished.append(eostail)
                 self.n_best_counter += 1
 
@@ -118,30 +137,38 @@ class Beam(object):
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
-        return (self.get_hyp_from_finished(top_hypothesis_tail),
-                top_hypothesis_tail.score)
+        return (
+            self.get_hyp_from_finished(top_hypothesis_tail),
+            top_hypothesis_tail.score,
+        )
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-        assert (self.outputs[hypothesis_tail.timestep]
-                [hypothesis_tail.hypid] == self.eos)
+        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i, hypid=endback, score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
+            hyp_idx.append(
+                self.HypothesisTail(
+                    timestep=i,
+                    hypid=endback,
+                    score=self.all_scores[i][endback],
+                    tokenid=self.outputs[i][endback],
+                )
+            )
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
@@ -166,13 +193,16 @@ class Beam(object):
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
             length_penalty = math.pow((1 + current_length) / 6, 0.65)
-            rescored_finished.append(self.HypothesisTail(
-                timestep=finished_item.timestep, hypid=finished_item.hypid,
-                score=finished_item.score / length_penalty,
-                tokenid=finished_item.tokenid))
+            rescored_finished.append(
+                self.HypothesisTail(
+                    timestep=finished_item.timestep,
+                    hypid=finished_item.hypid,
+                    score=finished_item.score / length_penalty,
+                    tokenid=finished_item.tokenid,
+                )
+            )
 
-        srted = sorted(rescored_finished, key=attrgetter('score'),
-                       reverse=True)
+        srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
@@ -180,7 +210,8 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Checks if self.finished is empty and add hyptail in that case.
+        """
+        Checks if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
 
@@ -191,15 +222,18 @@ class Beam(object):
             # to pass assert in L102, it is ok since empty self.finished
             # means junk prediction anyway
             self.outputs[-1][0] = self.eos
-            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                          hypid=0,
-                                          score=self.all_scores[-1][0],
-                                          tokenid=self.outputs[-1][0])
+            hyptail = self.HypothesisTail(
+                timestep=len(self.outputs) - 1,
+                hypid=0,
+                score=self.all_scores[-1][0],
+                tokenid=self.outputs[-1][0],
+            )
 
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Creates pydot graph representation of the beam.
+        """
+        Creates pydot graph representation of the beam.
 
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes
@@ -219,23 +253,24 @@ class Beam(object):
 
         # get top nbest hyp
         top_hyp_idx_n_best = []
-        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue',
-                         'green2', 'tan']
+        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
             # do not include EOS since it has rescored score not from original
             # self.all_scores, we color EOS with black
-            top_hyp_idx_n_best.append(self.get_hyp_from_finished(
-                hyptail))
+            top_hyp_idx_n_best.append(self.get_hyp_from_finished(hyptail))
 
         # create nodes
         for tstep, lis in enumerate(outputs):
             for hypid, token in enumerate(lis):
                 if tstep == 0:
                     hypid = 0  # collapse all __NULL__ nodes
-                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid,
-                                                score=all_scores[tstep][hypid],
-                                                tokenid=token)
+                node_tail = self.HypothesisTail(
+                    timestep=tstep,
+                    hypid=hypid,
+                    score=all_scores[tstep][hypid],
+                    tokenid=token,
+                )
                 color = 'white'
                 rank = None
                 for i, hypseq in enumerate(top_hyp_idx_n_best):
@@ -245,40 +280,67 @@ class Beam(object):
                         rank = i
                         break
                 label = (
-                    "<{}".format(dictionary.vec2txt([token])
-                                 if dictionary is not None else token) +
-                    " : " +
-                    "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3))
+                    "<{}".format(
+                        dictionary.vec2txt([token]) if dictionary is not None else token
+                    )
+                    + " : "
+                    + "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3)
+                )
 
-                graph.add_node(pydot.Node(
-                    node_tail.__repr__(), label=label, fillcolor=color,
-                    style='filled',
-                    xlabel='{}'.format(rank) if rank is not None else ''))
+                graph.add_node(
+                    pydot.Node(
+                        node_tail.__repr__(),
+                        label=label,
+                        fillcolor=color,
+                        style='filled',
+                        xlabel='{}'.format(rank) if rank is not None else '',
+                    )
+                )
 
         # create edges
         for revtstep, lis in reversed(list(enumerate(bookkeep))):
             for i, prev_id in enumerate(lis):
                 from_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep, hypid=prev_id,
-                        score=all_scores[revtstep][prev_id],
-                        tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep,
+                            hypid=prev_id,
+                            score=all_scores[revtstep][prev_id],
+                            tokenid=outputs[revtstep][prev_id],
+                        ).__repr__()
+                    )
+                )[0]
                 to_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep + 1, hypid=i,
-                        score=all_scores[revtstep + 1][i],
-                        tokenid=outputs[revtstep + 1][i]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep + 1,
+                            hypid=i,
+                            score=all_scores[revtstep + 1][i],
+                            tokenid=outputs[revtstep + 1][i],
+                        ).__repr__()
+                    )
+                )[0]
                 newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
                 graph.add_edge(newedge)
 
         return graph
 
-def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies='label_else_model',
-                            dict=None, useStartEndIndices=True,
-                            splitSentences=False):
-    """Keeps track of dialog history, up to a truncation length.
-    Either includes replies from the labels, model, or not all using param 'replies'."""
+
+def maintain_dialog_history(
+    history,
+    observation,
+    reply='',
+    historyLength=1,
+    useReplies='label_else_model',
+    dict=None,
+    useStartEndIndices=True,
+    splitSentences=False,
+):
+    """
+    Keeps track of dialog history, up to a truncation length.
+
+    Either includes replies from the labels, model, or not all using param 'replies'.
+    """
 
     def parse(txt, splitSentences):
         if dict is not None:
@@ -302,8 +364,9 @@ def maintain_dialog_history(history, observation, reply='',
         history['episode_done'] = False
 
     if useReplies != 'none':
-        if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     len(history['labels']) == 0):
+        if useReplies == 'model' or (
+            useReplies == 'label_else_model' and len(history['labels']) == 0
+        ):
             if reply:
                 if useStartEndIndices:
                     reply = dict.start_token + ' ' + reply
@@ -329,6 +392,7 @@ def maintain_dialog_history(history, observation, reply='',
 
     return history['dialog']
 
+
 def round_sigfigs(x, sigfigs=4):
     try:
         if x == 0:
@@ -347,29 +411,44 @@ def round_sigfigs(x, sigfigs=4):
         else:
             raise ex
 
+
 class PaddingUtils(object):
     """
     Class that contains functions that help with padding input and target tensors.
     """
+
     @classmethod
-    def pad_text(cls, observations, dictionary,
-                 end_idx=None, null_idx=0, dq=False, eval_labels=True,
-                 truncate=None):
-        """We check that examples are valid, pad with zeros, and sort by length
-           so that we can use the pack_padded function. The list valid_inds
-           keeps track of which indices are valid and the order in which we sort
-           the examples.
-           dq -- whether we should use deque or list
-           eval_labels -- whether or not we want to consider eval labels
-           truncate -- truncate input and output lengths
+    def pad_text(
+        cls,
+        observations,
+        dictionary,
+        end_idx=None,
+        null_idx=0,
+        dq=False,
+        eval_labels=True,
+        truncate=None,
+    ):
         """
+        We check that examples are valid, pad with zeros, and sort by length so that we
+        can use the pack_padded function.
+
+        The list valid_inds
+        keeps track of which indices are valid and the order in which we sort
+        the examples.
+        dq -- whether we should use deque or list
+        eval_labels -- whether or not we want to consider eval labels
+        truncate -- truncate input and output lengths
+        """
+
         def valid(obs):
             # check if this is an example our model should actually process
             return 'text' in obs and len(obs['text']) > 0
+
         try:
             # valid examples and their indices
-            valid_inds, exs = zip(*[(i, ex) for i, ex in
-                                    enumerate(observations) if valid(ex)])
+            valid_inds, exs = zip(
+                *[(i, ex) for i, ex in enumerate(observations) if valid(ex)]
+            )
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None, None, None
@@ -406,13 +485,17 @@ class PaddingUtils(object):
 
         # pad with zeros
         if dq:
-            parsed_x = [x if len(x) == max_x_len else
-                        x + deque((null_idx,)) * (max_x_len - len(x))
-                        for x in parsed_x]
+            parsed_x = [
+                x
+                if len(x) == max_x_len
+                else x + deque((null_idx,)) * (max_x_len - len(x))
+                for x in parsed_x
+            ]
         else:
-            parsed_x = [x if len(x) == max_x_len else
-                        x + [null_idx] * (max_x_len - len(x))
-                        for x in parsed_x]
+            parsed_x = [
+                x if len(x) == max_x_len else x + [null_idx] * (max_x_len - len(x))
+                for x in parsed_x
+            ]
         xs = parsed_x
 
         # set up the target tensors
@@ -440,24 +523,40 @@ class PaddingUtils(object):
             max_y_len = max(y_lens)
 
             if dq:
-                parsed_y = [y if len(y) == max_y_len else
-                            y + deque((null_idx,)) * (max_y_len - len(y))
-                            for y in parsed_y]
+                parsed_y = [
+                    y
+                    if len(y) == max_y_len
+                    else y + deque((null_idx,)) * (max_y_len - len(y))
+                    for y in parsed_y
+                ]
             else:
-                parsed_y = [y if len(y) == max_y_len else
-                            y + [null_idx] * (max_y_len - len(y))
-                            for y in parsed_y]
+                parsed_y = [
+                    y if len(y) == max_y_len else y + [null_idx] * (max_y_len - len(y))
+                    for y in parsed_y
+                ]
             ys = parsed_y
 
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
-    def map_predictions(cls, predictions, valid_inds, batch_reply,
-                        observations, dictionary, end_idx, report_freq=0.1,
-                        labels=None, answers=None, ys=None):
-        """Predictions are mapped back to appropriate indices in the batch_reply
-           using valid_inds.
-           report_freq -- how often we report predictions
+    def map_predictions(
+        cls,
+        predictions,
+        valid_inds,
+        batch_reply,
+        observations,
+        dictionary,
+        end_idx,
+        report_freq=0.1,
+        labels=None,
+        answers=None,
+        ys=None,
+    ):
+        """
+        Predictions are mapped back to appropriate indices in the batch_reply using
+        valid_inds.
+
+        report_freq -- how often we report predictions
         """
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
@@ -493,8 +592,9 @@ class PaddingUtils(object):
 
 
 class SharedTable(MutableMapping):
-    """Provides a simple shared-memory table of integers, floats, or strings.
-    Use this class as follows:
+    """
+    Provides a simple shared-memory table of integers, floats, or strings. Use this
+    class as follows:
 
     .. code-block:: python
 
@@ -506,20 +606,17 @@ class SharedTable(MutableMapping):
                 tbl['cnt'] += 1
     """
 
-    types = {
-        int: ctypes.c_int,
-        float: ctypes.c_float,
-        bool: ctypes.c_bool,
-    }
+    types = {int: ctypes.c_int, float: ctypes.c_float, bool: ctypes.c_bool}
 
     def __init__(self, init_dict=None):
-        """Create a shared memory version of each element of the initial
-        dictionary. Creates an empty array otherwise, which will extend
-        automatically when keys are added.
+        """
+        Create a shared memory version of each element of the initial dictionary.
+        Creates an empty array otherwise, which will extend automatically when keys are
+        added.
 
-        Each different type (all supported types listed in the ``types`` array
-        above) has its own array. For each key we store an index into the
-        appropriate array as well as the type of value stored for that key.
+        Each different type (all supported types listed in the ``types`` array above)
+        has its own array. For each key we store an index into the appropriate array as
+        well as the type of value stored for that key.
         """
         # idx is dict of {key: (array_idx, value_type)}
         self.idx = {}
@@ -535,8 +632,11 @@ class SharedTable(MutableMapping):
                     self.tensors[k] = v
                     continue
                 elif type(v) not in sizes:
-                    raise TypeError('SharedTable does not support values of ' +
-                                    'type ' + str(type(v)))
+                    raise TypeError(
+                        'SharedTable does not support values of '
+                        + 'type '
+                        + str(type(v))
+                    )
                 sizes[type(v)] += 1
             # pop tensors from init_dict
             for k in self.tensors.keys():
@@ -569,7 +669,9 @@ class SharedTable(MutableMapping):
         return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
-        """Returns shared value if key is available."""
+        """
+        Returns shared value if key is available.
+        """
         if key in self.tensors:
             return self.tensors[key]
         elif key in self.idx:
@@ -579,12 +681,14 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __setitem__(self, key, value):
-        """If key is in table, update it. Otherwise, extend the array to make
-        room. This uses additive resizing not multiplicative, since the number
-        of keys is not likely to change frequently during a run, so do not abuse
-        it.
-        Raises an error if you try to change the type of the value stored for
-        that key--if you need to do this, you must delete the key first.
+        """
+        If key is in table, update it.
+
+        Otherwise, extend the array to make room. This uses additive resizing not
+        multiplicative, since the number of keys is not likely to change frequently
+        during a run, so do not abuse it. Raises an error if you try to change the type
+        of the value stored for that key--if you need to do this, you must delete the
+        key first.
         """
         val_type = type(value)
         if 'Tensor' in str(val_type):
@@ -597,14 +701,19 @@ class SharedTable(MutableMapping):
         if key in self.idx:
             idx, typ = self.idx[key]
             if typ != val_type:
-                raise TypeError(('Cannot change stored type for {key} from ' +
-                                 '{v1} to {v2}. You need to del the key first' +
-                                 ' if you need to change value types.'
-                                 ).format(key=key, v1=typ, v2=val_type))
+                raise TypeError(
+                    (
+                        'Cannot change stored type for {key} from '
+                        + '{v1} to {v2}. You need to del the key first'
+                        + ' if you need to change value types.'
+                    ).format(key=key, v1=typ, v2=val_type)
+                )
             self.arrays[typ][idx] = value
         else:
-            raise KeyError('Cannot add more keys to the shared table as '
-                           'they will not be synced across processes.')
+            raise KeyError(
+                'Cannot add more keys to the shared table as '
+                'they will not be synced across processes.'
+            )
 
     def __delitem__(self, key):
         if key in self.tensors:
@@ -615,7 +724,9 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __str__(self):
-        """Returns simple dict representation of the mapping."""
+        """
+        Returns simple dict representation of the mapping.
+        """
         lhs = [
             '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
             for key, (idx, typ) in self.idx.items()
@@ -624,7 +735,9 @@ class SharedTable(MutableMapping):
         return '{{{}}}'.format(', '.join(lhs + rhs))
 
     def __repr__(self):
-        """Returns the object type and memory location with the mapping."""
+        """
+        Returns the object type and memory location with the mapping.
+        """
         representation = super().__repr__()
         return representation.replace('>', ': {}>'.format(str(self)))
 
@@ -635,15 +748,17 @@ class SharedTable(MutableMapping):
 def is_tensor(v):
     if type(v).__module__.startswith('torch'):
         import torch
+
         return torch.is_tensor(v)
     return False
 
 
 def modelzoo_path(datapath, path):
-    """If path starts with 'models', then we remap it to the model zoo path
-    within the data directory (default is ParlAI/data/models).
-    We download models from the model zoo if they are not here yet.
+    """
+    If path starts with 'models', then we remap it to the model zoo path within the data
+    directory (default is ParlAI/data/models).
 
+    We download models from the model zoo if they are not here yet.
     """
     if path is None:
         return None
@@ -651,14 +766,13 @@ def modelzoo_path(datapath, path):
         return path
     else:
         # Check if we need to download the model
-        animal = path[7:path.rfind('/')].replace('/', '.')
+        animal = path[7 : path.rfind('/')].replace('/', '.')
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
         try:
             my_module = importlib.import_module(module_name)
-            download = getattr(my_module, 'download')
-            download(datapath)
+            my_module.download(datapath)
         except (ImportError, AttributeError):
             pass
 

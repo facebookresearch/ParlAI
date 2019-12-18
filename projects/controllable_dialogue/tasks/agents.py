@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -6,7 +6,7 @@
 
 import copy
 from .build import build, make_path
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from parlai.core.teachers import ParlAIDialogTeacher
 
 

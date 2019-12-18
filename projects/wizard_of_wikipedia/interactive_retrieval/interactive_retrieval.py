@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -11,9 +11,10 @@
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
-from parlai.core.agents import Agent, create_agent
-from projects.wizard_of_wikipedia.wizard_transformer_ranker.\
-    wizard_transformer_ranker import WizardTransformerRankerAgent
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
+from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
+    WizardTransformerRankerAgent,
+)
 
 import json
 import os
@@ -26,50 +27,71 @@ class InteractiveRetrievalAgent(Agent):
         self.get_unique = opt['get_unique']
         if self.get_unique:
             self.used_messages = []
-        self.model_path = os.path.join(opt['datapath'], 'models',
-                                       'wizard_of_wikipedia',
-                                       'full_dialogue_retrieval_model')
+        self.model_path = os.path.join(
+            opt['datapath'],
+            'models',
+            'wizard_of_wikipedia',
+            'full_dialogue_retrieval_model',
+        )
 
         if not shared:
+            # Create responder
+            self._set_up_responder(opt)
             # Create retriever
             self._set_up_retriever(opt)
         else:
             self.opt = shared['opt']
             self.retriever = shared['retriever']
+            self.responder = create_agent_from_shared(shared['responder_shared_opt'])
             self.sent_tok = shared['sent_tok']
             self.wiki_map = shared['wiki_map']
-
-        # Create responder
-        self._set_up_responder(opt)
 
         self.id = 'WizardRetrievalInteractiveAgent'
         self.ret_history = {}
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         WizardTransformerRankerAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('WizardRetrievalInteractive Arguments')
-        parser.add_argument('--retriever-model-file', type=str, default=None)
-        parser.add_argument('--responder-model-file', type=str, default=None)
-        parser.add_argument('--get-unique', type='bool', default=True,
-                            help='get unique responses from the bot')
-        parser.add_argument('--num-retrieved', type=int, default=7,
-                            help='how many passages to retrieve for each'
-                                 'category')
+        parser.add_argument(
+            '--retriever-model-file',
+            type=str,
+            default='models:wikipedia_full/tfidf_retriever/model',
+        )
+        parser.add_argument(
+            '--responder-model-file',
+            type=str,
+            default='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+        )
+        parser.add_argument(
+            '--get-unique',
+            type='bool',
+            default=True,
+            help='get unique responses from the bot',
+        )
+        parser.add_argument(
+            '--num-retrieved',
+            type=int,
+            default=7,
+            help='how many passages to retrieve for each' 'category',
+        )
         parser.add_argument('--debug', type='bool', default=False)
         return parser
 
     def _set_up_retriever(self, opt):
-        retriever_opt = {'model_file': opt['retriever_model_file'],
-                         'remove_title': False,
-                         'datapath': opt['datapath'],
-                         'override': {'remove_title': False}}
+        retriever_opt = {
+            'model_file': opt['retriever_model_file'],
+            'remove_title': False,
+            'datapath': opt['datapath'],
+            'override': {'remove_title': False},
+        }
         self.retriever = create_agent(retriever_opt)
 
         self._set_up_sent_tok()
-        wiki_map_path = os.path.join(self.model_path,
-                                     'chosen_topic_to_passage.json')
+        wiki_map_path = os.path.join(self.model_path, 'chosen_topic_to_passage.json')
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_responder(self, opt):
@@ -79,8 +101,7 @@ class InteractiveRetrievalAgent(Agent):
             'model_file': opt['responder_model_file'],
             'datapath': opt['datapath'],
             'model': 'projects:wizard_of_wikipedia:wizard_transformer_ranker',
-            'fixed_candidates_path': os.path.join(self.model_path,
-                                                  'wizard_cands.txt'),
+            'fixed_candidates_path': os.path.join(self.model_path, 'wizard_cands.txt'),
             'eval_candidates': 'fixed',
             'n_heads': 6,
             'ffn_size': 1200,
@@ -90,6 +111,8 @@ class InteractiveRetrievalAgent(Agent):
             'legacy': True,
             'no_cuda': True,
             'encode_candidate_vecs': True,
+            'batchsize': 1,
+            'interactive_mode': True,
         }
         for k, v in override_opts.items():
             responder_opts[k] = v
@@ -123,9 +146,7 @@ class InteractiveRetrievalAgent(Agent):
                     if total >= 10:
                         break
                     if len(sent) > 0:
-                        retrieved_txt_format.append(
-                            ' '.join([chosen_topic, sent])
-                        )
+                        retrieved_txt_format.append(' '.join([chosen_topic, sent]))
                         total += 1
 
         if len(retrieved_txt_format) > 0:
@@ -136,13 +157,14 @@ class InteractiveRetrievalAgent(Agent):
         return passages
 
     def get_passages(self, act):
-        """Format passages retrieved by taking the first paragraph of the
-        top `num_retrieved` passages.
+        """
+        Format passages retrieved by taking the first paragraph of the top
+        `num_retrieved` passages.
         """
         retrieved_txt = act.get('text', '')
         cands = act.get('text_candidates', [])
         if len(cands) > 0:
-            retrieved_txts = cands[:self.opt['num_retrieved']]
+            retrieved_txts = cands[: self.opt['num_retrieved']]
         else:
             retrieved_txts = [retrieved_txt]
 
@@ -152,9 +174,7 @@ class InteractiveRetrievalAgent(Agent):
             if len(paragraphs) > 2:
                 sentences = self.sent_tok.tokenize(paragraphs[2])
                 for sent in sentences:
-                    retrieved_txt_format.append(
-                        ' '.join([paragraphs[0], sent])
-                    )
+                    retrieved_txt_format.append(' '.join([paragraphs[0], sent]))
 
         if len(retrieved_txt_format) > 0:
             passages = '\n'.join(retrieved_txt_format)
@@ -164,15 +184,15 @@ class InteractiveRetrievalAgent(Agent):
         return passages
 
     def retriever_act(self, history):
-        """Combines and formats texts retrieved by the TFIDF retriever for the
-        chosen topic, the last thing the wizard said, and the last thing the
-        apprentice said.
+        """
+        Combines and formats texts retrieved by the TFIDF retriever for the chosen
+        topic, the last thing the wizard said, and the last thing the apprentice said.
         """
         # retrieve on chosen topic
         chosen_topic_txts = None
         if self.ret_history.get('chosen_topic'):
             chosen_topic_txts = self.get_chosen_topic_passages(
-                self.ret_history['chosen_topic'],
+                self.ret_history['chosen_topic']
             )
 
         # retrieve on apprentice
@@ -180,7 +200,7 @@ class InteractiveRetrievalAgent(Agent):
         if self.ret_history.get('apprentice'):
             apprentice_act = {
                 'text': self.ret_history['apprentice'],
-                'episode_done': True
+                'episode_done': True,
             }
             self.retriever.observe(apprentice_act)
             apprentice_txts = self.get_passages(self.retriever.act())
@@ -188,10 +208,7 @@ class InteractiveRetrievalAgent(Agent):
         # retrieve on wizard
         wizard_txts = None
         if self.ret_history.get('wizard'):
-            wizard_act = {
-                'text': self.ret_history['wizard'],
-                'episode_done': True
-            }
+            wizard_act = {'text': self.ret_history['wizard'], 'episode_done': True}
             self.retriever.observe(wizard_act)
             wizard_txts = self.get_passages(self.retriever.act())
 
@@ -200,9 +217,9 @@ class InteractiveRetrievalAgent(Agent):
         if chosen_topic_txts:
             combined_txt += chosen_topic_txts
         if wizard_txts:
-            combined_txt += ('\n' + wizard_txts)
+            combined_txt += '\n' + wizard_txts
         if apprentice_txts:
-            combined_txt += ('\n' + apprentice_txts)
+            combined_txt += '\n' + apprentice_txts
 
         return combined_txt
 
@@ -216,8 +233,9 @@ class InteractiveRetrievalAgent(Agent):
         self.observation = obs
 
     def maintain_retrieved_texts(self, history, observation):
-        """Maintain texts retrieved by the retriever to mimic the set-up
-        from the data collection for the task.
+        """
+        Maintain texts retrieved by the retriever to mimic the set-up from the data
+        collection for the task.
         """
         if 'chosen_topic' not in history:
             history['episode_done'] = False
@@ -266,16 +284,19 @@ class InteractiveRetrievalAgent(Agent):
         responder_act = self.responder.act()
         if self.debug:
             print('DEBUG: Responder is acting:\n{}'.format(responder_act))
-        responder_act['id'] = 'WizardRetrievalInteractiveAgent'
+        responder_act.force_set('id', 'WizardRetrievalInteractiveAgent')
         if self.get_unique:
-            responder_act['text'] = self.get_unique_reply(responder_act)
+            responder_act.force_set('text', self.get_unique_reply(responder_act))
         return responder_act
 
     def share(self):
-        """Share internal saved_model between parent and child instances."""
+        """
+        Share internal saved_model between parent and child instances.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['retriever'] = self.retriever
+        shared['responder_shared_opt'] = self.responder.share()
         shared['sent_tok'] = self.sent_tok
         shared['wiki_map'] = self.wiki_map
 

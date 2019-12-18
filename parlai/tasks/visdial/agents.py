@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from .build import build, buildImage
+from .build import build
+from parlai.tasks.coco_caption.build_2014 import buildImage
 
 from PIL import Image
 import json
@@ -29,10 +30,11 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VisDial-v0.9',
-                             'visdial_0.9_' + suffix + '.json')
+    data_path = os.path.join(
+        opt['datapath'], 'VisDial-v0.9', 'visdial_0.9_' + suffix + '.json'
+    )
 
-    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG-2014', img_suffix)
 
     return data_path, image_path
 
@@ -46,11 +48,12 @@ def _image_loader(path):
 
 class DefaultTeacher(DialogTeacher):
     """
-    This version of VisDial inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    This version of VisDial inherits from the core Dialog Teacher, which just requires
+    it to define an iterator over its data `setup_data` in order to inherit basic
+    metrics, a `act` function, and enables Hogwild training with shared memory with no
+    extra work.
     """
+
     def __init__(self, opt, shared=None):
 
         self.datatype = opt['datatype']
@@ -86,10 +89,13 @@ class DefaultTeacher(DialogTeacher):
                     # only load image on first item
                     yield (
                         (
-                            caption + '\n' + question, answer,
-                            None, answer_options, img_path
+                            caption + '\n' + question,
+                            answer,
+                            None,
+                            answer_options,
+                            img_path,
                         ),
-                        True
+                        True,
                     )
                 else:
                     yield (question, answer, None, answer_options), False

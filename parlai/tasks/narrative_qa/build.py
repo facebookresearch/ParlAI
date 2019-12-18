@@ -11,9 +11,15 @@ import subprocess
 import shutil
 import csv
 import time
+from parlai.core.build_data import DownloadableFile
 
-
-NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/deepmind/narrativeqa/archive/master.zip',
+        'narrative_qa.zip',
+        '9f6c484664394e0275944a4630a3de6294ba839162765d2839cc3d31a0b47a0e',
+    )
+]
 
 
 def get_rows_for_set(reader, req_set):
@@ -44,8 +50,7 @@ def divide_csv_into_sets(csv_filepath, sets=('train', 'valid', 'test')):
     base_path = os.path.dirname(csv_filepath)
 
     for s in sets:
-        path = os.path.join(base_path,
-                            base_filename + '_' + s + '.csv')
+        path = os.path.join(base_path, base_filename + '_' + s + '.csv')
         fh.seek(0)
         rows = get_rows_for_set(reader, s)
         write_dict_list_to_csv(rows, path)
@@ -66,7 +71,7 @@ def move_files(base_path, sets=('train', 'valid', 'test')):
     for f in source:
         for s in sets:
             if f.endswith('_' + s + '.csv'):
-                final_name = f[:-(len('_' + s + '.csv'))] + '.csv'
+                final_name = f[: -(len('_' + s + '.csv'))] + '.csv'
                 f = os.path.join(base_path, f)
                 shutil.move(f, os.path.join(base_path, s, final_name))
 
@@ -86,8 +91,7 @@ def try_downloading(directory, row):
         if kind == 'gutenberg':
             time.sleep(2)
 
-        build_data.download(story_url, directory,
-                            document_id + '.content')
+        build_data.download(story_url, directory, document_id + '.content')
     else:
         return True
 
@@ -95,8 +99,7 @@ def try_downloading(directory, row):
     file_type = file_type.decode('utf-8')
 
     if 'gzip compressed' in file_type:
-        gz_path = os.path.join(directory,
-                               document_id + '.content.gz')
+        gz_path = os.path.join(directory, document_id + '.content.gz')
         shutil.move(story_path, gz_path)
         build_data.untar(gz_path)
 
@@ -111,8 +114,7 @@ def download_stories(path):
     with open(documents_csv, 'r') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
-            print("Downloading %s (%s)" % (row['wiki_title'],
-                  row['document_id']))
+            print("Downloading %s (%s)" % (row['wiki_title'], row['document_id']))
             finished = try_downloading(tmp_dir, row)
             count = 0
             while not finished and count < 5:
@@ -134,14 +136,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'narrative_qa.zip'
-        # dataset URL
-        url = NARRATIVE_QA_DOWNLOAD_URL
-        build_data.download(url, dpath, fname)
-
-        # uncompress it
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')
@@ -149,15 +146,14 @@ def build(opt):
         download_stories(base_path)
 
         # move from tmp to stories
-        tmp_stories_path = os.path.join(base_path,
-                                        'tmp')
-        new_stories_path = os.path.join(base_path,
-                                        'stories')
+        tmp_stories_path = os.path.join(base_path, 'tmp')
+        new_stories_path = os.path.join(base_path, 'stories')
         shutil.move(tmp_stories_path, new_stories_path)
 
         # divide into train, valid and test for summaries
-        summaries_csv_path = os.path.join(base_path, 'third_party',
-                                          'wikipedia', 'summaries.csv')
+        summaries_csv_path = os.path.join(
+            base_path, 'third_party', 'wikipedia', 'summaries.csv'
+        )
         new_path = os.path.join(base_path, 'summaries.csv')
         shutil.move(summaries_csv_path, new_path)
 

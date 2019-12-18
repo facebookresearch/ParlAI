@@ -3,7 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import math
 
 import torch
 import torch.nn as nn
@@ -16,24 +15,48 @@ class SelfFeedingModel(nn.Module):
     def add_cmdline_args(cls, argparser):
         model = argparser.add_argument_group('Self Feeding Model')
 
-        model.add_argument('-shl', '--sen-head-layers', type=int,
-                           default=1, help="The number of linear layers in the "
-                           "sentiment task head")
-        model.add_argument('-sexpemb', '--share-exp-embeddings', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog embeddings")
-        model.add_argument('-sexpxenc', '--share-exp-x-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog x encoder")
-        model.add_argument('-sexpyenc', '--share-exp-y-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog y encoder")
-        model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
-                           default=False, help="If True, the sentiment task shares the "
-                           "dialog embeddings")
-        model.add_argument('-ssenenc', '--share-sen-encoder', type='bool',
-                           default=False,
-                           help="If True, the sentiment task shares the dialog encoder")
+        model.add_argument(
+            '-shl',
+            '--sat-head-layers',
+            type=int,
+            default=1,
+            help="The number of linear layers in the " "satisfaction task head",
+        )
+        model.add_argument(
+            '-sfeeemb',
+            '--share-fee-embeddings',
+            type='bool',
+            default=True,
+            help="If True, the feedback task shares " "the dialog embeddings",
+        )
+        model.add_argument(
+            '-sfeexenc',
+            '--share-fee-x-encoder',
+            type='bool',
+            default=True,
+            help="If True, the feedback task shares " "the dialog x encoder",
+        )
+        model.add_argument(
+            '-sfeeyenc',
+            '--share-fee-y-encoder',
+            type='bool',
+            default=True,
+            help="If True, the feedback task shares " "the dialog y encoder",
+        )
+        model.add_argument(
+            '-ssatemb',
+            '--share-sat-embeddings',
+            type='bool',
+            default=False,
+            help="If True, the satisfaction task shares " "the dialog embeddings",
+        )
+        model.add_argument(
+            '-ssatenc',
+            '--share-sat-encoder',
+            type='bool',
+            default=False,
+            help="If True, the satisfaction task shares the dialog " "encoder",
+        )
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -51,36 +74,37 @@ class SelfFeedingModel(nn.Module):
 
         # Only build the parts of the network you will be using
         # This saves space (nbd) and prevents conflicts when loading
-        # Build explanation
-        if 'explanation' in self.opt['subtasks']:
-            if self.opt['share_exp_embeddings']:
-                self.exp_embeddings = self.dia_embeddings
+        # Build feedback
+        if 'feedback' in self.opt['subtasks']:
+            if self.opt['share_fee_embeddings']:
+                self.fee_embeddings = self.dia_embeddings
             else:
-                self.exp_embeddings = self.init_embeddings()
-            if self.opt['share_exp_x_encoder']:
-                self.x_exp_encoder = self.x_dia_encoder
+                self.fee_embeddings = self.init_embeddings()
+            if self.opt['share_fee_x_encoder']:
+                self.x_fee_encoder = self.x_dia_encoder
             else:
-                self.x_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            self.x_exp_head = nn.Dropout(p=0)
+                self.x_fee_encoder = self.build_encoder(opt, self.fee_embeddings)
+            self.x_fee_head = nn.Dropout(p=0)
 
-            if self.opt['share_exp_y_encoder']:
-                self.y_exp_encoder = self.y_dia_encoder
+            if self.opt['share_fee_y_encoder']:
+                self.y_fee_encoder = self.y_dia_encoder
             else:
-                self.y_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            self.y_exp_head = nn.Dropout(p=0)
+                self.y_fee_encoder = self.build_encoder(opt, self.fee_embeddings)
+            self.y_fee_head = nn.Dropout(p=0)
 
-        # Build sentiment
-        if 'sentiment' in self.opt['subtasks']:
-            if self.opt['share_sen_embeddings']:
-                self.sen_embeddings = self.dia_embeddings
+        # Build satisfaction
+        if 'satisfaction' in self.opt['subtasks']:
+            if self.opt['share_sat_embeddings']:
+                self.sat_embeddings = self.dia_embeddings
             else:
-                self.sen_embeddings = self.init_embeddings()
-            if self.opt['share_sen_encoder']:
-                self.x_sen_encoder = self.x_dia_encoder
+                self.sat_embeddings = self.init_embeddings()
+            if self.opt['share_sat_encoder']:
+                self.x_sat_encoder = self.x_dia_encoder
             else:
-                self.x_sen_encoder = self.build_encoder(opt, self.sen_embeddings)
-            self.x_sen_head = self.build_head(opt, outdim=1,
-                                              num_layers=self.opt['sen_head_layers'])
+                self.x_sat_encoder = self.build_encoder(opt, self.sat_embeddings)
+            self.x_sat_head = self.build_head(
+                opt, outdim=1, num_layers=self.opt['sat_head_layers']
+            )
 
     def forward(self):
         raise NotImplementedError
@@ -100,7 +124,8 @@ class SelfFeedingModel(nn.Module):
         return self.score_similarity(x_enc, y_enc)
 
     def encode_dia_y(self, y_vecs):
-        """Encodes a tensor of vectorized candidates
+        """
+        Encodes a tensor of vectorized candidates.
 
         :param y_vecs: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
             candidates
@@ -114,16 +139,18 @@ class SelfFeedingModel(nn.Module):
             y_enc = y_enc.reshape(oldshape[0], oldshape[1], -1)
         return y_enc
 
-    def score_explanation(self, x_vecs, y_vecs):
-        x_enc = self.x_exp_head(self.x_exp_encoder(x_vecs))
-        y_enc = self.y_exp_head(self.y_exp_encoder(y_vecs))
+    def score_feedback(self, x_vecs, y_vecs):
+        x_enc = self.x_fee_head(self.x_fee_encoder(x_vecs))
+        y_enc = self.y_fee_head(self.y_fee_encoder(y_vecs))
         return self.score_similarity(x_enc, y_enc)
 
-    def score_sentiment(self, x_vecs):
-        return torch.sigmoid(self.x_sen_head(self.x_sen_encoder(x_vecs))).squeeze(1)
+    def score_satisfaction(self, x_vecs):
+        return torch.sigmoid(self.x_sat_head(self.x_sat_encoder(x_vecs))).squeeze(1)
 
     def score_similarity(self, context_h, cand_h):
-        """Returns the dot product of encoded contexts and encoded candidates"""
+        """
+        Returns the dot product of encoded contexts and encoded candidates.
+        """
         if self.opt['normalize_sent_emb']:
             context_h /= context_h.norm(2, dim=1, keepdim=True)
             cand_h /= cand_h.norm(2, dim=1, keepdim=True)
@@ -131,32 +158,19 @@ class SelfFeedingModel(nn.Module):
         if cand_h.dim() == 2:
             scores = torch.matmul(context_h, cand_h.t())
         elif cand_h.dim() == 3:
-            scores = torch.bmm(
-                context_h.unsqueeze(1),
-                cand_h.transpose(
-                    1,
-                    2)).squeeze(1)
+            scores = torch.bmm(context_h.unsqueeze(1), cand_h.transpose(1, 2)).squeeze(
+                1
+            )
         else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cand_h.dim()))
+            raise RuntimeError(
+                'Unexpected candidate dimensions {}' ''.format(cand_h.dim())
+            )
 
-        return self.normalize_scores(scores)
-
-    def normalize_scores(self, scores):
-        if self.opt['scores_norm'] == 'dot':
-            return scores
-        elif self.opt['scores_norm'] == 'sqrt':
-            return scores / math.sqrt(self.opt['embedding_size'])
-        elif self.opt['scores_norm'] == 'dim':
-            return scores / self.opt['embedding_size']
-        else:
-            raise ValueError
+        return scores
 
     def init_embeddings(self):
         embeddings = nn.Embedding(
-            self.vocab_size,
-            self.opt['embedding_size'],
-            padding_idx=self.pad_idx
+            self.vocab_size, self.opt['embedding_size'], padding_idx=self.pad_idx
         )
         nn.init.normal_(
             embeddings.weight, mean=0, std=self.opt['embedding_size'] ** -0.5
@@ -182,7 +196,7 @@ class SelfFeedingModel(nn.Module):
     def build_head(self, opt, outdim=1, num_layers=1):
         dim = self.opt['embedding_size']
         modules = []
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             modules.append(nn.Linear(dim, dim))
             modules.append(nn.ReLU())
         modules.append(nn.Linear(dim, outdim))

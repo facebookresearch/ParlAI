@@ -23,7 +23,8 @@ def setup_args():
 
 
 def main(config):
-    """Creates .stitched files from .suggested files
+    """
+    Creates .stitched files from .suggested files.
 
     input: a .suggested file of logs (in ParlaiDialog format) from Mturk task 2, each of
         which starts with an initial prompt or topic request, and ends with a y
@@ -63,12 +64,14 @@ def main(config):
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} self-feeding episodes out of "
-          f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}.")
+    print(
+        f"Extracted {len(examples)} self-feeding episodes out of "
+        f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}."
+    )
 
 
 if __name__ == '__main__':
     config = setup_args()
-    assert(config['infile'].endswith('.suggested'))
-    assert(config['outfile'].endswith('.stitched'))
+    assert config['infile'].endswith('.suggested')
+    assert config['outfile'].endswith('.stitched')
     main(config)

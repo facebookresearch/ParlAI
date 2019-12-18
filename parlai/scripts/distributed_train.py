@@ -29,7 +29,6 @@ An example sbatch script is below, for a 2-host, 8-GPU setup (16 total gpus):
   #SBATCH --cpus-per-task=10
   srun python -u -m parlai.scripts.distributed_train \
     -m seq2seq -t convai2 --dict-file /path/to/dict-file
-
 """
 
 import os
@@ -65,11 +64,12 @@ def main():
         device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
         print(
-            'Initializing host {} as rank {}'
-            .format(socket.gethostname(), distributed_rank)
+            'Initializing host {} as rank {}, main is {}'.format(
+                socket.gethostname(), distributed_rank, main_host
+            )
         )
         # Begin distributed training
-        multiprocess_train(distributed_rank, opt, port, device_id, main_host)
+        multiprocess_train(distributed_rank, opt, port, 0, device_id, main_host)
     except subprocess.CalledProcessError as e:
         # scontrol failed
         raise e

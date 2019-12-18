@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Tokenizer that is backed by spaCy (spacy.io).
+"""
+Tokenizer that is backed by spaCy (spacy.io).
 
 Requires spaCy package and the spaCy english model.
 """
@@ -15,7 +16,6 @@ from .tokenizer import Tokens, Tokenizer
 
 
 class SpacyTokenizer(Tokenizer):
-
     def __init__(self, **kwargs):
         """
         Args:
@@ -49,14 +49,16 @@ class SpacyTokenizer(Tokenizer):
             else:
                 end_ws = tokens[i].idx + len(tokens[i].text)
 
-            data.append((
-                tokens[i].text,
-                text[start_ws: end_ws],
-                (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
-                tokens[i].tag_,
-                tokens[i].lemma_,
-                tokens[i].ent_type_,
-            ))
+            data.append(
+                (
+                    tokens[i].text,
+                    text[start_ws:end_ws],
+                    (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
+                    tokens[i].tag_,
+                    tokens[i].lemma_,
+                    tokens[i].ent_type_,
+                )
+            )
 
         # Set special option for non-entity tag: '' vs 'O' in spaCy
         return Tokens(data, self.annotators, opts={'non_ent': ''})

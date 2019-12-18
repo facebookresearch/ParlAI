@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+from parlai.core.worlds import create_task
+from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
+
+from copy import deepcopy
+import random
+
+
+def load_personas(opt):
+    print('[ loading personas.. ]')
+    # Create ConvAI2 data so we can assign personas.
+    convai2_opt = opt.copy()
+    convai2_opt['task'] = 'convai2:both'
+    if convai2_opt['datatype'].startswith('train'):
+        convai2_opt['datatype'] = 'train:evalmode'
+    convai2_opt['interactive_task'] = False
+    convai2_agent = RepeatLabelAgent(convai2_opt)
+    convai2_world = create_task(convai2_opt, convai2_agent)
+    personas = set()
+    while not convai2_world.epoch_done():
+        convai2_world.parley()
+        msg = convai2_world.get_acts()[0]
+        # Find a new episode
+        if msg.get('episode_done', False) and not convai2_world.epoch_done():
+            convai2_world.parley()
+            msg = convai2_world.get_acts()[0]
+            txt = msg.get('text', '').split('\n')
+            a1_persona = ""
+            a2_persona = ""
+            for t in txt:
+                if t.startswith("partner's persona:"):
+                    a1_persona += (
+                        t.replace("partner's persona:", 'your persona:') + '\n'
+                    )
+                if t.startswith('your persona:'):
+                    a2_persona += t + '\n'
+            personas.add(a1_persona)
+            personas.add(a2_persona)
+    print('[ loaded ' + str(len(personas)) + ' personas ]')
+    return list(personas)
+
+
+class InteractiveWorld(DialogPartnerWorld):
+    def __init__(self, opt, agents, shared=None):
+        super().__init__(opt, agents, shared)
+        self.personas_list = load_personas(self.opt)
+        self.cnt = 0
+
+    def get_new_personas(self):
+        random.seed()
+        personas_1 = random.choice(self.personas_list)
+        personas_2 = random.choice(self.personas_list)
+        return personas_1, personas_2
+
+    def parley(self):
+        """
+        Agent 0 goes first.
+
+        Alternate between the two agents.
+        """
+        if self.cnt == 0:
+            self.p1, self.p2 = self.get_new_personas()
+
+        acts = self.acts
+        agents = self.agents
+        if self.cnt == 0:
+            # add the persona on to the first message to agent 0
+            act = {}
+            act['text'] = self.p1
+            act['episode_done'] = False
+            act['id'] = 'persona'
+            agents[0].observe(validate(act))
+        act = deepcopy(agents[0].act())
+        if self.cnt == 0:
+            # add the persona on to the first message to agent 1
+            act.force_set('text', self.p2 + act.get('text', 'hi'))
+            agents[1].observe(validate(act))
+        else:
+            agents[1].observe(validate(act))
+        acts[1] = agents[1].act()
+        agents[0].observe(validate(acts[1]))
+        self.update_counters()
+        self.cnt += 1
+
+        if act['episode_done']:
+            print("CHAT DONE ")
+            print("\n... preparing new chat... \n")
+            self.cnt = 0
+
+
+class InteractiveSelfchatWorld(SelfChatBaseWorld):
+    def init_contexts(self):
+        self.personas_list = load_personas(self.opt)
+
+    def get_contexts(self):
+        random.seed()
+        personas_1 = random.choice(self.personas_list)
+        personas_2 = random.choice(self.personas_list)
+        return [personas_1, personas_2]

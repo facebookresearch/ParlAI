@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Helper functions for defining the set of tasks in ParlAI.
+"""
+Helper functions for defining the set of tasks in ParlAI.
+
 The actual task list and definitions are in the file task_list.py
 """
 from .task_list import task_list
@@ -24,8 +26,7 @@ def _build(task_list):
         for j in t['tags']:
             tag = _preprocess(j)
             if tag in tasks:
-                raise RuntimeError('tag ' + tag +
-                                   ' is the same as a task name')
+                raise RuntimeError('tag ' + tag + ' is the same as a task name')
             tags[tag].append(t)
     return tasks, tags
 
@@ -54,8 +55,9 @@ def _id_to_task(t_id):
 
 def ids_to_tasks(ids):
     if ids is None:
-        raise RuntimeError('No task specified. Please select a task with ' +
-                           '--task {task_name}.')
+        raise RuntimeError(
+            'No task specified. Please select a task with ' + '--task {task_name}.'
+        )
     return ','.join((_id_to_task(i) for i in ids.split(',') if len(i) > 0))
 
 

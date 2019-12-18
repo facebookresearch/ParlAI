@@ -4,11 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.utils import Timer
-from parlai.core.utils import round_sigfigs
-from parlai.core.utils import set_namedtuple_defaults
-from parlai.core.utils import padded_tensor
-from parlai.core.utils import argsort
+from parlai.core.opt import Opt
+from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
+from parlai.utils.torch import padded_tensor, argsort
+from copy import deepcopy
 import time
 import unittest
 import torch
@@ -72,6 +71,7 @@ class TestUtils(unittest.TestCase):
 
     def test_setnamedtupledefaults(self):
         from collections import namedtuple
+
         NT = namedtuple("NT", ("a", "b", "c"))
 
         # Shouldn't be able to construct a namedtuple without providing info
@@ -112,11 +112,26 @@ class TestUtils(unittest.TestCase):
         items2 = ["e", "d", "c", "b", "a"]
         torch_keys = torch.LongTensor(keys)
         assert argsort(keys, items, items2) == [
-            list(reversed(items)), list(reversed(items2))
+            list(reversed(items)),
+            list(reversed(items2)),
         ]
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
         assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
+
+    def test_opt(self):
+        opt = {'x': 0}
+        opt = Opt(opt)
+        opt['x'] += 1
+        opt['x'] = 10
+        history = opt.history['x']
+        self.assertEqual(history[0][1], 1, 'History not set properly')
+        self.assertEqual(history[1][1], 10, 'History not set properly')
+
+        opt_copy = deepcopy(opt)
+        history = opt_copy.history['x']
+        self.assertEqual(history[0][1], 1, 'Deepcopy history not set properly')
+        self.assertEqual(history[1][1], 10, 'Deepcopy history not set properly')
 
 
 if __name__ == '__main__':
