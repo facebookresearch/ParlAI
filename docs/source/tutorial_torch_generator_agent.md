@@ -135,9 +135,7 @@ class Decoder(nn.Module):
             state = encoder_state
         else:
             state = incr_state
-
         output, incr_state = self.lstm(embedded, state)
-
         return output, incr_state
 ```
 
@@ -147,9 +145,9 @@ class Decoder(nn.Module):
 The full code for the agent can be seen at <<< add >>>. Once finished, call training:
 
 ```
-python examples/train_model.py -m example_tga \
+python examples/train_model.py -m examples.seq2seq \
     -mf /tmp/example_model \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```
 
-You should get a perplexity of 139 on the validation set (which is equal to the test set for the ConvAI2 dataset), and <<< what else? Give commentary >>>
+You should get a perplexity of 139 and a token accuracy of 28% on the validation set (which is equal to the test set for the ConvAI2 dataset).
