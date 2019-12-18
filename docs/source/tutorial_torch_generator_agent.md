@@ -40,4 +40,12 @@ In order to write a generative model, your agent should extend `parlai.core.torc
 
 ### Training
 
-<<<how to call; what results should be>>>
+Finally, call training on the agent:
+
+```
+python examples/train_model.py -m example_tga \
+    -mf /tmp/example_model \
+    -t convai2 -bs 32 -eps 2 --truncate 128
+```
+
+You should get a perplexity of 139 on the validation set (which is equal to the test set for the ConvAI2 dataset), and <<<what else? Give commentary>>>
