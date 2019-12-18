@@ -47,6 +47,7 @@ def main():
 
         if fn.endswith('.py') and not src.startswith(PYTHON_SHEBANG):
             print(f'{fn}:1: Bad python3 shebang, use "{PYTHON_SHEBANG}"')
+            allgood = False
 
     if not allgood:
         sys.exit(1)

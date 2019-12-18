@@ -13,6 +13,7 @@ The corpora are all randomly, but deterministically generated
 
 from parlai.core.agents import Teacher
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
+from parlai.core.opt import Opt
 from torch.utils.data import Dataset
 import copy
 import random
@@ -40,7 +41,7 @@ class CandidateBaseTeacher(Teacher, ABC):
 
     def __init__(
         self,
-        opt: dict,
+        opt: Opt,
         shared: dict = None,
         vocab_size: int = VOCAB_SIZE,
         example_size: int = EXAMPLE_SIZE,
@@ -75,13 +76,13 @@ class CandidateBaseTeacher(Teacher, ABC):
         """
         return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         if self.datafile == 'train':
             return self.num_train
         else:
             return self.num_test
 
-    def num_examples(self):
+    def num_examples(self) -> int:
         return self.num_episodes()
 
     def _setup_data(self, fold: str):
@@ -214,13 +215,13 @@ class CandidateTeacherDataset(Dataset):
     def __getitem__(self, index):
         return (index, self.data[index])
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.num_examples()
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         return len(self.data)
 
-    def num_examples(self):
+    def num_examples(self) -> int:
         return self.num_episodes()
 
     def setup_data(self, fold):

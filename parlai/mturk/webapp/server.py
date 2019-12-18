@@ -36,12 +36,16 @@ import tornado.escape
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.webapp.run_mocks.mock_turk_manager import MockTurkManager
-from parlai import __path__ as parlai_path
+from typing import Dict, Any
+
+# https://github.com/python/mypy/issues/1422
+from parlai import __path__ as parlai_path  # type: ignore
 
 parlai_path = parlai_path[0]
 
 try:
-    from parlai_internal import __path__ as parlai_int_path
+    # https://github.com/python/mypy/issues/1422
+    from parlai_internal import __path__ as parlai_int_path  # type: ignore
 
     parlai_int_path = parlai_int_path[0]
 except Exception:
@@ -56,7 +60,7 @@ IS_DEBUG = True
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-tasks = {}
+tasks: Dict[Any, Any] = {}
 
 
 def row_to_dict(row):

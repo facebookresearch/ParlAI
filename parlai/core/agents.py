@@ -41,12 +41,14 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.utils.misc import warn_once, load_opt_file
+from parlai.utils.misc import warn_once
+from parlai.core.opt import Opt, load_opt_file
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
 import random
 import os
+from typing import List
 
 
 class Agent(object):
@@ -54,7 +56,7 @@ class Agent(object):
     Base class for all other agents.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         if not hasattr(self, 'id'):
             self.id = 'agent'
         if not hasattr(self, 'opt'):
@@ -149,7 +151,7 @@ class Agent(object):
         pass
 
     @classmethod
-    def upgrade_opt(cls, opt_from_disk):
+    def upgrade_opt(cls, opt_from_disk: Opt):
         """
         Upgrade legacy options when loading an opt file from disk.
 
@@ -199,7 +201,7 @@ class Teacher(Agent):
     Teachers provide the ``report()`` method to get back metrics.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
         if not hasattr(self, 'id'):
@@ -285,8 +287,8 @@ class MultiTaskTeacher(Teacher):
     function above.
     """
 
-    def __init__(self, opt, shared=None):
-        self.tasks = []
+    def __init__(self, opt: Opt, shared=None):
+        self.tasks: List[Agent] = []
         self.opt = opt
 
         self.id = opt['task']
@@ -449,7 +451,7 @@ def name_to_agent_class(name):
     return class_name
 
 
-def compare_init_model_opts(opt, curr_opt):
+def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     """
     Print loud warning when `init_model` opts differ from previous configuration.
     """
@@ -517,7 +519,7 @@ def compare_init_model_opts(opt, curr_opt):
         print('*' * 75)
 
 
-def load_agent_module(opt):
+def load_agent_module(opt: Opt):
     """
     Load agent options and module from file if opt file exists.
 
@@ -693,7 +695,7 @@ def get_agent_module(dir_name):
     return model_class
 
 
-def create_agent(opt, requireModelExists=False):
+def create_agent(opt: Opt, requireModelExists=False):
     """
     Create an agent from the options ``model``, ``model_params`` and ``model_file``.
 
@@ -737,7 +739,7 @@ def create_agent(opt, requireModelExists=False):
         if model is not None:
             return model
         else:
-            print("[ no model with opt yet at: " + opt.get('model_file') + "(.opt) ]")
+            print(f"[ no model with opt yet at: {opt['model_file']}(.opt) ]")
 
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
@@ -839,7 +841,7 @@ def get_task_module(taskname):
     return teacher_class
 
 
-def _add_task_flags_to_agent_opt(agent, opt, flags):
+def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     """
     Handle task flags provided by the task name itself.
 
@@ -856,7 +858,7 @@ def _add_task_flags_to_agent_opt(agent, opt, flags):
     opt['task'] = ':'.join(task)
 
 
-def create_task_agent_from_taskname(opt):
+def create_task_agent_from_taskname(opt: Opt):
     """
     Create task agent(s) assuming the input ``task_dir:teacher_class``.
 

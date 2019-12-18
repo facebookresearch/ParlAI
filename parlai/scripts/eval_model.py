@@ -125,6 +125,11 @@ def eval_model(opt, print_parser=None):
     :return: the final result of calling report()
     """
     random.seed(42)
+    if 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']:
+        raise ValueError(
+            'You should use --datatype train:evalmode if you want to evaluate on '
+            'the training set.'
+        )
 
     # load model and possibly print opt
     agent = create_agent(opt, requireModelExists=True)

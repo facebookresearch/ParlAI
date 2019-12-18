@@ -1639,6 +1639,13 @@ class MTurkManager:
                 }
             )
 
+        if self.is_sandbox and not self.is_test:
+            # Qualifications are not set in sandbox mode.
+            # We still create the qualifications above (if requested) so that
+            # assigning these qualifications to users works.
+            shared_utils.print_and_log('Qualifications are not set in sandbox mode.')
+            qualifications = []
+
         self.qualifications = qualifications
         return qualifications.copy()
 

@@ -6,7 +6,7 @@
 Transformer Agents.
 """
 from parlai.core.agents import Agent
-from parlai.utils.misc import padded_3d
+from parlai.utils.torch import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 

@@ -112,14 +112,14 @@ class Seq2seqAgent(Agent):
     """
 
     OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
+        'adadelta': optim.Adadelta,  # type: ignore
+        'adagrad': optim.Adagrad,  # type: ignore
         'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
+        'adamax': optim.Adamax,  # type: ignore
+        'asgd': optim.ASGD,  # type: ignore
+        'lbfgs': optim.LBFGS,  # type: ignore
+        'rmsprop': optim.RMSprop,  # type: ignore
+        'rprop': optim.Rprop,  # type: ignore
         'sgd': optim.SGD,
     }
 
@@ -482,13 +482,14 @@ class Seq2seqAgent(Agent):
 
                 if opt['embeddingsize'] != pretrained_dim:
                     rp = torch.Tensor(pretrained_dim, opt['embeddingsize']).normal_()
-                    t = lambda x: torch.mm(x.unsqueeze(0), rp)
                 else:
-                    t = lambda x: x
+                    rp = None
                 cnt = 0
                 for w, i in self.dict.tok2ind.items():
                     if w in embs.stoi:
-                        vec = t(embs.vectors[embs.stoi[w]])
+                        vec = embs.vectors[embs.stoi[w]]
+                        if rp is not None:
+                            vec = torch.mm(vec.unsqueeze(0), rp)
                         self.model.decoder.lt.weight.data[i] = vec
                         cnt += 1
                         if opt['lookuptable'] in ['unique', 'dec_out']:

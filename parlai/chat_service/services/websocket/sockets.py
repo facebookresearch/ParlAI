@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Dict, TypeVar
 from tornado.websocket import WebSocketHandler
 import uuid
 import logging
@@ -14,10 +15,13 @@ def get_rand_id():
     return str(uuid.uuid4())
 
 
-class MessageSocketHandler(WebSocketHandler):
-    subs = {}
+T = TypeVar('T', bound='MessageSocketHandler')
 
-    def __init__(self, *args, **kwargs):
+
+class MessageSocketHandler(WebSocketHandler):
+    def __init__(self: T, *args, **kwargs):
+        self.subs: Dict[int, T] = {}
+
         def _default_callback(message, socketID):
             logging.warn(f"No callback defined for new WebSocket messages.")
 

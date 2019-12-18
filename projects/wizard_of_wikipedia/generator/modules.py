@@ -8,7 +8,7 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
-from parlai.utils.misc import neginf
+from parlai.utils.torch import neginf
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 

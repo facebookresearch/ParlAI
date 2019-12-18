@@ -9,6 +9,8 @@ import logging
 import json
 import threading
 import time
+from typing import Dict, Union
+
 from queue import PriorityQueue, Empty
 import websocket
 
@@ -205,12 +207,15 @@ class SocketManager:
     """
 
     # Time to acknowledge different message types
-    ACK_TIME = {Packet.TYPE_ALIVE: 4, Packet.TYPE_MESSAGE: 4}
+    ACK_TIME: Dict[str, Union[int, float]] = {
+        Packet.TYPE_ALIVE: 4,
+        Packet.TYPE_MESSAGE: 4,
+    }
 
     # Default pongs without heartbeat before socket considered dead
-    DEF_MISSED_PONGS = 20
-    HEARTBEAT_RATE = 4
-    DEF_DEAD_TIME = 30
+    DEF_MISSED_PONGS: int = 20
+    HEARTBEAT_RATE: float = 4
+    DEF_DEAD_TIME: float = 30
 
     def __init__(
         self,
