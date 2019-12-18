@@ -10,7 +10,7 @@ VQA (Visual Question Answering).
 
 Its goal is to provide researchers:
 
-- **70+ popular datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [MS MARCO](http://www.msmarco.org/), [QuAC](https://www.aclweb.org/anthology/D18-1241), [HotpotQA](https://hotpotqa.github.io/), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [PersonaChat](https://arxiv.org/abs/1801.07243), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Wizard of Wikipedia](https://openreview.net/forum?id=r1l73iRqKm), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+- **80+ popular datasets available all in one place, with the same API**, among them [PersonaChat](https://arxiv.org/abs/1801.07243), [DailyDialog](https://arxiv.org/abs/1710.03957), [Wizard of Wikipedia](https://openreview.net/forum?id=r1l73iRqKm), [Empathetic Dialogues](https://arxiv.org/abs/1811.00207), [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [MS MARCO](http://www.msmarco.org/), [QuAC](https://www.aclweb.org/anthology/D18-1241), [HotpotQA](https://hotpotqa.github.io/), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php),  [Image Chat](https://arxiv.org/abs/1811.00945), [VQA](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py).
 - a wide set of **reference models** -- from retrieval baselines to transformers.
 - a large zoo of **pretrained models** ready to use off-the-shelf
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
@@ -19,9 +19,12 @@ Its goal is to provide researchers:
 - **multimodality**, some tasks use text and images
 
 ParlAI is described in the following paper:
-[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
+[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476)
+or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrjSp8X8Fp0_rTTRoLxUfW0aUm/view?usp=sharing).
 
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
+
+<p align="center"><img width="90%" src="docs/source/_static/img/parlai_examples.png" /></p>
 
 ## Installing ParlAI
 
@@ -70,7 +73,7 @@ Evaluate an IR baseline model on the validation set of the Personachat task:
 python examples/eval_model.py -m ir_baseline -t personachat -dt valid
 ```
 
-Train a single layer transformer on personachat (requires pytorch and torchtext).
+Train a single layer transformer on PersonaChat (requires pytorch and torchtext).
 Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
 python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
@@ -94,7 +97,7 @@ The code is set up into several main directories:
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
 
 ## The Team
-ParlAI is currently maintained by Emily Dinan, Alexander H. Miller, Stephen Roller, Kurt Shuster, Jack Urbanek and Jason Weston.
+ParlAI is currently maintained by Emily Dinan, Dexter Ju, Margaret Li, Spencer Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster, Eric Michael Smith, Jack Urbanek, Jason Weston, and Mary Williamson.
 A non-exhaustive list of other major contributors includes:
 Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
 Filipe de Avila Belbute Peres and Chao Pan.
