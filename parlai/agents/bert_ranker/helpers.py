@@ -258,14 +258,7 @@ class AdamWithDecay(Optimizer):
     """
 
     def __init__(
-        self,
-        params,
-        lr,
-        b1=0.9,
-        b2=0.999,
-        e=1e-6,
-        weight_decay=0.01,
-        max_grad_norm=1.0,
+        self, params, lr, b1=0.9, b2=0.999, e=1e-6, weight_decay=0.01, max_grad_norm=1.0
     ):
         if lr < 0.0:
             raise ValueError('Invalid learning rate: {} - should be >= 0.0'.format(lr))

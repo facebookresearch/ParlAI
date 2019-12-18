@@ -16,6 +16,7 @@ py-gfm==0.1.4
 py-rouge==1.1
 pyzmq==18.1.0
 regex==2019.8.19
+recommonmark==0.6.0
 requests==2.22.0
 requests-mock==1.7.0
 scikit-learn>=0.21.0
