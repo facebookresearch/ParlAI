@@ -12,8 +12,9 @@ import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
 from parlai.mturk.core.worlds import StaticMTurkTaskWorld
-from parlai.mturk.tasks.pairwise_dialogue_eval.task_config import task_config
+from parlai.mturk.tasks.acute_eval.task_config import task_config
 import parlai.mturk.core.mturk_utils as mturk_utils
+from parlai.utils.misc import warn_once
 
 
 task_queue = Queue()
@@ -54,12 +55,6 @@ def add_args(from_argv=False):
         help='list of (conv1, conv2, hit, desc) (for pre-chosen pairs, e.g. for replicating previous experiments)',
     )
     argparser.add_argument(
-        '--onboard_pair_data',
-        type=list,
-        default=None,
-        help='list of (conv1, conv2, hit, desc) onboarding tasks (for pre-chosen pairs, e.g. for replicating previous experiments)',
-    )
-    argparser.add_argument(
         '--s1_choice',
         type=str,
         default='I would prefer to talk to <Speaker 1>',
@@ -95,12 +90,6 @@ def add_args(from_argv=False):
         help='Number of conversation pairs to generate for the comparison',
     )
     argparser.add_argument(
-        '--num_onboarding_tasks',
-        type=int,
-        default=5,
-        help='Number of onboarding tasks total to screen workers with',
-    )
-    argparser.add_argument(
         '--block_on_onboarding_fail',
         type=bool,
         default=True,
@@ -110,13 +99,7 @@ def add_args(from_argv=False):
         '--onboarding_tasks',
         type=list,
         default=None,
-        help='onboarding tasks to screen workers with, list of (conv1id, conv2id, matchup) tuples',
-    )
-    argparser.add_argument(
-        '--onboarding_model_comparison',
-        type=str,
-        default='greedy_model,human_eval',
-        help='models to compare for the onboarding task. E.g. "greedy,human_eval" ',
+        help='onboarding tasks to screen workers with, list of (wrong_convid, right_convid, matchup) tuples',
     )
     argparser.add_argument(
         '--subtasks_per_hit',
@@ -171,8 +154,8 @@ def setup_task_queue(opt):
                 try:
                     single_task_json = json.loads(l)
                 except:
-                    print("FAILED TO LOAD: {} must be a  .jsonl file", data_fn)
                     print("ILLEGAL FORMATTING:", l)
+                    raise RuntimeError('One or more files are not valid .jsonl')
                 id = single_task_json.get('conversation_id')
                 all_conv_data[id] = single_task_json
                 model_convs.append(id)
@@ -194,7 +177,7 @@ def setup_task_queue(opt):
             )
             internal_id += 1
     else:
-        raise NotImplementedError("--onboarding_tasks cannot be empty or None")
+        warn_once("No onboarding task provided")
 
     ## Create main tasks from list of tuples
     if opt['pair_data']:
@@ -260,7 +243,7 @@ def setup_task_queue(opt):
             task_queue.put(desired_tasks[internal_id])
     # limit number of hits worker can do by default
     if opt['max_hits_per_worker'] == 0:
-        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) / opt[
+        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) // opt[
             'comparisons_per_hit'
         ]
 
@@ -275,7 +258,7 @@ def make_task_from_ids(
     question,
     is_flipped,
     hitid='',
-    matchup='regular',
+    matchup='',
     is_qual=False,
 ):
     """ Build task dict according to expected format
@@ -320,7 +303,7 @@ def get_new_task_data(worker, tasks_per_hit):
     worker_id = worker.worker_id
     task_data = get_onboarding_tasks(worker_id, tasks_per_hit)
     if len(task_data) == tasks_per_hit:
-        return onboarding_tasks
+        return task_data
     tries = 0
     completed_tasks = workers_tasks_completed.get(worker_id, [])
     seen_conversations = workers_to_conversations_seen.get(worker_id, [])
@@ -371,7 +354,7 @@ def return_task_data(worker_id, task_data):
     change their onboarding status depending on the task"""
     for subtask_data in task_data:
         if subtask_data['task_specs'].get('is_onboarding', False):
-            worker_onboarding_tasks_todo[worker_id].append(
+            workers_to_onboarding_tasks_todo[worker_id].append(
                 subtask_data['task_specs']['internal_id']
             )
         else:
@@ -465,6 +448,9 @@ def main(opt):
 
     display_agent_name = 'RatingWorker'
 
+    # Set up task queue before server
+    setup_task_queue(opt)
+
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
     mturk_manager = StaticMTurkManager(opt=opt)
@@ -479,8 +465,6 @@ def main(opt):
         raise Exception(
             "Set block_qualification or set block_on_onboarding_fail to False"
         )
-
-    setup_task_queue(opt)
 
     try:
         # Initialize run information
@@ -498,7 +482,7 @@ def main(opt):
             workers[0].id = display_agent_name
 
         def run_conversation(mturk_manager, opt, workers):
-            task_data = get_new_task_data(workers[0], opt['comparisons_per_hit'])
+            task_data = get_new_task_data(workers[0], opt['subtasks_per_hit'])
             world = StaticMTurkTaskWorld(
                 opt, mturk_agent=workers[0], task_data=task_data
             )
