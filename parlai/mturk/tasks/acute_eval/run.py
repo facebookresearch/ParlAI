@@ -243,9 +243,9 @@ def setup_task_queue(opt):
             task_queue.put(desired_tasks[internal_id])
     # limit number of hits worker can do by default
     if opt['max_hits_per_worker'] == 0:
-        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) // opt[
-            'comparisons_per_hit'
-        ]
+        opt['max_hits_per_worker'] = (
+            len(desired_tasks) + len(onboarding_tasks)
+        ) // opt['comparisons_per_hit']
 
 
 def make_task_from_ids(
