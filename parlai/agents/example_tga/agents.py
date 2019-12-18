@@ -194,10 +194,11 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
         Construct the model.
         """
 
-        self.model = ExampleModel(self.dict, self.opt['hidden_size'])
+        model = ExampleModel(self.dict, self.opt['hidden_size'])
         # we're responsible for setting the embeddings ourselves, but TorchAgent
         # gives us a nice helper
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
-                self.model.embeddings.weight, self.opt['embedding_type']
+                model.embeddings.weight, self.opt['embedding_type']
             )
+        return model

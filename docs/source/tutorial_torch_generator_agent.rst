@@ -6,7 +6,7 @@
 Using Torch Generator Agent
 ===========================
 
-**Author**: Stephen Roller
+**Authors**: Stephen Roller, Eric Smith
 
 :py:class:`~parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract
 parent class that provides functionality for building autoregressive generative
@@ -17,7 +17,7 @@ interface, but then provides you rich functionality like beam search and samplin
 Example Models
 --------------
 
-Two major models in ParlAI inheret from TorchGeneratorAgent: seq2seq and transformer.
+Two major models in ParlAI inherit from TorchGeneratorAgent: seq2seq and transformer.
 You can try one of these with the example below:
 
 .. code-block:: bash
@@ -31,6 +31,11 @@ Creating a Model
 In order to write a generative model, your agent should extend
 :py:class:`~parlai.core.torch_generator_agent.TorchGeneratorAgent`. This parent
 class implements ``train_step`` and ``eval_step``, so you only need to implement
-your model. However, your model should implement the 
-`~parlai.core.torch_generator_agent.TorchGeneratorModel` interface.
+your model and instantiate it through `build_model()`. However, your model should implement the
+:py:class:`~parlai.core.torch_generator_agent.TorchGeneratorModel` interface.
 
+
+Tutorial
+--------
+
+<<<>>>
