@@ -20,11 +20,57 @@ In order to write a generative model, your agent should extend `parlai.core.torc
 
 ## Tutorial
 
-<<<what tutorial will do; intro to example module>>>
+This tutorial will walk you through creating a simple generative model, found at `parlai.agents.example_tga.agents`, that consists of an LSTM-based encoder and decoder.
 
 ### Extending `TorchGeneratorAgent`
 
-<<<>>>
+A minimal `TorchGeneratorAgent` only needs to implement `build_model()`, but if you want to specify any command-line arguments, you'll need to add `add_cmdline_args()` as well. This method first adds flags for the agent's superclass and then adds a `--hidden-size` flag for the hidden dimension of the LSTMs.
+
+In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict <<< where this comes from >>> and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding module.
+
+Altogether, our example agent is defined as follows:
+
+```
+import parlai.core.torch_generator_agent as tga
+
+
+class ExampleTgaAgent(tga.TorchGeneratorAgent):
+    """
+    Example agent.
+
+    Implements the interface for TorchGeneratorAgent. The minimum requirement is that it
+    implements ``build_model``, but we will want to include additional command line
+    parameters.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        """
+        Add CLI arguments.
+        """
+        # Make sure to add all of TorchGeneratorAgent's arguments
+        super(ExampleTgaAgent, cls).add_cmdline_args(argparser)
+
+        # Add custom arguments only for this model.
+        group = argparser.add_argument_group('Example TGA Agent')
+        group.add_argument(
+            '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'
+        )
+
+    def build_model(self):
+        """
+        Construct the model.
+        """
+
+        model = ExampleModel(self.dict, self.opt['hidden_size'])
+        # we're responsible for setting the embeddings ourselves, but TorchAgent
+        # gives us a nice helper
+        if self.opt['embedding_type'] != 'random':
+            self._copy_embeddings(
+                model.embeddings.weight, self.opt['embedding_type']
+            )
+        return model
+```
 
 ### Extending `TorchGeneratorModel`
 
@@ -48,4 +94,4 @@ python examples/train_model.py -m example_tga \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```
 
-You should get a perplexity of 139 on the validation set (which is equal to the test set for the ConvAI2 dataset), and <<<what else? Give commentary>>>
+You should get a perplexity of 139 on the validation set (which is equal to the test set for the ConvAI2 dataset), and <<< what else? Give commentary >>>
