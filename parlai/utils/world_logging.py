@@ -22,6 +22,7 @@ class WorldLogger:
     """
     Logs actions/observations in a world and saves in a JSONL format.
     """
+
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('World Logging')
@@ -29,7 +30,7 @@ class WorldLogger:
             '--log-keep-fields',
             type=str,
             default=KEEP_ALL,
-            help='Fields to keep when logging. Should be a comma separated list'
+            help='Fields to keep when logging. Should be a comma separated list',
         )
 
     def __init__(self, opt):
