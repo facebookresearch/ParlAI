@@ -27,7 +27,7 @@ This tutorial will walk you through creating a simple generative model, found at
 
 A minimal `TorchGeneratorAgent` only needs to implement `build_model()`, but if you want to specify any command-line arguments, you'll need to add `add_cmdline_args()` as well. This method first adds flags for `TorchGeneratorAgent` and then adds a `--hidden-size` flag for the hidden dimension of the LSTMs.
 
-In `build_model()`, instantiate our example model (defined below) by passing in the agent's dict (set by `TorchAgent`) and the hidden size. You'll also need to add lines to optionally copy pre-existing token embeddings into the model's embedding table.
+In `build_model()`, we instantiate our example model (defined below) by passing in the agent's dict (set by `TorchAgent`) and the hidden size. We add lines to optionally copy pre-existing token embeddings into the model's embedding table.
 
 Altogether, our example agent is defined as follows:
 
@@ -76,14 +76,14 @@ class ExampleModel(tga.TorchGeneratorModel):
         self.decoder = Decoder(self.embeddings, hidden_size)
 ```
 
-We next define a function to project the output of the decoder back into the space of tokens:
+We next define a function to project the output of the decoder back into the token space:
 
 ```
     def output(self, decoder_output):
         return F.linear(decoder_output, self.embeddings.weight)
 ```
 
-Lastly, we need to define two functions to reindex the latent states of the encoder and decoder. We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each token step of beam search. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
+Lastly, we define two functions to reindex the latent states of the encoder and decoder along the sample dimension. We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each step of beam search. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
 ```
     def reorder_encoder_states(self, encoder_states, indices):
         h, c = encoder_states
@@ -96,7 +96,7 @@ Lastly, we need to define two functions to reindex the latent states of the enco
 
 ### Creating the encoder
 
-The encoder is straightfoward: it comprises an embedding layer and an LSTM, and a forward pass through the encoder consists of passing the sequences of input tokens through both of them sequentially. The final hidden state is returned.
+The encoder is straightfoward: it contains an embedding layer and an LSTM, and a forward pass through the encoder consists of passing the sequences of input tokens through both of them sequentially. The final hidden state is returned.
 
 ```
 class Encoder(nn.Module):
