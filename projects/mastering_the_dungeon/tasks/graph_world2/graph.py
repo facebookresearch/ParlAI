@@ -214,9 +214,7 @@ class Graph(object):
                 continue
             return i
 
-        return (
-            False
-        )  # There are results given the nearby conditions, but they do not satisfy the property constraints.
+        return False  # There are results given the nearby conditions, but they do not satisfy the property constraints.
 
     def copy(self):
         return deepcopy(self)

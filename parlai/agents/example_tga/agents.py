@@ -122,8 +122,8 @@ class ExampleModel(tga.TorchGeneratorModel):
     """
     ExampleModel implements the final components of TorchGeneratorModel.
 
-    Mainly needs to implement reorder_encoder_size, and instantiate self.encoder and
-    self.decoder.
+    Mainly needs to implement reorder_encoder_size, and instantiate
+    self.encoder and self.decoder.
     """
 
     def __init__(self, dictionary, esz=256, hidden_size=1024):
@@ -138,9 +138,7 @@ class ExampleModel(tga.TorchGeneratorModel):
         self.decoder = Decoder(self.embeddings, hidden_size)
 
     def output(self, decoder_output):
-        """
-        Perform the final output -> logits transformation.
-        """
+        """Perform the final output -> logits transformation."""
         return F.linear(decoder_output, self.embeddings.weight)
 
     def reorder_encoder_states(self, encoder_states, indices):
@@ -157,10 +155,10 @@ class ExampleModel(tga.TorchGeneratorModel):
         """
         Reorder the decoder states to select only the given batch indices.
 
-        This method can be a stub which always returns None; this will result in the
-        decoder doing a complete forward pass for every single token, making generation
-        O(n^2). However, if any state can be cached, then this method should be
-        implemented to reduce the generation complexity to O(n).
+        This method can be a stub which always returns None; this will result in
+        the decoder doing a complete forward pass for every single token, making
+        generation O(n^2). However, if any state can be cached, then this method
+        should be implemented to reduce the generation complexity to O(n).
         """
         h, c = incr_state
         return h[:, indices, :], c[:, indices, :]
@@ -170,16 +168,14 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
     """
     Example agent.
 
-    Implements the interface for TorchGeneratorAgent. The minimum requirement is that it
-    implements ``build_model``, but we will want to include additional command line
-    parameters.
+    Implements the interface for TorchGeneratorAgent. The minimum requirement
+    is that it implements ``build_model``, but we will want to include additional
+    command line parameters.
     """
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        """
-        Add CLI arguments.
-        """
+        """Add CLI arguments."""
         # Make sure to add all of TorchGeneratorAgent's arguments
         super(ExampleTgaAgent, cls).add_cmdline_args(argparser)
 
@@ -190,9 +186,7 @@ class ExampleTgaAgent(tga.TorchGeneratorAgent):
         )
 
     def build_model(self):
-        """
-        Construct the model.
-        """
+        """Construct the model."""
 
         self.model = ExampleModel(self.dict, self.opt['hidden_size'])
         # we're responsible for setting the embeddings ourselves, but TorchAgent
