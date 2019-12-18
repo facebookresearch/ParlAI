@@ -23,10 +23,10 @@ from parlai.core.logs import TensorboardLogger
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
+from parlai.utils.world_logging import WorldLogger
 
 import json
 import random
-from tqdm import tqdm
 
 
 def setup_args(parser=None):
@@ -44,7 +44,7 @@ def setup_args(parser=None):
         'file path. Set to the empty string to not save at all.',
     )
     parser.add_argument(
-        '--save-model-replies',
+        '--save-world-logs',
         type='bool',
         default=False,
         help='Saves a jsonl file containing all of the task examples and '
@@ -72,12 +72,13 @@ def setup_args(parser=None):
         'ppl,f1,accuracy,hits@1,rouge,bleu'
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
+    WorldLogger.add_cmdline_args(parser)
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
 
 
-def _save_eval_stats(opt, report, replies):
+def _save_eval_stats(opt, report):
     report_fname = opt['report_filename']
     if report_fname == '':
         return
@@ -89,17 +90,6 @@ def _save_eval_stats(opt, report, replies):
         print(f'[ Saving model report to {report_fname} ... ]')
         json.dump({'opt': opt, 'report': report}, f, indent=4)
 
-    # Save model replies
-    if opt['save_model_replies']:
-        for task, replies in replies.items():
-            base_name = report_fname.split('.')[0]
-            replies_fname = base_name + f'.{task}_replies.jsonl'
-            print(f'[ Saving model replies for task {task} to {replies_fname} ... ]')
-            with open(replies_fname, 'w') as f:
-                for reply in tqdm(replies):
-                    json_reply = json.dumps(reply)
-                    f.write(json_reply + '\n')
-
 
 def _eval_single_world(opt, agent, task):
     print(
@@ -107,6 +97,9 @@ def _eval_single_world(opt, agent, task):
             task, opt.get('datatype', 'N/A')
         )
     )
+    # set up world logger
+    world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
+
     task_opt = opt.copy()  # copy opt since we're editing the task
     task_opt['task'] = task
     world = create_task(task_opt, agent)  # create worlds for tasks
@@ -121,13 +114,11 @@ def _eval_single_world(opt, agent, task):
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
 
-    model_replies = []
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
         world.parley()
-        if opt['save_model_replies']:
-            acts = world.get_acts()
-            model_replies.append(acts)
+        if world_logger is not None:
+            world_logger.log(world)
         if opt['display_examples']:
             # display examples
             print(world.display() + '\n~~')
@@ -138,7 +129,15 @@ def _eval_single_world(opt, agent, task):
 
     report = world.report()
     world.reset()
-    return report, model_replies
+
+    # possibly dump world acts to file
+    if world_logger is not None:
+        world_logger.reset()  # add final acts to logs
+        base_outfile = opt['report_filename'].split('.')[0]
+        outfile = base_outfile + f'_{task}_replies.jsonl'
+        world_logger.write_jsonl_format(outfile)
+
+    return report
 
 
 def eval_model(opt, print_parser=None):
@@ -157,7 +156,7 @@ def eval_model(opt, print_parser=None):
             'the training set.'
         )
 
-    if opt['save_model_replies'] and not opt['report_filename']:
+    if opt['save_world_logs'] and not opt['report_filename']:
         raise RuntimeError(
             'In order to save model replies, please specify the save path '
             'with --report-filename'
@@ -172,12 +171,9 @@ def eval_model(opt, print_parser=None):
 
     tasks = opt['task'].split(',')
     reports = []
-    replies = {}
     for task in tasks:
-        task_report, model_replies = _eval_single_world(opt, agent, task)
+        task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
-        if opt['save_model_replies']:
-            replies[task] = model_replies
 
     report = aggregate_task_reports(
         reports, tasks, micro=opt.get('aggregate_micro', True)
@@ -191,7 +187,7 @@ def eval_model(opt, print_parser=None):
         )
     )
     print(report)
-    _save_eval_stats(opt, report, replies)
+    _save_eval_stats(opt, report)
     return report
 
 
