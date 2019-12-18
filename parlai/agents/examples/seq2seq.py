@@ -63,7 +63,8 @@ class Encoder(nn.Module):
             You can return anything you like; it is will be passed verbatim
             into the decoder for conditioning. However, it should be something
             you can easily manipulate in ``reorder_encoder_states``.
-            This particular implementation returns the output tensor from the LSTM.
+            This particular implementation returns the hidden and cell states from the
+            LSTM.
         """
         embedded = self.embeddings(input_tokens)
         _output, hidden = self.lstm(embedded)

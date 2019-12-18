@@ -7,7 +7,7 @@
 
 ## Example Models
 
-Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try one of these with the example below:
+Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try the transformer with the example below:
 
 ```
 python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtransformer \
