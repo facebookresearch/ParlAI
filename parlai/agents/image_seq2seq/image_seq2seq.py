@@ -79,9 +79,6 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
             self._copy_embeddings(
                 self.model.embeddings.weight, self.opt['embedding_type']
             )
-        if self.use_cuda:
-            self.model = self.model.cuda()
-
         return self.model
 
     def reset_metrics(self):
@@ -138,6 +135,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         if 'text' not in obs or 'text_vec' not in obs:
             return obs
         if self.opt.get('include_image_token', False):
+            # `truncate` is the third arg to this function
             truncate = args[2] - 1 if args[2] is not None else None
             vec = torch.LongTensor(
                 self._check_truncate(obs['text_vec'], truncate, True)
