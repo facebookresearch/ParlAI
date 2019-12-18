@@ -8,6 +8,7 @@ The core library contains the following files:
 - **build_data.py**: basic utilities for setting up data for tasks. you can override if your filesystem needs different functionality.
 - **dict.py**: contains code for building general NLP-style dictionaries from observations
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
+- **loader.py**: functions for loading world, agents, tasks, and teacher modules
 - **metrics.py**: computes evaluation metrics, e.g. ranking metrics, etc.
 - **params.py**: uses argparse to interpret command line arguments for ParlAI
 - **teachers.py**: contains teachers that deal with dialogue-based tasks, as well as data classes for storing data
