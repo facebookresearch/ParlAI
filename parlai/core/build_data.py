@@ -437,20 +437,27 @@ def download_multiprocess(
     urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None
 ):
     """
-    Download items in parallel (e.g. for an image + dialogue task)
+    Download items in parallel (e.g. for an image + dialogue task).
 
-    Note: "of threading, multiprocess and pytorch.multiprocessing pick two".
-    These three don't all play well together. On OS X, may hang upon successful finish.
+    WARNING: may have issues with OS X.
 
-    :param urls: Array of urls to download
-    :param path: directory to save items in
-    :param num_processes: number of processes to use
-    :param chunk_size: chunk size to use
-    :param dest_filenames: optional array of same length as url with filenames.
-     Images will be saved as path + dest_filename
-    :param error_path: where to save error logs
-    :return: array of tuples of (destination filename, http status code, error
-    message if any). Note that upon failure, file may not actually be created.
+    :param urls:
+        Array of urls to download
+    :param path:
+        directory to save items in
+    :param num_processes:
+        number of processes to use
+    :param chunk_size:
+        chunk size to use
+    :param dest_filenames:
+        optional array of same length as url with filenames.  Images will be
+        saved as path + dest_filename
+    :param error_path:
+        where to save error logs
+    :return:
+        array of tuples of (destination filename, http status code, error
+        message if any). Note that upon failure, file may not actually be
+        created.
     """
 
     pbar = tqdm.tqdm(total=len(urls), position=0)
