@@ -79,13 +79,14 @@ def write_agent(fout, agent_readme):
     fout.write('\n\n')
 
 
-def write_all_agents(fout):
+def write_all_agents():
     """
     Write list of agents to fout.
 
     :param fout:
         file object to write to
     """
+    os.makedirs('agent_refs', exist_ok=True)
     agents = [
         name
         for _, name, _ in pkgutil.iter_modules(
@@ -93,10 +94,9 @@ def write_all_agents(fout):
         )
     ]
     for agent in agents:
-        write_agent(fout, prepare_agent_readme(agent))
+        with open(f'agent_refs/{agent}.rst', 'w') as fout:
+            write_agent(fout, prepare_agent_readme(agent))
 
 
 # Write the agents!
-
-with open('agent_refs.inc', 'w') as f:
-    write_all_agents(f)
+write_all_agents()
