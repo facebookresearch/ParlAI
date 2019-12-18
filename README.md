@@ -24,7 +24,7 @@ or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrj
 
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
-<p align="center"><img width="90%" src="docs/source/_static/img/parlai_examples.png" /></p>
+<p align="center"><img width="90%" src="docs/source/_static/img/parlai_example.png" /></p>
 
 ## Installing ParlAI
 
