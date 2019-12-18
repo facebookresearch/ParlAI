@@ -91,7 +91,7 @@ class WorldLogger:
 
     def log(self, world):
         """
-        TODO: write docstring here
+        Log acts from a world.
         """
         # log batch world
         if self._is_batch_world(world):
@@ -138,7 +138,7 @@ class WorldLogger:
                 fw.write('\n')
 
     def write_jsonl_format(self, outfile):
-        print('[ Saving log to {} in jsonl format]'.format(outfile))
+        print('[ Saving log to {} in jsonl format ]'.format(outfile))
         with open(outfile, 'w') as of:
             for episode in tqdm(self._logs):
                 dialog = {'dialog': episode}
