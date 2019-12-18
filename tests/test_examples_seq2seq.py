@@ -26,7 +26,6 @@ class TestExampleSeq2Seq(unittest.TestCase):
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
                 truncate=128,
-                no_cuda=True,
             )
         )
 
