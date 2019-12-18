@@ -7,8 +7,38 @@
 import random
 from typing import Any, Dict, List
 
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.agents import Agent
-from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.core.worlds import create_task, DialogPartnerWorld, validate
+
+
+def load_openers(opt):
+    base_task = opt['task'].split(':')[0]
+    if base_task == 'self_chat':
+        # TODO(2284): Load default openers from s3
+        return
+    print('[ loading conversation openers... ]')
+    # create dummy task so we can get openers from the data
+    task_opt = opt.copy()
+    task_opt['task'] = base_task
+    # default train will loop forever, but evalmode will stop after one epoch
+    if task_opt['datatype'].startswith('train'):
+        task_opt['datatype'] = 'train:evalmode'
+    task_opt['interactive_task'] = False
+    task_agent = RepeatLabelAgent(task_opt)
+    task_world = create_task(task_opt, task_agent)
+    # run through task data, collecting all first messages
+    openers = set()
+    is_first_turn = True
+    while not task_world.epoch_done():
+        task_world.parley()
+        msg = task_world.get_acts()[0]
+        # add only the first message in the episode
+        if is_first_turn:
+            openers.add(msg.get('text', ''))
+        is_first_turn = msg.get('episode_done', False)
+    print(f'[ loaded {len(openers)} openers ]')
+    return list(openers)
 
 
 class SelfChatBaseWorld(DialogPartnerWorld):
@@ -27,10 +57,12 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         return ['__SILENCE__', '']
 
     def init_openers(self) -> None:
-        pass
+        if self.opt.get('seed_messages_from_task'):
+            self._openers = load_openers(self.opt)
 
     def get_openers(self, episode_num: int) -> List[str]:
-        pass
+        if self._openers:
+            return [random.choice(self._openers)]
 
     def display(self):
         s = ''

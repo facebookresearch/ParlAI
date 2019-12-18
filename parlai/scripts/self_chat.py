@@ -41,6 +41,11 @@ def setup_args(parser=None):
         default=10,
         help="The number of dialogue turns before self chat ends.",
     )
+    parser.add_argument(
+        '--seed-messages-from-task',
+        action='store_true',
+        help="Automatically seed conversation with messages from task dataset.",
+    )
     parser.add_argument('--outfile', type=str, default='/tmp/selfchat.json')
     parser.add_argument(
         '--format', type=str, default='json', choices={'parlai', 'json'}
