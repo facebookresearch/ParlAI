@@ -96,6 +96,8 @@ If you have any questions, bug reports or feature requests, please don't hesitat
 ## The Team
 ParlAI is currently maintained by Emily Dinan, Dexter Ju, Margaret Li, Spencer Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster, Eric Michael Smith, Jack Urbanek, Jason Weston, and Mary Williamson.
 
+Former major contributors and maintainers include Alexander H. Miller, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres and Chao Pan.
+
 ## Citation
 
 Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlAI in your work:
