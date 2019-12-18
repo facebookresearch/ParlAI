@@ -3,14 +3,21 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Websocket Runner."""
+"""
+Websocket Runner.
+"""
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.websocket.websocket_manager import WebsocketManager
 from parlai.chat_service.services.messenger import shared_utils as utils
 
 
+SERVICE_NAME = 'websocket'
+
+
 def setup_args():
-    """Set up args."""
+    """
+    Set up args.
+    """
     parser = ParlaiParser(False, False)
     parser.add_parlai_data_path()
     parser.add_websockets_args()
@@ -18,7 +25,10 @@ def setup_args():
 
 
 def run(opt):
-    """Run MessengerManager."""
+    """
+    Run MessengerManager.
+    """
+    opt['service'] = SERVICE_NAME
     manager = WebsocketManager(opt)
     try:
         manager.start_task()

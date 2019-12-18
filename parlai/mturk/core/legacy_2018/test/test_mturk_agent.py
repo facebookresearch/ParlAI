@@ -61,7 +61,9 @@ statuses = active_statuses + complete_statuses
 
 
 class TestAssignState(unittest.TestCase):
-    """Various unit tests for the AssignState class"""
+    """
+    Various unit tests for the AssignState class.
+    """
 
     def setUp(self):
         self.agent_state1 = AssignState()
@@ -80,7 +82,9 @@ class TestAssignState(unittest.TestCase):
         self.mturk_manager.shutdown()
 
     def test_assign_state_init(self):
-        '''Test proper initialization of assignment states'''
+        """
+        Test proper initialization of assignment states.
+        """
         self.assertEqual(self.agent_state1.status, AssignState.STATUS_NONE)
         self.assertEqual(len(self.agent_state1.messages), 0)
         self.assertEqual(len(self.agent_state1.message_ids), 0)
@@ -91,7 +95,9 @@ class TestAssignState(unittest.TestCase):
         self.assertIsNone(self.agent_state1.last_command)
 
     def test_message_management(self):
-        '''Test message management in an AssignState'''
+        """
+        Test message management in an AssignState.
+        """
         # Ensure message appends succeed and are idempotent
         self.agent_state1.append_message(MESSAGE_1)
         self.assertEqual(len(self.agent_state1.get_messages()), 1)
@@ -118,7 +124,9 @@ class TestAssignState(unittest.TestCase):
         self.assertEqual(len(self.agent_state2.message_ids), 1)
 
     def test_state_handles_status(self):
-        '''Ensures status updates and is_final are valid'''
+        """
+        Ensures status updates and is_final are valid.
+        """
 
         for status in statuses:
             self.agent_state1.set_status(status)
@@ -141,7 +149,9 @@ class TestAssignState(unittest.TestCase):
 
 
 class TestMTurkAgent(unittest.TestCase):
-    """Various unit tests for the MTurkAgent class"""
+    """
+    Various unit tests for the MTurkAgent class.
+    """
 
     def setUp(self):
         argparser = ParlaiParser(False, False)
@@ -172,7 +182,9 @@ class TestMTurkAgent(unittest.TestCase):
             os.remove(disconnect_path)
 
     def test_init(self):
-        '''Test initialization of an agent'''
+        """
+        Test initialization of an agent.
+        """
         self.assertIsNotNone(self.turk_agent.creation_time)
         self.assertIsNone(self.turk_agent.id)
         self.assertIsNone(self.turk_agent.message_request_time)
@@ -186,7 +198,9 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertTrue(self.turk_agent.alived)
 
     def test_state_wrappers(self):
-        '''Test the mturk agent wrappers around its state'''
+        """
+        Test the mturk agent wrappers around its state.
+        """
         for status in statuses:
             self.turk_agent.set_status(status)
             self.assertEqual(self.turk_agent.get_status(), status)
@@ -225,14 +239,18 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertFalse(self.turk_agent.is_in_task())
 
     def test_connection_id(self):
-        '''Ensure the connection_id hasn't changed'''
+        """
+        Ensure the connection_id hasn't changed.
+        """
         connection_id = "{}_{}".format(
             self.turk_agent.worker_id, self.turk_agent.assignment_id
         )
         self.assertEqual(self.turk_agent.get_connection_id(), connection_id)
 
     def test_inactive_data(self):
-        '''Ensure data packet generated for inactive commands is valid'''
+        """
+        Ensure data packet generated for inactive commands is valid.
+        """
         for status in complete_statuses:
             self.turk_agent.set_status(status)
             data = self.turk_agent.get_inactive_command_data()
@@ -260,7 +278,9 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertTrue(has_changed)
 
     def test_message_queue(self):
-        '''Ensure observations and acts work as expected'''
+        """
+        Ensure observations and acts work as expected.
+        """
         self.mturk_manager.send_message = mock.MagicMock()
         self.turk_agent.observe(ACT_1)
         self.mturk_manager.send_message.assert_called_with(

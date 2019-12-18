@@ -7,6 +7,22 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json',
+        'train-v2.0.json',
+        '68dcfbb971bd3e96d5b46c7177b16c1a4e7d4bdef19fb204502738552dede002',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json',
+        'dev-v2.0.json',
+        '80a5225e94905956a6446d296ca1093975c4d3b3260f1d6c8f68bc2ab77182d8',
+        zipped=False,
+    ),
+]
 
 
 def build(opt):
@@ -21,11 +37,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'train-v2.0.json'
-        fname2 = 'dev-v2.0.json'
-        url = 'https://rajpurkar.github.io/SQuAD-explorer/dataset/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

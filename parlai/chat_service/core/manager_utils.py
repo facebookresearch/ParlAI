@@ -19,7 +19,8 @@ SOCKET_TIMEOUT = 6
 
 # Socket handler
 class ChatServiceMessageSocket:
-    """ChatServiceMessageSocket is a wrapper around websocket to forward messages from the
+    """
+    ChatServiceMessageSocket is a wrapper around websocket to forward messages from the
     remote server to the ChatServiceManager.
     """
 
@@ -69,7 +70,9 @@ class ChatServiceMessageSocket:
             pass
 
     def _send_world_alive(self):
-        """Registers world with the passthrough server"""
+        """
+        Registers world with the passthrough server.
+        """
         self._safe_send(
             json.dumps(
                 {
@@ -81,7 +84,9 @@ class ChatServiceMessageSocket:
         )
 
     def _setup_socket(self):
-        """Create socket handlers and registers the socket"""
+        """
+        Create socket handlers and registers the socket.
+        """
 
         def on_socket_open(*args):
             shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
@@ -107,8 +112,10 @@ class ChatServiceMessageSocket:
                 self._ensure_closed()
 
         def on_disconnect(*args):
-            """Disconnect event is a no-op for us, as the server reconnects
-            automatically on a retry"""
+            """
+            Disconnect event is a no-op for us, as the server reconnects automatically
+            on a retry.
+            """
             shared_utils.print_and_log(
                 logging.INFO, 'World server disconnected: {}'.format(args)
             )
@@ -116,7 +123,9 @@ class ChatServiceMessageSocket:
             self._ensure_closed()
 
         def on_message(*args):
-            """Incoming message handler for messages from the FB user"""
+            """
+            Incoming message handler for messages from the FB user.
+            """
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':
                 self.alive = True
@@ -136,7 +145,7 @@ class ChatServiceMessageSocket:
             url_base_name = self.server_url.split('https://')[1]
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}/".format(url_base_name)
+                    sock_addr = "wss://{}/".format(url_base_name)
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -168,7 +177,8 @@ class ChatServiceMessageSocket:
 
 
 class ChatServiceWorldRunner:
-    """World Runner.
+    """
+    World Runner.
 
     Launches worlds, overworlds, etc. Helper for ChatServiceManager.
     """
@@ -183,14 +193,42 @@ class ChatServiceWorldRunner:
         self.system_done = False
         self.opt = opt
         self.tasks = {}  # task ID to task
+        self.initialized = False
+
+        def _is_done_initializing(fut):
+            e = fut.exception()
+            if e is not None:
+                self._log('`module_initialize` returned with error {}'.format(repr(e)))
+                if self.debug:
+                    raise e
+            if fut.result():
+                print(fut.result())
+            if self.debug:
+                print("DEBUG: Call to `module_initialize` has completed...")
+            self.initialized = True
+
+        if hasattr(self._world_module, "module_initialize"):
+            self._log("Initializing world module...")
+            # perform any module intialization steps
+            init_fn = self._world_module.module_initialize
+            self.init_fut = self.executor.submit(init_fn, opt, manager)
+            self.init_fut.add_done_callback(_is_done_initializing)
+        else:
+            self._log("World module does not have `module initialize` function")
+            self.initialized = True
 
     def _log(self, text):
         if self.debug:
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            utils.print_and_log(logging.INFO, "{} DEBUG: {}".format(time, text))
+            print("{} DEBUG: {}".format(time, text))
+
+    def is_initialized(self):
+        return self.initialized
 
     def shutdown(self):
-        """Shutdown the world runner."""
+        """
+        Shutdown the world runner.
+        """
         for _, task in self.tasks.items():
             if task.world is not None:
                 task.world.shutdown()
@@ -201,7 +239,8 @@ class ChatServiceWorldRunner:
         self._log("Shutdown complete.")
 
     def _run_world(self, task, world_name, agents):
-        """Run a world until completion.
+        """
+        Run a world until completion.
 
         :param task:
             TaskState. State of the given task.
@@ -229,7 +268,8 @@ class ChatServiceWorldRunner:
         return ret_val, world_data
 
     def launch_task_world(self, task_name, world_name, agents):
-        """Launch a task world.
+        """
+        Launch a task world.
 
         Return the job's future.
 
@@ -255,7 +295,8 @@ class ChatServiceWorldRunner:
         return fut
 
     def launch_overworld(self, task_name, overworld_name, onboard_map, overworld_agent):
-        """Launch an overworld and a subsequent onboarding world.
+        """
+        Launch an overworld and a subsequent onboarding world.
 
         Return the job's future
 
@@ -287,7 +328,7 @@ class ChatServiceWorldRunner:
                 self._world_module, overworld_name, "generate_world"
             )
             overworld = world_generator(self.opt, [overworld_agent])
-            while not self.system_done:
+            while not overworld.episode_done() and not self.system_done:
                 world_type = overworld.parley()
                 if world_type is None:
                     time.sleep(0.5)
@@ -310,6 +351,7 @@ class ChatServiceWorldRunner:
                 while agent_state.get_active_agent() != overworld_agent:
                     time.sleep(2)
                 overworld.return_overworld()
+            utils.print_and_log(logging.INFO, 'exiting overworld')
             return world_type
 
         fut = self.executor.submit(_world_function)

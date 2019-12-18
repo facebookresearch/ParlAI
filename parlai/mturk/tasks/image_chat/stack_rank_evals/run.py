@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -20,49 +21,48 @@ round_choices = ['first_response', 'second_response']
 
 def main():
     """
-        Human Evaluation of various responses to comments on images.
+    Human Evaluation of various responses to comments on images.
 
-        A turker is shown an image and some dialog history. Then, the
-        turker is asked to choose which response they think is more engaging.
+    A turker is shown an image and some dialog history. Then, the
+    turker is asked to choose which response they think is more engaging.
 
-        If no `--eval-data-path` is given, the data from the original
-        Image-Chat dataset is used.
+    If no `--eval-data-path` is given, the data from the original
+    Image-Chat dataset is used.
 
-        To use your own data, please specify `--eval-data-path`, a path to an
-        appropriate json file with a list of examples, where each example
-        has the following structure:
-            {
-                'image_hash': <hash of image>,
-                'dialog': [(personality, text), ...] - list of personality, text tuples
-                'personality': <personality of responses to compare>
-                '<compare_key_1>': <first response to compare>,
-                '<compare_key_2>': <second option to compare>,
-                .
-                .
-                .
-            }
-        Note that compare_key_1 and compare_key_2 can be any field, as long as they
-        map to a string response.
+    To use your own data, please specify `--eval-data-path`, a path to an
+    appropriate json file with a list of examples, where each example
+    has the following structure:
+        {
+            'image_hash': <hash of image>,
+            'dialog': [(personality, text), ...] - list of personality, text tuples
+            'personality': <personality of responses to compare>
+            '<compare_key_1>': <first response to compare>,
+            '<compare_key_2>': <second option to compare>,
+            .
+            .
+            .
+        }
+    Note that compare_key_1 and compare_key_2 can be any field, as long as they
+    map to a string response.
 
-        Example Scenario:
-            Suppose you have the original Image-Chat dataset, and
-            you would like to compare the outputs of your model called `model`.
+    Example Scenario:
+        Suppose you have the original Image-Chat dataset, and
+        you would like to compare the outputs of your model called `model`.
 
-            Your data may look like the following:
-            [{
-                'image_hash': hashforimageofcat,
-                'dialog': [
-                    ('Sweet', 'What a cute cat!'),
-                    ('Neutral', 'Just looks like a plain cat to me')
-                ]
-                'personality': 'Sweet',
-                'comment': 'It really is adorable if you look!', # Human Comment
-                'model_comment': 'You'll love it if you pet it!' # Model Comment
-            }, ...]
+        Your data may look like the following:
+        [{
+            'image_hash': hashforimageofcat,
+            'dialog': [
+                ('Sweet', 'What a cute cat!'),
+                ('Neutral', 'Just looks like a plain cat to me')
+            ]
+            'personality': 'Sweet',
+            'comment': 'It really is adorable if you look!', # Human Comment
+            'model_comment': 'You'll love it if you pet it!' # Model Comment
+        }, ...]
 
-            Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
-            the outputs of the model vs. the human comments from Personality-Captions
-
+        Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
+        the outputs of the model vs. the human comments from Personality-Captions
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

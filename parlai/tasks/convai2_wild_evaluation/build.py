@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -5,8 +6,16 @@
 
 import os
 import json
-
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
+
+RESOURCES = [
+    DownloadableFile(
+        'http://lnsigo.mipt.ru/export/datasets/convai/convai2_wild_evaluation_0.2.tgz',
+        'convai2_wild_evaluation_0.2.tgz',
+        'd40ff70275c8d1939a8081707edcf4e71072097d18b9998100a1099d23e29801',
+    )
+]
 
 
 def make_parlai_format(data: list, dpath: str):
@@ -58,10 +67,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'convai2_wild_evaluation_0.2.tgz'
-        url = 'http://lnsigo.mipt.ru/export/datasets/convai/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         output_fname = 'convai2_wild_evaluation.json'
         output_path = os.path.join(dpath, output_fname)

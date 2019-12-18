@@ -51,12 +51,16 @@ def print_and_log(level, message, should_print=False):
 
 
 def generate_event_id(worker_id):
-    """Return a unique id to use for identifying a packet for a worker"""
+    """
+    Return a unique id to use for identifying a packet for a worker.
+    """
     return '{}_{}'.format(worker_id, uuid.uuid4())
 
 
 class TaskState:
-    """Wrapper for an agent running on a Worker"""
+    """
+    Wrapper for an agent running on a Worker.
+    """
 
     def __init__(
         self, task_name, world_name, agents, is_overworld=False, world_type=None
@@ -85,7 +89,9 @@ WorldConfig = namedtuple(
 
 
 def get_world_module(world_path):
-    """Import the module specified by the world_path"""
+    """
+    Import the module specified by the world_path.
+    """
     run_module = None
     try:
         run_module = importlib.import_module(world_path)
@@ -96,8 +102,8 @@ def get_world_module(world_path):
 
 
 def get_world_fn_attr(world_module, world_name, fn_name, raise_if_missing=True):
-    """Import and return the function from world.
-
+    """
+    Import and return the function from world.
 
     :param world_module:
         module. a python module encompassing the worlds
@@ -123,7 +129,8 @@ def get_world_fn_attr(world_module, world_name, fn_name, raise_if_missing=True):
 
 
 def get_eligibility_fn(world_module, world_name):
-    """Get eligibility function for a world.
+    """
+    Get eligibility function for a world.
 
     :param world_module:
         module. a python module encompassing the worlds
@@ -139,7 +146,8 @@ def get_eligibility_fn(world_module, world_name):
 
 
 def get_assign_roles_fn(world_module, world_name):
-    """Get assign roles function for a world.
+    """
+    Get assign roles function for a world.
 
     :param world_module:
         module. a python module encompassing the worlds
@@ -155,7 +163,8 @@ def get_assign_roles_fn(world_module, world_name):
 
 
 def default_assign_roles_fn(agents):
-    """Assign agent role.
+    """
+    Assign agent role.
 
     Default role assignment.
 
@@ -167,7 +176,8 @@ def default_assign_roles_fn(agents):
 
 
 def parse_configuration_file(config_path):
-    """Read the config file for an experiment to get ParlAI settings.
+    """
+    Read the config file for an experiment to get ParlAI settings.
 
     :param config_path:
         path to config

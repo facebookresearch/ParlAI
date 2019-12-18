@@ -7,7 +7,9 @@ import unittest
 
 
 class TestImport(unittest.TestCase):
-    """Make sure the package is alive."""
+    """
+    Make sure the package is alive.
+    """
 
     def test_import_agent(self):
         from parlai.core.agents import Agent

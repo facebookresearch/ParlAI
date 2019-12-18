@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Unit tests for TorchAgent."""
+"""
+Unit tests for TorchAgent.
+"""
 
 import os
 import unittest
@@ -44,21 +46,29 @@ def get_agent(**kwargs):
 
 @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
 class TestTorchAgent(unittest.TestCase):
-    """Basic tests on the util functions in TorchAgent."""
+    """
+    Basic tests on the util functions in TorchAgent.
+    """
 
     def test_mock(self):
-        """Just make sure we can instantiate a mock agent."""
+        """
+        Just make sure we can instantiate a mock agent.
+        """
         agent = get_agent()
         self.assertTrue(isinstance(agent.dict, MockDict))
 
     def test_share(self):
-        """Make sure share works and shares dictionary."""
+        """
+        Make sure share works and shares dictionary.
+        """
         agent = get_agent()
         shared = agent.share()
         self.assertTrue('dict' in shared)
 
     def test__vectorize_text(self):
-        """Test _vectorize_text and its different options."""
+        """
+        Test _vectorize_text and its different options.
+        """
         agent = get_agent()
         text = "I'm sorry, Dave"
 
@@ -149,7 +159,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
     def test__check_truncate(self):
-        """Make sure we are truncating when needed."""
+        """
+        Make sure we are truncating when needed.
+        """
         agent = get_agent()
         inp = torch.LongTensor([1, 2, 3])
         self.assertEqual(agent._check_truncate(inp, None).tolist(), [1, 2, 3])
@@ -160,10 +172,11 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
     def test_vectorize(self):
-        """Test the vectorization of observations.
+        """
+        Test the vectorization of observations.
 
-        Make sure they do not recompute results, and respect the different
-        param options.
+        Make sure they do not recompute results, and respect the different param
+        options.
         """
         agent = get_agent()
         obs_labs = Message(
@@ -251,7 +264,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
     def test_batchify(self):
-        """Make sure the batchify function sets up the right fields."""
+        """
+        Make sure the batchify function sets up the right fields.
+        """
         agent = get_agent(rank_candidates=True)
         obs_labs = [
             Message(
@@ -466,7 +481,9 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
     def test_match_batch(self):
-        """Make sure predictions are correctly aligned when available."""
+        """
+        Make sure predictions are correctly aligned when available.
+        """
         agent = get_agent()
 
         # first try empty outputs
@@ -575,7 +592,9 @@ class TestTorchAgent(unittest.TestCase):
         )
 
     def test__add_person_tokens(self):
-        """Make sure person tokens are added to the write place in text."""
+        """
+        Make sure person tokens are added to the write place in text.
+        """
         agent = get_agent()
         text = (
             "I've seen things you people wouldn't believe.\n"
@@ -591,7 +610,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
     def test_history(self):
-        """Test different dialog history settings."""
+        """
+        Test different dialog history settings.
+        """
         # try with unlimited history
         agent = get_agent(history_size=-1)
         obs = {'text': 'I am Groot.', 'labels': ['I am Groot?'], 'episode_done': False}
@@ -606,35 +627,36 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.\nI am Groot.')
 
-        # include reply and set episode_done to clear history after this one
-        end_obs = obs.copy()
-        end_obs['episode_done'] = True
-        agent.history.update_history(end_obs, add_next='I am Groot?')
+        # include reply
+        agent.history.add_reply('I am Groot?')
+        agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
 
-        # because of episode_done, should be same as first exchange
+        # on reset should be same as first exchange
+        agent.history.reset()
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.')
 
         # now try with history size = 1
         agent = get_agent(history_size=1)
-
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.')
-
         # second exchange should change nothing
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.')
-
         # third exchange with reply should change nothing
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.')
+        # now if we add the reply, we should only have the reply left
+        agent.history.add_reply(obs['labels'][0])
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot?')
 
         # now try with history size = 2
         agent = get_agent(history_size=2)
@@ -645,25 +667,20 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(text, 'I am Groot.')
 
         # second exchange with reply should contain reply
-        agent.history.update_history(obs, add_next='I am Groot?')
+        agent.history.add_reply('I am Groot?')
+        agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot?\nI am Groot.')
 
-        # third exchange without reply should have two inputs
-        agent.history.update_history(obs)
-        text = agent.history.get_history_str()
-        self.assertEqual(text, 'I am Groot.\nI am Groot.')
-
         # now try with history size = 3
         agent = get_agent(history_size=3)
-
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.')
-
         # second exchange with reply should contain reply and input
-        agent.history.update_history(obs, add_next='I am Groot?')
+        agent.history.add_reply('I am Groot?')
+        agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.\nI am Groot?\nI am Groot.')
 
@@ -672,9 +689,9 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, '{} I am Groot.'.format(agent.P1_TOKEN))
-
         # second exchange, history should still contain the tokens
-        agent.history.update_history(obs, add_next='I am Groot?')
+        agent.history.add_reply('I am Groot?')
+        agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(
             text,
@@ -690,9 +707,9 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.update_history(ctx_obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'Groot is Groot.\n{} I am Groot.'.format(agent.P1_TOKEN))
-
         # second exchange, history should still contain context text
-        agent.history.update_history(obs, add_next='I am Groot?')
+        agent.history.add_reply('I am Groot?')
+        agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(
             text,
@@ -726,67 +743,42 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
-    def test_last_reply(self):
-        """Make sure last reply returns expected values."""
-        agent = get_agent()
-        # nothing to retrieve
-        self.assertIsNone(agent.last_reply())
-        # set agent's generated replies
-        agent.replies = {
-            'batch_reply': [{'text': 'It\'s okay! I\'m a leaf on the wind.'}]
-        }
-        # If the observation was previously an episode end, we shouldn't have any
-        # older reply
-        self.assertEqual(agent.last_reply(), None)
-        # now agent should remember what it said
-        agent.observation = {'episode_done': False}
-        self.assertEqual(agent.last_reply(), 'It\'s okay! I\'m a leaf on the wind.')
-        # now set true observation
-        agent.observation = {
-            'text': 'Will that work?',
-            'labels': ['I\'m a leaf on the wind. Watch how I soar.'],
-            'episode_done': False,
-        }
-        # now agent should remember true label
-        self.assertEqual(
-            agent.last_reply(), 'I\'m a leaf on the wind. Watch how I soar.'
-        )
-        # but not if we tell to use the model reply
-        self.assertEqual(
-            agent.last_reply(use_reply='model'), 'It\'s okay! I\'m a leaf on the wind.'
-        )
-        # if we don't want to use the last reply at all, it should be None
-        self.assertIsNone(agent.last_reply(use_reply='none'))
-
     def test_observe(self):
-        """Make sure agent stores and returns observation."""
+        """
+        Make sure agent stores and returns observation.
+        """
         agent = get_agent()
         # text could be none
         obs = {'text': None, 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
+        # make sure we throw an exception for having an episode done without a reset
+        obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
+        with self.assertRaises(RuntimeError):
+            agent.observe(obs.copy())
+        # okay, let's do it properly now
+        agent.reset()
         obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
-        # episode was done so shouldn't remember history
-        out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], "I'll be back.")
-        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
-
         # now try with episode not done
+        agent = get_agent()
         obs['episode_done'] = False
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
         # should remember history
+        agent.act()
         out = agent.observe(obs.copy())
         self.assertEqual(out['full_text'], "I'll be back.\nI'm back.\nI'll be back.")
 
     def test_batch_act(self):
-        """Make sure batch act calls the right step."""
+        """
+        Make sure batch act calls the right step.
+        """
         agent = get_agent()
 
         obs_labs = [
@@ -854,7 +846,9 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
     def test_interactive_mode(self):
-        """Test if conversation history is destroyed in MTurk mode."""
+        """
+        Test if conversation history is destroyed in MTurk mode.
+        """
         # both manually setting bs to 1 and interactive mode true
         agent = get_agent(batchsize=1, interactive_mode=True)
         agent.observe(Message({'text': 'foo', 'episode_done': True}))
@@ -897,17 +891,58 @@ class TestTorchAgent(unittest.TestCase):
             'Evaluating 0', response['text'], 'Incorrect output in single act()'
         )
 
-        # finally, the expected failure
-        with self.assertRaises(RuntimeError):
-            agent = get_agent(batchsize=16, interactive_mode=False)
-            agent.observe(Message({'text': 'foo', 'episode_done': True}))
-            response = agent.act()
-            shared = create_agent_from_shared(agent.share())
-            shared.observe(Message({'text': 'bar', 'episode_done': True}))
-            response = shared.act()
+        # finally, actively attempt to sabotage
+        agent = get_agent(batchsize=16, interactive_mode=False)
+        agent.observe(Message({'text': 'foo', 'episode_done': True}))
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = create_agent_from_shared(agent.share())
+        shared.observe(Message({'text': 'bar', 'episode_done': True}))
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+    def test_use_reply(self):
+        """
+        Check that self-observe is correctly acting on labels.
+        """
+        # default is hybrid label-model, which uses the label if it's available, and
+        # otherwise the label
+        # first check if there is a label available
+        agent = get_agent()
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
+        # check if there is no label
+        agent.reset()
+        obs = Message({'text': 'Call', 'episode_done': False})
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(
+            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
+        )
+        # now some of the other possible values of --use-reply
+        # --use-reply model. even if there is a label, we should see the model's out
+        agent = get_agent(use_reply='model')
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
+        # --use-reply none doesn't hear itself
+        agent = get_agent(use_reply='none')
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call')
 
     def test_mturk_racehistory(self):
-        """Emulate a setting where batch_act misappropriately handles mturk."""
+        """
+        Emulate a setting where batch_act misappropriately handles mturk.
+        """
         agent = get_agent(batchsize=16, interactive_mode=True, echo=True)
         share1 = create_agent_from_shared(agent.share())
 
@@ -931,7 +966,8 @@ class TestTorchAgent(unittest.TestCase):
         self.assertNotIn('thread2-msg2', share1.history.get_history_str())
 
     def test_resume_checkpoint(self):
-        """Make sure when resuming training that model uses appropriate mf.
+        """
+        Make sure when resuming training that model uses appropriate mf.
 
         Copy train_model from testing_utils to directly access agent.
         """

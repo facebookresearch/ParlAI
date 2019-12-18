@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -90,8 +91,8 @@ class TopicsGenerator(object):
 
 
 class TopicChooseWorld(MTurkOnboardWorld):
-    """A world that provides topics to an MTurk Agent and asks them to choose
-    one.
+    """
+    A world that provides topics to an MTurk Agent and asks them to choose one.
     """
 
     def __init__(self, opt, mturk_agent, role='PERSON_1'):
@@ -318,9 +319,11 @@ class WizardEval(MultiAgentDialogWorld):
             self.eval_agent.observe(act)
 
     def parallel_eval_mode(self):
-        """Parallel function that shuts one agent down and asks the other
-        to do the evaluation if their are two agents. If there is only
-        one agent, it performs the evaluation.
+        """
+        Parallel function that shuts one agent down and asks the other to do the
+        evaluation if their are two agents.
+
+        If there is only one agent, it performs the evaluation.
         """
         global eval_or_shutdown
 

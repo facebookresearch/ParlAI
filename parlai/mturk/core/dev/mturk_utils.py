@@ -71,10 +71,10 @@ def setup_aws_credentials():
 
 
 def calculate_mturk_cost(payment_opt):
-    """MTurk Pricing: https://requester.mturk.com/pricing
-    20% fee on the reward and bonus amount (if any) you pay Workers.
-    HITs with 10 or more assignments will be charged an additional
-    20% fee on the reward you pay Workers.
+    """
+    MTurk Pricing: https://requester.mturk.com/pricing 20% fee on the reward and bonus
+    amount (if any) you pay Workers. HITs with 10 or more assignments will be charged an
+    additional 20% fee on the reward you pay Workers.
 
     Example payment_opt format for paying reward:
     {
@@ -99,9 +99,9 @@ def calculate_mturk_cost(payment_opt):
 
 
 def check_mturk_balance(balance_needed, is_sandbox):
-    """Checks to see if there is at least balance_needed amount in the
-    requester account, returns True if the balance is greater than
-    balance_needed
+    """
+    Checks to see if there is at least balance_needed amount in the requester account,
+    returns True if the balance is greater than balance_needed.
     """
     client = get_mturk_client(is_sandbox)
 
@@ -135,7 +135,9 @@ def check_mturk_balance(balance_needed, is_sandbox):
 
 
 def create_hit_config(opt, task_description, unique_worker, is_sandbox):
-    """Writes a HIT config to file"""
+    """
+    Writes a HIT config to file.
+    """
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
         mturk_submit_url = 'https://www.mturk.com/mturk/externalSubmit'
@@ -160,7 +162,9 @@ def create_hit_config(opt, task_description, unique_worker, is_sandbox):
 
 
 def get_mturk_client(is_sandbox):
-    """Returns the appropriate mturk client given sandbox option"""
+    """
+    Returns the appropriate mturk client given sandbox option.
+    """
     global client
     if client is None:
         client = boto3.client(
@@ -175,16 +179,20 @@ def get_mturk_client(is_sandbox):
 
 
 def delete_qualification(qualification_id, is_sandbox):
-    """Deletes a qualification by id"""
+    """
+    Deletes a qualification by id.
+    """
     client = get_mturk_client(is_sandbox)
     client.delete_qualification_type(QualificationTypeId=qualification_id)
 
 
 def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
-    """Query amazon to find the existing qualification name, return the Id,
-    otherwise return none.
-    If must_be_owned is true, it only returns qualifications owned by the user.
-    Will return False if it finds another's qualification
+    """
+    Query amazon to find the existing qualification name, return the Id, otherwise
+    return none.
+
+    If must_be_owned is true, it only returns qualifications owned by the user. Will
+    return False if it finds another's qualification
     """
     client = get_mturk_client(is_sandbox)
 
@@ -218,9 +226,11 @@ def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
 def find_or_create_qualification(
     qualification_name, description, is_sandbox, must_be_owned=True
 ):
-    """Query amazon to find the existing qualification name, return the Id. If
-    it exists and must_be_owned is true but we don't own it, this prints an
-    error and returns none. If it doesn't exist, the qualification is created
+    """
+    Query amazon to find the existing qualification name, return the Id.
+
+    If it exists and must_be_owned is true but we don't own it, this prints an error and
+    returns none. If it doesn't exist, the qualification is created
     """
     qual_id = find_qualification(
         qualification_name, is_sandbox, must_be_owned=must_be_owned
@@ -242,7 +252,9 @@ def find_or_create_qualification(
 
 
 def give_worker_qualification(worker_id, qualification_id, value=None, is_sandbox=True):
-    """Give a qualification to the given worker"""
+    """
+    Give a qualification to the given worker.
+    """
     client = get_mturk_client(is_sandbox)
 
     if value is not None:
@@ -264,7 +276,9 @@ def give_worker_qualification(worker_id, qualification_id, value=None, is_sandbo
 def remove_worker_qualification(
     worker_id, qualification_id, is_sandbox=True, reason=''
 ):
-    """Give a qualification to the given worker"""
+    """
+    Give a qualification to the given worker.
+    """
     client = get_mturk_client(is_sandbox)
     client.disassociate_qualification_from_worker(
         QualificationTypeId=qualification_id, WorkerId=worker_id, Reason=reason
@@ -281,7 +295,9 @@ def create_hit_type(
     qualifications=None,
     auto_approve_delay=7 * 24 * 3600,  # default 1 week
 ):
-    """Create a HIT type to be used to generate HITs of the requested params"""
+    """
+    Create a HIT type to be used to generate HITs of the requested params.
+    """
     client = get_mturk_client(is_sandbox)
 
     # If the user hasn't specified a location qualification, we assume to
@@ -325,7 +341,9 @@ def create_hit_type(
 
 
 def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments, is_sandbox):
-    """Creates the actual HIT given the type and page to direct clients to"""
+    """
+    Creates the actual HIT given the type and page to direct clients to.
+    """
     page_url = page_url.replace('&', '&amp;')
     amazon_ext_url = (
         'http://mechanicalturk.amazonaws.com/'

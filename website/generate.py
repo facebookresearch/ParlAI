@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -31,7 +31,9 @@ def _read_file(filename):
 
 
 def _mkdirp(directory):
-    """Equivalent to mkdir -p"""
+    """
+    Equivalent to mkdir -p.
+    """
     if not os.path.exists(directory):
         os.makedirs(directory)
 

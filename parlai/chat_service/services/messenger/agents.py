@@ -20,7 +20,9 @@ class MessengerAgent(ChatServiceAgent):
         self.page_id = page_id
 
     def observe(self, act):
-        """Send an agent a message through the mturk manager"""
+        """
+        Send an agent a message through the mturk manager.
+        """
         if 'payload' in act:
             resp = self.manager.observe_payload(
                 self.id,
@@ -47,11 +49,15 @@ class MessengerAgent(ChatServiceAgent):
             print('{} could not be extracted to an observed message'.format(resp))
 
     def observe_typing_on(self, persona_id=None):
-        """Allow agent to observe typing indicator"""
+        """
+        Allow agent to observe typing indicator.
+        """
         self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
     def put_data(self, message):
-        """Put data into the message queue if it hasn't already been seen"""
+        """
+        Put data into the message queue if it hasn't already been seen.
+        """
         mid = message['message']['mid']
         seq = message['message'].get('seq', None)
         if 'text' not in message['message']:
@@ -88,8 +94,10 @@ class MessengerAgent(ChatServiceAgent):
         pass
 
     def act(self, timeout=None):
-        """Pulls a message from the message queue. If none exist returns None
-        unless the timeout has expired.
+        """
+        Pulls a message from the message queue.
+
+        If none exist returns None unless the timeout has expired.
         """
         # if this is the first act since last sent message start timing
         if self.message_request_time is None:

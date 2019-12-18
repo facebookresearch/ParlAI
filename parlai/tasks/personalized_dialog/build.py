@@ -7,6 +7,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://www.dropbox.com/s/4i9u4y24pt3paba/personalized-dialog-dataset.tar.gz?dl=1',
+        'personalized-dialog-dataset.tar.gz',
+        '0da3d5ba631d672e9e2d108dfd6721c8201cc41b837425540faba6815c375c52',
+    )
+]
 
 
 def build(opt):
@@ -21,11 +30,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        # https://www.dropbox.com/s/4i9u4y24pt3paba/personalized-dialog-dataset.tar.gz?dl=1
-        fname = 'personalized-dialog-dataset.tar.gz'
-        url = 'https://www.dropbox.com/s/4i9u4y24pt3paba/' + fname + '?dl=1'
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

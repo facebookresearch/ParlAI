@@ -23,7 +23,6 @@ import json
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 MTurkManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
-MTurkManagerFile.input = mock.MagicMock()
 
 # Lets ignore the logging part
 MTurkManagerFile.shared_utils.print_and_log = mock.MagicMock()
@@ -183,9 +182,11 @@ class MockSocket:
 
 
 class MockAgent(object):
-    """Class that pretends to be an MTurk agent interacting through the
-    webpage by simulating the same commands that are sent from the core.html
-    file. Exposes methods to use for testing and checking status
+    """
+    Class that pretends to be an MTurk agent interacting through the webpage by
+    simulating the same commands that are sent from the core.html file.
+
+    Exposes methods to use for testing and checking status
     """
 
     def __init__(self, hit_id, assignment_id, worker_id, task_group_id):
@@ -227,7 +228,9 @@ class MockAgent(object):
             self.send_alive()
 
     def make_packet_handler(self):
-        """A packet handler that properly sends heartbeats"""
+        """
+        A packet handler that properly sends heartbeats.
+        """
 
         def on_ack(*args):
             self.acked_packet.append(args[0])
@@ -297,7 +300,9 @@ class MockAgent(object):
         return self.build_and_send_packet(Packet.TYPE_ALIVE, data)
 
     def send_heartbeat(self):
-        """Sends a heartbeat to the world"""
+        """
+        Sends a heartbeat to the world.
+        """
         hb = {
             'id': str(uuid.uuid4()),
             'receiver_id': '[World_' + self.task_group_id + ']',
@@ -324,9 +329,14 @@ class MockAgent(object):
 
 
 class TestMTurkManagerWorkflows(unittest.TestCase):
-    '''Various test cases to replicate a whole mturk workflow'''
+    """
+    Various test cases to replicate a whole mturk workflow.
+    """
 
     def setUp(self):
+        patcher = mock.patch('builtins.input', return_value='y')
+        self.addCleanup(patcher.stop)
+        patcher.start()
         # Mock functions that hit external APIs and such
         self.server_utils = MTurkManagerFile.server_utils
         self.mturk_utils = MTurkManagerFile.mturk_utils

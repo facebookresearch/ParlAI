@@ -29,7 +29,6 @@ An example sbatch script is below, for a 2-host, 8-GPU setup (16 total gpus):
   #SBATCH --cpus-per-task=10
   srun python -u -m parlai.scripts.distributed_train \
     -m seq2seq -t convai2 --dict-file /path/to/dict-file
-
 """
 
 import os

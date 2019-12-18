@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Messenger Manager Module.
+"""
+Messenger Manager Module.
 
-Contains implementation of the MessengerManager, which helps run
-ParlAI via FB Messenger.
+Contains implementation of the MessengerManager, which helps run ParlAI via FB
+Messenger.
 """
 
 import logging
@@ -29,7 +30,8 @@ class MessengerManager(ChatServiceManager):
     """
 
     def __init__(self, opt):
-        """Create an MessengerManager using the given setup options
+        """
+        Create an MessengerManager using the given setup options.
         """
         # Manager attributes
         super().__init__(opt)
@@ -52,7 +54,9 @@ class MessengerManager(ChatServiceManager):
         pass
 
     def _complete_setup(self):
-        """Complete necessary setup items."""
+        """
+        Complete necessary setup items.
+        """
         self.setup_server()
         self.init_new_state()
         self.setup_socket()
@@ -60,17 +64,22 @@ class MessengerManager(ChatServiceManager):
         self._load_model()
 
     def _load_model(self):
-        """Load model if necessary."""
+        """
+        Load model if necessary.
+        """
         if 'model_file' in self.opt or 'model' in self.opt:
-            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
-        """Initialize logging settings from the opt."""
+        """
+        Initialize logging settings from the opt.
+        """
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
 
     def mark_removed(self, agent_id, pageid):
-        """Mark the agent as removed from the pool.
+        """
+        Mark the agent as removed from the pool.
 
         Can be overriden to change other metadata linked to agent removal.
 
@@ -111,14 +120,16 @@ class MessengerManager(ChatServiceManager):
             self.handle_message_read(event)
 
     def after_agent_removed(self, agent_id):
-        """Perform any changes to metadata on agent removal.
+        """
+        Perform any changes to metadata on agent removal.
 
         override if extra bookkeeping must be done when removing agent
         """
         pass
 
     def _create_agent(self, task_id, agent_id):
-        """Initialize an agent and return it.
+        """
+        Initialize an agent and return it.
 
         Called each time an agent is placed into a new task.
 
@@ -132,7 +143,9 @@ class MessengerManager(ChatServiceManager):
         )
 
     def _log_missing_agent(self, agent_id, assignment_id):
-        """Log the occurence of a missing agent."""
+        """
+        Log the occurence of a missing agent.
+        """
         shared_utils.print_and_log(
             logging.WARN,
             'Expected to have an agent for {}_{}, yet none was found'.format(
@@ -142,7 +155,9 @@ class MessengerManager(ChatServiceManager):
 
     # Manager Lifecycle Functions #
     def setup_server(self):
-        """Prepare the Messenger server for handling messages."""
+        """
+        Prepare the Messenger server for handling messages.
+        """
         if self.bypass_server_setup:
             return
 
@@ -190,7 +205,9 @@ class MessengerManager(ChatServiceManager):
 
     # override if permission needed externally
     def get_app_token(self):
-        """Find and return an app access token."""
+        """
+        Find and return an app access token.
+        """
         if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
                 os.makedirs(os.path.expanduser('~/.parlai/'))
@@ -212,7 +229,9 @@ class MessengerManager(ChatServiceManager):
         return token
 
     def setup_socket(self):
-        """Set up socket to start communicating to workers."""
+        """
+        Set up socket to start communicating to workers.
+        """
         if not self.bypass_server_setup:
             shared_utils.print_and_log(
                 logging.INFO, 'Local: Setting up WebSocket...', should_print=True
@@ -232,11 +251,11 @@ class MessengerManager(ChatServiceManager):
         shared_utils.print_and_log(
             logging.INFO, 'done with websocket', should_print=True
         )
-
     # Agent Interaction Functions #
 
     def observe_message(self, receiver_id, text, quick_replies=None, persona_id=None):
-        """Send a message through the message manager.
+        """
+        Send a message through the message manager.
 
         :param receiver_id:
             int identifier for agent to send message to
@@ -252,7 +271,8 @@ class MessengerManager(ChatServiceManager):
         )
 
     def observe_payload(self, receiver_id, data, quick_replies=None, persona_id=None):
-        """Send a payload through the message manager.
+        """
+        Send a payload through the message manager.
 
         :param receiver_id:
             int identifier for agent to send message to
@@ -268,7 +288,8 @@ class MessengerManager(ChatServiceManager):
         )
 
     def upload_attachment(self, payload):
-        """Upload an attachment and return an attachment ID.
+        """
+        Upload an attachment and return an attachment ID.
 
         :param payload:
             dict with the following format:

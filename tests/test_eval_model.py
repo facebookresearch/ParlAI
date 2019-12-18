@@ -11,10 +11,33 @@ import parlai.utils.testing as testing_utils
 
 
 class TestEvalModel(unittest.TestCase):
-    """Basic tests on the eval_model.py example."""
+    """
+    Basic tests on the eval_model.py example.
+    """
+
+    def test_noevalmode(self):
+        """
+        Ensure you get an error trying to use eval_model with -dt train.
+        """
+        with self.assertRaises(ValueError):
+            testing_utils.eval_model(
+                {'task': 'integration_tests', 'model': 'repeat_label'},
+                valid_datatype='train',
+            )
+
+    def test_evalmode(self):
+        """
+        Eval_model with -dt train:evalmode should be okay.
+        """
+        testing_utils.eval_model(
+            {'task': 'integration_tests', 'model': 'repeat_label'},
+            valid_datatype='train:evalmode',
+        )
 
     def test_output(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -45,7 +68,9 @@ class TestEvalModel(unittest.TestCase):
             )
 
     def test_metrics_all(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -76,7 +101,9 @@ class TestEvalModel(unittest.TestCase):
             self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
 
     def test_metrics_select(self):
-        """Test output of running eval_model"""
+        """
+        Test output of running eval_model.
+        """
         parser = setup_args()
         parser.set_defaults(
             task='integration_tests',
@@ -151,6 +178,30 @@ class TestEvalModel(unittest.TestCase):
             4,
             'Task accuracy is averaged incorrectly',
         )
+
+    def test_train_evalmode(self):
+        """
+        Test that evaluating a model with train:evalmode completes an epoch.
+        """
+        base_dict = {'model': 'repeat_label', 'datatype': 'train:evalmode'}
+
+        teachers = ['integration_tests:fixed_dialog_candidate', 'integration_tests']
+        batchsize = [1, 64]
+        for bs in batchsize:
+            for teacher in teachers:
+                d = base_dict.copy()
+                d['task'] = teacher
+                d['batchsize'] = bs
+                with testing_utils.timeout(time=20):
+                    stdout, valid, test = testing_utils.eval_model(
+                        d, valid_datatype=d['datatype']
+                    )
+                self.assertEqual(
+                    int(valid['exs']),
+                    500,
+                    f'train:evalmode failed with bs {bs} and teacher {teacher}'
+                    f' stdout: {stdout}',
+                )
 
 
 if __name__ == '__main__':

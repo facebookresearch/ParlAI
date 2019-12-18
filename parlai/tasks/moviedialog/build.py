@@ -7,11 +7,26 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/moviedialog/moviedialog.tar.gz',
+        'moviedialog.tar.gz',
+        '9b168d30111f13b9cc50e6a15885adae8f86bc0bb7a124d435c43fd0f7e2a9c7',
+    ),
+    DownloadableFile(
+        'http://cs.nyu.edu/~xiang/task4_reddit.tgz',
+        'task4_reddit.tgz',
+        '6316a6a5c563bc3c133a4a1e611d8ca638c61582f331c500697d9090efd215bb',
+    ),
+]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MovieDialog')
-    version = '3'
+    # 2019-12-11 bump version with changed url
+    version = '3.01'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -21,17 +36,12 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'moviedialog.tar.gz'
-        url = 'http://parl.ai/downloads/moviedialog/' + fname
-        build_data.download(url, dpath, fname)
+        RESOURCES[0].download_file(dpath)
 
         dpath2 = os.path.join(dpath, 'movie_dialog_dataset', 'task4_reddit')
         build_data.make_dir(dpath2)
-        url2 = 'http://tinyurl.com/' + 'p6tyohj'
-        build_data.download(url2, dpath2, 'p6tyohj.tgz')
 
-        build_data.untar(dpath, fname)
-        build_data.untar(dpath2, 'p6tyohj.tgz')
+        RESOURCES[1].download_file(dpath2)
 
         # remove pipes from task 4 labels, only one label per example
         for root, _subfolder, files in os.walk(os.path.join(dpath2, 'task4_reddit')):

@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Talk with a model using a web UI."""
+"""
+Talk with a model using a web UI.
+"""
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -11,6 +13,7 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.image_featurizers import ImageLoader
+from typing import Dict, Any
 
 import json
 import cgi
@@ -21,7 +24,7 @@ import os
 
 HOST_NAME = 'localhost'
 PORT = 8080
-SHARED = {}
+SHARED: Dict[str, Any] = {}
 IMAGE_LOADER = None
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
@@ -178,7 +181,9 @@ WEB_HTML = """
 
 
 class MyHandler(BaseHTTPRequestHandler):
-    """Interactive Handler."""
+    """
+    Interactive Handler.
+    """
 
     def interactive_running(self, data):
         """
@@ -201,13 +206,17 @@ class MyHandler(BaseHTTPRequestHandler):
         return model_res
 
     def do_HEAD(self):
-        """Handle headers."""
+        """
+        Handle headers.
+        """
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_POST(self):
-        """Handle POST."""
+        """
+        Handle POST.
+        """
         if self.path != '/interact':
             return self.respond({'status': 500})
         ctype, pdict = cgi.parse_header(self.headers['content-type'])
@@ -222,7 +231,9 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(json_str, 'utf-8'))
 
     def do_GET(self):
-        """Handle GET."""
+        """
+        Handle GET.
+        """
         paths = {
             '/': {'status': 200},
             '/favicon.ico': {'status': 202},  # Need for chrome
@@ -233,7 +244,9 @@ class MyHandler(BaseHTTPRequestHandler):
             self.respond({'status': 500})
 
     def handle_http(self, status_code, path, text=None):
-        """Generate HTTP."""
+        """
+        Generate HTTP.
+        """
         self.send_response(status_code)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -241,13 +254,17 @@ class MyHandler(BaseHTTPRequestHandler):
         return bytes(content, 'UTF-8')
 
     def respond(self, opts):
-        """Respond."""
+        """
+        Respond.
+        """
         response = self.handle_http(opts['status'], self.path)
         self.wfile.write(response)
 
 
 def setup_interactive():
-    """Set up the interactive script."""
+    """
+    Set up the interactive script.
+    """
     parser = setup_args()
     opt = parser.parse_args(print_args=True)
     if not opt.get('model_file'):

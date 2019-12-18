@@ -28,6 +28,11 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
   _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
+  
+- **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
+  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._  
+  
+  
 
 ## Chit-chat
 
@@ -37,11 +42,15 @@ This directory also contains subfolders for some of the projects which are house
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._
 
+- **Empathetic Dialogues** [[paper]](https://arxiv.org/abs/1811.00207) [[external website]](https://github.com/facebookresearch/EmpatheticDialogues) [[video]](https://ai.facebook.com/blog/making-conversation-models-more-empathetic/).
+_Task & models for chitchat displaying empathy._
+
 - **ConvAI2 Competition** [[external website]](http://convai.io/).
 _Competition on dialogue chitchat based on the PersonaChat task._
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
 _Task & models for chitchat with a given persona._
+
 
 ## Well-Behaved
 
