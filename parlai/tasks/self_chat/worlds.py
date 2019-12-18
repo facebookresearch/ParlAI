@@ -40,10 +40,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         return s
 
     def episode_done(self):
-        if self.turn_cnt >= self.max_turn_cnt:
-            return True
-        else:
-            return False
+        return self.turn_cnt >= self.max_turn_cnt
 
     def _get_seed_utt_acts(
         self, episode_num: int, agents: List[Agent]
@@ -91,12 +88,19 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 self.agents_ordered[i].observe(validate(context))
             self.contexts = None
         elif self.seed_utterances:
+            # grab the first two seed messages
             utts = self.seed_utterances[:2]
+            # process the turn
             for i in [0, 1]:
-                self.acts[i] = (
-                    utts[i] if len(utts) > i else self.agents_ordered[i].act()
-                )
+                # if we have a seed utterance, add it to the conversation
+                if len(utts) > i:
+                    self.acts[i] = utts[i]
+                    if hasattr(self.agents_ordered[i], 'self_observe'):
+                        self.agents_ordered[i].self_observe(self.acts[i])
+                else:
+                    self.acts[i] = self.agents_ordered[i].act()
                 self.agents_ordered[1 - i].observe(validate(self.acts[i]))
+            # remove the used seed messages from the queue
             self.seed_utterances = self.seed_utterances[2:]
         else:
             # do regular loop
