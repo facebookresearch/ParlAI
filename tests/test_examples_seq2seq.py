@@ -8,7 +8,7 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 BATCH_SIZE = 32
-NUM_EPOCHS = 2
+NUM_EPOCHS = 1
 
 
 class TestExampleSeq2Seq(unittest.TestCase):
@@ -30,10 +30,10 @@ class TestExampleSeq2Seq(unittest.TestCase):
         )
 
         self.assertTrue(
-            valid['ppl'] < 150, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+            valid['ppl'] < 220, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertTrue(
-            test['ppl'] < 150, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['ppl'] < 220, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
 
