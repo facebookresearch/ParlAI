@@ -96,7 +96,7 @@ If no port number is specified in `--port` then the default port used will be `3
 
 This allows you to chat with a ParlAI model on Facebook Messenger.
 
-<p align="center"><img width="90%" src="docs/source/_static/img/messenger-example.png" /></p>
+<p align="center"><img width="90%" src="_static/img/messenger-example.png" /></p>
 
 
 #### Setup
