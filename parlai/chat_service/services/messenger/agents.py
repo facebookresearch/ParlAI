@@ -5,35 +5,21 @@
 # LICENSE file in the root directory of this source tree.
 
 import time
-from queue import Queue
 
-from parlai.core.agents import Agent
+from parlai.chat_service.core.agents import ChatServiceAgent
 
 
-class MessengerAgent(Agent):
+class MessengerAgent(ChatServiceAgent):
     """
     Base class for a person on messenger that can act in a ParlAI world.
     """
 
-    def __init__(self, opt, manager, task_id, messenger_psid, page_id):
-        super().__init__(opt)
-        self.manager = manager
-        self.id = messenger_psid
-
-        self.acted_packets = {}
+    def __init__(self, opt, manager, task_id, receiver_id, page_id):
+        super().__init__(opt, manager, receiver_id, task_id)
         self.active = True
-        self.data = {}
         self.disp_id = 'NewUser'
         self.message_partners = []
-        self.message_request_time = None
-        self.msg_queue = Queue()
-        self.observed_packets = {}
         self.page_id = page_id
-        self.task_id = task_id
-
-        self.stored_data = {}
-        # initialize stored data
-        self.set_stored_data()
 
     def observe(self, act):
         """
@@ -104,30 +90,6 @@ class MessengerAgent(Agent):
                 action['attachment_url'] = message['message'].get('attachment_url')
             self.msg_queue.put(action)
 
-    def set_stored_data(self):
-        """
-        Gets agent state data from manager.
-        """
-        agent_state = self.manager.get_agent_state(self.id)
-        if agent_state is not None and hasattr(agent_state, 'stored_data'):
-            self.stored_data = agent_state.stored_data
-
-    def get_new_act_message(self):
-        """
-        Get a new act message if one exists, return None otherwise.
-        """
-        # Check if person has sent a message
-        if not self.msg_queue.empty():
-            return self.msg_queue.get()
-
-        # There are no messages to be sent
-        if not self.active:
-            # TODO return a status that notes the user is
-            # not active right now
-            pass
-
-        return None
-
     def mark_inactive(self):
         # some kind of behavior to send a message when a user is marked as
         # being inactive. Could be useful. Should return a message to be sent
@@ -172,22 +134,6 @@ class MessengerAgent(Agent):
             if msg is not None and self.message_request_time is not None:
                 self.message_request_time = None
         return msg
-
-    def act_blocking(self, timeout=None):
-        """
-        Repeatedly loop until we retrieve a message from the queue.
-        """
-        while True:
-            msg = self.act(timeout=timeout)
-            if msg is not None:
-                return msg
-            time.sleep(0.2)
-
-    def episode_done(self):
-        """
-        Return whether or not this agent believes the conversation to be done.
-        """
-        return self.manager.shutting_down
 
     def shutdown(self):
         pass

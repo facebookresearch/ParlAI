@@ -72,7 +72,7 @@ def setup_args(parser=None):
     parser.add_argument(
         '-cun',
         '--compute-unique',
-        type=bool,
+        type='bool',
         default=True,
         help='Compute %% of unique responses from the model',
     )
@@ -148,11 +148,13 @@ def eval_wordstat(opt, print_parser=None):
         'pred_list': [],
         'pure_pred_list': [],
         'context_list': [],
+        'unique_words': set(),
     }
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
     def process_prediction(prediction, word_statistics):
-        word_statistics['pred_list'].append(normalize_answer(prediction))
+        normalized = normalize_answer(prediction)
+        word_statistics['pred_list'].append(normalized)
         freqs, _cnt, wlength, clength = get_word_stats(
             prediction, dictionary, bins=bins
         )
@@ -160,6 +162,7 @@ def eval_wordstat(opt, print_parser=None):
         word_statistics['mean_wlength'].append(wlength)
         word_statistics['mean_clength'].append(clength)
         word_statistics['freqs_cnt'] += Counter(freqs)
+        word_statistics['unique_words'] |= set(normalized.split(" "))
         return word_statistics
 
     while not world.epoch_done():
@@ -173,6 +176,8 @@ def eval_wordstat(opt, print_parser=None):
         else:
             for w in world.worlds:
                 try:
+                    if 'text' not in w.acts[-1]:
+                        continue
                     prediction = w.acts[-1]['text']
                     word_statistics['context_list'].append(w.acts[0]['text'])
                     word_statistics['pure_pred_list'].append(prediction)
@@ -226,6 +231,7 @@ def eval_wordstat(opt, print_parser=None):
                 len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2
             )
         )
+    print("Total unique tokens:", len(word_statistics['unique_words']))
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:

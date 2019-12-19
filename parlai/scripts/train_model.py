@@ -17,9 +17,9 @@ Examples
 --------
 .. code-block:: shell
 
-  python -m parlai.scripts.train -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-  python -m parlai.scripts.train -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-  python -m parlai.scripts.train -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+  python -m parlai.scripts.train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+  python -m parlai.scripts.train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+  python -m parlai.scripts.train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
 """  # noqa: E501
 
 # TODO List:
