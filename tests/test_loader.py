@@ -41,13 +41,15 @@ class TestLoader(unittest.TestCase):
         self.assertEqual(task_module, c2agents)
 
     def test_load_interactive_world(self):
-        world_module = load_world_module(OPTIONS['task'].split(':')[0], True,)
+        world_module = load_world_module(
+            OPTIONS['task'].split(':')[0], interactive_task=True,
+        )
         print(world_module)
         self.assertEqual(world_module, c2interactive)
 
     def test_load_dialog_partner_world(self):
         world_module = load_world_module(
-            OPTIONS['task'].split(':')[0], False, num_agents=2
+            OPTIONS['task'].split(':')[0], interactive_task=False, num_agents=2
         )
         self.assertEqual(world_module, DialogPartnerWorld)
 

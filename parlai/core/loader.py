@@ -6,8 +6,8 @@
 """
 Functions for loading modules for agents, tasks and teachers, and worlds.
 
-These functions are largely for converting strings specified in opts (like
-for --task) to the appropriate module.
+These functions are largely for converting strings specified in opts (like for --task)
+to the appropriate module.
 """
 
 import importlib
@@ -141,8 +141,8 @@ def load_agent_module(agent_path: str):
 ##############################################################
 def _get_task_path_and_repo(taskname: str):
     """
-    Returns the task path list and repository containing the task as specified
-    by `--task`.
+    Returns the task path list and repository containing the task as specified by
+    `--task`.
 
     :param taskname: path to task class (specified in format detailed below)
     """
@@ -161,8 +161,7 @@ def _get_task_path_and_repo(taskname: str):
 
 def load_task_module(taskname: str):
     """
-    Get the module containing all teacher agents for the task specified
-    by `--task`.
+    Get the module containing all teacher agents for the task specified by `--task`.
 
     :param taskname: path to task class in one of the following formats:
         * full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
@@ -269,13 +268,13 @@ def _get_default_world(default_world=None, num_agents=None):
 
 def load_world_module(
     taskname: str,
-    interactive_task: bool,
+    interactive_task: bool = False,
     num_agents: int = None,  # a priori may not know the number of agents
     default_world=None,
 ):
     """
-    Load the world module for the specific environment. If not enough
-    information is to determine which world should be loaded, returns None.
+    Load the world module for the specific environment. If not enough information is to
+    determine which world should be loaded, returns None.
 
     :param taskname:
         path to task class in one of the above formats
