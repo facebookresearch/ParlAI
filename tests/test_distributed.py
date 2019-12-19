@@ -9,6 +9,7 @@ import unittest
 import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
+import parlai.scripts.multiprocessing_train as mp_train
 
 
 def _forced_parse(parser, opt):
@@ -23,14 +24,9 @@ def _forced_parse(parser, opt):
     return popt
 
 
-@unittest.skip("Test disabled until #1974 is resolved.")
+@testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
     def _distributed_train_model(self, opt):
-        # we have to delay our import to here, because the set_spawn_method call
-        # inside multiprocessing_train will break the multithreading tests, even
-        # when we skip the test.
-        import parlai.scripts.multiprocessing_train as mp_train
-
         with testing_utils.capture_output() as output:
             with testing_utils.tempdir() as tmpdir:
                 if 'model_file' not in opt:
