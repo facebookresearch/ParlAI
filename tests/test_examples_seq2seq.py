@@ -9,6 +9,7 @@ import parlai.utils.testing as testing_utils
 
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
+LR = 1
 
 
 class TestExampleSeq2Seq(unittest.TestCase):
@@ -23,12 +24,14 @@ class TestExampleSeq2Seq(unittest.TestCase):
             dict(
                 task='integration_tests:nocandidate',
                 model='examples/seq2seq',
+                learningrate=LR,
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
-                truncate=128,
+                numthreads=1,
                 no_cuda=True,
                 embeddingsize=16,
                 hiddensize=16,
+                gradient_clip=1.0,
                 inference='beam',
                 beam_size=4,
             )
