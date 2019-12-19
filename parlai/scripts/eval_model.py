@@ -135,7 +135,7 @@ def _eval_single_world(opt, agent, task):
         world_logger.reset()  # add final acts to logs
         base_outfile = opt['report_filename'].split('.')[0]
         outfile = base_outfile + f'_{task}_replies.jsonl'
-        #world_logger.write_jsonl_format(outfile)
+        # world_logger.write_jsonl_format(outfile)
         world_logger.write_parlai_format(outfile)
 
     return report
