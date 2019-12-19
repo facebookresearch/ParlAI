@@ -13,6 +13,8 @@ Contains the following main utilities:
   the TorchAgent class
 * Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
+* History class which handles tracking the dialogue state over the course of an episode.
+
 
 See below for documentation on each specific tool.
 """

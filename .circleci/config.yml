@@ -60,7 +60,7 @@ installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
-      pip install -r requirements.txt
+      pip install -q -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 

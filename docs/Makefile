@@ -27,6 +27,7 @@ clean:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
+	cd "${SOURCEDIR}"; python generate_agent_list.py
 	cd "${SOURCEDIR}"; python generate_task_list.py
 	cd "${SOURCEDIR}"; python generate_zoo_list.py
 	cd "${SOURCEDIR}"; python generate_cli.py

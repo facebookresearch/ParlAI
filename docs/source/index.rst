@@ -19,6 +19,7 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 1
    :caption: Tutorials
 
+   test
    tutorial_quick
    tutorial_basic
    tutorial_task
@@ -51,6 +52,14 @@ ParlAI is a one-stop-shop for dialog research.
    utils
    thread_utils
    worlds
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Agents
+  :glob:
+
+  agents_list
+  agent_refs/*
 
 .. toctree::
   :maxdepth: 1
