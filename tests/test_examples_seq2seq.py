@@ -7,8 +7,8 @@
 import unittest
 import parlai.utils.testing as testing_utils
 
-BATCH_SIZE = 32
-NUM_EPOCHS = 1
+BATCH_SIZE = 16
+NUM_EPOCHS = 10
 
 
 class TestExampleSeq2Seq(unittest.TestCase):
@@ -22,18 +22,27 @@ class TestExampleSeq2Seq(unittest.TestCase):
         stdout, valid, test = testing_utils.train_model(
             dict(
                 model='examples/seq2seq',
-                task='convai2',
+                task='integration_tests:nocandidate',
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
                 truncate=128,
+                no_cuda=True,
             )
         )
 
         self.assertTrue(
-            valid['ppl'] < 220, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+            valid['bleu-4'] > 0.95,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertTrue(
-            test['ppl'] < 220, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['bleu-4'] > 0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+        )
+        self.assertTrue(
+            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertTrue(
+            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
 
