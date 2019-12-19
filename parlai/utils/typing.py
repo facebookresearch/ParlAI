@@ -7,10 +7,10 @@
 """
 Definitions of general ParlAI types.
 """
-from typing import TypeVar
+from typing import TypeVar, Dict, Any
 
 
-class _Shared(dict):
+class _Shared(Dict[str, Any]):
     """
     ParlAI ``shared`` Structure.
 
