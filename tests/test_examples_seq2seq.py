@@ -29,16 +29,18 @@ class TestExampleSeq2Seq(unittest.TestCase):
                 no_cuda=True,
                 embeddingsize=16,
                 hiddensize=16,
+                inference='beam',
+                beam_size=4,
             )
         )
 
         self.assertTrue(
             valid['token_acc'] > 0.95,
-            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            "valid token_acc = {}\nLOG:\n{}".format(valid['token_acc'], stdout),
         )
         self.assertTrue(
             test['token_acc'] > 0.95,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            "test token_acc = {}\nLOG:\n{}".format(test['token_acc'], stdout),
         )
 
 
