@@ -358,22 +358,22 @@ Here are some examples:
 
 .. code-block:: python
 
-   #Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
+   # Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
    python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
 
-   #Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+   # Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
    python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 
-   #Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
+   # Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
    python examples/eval_model.py -t squad -mf "zoo:drqa/squad/model"
 
-   #Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
+   # Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
    python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
 
-   #Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
+   # Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
    python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
-   #Display the predictions of that same IR baseline model:
+   # Display the predictions of that same IR baseline model:
    python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 
@@ -389,8 +389,22 @@ See `this tutorial <tutorial_task.html>`_ for making your own agents.
 Of course every model has various parameters and hyperparameters to set in general.
 
 
+Interacting with Models
+^^^^^^^^^^^^^^^^^^^^^^^
+
+One can also talk to your models! Here are examples of talking to models already in the model zoo:
+
+.. code-block:: python
+
+   # Interact with a Poly-Encoder model on ConvAI2
+   python examples/interactive.py -mf zoo:pretrained_transformers/model_poly/model -t convai2
+
+   # Interact with a Wizard Of Wikipedia (Full Dialogue Retrieval Model).
+   python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+
+
 **Model Zoo**
 
-A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See the devoted documentation section or `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
+ParlAI now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See the devoted documentation section or `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
 
 The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
