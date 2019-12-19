@@ -17,13 +17,6 @@ TorchRankerAgents and TorchGeneratorAgents support this.
 """
 
 import torch
-
-try:
-    # We need to run this *very first*, but subprocesses will throw an
-    # exception when running it
-    torch.multiprocessing.set_start_method("spawn")
-except RuntimeError:
-    pass
 import random
 import copy
 import os
