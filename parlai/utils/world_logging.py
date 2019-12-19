@@ -84,9 +84,9 @@ class WorldLogger:
 
     def _log_batch(self, world):
         batch_act = world.get_acts()
-        act_pairs = zip(*batch_act)
-        for i, act_pair in enumerate(act_pairs):
-            self._add_msgs(act_pair, idx=i)
+        parleys = zip(*batch_act)
+        for i, parley in enumerate(parleys):
+            self._add_msgs(parley, idx=i)
             if world.worlds[i].episode_done():
                 self.reset_world(idx=i)
 
@@ -106,24 +106,24 @@ class WorldLogger:
             # add episode to logs and clear examples
             self.reset_world()
 
-    def convert_to_labeled_data(self, log):
+    def convert_to_labeled_data(self, episode):
         out = []
-        text = ''
-        for msgs in log:
-            if text != '':
-                text += '\n'
-            text += msgs[0].get('text')
-            if msgs[1].get('id') != 'context':
-                label = msgs[1].get('text')
+        text_lst = []
+        for parley in episode:
+            first_act, second_act = parley
+            if 'text' in first_act:
+                text_lst.append(first_act['text'])
+            if second_act.get('id') != 'context':
+                label = second_act.get('text')
                 out.append(
                     {
-                        'id': msgs[0].get('id'),
-                        'text': text,
+                        'id': first_act.get('id', ''),
+                        'text': '\n'.join(text_lst),
                         'labels': [label],
                         'episode_done': False,
                     }
                 )
-                text = ''
+                text_lst = []
         if len(out) > 0:
             out[-1]['episode_done'] = True
         return out
@@ -131,10 +131,10 @@ class WorldLogger:
     def write_parlai_format(self, outfile):
         print('[ Saving log to {} in ParlAI format ]'.format(outfile))
         with open(outfile, 'w') as fw:
-            for episode in tqdm(self._log):
+            for episode in tqdm(self._logs):
                 ep = self.convert_to_labeled_data(episode)
-                for a in ep:
-                    txt = msg_to_str(a)
+                for act in ep:
+                    txt = msg_to_str(act)
                     fw.write(txt + '\n')
                 fw.write('\n')
 
