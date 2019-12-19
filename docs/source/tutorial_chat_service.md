@@ -64,21 +64,7 @@ In addition to the overworld demo, the following example tasks are provided:
 
 To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example `worlds.py` and `config.yml` files to create your task.
 
-A few things to keep in mind:
-
-1. A conversation ends when a call between ``parley`` calls to ``episode_done`` returns True.
-2. Your world can utilize the complete set of `Facebook Messenger Templates <https://developers.facebook.com/docs/messenger-platform/send-messages/templates>`__ by putting the formatted data in the 'payload' field of the observed action.
-3. Quick replies can be attached to any action, the ``MessengerOverworld`` of the `Overworld Demo <https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/>`__ displays this functionality.
-4. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
-5. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via ``episode_done``).
-6. To collect the conversation, data should be collected during every ``parley`` and saved during the ``world.shutdown`` call. You must inform the user of the fact that the data is being collected as well as your intended use.
-7. Finally, if you wish to use and command line arguments as you would in ParlAI, specify those in the ``opt`` section of the config file.
-
-
-
-To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example `worlds.py` and `config.yml` files to create your task.
-
-A few things to keep in mind:
+**A few things to keep in mind:**
 
 1. A conversation ends when a call between `parley` calls to `episode_done` returns True.
 2. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
@@ -135,7 +121,7 @@ Additional flags can be used (you can also specify these in the `config.yml` fil
 - `--force-page-token` forces the script to request a new page token from you, allowing you to switch what page you're running your bot on.
 - `--verbose` and `--debug` should be used before reporting problems that arise that appear unrelated to your world, as they expose more of the internal state of the messenger manager.
 
-Other things to keep in mind when creating your Messenger tasks:
+**Other things to keep in mind when creating your Messenger tasks:**
 - Your world can utilize the complete set of [Facebook Messenger Templates](https://developers.facebook.com/docs/messenger-platform/send-messages/templates) by putting the formatted data in the 'payload' field of the observed action.
 - Quick replies can be attached to any action, the `MessengerOverworld` of the [Overworld Demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/) displays this functionality.
 
