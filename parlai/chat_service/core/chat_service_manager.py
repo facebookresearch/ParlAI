@@ -14,7 +14,7 @@ import traceback
 from parlai.chat_service.core.agents import ChatServiceAgent
 import parlai.chat_service.services.messenger.server_utils as server_utils
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
-from parlai.chat_service.services.messenger.world_runner import MessengerWorldRunner
+from parlai.chat_service.core.manager_utils import ChatServiceWorldRunner
 from abc import ABC, abstractmethod
 
 
@@ -174,7 +174,7 @@ class ChatServiceManager(ABC):
         self.opt['task'] = self.config['task_name']
         # Deepcopy the opts so the manager opts aren't changed by the world runner
         self.runner_opt = copy.deepcopy(opt)
-        self.world_runner = MessengerWorldRunner(
+        self.world_runner = ChatServiceWorldRunner(
             self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
         self.max_agents_for = {
@@ -186,6 +186,7 @@ class ChatServiceManager(ABC):
         self.taskworld_map = {
             task: cfg.task_name for task, cfg in self.task_configs.items()
         }
+        self.service_reference_id = None
 
     @abstractmethod
     def parse_additional_args(self, opt):
@@ -305,7 +306,7 @@ class ChatServiceManager(ABC):
             for partner in agent.message_partners:
                 # We don't know who sent the message that was seen, but we can
                 # send a message observed event to everyone else in the chat
-                self.message_sender.send_read(partner.id)
+                self.sender.send_read(partner.id)
 
     def _on_first_message(self, message):
         """
@@ -403,7 +404,7 @@ class ChatServiceManager(ABC):
                     'Please wait while we pair you with another person. '
                     'If you wish to exit, type *EXIT*.',
                 )
-                self.message_sender.typing_on(agent_id)
+                self.sender.typing_on(agent_id)
         else:
             # If an agent is in a solo world, we can put a typing indicator
             # and mark the message as read
@@ -572,7 +573,7 @@ class ChatServiceManager(ABC):
                         'Pairing is taking longer than expected. '
                         'If you wish to exit, type *EXIT*.',
                     )
-                    self.message_sender.typing_on(agent_state.service_id)
+                    self.sender.typing_on(agent_state.service_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
     def start_task(self):
@@ -687,7 +688,7 @@ class ChatServiceManager(ABC):
             self.is_running = False
             self.world_runner.shutdown()
             if not self.bypass_server_setup:
-                self.message_socket.keep_running = False
+                self.socket.keep_running = False
             self._expire_all_conversations()
         except BaseException as e:
             shared_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
