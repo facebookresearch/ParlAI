@@ -130,8 +130,8 @@ def _eval_single_world(opt, agent, task):
     report = world.report()
     world.reset()
 
-    # possibly dump world acts to file
     if world_logger is not None:
+        # dump world acts to file
         world_logger.reset()  # add final acts to logs
         base_outfile = opt['report_filename'].split('.')[0]
         outfile = base_outfile + f'_{task}_replies.jsonl'
