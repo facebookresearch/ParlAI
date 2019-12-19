@@ -115,5 +115,14 @@ def write_first_n_examples_to_file(self, teacher_name, teacher_opt=None, n=10):
         f.write(json.dumps(first_n_examples))
 
 
+class AllTeacherTests(unittest.TestCase):
+    def test_all_teachers(self):
+        # Find all the DefaultTeachers?
+        # Or just create a manual list
+        # Send a warning of all teachers that don't have tests?
+        # TODO
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()
