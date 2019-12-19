@@ -21,28 +21,24 @@ class TestExampleSeq2Seq(unittest.TestCase):
     def test_generation(self):
         stdout, valid, test = testing_utils.train_model(
             dict(
-                model='examples/seq2seq',
                 task='integration_tests:nocandidate',
+                model='examples/seq2seq',
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
                 truncate=128,
                 no_cuda=True,
+                embeddingsize=16,
+                hiddensize=16,
             )
         )
 
         self.assertTrue(
-            valid['bleu-4'] > 0.95,
+            valid['token_acc'] > 0.95,
             "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertTrue(
-            test['bleu-4'] > 0.95,
+            test['token_acc'] > 0.95,
             "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
-        )
-        self.assertTrue(
-            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
-        self.assertTrue(
-            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
 
