@@ -19,7 +19,7 @@ def prepare_agent_readme(agent):
     :return:
         agent's readme
     """
-    readme_path = f'../../parlai/agents/{agent}/README.md'
+    readme_path = f'{os.path.join(parlai.agents.__path__[0], agent)}/README.md'
     if not os.path.exists(readme_path):
         raise RuntimeError(f'Agent {agent} must have README.md')
     with open(readme_path) as f:
