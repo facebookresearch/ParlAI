@@ -1004,7 +1004,7 @@ task_list = [
             "to facilitate training and evaluating dialogue systems. See "
             "https://arxiv.org/abs/1811.00207 for more information. \n"
             "Dataset has been released under the CC BY-NC license. \n"
-            "EmpatheticDialogueTeacher returns examples like so: \n\n"
+            "EmpatheticDialoguesTeacher returns examples like so: \n\n"
             "  - [text]:  context line (previous utterance by 'speaker') \n"
             "  - [labels]: label line  (current utterance by 'listener') \n\n"
             "with additional task specific fields: \n\n"

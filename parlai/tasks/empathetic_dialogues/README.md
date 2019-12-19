@@ -3,7 +3,7 @@ Task: Empathetic Dialogues
 Description: A dataset of 25k conversations grounded in emotional situations to facilitate training and evaluating dialogue systems. See https://arxiv.org/abs/1811.00207 for more information. 
 =========================== 
 Dataset has been released under the CC BY-NC license. 
-EmpatheticDialogueTeacher returns examples like so: 
+EmpatheticDialoguesTeacher returns examples like so: 
 - [text]:  context line (previous utterance by 'speaker') 
 - [labels]: label line  (current utterance by 'listener') 
 with additional task specific fields: 
