@@ -17,7 +17,7 @@ Its goal is to provide researchers:
 - a unified framework for sharing, training and testing dialog models
 - many popular datasets available all in one place, with the ability to multi-task over them
 - seamless integration of :doc:`Amazon Mechanical Turk <tutorial_mturk>` for data collection and human evaluation
-- integration with :doc:`Facebook Messenger <tutorial_messenger>` to connect agents with humans in a chat interface
+- integration with :doc:`chat services like Facebook Messenger <tutorial_chat_service>` to connect agents with humans in a chat interface
 
 You can also see the `README <https://github.com/facebookresearch/ParlAI/blob/master/README.md>`_ for more basic info on ParlAI, or continue reading this document.
 
