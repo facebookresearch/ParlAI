@@ -11,8 +11,8 @@ VQA (Visual Question Answering).
 Its goal is to provide researchers:
 
 - **80+ popular datasets available all in one place, with the same API**, among them [PersonaChat](https://arxiv.org/abs/1801.07243), [DailyDialog](https://arxiv.org/abs/1710.03957), [Wizard of Wikipedia](https://openreview.net/forum?id=r1l73iRqKm), [Empathetic Dialogues](https://arxiv.org/abs/1811.00207), [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [MS MARCO](http://www.msmarco.org/), [QuAC](https://www.aclweb.org/anthology/D18-1241), [HotpotQA](https://hotpotqa.github.io/), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php),  [Image Chat](https://arxiv.org/abs/1811.00945), [VQA](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py).
-- a wide set of **reference models** -- from retrieval baselines to transformers.
-- a large zoo of **pretrained models** ready to use off-the-shelf
+- a wide set of [**reference models**](https://www.parl.ai/docs/agents_list.html) -- from retrieval baselines to transformers.
+- a large [zoo of **pretrained models**](https://parl.ai/docs/zoo.html) ready to use off-the-shelf
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
 - **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
 - a large range of **helpers to create your own agents** and train on several tasks with **multitasking**
@@ -24,7 +24,7 @@ or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrj
 
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
-<p align="center"><img width="90%" src="docs/source/_static/img/parlai_examples.png" /></p>
+<p align="center"><img width="90%" src="docs/source/_static/img/parlai_example.png" /></p>
 
 ## Installing ParlAI
 
