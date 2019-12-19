@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -34,7 +34,9 @@ RETRIEVAL_OPTIONS = {
 
 @testing_utils.skipUnlessGPU
 class TestWizardModel(unittest.TestCase):
-    """Checks that pre-trained Wizard models give the correct results"""
+    """
+    Checks that pre-trained Wizard models give the correct results.
+    """
 
     @classmethod
     def setUpClass(cls):

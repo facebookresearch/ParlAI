@@ -5,14 +5,26 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 import json
 
-TRAIN_FILENAME = 'coqa-train-v1.0.json'
-VALID_FILENAME = 'coqa-dev-v1.0.json'
 VERSION = '1.0'
-URL = 'https://nlp.stanford.edu/data/coqa/'
+RESOURCES = [
+    DownloadableFile(
+        'https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',
+        'coqa-train-v1.0.json',
+        'b0fdb2bc1bd38dd3ca2ce5fa2ac3e02c6288ac914f241ac409a655ffb6619fa6',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json',
+        'coqa-dev-v1.0.json',
+        'dfa367a9733ce53222918d0231d9b3bedc2b8ee831a2845f62dfc70701f2540a',
+        zipped=False,
+    ),
+]
 
 
 def make_parlai_format(outpath, dtype, data):
@@ -52,14 +64,14 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(URL + VALID_FILENAME, dpath, VALID_FILENAME)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
-        with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
+        with open(os.path.join(dpath, 'coqa-train-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, VALID_FILENAME)) as f:
+        with open(os.path.join(dpath, 'coqa-dev-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

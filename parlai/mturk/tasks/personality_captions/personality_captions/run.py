@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -19,10 +20,10 @@ import os
 
 def main():
     """
-        Personality-Captions Data Collection Task.
+    Personality-Captions Data Collection Task.
 
-        This is the task setup used when collecting the Personality-Captions
-        dataset (https://arxiv.org/abs/1810.10665).
+    This is the task setup used when collecting the Personality-Captions dataset
+    (https://arxiv.org/abs/1810.10665).
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

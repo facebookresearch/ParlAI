@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Various test loaders."""
+"""
+Various test loaders.
+"""
 
 import os
 import unittest
@@ -13,7 +15,9 @@ from itertools import chain
 
 
 def _circleci_parallelism(suite):
-    """Allow for parallelism in CircleCI for speedier tests.."""
+    """
+    Allow for parallelism in CircleCI for speedier tests..
+    """
     if int(os.environ.get('CIRCLE_NODE_TOTAL', 0)) <= 1:
         # either not running on circleci, or we're not using parallelism.
         return suite
@@ -32,7 +36,9 @@ def _circleci_parallelism(suite):
 
 
 def _clear_cmdline_args(fn):
-    """Decorate to make sure 'python setup.py test' doesn't look like a parlai call."""
+    """
+    Decorate to make sure 'python setup.py test' doesn't look like a parlai call.
+    """
     import sys
 
     sys.argv = sys.argv[:1]
@@ -79,7 +85,9 @@ def unittests():
 
 @_clear_cmdline_args
 def mturk():
-    """Mechanical Turk tests."""
+    """
+    Mechanical Turk tests.
+    """
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai/mturk/core/test/")
     return test_suite
@@ -87,11 +95,9 @@ def mturk():
 
 @_clear_cmdline_args
 def internal_tests():
-    """Internal Tests"""
+    """
+    Internal Tests.
+    """
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai_internal/tests")
     return test_suite
-
-
-if __name__ == '__main__':
-    unittest.run(unittests())

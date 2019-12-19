@@ -6,7 +6,8 @@
 
 from collections import deque, namedtuple
 from collections.abc import MutableMapping
-from multiprocessing import Lock, RawArray
+from multiprocessing import Lock
+from multiprocessing import RawArray  # type: ignore
 from operator import attrgetter
 
 import ctypes
@@ -19,7 +20,11 @@ import torch
 
 
 class Beam(object):
-    """Generic beam class. It keeps information about beam_size hypothesis."""
+    """
+    Generic beam class.
+
+    It keeps information about beam_size hypothesis.
+    """
 
     def __init__(
         self,
@@ -31,7 +36,8 @@ class Beam(object):
         min_n_best=3,
         cuda='cpu',
     ):
-        """Instantiate Beam object.
+        """
+        Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
         :param min_length: minimum length of the predicted sequence
@@ -131,7 +137,8 @@ class Beam(object):
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
@@ -142,7 +149,8 @@ class Beam(object):
         )
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep: timestep with range up to len(self.outputs)-1
         :param hyp_id: id with range up to beam_size-1
@@ -202,7 +210,8 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Checks if self.finished is empty and add hyptail in that case.
+        """
+        Checks if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
 
@@ -223,7 +232,8 @@ class Beam(object):
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Creates pydot graph representation of the beam.
+        """
+        Creates pydot graph representation of the beam.
 
         :param outputs: self.outputs from the beam
         :param dictionary: tok 2 word dict to save words in the tree nodes
@@ -326,8 +336,11 @@ def maintain_dialog_history(
     useStartEndIndices=True,
     splitSentences=False,
 ):
-    """Keeps track of dialog history, up to a truncation length.
-    Either includes replies from the labels, model, or not all using param 'replies'."""
+    """
+    Keeps track of dialog history, up to a truncation length.
+
+    Either includes replies from the labels, model, or not all using param 'replies'.
+    """
 
     def parse(txt, splitSentences):
         if dict is not None:
@@ -415,13 +428,16 @@ class PaddingUtils(object):
         eval_labels=True,
         truncate=None,
     ):
-        """We check that examples are valid, pad with zeros, and sort by length
-           so that we can use the pack_padded function. The list valid_inds
-           keeps track of which indices are valid and the order in which we sort
-           the examples.
-           dq -- whether we should use deque or list
-           eval_labels -- whether or not we want to consider eval labels
-           truncate -- truncate input and output lengths
+        """
+        We check that examples are valid, pad with zeros, and sort by length so that we
+        can use the pack_padded function.
+
+        The list valid_inds
+        keeps track of which indices are valid and the order in which we sort
+        the examples.
+        dq -- whether we should use deque or list
+        eval_labels -- whether or not we want to consider eval labels
+        truncate -- truncate input and output lengths
         """
 
         def valid(obs):
@@ -536,9 +552,11 @@ class PaddingUtils(object):
         answers=None,
         ys=None,
     ):
-        """Predictions are mapped back to appropriate indices in the batch_reply
-           using valid_inds.
-           report_freq -- how often we report predictions
+        """
+        Predictions are mapped back to appropriate indices in the batch_reply using
+        valid_inds.
+
+        report_freq -- how often we report predictions
         """
         for i in range(len(predictions)):
             # map the predictions back to non-empty examples in the batch
@@ -574,8 +592,9 @@ class PaddingUtils(object):
 
 
 class SharedTable(MutableMapping):
-    """Provides a simple shared-memory table of integers, floats, or strings.
-    Use this class as follows:
+    """
+    Provides a simple shared-memory table of integers, floats, or strings. Use this
+    class as follows:
 
     .. code-block:: python
 
@@ -590,13 +609,14 @@ class SharedTable(MutableMapping):
     types = {int: ctypes.c_int, float: ctypes.c_float, bool: ctypes.c_bool}
 
     def __init__(self, init_dict=None):
-        """Create a shared memory version of each element of the initial
-        dictionary. Creates an empty array otherwise, which will extend
-        automatically when keys are added.
+        """
+        Create a shared memory version of each element of the initial dictionary.
+        Creates an empty array otherwise, which will extend automatically when keys are
+        added.
 
-        Each different type (all supported types listed in the ``types`` array
-        above) has its own array. For each key we store an index into the
-        appropriate array as well as the type of value stored for that key.
+        Each different type (all supported types listed in the ``types`` array above)
+        has its own array. For each key we store an index into the appropriate array as
+        well as the type of value stored for that key.
         """
         # idx is dict of {key: (array_idx, value_type)}
         self.idx = {}
@@ -649,7 +669,9 @@ class SharedTable(MutableMapping):
         return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
-        """Returns shared value if key is available."""
+        """
+        Returns shared value if key is available.
+        """
         if key in self.tensors:
             return self.tensors[key]
         elif key in self.idx:
@@ -659,12 +681,14 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __setitem__(self, key, value):
-        """If key is in table, update it. Otherwise, extend the array to make
-        room. This uses additive resizing not multiplicative, since the number
-        of keys is not likely to change frequently during a run, so do not abuse
-        it.
-        Raises an error if you try to change the type of the value stored for
-        that key--if you need to do this, you must delete the key first.
+        """
+        If key is in table, update it.
+
+        Otherwise, extend the array to make room. This uses additive resizing not
+        multiplicative, since the number of keys is not likely to change frequently
+        during a run, so do not abuse it. Raises an error if you try to change the type
+        of the value stored for that key--if you need to do this, you must delete the
+        key first.
         """
         val_type = type(value)
         if 'Tensor' in str(val_type):
@@ -700,7 +724,9 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __str__(self):
-        """Returns simple dict representation of the mapping."""
+        """
+        Returns simple dict representation of the mapping.
+        """
         lhs = [
             '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
             for key, (idx, typ) in self.idx.items()
@@ -709,7 +735,9 @@ class SharedTable(MutableMapping):
         return '{{{}}}'.format(', '.join(lhs + rhs))
 
     def __repr__(self):
-        """Returns the object type and memory location with the mapping."""
+        """
+        Returns the object type and memory location with the mapping.
+        """
         representation = super().__repr__()
         return representation.replace('>', ': {}>'.format(str(self)))
 
@@ -726,10 +754,11 @@ def is_tensor(v):
 
 
 def modelzoo_path(datapath, path):
-    """If path starts with 'models', then we remap it to the model zoo path
-    within the data directory (default is ParlAI/data/models).
-    We download models from the model zoo if they are not here yet.
+    """
+    If path starts with 'models', then we remap it to the model zoo path within the data
+    directory (default is ParlAI/data/models).
 
+    We download models from the model zoo if they are not here yet.
     """
     if path is None:
         return None
@@ -743,8 +772,7 @@ def modelzoo_path(datapath, path):
         module_name = 'parlai.zoo.{}'.format(animal)
         try:
             my_module = importlib.import_module(module_name)
-            download = getattr(my_module, 'download')
-            download(datapath)
+            my_module.download(datapath)
         except (ImportError, AttributeError):
             pass
 

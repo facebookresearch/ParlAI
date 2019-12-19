@@ -5,15 +5,18 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from typing import Optional
+
 import gzip
 import os
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
 
 class ParseInsuranceQA(object):
-    version = None
-    label2answer_fname = None
+    version: Optional[str] = None
+    label2answer_fname: Optional[str] = None
 
     @classmethod
     def read_gz(cls, filename):
@@ -209,6 +212,15 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
         fout.close()
 
 
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/shuzi/insuranceQA/archive/master.zip',
+        'insuranceqa.zip',
+        '53e1c4a68734c6a0955dcba50d5a2a9926004d4cd4cda2e988cc7b990a250fbf',
+    )
+]
+
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'InsuranceQA')
     version = '1'
@@ -220,12 +232,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data from github.
-        fname = 'insuranceqa.zip'
-        url = 'https://github.com/shuzi/insuranceQA/archive/master.zip'
-        print('[downloading data from: ' + url + ']')
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         ParseInsuranceQAV1.build(dpath)
         ParseInsuranceQAV2.build(dpath)

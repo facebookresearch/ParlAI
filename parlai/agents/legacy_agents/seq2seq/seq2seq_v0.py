@@ -24,7 +24,9 @@ import pickle
 
 
 class Agent(object):
-    """Base class for all other agents."""
+    """
+    Base class for all other agents.
+    """
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'id'):
@@ -34,12 +36,16 @@ class Agent(object):
         self.observation = None
 
     def observe(self, observation):
-        """Receive an observation/action dict."""
+        """
+        Receive an observation/action dict.
+        """
         self.observation = observation
         return observation
 
     def act(self):
-        """Return an observation/action dict based upon given observation."""
+        """
+        Return an observation/action dict based upon given observation.
+        """
         if hasattr(self, 'observation') and self.observation is not None:
             print('agent received observation:')
             print(self.observation)
@@ -63,14 +69,16 @@ class Agent(object):
         pass
 
     def save(self, path=None):
-        """If applicable, save any parameters needed to recreate this agent from
-        loaded parameters.
+        """
+        If applicable, save any parameters needed to recreate this agent from loaded
+        parameters.
         """
         pass
 
     def share(self):
-        """If applicable, share any parameters needed to create a shared version
-        of this agent.
+        """
+        If applicable, share any parameters needed to create a shared version of this
+        agent.
         """
         shared = {}
         shared['class'] = type(self)
@@ -78,12 +86,15 @@ class Agent(object):
         return shared
 
     def shutdown(self):
-        """Perform any final cleanup if needed."""
+        """
+        Perform any final cleanup if needed.
+        """
         pass
 
 
 class Seq2seqAgent(Agent):
-    """Agent which takes an input sequence and produces an output sequence.
+    """
+    Agent which takes an input sequence and produces an output sequence.
 
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
@@ -101,14 +112,14 @@ class Seq2seqAgent(Agent):
     """
 
     OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
+        'adadelta': optim.Adadelta,  # type: ignore
+        'adagrad': optim.Adagrad,  # type: ignore
         'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
+        'adamax': optim.Adamax,  # type: ignore
+        'asgd': optim.ASGD,  # type: ignore
+        'lbfgs': optim.LBFGS,  # type: ignore
+        'rmsprop': optim.RMSprop,  # type: ignore
+        'rprop': optim.Rprop,  # type: ignore
         'sgd': optim.SGD,
     }
 
@@ -118,7 +129,9 @@ class Seq2seqAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument(
             '--init-model',
@@ -342,7 +355,9 @@ class Seq2seqAgent(Agent):
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
         super().__init__(opt, shared)
         opt = self.opt  # there is a deepcopy in the init
 
@@ -467,13 +482,14 @@ class Seq2seqAgent(Agent):
 
                 if opt['embeddingsize'] != pretrained_dim:
                     rp = torch.Tensor(pretrained_dim, opt['embeddingsize']).normal_()
-                    t = lambda x: torch.mm(x.unsqueeze(0), rp)
                 else:
-                    t = lambda x: x
+                    rp = None
                 cnt = 0
                 for w, i in self.dict.tok2ind.items():
                     if w in embs.stoi:
-                        vec = t(embs.vectors[embs.stoi[w]])
+                        vec = embs.vectors[embs.stoi[w]]
+                        if rp is not None:
+                            vec = torch.mm(vec.unsqueeze(0), rp)
                         self.model.decoder.lt.weight.data[i] = vec
                         cnt += 1
                         if opt['lookuptable'] in ['unique', 'dec_out']:
@@ -553,10 +569,11 @@ class Seq2seqAgent(Agent):
         self.reset()
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
+        """
+        Set overridable opts from loaded opt file.
 
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
+        Print out each added key and each overriden key. Only override args specific to
+        the model.
         """
         model_args = {
             'hiddensize',
@@ -592,11 +609,15 @@ class Seq2seqAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         return self.dict.txt2vec(text)
 
     def v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         for i in vec:
             if i == self.END_IDX:
@@ -606,17 +627,23 @@ class Seq2seqAgent(Agent):
         return self.dict.vec2txt(new_vec)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         if self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.history.clear()
         for i in range(len(self.answers)):
@@ -624,16 +651,19 @@ class Seq2seqAgent(Agent):
         self.reset_metrics()
 
     def reset_metrics(self):
-        """Reset metrics for reporting loss and perplexity."""
+        """
+        Reset metrics for reporting loss and perplexity.
+        """
         self.metrics['loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
+        """
+        Report loss and perplexity from model's perspective.
 
-        Note that this includes predicting __END__ and __UNK__ tokens and may
-        differ from a truly independent measurement.
+        Note that this includes predicting __END__ and __UNK__ tokens and may differ
+        from a truly independent measurement.
         """
         m = {}
         num_tok = self.metrics['num_tokens']
@@ -653,7 +683,9 @@ class Seq2seqAgent(Agent):
         return m
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['opt'] = self.opt
         shared['answers'] = self.answers
@@ -675,7 +707,9 @@ class Seq2seqAgent(Agent):
         return shared
 
     def observe(self, observation):
-        """Save observation for act.
+        """
+        Save observation for act.
+
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
@@ -698,10 +732,11 @@ class Seq2seqAgent(Agent):
         return obs
 
     def predict(self, xs, ys=None, cands=None, valid_cands=None, is_training=False):
-        """Produce a prediction from our model.
+        """
+        Produce a prediction from our model.
 
-        Update the model using the targets if available, otherwise rank
-        candidates as well if they are available and param is set.
+        Update the model using the targets if available, otherwise rank candidates as
+        well if they are available and param is set.
         """
         predictions, cand_preds = None, None
         if is_training:
@@ -763,7 +798,9 @@ class Seq2seqAgent(Agent):
         return predictions, cand_preds
 
     def vectorize(self, observations):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
         is_training = any(['labels' in obs for obs in observations])
         xs, ys, labels, valid_inds, _, _ = PaddingUtils.pad_text(
             observations,
@@ -890,7 +927,9 @@ class Seq2seqAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path and hasattr(self, 'model'):
@@ -908,26 +947,33 @@ class Seq2seqAgent(Agent):
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def shutdown(self):
-        """Save the state of the model when shutdown."""
+        """
+        Save the state of the model when shutdown.
+        """
         path = self.opt.get('model_file', None)
         if path is not None and hasattr(self, 'optimizer'):
             self.save(path + '.shutdown_state')
         super().shutdown()
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         return states
 
     def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule."""
+        """
+        Use the metrics to decide when to adjust LR schedule.
+        """
         if 'loss' in metrics_dict:
             self.scheduler.step(metrics_dict['loss'])
 
 
 class mydefaultdict(defaultdict):
-    """Custom defaultdict which overrides defaults requested by the get
-    function with the default factory.
+    """
+    Custom defaultdict which overrides defaults requested by the get function with the
+    default factory.
     """
 
     def get(self, key, default=None):
@@ -936,11 +982,12 @@ class mydefaultdict(defaultdict):
 
 
 class PerplexityEvaluatorAgent(Seq2seqAgent):
-    """Subclass for doing standardized perplexity evaluation.
+    """
+    Subclass for doing standardized perplexity evaluation.
 
     This is designed to be used in conjunction with the PerplexityWorld at
-    parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
-    to calculate the probability of tokens one token at a time.
+    parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function to
+    calculate the probability of tokens one token at a time.
     """
 
     def __init__(self, opt, shared=None):
@@ -949,8 +996,9 @@ class PerplexityEvaluatorAgent(Seq2seqAgent):
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words given an input and
-        partial true output. This is used to calculate the per-word perplexity.
+        """
+        Return probability distribution over next words given an input and partial true
+        output. This is used to calculate the per-word perplexity.
 
         Arguments:
         observation -- input observation dict

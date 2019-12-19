@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""ParlAI Server file"""
+"""
+ParlAI Server file.
+"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -33,12 +36,16 @@ import tornado.escape
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.webapp.run_mocks.mock_turk_manager import MockTurkManager
-from parlai import __path__ as parlai_path
+from typing import Dict, Any
+
+# https://github.com/python/mypy/issues/1422
+from parlai import __path__ as parlai_path  # type: ignore
 
 parlai_path = parlai_path[0]
 
 try:
-    from parlai_internal import __path__ as parlai_int_path
+    # https://github.com/python/mypy/issues/1422
+    from parlai_internal import __path__ as parlai_int_path  # type: ignore
 
     parlai_int_path = parlai_int_path[0]
 except Exception:
@@ -53,7 +60,7 @@ IS_DEBUG = True
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-tasks = {}
+tasks: Dict[Any, Any] = {}
 
 
 def row_to_dict(row):
@@ -65,12 +72,16 @@ def get_rand_id():
 
 
 def force_dir(path):
-    """Make sure the parent dir exists for path so we can write a file."""
+    """
+    Make sure the parent dir exists for path so we can write a file.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
 def get_path(filename):
-    """Get the path to an asset."""
+    """
+    Get the path to an asset.
+    """
     cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
@@ -484,9 +495,11 @@ class BonusHandler(BaseHandler):
         self.mturk_manager = app.mturk_manager
 
     def post(self, worker_target):
-        """Requests to /bonus/{worker_id} will give a bonus to that worker.
-        Requires a reason, assignment_id, a unique token (for idempotence),
-        and the bonus amount IN CENTS
+        """
+        Requests to /bonus/{worker_id} will give a bonus to that worker.
+
+        Requires a reason, assignment_id, a unique token (for idempotence), and the
+        bonus amount IN CENTS
         """
         data = tornado.escape.json_decode(self.request.body)
         reason = data['reason']
@@ -585,9 +598,10 @@ class TaskRunHandler(BaseHandler):
         self.app = app
 
     def post(self, task_target):
-        """Requests to /run_task/{task_id} will launch a task locally
-        for the given task. It will die after 20 mins if it doesn't end
-        on its own.
+        """
+        Requests to /run_task/{task_id} will launch a task locally for the given task.
+
+        It will die after 20 mins if it doesn't end on its own.
         """
         try:
             # Load the run and task_config modules from the expected locations

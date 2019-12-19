@@ -4,19 +4,19 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-    A dataset with conversations directly grounded with knowledge
-    retrieved from Wikipedia. Contains 201k utterances from 22k
-    dialogues spanning over 1300 diverse topics, split into train,
-    test, and valid sets. The test and valid sets are split
-    into two sets each: one with overlapping topics with the train
-    set, and one with unseen topics.
+A dataset with conversations directly grounded with knowledge retrieved from Wikipedia.
+Contains 201k utterances from 22k dialogues spanning over 1300 diverse topics, split
+into train, test, and valid sets. The test and valid sets are split into two sets each:
+one with overlapping topics with the train set, and one with unseen topics.
 
-    To access the different valid/test splits (unseen/seen), specify
-    the corresponding split (`random_split` for seen, `topic_split`
-    for unseen) after the last colon in the task.
-    E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
+To access the different valid/test splits (unseen/seen), specify
+the corresponding split (`random_split` for seen, `topic_split`
+for unseen) after the last colon in the task.
+E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+import copy
+import parlai.core.agents as core_agents
 from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
@@ -48,6 +48,7 @@ def _first_key(dictionary):
 def _get_chosen_title_and_sent(wizard_entry, k_dict):
     """
     Return a nicely extracted title and chosen sentence.
+
     :return: pair (title, sentence)
     """
     title_dict = wizard_entry.get('checked_passage', 'none')
@@ -96,27 +97,27 @@ def _path(opt, split='random_split'):
 
 
 class WizardOfWikipediaTeacher(FixedDialogTeacher):
-    """The default teacher; essentially reads the json file and outputs the
-       raw data.
+    """
+    The default teacher; essentially reads the json file and outputs the raw data.
 
-       Actions have the following form:
-       {
-           'wizard_eval': <evaluation of wizard>,
-           'chosen_topic': <chosen_topic>,
-           'chosen_topic_passage': <chosen topic passage>,
-           'mtdo': <whether the conversation had sufficient overlap>,
-           'text': <text>
-           'retrieved_topics': <topics retrieved for text>
-           'full_retrieved_passages': <full retrieved passages>
-           'retrieved_passages': <passages shown to turker>
-           'checked_sentence': <checked sentence if wizard, else None>
-           'checked_passage': <checked_passage if wizard, else None>
-       }
+    Actions have the following form:
+    {
+        'wizard_eval': <evaluation of wizard>,
+        'chosen_topic': <chosen_topic>,
+        'chosen_topic_passage': <chosen topic passage>,
+        'mtdo': <whether the conversation had sufficient overlap>,
+        'text': <text>
+        'retrieved_topics': <topics retrieved for text>
+        'full_retrieved_passages': <full retrieved passages>
+        'retrieved_passages': <passages shown to turker>
+        'checked_sentence': <checked sentence if wizard, else None>
+        'checked_passage': <checked_passage if wizard, else None>
+    }
 
-       The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
+    The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
 
-       Specify the valid/test split after the last colon in the task, e.g.
-       wizard_of_wikipedia:<teacher>:random_split
+    Specify the valid/test split after the last colon in the task, e.g.
+    wizard_of_wikipedia:<teacher>:random_split
     """
 
     def __init__(self, opt, shared=None):
@@ -337,23 +338,31 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
 
 
 class BasicdialogTeacher(WizardOfWikipediaTeacher):
-    """Teacher that only contains the basic dialog between the wizard and
-    the Apprentice
+    """
+    Teacher that only contains the basic dialog between the wizard and the Apprentice.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.speaker_label = opt.get('speaker_label', 'both')
+        self.add_topic = opt.get('add_topic', False)
         self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
-        self.wizard_dialog = opt.get('wizard_dialog', False)
 
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Basic Dialog Arguments')
         agent.add_argument(
-            '--wizard-dialog',
+            '--speaker-label',
+            type=str,
+            default='both',
+            choices=['both', 'wizard', 'apprentice'],
+            help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
             type='bool',
             default=False,
-            help='If true, ensures that wizard response ' 'is always the label',
+            help='prepend chosen topic to first turn',
         )
 
     def num_examples(self):
@@ -361,7 +370,8 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
     def len_episode(self, ep):
         d = self.data[ep]
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
             return (len(d['dialog']) - 1) // 2
         return len(d['dialog']) // 2
 
@@ -370,7 +380,8 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         episode_done = entry_idx == (self.len_episode(episode_idx) - 1)
 
         idx = entry_idx * 2
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
             idx += 1
 
         dialog_entry_1 = d['dialog'][idx]
@@ -379,17 +390,45 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
+        if self.add_topic and entry_idx == 0:
+            text = d.get('chosen_topic', '') + '\n' + text
+
         action = {
             'id': 'WizardBasicDialog',
             'text': text,
             'labels': labels,
             'episode_done': episode_done,
         }
+        if 'label_candidates' in d:
+            action['label_candidates'] = d['label_candidates']
 
-        if self.wizard_dialog:
+        if self.speaker_label == 'wizard':
             action['chosen_topic'] = d.get('chosen_topic', '')
 
         return action
+
+
+class BasicWizardDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = "wizard"
+        self.add_topic = True
+
+
+class BasicApprenticeDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.speaker_label = 'apprentice'
+        self.add_topic = True
+
+
+class BasicBothDialogTeacher(core_agents.MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt[
+            'task'
+        ] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
+        super().__init__(opt, shared)
 
 
 ###############################################################
@@ -400,9 +439,11 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
 
 class GeneratorTeacher(WizardDialogKnowledgeTeacher):
-    """Teacher for training a generator. Depending on certain flag
-    configurations, the teacher will include differing amounts of knowledge
+    """
+    Teacher for training a generator.
 
+    Depending on certain flag configurations, the teacher will include differing amounts
+    of knowledge
     """
 
     def __init__(self, opt, shared=None):
@@ -491,8 +532,8 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
 
 class DocreaderTeacher(WizardOfWikipediaTeacher):
     """
-    Teacher for training a doc reader. One can specify the format of the
-    action via the `--teacher-type` flag.
+    Teacher for training a doc reader. One can specify the format of the action via the
+    `--teacher-type` flag.
 
     docs:
         {
@@ -525,7 +566,6 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             text: <Sentence for which passage was retrieved>
             label: <Max overlap span between sentence said and sentence retrieved>
         }
-
     """
 
     def __init__(self, opt, shared=None):
@@ -875,6 +915,14 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
 
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
+    pass
+
+
+class SelfchatTeacher(BasicBothDialogTeacher):
+    """
+    Teacher used to create candidates for selfchats, if needed.
+    """
+
     pass
 
 

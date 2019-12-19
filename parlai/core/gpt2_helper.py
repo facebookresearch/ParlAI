@@ -5,12 +5,15 @@
 # LICENSE file in the root directory of this source tree.
 """
 Byte pair encoding utilities from GPT-2.
+
 Original source: https://github.com/openai/gpt-2/blob/master/src/encoder.py
 Original license: MIT
 This is an implemtation from fairseq : https://github.com/pytorch/fairseq/blob/master/fairseq/data/encoders/gpt2_bpe_utils.py
 Implemtation license: MIT
 """
 
+from typing import List
+from parlai.core.opt import Opt
 from functools import lru_cache
 import json
 from .build_data import download, make_dir
@@ -24,12 +27,13 @@ DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
 def bytes_to_unicode():
     """
     Returns list of utf-8 byte and a corresponding list of unicode strings.
-    The reversible bpe codes work on unicode strings.
-    This means you need a large # of unicode characters in your vocab if you want to avoid UNKs.
-    When you're at something like a 10B token dataset you end up needing around 5K for decent coverage.
-    This is a signficant percentage of your normal, say, 32K bpe vocab.
-    To avoid that, we want lookup tables between utf-8 bytes and unicode strings.
-    And avoids mapping to whitespace/control characters the bpe code barfs on.
+
+    The reversible bpe codes work on unicode strings. This means you need a large # of
+    unicode characters in your vocab if you want to avoid UNKs. When you're at something
+    like a 10B token dataset you end up needing around 5K for decent coverage. This is a
+    signficant percentage of your normal, say, 32K bpe vocab. To avoid that, we want
+    lookup tables between utf-8 bytes and unicode strings. And avoids mapping to
+    whitespace/control characters the bpe code barfs on.
     """
     bs = (
         list(range(ord("!"), ord("~") + 1))
@@ -48,7 +52,9 @@ def bytes_to_unicode():
 
 
 def get_pairs(word):
-    """Return set of symbol pairs in a word.
+    """
+    Return set of symbol pairs in a word.
+
     Word is represented as tuple of symbols (symbols being variable-length strings).
     """
     pairs = set()
@@ -60,7 +66,7 @@ def get_pairs(word):
 
 
 class Gpt2BpeHelper:
-    def __init__(self, opt, errors='replace'):
+    def __init__(self, opt: Opt, errors='replace'):
         data_path = os.path.join(opt['datapath'], 'gpt2')
         vocab_path = os.path.join(data_path, 'vocab.bpe')
         json_path = os.path.join(data_path, 'encoder.json')
@@ -87,7 +93,6 @@ class Gpt2BpeHelper:
         self.byte_encoder = bytes_to_unicode()
         self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
         self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
-        self.cache = {}
         try:
             import regex as re
 
@@ -100,9 +105,8 @@ class Gpt2BpeHelper:
             r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
         )
 
-    def bpe(self, token):
-        if token in self.cache:
-            return self.cache[token]
+    @lru_cache(maxsize=10240)
+    def bpe(self, token: str) -> str:
         word = tuple(token)
         pairs = get_pairs(word)
 
@@ -114,7 +118,7 @@ class Gpt2BpeHelper:
             if bigram not in self.bpe_ranks:
                 break
             first, second = bigram
-            new_word = []
+            new_word: List[str] = []
             i = 0
             while i < len(word):
                 try:
@@ -131,18 +135,15 @@ class Gpt2BpeHelper:
                 else:
                     new_word.append(word[i])
                     i += 1
-            new_word = tuple(new_word)
-            word = new_word
+            word = tuple(new_word)
             if len(word) == 1:
                 break
             else:
                 pairs = get_pairs(word)
-        word = ' '.join(word)
-        self.cache[token] = word
-        return word
+        return ' '.join(word)
 
-    def encode(self, text):
-        bpe_tokens = []
+    def encode(self, text: str) -> List[str]:
+        bpe_tokens: List[str] = []
         for token in self.re.findall(self.pat, text):
             token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
             bpe_tokens.extend(
@@ -150,7 +151,7 @@ class Gpt2BpeHelper:
             )
         return bpe_tokens
 
-    def decode(self, tokens):
+    def decode(self, tokens: List[str]) -> str:
         text = ''.join([self.decoder[token] for token in tokens])
         text = bytearray([self.byte_decoder[c] for c in text]).decode(
             'utf-8', errors=self.errors

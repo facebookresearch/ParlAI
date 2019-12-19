@@ -3,36 +3,26 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""File for miscellaneous utility functions and constants."""
+"""
+File for miscellaneous utility functions and constants.
+"""
 
 from collections import deque
-from copy import deepcopy
 import math
-import json
-import pickle
 import random
 import time
-import traceback
+from typing import Union, Optional, Set, Any, Dict, List
 import warnings
 
 from parlai.core.message import Message
 
-# some of the utility methods are helpful for Torch
 try:
     import torch
 
-    # default type in padded3d needs to be protected if torch
-    # isn't installed.
-    TORCH_LONG = torch.long
     __TORCH_AVAILABLE = True
 except ImportError:
-    TORCH_LONG = None
+    # silence the error, we'll have other problems later if it's super necessary
     __TORCH_AVAILABLE = False
-
-
-"""Near infinity, useful as a large penalty for scoring when inf is bad."""
-NEAR_INF = 1e20
-NEAR_INF_FP16 = 65504
 
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
@@ -48,15 +38,8 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'eval_labels_vec',
     'text_vec',
     'label_candidates_vecs',
+    'token_losses',
 }
-
-
-def neginf(dtype):
-    """Return a representable finite number near -inf for a dtype."""
-    if dtype is torch.float16:
-        return -NEAR_INF_FP16
-    else:
-        return -NEAR_INF
 
 
 def maintain_dialog_history(
@@ -133,9 +116,8 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     """
     Load global fixed set of candidate labels that the teacher provides.
 
-    Every example will include these as candidates. The true labels for a
-    specific example are also added to this set, so that it's possible to get
-    the right answer.
+    Every example will include these as candidates. The true labels for a specific
+    example are also added to this set, so that it's possible to get the right answer.
     """
     if path is None:
         return None
@@ -165,85 +147,6 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
                 else:
                     cands.append(line)
     return cands
-
-
-def load_opt_file(optfile):
-    """Load an Opt from disk."""
-    try:
-        # try json first
-        with open(optfile, 'r') as handle:
-            opt = json.load(handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as handle:
-            opt = pickle.load(handle)
-    return Opt(opt)
-
-
-class Opt(dict):
-    """
-    Class for tracking options.
-
-    Functions like a dict, but allows us to track the history of arguments
-    as they are set.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.history = {}
-        self.deepcopies = []
-
-    def __setitem__(self, key, val):
-        loc = traceback.format_stack()[-2]
-        self.history.setdefault(key, []).append((loc, val))
-        super().__setitem__(key, val)
-
-    def __getstate__(self):
-        return (self.history, self.deepcopies, dict(self))
-
-    def __setstate__(self, state):
-        self.history, self.deepcopies, data = state
-        self.update(data)
-
-    def __reduce__(self):
-        return (Opt, (), self.__getstate__())
-
-    def __deepcopy__(self, memo):
-        """Override deepcopy so that history is copied over to new object."""
-        # track location of deepcopy
-        loc = traceback.format_stack()[-3]
-        self.deepcopies.append(loc)
-        # deepcopy the dict
-        memo = deepcopy(dict(self))
-        # make into Opt object
-        memo = Opt(memo)
-        # deepcopy the history
-        memo.history = deepcopy(self.history)
-        # deepcopy the deepcopy history
-        memo.deepcopies = deepcopy(self.deepcopies)
-        return memo
-
-    def display_deepcopies(self):
-        """Display all deepcopies."""
-        if len(self.deepcopies) == 0:
-            print('No deepcopies performed on this opt.')
-            return
-        print('Deepcopies were performed at the following locations:\n')
-        for i, loc in enumerate(self.deepcopies):
-            print('{}. {}'.format(i + 1, loc))
-
-    def display_history(self, key):
-        """Display the history for an item in the dict."""
-        if key not in self.history:
-            print('No history for key {}.'.format(key))
-            return
-        item_hist = self.history[key]
-        for i, change in enumerate(item_hist):
-            print(
-                '{}. {} was set to {} at:\n{}\n'.format(
-                    i + 1, key, change[1], change[0]
-                )
-            )
 
 
 class Predictor(object):
@@ -281,7 +184,9 @@ class Predictor(object):
         self.agent = create_agent(self.opt)
 
     def predict(self, observation):
-        """From a ParlAI-standard message dict, get model prediction."""
+        """
+        From a ParlAI-standard message dict, get model prediction.
+        """
         if 'episode_done' not in observation:
             observation['episode_done'] = True
         self.agent.observe(observation)
@@ -290,56 +195,76 @@ class Predictor(object):
 
 
 class Timer(object):
-    """Computes elapsed time."""
+    """
+    Computes elapsed time.
+    """
 
     def __init__(self):
-        """Initialize timer."""
+        """
+        Initialize timer.
+        """
         self.running = True
         self.total = 0
         self.start = time.time()
 
     def reset(self):
-        """Reset timer to zero."""
+        """
+        Reset timer to zero.
+        """
         self.running = True
         self.total = 0
         self.start = time.time()
         return self
 
     def resume(self):
-        """Resume timer."""
+        """
+        Resume timer.
+        """
         if not self.running:
             self.running = True
             self.start = time.time()
         return self
 
     def stop(self):
-        """Pause timer."""
+        """
+        Pause timer.
+        """
         if self.running:
             self.running = False
             self.total += time.time() - self.start
         return self
 
     def time(self):
-        """Get current timer time."""
+        """
+        Get current timer time.
+        """
         if self.running:
             return self.total + time.time() - self.start
         return self.total
 
 
 class TimeLogger:
-    """Class for logging time progress against a goal."""
+    """
+    Class for logging time progress against a goal.
+    """
 
     def __init__(self):
-        """Set up timer."""
+        """
+        Set up timer.
+        """
         self.timer = Timer()
         self.tot_time = 0
 
     def total_time(self):
-        """Return time elapsed at last log call."""
+        """
+        Return time elapsed at last log call.
+        """
         return self.tot_time
 
     def time(self):
-        """Return current timer time."""
+        """
+        Return current timer time.
+        """
         return self.timer.time()
 
     def log(self, done, total, report=None):
@@ -390,12 +315,34 @@ class AttrDict(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize AttrDict using input dict."""
+        """
+        Initialize AttrDict using input dict.
+        """
         super().__init__(*args, **kwargs)
         self.__dict__ = self
 
 
-def round_sigfigs(x, sigfigs=4):
+class NoLock(object):
+    """
+    Empty `lock`.
+
+    Does nothing when you enter or exit.
+    """
+
+    def __enter__(self):
+        """
+        No-op.
+        """
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        """
+        No-op.
+        """
+        pass
+
+
+def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
     """
     Round value to specified significant figures.
 
@@ -404,41 +351,30 @@ def round_sigfigs(x, sigfigs=4):
 
     :returns: float number rounded to specified sigfigs
     """
+    x_: float
+    if __TORCH_AVAILABLE and isinstance(x, torch.Tensor):
+        x_ = x.item()
+    else:
+        x_ = x  # type: ignore
+
     try:
-        if x == 0:
+        if x_ == 0:
             return 0
-        return round(x, -math.floor(math.log10(abs(x)) - sigfigs + 1))
-    except (RuntimeError, TypeError):
-        # handle 1D torch tensors
-        # if anything else breaks here please file an issue on Github
-        if hasattr(x, 'item'):
-            return round_sigfigs(x.item(), sigfigs)
-        else:
-            return round_sigfigs(x[0], sigfigs)
+        return round(x_, -math.floor(math.log10(abs(x_)) - sigfigs + 1))
     except (ValueError, OverflowError) as ex:
-        if x in [float('inf'), float('-inf')] or x != x:  # inf or nan
-            return x
+        if x_ in [float('inf'), float('-inf')] or x_ != x_:  # inf or nan
+            return x_
         else:
             raise ex
-
-
-class NoLock(object):
-    """Empty `lock`. Does nothing when you enter or exit."""
-
-    def __enter__(self):
-        """No-op."""
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        """No-op."""
-        pass
 
 
 single_nolock = NoLock()
 
 
 def no_lock():
-    """Build a nolock for other classes to use for no-op locking."""
+    """
+    Build a nolock for other classes to use for no-op locking.
+    """
     return single_nolock
 
 
@@ -633,7 +569,9 @@ class PaddingUtils(object):
 
 
 def clip_text(text, max_len):
-    """Clip text to max length, adding ellipses."""
+    """
+    Clip text to max length, adding ellipses.
+    """
     if len(text) > max_len:
         begin_text = ' '.join(text[: math.floor(0.8 * max_len)].split(' ')[:-1])
         end_text = ' '.join(
@@ -646,7 +584,7 @@ def clip_text(text, max_len):
     return text
 
 
-def _ellipse(lst, max_display=5, sep='|'):
+def _ellipse(lst: List[str], max_display: int = 5, sep: str = '|') -> str:
     """
     Like join, but possibly inserts an ellipsis.
 
@@ -664,19 +602,43 @@ def _ellipse(lst, max_display=5, sep='|'):
     return sep.join(str(c) for c in choices)
 
 
-def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
+def display_messages(
+    msgs: List[Dict[str, Any]],
+    prettify: bool = False,
+    ignore_fields: str = '',
+    max_len: int = 1000,
+) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
 
-    If prettify is true, candidates are displayed using prettytable.
-    ignore_fields provides a list of fields in the msgs which should not be
-    displayed.
+    If prettify is true, candidates are displayed using prettytable. ignore_fields
+    provides a list of fields in the msgs which should not be displayed.
     """
+
+    def _token_losses_line(
+        msg: Dict[str, Any], ignore_fields: List[str], space: str
+    ) -> Optional[str]:
+        """
+        Displays the loss associated with each token. Can be used for debugging
+        generative models.
+
+        See TorchGeneratorAgent._construct_token_losses for an example implementation.
+        """
+        key = 'token_losses'
+        token_losses = msg.get(key, None)
+        if key in ignore_fields or not token_losses:
+            return None
+        # Reduce losses to 4 significant figures
+        formatted_tl = ' | '.join(
+            [f"{tl[0]} {float('{:.4g}'.format(tl[1]))}" for tl in token_losses]
+        )
+        return f'{space}[{key}]: {formatted_tl}'
+
     lines = []
     episode_done = False
-    ignore_fields = ignore_fields.split(',')
+    ignore_fields_ = ignore_fields.split(',')
     for index, msg in enumerate(msgs):
-        if msg is None or (index == 1 and 'agent_reply' in ignore_fields):
+        if msg is None or (index == 1 and 'agent_reply' in ignore_fields_):
             # We only display the first agent (typically the teacher) if we
             # are ignoring the agent reply.
             continue
@@ -690,21 +652,25 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
-            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields:
+            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields_:
                 if type(msg[key]) is list:
                     line = '[' + key + ']:\n  ' + _ellipse(msg[key], sep='\n  ')
                 else:
                     line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
                 lines.append(space + line)
-        if type(msg.get('image')) == str:
-            lines.append(msg['image'])
+        if type(msg.get('image')) in [str, torch.Tensor]:
+            lines.append(f'[ image ]: {msg["image"]}')
         if msg.get('text', ''):
             text = clip_text(msg['text'], max_len)
             ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
             lines.append(space + ID + text)
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
-            if msg.get(field) and field not in ignore_fields:
+            if msg.get(field) and field not in ignore_fields_:
                 lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
+        # Handling this separately since we need to clean up the raw output before displaying.
+        token_loss_line = _token_losses_line(msg, ignore_fields_, space)
+        if token_loss_line:
+            lines.append(token_loss_line)
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
@@ -841,155 +807,10 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(
-    items,
-    pad_idx=0,
-    use_cuda=False,
-    left_padded=False,
-    max_len=None,
-    fp16friendly=False,
-):
-    """
-    Create a right-padded matrix from an uneven list of lists.
-
-    Returns (padded, lengths), where padded is the padded matrix, and lengths
-    is a list containing the lengths of each row.
-
-    Matrix is right-padded (filled to the right) by default, but can be
-    left padded if the flag is set to True.
-
-    Matrix can also be placed on cuda automatically.
-
-    :param list[iter[int]] items: List of items
-    :param bool sort: If True, orders by the length
-    :param int pad_idx: the value to use for padding
-    :param bool use_cuda: if true, places `padded` on GPU
-    :param bool left_padded:
-    :param int max_len: if None, the max length is the maximum item length
-    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
-
-    :returns: (padded, lengths) tuple
-    :rtype: (Tensor[int64], list[int])
-    """
-    # hard fail if we don't have torch
-    if not __TORCH_AVAILABLE:
-        raise ImportError(
-            "Cannot use padded_tensor without torch; go to http://pytorch.org"
-        )
-
-    # number of items
-    n = len(items)
-    # length of each item
-    lens = [len(item) for item in items]
-    # max in time dimension
-    t = max(lens) if max_len is None else max_len
-
-    # if input tensors are empty, we should expand to nulls
-    t = max(t, 1)
-
-    if fp16friendly and (t % 8 != 0):
-        # pad to be a multiple of 8 to ensure we use the tensor cores
-        t += 8 - (t % 8)
-
-    if isinstance(items[0], torch.Tensor):
-        # keep type of input tensors, they may already be cuda ones
-        output = items[0].new(n, t)
-    else:
-        output = torch.LongTensor(n, t)
-    output.fill_(pad_idx)
-
-    for i, (item, length) in enumerate(zip(items, lens)):
-        if length == 0:
-            # skip empty items
-            continue
-        if not isinstance(item, torch.Tensor):
-            # put non-tensors into a tensor
-            item = torch.LongTensor(item)
-        if left_padded:
-            # place at end
-            output[i, t - length :] = item
-        else:
-            # place at beginning
-            output[i, :length] = item
-
-    if use_cuda:
-        output = output.cuda()
-    return output, lens
+_seen_warnings: Set[str] = set()
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
-    """
-    Make 3D padded tensor for list of lists of 1D tensors or lists.
-
-    :param tensors:
-        list of lists of 1D tensors (or lists)
-    :param pad_idx:
-        padding to fill tensor with
-    :param use_cuda:
-        whether to call cuda() before returning
-    :param bool fp16friendly:
-        if True, pads the final dimension to be a multiple of 8.
-
-    :returns:
-        3D tensor with the maximum dimensions of the inputs
-    """
-    a = len(tensors)
-    b = max(len(row) for row in tensors)
-    c = max(len(item) for row in tensors for item in row)
-
-    # pad empty tensors
-    if fp16friendly and c % 8 != 0:
-        c += 8 - (c % 8)
-    c = max(c, 1)
-
-    output = torch.full((a, b, c), pad_idx, dtype=dtype)
-
-    for i, row in enumerate(tensors):
-        for j, item in enumerate(row):
-            if len(item) == 0:
-                continue
-            if not isinstance(item, torch.Tensor):
-                item = torch.Tensor(item, dtype=dtype)
-            output[i, j, : len(item)] = item
-
-    if use_cuda:
-        output = output.cuda()
-
-    return output
-
-
-def argsort(keys, *lists, descending=False):
-    """
-    Reorder each list in lists by the (descending) sorted order of keys.
-
-    :param iter keys:
-        Keys to order by.
-    :param list[list] lists:
-        Lists to reordered by keys's order.  Correctly handles lists and 1-D
-        tensors.
-    :param bool descending:
-        Use descending order if true.
-
-    :returns:
-        The reordered items.
-    """
-    ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
-    if descending:
-        ind_sorted = list(reversed(ind_sorted))
-    output = []
-    for lst in lists:
-        # watch out in case we don't have torch installed
-        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
-            output.append(lst[ind_sorted])
-        else:
-            output.append([lst[i] for i in ind_sorted])
-    return output
-
-
-_seen_warnings = set()
-
-
-def warn_once(msg, warningtype=None):
+def warn_once(msg: str, warningtype=None) -> None:
     """
     Raise a warning, but only once.
 
@@ -1000,45 +821,3 @@ def warn_once(msg, warningtype=None):
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
         warnings.warn(msg, warningtype, stacklevel=2)
-
-
-def fp16_optimizer_wrapper(
-    optimizer, verbose=False, dynamic_loss_scale=True, loss_initial_scale=2.0 ** 17
-):
-    """
-    Wrap the an optimizer with FP16 loss scaling protection.
-
-    Requires apex to be installed. Will throw an ImportError if it is not.
-
-    :param optimizer:
-        Any torch optimizer
-    :param bool verbose:
-        Enables verbose output in the FP16 optimizer. Turning this on can help
-        debug when FP16 is underperforming.
-    :param bool dynamic_loss_scaling:
-        FP16 requires loss scaling to avoid underflows. It is recommended this
-        stays on, but advanced users may want it off.
-    :param float loss_initial_scale:
-        Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
-
-    :returns:
-        An APEX FP16 optimizer. Please note this has different requirements on
-        how backward() and step() are called.
-    """
-    try:
-        import apex.fp16_utils
-    except ImportError:
-        raise ImportError(
-            'No fp16 support without apex. Please install it from '
-            'https://github.com/NVIDIA/apex'
-        )
-    return apex.fp16_utils.FP16_Optimizer(
-        optimizer,
-        dynamic_loss_scale=dynamic_loss_scale,
-        verbose=verbose,
-        # TODO: We may later want to remove this flag. Right now it
-        # empirically improves the first few backward passes, but future APEX
-        # improvements may make this unnecessary.
-        dynamic_loss_args={'init_scale': loss_initial_scale},
-    )

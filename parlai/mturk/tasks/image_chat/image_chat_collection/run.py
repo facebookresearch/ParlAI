@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -18,10 +19,10 @@ import os
 
 def main():
     """
-        Image Chat data collection task.
+    Image Chat data collection task.
 
-        A worker is shown an image and part of a conversation, and is given a
-        personality with which the worker should continue the conversation.
+    A worker is shown an image and part of a conversation, and is given a personality
+    with which the worker should continue the conversation.
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

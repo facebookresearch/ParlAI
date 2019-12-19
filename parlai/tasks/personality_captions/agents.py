@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -11,7 +12,6 @@ An example is given as follows:
            'image': <image features if specified else image>,
            'label': <comment>,
           }
-
 """
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
@@ -43,12 +43,14 @@ def _path(opt):
 
 
 class DefaultDataset(Dataset):
-    """A Pytorch Dataset."""
+    """
+    A Pytorch Dataset.
+    """
 
     def __init__(self, opt):
         self.opt = opt
         opt['image_load_task'] = 'personality_captions'
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
         self.include_image = opt.get('include_image')
@@ -60,7 +62,9 @@ class DefaultDataset(Dataset):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command line args."""
+        """
+        Add command line args.
+        """
         PersonalityCaptionsTeacher.add_cmdline_args(argparser)
 
     def _setup_data(self, data_path, personalities_data_path):
@@ -111,15 +115,21 @@ class DefaultDataset(Dataset):
         return self.image_loader.load(im_path)
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         return len(self.data)
 
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         return self.num_episodes()
 
     def num_images(self):
-        """Return number of images."""
+        """
+        Return number of images.
+        """
         if not hasattr(self, 'num_imgs'):
             self.num_imgs = len({d['image_num'] for d in self.data})
         return self.num_imgs
@@ -129,14 +139,14 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
     """
     Provide the personality in the `text` field, and the captions in the `labels` field.
 
-    To specify your own path to the YFCC100m images, please use the
-    `--yfcc-path` command line argument.
+    To specify your own path to the YFCC100m images, please use the `--yfcc-path`
+    command line argument.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.data_path, personalities_data_path, self.image_path = _path(opt)
         self.datatype = opt.get('datatype').split(':')[0]
         self.include_personality = opt.get('include_personality')
@@ -152,7 +162,9 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command line args."""
+        """
+        Add command line args.
+        """
         agent = argparser.add_argument_group('Personality-Captions arguments')
         agent.add_argument(
             '--include-personality',
@@ -192,16 +204,22 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
             self.personalities = json.load(f)
 
     def reset(self):
-        """Reset teacher."""
+        """
+        Reset teacher.
+        """
         super().reset()
         self.example = None
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         return self.num_examples()
 
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         return len(self.data)
 
     def submit_load_request(self, image_id):
@@ -248,12 +266,13 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Return the next example from this dataset.
+        """
+        Return the next example from this dataset.
 
         Queues next example.
         """
         ready = None
-        load_image = self.image_mode != 'none' and self.include_image
+        load_image = self.image_mode != 'no_image_model' and self.include_image
         # pull up the currently queued example
         if self.example is not None:
             # if self.image_mode != 'none' and 'image_id' in self.example:
@@ -276,7 +295,9 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
             return ready
 
     def share(self):
-        """Share appropriate attributes."""
+        """
+        Share appropriate attributes.
+        """
         shared = super().share()
         shared['data'] = self.data
         shared['image_loader'] = self.image_loader
@@ -284,7 +305,9 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
 
 class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
-    """Test PersonalityCaptions teacher for ensuring pretrained model does not break."""
+    """
+    Test PersonalityCaptions teacher for ensuring pretrained model does not break.
+    """
 
     def _setup_data(self, data_path, personalities_data_path):
         super()._setup_data(data_path, personalities_data_path)
@@ -300,16 +323,22 @@ class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
         self.image_features = torch.load(image_features_path)
 
     def reset(self):
-        """Reset teacher."""
+        """
+        Reset teacher.
+        """
         super().reset()
         self.example = None
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         return len(self.image_features)
 
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         return len(self.image_features)
 
     def get(self, episode_idx, entry_idx=0):
@@ -345,6 +374,8 @@ class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
 
 
 class DefaultTeacher(PersonalityCaptionsTeacher):
-    """Default teacher."""
+    """
+    Default teacher.
+    """
 
     pass

@@ -29,11 +29,12 @@ def _path(opt):
 
 
 class SplitTeacher(Teacher):
-    """FVQA Teacher, which loads the json VQA data and implements its own
-    `act` method for interacting with student agent.
+    """
+    FVQA Teacher, which loads the json VQA data and implements its own `act` method for
+    interacting with student agent.
 
-    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just
-    "fvqa" to use the default split (0).
+    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just "fvqa" to use
+    the default split (0).
     """
 
     def __init__(self, opt, shared=None):
@@ -99,7 +100,9 @@ class SplitTeacher(Teacher):
         self.factmetrics.clear()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.lastY is not None:
             if self.asked_question:
                 self.metrics.update(observation, self.lastY[0])

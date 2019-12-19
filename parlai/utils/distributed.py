@@ -8,8 +8,8 @@
 """
 Useful utilities for training in distributed mode.
 
-Many of these functions act as wrappers which perform no-ops if code is running
-in non-distributed mode.
+Many of these functions act as wrappers which perform no-ops if code is running in non-
+distributed mode.
 """
 
 import builtins
@@ -52,12 +52,16 @@ def validate_params(opt):
 
 
 def is_distributed():
-    """Return if we are in distributed mode."""
+    """
+    Return if we are in distributed mode.
+    """
     return TORCH_AVAILABLE and dist.is_available() and dist.is_initialized()
 
 
 def num_workers():
-    """Get the total number of workers."""
+    """
+    Get the total number of workers.
+    """
     if not is_distributed():
         return 1
     else:
@@ -68,8 +72,8 @@ def is_primary_worker():
     """
     Determine if we are the primary (master) worker.
 
-    Returns False if we are a secondary worker. Returns True if we are either
-    (1) not in distributed mode (2) or are the primary (rank 0) worker.
+    Returns False if we are a secondary worker. Returns True if we are either (1) not in
+    distributed mode (2) or are the primary (rank 0) worker.
     """
     return not is_distributed() or dist.get_rank() == 0
 
@@ -77,9 +81,10 @@ def is_primary_worker():
 @contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """
-    Context manager to override the print to suppress or modify output.
-    Recommended usage is to call this with suppress=True for all non-primary workers,
-    or call with a prefix of rank on all workers.
+    Context manager to override the print to suppress or modify output. Recommended
+    usage is to call this with suppress=True for all non-primary workers, or call with a
+    prefix of rank on all workers.
+
     >>> with override_print(prefix="rank{}".format(rank)):
     ...     my_computation()
     :param bool suppress:

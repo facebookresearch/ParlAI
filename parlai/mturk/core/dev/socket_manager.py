@@ -18,7 +18,9 @@ import parlai.mturk.core.dev.shared_utils as shared_utils
 
 
 class Packet:
-    """Class for holding information sent over a socket"""
+    """
+    Class for holding information sent over a socket.
+    """
 
     # Possible Packet Status
     STATUS_NONE = -1
@@ -68,8 +70,8 @@ class Packet:
 
     @staticmethod
     def from_dict(packet):
-        """Create a packet from the dictionary that would
-        be recieved over a socket
+        """
+        Create a packet from the dictionary that would be recieved over a socket.
         """
         try:
             packet_id = packet['id']
@@ -98,7 +100,9 @@ class Packet:
             return None
 
     def as_dict(self):
-        """Convert a packet into a form that can be pushed over a socket"""
+        """
+        Convert a packet into a form that can be pushed over a socket.
+        """
         return {
             'id': self.id,
             'type': self.type,
@@ -110,16 +114,21 @@ class Packet:
         }
 
     def get_sender_connection_id(self):
-        """Get the connection_id that this packet came from"""
+        """
+        Get the connection_id that this packet came from.
+        """
         return '{}_{}'.format(self.sender_id, self.assignment_id)
 
     def get_receiver_connection_id(self):
-        """Get the connection_id that this is going to"""
+        """
+        Get the connection_id that this is going to.
+        """
         return '{}_{}'.format(self.receiver_id, self.assignment_id)
 
     def new_copy(self):
-        """Return a new packet that is a copy of this packet with
-        a new id and with a fresh status
+        """
+        Return a new packet that is a copy of this packet with a new id and with a fresh
+        status.
         """
         packet = Packet.from_dict(self.as_dict())
         packet.id = shared_utils.generate_event_id(self.receiver_id)
@@ -129,30 +138,37 @@ class Packet:
         return 'Packet <{}>'.format(self.as_dict())
 
     def swap_sender(self):
-        """Swaps the sender_id and receiver_id"""
+        """
+        Swaps the sender_id and receiver_id.
+        """
         self.sender_id, self.receiver_id = self.receiver_id, self.sender_id
         return self
 
     def set_type(self, new_type):
-        """Updates the message type"""
+        """
+        Updates the message type.
+        """
         self.type = new_type
         return self
 
     def set_data(self, new_data):
-        """Updates the message data"""
+        """
+        Updates the message data.
+        """
         self.data = new_data
         return self
 
 
 class SocketManager:
-    """SocketManager is a wrapper around websocket to conform to the API
-    allowing the remote state to sync up with our local state.
+    """
+    SocketManager is a wrapper around websocket to conform to the API allowing the
+    remote state to sync up with our local state.
     """
 
     # Default pings without pong before socket considered dead
-    DEF_MISSED_PONGS = 20
-    PING_RATE = 4
-    DEF_DEAD_TIME = 30
+    DEF_MISSED_PONGS: int = 20
+    PING_RATE: float = 4
+    DEF_DEAD_TIME: float = 30
 
     def __init__(
         self,
@@ -212,7 +228,9 @@ class SocketManager:
         self._setup_socket()
 
     def get_my_sender_id(self):
-        """Gives the name that this socket manager should use for its world"""
+        """
+        Gives the name that this socket manager should use for its world.
+        """
         return '[World_{}]'.format(self.task_group_id)
 
     def _safe_send(self, data, force=False):
@@ -257,7 +275,9 @@ class SocketManager:
         self.ws = None
 
     def _send_world_alive(self):
-        """Registers world with the passthrough server"""
+        """
+        Registers world with the passthrough server.
+        """
         self._safe_send(
             json.dumps(
                 {
@@ -288,7 +308,9 @@ class SocketManager:
             self.last_sent_ping_time = time.time()
 
     def _send_packet(self, packet, send_time):
-        """Sends a packet, blocks if the packet is blocking"""
+        """
+        Sends a packet, blocks if the packet is blocking.
+        """
         # Send the packet
         pkt = packet.as_dict()
         if pkt['data'] is None or packet.status == Packet.STATUS_SENT:
@@ -332,7 +354,9 @@ class SocketManager:
         reaper_thread.start()
 
     def _setup_socket(self):
-        """Create socket handlers and registers the socket"""
+        """
+        Create socket handlers and registers the socket.
+        """
 
         def on_socket_open(*args):
             shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
@@ -359,9 +383,12 @@ class SocketManager:
                 self._ensure_closed()
 
         def on_disconnect(*args):
-            """Disconnect event is a no-op for us, as the server reconnects
-            automatically on a retry. Just in case the server is actually
-            dead we set up a thread to reap the whole task.
+            """
+            Disconnect event is a no-op for us, as the server reconnects automatically
+            on a retry.
+
+            Just in case the server is actually dead we set up a thread to reap the
+            whole task.
             """
             shared_utils.print_and_log(
                 logging.INFO, 'World server disconnected: {}'.format(args)
@@ -371,8 +398,9 @@ class SocketManager:
                 self._spawn_reaper_thread()
 
         def on_message(*args):
-            """Incoming message handler for SERVER_PONG, MESSAGE_BATCH,
-            AGENT_DISCONNECT, SNS_MESSAGE, SUBMIT_MESSAGE, AGENT_ALIVE
+            """
+            Incoming message handler for SERVER_PONG, MESSAGE_BATCH, AGENT_DISCONNECT,
+            SNS_MESSAGE, SUBMIT_MESSAGE, AGENT_ALIVE.
             """
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':  # TODO make socket func
@@ -473,7 +501,9 @@ class SocketManager:
         self.send_thread.start()
 
     def channel_thread(self):
-        """Handler thread for monitoring all channels"""
+        """
+        Handler thread for monitoring all channels.
+        """
         # while the thread is still alive
         while not self.is_shutdown:
             if self.ws is None:
@@ -511,14 +541,18 @@ class SocketManager:
 
     # Inividual channel accessors are useful for testing
     def open_channel(self, worker_id, assignment_id):
-        """Opens a channel for a worker on a given assignment, doesn't re-open
-        if the channel is already open."""
+        """
+        Opens a channel for a worker on a given assignment, doesn't re-open if the
+        channel is already open.
+        """
         connection_id = '{}_{}'.format(worker_id, assignment_id)
         self.open_channels.add(connection_id)
         self.worker_assign_ids[connection_id] = (worker_id, assignment_id)
 
     def close_channel(self, connection_id):
-        """Closes a channel by connection_id"""
+        """
+        Closes a channel by connection_id.
+        """
         shared_utils.print_and_log(
             logging.DEBUG, 'Closing channel {}'.format(connection_id)
         )
@@ -534,7 +568,9 @@ class SocketManager:
                         del self.packet_map[packet_id]
 
     def close_all_channels(self):
-        """Closes all channels by clearing the list of channels"""
+        """
+        Closes all channels by clearing the list of channels.
+        """
         shared_utils.print_and_log(logging.DEBUG, 'Closing all channels')
         connection_ids = list(self.open_channels)
         for connection_id in connection_ids:
@@ -544,7 +580,9 @@ class SocketManager:
         return connection_id in self.open_channels
 
     def queue_packet(self, packet):
-        """Queues sending a packet to its intended owner"""
+        """
+        Queues sending a packet to its intended owner.
+        """
         shared_utils.print_and_log(
             logging.DEBUG, 'Put packet ({}) in queue'.format(packet.id)
         )
@@ -556,14 +594,18 @@ class SocketManager:
         return True
 
     def get_status(self, packet_id):
-        """Returns the status of a particular packet by id"""
+        """
+        Returns the status of a particular packet by id.
+        """
         with self.packet_map_lock:
             if packet_id not in self.packet_map:
                 return Packet.STATUS_NONE
             return self.packet_map[packet_id].status
 
     def shutdown(self):
-        """marks the socket manager as closing, shuts down all channels"""
+        """
+        marks the socket manager as closing, shuts down all channels.
+        """
         self.is_shutdown = True
         self.close_all_channels()
         self.keep_running = False

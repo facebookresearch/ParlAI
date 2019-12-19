@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -28,7 +28,7 @@ REPLACEMENT3 = """
 
 
 if __name__ == '__main__':
-    for root, dirs, files in os.walk("build/docs/"):
+    for root, _, files in os.walk("build/docs/"):
         for file in files:
             if file.endswith(".html"):
                 file_path = os.path.join(root, file)

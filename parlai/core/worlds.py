@@ -47,22 +47,26 @@ import random
 import time
 
 from functools import lru_cache
+from typing import List, Dict, Any
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
+from parlai.core.opt import Opt
 from parlai.core.agents import (
     create_agents_from_shared,
     create_task_agent_from_taskname,
 )
 from parlai.core.metrics import aggregate_metrics
-from parlai.utils.misc import Message, Timer, display_messages
+from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 
 def validate(observation):
-    """Make sure the observation table is valid, or raise an error."""
+    """
+    Make sure the observation table is valid, or raise an error.
+    """
     if observation is not None and isinstance(observation, dict):
         return observation
     else:
@@ -76,7 +80,7 @@ class World(object):
     All children can override these to provide more detailed functionality.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
         self.id = opt['task']
         self.opt = copy.deepcopy(opt)
         if shared:
@@ -101,15 +105,17 @@ class World(object):
         pass
 
     def getID(self):
-        """Return the name of the world, typically the task the world encodes."""
+        """
+        Return the name of the world, typically the task the world encodes.
+        """
         return self.id
 
     def display(self):
         """
         Return a string describing the current state of the world.
 
-        Useful for monitoring and debugging.
-        By default, display the messages between the agents.
+        Useful for monitoring and debugging. By default, display the messages between
+        the agents.
         """
         if not hasattr(self, 'acts'):
             return ''
@@ -121,20 +127,24 @@ class World(object):
         )
 
     def episode_done(self):
-        """Whether the episode is done or not."""
+        """
+        Whether the episode is done or not.
+        """
         return False
 
     def epoch_done(self):
         """
         Whether the epoch is done or not.
 
-        Not all worlds have the notion of an epoch, but this is useful
-        for fixed training, validation or test sets.
+        Not all worlds have the notion of an epoch, but this is useful for fixed
+        training, validation or test sets.
         """
         return False
 
     def share(self):
-        """Share the world."""
+        """
+        Share the world.
+        """
         shared_data = {}
         shared_data['world_class'] = type(self)
         shared_data['opt'] = self.opt
@@ -145,8 +155,8 @@ class World(object):
         """
         Create shared data for agents.
 
-        Allows other classes to create the same agents without duplicating the
-        data (i.e. sharing parameters).
+        Allows other classes to create the same agents without duplicating the data
+        (i.e. sharing parameters).
         """
         if not hasattr(self, 'agents'):
             return None
@@ -154,27 +164,39 @@ class World(object):
         return shared_agents
 
     def get_agents(self):
-        """Return the list of agents."""
+        """
+        Return the list of agents.
+        """
         return self.agents
 
     def get_task_agent(self):
-        """Return task agent, if applicable."""
+        """
+        Return task agent, if applicable.
+        """
         raise NotImplementedError('Implement in subworld')
 
     def get_acts(self):
-        """Return the last act of each agent."""
+        """
+        Return the last act of each agent.
+        """
         return self.acts
 
     def get_time(self):
-        """Return total training time."""
+        """
+        Return total training time.
+        """
         return self.time.time()
 
     def get_total_exs(self):
-        """Return total amount of examples seen by world."""
+        """
+        Return total amount of examples seen by world.
+        """
         return self.total_exs
 
     def get_total_epochs(self):
-        """Return total amount of epochs on which the world has trained."""
+        """
+        Return total amount of epochs on which the world has trained.
+        """
         return self.total_epochs
 
     def __enter__(self):
@@ -192,22 +214,34 @@ class World(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        """After ``with`` statement, call shutdown."""
+        """
+        After ``with`` statement, call shutdown.
+        """
         self.shutdown()
         return False
 
     def num_examples(self):
-        """Return the number of examples. Always 0 in the abstract world."""
+        """
+        Return the number of examples.
+
+        Always 0 in the abstract world.
+        """
         # TODO: mark as abstract?
         return 0
 
     def num_episodes(self):
-        """Return the number of episodes. Always 0 in the abstract world."""
+        """
+        Return the number of episodes.
+
+        Always 0 in the abstract world.
+        """
         # TODO: mark as abstract?
         return 0
 
     def reset(self):
-        """Reset all agents in the world, and world statistics."""
+        """
+        Reset all agents in the world, and world statistics.
+        """
         for a in self.agents:
             a.reset()
         self.max_exs = None
@@ -217,16 +251,22 @@ class World(object):
         self.time.reset()
 
     def reset_metrics(self):
-        """Reset metrics for all agents."""
+        """
+        Reset metrics for all agents.
+        """
         for a in self.agents:
             a.reset_metrics()
 
     def shutdown(self):
-        """Perform any cleanup, if appropriate."""
+        """
+        Perform any cleanup, if appropriate.
+        """
         pass
 
     def update_counters(self):
-        """Update how many epochs have completed."""
+        """
+        Update how many epochs have completed.
+        """
         self.total_parleys += 1
         if self.max_exs is None:
             if 'num_epochs' in self.opt and self.opt['num_epochs'] > 0:
@@ -251,11 +291,11 @@ class DialogPartnerWorld(World):
     """
     Simple world for two agents communicating synchronously.
 
-    This basic world switches back and forth between two agents, giving each
-    agent one chance to speak per turn and passing that back to the other one.
+    This basic world switches back and forth between two agents, giving each agent one
+    chance to speak per turn and passing that back to the other one.
     """
 
-    def __init__(self, opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents, shared=None):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
@@ -273,11 +313,17 @@ class DialogPartnerWorld(World):
             self.id = self.get_task_agent().getID()
 
     def get_task_agent(self):
-        """Return task agent."""
+        """
+        Return task agent.
+        """
         return self.get_agents()[0]
 
     def parley(self):
-        """Agent 0 goes first. Alternate between the two agents."""
+        """
+        Agent 0 goes first.
+
+        Alternate between the two agents.
+        """
         acts = self.acts
         agents = self.agents
         acts[0] = agents[0].act()
@@ -287,18 +333,24 @@ class DialogPartnerWorld(World):
         self.update_counters()
 
     def episode_done(self):
-        """Only the first agent indicates when the episode is done."""
+        """
+        Only the first agent indicates when the episode is done.
+        """
         if self.acts[0] is not None:
             return self.acts[0].get('episode_done', False)
         else:
             return False
 
     def epoch_done(self):
-        """Only the first agent indicates when the epoch is done."""
+        """
+        Only the first agent indicates when the epoch is done.
+        """
         return self.get_task_agent().epoch_done()
 
     def report(self):
-        """Report all metrics of all subagents."""
+        """
+        Report all metrics of all subagents.
+        """
 
         # DEPRECATIONDAY: should we get rid of this option?
         metrics = {}
@@ -316,19 +368,25 @@ class DialogPartnerWorld(World):
 
     @lru_cache(maxsize=1)
     def num_examples(self):
-        """Return number of examples."""
+        """
+        Return number of examples.
+        """
         if hasattr(self.get_task_agent(), 'num_examples'):
             return self.get_task_agent().num_examples()
         return 0
 
     def num_episodes(self):
-        """Return number of episodes."""
+        """
+        Return number of episodes.
+        """
         if hasattr(self.get_task_agent(), 'num_episodes'):
             return self.get_task_agent().num_episodes()
         return 0
 
     def shutdown(self):
-        """Shutdown each agent."""
+        """
+        Shutdown each agent.
+        """
         for a in self.agents:
             a.shutdown()
 
@@ -340,7 +398,7 @@ class MultiAgentDialogWorld(World):
     Each agent receives as input the actions of all other agents since its last `act()`.
     """
 
-    def __init__(self, opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents, shared=None):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
@@ -354,8 +412,8 @@ class MultiAgentDialogWorld(World):
         """
         Perform a turn for every agent.
 
-        For each agent, get an observation of the last action each of the
-        other agents took. Then take an action yourself.
+        For each agent, get an observation of the last action each of the other agents
+        took. Then take an action yourself.
         """
         acts = self.acts
         for index, agent in enumerate(self.agents):
@@ -366,11 +424,15 @@ class MultiAgentDialogWorld(World):
         self.update_counters()
 
     def get_task_agent(self):
-        """Return task agent."""
+        """
+        Return task agent.
+        """
         return self.get_agents()[0]
 
     def epoch_done(self):
-        """Return if the epoch is done for any subagent."""
+        """
+        Return if the epoch is done for any subagent.
+        """
         done = False
         for a in self.agents:
             if a.epoch_done():
@@ -378,7 +440,9 @@ class MultiAgentDialogWorld(World):
         return done
 
     def episode_done(self):
-        """Return if the episode is done for any subagent."""
+        """
+        Return if the episode is done for any subagent.
+        """
         done = False
         for a in self.agents:
             if a.episode_done():
@@ -386,7 +450,9 @@ class MultiAgentDialogWorld(World):
         return done
 
     def report(self):
-        """Report metrics for all subagents."""
+        """
+        Report metrics for all subagents.
+        """
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -401,7 +467,9 @@ class MultiAgentDialogWorld(World):
             return metrics
 
     def shutdown(self):
-        """Shutdown each agent."""
+        """
+        Shutdown each agent.
+        """
         for a in self.agents:
             a.shutdown()
 
@@ -414,7 +482,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
     simulation can be implemented rather than just dialogue between agents.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
         super().__init__(opt, agents, shared)
         self.init_world()
 
@@ -422,8 +490,8 @@ class ExecutableWorld(MultiAgentDialogWorld):
         """
         Initialize the world.
 
-        An executable world class should implement this function, otherwise
-        the actions do not do anything (and it is the same as MultiAgentDialogWorld).
+        An executable world class should implement this function, otherwise the actions
+        do not do anything (and it is the same as MultiAgentDialogWorld).
         """
         # TODO: mark as abstract
         pass
@@ -432,8 +500,8 @@ class ExecutableWorld(MultiAgentDialogWorld):
         """
         Execute an action.
 
-        An executable world class should implement this function, otherwise
-        the actions do not do anything (and it is the same as MultiAgentDialogWorld).
+        An executable world class should implement this function, otherwise the actions
+        do not do anything (and it is the same as MultiAgentDialogWorld).
         """
         pass
 
@@ -441,9 +509,9 @@ class ExecutableWorld(MultiAgentDialogWorld):
         """
         Observe an action.
 
-        An executable world class should implement this function, otherwise
-        the observations for each agent are just the messages from other agents
-        and not confitioned on the world at all (and it is thus the same as
+        An executable world class should implement this function, otherwise the
+        observations for each agent are just the messages from other agents and not
+        confitioned on the world at all (and it is thus the same as
         MultiAgentDialogWorld).
         """
         if agent.id == act['id']:
@@ -452,7 +520,9 @@ class ExecutableWorld(MultiAgentDialogWorld):
             return act
 
     def parley(self):
-        """For each agent: act, execute and observe actions in world."""
+        """
+        For each agent: act, execute and observe actions in world.
+        """
         acts = self.acts
         for index, agent in enumerate(self.agents):
             # The agent acts.
@@ -471,15 +541,14 @@ class MultiWorld(World):
     """
     Container for multiple worlds.
 
-    Container for a set of worlds where each world gets a turn
-    in a round-robin fashion. The same user_agents are placed in each,
-    though each world may contain additional agents according to the task
-    that world represents.
+    Container for a set of worlds where each world gets a turn in a round-robin fashion.
+    The same user_agents are placed in each, though each world may contain additional
+    agents according to the task that world represents.
     """
 
-    def __init__(self, opt, agents=None, shared=None, default_world=None):
+    def __init__(self, opt: Opt, agents=None, shared=None, default_world=None):
         super().__init__(opt)
-        self.worlds = []
+        self.worlds: List[World] = []
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
@@ -514,7 +583,9 @@ class MultiWorld(World):
             sum += weight
 
     def num_examples(self):
-        """Return sum of each subworld's number of examples."""
+        """
+        Return sum of each subworld's number of examples.
+        """
         if not hasattr(self, 'num_exs'):
             worlds_num_exs = [w.num_examples() for w in self.worlds]
             if any(num is None for num in worlds_num_exs):
@@ -524,7 +595,9 @@ class MultiWorld(World):
         return self.num_exs
 
     def num_episodes(self):
-        """Return sum of each subworld's number of episodes."""
+        """
+        Return sum of each subworld's number of episodes.
+        """
         if not hasattr(self, 'num_eps'):
             worlds_num_eps = [w.num_episodes() for w in self.worlds]
             if any(num is None for num in worlds_num_eps):
@@ -534,19 +607,27 @@ class MultiWorld(World):
         return self.num_eps
 
     def get_agents(self):
-        """Return the agents in the *current* subworld."""
+        """
+        Return the agents in the *current* subworld.
+        """
         return self.worlds[self.world_idx].get_agents()
 
     def get_task_agent(self):
-        """Not possible/well-defined in this setting."""
+        """
+        Not possible/well-defined in this setting.
+        """
         raise RuntimeError('get_task_agent not defined for Multiworld')
 
     def get_acts(self):
-        """Return the acts in the *current* subworld."""
+        """
+        Return the acts in the *current* subworld.
+        """
         return self.worlds[self.world_idx].get_acts()
 
     def share(self):
-        """Share all the subworlds."""
+        """
+        Share all the subworlds.
+        """
         shared_data = {}
         shared_data['world_class'] = type(self)
         shared_data['opt'] = self.opt
@@ -554,7 +635,9 @@ class MultiWorld(World):
         return shared_data
 
     def epoch_done(self):
-        """Return if *all* the subworlds are done."""
+        """
+        Return if *all* the subworlds are done.
+        """
         for t in self.worlds:
             if not t.epoch_done():
                 return False
@@ -565,8 +648,8 @@ class MultiWorld(World):
         Update the current subworld.
 
         If we are in the middle of an episode, keep the same world and finish this
-        episode. If we have finished this episode, pick a new world (either in a
-        random or round-robin fashion).
+        episode. If we have finished this episode, pick a new world (either in a random
+        or round-robin fashion).
         """
         self.parleys = self.parleys + 1
         if self.world_idx >= 0 and self.worlds[self.world_idx].episode_done():
@@ -588,13 +671,17 @@ class MultiWorld(World):
                         break
 
     def parley(self):
-        """Parley the *current* subworld."""
+        """
+        Parley the *current* subworld.
+        """
         self.parley_init()
         self.worlds[self.world_idx].parley()
         self.update_counters()
 
     def display(self):
-        """Display all subworlds."""
+        """
+        Display all subworlds.
+        """
         if self.world_idx != -1:
             s = ''
             w = self.worlds[self.world_idx]
@@ -606,23 +693,31 @@ class MultiWorld(World):
             return ''
 
     def report(self):
-        """Report aggregate metrics across all subworlds."""
+        """
+        Report aggregate metrics across all subworlds.
+        """
         metrics = aggregate_metrics(self.worlds)
         self.total_exs += metrics.get('exs', 0)
         return metrics
 
     def reset(self):
-        """Reset all subworlds."""
+        """
+        Reset all subworlds.
+        """
         for w in self.worlds:
             w.reset()
 
     def reset_metrics(self):
-        """Reset metrics in all subworlds."""
+        """
+        Reset metrics in all subworlds.
+        """
         for w in self.worlds:
             w.reset_metrics()
 
     def save_agents(self):
-        """Save agents in all subworlds."""
+        """
+        Save agents in all subworlds.
+        """
         # Assumes all worlds have same agents, picks first to save.
         self.worlds[0].save_agents()
 
@@ -631,8 +726,8 @@ def _override_opts_in_shared(table, overrides):
     """
     Override all shared dicts.
 
-    Looks recursively for ``opt`` dictionaries within shared dict and overrides
-    any key-value pairs with pairs from the overrides dict.
+    Looks recursively for ``opt`` dictionaries within shared dict and overrides any key-
+    value pairs with pairs from the overrides dict.
     """
     if 'opt' in table:
         # change values if an 'opt' dict is available
@@ -665,12 +760,12 @@ class BatchWorld(World):
     ``MultiWorld``.
     """
 
-    def __init__(self, opt, world):
+    def __init__(self, opt: Opt, world):
         super().__init__(opt)
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        self.worlds = []
+        self.worlds: List[World] = []
         for i in range(opt['batchsize']):
             # make sure that any opt dicts in shared have batchindex set to i
             # this lets all shared agents know which batchindex they have,
@@ -687,7 +782,9 @@ class BatchWorld(World):
         self.acts = [None] * len(self.world.get_agents())
 
     def batch_observe(self, index, batch_actions, index_acting):
-        """Observe corresponding actions in all subworlds."""
+        """
+        Observe corresponding actions in all subworlds.
+        """
         batch_observations = []
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
@@ -695,28 +792,38 @@ class BatchWorld(World):
             if batch_actions[i] is None:
                 # shouldn't send None, should send empty observations
                 batch_actions[i] = [{}] * len(self.worlds)
+
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
                 # first goes through (agents receive messages via the world,
                 # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting:
-                    return None  # don't observe yourself talking
                 observation = validate(batch_actions[i])
-            observation = agents[index].observe(observation)
+
+            if index == index_acting:
+                # self_observe is distinguished from a normal observe
+                if hasattr(agents[index], 'self_observe'):
+                    agents[index].self_observe(observation)
+            else:
+                observation = agents[index].observe(observation)
+
+            # TODO: not so sure about this...
             if observation is None:
                 raise ValueError('Agents should return what they observed.')
             batch_observations.append(observation)
         return batch_observations
 
     def batch_act(self, agent_idx, batch_observation):
-        """Act in all subworlds."""
+        """
+        Act in all subworlds.
+        """
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
         if hasattr(a, 'batch_act') and not (
-            hasattr(a, 'use_batch_act') and not a.use_batch_act
+            hasattr(a, 'use_batch_act')  # TODO: remove use_batch_act
+            and not a.use_batch_act
         ):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
@@ -764,7 +871,9 @@ class BatchWorld(World):
         self.update_counters()
 
     def display(self):
-        """Display the full batch."""
+        """
+        Display the full batch.
+        """
         s = "[--batchsize " + str(len(self.worlds)) + "--]\n"
         for i, w in enumerate(self.worlds):
             s += "[batch world " + str(i) + ":]\n"
@@ -773,27 +882,39 @@ class BatchWorld(World):
         return s
 
     def num_examples(self):
-        """Return the number of examples for the root world."""
+        """
+        Return the number of examples for the root world.
+        """
         return self.world.num_examples()
 
     def num_episodes(self):
-        """Return the number of episodes for the root world."""
+        """
+        Return the number of episodes for the root world.
+        """
         return self.world.num_episodes()
 
     def get_total_exs(self):
-        """Return the total number of processed episodes in the root world."""
+        """
+        Return the total number of processed episodes in the root world.
+        """
         return self.world.get_total_exs()
 
     def getID(self):
-        """Return the ID of the root world."""
+        """
+        Return the ID of the root world.
+        """
         return self.world.getID()
 
     def get_agents(self):
-        """Return the agents of the root world"""
+        """
+        Return the agents of the root world.
+        """
         return self.world.get_agents()
 
     def get_task_agent(self):
-        """Return task agent of the root world."""
+        """
+        Return task agent of the root world.
+        """
         return self.world.get_task_agent()
 
     def episode_done(self):
@@ -805,7 +926,9 @@ class BatchWorld(World):
         return False
 
     def epoch_done(self):
-        """Return if the epoch is done in the root world."""
+        """
+        Return if the epoch is done in the root world.
+        """
         # first check parent world: if it says it's done, we're done
         if self.world.epoch_done():
             return True
@@ -816,27 +939,37 @@ class BatchWorld(World):
         return True
 
     def report(self):
-        """Report metrics for the root world."""
+        """
+        Report metrics for the root world.
+        """
         return self.world.report()
 
     def reset(self):
-        """Reset the root world, and all copies."""
+        """
+        Reset the root world, and all copies.
+        """
         self.world.reset()
         for w in self.worlds:
             w.reset()
 
     def reset_metrics(self):
-        """Reset metrics in the root world."""
+        """
+        Reset metrics in the root world.
+        """
         self.world.reset_metrics()
 
     def save_agents(self):
-        """Save the agents in the root world."""
+        """
+        Save the agents in the root world.
+        """
         # Because all worlds share the same parameters through sharing, saving
         # one copy would suffice
         self.world.save_agents()
 
     def shutdown(self):
-        """Shutdown each world."""
+        """
+        Shutdown each world.
+        """
         for w in self.worlds:
             w.shutdown()
         self.world.shutdown()
@@ -849,7 +982,7 @@ class HogwildProcess(Process):
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
-    def __init__(self, tid, opt, shared, sync):
+    def __init__(self, tid, opt: Opt, shared, sync):
         self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
         opt['numthreads'] = 1  # don't let threads create more threads!
@@ -866,8 +999,8 @@ class HogwildProcess(Process):
         """
         Run a parley loop.
 
-        Runs normal parley loop for as many examples as this thread can get
-        ahold of via the semaphore ``queued_sem``.
+        Runs normal parley loop for as many examples as this thread can get ahold of via
+        the semaphore ``queued_sem``.
         """
         world = self.shared['world_class'](self.opt, None, self.shared)
         if self.opt.get('batchsize', 1) > 1:
@@ -936,12 +1069,12 @@ class HogwildWorld(World):
       once the processing is complete).
     """
 
-    def __init__(self, opt, world):
+    def __init__(self, opt: Opt, world):
         super().__init__(opt)
         self.inner_world = world
         self.numthreads = opt['numthreads']
 
-        self.sync = {  # syncronization primitives
+        self.sync: Dict[str, Any] = {  # syncronization primitives
             # semaphores for counting queued examples
             'queued_sem': Semaphore(0),  # counts num exs to be processed
             'threads_sem': Semaphore(0),  # counts threads
@@ -954,7 +1087,7 @@ class HogwildWorld(World):
             'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
-        self.threads = []
+        self.threads: List[HogwildProcess] = []
         for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
             time.sleep(0.05)  # delay can help prevent deadlock in thread launches
@@ -965,12 +1098,16 @@ class HogwildWorld(World):
             # wait for threads to launch
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
-            self.sync['threads_sem'].acquire()
+            self.sync['threads_sem'].acquire()  # type: ignore
 
         print(f'[ {self.numthreads} threads initialized ]')
 
     def display(self):
-        """Unsupported operation. Raises a `NotImplementedError`."""
+        """
+        Unsupported operation.
+
+        Raises a `NotImplementedError`.
+        """
         self.shutdown()
         raise NotImplementedError(
             'Hogwild does not support displaying in-run'
@@ -978,16 +1115,24 @@ class HogwildWorld(World):
         )
 
     def episode_done(self):
-        """Unsupported operation. Raises a `RuntimeError`."""
+        """
+        Unsupported operation.
+
+        Raises a `RuntimeError`.
+        """
         self.shutdown()
         raise RuntimeError('episode_done() undefined for hogwild')
 
     def epoch_done(self):
-        """Return whether the epoch is finished."""
+        """
+        Return whether the epoch is finished.
+        """
         return self.sync['epoch_done_ctr'].value == self.numthreads
 
     def parley(self):
-        """Queue one item to be processed."""
+        """
+        Queue one item to be processed.
+        """
         # schedule an example
         self.sync['queued_sem'].release()
         # keep main process from getting too far ahead of the threads
@@ -996,28 +1141,40 @@ class HogwildWorld(World):
         self.update_counters()
 
     def getID(self):
-        """Return the inner world's ID."""
+        """
+        Return the inner world's ID.
+        """
         return self.inner_world.getID()
 
     @lru_cache(maxsize=1)
     def num_examples(self):
-        """Return the number of examples."""
+        """
+        Return the number of examples.
+        """
         return self.inner_world.num_examples()
 
     def num_episodes(self):
-        """Return the number of episodes."""
+        """
+        Return the number of episodes.
+        """
         return self.inner_world.num_episodes()
 
     def get_task_agent(self):
-        """Return task agent of inner world."""
+        """
+        Return task agent of inner world.
+        """
         return self.inner_world.get_task_agent()
 
     def get_total_exs(self):
-        """Return the number of processed examples."""
+        """
+        Return the number of processed examples.
+        """
         return self.inner_world.get_total_exs()
 
     def get_total_epochs(self):
-        """Return total amount of epochs on which the world has trained."""
+        """
+        Return total amount of epochs on which the world has trained.
+        """
         if self.max_exs is None:
             if 'num_epochs' in self.opt and self.opt['num_epochs'] > 0:
                 if self.num_examples():
@@ -1036,15 +1193,21 @@ class HogwildWorld(World):
             return self.total_epochs
 
     def report(self):
-        """Report the inner world's metrics."""
+        """
+        Report the inner world's metrics.
+        """
         return self.inner_world.report()
 
     def save_agents(self):
-        """Save the inner world's agents."""
+        """
+        Save the inner world's agents.
+        """
         self.inner_world.save_agents()
 
     def reset(self):
-        """Reset the inner world."""
+        """
+        Reset the inner world.
+        """
         # set epoch done counter negative so all threads know to reset
         with self.sync['epoch_done_ctr'].get_lock():
             threads_asleep = self.sync['epoch_done_ctr'].value > 0
@@ -1055,11 +1218,15 @@ class HogwildWorld(World):
                 self.sync['reset_sem'].release()
 
     def reset_metrics(self):
-        """Reset metrics for the inner world."""
+        """
+        Reset metrics for the inner world.
+        """
         self.inner_world.reset_metrics()
 
     def shutdown(self):
-        """Set shutdown flag and wake threads up to close themselves."""
+        """
+        Set shutdown flag and wake threads up to close themselves.
+        """
         # set shutdown flag
         with self.sync['term_flag'].get_lock():
             self.sync['term_flag'].value = True
@@ -1082,15 +1249,14 @@ class HogwildWorld(World):
 ################################################################################
 # Functions for creating tasks/worlds given options.
 ################################################################################
-def _create_task_agents(opt):
+def _create_task_agents(opt: Opt):
     """
     Create task agent(s) for the given task name.
 
-    It does this by calling the create_agent function in agents.py of the
-    given task.  If create_agents function does not exist, it just looks for
-    the teacher (agent) class defined by the task name directly.  (This saves
-    the task creator bothering to define the create_agents function when it is
-    not needed.)
+    It does this by calling the create_agent function in agents.py of the given task. If
+    create_agents function does not exist, it just looks for the teacher (agent) class
+    defined by the task name directly.  (This saves the task creator bothering to define
+    the create_agents function when it is not needed.)
     """
     sp = opt['task'].strip()
     repo = 'parlai'
@@ -1113,7 +1279,7 @@ def _create_task_agents(opt):
     try:
         # Tries to call the create_agent function in agents.py
         task = sp[0].lower()
-        task_agents = my_module.create_agents(opt, task)
+        task_agents = my_module.create_agents(opt, task)  # type: ignore
     except AttributeError:
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
@@ -1122,9 +1288,16 @@ def _create_task_agents(opt):
     return task_agents
 
 
-def _get_task_world(opt, user_agents, default_world=None):
+def _get_task_world(opt: Opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
-    sp = opt['task'].strip().split(':')
+    sp = opt['task'].strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
     if '.' in sp[0]:
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
@@ -1146,11 +1319,11 @@ def _get_task_world(opt, user_agents, default_world=None):
                 world_name = "InteractiveWorld"
             else:
                 world_name = "DefaultWorld"
-        module_name = "parlai.tasks.%s.worlds" % (task)
+        module_name = "%s.tasks.%s.worlds" % (repo, task)
         try:
             my_module = importlib.import_module(module_name)
             world_class = getattr(my_module, world_name)
-        except Exception:
+        except (ModuleNotFoundError, AttributeError):
             # Defaults to this if you did not specify a world for your task.
             if default_world is not None:
                 world_class = default_world
@@ -1161,7 +1334,7 @@ def _get_task_world(opt, user_agents, default_world=None):
     return world_class, task_agents
 
 
-def create_task_world(opt, user_agents, default_world=None):
+def create_task_world(opt: Opt, user_agents, default_world=None):
     """
     Instantiate a world with the supplied options and user agents.
 
@@ -1173,14 +1346,13 @@ def create_task_world(opt, user_agents, default_world=None):
     return world_class(opt, task_agents + user_agents)
 
 
-def create_task(opt, user_agents, default_world=None):
+def create_task(opt: Opt, user_agents, default_world=None):
     """
     Create a world + task_agents (aka a task).
 
-    Assuming ``opt['task']="task_dir:teacher_class:options"``
-    e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
-    see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
-    for list of tasks.
+    Assuming ``opt['task']="task_dir:teacher_class:options"`` e.g. ``"babi:Task1k:1"``
+    or ``"#babi-1k"`` or ``"#QA"``, see ``parlai/tasks/tasks.py`` and see
+    ``parlai/tasks/task_list.py`` for list of tasks.
     """
     task = opt.get('task')
     pyt_task = opt.get('pytorch_teacher_task')

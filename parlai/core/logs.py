@@ -17,6 +17,7 @@ extended to any other tool like visdom.
 import os
 import json
 import numbers
+from parlai.core.opt import Opt
 
 try:
     from tensorboardX import SummaryWriter
@@ -25,11 +26,15 @@ except ImportError:
 
 
 class TensorboardLogger(object):
-    """Log objects to tensorboard."""
+    """
+    Log objects to tensorboard.
+    """
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add tensorboard CLI args."""
+        """
+        Add tensorboard CLI args.
+        """
         logger = argparser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog',
@@ -40,7 +45,7 @@ class TensorboardLogger(object):
             hidden=False,
         )
 
-    def __init__(self, opt):
+    def __init__(self, opt: Opt):
         if SummaryWriter is None:
             raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
