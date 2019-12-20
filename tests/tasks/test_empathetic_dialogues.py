@@ -6,14 +6,32 @@
 
 import unittest
 
-from parlai_internal.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
+from parlai.tasks.empathetic_dialogues.agents import (
+    EmpatheticDialoguesTeacher,
+    PersonaTopicifierTeacher,
+)
+
+
+EPISODE_COUNTS = {
+    'train_experiencer_only': 19531,
+    'train_both_sides': 39057,
+    'valid': 2769,
+    'test': 2547,
+}
+
+EXAMPLE_COUNTS = {
+    'train_experiencer_only': 40254,
+    'train_both_sides': 64636,
+    'valid': 5738,
+    'test': 5259,
+}
 
 
 class TestEDTeacher(unittest.TestCase):
     """
     Basic tests to count the number of examples/episodes and to check a few utterances.
 
-    # Counting num episodes
+    # Counting num episodes (from the original internal copy of the data)
     cat /checkpoint/parlai/tasks/empathetic_dialogues/train.csv | grep -E '^hit:[0-9]+_conv:[0-9]+,2' | wc  # 19531
     cat /checkpoint/parlai/tasks/empathetic_dialogues/train.csv | grep -E '^hit:[0-9]+_conv:[0-9]+,(2|3)' | wc  # 39057
     cat /checkpoint/parlai/tasks/empathetic_dialogues/valid_random_cands.csv | grep -E '^hit:[0-9]+_conv:[0-9]+,2' | wc  # 2769
@@ -23,7 +41,7 @@ class TestEDTeacher(unittest.TestCase):
     # we also include turn_idx=3 to count the Listener-based conversations in the same
     # manner.
 
-    # Count num examples
+    # Count num examples (from the original internal copy of the data)
     grep -E 'hit:[0-9]+_conv:[0-9]+,(2|4|6|8|10|12),' /checkpoint/parlai/tasks/empathetic_dialogues/train.csv | wc  # 40254
     grep -E 'hit:[0-9]+_conv:[0-9]+,(2|3|4|5|6|7|8|9|10|11|12),' /checkpoint/parlai/tasks/empathetic_dialogues/train.csv | wc  # 64636 (--train-experiencer-only False)
     grep -E 'hit:[0-9]+_conv:[0-9]+,(2|4|6|8|10|12),' /checkpoint/parlai/tasks/empathetic_dialogues/valid_random_cands.csv | wc  # 5738
@@ -33,16 +51,30 @@ class TestEDTeacher(unittest.TestCase):
     def test_counts(self):
 
         opts_episodes_and_examples = [
-            ({'datatype': 'train', 'train_experiencer_only': True}, 19531, 40254),
-            ({'datatype': 'train', 'train_experiencer_only': False}, 39057, 64636),
-            ({'datatype': 'valid'}, 2769, 5738),
-            ({'datatype': 'test'}, 2547, 5259),
+            (
+                {'datatype': 'train'},
+                EPISODE_COUNTS['train_experiencer_only'],
+                EXAMPLE_COUNTS['train_experiencer_only'],
+            ),  # Test the default mode
+            (
+                {'datatype': 'train', 'train_experiencer_only': True},
+                EPISODE_COUNTS['train_experiencer_only'],
+                EXAMPLE_COUNTS['train_experiencer_only'],
+            ),
+            (
+                {'datatype': 'train', 'train_experiencer_only': False},
+                EPISODE_COUNTS['train_both_sides'],
+                EXAMPLE_COUNTS['train_both_sides'],
+            ),
+            ({'datatype': 'valid'}, EPISODE_COUNTS['valid'], EXAMPLE_COUNTS['valid']),
+            ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
         ]
 
-        for opt, num_episodes, num_examples in opts_episodes_and_examples:
-            teacher = EmpatheticDialoguesTeacher(opt)
-            self.assertEqual(teacher.num_episodes(), num_episodes)
-            self.assertEqual(teacher.num_examples(), num_examples)
+        for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
+            for opt, num_episodes, num_examples in opts_episodes_and_examples:
+                teacher = teacher_class(opt)
+                self.assertEqual(teacher.num_episodes(), num_episodes)
+                self.assertEqual(teacher.num_examples(), num_examples)
 
     def test_check_examples(self):
 
