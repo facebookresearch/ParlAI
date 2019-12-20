@@ -408,7 +408,7 @@ class TestEDTeacher(unittest.TestCase):
                 (
                     {'datatype': 'valid'},
                     {
-                        'text': 'I was walking through my hallway a few week ago, and my son was hiding under the table and grabbed my ankle. I thought i was got.',
+                        'text': 'I was walking through my hallway a few week ago, and my son was hiding under the table and grabbed my ankle. I thought i was got. ',
                         'labels': ['surprised'],
                         'episode_done': True,
                     },
