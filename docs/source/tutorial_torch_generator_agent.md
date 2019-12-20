@@ -16,7 +16,9 @@ python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtra
 
 ## Creating a Model
 
-In order to write a generative model, your agent should extend `TorchGeneratorAgent`. This parent class implements `train_step` and `eval_step`, so you only need to implement your model and instantiate it through `build_model`. However, your model should implement the `TorchGeneratorModel` interface.
+In order to write a generative model, your agent should extend `TorchGeneratorAgent`. This parent class implements `train_step` and `eval_step`, so you only need to implement your model and instantiate it through `build_model`. `TorchGeneratorAgent` will take care of many common generator features, such as forced decoding, beam search, n-gram beam blocking, top-k and top-p/nucleus sampling, etc.
+
+Additionally, your model should implement the `TorchGeneratorModel` interface: see the tutorial below for an example of this.
 
 
 ## Tutorial

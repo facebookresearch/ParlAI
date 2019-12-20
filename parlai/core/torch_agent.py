@@ -1167,6 +1167,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
+        if self.opt['embedding_type'] == 'random':
+            # Random embedding means no copying of pretrained embeddings
+            return
+
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():

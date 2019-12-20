@@ -197,8 +197,7 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
         """
 
         model = ExampleModel(self.dict, self.opt['hidden_size'])
-        if self.opt['embedding_type'] != 'random':
-            # Initialize pre-trained embeddings by copying them from another source:
-            # GloVe, fastText, etc.
-            self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
+        # Optionally initialize pre-trained embeddings by copying them from another
+        # source: GloVe, fastText, etc.
+        self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
