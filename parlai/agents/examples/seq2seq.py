@@ -7,11 +7,11 @@
 r"""
 Example TorchGeneratorAgent model.
 
-This demonstrates the minimal structure of a building a generative model, consisting of 
-an encoder and decoder that each contain a 1-layer LSTM. The subclassed model and agent 
-handle passing in the current decoder state during incremental decoding, as well as 
+This demonstrates the minimal structure of a building a generative model, consisting of
+an encoder and decoder that each contain a 1-layer LSTM. The subclassed model and agent
+handle passing in the current decoder state during incremental decoding, as well as
 reordering the encoder/decoder states. The base TorchGeneratorAgent class handles common
-generator features like forced decoding, beam search, n-gram beam blocking, and top-k 
+generator features like forced decoding, beam search, n-gram beam blocking, and top-k
 and top-p/nucleus sampling.
 
 You can train this agent to a reasonable accuracy with:
