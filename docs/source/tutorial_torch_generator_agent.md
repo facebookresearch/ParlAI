@@ -153,4 +153,4 @@ python examples/train_model.py -m examples/seq2seq \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```
 
-You should get a perplexity of around 135 and a token accuracy of around 28% on the ConvAI2 validation/test set.
+You should get a perplexity of around 140 and a token accuracy of around 28% on the ConvAI2 validation/test set.
