@@ -52,30 +52,33 @@ class TestEDTeacher(unittest.TestCase):
 
     def test_counts(self):
 
-        opts_episodes_and_examples = [
-            (
-                {'datatype': 'train'},
-                EPISODE_COUNTS['train_both_sides'],
-                EXAMPLE_COUNTS['train_both_sides'],
-            ),  # Test the default mode
-            (
-                {'datatype': 'train', 'train_experiencer_only': True},
-                EPISODE_COUNTS['train_experiencer_only'],
-                EXAMPLE_COUNTS['train_experiencer_only'],
-            ),
-            (
-                {'datatype': 'train', 'train_experiencer_only': False},
-                EPISODE_COUNTS['train_both_sides'],
-                EXAMPLE_COUNTS['train_both_sides'],
-            ),
-            ({'datatype': 'valid'}, EPISODE_COUNTS['valid'], EXAMPLE_COUNTS['valid']),
-            ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
-        ]
-
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
 
-            # Check teacher with multiple examples per episode
+            # Check EmpatheticDialoguesTeacher, with multiple examples per episode
+            opts_episodes_and_examples = [
+                (
+                    {'datatype': 'train'},
+                    EPISODE_COUNTS['train_both_sides'],
+                    EXAMPLE_COUNTS['train_both_sides'],
+                ),  # Test the default mode
+                (
+                    {'datatype': 'train', 'train_experiencer_only': True},
+                    EPISODE_COUNTS['train_experiencer_only'],
+                    EXAMPLE_COUNTS['train_experiencer_only'],
+                ),
+                (
+                    {'datatype': 'train', 'train_experiencer_only': False},
+                    EPISODE_COUNTS['train_both_sides'],
+                    EXAMPLE_COUNTS['train_both_sides'],
+                ),
+                (
+                    {'datatype': 'valid'},
+                    EPISODE_COUNTS['valid'],
+                    EXAMPLE_COUNTS['valid'],
+                ),
+                ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
+            ]
             for teacher_class in [EmpatheticDialoguesTeacher]:
                 for opt, num_episodes, num_examples in opts_episodes_and_examples:
                     full_opt = Opt({**opt, 'datapath': data_path})
@@ -83,9 +86,25 @@ class TestEDTeacher(unittest.TestCase):
                     self.assertEqual(teacher.num_episodes(), num_episodes)
                     self.assertEqual(teacher.num_examples(), num_examples)
 
-            # Check teacher with one example per episode
+            # Check EmotionClassificationSituationTeacher, with one example per episode
+            train_episode_count = EPISODE_COUNTS['train_experiencer_only']
+            # For the situation classifier, we only want to have one episode per train
+            # conversation
+            opts_episodes = [
+                ({'datatype': 'train'}, train_episode_count),  # Test the default mode
+                (
+                    {'datatype': 'train', 'train_experiencer_only': True},
+                    train_episode_count,
+                ),
+                (
+                    {'datatype': 'train', 'train_experiencer_only': False},
+                    train_episode_count,
+                ),
+                ({'datatype': 'valid'}, EPISODE_COUNTS['valid']),
+                ({'datatype': 'test'}, EPISODE_COUNTS['test']),
+            ]
             for teacher_class in [EmotionClassificationSituationTeacher]:
-                for opt, num_episodes, _ in opts_episodes_and_examples:
+                for opt, num_episodes in opts_episodes:
                     full_opt = Opt({**opt, 'datapath': data_path})
                     teacher = teacher_class(full_opt)
                     self.assertEqual(teacher.num_episodes(), num_episodes)

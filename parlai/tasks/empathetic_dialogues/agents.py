@@ -198,6 +198,8 @@ class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        opt['train_experiencer_only'] = True
+        # So that we only have one episode per train conversation
         super().__init__(opt, shared)
         if not shared:
             self._get_situations()
