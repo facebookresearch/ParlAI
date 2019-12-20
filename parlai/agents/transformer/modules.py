@@ -871,8 +871,10 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
         Not implemented in Transformers, since ``incremental_state`` is always None.
         """
+        # TODO: revise docstring
         # no support for incremental decoding at this time
-        return None
+        # {{{TODO: revise}}}
+        return final_incr_state
 
     def output(self, tensor):
         """
