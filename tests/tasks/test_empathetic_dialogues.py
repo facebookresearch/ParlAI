@@ -10,7 +10,6 @@ from parlai.core.opt import Opt
 from parlai.tasks.empathetic_dialogues.agents import (
     EmotionClassificationSituationTeacher,
     EmpatheticDialoguesTeacher,
-    PersonaTopicifierTeacher,
 )
 from parlai.utils import testing as testing_utils
 
@@ -76,8 +75,8 @@ class TestEDTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
 
-            # Check teachers with multiple examples per episode
-            for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
+            # Check teacher with multiple examples per episode
+            for teacher_class in [EmpatheticDialoguesTeacher]:
                 for opt, num_episodes, num_examples in opts_episodes_and_examples:
                     full_opt = Opt({**opt, 'datapath': data_path})
                     teacher = teacher_class(full_opt)
