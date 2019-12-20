@@ -1,6 +1,6 @@
 # Using Torch Generator Agent
 
-**Authors**: Stephen Roller, Eric Smith
+**Authors**: Eric Smith
 
 `parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract parent class that provides functionality for building autoregressive generative models. Extending `TorchGeneratorAgent` requires your model conform to a strict interface, but then provides you rich functionality like beam search and sampling.
 
@@ -16,7 +16,7 @@ python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtra
 
 ## Creating a Model
 
-In order to write a generative model, your agent should extend `parlai.core.torch_generator_agent.TorchGeneratorAgent`. This parent class implements `train_step` and `eval_step`, so you only need to implement your model and instantiate it through `build_model`. However, your model should implement the `parlai.core.torch_generator_agent.TorchGeneratorModel` interface.
+In order to write a generative model, your agent should extend `TorchGeneratorAgent`. This parent class implements `train_step` and `eval_step`, so you only need to implement your model and instantiate it through `build_model`. However, your model should implement the `TorchGeneratorModel` interface.
 
 
 ## Tutorial
