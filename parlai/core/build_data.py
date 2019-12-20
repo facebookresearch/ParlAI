@@ -21,7 +21,11 @@ import hashlib
 import tqdm
 import math
 import zipfile
-from multiprocessing import Pool
+
+try:
+    from torch.multiprocessing import Pool
+except ImportError:
+    from multiprocessing import Pool
 
 
 class DownloadableFile:

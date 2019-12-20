@@ -56,11 +56,11 @@ ParlAI is a one-stop-shop for dialog research.
 
 .. toctree::
   :maxdepth: 1
-  :caption: Reference Models
+  :caption: Agents
+  :glob:
 
-  repeat_label
-  unigram_agent
-  example_seq2seq
+  agents_list
+  agent_refs/*
 
 .. toctree::
    :maxdepth: 2

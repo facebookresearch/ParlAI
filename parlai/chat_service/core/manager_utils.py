@@ -145,7 +145,7 @@ class ChatServiceMessageSocket:
             url_base_name = self.server_url.split('https://')[1]
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}/".format(url_base_name)
+                    sock_addr = "wss://{}/".format(url_base_name)
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -193,11 +193,37 @@ class ChatServiceWorldRunner:
         self.system_done = False
         self.opt = opt
         self.tasks = {}  # task ID to task
+        self.initialized = False
+
+        def _is_done_initializing(fut):
+            e = fut.exception()
+            if e is not None:
+                self._log('`module_initialize` returned with error {}'.format(repr(e)))
+                if self.debug:
+                    raise e
+            if fut.result():
+                print(fut.result())
+            if self.debug:
+                print("DEBUG: Call to `module_initialize` has completed...")
+            self.initialized = True
+
+        if hasattr(self._world_module, "module_initialize"):
+            self._log("Initializing world module...")
+            # perform any module intialization steps
+            init_fn = self._world_module.module_initialize
+            self.init_fut = self.executor.submit(init_fn, opt, manager)
+            self.init_fut.add_done_callback(_is_done_initializing)
+        else:
+            self._log("World module does not have `module initialize` function")
+            self.initialized = True
 
     def _log(self, text):
         if self.debug:
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            utils.print_and_log(logging.INFO, "{} DEBUG: {}".format(time, text))
+            print("{} DEBUG: {}".format(time, text))
+
+    def is_initialized(self):
+        return self.initialized
 
     def shutdown(self):
         """
@@ -302,7 +328,7 @@ class ChatServiceWorldRunner:
                 self._world_module, overworld_name, "generate_world"
             )
             overworld = world_generator(self.opt, [overworld_agent])
-            while not self.system_done:
+            while not overworld.episode_done() and not self.system_done:
                 world_type = overworld.parley()
                 if world_type is None:
                     time.sleep(0.5)
@@ -325,6 +351,7 @@ class ChatServiceWorldRunner:
                 while agent_state.get_active_agent() != overworld_agent:
                     time.sleep(2)
                 overworld.return_overworld()
+            utils.print_and_log(logging.INFO, 'exiting overworld')
             return world_type
 
         fut = self.executor.submit(_world_function)
