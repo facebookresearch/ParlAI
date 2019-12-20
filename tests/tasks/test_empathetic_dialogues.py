@@ -391,17 +391,26 @@ class TestEDTeacher(unittest.TestCase):
             opts_and_examples = [
                 (
                     {'datatype': 'train', 'train_experiencer_only': True},
-                    {'text': 'i used to scare for darkness', 'labels': ['afraid']},
+                    {
+                        'text': ' i used to scare for darkness',
+                        'labels': ['afraid'],
+                        'episode_done': True,
+                    },
                 ),
                 (
                     {'datatype': 'train', 'train_experiencer_only': False},
-                    {'text': 'i used to scare for darkness', 'labels': ['afraid']},
+                    {
+                        'text': ' i used to scare for darkness',
+                        'labels': ['afraid'],
+                        'episode_done': True,
+                    },
                 ),
                 (
                     {'datatype': 'valid'},
                     {
                         'text': 'I was walking through my hallway a few week ago, and my son was hiding under the table and grabbed my ankle. I thought i was got.',
                         'labels': ['surprised'],
+                        'episode_done': True,
                     },
                 ),
                 (
@@ -409,6 +418,7 @@ class TestEDTeacher(unittest.TestCase):
                     {
                         'text': "My mother stopped by my house one day and said she saw 3 dogs on the road, down from our house. They were starving, with ribs showing, and it was a mother dog and her two small puppies. Of course, my daughter wanted to bring them to our house, so we could feed and help them. We did, and my heart went out to them, as they were so sweet, but really were in a bad shape.",
                         'labels': ['caring'],
+                        'episode_done': True,
                     },
                 ),
             ]
