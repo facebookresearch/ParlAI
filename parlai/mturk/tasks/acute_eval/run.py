@@ -73,12 +73,6 @@ def add_args(from_argv=False):
         help='question to present to turker for comparison (e.g. "Which speaker is better?")',
     )
     argparser.add_argument(
-        '--correctness_is_flipped',
-        default=False,
-        action='store_true',
-        help='question phrasing flips the better model - e.g. question is "Which speaker is more boring?"',
-    )
-    argparser.add_argument(
         '--model_comparisons',
         type=str,
         help='list of model pairs to compare, comma separated. E.g. ["transformer,human_eval"] ',
@@ -171,7 +165,6 @@ def setup_task_queue(opt):
                 opt['s1_choice'],
                 opt['s2_choice'],
                 opt['question'],
-                opt['correctness_is_flipped'],
                 matchup=matchup,
                 is_qual=True,
             )
@@ -191,7 +184,6 @@ def setup_task_queue(opt):
                 opt['s1_choice'],
                 opt['s2_choice'],
                 opt['question'],
-                opt['correctness_is_flipped'],
                 hit_id,
                 matchup,
             )
@@ -228,7 +220,6 @@ def setup_task_queue(opt):
                     opt['s1_choice'],
                     opt['s2_choice'],
                     opt['question'],
-                    opt['correctness_is_flipped'],
                     matchup=matchup_name,
                 )
                 internal_id += 1
@@ -243,9 +234,9 @@ def setup_task_queue(opt):
             task_queue.put(desired_tasks[internal_id])
     # limit number of hits worker can do by default
     if opt['max_hits_per_worker'] == 0:
-        opt['max_hits_per_worker'] = (
-            len(desired_tasks) + len(onboarding_tasks)
-        ) // opt['comparisons_per_hit']
+        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) // opt[
+            'comparisons_per_hit'
+        ]
 
 
 def make_task_from_ids(
@@ -256,7 +247,6 @@ def make_task_from_ids(
     s1_choice,
     s2_choice,
     question,
-    is_flipped,
     hitid='',
     matchup='',
     is_qual=False,
@@ -279,7 +269,6 @@ def make_task_from_ids(
     specs['s1_choice'] = s1_choice
     specs['s2_choice'] = s2_choice
     specs['question'] = question
-    specs['correctness_is_flipped'] = is_flipped
     specs['speakers_to_eval'] = ['model', 'model']
     if is_qual:
         specs['is_onboarding'] = True
@@ -409,16 +398,7 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
         worker_response = float(response_data[i]['speakerChoice'])
         expected_response = (
             1
-            if (
-                (
-                    task_specs['conversation_order'] == [1, 0]
-                    and not task_specs['correctness_is_flipped']
-                )
-                or (
-                    task_specs['conversation_order'] == [0, 1]
-                    and task_specs['correctness_is_flipped']
-                )
-            )
+            if task_specs['conversation_order'] == [1, 0]
             else 2
         )
         num_onboarding_tasks += 1

@@ -31,7 +31,7 @@ You can find an example run script in `example_script.py` - opening this and fol
 This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format within a folder specified by `args['dialogs_path']`. This is a template of the format with the minimal expected fields:
 
     {
-      "model_name": "model_name",
+      "speakers": ["model", "human_evaluator"],
       "conversation_id": "id",
       "dialog": [
         {"speaker": "model", "text": "Hi"},
@@ -40,7 +40,7 @@ This task code assumes that you've parsed and saved your collected conversations
       ]
     }
 
-See `example/model*.jsonl` for examples of the format required.
+Note that we assume "dialog" consists of strictly alternating turns (e.g. a, b, a, b, a...). See `example/model*.jsonl` for examples of the format required.
 
 ## Question phrasing
 
