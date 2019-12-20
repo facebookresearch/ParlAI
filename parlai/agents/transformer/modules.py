@@ -694,7 +694,10 @@ class TransformerDecoder(nn.Module):
         :param incr_state:
             Ignored. Should always be ``None`` in this version.
         """
+        # TODO: update docstring!
         encoder_output, encoder_mask = encoder_state
+
+        # {{{TODO: use incr_state}}}
 
         seq_len = input.size(1)
         positions = input.new(seq_len).long()
