@@ -120,10 +120,9 @@ class Decoder(nn.Module):
 
 class ExampleModel(tga.TorchGeneratorModel):
     """
-    ExampleModel implements the final components of TorchGeneratorModel.
-
-    Mainly needs to implement reorder_encoder_size, and instantiate self.encoder and
-    self.decoder.
+    ExampleModel implements the abstract methods of TorchGeneratorModel to define how to
+    re-order encoder states and decoder incremental states. It also instantiates the
+    embedding table, encoder, and decoder, and defines the final output layer.
     """
 
     def __init__(self, dictionary, esz=256, hidden_size=1024):
@@ -195,8 +194,8 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
         """
 
         model = ExampleModel(self.dict, self.opt['hidden_size'])
-        # we're responsible for setting the embeddings ourselves, but TorchAgent
-        # gives us a nice helper
         if self.opt['embedding_type'] != 'random':
+            # Initialize pre-trained embeddings by copying them from another source:
+            # GloVe, fastText, etc.
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
