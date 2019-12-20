@@ -8,6 +8,7 @@ import unittest
 
 from parlai.core.opt import Opt
 from parlai.tasks.empathetic_dialogues.agents import (
+    EmotionClassificationSituationTeacher,
     EmpatheticDialoguesTeacher,
     PersonaTopicifierTeacher,
 )
@@ -72,6 +73,7 @@ class TestEDTeacher(unittest.TestCase):
             ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
         ]
 
+        # Check teachers with multiple examples per episode
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
             for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
@@ -80,6 +82,16 @@ class TestEDTeacher(unittest.TestCase):
                     teacher = teacher_class(full_opt)
                     self.assertEqual(teacher.num_episodes(), num_episodes)
                     self.assertEqual(teacher.num_examples(), num_examples)
+
+        # Check teacher with one example per episode
+        with testing_utils.tempdir() as tmpdir:
+            data_path = tmpdir
+            for teacher_class in [EmotionClassificationSituationTeacher]:
+                for opt, num_episodes, _ in opts_episodes_and_examples:
+                    full_opt = Opt({**opt, 'datapath': data_path})
+                    teacher = teacher_class(full_opt)
+                    self.assertEqual(teacher.num_episodes(), num_episodes)
+                    self.assertEqual(teacher.num_examples(), num_episodes)
 
     def test_check_examples(self):
 
