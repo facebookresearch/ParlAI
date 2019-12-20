@@ -27,7 +27,7 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_torch_ranker_agent
    tutorial_tipsntricks
    tutorial_mturk
-   tutorial_messenger
+   tutorial_chat_service
    tutorial_tensorboard
 
 .. toctree::
