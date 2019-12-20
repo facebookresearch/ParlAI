@@ -73,9 +73,10 @@ class TestEDTeacher(unittest.TestCase):
             ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
         ]
 
-        # Check teachers with multiple examples per episode
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
+
+            # Check teachers with multiple examples per episode
             for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
                 for opt, num_episodes, num_examples in opts_episodes_and_examples:
                     full_opt = Opt({**opt, 'datapath': data_path})
@@ -83,9 +84,7 @@ class TestEDTeacher(unittest.TestCase):
                     self.assertEqual(teacher.num_episodes(), num_episodes)
                     self.assertEqual(teacher.num_examples(), num_examples)
 
-        # Check teacher with one example per episode
-        with testing_utils.tempdir() as tmpdir:
-            data_path = tmpdir
+            # Check teacher with one example per episode
             for teacher_class in [EmotionClassificationSituationTeacher]:
                 for opt, num_episodes, _ in opts_episodes_and_examples:
                     full_opt = Opt({**opt, 'datapath': data_path})
