@@ -55,8 +55,8 @@ class TestEDTeacher(unittest.TestCase):
         opts_episodes_and_examples = [
             (
                 {'datatype': 'train'},
-                EPISODE_COUNTS['train_experiencer_only'],
-                EXAMPLE_COUNTS['train_experiencer_only'],
+                EPISODE_COUNTS['train_both_sides'],
+                EXAMPLE_COUNTS['train_both_sides'],
             ),  # Test the default mode
             (
                 {'datatype': 'train', 'train_experiencer_only': True},
