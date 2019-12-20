@@ -17,6 +17,7 @@ import pickle
 import contextlib
 
 try:
+    import torch.nn
     import torch.version
     import torch.distributed as dist
 
@@ -229,21 +230,30 @@ def sync_object(data, max_size=16384):
     return data
 
 
-def check_synced_parameters(model):
+def sync_parameters(model: torch.nn.Module) -> bool:
     """
-    Check that all parameters across all workers are the same.
+    Sync all parameters across all workers are the same.
 
-    Always returns True, or raises an AssertionError if they are not
-    synchronized.
+    Always returns True, or raises an AssertionError if there was a failure.
 
-    :param torch.nn.Module model: A pytorch model.
-    :return: True
+    :param model: A pytorch model.
+    :return: always True
     """
     if not is_distributed():
         # if things aren't distributed, of course things are in sync
         return True
 
-    # compute the local norm:
+    # sync all the parameters
+    with torch.no_grad():
+        for p in model.parameters():
+            if not is_primary_worker():
+                # zero out parameters on all workers EXCEPT the primary worker
+                p.data.zero_()
+            # sum the parameters across all workers, resulting in everyone having
+            # the parameters of the primary worker
+            dist.all_reduce(p.data, dist.ReduceOp.SUM)
+
+    # double check everything synced correctly
     norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
     all_versions = all_gather_list(norm2)
     if not all(n == norm2 for n in all_versions):

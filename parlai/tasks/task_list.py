@@ -1065,4 +1065,15 @@ task_list = [
             "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
         ),
     },
+    {
+        "id": "IGC",
+        "display_name": "Image Grounded Conversations",
+        "task": "igc",
+        "tags": ["All", "Visual", "ChitChat"],
+        "description": (
+            "A dataset of (image, context, question, answer) tuples, comprised "
+            "of eventful images taken from Bing, Flickr, and COCO. See "
+            "https://arxiv.org/abs/1701.08251 for more information."
+        ),
+    },
 ]
