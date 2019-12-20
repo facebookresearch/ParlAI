@@ -19,7 +19,7 @@ Other optional fields:
 
 ## EmotionClassificationSituationTeacher
 Classifier that returns the situation and emotion for each episode given by `EmpatheticDialoguesTeacher`. Examples:
-- [text]: A 1-3 sentence description of the situation that the conversation is (see [situation] above)
-- [labels]: one of 32 emotion words (see [emotion] above)
+- [text]: A 1-3 sentence description of the situation that the conversation is (equivalent to [situation] for `EmpatheticDialoguesTeacher`)
+- [labels]: one of 32 emotion words (equivalent to [emotion] for `EmpatheticDialoguesTeacher`)
 
 Tags: #EmpatheticDialogues, #All, #ChitChat
