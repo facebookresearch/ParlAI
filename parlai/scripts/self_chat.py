@@ -51,6 +51,7 @@ def setup_args(parser=None):
         '--format', type=str, default='json', choices={'parlai', 'json'}
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
+    WorldLogger.add_cmdline_args(parser)
     return parser
 
 
