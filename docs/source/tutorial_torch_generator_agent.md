@@ -23,7 +23,7 @@ Additionally, your model should implement the `TorchGeneratorModel` interface: s
 
 ## Tutorial
 
-This tutorial will walk you through creating a simple generative model, found at `parlai.agents.examples.seq2seq`, that consists of a 1-layer LSTM encoder and decoder.
+This tutorial will walk you through creating a simple generative model, found at `parlai.agents.examples.seq2seq`, that consists of a 1-layer-LSTM encoder and decoder.
 
 ### Extending `TorchGeneratorAgent`
 
