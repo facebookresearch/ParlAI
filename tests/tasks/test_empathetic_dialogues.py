@@ -6,10 +6,12 @@
 
 import unittest
 
+from parlai.core.opt import Opt
 from parlai.tasks.empathetic_dialogues.agents import (
     EmpatheticDialoguesTeacher,
     PersonaTopicifierTeacher,
 )
+from parlai.utils import testing as testing_utils
 
 
 EPISODE_COUNTS = {
@@ -70,11 +72,14 @@ class TestEDTeacher(unittest.TestCase):
             ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
         ]
 
-        for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
-            for opt, num_episodes, num_examples in opts_episodes_and_examples:
-                teacher = teacher_class(opt)
-                self.assertEqual(teacher.num_episodes(), num_episodes)
-                self.assertEqual(teacher.num_examples(), num_examples)
+        with testing_utils.tempdir() as tmpdir:
+            data_path = tmpdir
+            for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
+                for opt, num_episodes, num_examples in opts_episodes_and_examples:
+                    full_opt = Opt({**opt, 'datapath': data_path})
+                    teacher = teacher_class(full_opt)
+                    self.assertEqual(teacher.num_episodes(), num_episodes)
+                    self.assertEqual(teacher.num_examples(), num_examples)
 
     def test_check_examples(self):
 
@@ -345,9 +350,12 @@ class TestEDTeacher(unittest.TestCase):
             ),
         ]
 
-        for opt, example in opts_and_examples:
-            teacher = EmpatheticDialoguesTeacher(opt)
-            self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
+        with testing_utils.tempdir() as tmpdir:
+            data_path = tmpdir
+            for opt, example in opts_and_examples:
+                full_opt = Opt({**opt, 'datapath': data_path})
+                teacher = EmpatheticDialoguesTeacher(full_opt)
+                self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
 
 
 if __name__ == '__main__':
