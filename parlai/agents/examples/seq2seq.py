@@ -129,8 +129,10 @@ class Decoder(nn.Module):
 class ExampleModel(tga.TorchGeneratorModel):
     """
     ExampleModel implements the abstract methods of TorchGeneratorModel to define how to
-    re-order encoder states and decoder incremental states. It also instantiates the
-    embedding table, encoder, and decoder, and defines the final output layer.
+    re-order encoder states and decoder incremental states.
+
+    It also instantiates the embedding table, encoder, and decoder, and defines the
+    final output layer.
     """
 
     def __init__(self, dictionary, esz=256, hidden_size=1024):
