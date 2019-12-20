@@ -73,18 +73,19 @@ class SelfChatBaseWorld(DialogPartnerWorld):
 
     def init_openers(self) -> None:
         """
-        Override to load or instantiate opening messages to be used to seed the self chat.
+        Override to load or instantiate opening messages to be used to seed the self
+        chat.
         """
         if self.opt.get('seed_messages_from_task'):
             self._openers = load_openers(self.opt)
 
     def get_openers(self, episode_num: int) -> Optional[List[str]]:
         """
-        Override to return one or more opening messages with which to seed the
-        self chat episode.
-        
-        The return value should be an array of strings, each string being a message
-        in response to the string before it.
+        Override to return one or more opening messages with which to seed the self chat
+        episode.
+
+        The return value should be an array of strings, each string being a message in
+        response to the string before it.
         """
         if self._openers:
             return [random.choice(self._openers)]
