@@ -57,7 +57,7 @@ As an example, the [Overworld Demo](https://github.com/facebookresearch/ParlAI/b
 
 In addition to the overworld demo, the following example tasks are provided:
 
-- [Generic Chatbot](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/chatbot/): Allow messenger conversations with any ParlAI models, for instance the [PersonaChat](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat) model.
+- [Generic Chatbot](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/chatbot/): Allow conversations with any ParlAI models, for instance the [PersonaChat](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat) model.
 - [QA Data Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/qa_data_collection/): collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
 
 ### Creating your Own Task
@@ -96,7 +96,7 @@ If no port number is specified in `--port` then the default port used will be `3
 
 This allows you to chat with a ParlAI model on Facebook Messenger.
 
-<p align="center"><img width="90%" src="_static/img/messenger-example.png" /></p>
+<p align="center"><img width="80%" src="_static/img/messenger-example.png" /></p>
 
 
 #### Setup
