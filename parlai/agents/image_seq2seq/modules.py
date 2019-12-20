@@ -62,7 +62,6 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
-            use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
         )
 
 
@@ -73,23 +72,62 @@ class ContextWithImageEncoder(TransformerEncoder):
     Encodes image and context via simple concatenation.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        n_heads,
+        n_layers,
+        embedding_size,
+        ffn_size,
+        vocabulary_size,
+        embedding=None,
+        dropout=0.0,
+        attention_dropout=0.0,
+        relu_dropout=0.0,
+        padding_idx=0,
+        learn_positional_embeddings=False,
+        embeddings_scale=False,
+        reduction_type='mean',
+        n_positions=1024,
+        activation='relu',
+        variant='aiayn',
+        n_segments=0,
+        output_scaling=1.0,
+        image_encoder_num_layers=1,
+        image_features_dim=2048,
+    ):
         """
         Override TransformerEncoder __init__.
 
         Setup the image encoder; create some dummy tensors for inserting image into
         input
         """
-        self.n_img_layers = kwargs.pop('image_encoder_num_layers')
-        self.img_dim = kwargs.pop('image_features_dim')
-        self.use_cuda = kwargs.pop('use_cuda')
-        super().__init__(*args, **kwargs)
+        self.n_img_layers = image_encoder_num_layers
+        self.img_dim = image_features_dim
+        super().__init__(
+            n_heads,
+            n_layers,
+            embedding_size,
+            ffn_size,
+            vocabulary_size,
+            embedding,
+            dropout,
+            attention_dropout,
+            relu_dropout,
+            padding_idx,
+            learn_positional_embeddings,
+            embeddings_scale,
+            reduction_type,
+            n_positions,
+            activation,
+            variant,
+            n_segments,
+            output_scaling,
+        )
         self._build_image_encoder()
-        self.dummy_image_enc = torch.zeros((self.embedding_size))
-        self.ones_mask = torch.ones(1).bool()
-        if self.use_cuda:
-            self.dummy_image_enc = self.dummy_image_enc.cuda()
-            self.ones_mask = self.ones_mask.cuda()
+        self.dummy_image_enc = torch.nn.Parameter(
+            torch.zeros((self.embedding_size)), requires_grad=False
+        )
+        self.ones_mask = torch.nn.Parameter(torch.ones(1).bool(), requires_grad=False)
 
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
