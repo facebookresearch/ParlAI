@@ -8,6 +8,7 @@ import unittest
 
 from parlai.tasks.empathetic_dialogues.agents import (
     EmpatheticDialoguesTeacher,
+    PersonaTopicifierTeacher,
 )
 
 
@@ -51,6 +52,11 @@ class TestEDTeacher(unittest.TestCase):
 
         opts_episodes_and_examples = [
             (
+                {'datatype': 'train'},
+                EPISODE_COUNTS['train_experiencer_only'],
+                EXAMPLE_COUNTS['train_experiencer_only'],
+            ),  # Test the default mode
+            (
                 {'datatype': 'train', 'train_experiencer_only': True},
                 EPISODE_COUNTS['train_experiencer_only'],
                 EXAMPLE_COUNTS['train_experiencer_only'],
@@ -64,10 +70,11 @@ class TestEDTeacher(unittest.TestCase):
             ({'datatype': 'test'}, EPISODE_COUNTS['test'], EXAMPLE_COUNTS['test']),
         ]
 
-        for opt, num_episodes, num_examples in opts_episodes_and_examples:
-            teacher = EmpatheticDialoguesTeacher(opt)
-            self.assertEqual(teacher.num_episodes(), num_episodes)
-            self.assertEqual(teacher.num_examples(), num_examples)
+        for teacher_class in [EmpatheticDialoguesTeacher, PersonaTopicifierTeacher]:
+            for opt, num_episodes, num_examples in opts_episodes_and_examples:
+                teacher = teacher_class(opt)
+                self.assertEqual(teacher.num_episodes(), num_episodes)
+                self.assertEqual(teacher.num_examples(), num_examples)
 
     def test_check_examples(self):
 
