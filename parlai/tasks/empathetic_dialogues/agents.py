@@ -50,9 +50,10 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             '--train-experiencer-only',
             type='bool',
             default=DEFAULT_TRAIN_EXPERIENCER_ONLY,
-            # i.e. do not include the other side of the conversation where
-            # responder would be text and experiencer utterance would be label
-            help='In the train set, only use experiencer utterances as text and responder utterances as labels.',
+            # i.e. do not include the other side of the conversation where the Listener
+            # (responder) utterance would be the text and the Speaker (experiencer)
+            # utterance would be the label
+            help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
         )
 
     def num_episodes(self):
@@ -163,9 +164,6 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         if len(experiencer_text_dialogue) > 0:
             self.data.append(experiencer_text_dialogue)
         if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
-            # experiencer_only True is the default mode:
-            # only train on listener (responder) reactions as cands and
-            # experiencer/speaker utterances as previous utterances
             self.data.append(responder_text_dialogue)
 
     def get(self, episode_idx, entry_idx=0):
