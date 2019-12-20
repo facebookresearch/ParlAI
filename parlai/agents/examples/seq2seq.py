@@ -28,7 +28,8 @@ import parlai.core.torch_generator_agent as tga
 
 class Encoder(nn.Module):
     """
-    Example encoder.
+    Example encoder, consisting of an embedding layer and a 1-layer LSTM with the
+    specified hidden size.
 
     Pay particular attention to the ``forward`` output.
     """
@@ -73,7 +74,9 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
     """
-    Basic example Decoder.
+    Basic example decoder, consisting of an embedding layer and a 1-layer LSTM with the
+    specified hidden size. Decoder allows for incremental decoding by ingesting the
+    current incremental state on each forward pass.
 
     Pay particular note to the ``forward``.
     """
