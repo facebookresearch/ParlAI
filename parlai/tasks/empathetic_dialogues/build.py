@@ -14,7 +14,7 @@ RESOURCES = [
     DownloadableFile(
         'http://parl.ai/downloads/empatheticdialogues/empatheticdialogues.tar.gz',
         'empatheticdialogues.tar.gz',
-        '240c492cb6199a315722f716bfcc14f13ea6605f1cec67349153b606be92f6f2',
+        '56f234d77b7dd1f005fd365bb17769cfe346c3c84295b69bc069c8ccb83be03d',
     )
 ]
 
