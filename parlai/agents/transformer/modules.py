@@ -792,14 +792,20 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         # don't peak into the future!
-        x = self.self_attention(query=x, mask=decoder_mask)
+        x, final_self_attn_incr_state = self.self_attention(
+            query=x, mask=decoder_mask, incr_state=incr_state.get('self_attn')
+        )
         x = self.dropout(x)  # --dropout
         x = x + residual
         x = _normalize(x, self.norm1)
 
         residual = x
-        x = self.encoder_attention(
-            query=x, key=encoder_output, value=encoder_output, mask=encoder_mask
+        x, final_encoder_attn_incr_state = self.encoder_attention(
+            query=x,
+            key=encoder_output,
+            value=encoder_output,
+            mask=encoder_mask,
+            incr_state=incr_state.get('encoder_attn'),
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
@@ -1007,10 +1013,11 @@ class MultiHeadAttention(nn.Module):
 
         nn.init.xavier_normal_(self.out_lin.weight)
 
-    def forward(self, query, key=None, value=None, mask=None):
+    def forward(self, query, key=None, value=None, mask=None, incr_state=None):
         """
         Forward pass.
         """
+        # TODO: document incr_state!
         # TODO: there are a lot of parameters to document here.
 
         # Input is [B, query_len, dim]
@@ -1023,6 +1030,8 @@ class MultiHeadAttention(nn.Module):
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)
+
+        # {{{TODO: use incr_state}}}
 
         def prepare_head(tensor):
             # input is [batch_size, seq_len, n_heads * dim_per_head]
@@ -1076,7 +1085,7 @@ class MultiHeadAttention(nn.Module):
 
         out = self.out_lin(attentioned)
 
-        return out
+        return out, final_incr_state
 
     @staticmethod
     def reorder_incremental_state(incremental_state, inds):
