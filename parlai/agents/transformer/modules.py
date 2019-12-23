@@ -1068,15 +1068,21 @@ class MultiHeadAttention(nn.Module):
         if incr_state is None:
             incr_state = {}
         if 'prev_key' in incr_state:
+            prev_key = incr_state['prev_key'].view(
+                batch_size * n_heads, -1, dim_per_head
+            )
             if static_kv:
-                k = incr_state['prev_key']
+                k = prev_key
             else:
-                k = torch.cat([incr_state['prev_key'], k], dim=1)
+                k = torch.cat([prev_key, k], dim=1)
         if 'prev_value' in incr_state:
+            prev_value = incr_state['prev_value'].view(
+                batch_size * n_heads, -1, dim_per_head
+            )
             if static_kv:
-                v = incr_state['prev_value']
+                v = prev_value
             else:
-                v = torch.cat([incr_state['prev_value'], v], dim=1)
+                v = torch.cat([prev_value, v], dim=1)
         if 'prev_mask' in incr_state:
             if static_kv:
                 mask = incr_state['prev_mask']
@@ -1086,7 +1092,11 @@ class MultiHeadAttention(nn.Module):
                 # incr_state['prev_key'])
 
         # Save new incremental states
-        new_incr_state = {'prev_key': k, 'prev_value': v, 'prev_mask': mask}
+        new_incr_state = {
+            'prev_key': k.view(batch_size, n_heads, -1, dim_per_head),
+            'prev_value': v.view(batch_size, n_heads, -1, dim_per_head),
+            'prev_mask': mask,
+        }
 
         dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
