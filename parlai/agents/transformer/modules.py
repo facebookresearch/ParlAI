@@ -724,16 +724,16 @@ class TransformerDecoder(nn.Module):
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
 
-        final_incr_state = {}
+        new_incr_state = {}
         for idx, layer in enumerate(self.layers):
-            tensor, final_incr_state[idx] = layer(
+            tensor, new_incr_state[idx] = layer(
                 x=tensor,
                 encoder_output=encoder_output,
                 encoder_mask=encoder_mask,
                 incr_state=incr_state,
             )
 
-        return tensor, final_incr_state
+        return tensor, new_incr_state
 
 
 class TransformerDecoderLayer(nn.Module):
@@ -818,11 +818,11 @@ class TransformerDecoderLayer(nn.Module):
         x = residual + x
         x = _normalize(x, self.norm3)
 
-        final_incr_state = {
+        new_incr_state = {
             'self_attn': final_self_attn_incr_state,
             'encoder_attn': final_encoder_attn_incr_state,
         }
-        return x, final_incr_state
+        return x, new_incr_state
 
     def _create_selfattn_mask(self, x):
         # figure out how many timestamps we need
@@ -1031,8 +1031,6 @@ class MultiHeadAttention(nn.Module):
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)
 
-        # {{{TODO: use incr_state}}}
-
         def prepare_head(tensor):
             # input is [batch_size, seq_len, n_heads * dim_per_head]
             # output is [batch_size * n_heads, seq_len, dim_per_head]
@@ -1058,6 +1056,24 @@ class MultiHeadAttention(nn.Module):
         q = prepare_head(self.q_lin(query))
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
+
+        # Prepend incremental states
+        if incr_state is None:
+            incr_state = {}
+        if 'prev_key' in incr_state:
+            k = torch.cat([incr_state['prev_key'], k], dim=1)
+        if 'prev_value' in incr_state:
+            v = torch.cat([incr_state['prev_value'], v], dim=1)
+        if 'prev_mask' in incr_state:
+            mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
+            # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
+            import pdb
+
+            pdb.set_trace()
+            # TODO: make sure this is working as you think!!
+
+        # Save new incremental states
+        new_incr_state = {'prev_key': k, 'prev_value': v, 'prev_mask': mask}
 
         dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
@@ -1085,7 +1101,7 @@ class MultiHeadAttention(nn.Module):
 
         out = self.out_lin(attentioned)
 
-        return out, final_incr_state
+        return out, new_incr_state
 
     @staticmethod
     def reorder_incremental_state(incremental_state, inds):
