@@ -697,14 +697,18 @@ class TransformerDecoder(nn.Module):
         # TODO: update docstring!
         encoder_output, encoder_mask = encoder_state
 
-        if incr_state is None:
-            incr_state = {}
-
-        # {{{TODO: use incr_state}}}
-
         seq_len = input.size(1)
         positions = input.new(seq_len).long()
         positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+
+        if incr_state is not None:
+            # We're doing incremental decoding, so select only the most recent position
+            input = input[:, -1:]
+            if positions is not None:
+                positions = positions[:, -1:]
+        else:
+            incr_state = {idx: {} for idx in range(len(self.layers))}
+
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
@@ -720,8 +724,14 @@ class TransformerDecoder(nn.Module):
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
 
-        for layer in self.layers:
-            tensor = layer(tensor, encoder_output, encoder_mask)
+        final_incr_state = {}
+        for idx, layer in enumerate(self.layers):
+            tensor, final_incr_state[idx] = layer(
+                x=tensor,
+                encoder_output=encoder_output,
+                encoder_mask=encoder_mask,
+                incr_state=incr_state,
+            )
 
         return tensor, final_incr_state
 
@@ -769,10 +779,15 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm3 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-    def forward(self, x, encoder_output, encoder_mask):
+    def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
         Forward pass.
         """
+        # TODO: discuss incr_state in docstring
+
+        if incr_state is None:
+            incr_state = {}
+
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
@@ -797,7 +812,11 @@ class TransformerDecoderLayer(nn.Module):
         x = residual + x
         x = _normalize(x, self.norm3)
 
-        return x
+        final_incr_state = {
+            'self_attn': final_self_attn_incr_state,
+            'encoder_attn': final_encoder_attn_incr_state,
+        }
+        return x, final_incr_state
 
     def _create_selfattn_mask(self, x):
         # figure out how many timestamps we need
@@ -1062,9 +1081,12 @@ class MultiHeadAttention(nn.Module):
     @staticmethod
     def reorder_incremental_state(incremental_state, inds):
         """
-        Reorder the input incremental-state tensor.
+        Reorder the input incremental-state tensors.
         """
-        return torch.index_select(incremental_state, 0, inds).contiguous()
+        return {
+            key: torch.index_select(val, 0, inds).contiguous()
+            for key, val in incremental_state.items()
+        }
 
 
 class TransformerFFN(nn.Module):
