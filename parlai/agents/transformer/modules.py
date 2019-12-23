@@ -720,7 +720,7 @@ class TransformerDecoder(nn.Module):
         for layer in self.layers:
             tensor = layer(tensor, encoder_output, encoder_mask)
 
-        return tensor, None
+        return tensor, final_incr_state
 
 
 class TransformerDecoderLayer(nn.Module):
@@ -869,10 +869,9 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         """
         Reorder the decoder incremental state.
 
-        Not implemented in Transformers, since ``incremental_state`` is always None.
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
         """
         # TODO: revise docstring
-        # no support for incremental decoding at this time
         # {{{TODO: revise}}}
         return final_incr_state
 
