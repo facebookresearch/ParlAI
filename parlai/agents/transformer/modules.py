@@ -793,7 +793,10 @@ class TransformerDecoderLayer(nn.Module):
         residual = x
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
-            query=x, mask=decoder_mask, incr_state=incr_state.get('self_attn')
+            query=x,
+            mask=decoder_mask,
+            incr_state=incr_state.get('self_attn'),
+            static_kv=False,
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
@@ -806,6 +809,7 @@ class TransformerDecoderLayer(nn.Module):
             value=encoder_output,
             mask=encoder_mask,
             incr_state=incr_state.get('encoder_attn'),
+            static_kv=True,
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
@@ -1013,7 +1017,9 @@ class MultiHeadAttention(nn.Module):
 
         nn.init.xavier_normal_(self.out_lin.weight)
 
-    def forward(self, query, key=None, value=None, mask=None, incr_state=None):
+    def forward(
+        self, query, key=None, value=None, mask=None, incr_state=None, static_kv=False
+    ):
         """
         Forward pass.
         """
@@ -1061,11 +1067,20 @@ class MultiHeadAttention(nn.Module):
         if incr_state is None:
             incr_state = {}
         if 'prev_key' in incr_state:
-            k = torch.cat([incr_state['prev_key'], k], dim=1)
+            if static_kv:
+                k = incr_state['prev_key']
+            else:
+                k = torch.cat([incr_state['prev_key'], k], dim=1)
         if 'prev_value' in incr_state:
-            v = torch.cat([incr_state['prev_value'], v], dim=1)
+            if static_kv:
+                v = incr_state['prev_value']
+            else:
+                v = torch.cat([incr_state['prev_value'], v], dim=1)
         if 'prev_mask' in incr_state:
-            mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
+            if static_kv:
+                mask = incr_state['prev_mask']
+            else:
+                mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
             # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
             import pdb
 
