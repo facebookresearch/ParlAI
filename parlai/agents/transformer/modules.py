@@ -697,6 +697,9 @@ class TransformerDecoder(nn.Module):
         # TODO: update docstring!
         encoder_output, encoder_mask = encoder_state
 
+        if incr_state is None:
+            incr_state = {}
+
         # {{{TODO: use incr_state}}}
 
         seq_len = input.size(1)
@@ -806,6 +809,21 @@ class TransformerDecoderLayer(nn.Module):
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
 
+    def reorder_incremental_state(self, incremental_state: dict, inds):
+        """
+        Reorder all incremental-state tensors for this layer.
+        """
+        attn_types = {
+            'self_attn': self.self_attention,
+            'encoder_attn': self.encoder_attention,
+        }
+        return {
+            attn_type: attn.reorder_incremental_state(
+                incremental_state[attn_type], inds
+            )
+            for attn_type, attn in attn_types.items()
+        }
+
 
 class TransformerGeneratorModel(TorchGeneratorModel):
     """
@@ -870,10 +888,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         Reorder the decoder incremental state.
 
         See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Here, incremental_state is a dict whose keys are layer indices and whose values
+        are dicts containing the incremental state for that layer.
         """
-        # TODO: revise docstring
-        # {{{TODO: revise}}}
-        return final_incr_state
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.decoder.layers)
+        }
 
     def output(self, tensor):
         """
@@ -1036,6 +1058,13 @@ class MultiHeadAttention(nn.Module):
         out = self.out_lin(attentioned)
 
         return out
+
+    @staticmethod
+    def reorder_incremental_state(incremental_state, inds):
+        """
+        Reorder the input incremental-state tensor.
+        """
+        return torch.index_select(incremental_state, 0, inds).contiguous()
 
 
 class TransformerFFN(nn.Module):
