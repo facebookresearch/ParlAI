@@ -1029,6 +1029,7 @@ class MultiHeadAttention(nn.Module):
 
         # Input is [B, query_len, dim]
         # Mask is [B, key_len] (selfattn) or [B, key_len, key_len] (enc attn)
+        # TODO: update these sizes, because it's not the full key_len anymore given the caching ^
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim
@@ -1058,7 +1059,7 @@ class MultiHeadAttention(nn.Module):
             # key and value are the same, but query differs
             # self attention
             value = key
-        _, key_len, dim = key.size()
+        _, _, dim = key.size()
 
         q = prepare_head(self.q_lin(query))
         k = prepare_head(self.k_lin(key))
@@ -1098,6 +1099,7 @@ class MultiHeadAttention(nn.Module):
             'prev_mask': mask,
         }
 
+        key_len = k.size(1)
         dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
         attn_mask = (
