@@ -731,7 +731,7 @@ class TransformerDecoder(nn.Module):
                 x=tensor,
                 encoder_output=encoder_output,
                 encoder_mask=encoder_mask,
-                incr_state=incr_state,
+                incr_state=incr_state[idx],
             )
 
         return tensor, new_incr_state
