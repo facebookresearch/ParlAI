@@ -1082,11 +1082,8 @@ class MultiHeadAttention(nn.Module):
                 mask = incr_state['prev_mask']
             else:
                 mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
-            # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
-            import pdb
-
-            pdb.set_trace()
-            # TODO: make sure this is working as you think!!
+                # Prepend along the key_len dimension (analogous to
+                # incr_state['prev_key'])
 
         # Save new incremental states
         new_incr_state = {'prev_key': k, 'prev_value': v, 'prev_mask': mask}
