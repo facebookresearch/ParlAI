@@ -580,7 +580,8 @@ class TransformerEncoderLayer(nn.Module):
         """
         Forward pass.
         """
-        tensor = tensor + self.dropout(self.attention(tensor, mask=mask))
+        tensor, _ = self.attention(tensor, mask=mask)
+        tensor = tensor + self.dropout(tensor)
         tensor = _normalize(tensor, self.norm1)
         tensor = tensor + self.dropout(self.ffn(tensor))
         tensor = _normalize(tensor, self.norm2)
