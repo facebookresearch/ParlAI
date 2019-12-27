@@ -1069,7 +1069,7 @@ class MultiHeadAttention(nn.Module):
             # key and value are the same, but query differs
             # self attention
             value = key
-        _, _input_key_len, dim = key.size()
+        _, _key_len, dim = key.size()
 
         q = prepare_head(self.q_lin(query))
         k = prepare_head(self.k_lin(key))
@@ -1110,15 +1110,15 @@ class MultiHeadAttention(nn.Module):
             'prev_mask': mask,
         }
 
-        final_key_len = k.size(1)
+        full_key_len = k.size(1)
         dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
         attn_mask = (
             (mask == 0)
-            .view(batch_size, 1, -1, final_key_len)
+            .view(batch_size, 1, -1, full_key_len)
             .repeat(1, n_heads, 1, 1)
-            .expand(batch_size, n_heads, query_len, final_key_len)
-            .view(batch_size * n_heads, query_len, final_key_len)
+            .expand(batch_size, n_heads, query_len, full_key_len)
+            .view(batch_size * n_heads, query_len, full_key_len)
         )
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
