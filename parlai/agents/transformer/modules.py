@@ -1033,7 +1033,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Dict[str, torch.Tensor] = None,
         static_kv: bool = False,
-    ) -> Tuple(torch.Tensor, Dict[str, torch.Tensor]):
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
 
