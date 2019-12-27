@@ -693,9 +693,9 @@ class TransformerDecoder(nn.Module):
         :param encoder_state:
             Output from the encoder module forward pass.
         :param incr_state:
-            Ignored. Should always be ``None`` in this version.
+            The incremental state: a dictionary whose keys index the layers and whose
+            values contain the incremental state for each layer.
         """
-        # TODO: update docstring!
         encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
@@ -782,9 +782,9 @@ class TransformerDecoderLayer(nn.Module):
 
     def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
-        Forward pass.
+        Forward pass. The incremental state is a dict with values for self- and
+        encoder-attention states.
         """
-        # TODO: discuss incr_state in docstring
 
         if incr_state is None:
             incr_state = {}
@@ -1022,14 +1022,16 @@ class MultiHeadAttention(nn.Module):
         self, query, key=None, value=None, mask=None, incr_state=None, static_kv=False
     ):
         """
-        Forward pass.
+        Forward pass. The incremental state is a dictionary with values representing the
+        previous states of the key, value, and mask.
         """
-        # TODO: document incr_state!
         # TODO: there are a lot of parameters to document here.
 
         # Input is [B, query_len, dim]
-        # Mask is [B, key_len] (selfattn) or [B, key_len, key_len] (enc attn)
-        # TODO: update these sizes, because it's not the full key_len anymore given the caching ^
+        # Mask is [B, key_len, key_len]. If we are using caching with incr_state, mask
+        # will be [B, 1, 1] for self-attn.
+        print(mask.size())
+        # TODO: remove
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim

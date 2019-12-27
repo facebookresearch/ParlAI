@@ -777,7 +777,6 @@ class TorchGeneratorAgent(TorchAgent):
             incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
-
             decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
