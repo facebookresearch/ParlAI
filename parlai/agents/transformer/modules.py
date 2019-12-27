@@ -1092,7 +1092,8 @@ class MultiHeadAttention(nn.Module):
                 # Prepend along the key_len dimension (analogous to
                 # incr_state['prev_key'])
 
-        # Save new incremental states
+        # Save new incremental states. We reshape to allow for reordering along batch
+        # dimension.
         new_incr_state = {
             'prev_key': k.view(batch_size, n_heads, -1, dim_per_head),
             'prev_value': v.view(batch_size, n_heads, -1, dim_per_head),
