@@ -1032,7 +1032,8 @@ class MultiHeadAttention(nn.Module):
         Forward pass.
 
         The incremental state is a dictionary with values representing the previous
-        states of the key, value, and mask.
+        states of the key, value, and mask. static_kv is True if the key and value are
+        held constant during decoding (as in encoder/decoder attention).
         """
         # TODO: there are a lot of parameters to document here.
 
