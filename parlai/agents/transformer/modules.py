@@ -929,9 +929,15 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         Here, incremental_state is a dict whose keys are layer indices and whose values
         are dicts containing the incremental state for that layer.
         """
+        if hasattr(self.decoder, 'transformer'):
+            # The ContextKnowledgeDecoder has a TransformerDecoder instance as a
+            # .transformer attribute
+            base_decoder = self.decoder.transformer
+        else:
+            base_decoder = self.decoder
         return {
             idx: layer.reorder_incremental_state(incremental_state[idx], inds)
-            for idx, layer in enumerate(self.decoder.layers)
+            for idx, layer in enumerate(base_decoder.layers)
         }
 
     def output(self, tensor):
