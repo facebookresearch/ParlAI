@@ -1155,9 +1155,8 @@ class MultiHeadAttention(nn.Module):
 
         return out, new_incr_state
 
-    @staticmethod
     def reorder_incremental_state(
-        incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
         """
         Reorder the input incremental-state tensors.
