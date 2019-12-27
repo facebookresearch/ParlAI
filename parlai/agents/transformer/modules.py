@@ -782,8 +782,10 @@ class TransformerDecoderLayer(nn.Module):
 
     def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
-        Forward pass. The incremental state is a dict with values for self- and
-        encoder-attention states.
+        Forward pass.
+
+        The incremental state is a dict with values for self- and encoder-attention
+        states.
         """
 
         if incr_state is None:
@@ -1022,8 +1024,10 @@ class MultiHeadAttention(nn.Module):
         self, query, key=None, value=None, mask=None, incr_state=None, static_kv=False
     ):
         """
-        Forward pass. The incremental state is a dictionary with values representing the
-        previous states of the key, value, and mask.
+        Forward pass.
+
+        The incremental state is a dictionary with values representing the previous
+        states of the key, value, and mask.
         """
         # TODO: there are a lot of parameters to document here.
 
