@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 import torch
@@ -1026,20 +1026,32 @@ class MultiHeadAttention(nn.Module):
         nn.init.xavier_normal_(self.out_lin.weight)
 
     def forward(
-        self, query, key=None, value=None, mask=None, incr_state=None, static_kv=False
-    ):
+        self,
+        query: torch.Tensor,
+        key: torch.Tensor = None,
+        value: torch.Tensor = None,
+        mask: torch.Tensor = None,
+        incr_state: Dict[str, torch.Tensor] = None,
+        static_kv: bool = False,
+    ) -> Tuple(torch.Tensor, Dict[str, torch.Tensor]):
         """
         Forward pass.
 
-        The incremental state is a dictionary with values representing the previous
-        states of the key, value, and mask. static_kv is True if the key and value are
-        held constant during decoding (as in encoder/decoder attention).
+        :param query: attention query
+        :param key: attention key
+        :param value: attention value
+        :param mask: tensor in which True means that we are allowing attention and False
+          means we are blocking it. Mask is:
+          - [B, key_len] (encoder self-attn and decoder enc/dec attn)
+          - [B, query_len, key_len] (decoder self-attn)
+          - [B, 1, 1] (decoder self-attn with incr_state caching)
+        :param incr_state: dictionary with values representing the previous states of
+          the key, value, and mask
+        :param static_kv: True if the key and value are held constant during decoding
+          (as in encoder/decoder attention)
+        :return: (final attended tensor, new incremental state)
         """
-        # TODO: there are a lot of parameters to document here.
 
-        # Input is [B, query_len, dim]
-        # Mask is [B, key_len, key_len] (self-attn) or [B, key_len] (enc-attn). If we
-        # are using caching with incr_state, mask is [B, 1, 1] for self-attn.
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim
