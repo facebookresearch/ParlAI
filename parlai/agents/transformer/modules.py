@@ -1028,10 +1028,8 @@ class MultiHeadAttention(nn.Module):
         # TODO: there are a lot of parameters to document here.
 
         # Input is [B, query_len, dim]
-        # Mask is [B, key_len, key_len]. If we are using caching with incr_state, mask
-        # will be [B, 1, 1] for self-attn.
-        print(mask.size())
-        # TODO: remove
+        # Mask is [B, key_len, key_len] (self-attn) or [B, key_len] (enc-attn). If we
+        # are using caching with incr_state, mask is [B, 1, 1] for self-attn.
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim
