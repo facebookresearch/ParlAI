@@ -16,12 +16,13 @@ https://arxiv.org/abs/1810.04805), and a few different variations seen in the
 literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
+import math
+from typing import Dict
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-import math
-import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -841,7 +842,9 @@ class TransformerDecoderLayer(nn.Module):
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
 
-    def reorder_incremental_state(self, incremental_state: dict, inds):
+    def reorder_incremental_state(
+        self, incremental_state: Dict[str, dict], inds: torch.Tensor
+    ) -> Dict[str, dict]:
         """
         Reorder all incremental-state tensors for this layer.
         """
@@ -915,7 +918,9 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         mask = torch.index_select(mask, 0, indices)
         return enc, mask
 
-    def reorder_decoder_incremental_state(self, incremental_state, inds):
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[int, dict], inds: torch.Tensor
+    ) -> Dict[int, dict]:
         """
         Reorder the decoder incremental state.
 
@@ -1134,7 +1139,9 @@ class MultiHeadAttention(nn.Module):
         return out, new_incr_state
 
     @staticmethod
-    def reorder_incremental_state(incremental_state, inds):
+    def reorder_incremental_state(
+        incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
+    ) -> Dict[str, torch.Tensor]:
         """
         Reorder the input incremental-state tensors.
         """
