@@ -1075,7 +1075,11 @@ class MultiHeadAttention(nn.Module):
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
 
-        # Prepend incremental states
+        # Prepend incremental states. For each of the key, value, and mask, see if
+        # a previous incremental state exists, and if so, reshape it to match the shape
+        # of the new state. Concatenate the previous and new states to match what the
+        # full state would have been if we had not cached. (If we are using static_kv,
+        # these three states are unchanging, so just re-use the cached states.)
         if incr_state is None:
             incr_state = {}
         if 'prev_key' in incr_state:
