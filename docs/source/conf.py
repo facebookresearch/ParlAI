@@ -179,10 +179,11 @@ texinfo_documents = [
     )
 ]
 
-# Resolve function for the linkcode extension.
-# Stolen shamelessly from Lasagne! Thanks Lasagne!
-# https://github.com/Lasagne/Lasagne/blob/5d3c63cb315c50b1cbd27a6bc8664b406f34dd99/docs/conf.py#L114-L135
+
 def linkcode_resolve(domain, info):
+    # Resolve function for the linkcode extension.
+    # Stolen shamelessly from Lasagne! Thanks Lasagne!
+    # https://github.com/Lasagne/Lasagne/blob/5d3c63cb315c50b1cbd27a6bc8664b406f34dd99/docs/conf.py#L114-L135
     def find_source():
         # try to find the file and line number, based on code from numpy:
         # https://github.com/numpy/numpy/blob/master/doc/source/conf.py#L286
@@ -210,11 +211,6 @@ def linkcode_resolve(domain, info):
 # At the bottom of conf.py
 def setup(app):
     app.add_config_value(
-        'recommonmark_config',
-        {
-            'url_resolver': lambda url: github_doc_root + url,
-            'auto_toc_tree_section': 'Contents',
-        },
-        True,
+        'recommonmark_config', {'auto_toc_tree_section': 'Contents'}, True
     )
     app.add_transform(AutoStructify)
