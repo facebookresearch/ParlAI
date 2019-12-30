@@ -201,7 +201,7 @@ def linkcode_resolve(domain, info):
         return None
     try:
         filename = 'parlai/%s#L%d-L%d' % find_source()
-        tag = 'master'
+        tag = git.Git().rev_parse('HEAD')
         return "https://github.com/facebookresearch/ParlAI/blob/%s/%s" % (tag, filename)
     except Exception:
         return None
