@@ -1327,6 +1327,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     path as per get_image_features_path().
 
     Important methods and properties (override in subclass if needed):
+
     - get_data_path(): where data file is found (default: <datapath>/<task>)
     - get_image_path(): where images found (default: <datapath>/<task>/images)
     - get_image_features_path(): dict of image features (default:
@@ -1339,10 +1340,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
     @abstractmethod image_id_to_image_path() must be implemented in subclass
 
     Example with the key defaults (but the keys can be customized):
-    obs = {
-        'text': <caption>,
-        'image': <image features if specified else image>
-    }
+
+    .. code-block:: python
+
+        obs = {
+            'text': <caption>,
+            'image': <image features if specified else image>
+        }
     """
 
     def __init__(self, opt, shared=None):

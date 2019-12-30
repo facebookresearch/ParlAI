@@ -16,10 +16,10 @@ BUILDDIR      = build
 
 
 # Put it first so that "make" without argument is like "make html".
-html:
-	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+all:
+	make html
 
-.PHONY: help Makefile
+.PHONY: all Makefile
 
 clean:
 	rm -rfv "${BUILDDIR}"

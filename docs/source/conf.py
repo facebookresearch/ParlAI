@@ -96,7 +96,7 @@ autodoc_default_options = {
     'exclude-members': '__dict__,__weakref__',
     'special-members': '__init__',
     'member-order': 'bysource',
-    'show-inheritance': True,
+    'show-inheritance': False,
 }
 
 # -- Options for HTML output ----------------------------------------------
@@ -106,6 +106,8 @@ autodoc_default_options = {
 #
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+# don't show the "view source" link
+html_show_sourcelink = False
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
