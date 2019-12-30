@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 from torch import optim
 
 
@@ -181,8 +187,7 @@ class CosineLRScheduler(ParlAILRScheduler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scheduler = optim.lr_scheduler.CosineAnnealingLR(
-            optimizer,
-            opt['max_num_epochs']  # TODO @margaretli find exact name
+            optimizer, opt['max_num_epochs'] #TODO @margaretli find exact name
             # also investigate whether to use stoptrain instead of relying on max num epochs
         )
 
@@ -193,8 +198,7 @@ class CosineLRScheduler(ParlAILRScheduler):
             return
         self.scheduler.step()
 
-
-# TODO @margaretli
+#TODO @margaretli
 # class LinearLRScheduler(ParlAILRScheduler):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
