@@ -1,8 +1,3 @@
-..
-  Copyright (c) Facebook, Inc. and its affiliates.
-  This source code is licensed under the MIT license found in the
-  LICENSE file in the root directory of this source tree.
-
 .. ParlAI documentation master file, created by
    sphinx-quickstart on Wed Apr 19 15:46:54 2017.
    You can adapt this file completely to your liking, but it should at least
@@ -48,9 +43,8 @@ ParlAI is a one-stop-shop for dialog research.
    metrics
    params
    teachers
-   utils
-   thread_utils
    worlds
+   utils
 
 .. toctree::
   :maxdepth: 1

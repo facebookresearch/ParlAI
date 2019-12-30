@@ -8,7 +8,7 @@ import sys
 import re
 import parlai.utils.testing as testing_utils
 
-FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
+FILENAME_EXTENSIONS = r'.*\.(py|sh|js|css)$'
 WHITELIST_PHRASES = ['Moscow Institute of Physics and Technology.']
 COPYRIGHT = [
     "Copyright (c) Facebook, Inc. and its affiliates.",
