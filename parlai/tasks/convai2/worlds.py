@@ -48,9 +48,20 @@ def load_personas(opt):
 
 
 class InteractiveWorld(DialogPartnerWorld):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        parser = argparser.add_argument_group('ConvAI2 Interactive World')
+        parser.add_argument(
+            '--display-partner-persona',
+            type='bool',
+            default=True,
+            help='Display your partner persona at the end of the chat',
+        )
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.personas_list = load_personas(self.opt)
+        self.display_partner_persona = self.opt['display_partner_persona']
         self.cnt = 0
 
     def get_new_personas(self):
@@ -69,29 +80,36 @@ class InteractiveWorld(DialogPartnerWorld):
             self.p1, self.p2 = self.get_new_personas()
 
         acts = self.acts
-        agents = self.agents
+        human_agent, model_agent = self.agents
         if self.cnt == 0:
-            # add the persona on to the first message to agent 0
+            # add the persona on to the first message to human agent
             act = {}
             act['text'] = self.p1
             act['episode_done'] = False
             act['id'] = 'persona'
-            agents[0].observe(validate(act))
-        act = deepcopy(agents[0].act())
+            human_agent.observe(validate(act))
+        act = deepcopy(human_agent.act())
         if self.cnt == 0:
-            # add the persona on to the first message to agent 1
+            # add the persona on to the first message to model agent
             act.force_set('text', self.p2 + act.get('text', 'hi'))
-            agents[1].observe(validate(act))
+            model_agent.observe(validate(act))
         else:
-            agents[1].observe(validate(act))
-        acts[1] = agents[1].act()
-        agents[0].observe(validate(acts[1]))
+            model_agent.observe(validate(act))
+        acts[1] = model_agent.act()
+        human_agent.observe(validate(acts[1]))
         self.update_counters()
         self.cnt += 1
 
         if act['episode_done']:
-            print("CHAT DONE ")
-            print("\n... preparing new chat... \n")
+            print("\nCHAT DONE.\n")
+            if self.display_partner_persona:
+                partner_persona = self.p2.replace(
+                    'your persona:', 'partner\'s persona:'
+                )
+                print(
+                    f"Your partner was playing the following persona:\n{partner_persona}"
+                )
+            print("[ Preparing new chat ... ]\n")
             self.cnt = 0
 
 

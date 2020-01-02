@@ -11,10 +11,10 @@ To use this class, please follow the tutorial here:
 http://parl.ai/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
 """
 
-from .teachers import FixedDialogTeacher
+from parlai.core.loader import load_agent_module
+from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.misc import warn_once
 from parlai.scripts.build_pytorch_data import build_data
-from .agents import get_agent_module
 import json
 import math
 import collections
@@ -377,7 +377,7 @@ def get_dataset_classes(opt):
         if hasattr(dataset_class, 'collate'):
             collate = dataset_class.collate
         elif opt.get('model', False):
-            agent_class = get_agent_module(opt.get('model'))
+            agent_class = load_agent_module(opt.get('model'))
             if hasattr(agent_class, 'collate'):
                 collate = agent_class.collate
         datasets.append((dataset_class, collate, full_task_name))
@@ -859,7 +859,7 @@ class DefaultTeacher(PytorchDataTeacher):
     """
     Alias for PytorchDataTeacher.
 
-    This exists to simplify loading code in parlai.core.agents.get_task_module.
+    This exists to simplify loading code in parlai.core.loader.load_teacher_module.
     """
 
     pass

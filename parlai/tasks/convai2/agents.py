@@ -100,7 +100,7 @@ class SelfchatTeacher(SelfOriginalTeacher):
     pass
 
 
-def create_agents(opt, task):
+def create_agents(opt):
     if not opt.get('interactive_task', False):
         return create_task_agent_from_taskname(opt)
     else:
