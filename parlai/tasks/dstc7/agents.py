@@ -34,25 +34,28 @@ class DSTC7Teacher(FixedDialogTeacher):
         filepath = os.path.join(
             basedir, 'ubuntu_%s_subtask_1%s.json' % (self.split, self.get_suffix())
         )
-        with open(filepath, 'r') as f:
-            self.data = json.loads(f.read())
+        if shared is not None:
+            self.data = shared['data']
+        else:
+            with open(filepath, 'r') as f:
+                self.data = json.loads(f.read())
 
-        # special case of test set
-        if self.split == "test":
-            id_to_res = {}
-            with open(
-                os.path.join(basedir, "ubuntu_responses_subtask_1.tsv"), 'r'
-            ) as f:
-                for line in f:
-                    splited = line[0:-1].split("\t")
-                    id_ = splited[0]
-                    id_res = splited[1]
-                    res = splited[2]
-                    id_to_res[id_] = [{"candidate-id": id_res, "utterance": res}]
-            for sample in self.data:
-                sample["options-for-correct-answers"] = id_to_res[
-                    str(sample["example-id"])
-                ]
+            # special case of test set
+            if self.split == "test":
+                id_to_res = {}
+                with open(
+                    os.path.join(basedir, "ubuntu_responses_subtask_1.tsv"), 'r'
+                ) as f:
+                    for line in f:
+                        splited = line[0:-1].split("\t")
+                        id_ = splited[0]
+                        id_res = splited[1]
+                        res = splited[2]
+                        id_to_res[id_] = [{"candidate-id": id_res, "utterance": res}]
+                for sample in self.data:
+                    sample["options-for-correct-answers"] = id_to_res[
+                        str(sample["example-id"])
+                    ]
 
         super().__init__(opt, shared)
         self.reset()
@@ -96,6 +99,16 @@ class DSTC7Teacher(FixedDialogTeacher):
         return shared
 
 
+class DSTC7TeacherAugmented(DSTC7Teacher):
+    """ Augmented
+    """
+
+    def get_suffix(self):
+        if self.split != "train":
+            return ""
+        return "_augmented"
+
+
 class DSTC7TeacherAugmentedSampled(DSTC7Teacher):
     """
     The dev and test set are the same, but the training set has been augmented using the
@@ -107,7 +120,7 @@ class DSTC7TeacherAugmentedSampled(DSTC7Teacher):
     def get_suffix(self):
         if self.split != "train":
             return ""
-        return "_augmented"
+        return "_sampled"
 
     def get_nb_cands(self):
         return 16
