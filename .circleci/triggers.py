@@ -23,7 +23,9 @@ def detect_all():
     """
     Check if we should run all tests.
     """
-    return any(kw in testing_utils.git_commit_messages().lower() for kw in ['[all]', '[long]'])
+    return any(
+        kw in testing_utils.git_commit_messages().lower() for kw in ['[all]', '[long]']
+    )
 
 
 def detect_osx():
