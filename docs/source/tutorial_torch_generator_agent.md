@@ -85,7 +85,7 @@ We next define a function to project the output of the decoder back into the tok
         return F.linear(decoder_output, self.embeddings.weight)
 ```
 
-Lastly, we define two functions to reindex the latent states of the encoder and decoder along the sample dimension. We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each step of beam search. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
+Lastly, we define two functions to reindex the latent states of the encoder and decoder. For the encoder, the indices that we pass in index the samples in the batch, and for the decoder, the indices index the candidates that we want to retain for the next step of decoding (for instance, in beam search). We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each step of decoding. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
 ```
     def reorder_encoder_states(self, encoder_states, indices):
         h, c = encoder_states
