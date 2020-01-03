@@ -88,7 +88,7 @@ installtorchcpuosx: &installtorchcpuosx
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.0-cp37-none-macosx_10_7_x86_64.whl
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.3.1-cp37-none-macosx_10_7_x86_64.whl
 
 installtorchcpu36: &installtorchcpu36
   run:

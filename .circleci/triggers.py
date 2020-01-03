@@ -23,14 +23,16 @@ def detect_all():
     """
     Check if we should run all tests.
     """
-    return any(kw in testing_utils.git_commit_messages() for kw in ['[all]', '[long]'])
+    return any(
+        kw in testing_utils.git_commit_messages().lower() for kw in ['[all]', '[long]']
+    )
 
 
 def detect_osx():
     """
     Check if we should run OSX tests.
     """
-    commit_msg = '[OSX]' in testing_utils.git_commit_messages()
+    commit_msg = '[osx]' in testing_utils.git_commit_messages().lower()
     return commit_msg
 
 
@@ -38,7 +40,7 @@ def detect_gpu():
     """
     Check if we should run GPU tests.
     """
-    commit_msg = '[gpu]' in testing_utils.git_commit_messages()
+    commit_msg = '[gpu]' in testing_utils.git_commit_messages().lower()
     test_changed = any(
         'tests/nightly/gpu' in fn for fn in testing_utils.git_changed_files()
     )

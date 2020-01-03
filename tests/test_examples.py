@@ -38,11 +38,11 @@ class TestExampleSeq2Seq(unittest.TestCase):
         )
 
         self.assertTrue(
-            valid['token_acc'] > 0.95,
+            valid['token_acc'] > 0.9,
             "valid token_acc = {}\nLOG:\n{}".format(valid['token_acc'], stdout),
         )
         self.assertTrue(
-            test['token_acc'] > 0.95,
+            test['token_acc'] > 0.9,
             "test token_acc = {}\nLOG:\n{}".format(test['token_acc'], stdout),
         )
 
