@@ -152,7 +152,7 @@ def _get_task_path_and_repo(taskname: str):
         # To switch to local repo, useful for non-public projects
         # (make a directory called 'parlai_internal' with your private agents)
         repo = 'parlai_internal'
-        task = task[:9]
+        task = task[9:]
 
     task_path_list = task.split(':')
 
