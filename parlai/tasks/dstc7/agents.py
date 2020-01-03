@@ -100,7 +100,8 @@ class DSTC7Teacher(FixedDialogTeacher):
 
 
 class DSTC7TeacherAugmented(DSTC7Teacher):
-    """ Augmented
+    """
+    Augmented.
     """
 
     def get_suffix(self):
