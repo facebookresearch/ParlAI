@@ -70,14 +70,16 @@ class TestLoader(unittest.TestCase):
         if not agent_folder_exists:
             os.mkdir('parlai_internal/agents')
 
-        shutil.copytree('example_parlai_internal/agents/parrot', 'parlai_internal/agents/parrot')
+        shutil.copytree(
+            'example_parlai_internal/agents/parrot', 'parlai_internal/agents/parrot'
+        )
         agent_module = load_agent_module('internal:parrot')
 
         try:
-            assert(agent_module)
+            assert agent_module
         except ModuleNotFoundError as e:
             cleanup(parlai_internal_exists, agent_folder_exists)
-            raise(e)
+            raise (e)
 
         cleanup(parlai_internal_exists, agent_folder_exists)
 
