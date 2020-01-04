@@ -5,6 +5,7 @@ from typing import Dict, Any
 import unittest
 from parlai.core.opt import Opt
 import parlai.utils.testing as testing_utils
+from parlai.tasks.integration_tests.agents import NUM_TEST
 
 _TASK = 'integration_tests:variable_length'
 _DEFAULT_OPTIONS = {
@@ -20,6 +21,7 @@ _DEFAULT_OPTIONS = {
     'truncate': 8,
     'model': 'transformer/generator',
     'task': _TASK,
+    'no_cuda': True,
 }
 
 
@@ -27,8 +29,9 @@ class TestDynamicBatching(unittest.TestCase):
     def _test_correct_processed(self, **kwargs: Dict[str, Any]):
         opt = Opt({**_DEFAULT_OPTIONS, **kwargs})
         train_log, valid_report, test_report = testing_utils.train_model(opt)
-        self.assertEqual(valid_report['exs'], 100)
-        self.assertEqual(test_report['exs'], 100)
+        num_goal = NUM_TEST * len(opt['task'].split(','))
+        self.assertEqual(valid_report['exs'], num_goal)
+        self.assertEqual(test_report['exs'], num_goal)
 
     def test_no_truncate(self):
         with self.assertRaises(ValueError):
@@ -43,6 +46,14 @@ class TestDynamicBatching(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             testing_utils.eval_model(model='repeat_label', task=_TASK)
+
+    def test_ranking(self):
+        self._test_correct_processed(model='transformer/ranker', datatype='train')
+
+    def test_ranking_streaming(self):
+        self._test_correct_processed(
+            model='transformer/ranker', datatype='train:stream'
+        )
 
     def test_training(self):
         self._test_correct_processed(datatype='train')

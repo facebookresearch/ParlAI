@@ -460,12 +460,19 @@ class DialogTeacher(FixedDialogTeacher):
         self.training = (
             self.datatype.startswith('train') and 'evalmode' not in self.datatype
         )
-        self.stream = 'stream' in self.datatype.split(':')
+        self.stream = 'stream' in self.datatype
 
         if not self.use_batch_act:
             # first initialize any shared objects
             data_class = StreamDialogData if self.stream else DialogData
-            kwargs = {'cycle': self.training} if self.stream else {}
+            kwargs = (
+                # never cycle if "ordered" is in the datatype. this is used by
+                # build_dict to enumerate through the data exactly once while still
+                # marking examples as training examples.
+                {'cycle': self.training and 'ordered' not in self.datatype}
+                if self.stream
+                else {}
+            )
             if shared and shared.get('data'):
                 self.data = data_class(opt, shared=shared['data'], **kwargs)
             else:
@@ -865,7 +872,6 @@ class StreamDialogData(DialogData):
         while True:
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
-            yield -1
             while not self.cycle:
                 yield -1
 

@@ -998,12 +998,12 @@ class DynamicBatchWorld(World):
         if not hasattr(world, 'agents'):
             raise TypeError("World doesn't have access to the agents.")
 
-        if len(world.agents) != 2:
+        if len(world.get_agents()) != 2:
             raise AssertionError(
                 "Dynamic batch only works in a fixed dialog world with two agents."
             )
 
-        if not hasattr(world.agents[1], 'batch_act'):
+        if not hasattr(world.get_agents()[1], 'batch_act'):
             raise TypeError("Model agent doesn't have batch_act.")
 
         self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
@@ -1044,7 +1044,11 @@ class DynamicBatchWorld(World):
             w.reset_metrics()
 
     def epoch_done(self):
-        return all(w.epoch_done() for w in self.worlds)
+        return (
+            self.world.epoch_done()
+            or all(w.epoch_done() for w in self.worlds)
+            and all(s is None for s in self._scores)
+        )
 
     def num_examples(self):
         return self.world.num_examples()
@@ -1074,7 +1078,6 @@ class DynamicBatchWorld(World):
 
     def parley(self):
         # first make sure that all the worlds are processed in the queue
-        assert not self.epoch_done()
         indices = []
         for i in range(self._BUFFER_SIZE):
             if self._scores[i] is not None:
@@ -1083,14 +1086,12 @@ class DynamicBatchWorld(World):
             if self.worlds[i].epoch_done():
                 continue
 
-            act = self.worlds[i].agents[0].act()
-            obs = self.worlds[i].agents[1].observe(act)
-            self._obs[i] = obs
+            if hasattr(self.world, 'parley_init'):
+                self.worlds[i].parley_init()
 
-            if act is None:
-                # TODO: we might need to do something special here around the end of
-                # the epoch
-                raise TypeError("This is unexpected.")
+            act = self.worlds[i].get_agents()[0].act()
+            obs = self.worlds[i].get_agents()[1].observe(act)
+            self._obs[i] = obs
 
             self._scores[i] = self._score(obs)
             if self._scores[i] is not None:
@@ -1144,17 +1145,17 @@ class DynamicBatchWorld(World):
         assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
 
         # great, this batch is good to go! let's run it!
-        acts = self.world.agents[1].batch_act([self._obs[i] for i in batch])
+        acts = self.world.get_agents()[1].batch_act([self._obs[i] for i in batch])
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result
-            self.worlds[i].agents[0].observe(act)
+            self.worlds[i].get_agents()[0].observe(act)
             # and that the agent copies saw their own voice
-            self.worlds[i].agents[1].self_observe(act)
+            self.worlds[i].get_agents()[1].self_observe(act)
 
             # move these worlds forward
-            act = self.worlds[i].agents[0].act()
-            obs = self.worlds[i].agents[1].observe(act)
+            act = self.worlds[i].get_agents()[0].act()
+            obs = self.worlds[i].get_agents()[1].observe(act)
             self._scores[i] = self._score(obs)
             self._obs[i] = obs
 
