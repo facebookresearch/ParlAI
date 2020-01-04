@@ -980,9 +980,6 @@ class DynamicBatchWorld(World):
         super().__init__(opt)
         self.opt = opt
 
-        # size of the buffer we will use to find worlds
-        self._BUFFER_SIZE = 1024
-
         # agents is a placeholder just for super.reset
         self.agents = []
 
@@ -1012,6 +1009,9 @@ class DynamicBatchWorld(World):
                 'You must use --text-truncate or --truncate in order to use '
                 'dynamic batching.'
             )
+
+        # size of the buffer we will use to find worlds
+        self._BUFFER_SIZE = 1021  # chosen as a prime number
 
         # TODO: check to ensure the agent has self_observe
         shared = world.share()

@@ -63,12 +63,12 @@ class TestDynamicBatching(unittest.TestCase):
 
     def test_multiworld(self):
         self._test_correct_processed(
-            task='integration_tests:variable_length,integration_tests',
+            task='integration_tests:variable_length,integration_tests:multipass',
         )
 
     def test_multiworld_stream(self):
         self._test_correct_processed(
-            task='integration_tests:variable_length,integration_tests',
+            task='integration_tests:variable_length,integration_tests:multipass',
             datatype='train:stream',
         )
 

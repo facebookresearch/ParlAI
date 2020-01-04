@@ -933,6 +933,8 @@ class StreamDialogData(DialogData):
                 if self.entry_idx == 0:
                     self.cur_episode = self.next_episode
                     self.next_episode = next(self.data)
+                if self.cur_episode == -1:
+                    return {'episode_done': True}, True
                 entry = self.cur_episode[self.entry_idx]
 
                 # now pack it in a action-observation dictionary
