@@ -25,7 +25,6 @@ jobs:
           set -eux
           git fetch --all
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            # force
             git branch -f master origin/master
           fi
       - name: Run flake8
@@ -55,9 +54,17 @@ jobs:
           python-version: 3.7.x
           architecture: x64
       - name: Fetch ParlAI
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Fix git
+        run: |
+          set -eux
+          git fetch --all
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git branch -f master origin/master
+          fi
       - name: caching dependencies
         uses: actions/cache@v1
         with:
@@ -72,7 +79,12 @@ jobs:
           pip install -q torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
       - name: mypy
         run: |
-          mypy | sed 's/: error:/:1: TYPE:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
+          set -eux
+          mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
+          git checkout -f master
+          mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
+          diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
+          cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
         uses: pytorch/add-annotations-github-action@master
         with:
