@@ -992,9 +992,6 @@ class DynamicBatchWorld(World):
                 'MultiWorld of DialogPartnerWorld'
             )
 
-        if not hasattr(world, 'agents'):
-            raise TypeError("World doesn't have access to the agents.")
-
         if len(world.get_agents()) != 2:
             raise AssertionError(
                 "Dynamic batch only works in a fixed dialog world with two agents."
@@ -1097,10 +1094,9 @@ class DynamicBatchWorld(World):
             if self._scores[i] is not None:
                 indices.append(i)
 
+        # quick invariant checks
         assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
-
-        for i in indices:
-            assert self._scores is not None
+        assert not any(self._scores[i] is None for i in indices)
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
