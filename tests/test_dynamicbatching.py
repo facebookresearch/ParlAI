@@ -5,7 +5,7 @@ from typing import Dict, Any
 import unittest
 from parlai.core.opt import Opt
 import parlai.utils.testing as testing_utils
-from parlai.tasks.integration_tests.agents import NUM_TEST
+from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
 
 _TASK = 'integration_tests:variable_length'
 _DEFAULT_OPTIONS = {
@@ -26,10 +26,9 @@ _DEFAULT_OPTIONS = {
 
 
 class TestDynamicBatching(unittest.TestCase):
-    def _test_correct_processed(self, **kwargs: Dict[str, Any]):
+    def _test_correct_processed(self, num_goal, **kwargs: Dict[str, Any]):
         opt = Opt({**_DEFAULT_OPTIONS, **kwargs})
         train_log, valid_report, test_report = testing_utils.train_model(opt)
-        num_goal = NUM_TEST * len(opt['task'].split(','))
         self.assertEqual(valid_report['exs'], num_goal)
         self.assertEqual(test_report['exs'], num_goal)
 
@@ -48,26 +47,30 @@ class TestDynamicBatching(unittest.TestCase):
             testing_utils.eval_model(model='repeat_label', task=_TASK)
 
     def test_ranking(self):
-        self._test_correct_processed(model='transformer/ranker', datatype='train')
+        self._test_correct_processed(
+            NUM_TEST, model='transformer/ranker', datatype='train'
+        )
 
     def test_ranking_streaming(self):
         self._test_correct_processed(
-            model='transformer/ranker', datatype='train:stream'
+            NUM_TEST, model='transformer/ranker', datatype='train:stream'
         )
 
     def test_training(self):
-        self._test_correct_processed(datatype='train')
+        self._test_correct_processed(NUM_TEST, datatype='train')
 
     def test_streaming(self):
-        self._test_correct_processed(datatype='train:stream')
+        self._test_correct_processed(NUM_TEST, datatype='train:stream')
 
     def test_multiworld(self):
         self._test_correct_processed(
+            NUM_TEST + NUM_TEST * EXAMPLE_SIZE,
             task='integration_tests:variable_length,integration_tests:multipass',
         )
 
     def test_multiworld_stream(self):
         self._test_correct_processed(
+            NUM_TEST + NUM_TEST * EXAMPLE_SIZE,
             task='integration_tests:variable_length,integration_tests:multipass',
             datatype='train:stream',
         )
