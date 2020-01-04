@@ -32,64 +32,56 @@ class TestDynamicBatching(unittest.TestCase):
                 Opt({'model': 'repeat_label', 'text_truncate': 8, **_BASE_OPTIONS})
             )
 
+    def _test_correct_processed(self, **kwargs: dict):
+        opt = Opt({**kwargs, **_BASE_OPTIONS})
+        train_log, valid_report, test_report = testing_utils.train_model(opt)
+        self.assertIn(train_log, 'total_exs:500')
+        self.assertEqual(valid_report['exs'], 100)
+        self.assertEqual(test_report['exs'], 100)
+
     def test_training(self):
-        testing_utils.train_model(
-            dict(
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                num_epochs=1,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
-                inference='beam',
-                truncate=8,
-                **_BASE_OPTIONS,
-            )
+        self._test_correct_processed(
+            model='transformer/generator',
+            optimizer='adamax',
+            learningrate=7e-3,
+            num_epochs=1,
+            n_layers=1,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=32,
+            inference='beam',
+            truncate=8,
         )
 
     def test_streaming(self):
-        testing_utils.train_model(
-            dict(
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                num_epochs=1,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
-                inference='beam',
-                truncate=8,
-                datatype='train:stream',
-                **_BASE_OPTIONS,
-            )
+        self._test_correct_processed(
+            model='transformer/generator',
+            optimizer='adamax',
+            learningrate=7e-3,
+            num_epochs=1,
+            n_layers=1,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=32,
+            inference='beam',
+            truncate=8,
+            datatype='train:stream',
         )
 
     def test_multiworld(self):
-        testing_utils.train_model(
-            Opt(
-                {
-                    'model': 'transformers/generator',
-                    'task': 'integration_tests:variable_length,integration_tests',
-                    'truncate': 8,
-                    **_BASE_OPTIONS,
-                }
-            )
+        self._test_correct_processed(
+            model='transformers/generator',
+            task='integration_tests:variable_length,integration_tests',
+            truncate=8,
         )
 
     def test_multiworld_stream(self):
-        testing_utils.train_model(
-            Opt(
-                {
-                    'model': 'transformers/generator',
-                    'task': 'integration_tests:variable_length,integration_tests',
-                    'truncate': 8,
-                    'datatype': 'train:stream',
-                    **_BASE_OPTIONS,
-                }
-            )
+        self._test_correct_processed(
+            model='transformers/generator',
+            task='integration_tests:variable_length,integration_tests',
+            truncate=8,
+            datatype='train:stream',
+            **_BASE_OPTIONS,
         )
 
 
