@@ -263,7 +263,7 @@ def _run_single_eval(opt, valid_world, max_exs):
         if cnt == 0 and opt['display_examples']:
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
-        cnt += valid_world.opt['batchsize']
+        cnt += valid_world.report()['exs']
 
     valid_report = valid_world.report()
     valid_world.reset()  # make sure world doesn't remember valid data
