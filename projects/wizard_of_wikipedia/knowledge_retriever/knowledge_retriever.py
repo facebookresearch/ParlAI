@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -59,6 +59,7 @@ class KnowledgeRetrieverAgent(Agent):
 
         if not shared:
             # Create retriever
+            download(opt['datapath'])  # make sure to download all relevant files
             self._set_up_tfidf_retriever(opt)
             self._set_up_selector(opt)
         else:
@@ -88,8 +89,6 @@ class KnowledgeRetrieverAgent(Agent):
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_selector(self, opt):
-        # make sure to download all relevant files
-        download(opt['datapath'])
         selector_opt = {
             'datapath': opt['datapath'],
             'model_file': opt['selector_model_file'],
