@@ -1001,6 +1001,7 @@ class DynamicBatchWorld(World):
             raise TypeError("Model agent doesn't have batch_act.")
 
         self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
+        self.l_truncate = opt.get('label_truncate', None) or opt.get('truncate', None)
         if self.truncate is None or self.truncate < 0:
             raise ValueError(
                 'You must use --text-truncate or --truncate in order to use '
@@ -1014,7 +1015,7 @@ class DynamicBatchWorld(World):
         shared = world.share()
         self.world = world
         # TODO: maybe generalize this
-        self.max_size = self.truncate * opt['batchsize']
+        self.max_size = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
         self.worlds = [
@@ -1069,7 +1070,11 @@ class DynamicBatchWorld(World):
             # nearest multiple of 4. We can therefore mix-and-match
             # anything with the same cost for increased stochasticity,
             # while not really wasting much padding.
-            return self._ceil(len(obs['text_vec']))
+            return tuple(
+                self._ceil(len(obs[key]))
+                for key in ['text_vec', 'labels_vec', 'eval_labels_vec']
+                if key in obs
+            )
         else:
             return None
 
@@ -1100,7 +1105,7 @@ class DynamicBatchWorld(World):
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
-        indices = sorted(indices, key=lambda i: (self._scores[i], random.random()))
+        indices = sorted(indices, key=lambda i: self._scores[i] + (random.random(),))
         # indices = sorted(indices, key=lambda i: (random.random()))
 
         # now let's build the batch
@@ -1114,23 +1119,18 @@ class DynamicBatchWorld(World):
         # we picked a random spot, but we can get better packing if we start at the
         # last example with the same score, since we always pick move down to smaller examples.
         while index_index < len(indices) - 1 and (
-            self._scores[indices[index_index]] == self._scores[indices[index_index + 1]]
+            sum(self._scores[indices[index_index]])
+            == sum(self._scores[indices[index_index + 1]])
         ):
             index_index += 1
 
-        MAX_BS = 256
-
         # quit early if we eat our full buffer
         while indices:
-            if len(batch) >= MAX_BS:
-                break
             index = indices[index_index]
-            this_width = self._ceil(self._scores[index])
+            this_width = self._ceil(sum(self._scores[index]))
             new_width = max(width, this_width)
             # compute the cost of the new batch
             new_size = new_width * self._ceil(len(batch) + 1)
-            # TODO: delete this:
-            # if len(batch) < self.opt['batchsize']:
             if new_size <= self.max_size:
                 # cool, this one fits, let's add it
                 width = new_width
@@ -1141,9 +1141,9 @@ class DynamicBatchWorld(World):
                 # we'd overfill our buffer, give up
                 break
 
-        # always have a batch size that's a multiple of 4
-        while len(indices) % 4 != 0:
-            indices.pop(0)
+        # Always have a batch size that's a multiple of 4, for fp16's sake.
+        while len(batch) > 4 and len(batch) % 4 != 0:
+            batch.pop(0)
 
         # double check our assumed invariant
         assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size

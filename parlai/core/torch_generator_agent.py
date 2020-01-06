@@ -572,7 +572,7 @@ class TorchGeneratorAgent(TorchAgent):
                 print(
                     '| WARNING: ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
-                    'truncate the inputs to the model.'
+                    'truncate the inputs to the model.: ' + str(e)
                 )
                 self.metrics['total_skipped_batches'] += 1
                 # gradients are synced on backward, now this model is going to be
