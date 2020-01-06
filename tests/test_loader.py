@@ -26,7 +26,7 @@ OPTIONS = {
 
 class TestLoader(unittest.TestCase):
     """
-    Make sure the package is alive.
+    Make sure we can load various modules (agents, teachers, worlds).
     """
 
     def test_load_agent(self):
@@ -53,35 +53,36 @@ class TestLoader(unittest.TestCase):
         )
         self.assertEqual(world_module, DialogPartnerWorld)
 
-    def test_load_internal_agent(self):
-        def cleanup(parlai_internal_exists, agent_folder_exists):
-            if not parlai_internal_exists:
-                shutil.rmtree('parlai_internal/')
-            elif not agent_folder_exists:
-                shutil.rmtree('parlai_internal/agents/')
-            else:
-                shutil.rmtree('parlai_internal/agents/parrot/')
 
-        parlai_internal_exists = os.path.exists('parlai_internal')
-        if not parlai_internal_exists:
+class TestLoadParlAIInternal(unittest.TestCase):
+    """
+    Make sure we can load an agent from internal.
+    """
+
+    def setUp(self):
+        self.parlai_internal_exists = os.path.exists('parlai_internal')
+        if not self.parlai_internal_exists:
             os.mkdir('parlai_internal')
 
-        agent_folder_exists = os.path.exists('parlai_internal/agents')
-        if not agent_folder_exists:
+        self.agent_folder_exists = os.path.exists('parlai_internal/agents')
+        if not self.agent_folder_exists:
             os.mkdir('parlai_internal/agents')
 
         shutil.copytree(
             'example_parlai_internal/agents/parrot', 'parlai_internal/agents/parrot'
         )
 
-        try:
-            agent_module = load_agent_module('internal:parrot')
-            assert agent_module
-        except ModuleNotFoundError as e:
-            cleanup(parlai_internal_exists, agent_folder_exists)
-            raise (e)
+    def test_load_internal_agent(self):
+        agent_module = load_agent_module('internal:parrot')
+        assert agent_module, 'Could not load internal agent'
 
-        cleanup(parlai_internal_exists, agent_folder_exists)
+    def tearDown(self):
+        if not self.parlai_internal_exists:
+            shutil.rmtree('parlai_internal/')
+        elif not self.agent_folder_exists:
+            shutil.rmtree('parlai_internal/agents/')
+        else:
+            shutil.rmtree('parlai_internal/agents/parrot/')
 
 
 if __name__ == '__main__':
