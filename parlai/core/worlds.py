@@ -1118,8 +1118,12 @@ class DynamicBatchWorld(World):
         ):
             index_index += 1
 
+        MAX_BS = 256
+
         # quit early if we eat our full buffer
         while indices:
+            if len(batch) >= MAX_BS:
+                break
             index = indices[index_index]
             this_width = self._ceil(self._scores[index])
             new_width = max(width, this_width)
@@ -1136,6 +1140,10 @@ class DynamicBatchWorld(World):
             else:
                 # we'd overfill our buffer, give up
                 break
+
+        # always have a batch size that's a multiple of 4
+        while len(indices) % 4 != 0:
+            indices.pop(0)
 
         # double check our assumed invariant
         assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
