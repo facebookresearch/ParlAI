@@ -16,6 +16,7 @@ from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
 from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
+from parlai.utils.misc import warn_once
 
 from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
     KnowledgeRetrieverAgent,
@@ -29,8 +30,21 @@ class InteractiveWorld(DialogPartnerWorld):
     """
     Interactive world for wizard of wikipedia.
 
-    Used for models trained on the task `-t wizard_of_wikipedias`.
+    Used for models trained on the task `-t wizard_of_wikipedia`.
+    Automatically retrieves knowledge from Wikipedia based on the
+    conversation history using a TF-IDF retriever. Then uses a
+    Transformer-based model to select a checked sentence from these
+    retrieved passages.
     """
+    @staticmethod
+    def add_cmdline_args(argparser):
+        parser = argparser.add_argument_group('WoW Interactive World Args')
+        parser.add_argument(
+            '--print-checked-sentence',
+            type='bool',
+            default=True,
+            help='Print sentence that the model checks.'
+        )
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
@@ -43,6 +57,8 @@ class InteractiveWorld(DialogPartnerWorld):
         self.model_agent = self.agents[1]
 
         self._set_up_knowledge_agent(opt.get('add_token_knowledge', False))
+
+        self.print_checked_sentence = opt['print_checked_sentence']
 
     def _set_up_knowledge_agent(self, add_token_knowledge=False):
         from parlai.core.params import ParlaiParser
@@ -99,11 +115,12 @@ class InteractiveWorld(DialogPartnerWorld):
         knowledge_act = self.knowledge_agent.act()
         act['knowledge'] = knowledge_act['text']
         act['checked_sentence'] = knowledge_act['checked_sentence']
-        print(
-            '[ Using chosen sentence from Wikpedia ]: {}'.format(
-                knowledge_act['checked_sentence']
+        if self.print_checked_sentence:
+            print(
+                '[ Using chosen sentence from Wikpedia ]: {}'.format(
+                    knowledge_act['checked_sentence']
+                )
             )
-        )
         act['title'] = knowledge_act['title']
         return act
 
@@ -182,11 +199,22 @@ class InteractiveGeneratorWorld(InteractiveWorld):
     def _add_knowledge_to_act(self, act):
         act = super()._add_knowledge_to_act(act)
         if self.opt.get('prepend_gold_knowledge', False):
+            warn_once(
+                'Prepending selected knowledge to dialogue input.'
+                'If this was not intended behavior, please run with the '
+                'flag --prepend-gold-knowledge False'
+            )
             knowledge_text = ' '.join(
                 [TOKEN_KNOWLEDGE, act['checked_sentence'], TOKEN_END_KNOWLEDGE]
             )
             new_text = '\n'.join([knowledge_text, act['text']])
             act.force_set('text', new_text)
+        else:
+            warn_once(
+                'Not prepending selected knowledge to dialogue input.'
+                'If this was not intended behavior, please run with the '
+                'flag --prepend-gold-knowledge True'
+            )
         return act
 
 
