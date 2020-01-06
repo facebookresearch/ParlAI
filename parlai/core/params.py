@@ -15,8 +15,8 @@ import datetime
 import parlai
 import git
 
-from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
+from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt, load_opt_file
 
@@ -789,7 +789,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add arguments specific to a particular model.
         """
-        agent = get_agent_module(model)
+        agent = load_agent_module(model)
         try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self)
@@ -809,10 +809,22 @@ class ParlaiParser(argparse.ArgumentParser):
         Add arguments specific to the specified task.
         """
         for t in ids_to_tasks(task).split(','):
-            agent = get_task_module(t)
+            agent = load_teacher_module(t)
             try:
                 if hasattr(agent, 'add_cmdline_args'):
                     agent.add_cmdline_args(self)
+            except argparse.ArgumentError:
+                # already added
+                pass
+
+    def add_world_args(self, task, interactive_task):
+        """
+        Add arguments specific to the world.
+        """
+        world_class = load_world_module(task, interactive_task)
+        if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
+            try:
+                world_class.add_cmdline_args(self)
             except argparse.ArgumentError:
                 # already added
                 pass
@@ -893,6 +905,12 @@ class ParlaiParser(argparse.ArgumentParser):
         model = get_model_name(parsed)
         if model is not None:
             self.add_model_subargs(model)
+
+        # add world args, if we know a priori which world is being used
+        if task is not None:
+            self.add_world_args(
+                task, parsed.get('interactive_task', False),
+            )
 
         # reset parser-level defaults over any model-level defaults
         try:

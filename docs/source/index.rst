@@ -23,10 +23,11 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_basic
    tutorial_task
    tutorial_worlds
+   tutorial_torch_generator_agent
    tutorial_torch_ranker_agent
    tutorial_tipsntricks
    tutorial_mturk
-   tutorial_messenger
+   tutorial_chat_service
    tutorial_tensorboard
 
 .. toctree::
@@ -54,11 +55,11 @@ ParlAI is a one-stop-shop for dialog research.
 
 .. toctree::
   :maxdepth: 1
-  :caption: Reference Models
+  :caption: Agents
+  :glob:
 
-  repeat_label
-  unigram_agent
-  example_seq2seq
+  agents_list
+  agent_refs/*
 
 .. toctree::
    :maxdepth: 2

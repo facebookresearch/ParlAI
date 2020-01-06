@@ -13,6 +13,8 @@ Contains the following main utilities:
   the TorchAgent class
 * Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
+* History class which handles tracking the dialogue state over the course of an episode.
+
 
 See below for documentation on each specific tool.
 """
@@ -1165,6 +1167,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
+        if self.opt['embedding_type'] == 'random':
+            # Random embedding means no copying of pretrained embeddings
+            return
+
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():

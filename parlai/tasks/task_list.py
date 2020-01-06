@@ -1004,7 +1004,7 @@ task_list = [
             "to facilitate training and evaluating dialogue systems. See "
             "https://arxiv.org/abs/1811.00207 for more information. \n"
             "Dataset has been released under the CC BY-NC license. \n"
-            "EmpatheticDialogueTeacher returns examples like so: \n\n"
+            "EmpatheticDialoguesTeacher returns examples like so: \n\n"
             "  - [text]:  context line (previous utterance by 'speaker') \n"
             "  - [labels]: label line  (current utterance by 'listener') \n\n"
             "with additional task specific fields: \n\n"
@@ -1063,6 +1063,17 @@ task_list = [
             "of common grounding under continuous and partially-observable context. "
             "This code also includes reference-resolution annotation "
             "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
+        ),
+    },
+    {
+        "id": "IGC",
+        "display_name": "Image Grounded Conversations",
+        "task": "igc",
+        "tags": ["All", "Visual", "ChitChat"],
+        "description": (
+            "A dataset of (image, context, question, answer) tuples, comprised "
+            "of eventful images taken from Bing, Flickr, and COCO. See "
+            "https://arxiv.org/abs/1701.08251 for more information."
         ),
     },
 ]
