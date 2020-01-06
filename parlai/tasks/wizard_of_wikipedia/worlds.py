@@ -30,12 +30,12 @@ class InteractiveWorld(DialogPartnerWorld):
     """
     Interactive world for wizard of wikipedia.
 
-    Used for models trained on the task `-t wizard_of_wikipedia`.
-    Automatically retrieves knowledge from Wikipedia based on the
-    conversation history using a TF-IDF retriever. Then uses a
-    Transformer-based model to select a checked sentence from these
-    retrieved passages.
+    Used for models trained on the task `-t wizard_of_wikipedia`. Automatically
+    retrieves knowledge from Wikipedia based on the conversation history using a TF-IDF
+    retriever. Then uses a Transformer-based model to select a checked sentence from
+    these retrieved passages.
     """
+
     @staticmethod
     def add_cmdline_args(argparser):
         parser = argparser.add_argument_group('WoW Interactive World Args')
@@ -43,7 +43,7 @@ class InteractiveWorld(DialogPartnerWorld):
             '--print-checked-sentence',
             type='bool',
             default=True,
-            help='Print sentence that the model checks.'
+            help='Print sentence that the model checks.',
         )
 
     def __init__(self, opt, agents, shared=None):
@@ -128,8 +128,8 @@ class InteractiveWorld(DialogPartnerWorld):
         """
         Loop between wizard and apprentice.
 
-        Adds knowledge to the wizard observations. Assumes that the model agent
-        is the wizard model.
+        Adds knowledge to the wizard observations. Assumes that the model agent is the
+        wizard model.
         """
 
         if self.cnt == 0:
@@ -180,8 +180,8 @@ class InteractiveGeneratorWorld(InteractiveWorld):
     """
     Interactive world for generative models.
 
-    Specifically a world for models trained on the task
-    `-t wizard_of_wikipedia generator`.
+    Specifically a world for models trained on the task `-t wizard_of_wikipedia
+    generator`.
     """
 
     def __init__(self, opt, agents, shared=None):

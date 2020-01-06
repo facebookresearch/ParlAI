@@ -88,7 +88,7 @@ class TestWizardModel(unittest.TestCase):
 
 class TestKnowledgeRetriever(unittest.TestCase):
     """
-    Checks that the Knowledge Retriever module returns the correct results
+    Checks that the Knowledge Retriever module returns the correct results.
     """
 
     def test_knowledge_retriever(self):

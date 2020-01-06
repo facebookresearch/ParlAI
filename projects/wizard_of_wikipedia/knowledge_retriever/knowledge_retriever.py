@@ -4,8 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Knowledge retrieval agent. Used in interactive mode when the knowledge is
-not available. Uses the retrieval model from the model zoo.
+Knowledge retrieval agent.
+
+Used in interactive mode when the knowledge is not available. Uses the retrieval model
+from the model zoo.
 """
 
 from parlai.core.agents import Agent, create_agent, create_agent_from_shared
@@ -116,8 +118,8 @@ class KnowledgeRetrieverAgent(Agent):
 
     def maintain_retriever_history(self, obs, actor_id='apprentice'):
         """
-        Maintain texts retrieved by the retriever to mimic the set-up
-        from the data collection for the task.
+        Maintain texts retrieved by the retriever to mimic the set-up from the data
+        collection for the task.
         """
 
         if actor_id == 'apprentice':
@@ -178,8 +180,8 @@ class KnowledgeRetrieverAgent(Agent):
 
     def get_passages(self, act):
         """
-        Format passages retrieved by taking the first paragraph of the
-        top `num_retrieved` passages.
+        Format passages retrieved by taking the first paragraph of the top
+        `num_retrieved` passages.
         """
         retrieved_txt = act.get('text', '')
         cands = act.get('text_candidates', [])
@@ -213,9 +215,8 @@ class KnowledgeRetrieverAgent(Agent):
 
     def tfidf_retriever_act(self, history):
         """
-        Combines and formats texts retrieved by the TFIDF retriever for the
-        chosen topic, the last thing the wizard said, and the last thing the
-        apprentice said.
+        Combines and formats texts retrieved by the TFIDF retriever for the chosen
+        topic, the last thing the wizard said, and the last thing the apprentice said.
         """
         # retrieve on chosen topic
         chosen_topic_txts = None
@@ -314,8 +315,10 @@ class KnowledgeRetrieverAgent(Agent):
 
     def observe(self, observation, actor_id='apprentice'):
         """
-        Observe a dialogue act. Use `actor_id` to indicate whether dialogue acts
-        are from the 'apprentice' or the 'wizard' agent.
+        Observe a dialogue act.
+
+        Use `actor_id` to indicate whether dialogue acts are from the 'apprentice' or
+        the 'wizard' agent.
         """
         if actor_id == 'apprentice':
             self.observation = observation
