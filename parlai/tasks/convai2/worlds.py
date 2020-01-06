@@ -4,12 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from copy import deepcopy
+
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 
-from copy import deepcopy
 import random
 
 
