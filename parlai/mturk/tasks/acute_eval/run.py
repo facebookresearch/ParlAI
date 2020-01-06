@@ -256,6 +256,7 @@ def make_task_from_ids(
     conv_orders = [[0, 1], [1, 0]]
     conv1 = all_conv_data.get(id1)
     conv2 = all_conv_data.get(id2)
+    conv_order = conv_orders[np.random.choice([0, 1])]
     if conv1 is None or conv2 is None:
         raise Exception("One of assignment ids {}, {} not found".format(id1, id2))
     task_data = {}
@@ -264,8 +265,10 @@ def make_task_from_ids(
     task_data['task_specs'] = specs
     specs['comparison_type'] = matchup
     specs['original_hit_id'] = hitid
-    specs['conversation_order'] = conv_orders[np.random.choice([0, 1])]
+    specs['conversation_order'] = conv_order
     specs['internal_id'] = internal_id
+    specs['s1_name'] = conv1[speakers[conv_order[0]]]
+    specs['s2_name'] = conv1[speakers[conv_order[0]]]
     specs['s1_choice'] = s1_choice
     specs['s2_choice'] = s2_choice
     specs['question'] = question
@@ -393,13 +396,15 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
     num_correct = 0
     for i in range(len(task_data)):
         task_specs = task_data[i]['task_specs']
+        s1_name = task_specs['s1_name']
+        s2_name = task_specs['s2_name']
         if not task_specs.get('is_onboarding', False):
             continue
         worker_response = float(response_data[i]['speakerChoice'])
         expected_response = (
-            1
+            s1_name
             if task_specs['conversation_order'] == [1, 0]
-            else 2
+            else s2_name
         )
         num_onboarding_tasks += 1
         if worker_response == expected_response:
@@ -441,9 +446,13 @@ def main(opt):
 
     mturk_manager.set_onboard_function(onboard_function=None)
 
+    task_group_id = mturk_manager.task_group_id
+
     if opt['block_on_onboarding_fail'] and opt['block_qualification'] is None:
-        raise Exception(
-            "Set block_qualification or set block_on_onboarding_fail to False"
+        opt['block_qualification'] = task_group_id
+        warn_once(
+            "No block_qualification set in opt, automatically creating"
+            "new qualification {}".format(task_group_id)
         )
 
     try:
@@ -484,7 +493,7 @@ def main(opt):
                 )
             return save_data
 
-        print("This run id: {}".format(mturk_manager.task_group_id))
+        print("This run id: {}".format(task_group_id))
 
         # Begin the task, allowing mturk_manager to start running the task
         # world on any workers who connect

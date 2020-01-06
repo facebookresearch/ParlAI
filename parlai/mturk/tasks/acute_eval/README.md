@@ -23,7 +23,11 @@ following BibTex entry:
 Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai),
 follow the instructions below.
 
-You can find an example run script in `example_script.py` - opening this and following along the instructions with it will be easiest.
+The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
+
+    python parlai/mturk/tasks/acute_eval/run.py --dialogs_path parlai/mturk/tasks/acute_eval/example
+
+However, You can find an example run script in `example_script.py` - opening this and following along the instructions with it will be easiest.
 
 
 ## Formatting conversation data
@@ -31,10 +35,10 @@ You can find an example run script in `example_script.py` - opening this and fol
 This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format within a folder specified by `args['dialogs_path']`. This is a template of the format with the minimal expected fields:
 
     {
-      "speakers": ["model", "human_evaluator"],
+      "speakers": ["model1", "human_evaluator"],
       "conversation_id": "id",
       "dialog": [
-        {"speaker": "model", "text": "Hi"},
+        {"speaker": "model1", "text": "Hi"},
         {"speaker": "human_evaluator", "text": "Hi back"},
         ...
       ]

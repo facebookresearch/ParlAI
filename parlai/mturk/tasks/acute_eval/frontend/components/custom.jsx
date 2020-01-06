@@ -279,6 +279,8 @@ class EvalResponse extends React.Component {
     }
     let s1_choice = this.props.task_data.task_specs.s1_choice.split('<Speaker 1>');
     let s2_choice = this.props.task_data.task_specs.s2_choice.split('<Speaker 2>');
+    let s1_name = this.props.task_data.task_specs.s1_name;
+    let s2_name = this.props.task_data.task_specs.s2_name;
     let form_question = this.props.task_data.task_specs.question;
     let text_question = "Please provide a brief justification for your choice (a few words or a sentence)";
     let text_reason = (
@@ -320,9 +322,9 @@ class EvalResponse extends React.Component {
                     <Col sm={6}>
                         <Radio
                           name="speakerChoice"
-                          value="1"
+                          value=s1_name
                           style={{'width': '100%'}}
-                          checked={this.state.speakerChoice == "1"}
+                          checked={this.state.speakerChoice == s1_name}
                           onChange={this.handleInputChange}
                         >
                           {choice1}
@@ -331,9 +333,9 @@ class EvalResponse extends React.Component {
                       <Col sm={6}>
                         <Radio
                           name="speakerChoice"
-                          value="2"
+                          value=s2_name
                           style={{'width': '100%'}}
-                          checked={this.state.speakerChoice == "2"}
+                          checked={this.state.speakerChoice == s2_name}
                           onChange={this.handleInputChange}
                         >
                           {choice2}
