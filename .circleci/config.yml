@@ -72,6 +72,7 @@ installtorchgpu11: &installtorchgpu11
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
+      pip3 install --progress-bar off torchvision
 
 
 installtorchgpu12: &installtorchgpu12
@@ -82,6 +83,7 @@ installtorchgpu12: &installtorchgpu12
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
+      pip3 install --progress-bar off torchvision
 
 
 installtorchcpuosx: &installtorchcpuosx
@@ -231,10 +233,10 @@ jobs:
             - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v5{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu11-v4{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v5{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu11
@@ -258,10 +260,10 @@ jobs:
             - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v5{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu12-v4{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v5{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchgpu12
