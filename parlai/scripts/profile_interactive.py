@@ -4,8 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Basic script which allows to profile interaction with a model using repeat_query
-to avoid human interaction (so we can time it, only).
+Basic script which allows to profile interaction with a model using repeat_query to
+avoid human interaction (so we can time it, only).
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
