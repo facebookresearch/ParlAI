@@ -53,10 +53,10 @@ class Metric(ABC):
         pass
 
     def __str__(self) -> str:
-        return '{:.4g}'.format(self.report())
+        return f'{self.report():.4g}'
 
     def __repr__(self) -> str:
-        return '{}({:.4g})'.format(str(self.__class__), self.report())
+        return f'{self.__class__}({self.report():.4g})'
 
 
 class SumMetric(Metric):
@@ -67,10 +67,10 @@ class SumMetric(Metric):
     def __init__(self, sum_: Number):
         self.sum = sum_
 
-    def __add__(self, other: 'SumMetric'):
+    def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        self.sum += other.sum
+        return self.sum + other.sum
 
     def report(self) -> Number:
         return self.sum
@@ -85,11 +85,12 @@ class AverageMetric(Metric):
         self.numer = numer
         self.denom = denom
 
-    def __add__(self, other: 'AverageMetric'):
+    def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        self.numer += other.numer
-        self.denom += other.denom
+        full_numer = self.numer + other.numer
+        full_denom = self.denom + other.denom
+        return full_numer / full_denom
 
     def report(self) -> Number:
         return self.numer / self.denom
