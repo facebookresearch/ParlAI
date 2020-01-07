@@ -35,14 +35,10 @@ from parlai.core.agents import Agent
 from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.nn.lr_scheduler import init_lr_scheduler
+from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import argsort, fp16_optimizer_wrapper, padded_tensor
-
-
-class StopTrainException(Exception):
-    pass
 
 
 class Batch(AttrDict):
@@ -527,6 +523,14 @@ class TorchAgent(ABC, Agent):
             'when it is lowered.',
         )
         lr_group.add_argument(
+            '--max-lr-steps',
+            type=int,
+            default=-1,
+            help='Number of train steps the scheduler should take after warmup. '
+            'Training is terminated after this many steps. This should only be '
+            'set for --lr_scheduler invsqrt, cosine, or linear',
+        )
+        lr_group.add_argument(
             '--warmup-updates',
             type=int,
             default=-1,
@@ -899,7 +903,7 @@ class TorchAgent(ABC, Agent):
         if states is None:
             states = {}
         optimizer = self.optimizer
-        self.scheduler = lr_scheduler.init_lr_scheduler(
+        self.scheduler = ParlAILRScheduler.init_lr_scheduler(
             self.opt, optimizer, states, hard_reset
         )
 
@@ -1428,11 +1432,12 @@ class TorchAgent(ABC, Agent):
         """
         if output is None:
             return batch_reply
-        for k, v in output.items():
-            if v is None:
-                continue
-            for i, sub_val in zip(valid_inds, v):
-                batch_reply[i][k] = sub_val
+        if output.text is not None:
+            for i, response in zip(valid_inds, output.text):
+                batch_reply[i]['text'] = response
+        if output.text_candidates is not None:
+            for i, cands in zip(valid_inds, output.text_candidates):
+                batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
     def observe(self, observation):
