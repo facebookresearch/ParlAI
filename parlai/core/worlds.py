@@ -1016,6 +1016,7 @@ class DynamicBatchWorld(World):
         self.world = world
         # TODO: maybe generalize this
         self.max_size = (self.l_truncate + self.truncate) * opt['batchsize']
+        self.rng = random.Random(4)
 
         # buffer worlds
         self.worlds = [
@@ -1032,6 +1033,7 @@ class DynamicBatchWorld(World):
         self.number_parleys = 0
         self.total_exs = 0
         self.world.reset()
+        self.rng = random.Random(4)
         for w in self.worlds:
             w.reset()
 
@@ -1105,8 +1107,7 @@ class DynamicBatchWorld(World):
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
-        indices = sorted(indices, key=lambda i: self._scores[i] + (random.random(),))
-        # indices = sorted(indices, key=lambda i: (random.random()))
+        indices = sorted(indices, key=lambda i: self._scores[i] + (self.rng.random(),))
 
         # now let's build the batch
         batch = []
