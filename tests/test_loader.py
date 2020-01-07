@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import os
+import shutil
 import unittest
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
@@ -16,7 +18,6 @@ from parlai.core.loader import (
 )
 from parlai.core.worlds import DialogPartnerWorld
 
-
 OPTIONS = {
     'task': 'convai2:selfRevised',
     'agent': 'repeat_label',
@@ -25,7 +26,7 @@ OPTIONS = {
 
 class TestLoader(unittest.TestCase):
     """
-    Make sure the package is alive.
+    Make sure we can load various modules (agents, teachers, worlds).
     """
 
     def test_load_agent(self):
@@ -44,7 +45,6 @@ class TestLoader(unittest.TestCase):
         world_module = load_world_module(
             OPTIONS['task'].split(':')[0], interactive_task=True,
         )
-        print(world_module)
         self.assertEqual(world_module, c2interactive)
 
     def test_load_dialog_partner_world(self):
@@ -52,6 +52,41 @@ class TestLoader(unittest.TestCase):
             OPTIONS['task'].split(':')[0], interactive_task=False, num_agents=2
         )
         self.assertEqual(world_module, DialogPartnerWorld)
+
+
+class TestLoadParlAIInternal(unittest.TestCase):
+    """
+    Make sure we can load an agent from internal.
+    """
+
+    def setUp(self):
+        # create a parlai_internal folder if it does not exist
+        self.parlai_internal_exists = os.path.exists('parlai_internal')
+        if not self.parlai_internal_exists:
+            os.mkdir('parlai_internal')
+
+        self.agent_folder_exists = os.path.exists('parlai_internal/agents')
+        if not self.agent_folder_exists:
+            os.mkdir('parlai_internal/agents')
+
+        # copy over the example agent from example_parlai_internal
+        shutil.copytree(
+            'example_parlai_internal/agents/parrot', 'parlai_internal/agents/parrot'
+        )
+
+    def test_load_internal_agent(self):
+        agent_module = load_agent_module('internal:parrot')
+        assert agent_module, 'Could not load internal agent'
+
+    def tearDown(self):
+        # clean up: remove all folders that we created over the course
+        # of this test
+        if not self.parlai_internal_exists:
+            shutil.rmtree('parlai_internal/')
+        elif not self.agent_folder_exists:
+            shutil.rmtree('parlai_internal/agents/')
+        else:
+            shutil.rmtree('parlai_internal/agents/parrot/')
 
 
 if __name__ == '__main__':
