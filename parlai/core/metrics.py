@@ -71,7 +71,7 @@ class SumMetric(Metric):
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
         full_sum = self.sum + other.sum
-        return SumMetric(sum=full_sum)
+        return SumMetric(sum_=full_sum)
 
     def report(self) -> Number:
         return self.sum
