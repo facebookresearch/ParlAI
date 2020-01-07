@@ -91,6 +91,7 @@ class InteractiveSimpleWorld(DialogPartnerWorld):
             act['id'] = 'persona'
             agents[0].observe(validate(act))
         act = deepcopy(agents[0].act())
+        acts[0] = act
         if self.cnt == 0:
             # add the persona on to the first message to agent 1
             act.force_set('text', self.p2 + act.get('text', 'hi'))
