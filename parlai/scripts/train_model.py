@@ -31,13 +31,12 @@ import os
 import signal
 
 from parlai.core.agents import create_agent, create_agent_from_shared
-from parlai.core.metrics import aggregate_task_reports
-from parlai.core.worlds import create_task
-from parlai.core.params import ParlaiParser, print_announcements
-from parlai.utils.misc import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
-from parlai.core.torch_agent import StopTrainException
+from parlai.core.metrics import aggregate_task_reports
+from parlai.core.params import ParlaiParser, print_announcements
+from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
@@ -45,7 +44,8 @@ from parlai.utils.distributed import (
     is_distributed,
     num_workers,
 )
-from parlai.scripts.build_pytorch_data import get_pyt_dict_file
+from parlai.utils.exceptions import StopTrainException
+from parlai.utils.misc import Timer, round_sigfigs, warn_once
 
 
 def setup_args(parser=None) -> ParlaiParser:

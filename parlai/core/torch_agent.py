@@ -903,7 +903,10 @@ class TorchAgent(ABC, Agent):
         if states is None:
             states = {}
         optimizer = self.optimizer
-        self.scheduler = ParlAILRScheduler.init_lr_scheduler(
+        if self.fp16:
+            # lr schedulers don't work with apex, they expect the "real" optimizer
+            optimizer = optimizer.optimizer
+        self.scheduler = ParlAILRScheduler.lr_scheduler_factory(
             self.opt, optimizer, states, hard_reset
         )
 

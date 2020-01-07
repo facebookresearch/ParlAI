@@ -8,8 +8,11 @@ Code for LR Schedulers.
 See ParlAILRScheduler (super class) and subclasses for detailed documentation
 """
 
-from torch import optim
 from abc import abstractmethod
+from torch import optim
+import numpy as np
+
+from parlai.utils.exceptions import StopTrainException
 
 
 class ParlAILRScheduler(object):
@@ -18,18 +21,14 @@ class ParlAILRScheduler(object):
     Schedulers can be initialized with lr_scheduler_factory()
     """
 
-    def __init__(self, *args, **kwargs):
-        if self.fp16:
-            # lr schedulers don't work with apex, they expect the "real" optimizer
-            optimizer = optimizer.optimizer
-
+    def __init__(self, optimizer, states, hard_reset, warmup_updates):
         self.warmup_updates = warmup_updates
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or hard_reset
         ):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                optimizer, self.__class__._warmup_lr
+                optimizer, self._warmup_lr
             )
         else:
             self.warmup_scheduler = None
@@ -41,8 +40,7 @@ class ParlAILRScheduler(object):
             and self._number_training_updates <= self.warmup_updates
         )
 
-    @classmethod
-    def _warmup_lr(cls, step):
+    def _warmup_lr(self, step):
         start = self.warmup_updates
         end = 1.0
         progress = min(1.0, step / self.warmup_updates)
@@ -164,7 +162,7 @@ class ParlAILRScheduler(object):
             if self._is_lr_warming_up():
                 self.warmup_scheduler.step(epoch=num_steps)
             else:
-                scheduler_steps = num_steps - self.warmup_steps
+                scheduler_steps = num_steps - self.warmup_updates
                 self.train_step(scheduler_steps)
 
     @abstractmethod
@@ -239,17 +237,16 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         warmup_updates,
         max_lr_steps,
     ):
-        super().__init__(optimizer, states, hard_reset, warmup_updates,)
+        super().__init__(optimizer, states, hard_reset, warmup_updates)
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler invsqrt requires setting --max_lr_steps')
         self.max_lr_steps = max_lr_steps
         self.decay_factor = np.sqrt(max(1, max_lr_steps))
         self.scheduler = optim.lr_scheduler.LambdaLR(
-            optimizer, self.__class__._invsqrt_lr
+            optimizer, self._invsqrt_lr
         )
 
-    @classmethod
-    def _invsqrt_lr(cls, step):
+    def _invsqrt_lr(self, step):
         return self.decay_factor / np.sqrt(max(1, step))
 
     def train_step(self, scheduler_steps):
@@ -306,9 +303,9 @@ class LinearLRScheduler(ParlAILRScheduler):
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler linear requires setting --max_lr_steps')
         self.max_lr_steps = max_lr_steps
-        self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _linear_lr)
+        self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._linear_lr)
 
-    def _linear_lr(step):
+    def _linear_lr(self, step):
         # this multiplicative factor ensures linear decay rate
         lr_mult = (self.max_lr_steps - step - 1) / (self.max_lr_steps - step)
         return lr_mult
