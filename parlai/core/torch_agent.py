@@ -495,62 +495,6 @@ class TorchAgent(ABC, Agent):
             help='Weight decay on the weights.',
         )
 
-        # lr scheduler
-        lr_group = agent.add_argument_group('Learning Rate Scheduler')
-        lr_group.add_argument(
-            '--lr-scheduler',
-            type=str,
-            default='reduceonplateau',
-            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt', 'cosine', 'linear'],
-            help='Learning rate scheduler.',
-        )
-        lr_group.add_argument(
-            '--lr-scheduler-patience',
-            type=int,
-            default=3,
-            help='LR scheduler patience. In number of validation runs. If using '
-            'fixed scheduler, LR is decayed every <patience> validations.',
-        )
-        lr_group.add_argument(
-            '--lr-scheduler-decay',
-            type=float,
-            default=0.5,
-            help='Decay factor for LR scheduler, or how much LR is multiplied by '
-            'when it is lowered.',
-        )
-        lr_group.add_argument(
-            '--max-lr-steps',
-            type=int,
-            default=-1,
-            help='Number of train steps the scheduler should take after warmup. '
-            'Training is terminated after this many steps. This should only be '
-            'set for --lr_scheduler invsqrt, cosine, or linear',
-        )
-        lr_group.add_argument(
-            '--warmup-updates',
-            type=int,
-            default=-1,
-            hidden=True,
-            help='Learning rate warmup period, in number of SGD updates. '
-            'Linearly scales up LR over period. Only enabled if > 0.',
-        )
-        lr_group.add_argument(
-            '--warmup-rate',
-            type=float,
-            default=1e-4,
-            hidden=True,
-            help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
-            'this value. Linearly adjusted up to 1.0 across --warmup-updates '
-            'steps.',
-        )
-        lr_group.add_argument(
-            '--update-freq',
-            type=int,
-            default=1,
-            hidden=True,
-            help='Accumulate gradients N times before performing an optimizer.step().',
-        )
-
         # preprocessing arguments
         agent.add_argument(
             '-rc',
@@ -644,6 +588,7 @@ class TorchAgent(ABC, Agent):
         )
 
         cls.dictionary_class().add_cmdline_args(argparser)
+        ParlAILRScheduler.add_cmdline_args(argparser)
 
     def __init__(self, opt: Opt, shared=None):
         """
@@ -1431,12 +1376,11 @@ class TorchAgent(ABC, Agent):
         """
         if output is None:
             return batch_reply
-        if output.text is not None:
-            for i, response in zip(valid_inds, output.text):
-                batch_reply[i]['text'] = response
-        if output.text_candidates is not None:
-            for i, cands in zip(valid_inds, output.text_candidates):
-                batch_reply[i]['text_candidates'] = cands
+        for k, v in output.items():
+            if v is None:
+                continue
+            for i, sub_val in zip(valid_inds, v):
+                batch_reply[i][k] = sub_val
         return batch_reply
 
     def observe(self, observation):
