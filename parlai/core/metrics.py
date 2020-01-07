@@ -16,6 +16,7 @@ from collections import Counter
 from parlai.utils.misc import warn_once
 from numbers import Number
 
+from abc import ABC, abstractmethod
 import re
 
 DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
@@ -40,6 +41,58 @@ except ImportError:
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
+
+
+class Metric(ABC):
+    """
+    Base class for storing metrics. Subclasses should define .report().
+    """
+
+    @abstractmethod
+    def report(self) -> Number:
+        pass
+
+    def __str__(self) -> str:
+        return '{:.4g}'.format(self.report())
+
+    def __repr__(self) -> str:
+        return '{}({:.4g})'.format(str(self.__class__), self.report())
+
+
+class SumMetric(Metric):
+    """
+    Class that keeps a running sum of some metric.
+    """
+
+    def __init__(self, sum_: Number):
+        self.sum = sum_
+
+    def __add__(self, other: 'SumMetric'):
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        self.sum += other.sum
+
+    def report(self) -> Number:
+        return self.sum
+
+
+class AverageMetric(Metric):
+    """
+    Class that keeps a running average of some metric.
+    """
+
+    def __init__(self, numer: Number, denom: int):
+        self.numer = numer
+        self.denom = denom
+
+    def __add__(self, other: 'AverageMetric'):
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        self.numer += other.numer
+        self.denom += other.denom
+
+    def report(self) -> Number:
+        return self.numer / self.denom
 
 
 def normalize_answer(s):
