@@ -23,6 +23,9 @@ class ParlAILRScheduler(object):
     """
 
     def __init__(self, optimizer, states, hard_reset, warmup_updates):
+        """Initialize warmup scheduler. Specific main schedulers should be
+        initialized in the subclasses.
+        """
         self.warmup_updates = warmup_updates
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
@@ -42,6 +45,7 @@ class ParlAILRScheduler(object):
         )
 
     def _warmup_lr(self, step):
+        """Return lr multiplier (on initial lr) for warmup scheduler."""
         start = self.warmup_updates
         end = 1.0
         progress = min(1.0, step / self.warmup_updates)
@@ -49,6 +53,7 @@ class ParlAILRScheduler(object):
         return lr_mult
 
     def load_state(self, states):
+        """Load state of scheduler from states."""
         if 'number_training_updates' in states:
             self._number_training_updates = states['number_training_updates']
         if self.scheduler and 'lr_scheduler' in states:
@@ -57,6 +62,7 @@ class ParlAILRScheduler(object):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def get_state_dict(self):
+        """Return scheduler state dictionary."""
         return self.scheduler.state_dict()
 
     @classmethod
@@ -65,6 +71,9 @@ class ParlAILRScheduler(object):
         Create the learning rate scheduler, and assign it to self.scheduler.
         This scheduler will be updated upon a call to receive_metrics.
         May also create self.warmup_scheduler, if appropriate.
+        :param opt opt: Arguments received by torch_agent
+        :param optimizer optimizer: Optimizer being used for training. May be
+            wrapped in fp16_optimizer_wrapper depending on whether fp16 is used
         :param state_dict states: Possible state_dict provided by model
             checkpoint, for restoring LR state
         :param bool hard_reset: If true, the LR scheduler should ignore the
@@ -193,6 +202,9 @@ class ParlAILRScheduler(object):
 
 
 class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
+    """Scheduler that decays by a multiplicative rate when valid loss plateaus.
+    """
+
     def __init__(self, optimizer, states, hard_reset, patience, decay, warmup_updates):
         super().__init__(optimizer, states, hard_reset, warmup_updates)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
@@ -215,6 +227,9 @@ class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
 
 
 class FixedLRScheduler(ParlAILRScheduler):
+    """Scheduler that decays by a fixed multiplicative rate at each valid step.
+    """
+
     def __init__(self, optimizer, states, hard_reset, patience, decay, warmup_updates):
         super().__init__(optimizer, states, hard_reset, warmup_updates)
         self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
@@ -231,6 +246,8 @@ class FixedLRScheduler(ParlAILRScheduler):
 
 
 class InvSqrtLRScheduler(ParlAILRScheduler):
+    """Scheduler that decays at an inverse square root rate."""
+
     def __init__(
         self,
         optimizer,
@@ -260,8 +277,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
 
 
 class CosineLRScheduler(ParlAILRScheduler):
-    """ Scheduler that decays by a cosine function.
-    """
+    """ Scheduler that decays by a cosine function."""
 
     def __init__(
         self,
@@ -289,8 +305,7 @@ class CosineLRScheduler(ParlAILRScheduler):
 
 
 class LinearLRScheduler(ParlAILRScheduler):
-    """ Scheduler that decays linearly.
-    """
+    """ Scheduler that decays linearly."""
 
     def __init__(
         self,
