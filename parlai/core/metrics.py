@@ -70,7 +70,8 @@ class SumMetric(Metric):
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        return self.sum + other.sum
+        full_sum = self.sum + other.sum
+        return SumMetric(sum=full_sum)
 
     def report(self) -> Number:
         return self.sum
@@ -90,7 +91,7 @@ class AverageMetric(Metric):
         # we drop Python 3.6
         full_numer = self.numer + other.numer
         full_denom = self.denom + other.denom
-        return full_numer / full_denom
+        return AverageMetric(numer=full_numer, denom=full_denom)
 
     def report(self) -> Number:
         return self.numer / self.denom
