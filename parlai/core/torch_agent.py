@@ -1597,8 +1597,7 @@ class TorchAgent(ABC, Agent):
             if getattr(self, 'scheduler', None):
                 states['lr_scheduler'] = self.scheduler.get_state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler', None):
-                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1803,7 +1802,8 @@ class TorchAgent(ABC, Agent):
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
 
-        self.scheduler.step(self._number_training_updates)
+        if getattr(self, 'scheduler', None):
+            self.scheduler.step(self._number_training_updates)
 
     def zero_grad(self):
         """

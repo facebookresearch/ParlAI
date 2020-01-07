@@ -93,14 +93,14 @@ class ParlAILRScheduler(object):
         max_lr_steps = opt.get('max_lr_steps', -1)
 
         if opt.get('lr_scheduler') == 'none':
-            scheduler = None
+            return None
         elif decay == 1.0:
             warn_once(
                 "Your LR decay is set to 1.0. Assuming you meant you wanted "
                 "to disable learning rate scheduling. Adjust --lr-scheduler-decay "
                 "if this is not correct."
             )
-            scheduler = None
+            return None
         elif opt.get('lr_scheduler') == 'reduceonplateau':
             scheduler = ReduceOnPlateauLRScheduler(
                 optimizer, states, hard_reset, patience, decay, warmup_updates, warmup_rate,
@@ -181,12 +181,11 @@ class ParlAILRScheduler(object):
         Override this method to override the behavior for training schedulers.
         """
         self._number_training_updates = num_steps
-        if hasattr(self, 'warmup_scheduler'):
-            if self._is_lr_warming_up():
-                self.warmup_scheduler.step(epoch=num_steps)
-            else:
-                scheduler_steps = num_steps - self.warmup_updates
-                self.train_step(scheduler_steps)
+        if self._is_lr_warming_up():
+            self.warmup_scheduler.step(epoch=num_steps)
+        else:
+            scheduler_steps = num_steps - self.warmup_updates
+            self.train_step(scheduler_steps)
 
     @abstractmethod
     def train_step(self, scheduler_steps):
@@ -337,7 +336,6 @@ class LinearLRScheduler(ParlAILRScheduler):
         # this multiplicative factor ensures linear decay rate
         # lr_mult = float(self.max_lr_steps - step - 1) / float(self.max_lr_steps - step)
         lr_mult = max(0.0, 1.0 - step / self.max_lr_steps)
-        print(lr_mult)
         return lr_mult
 
     def train_step(self, scheduler_steps):
