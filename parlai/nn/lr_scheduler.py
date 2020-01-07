@@ -13,6 +13,7 @@ from torch import optim
 import numpy as np
 
 from parlai.utils.exceptions import StopTrainException
+from parlai.utils.misc import warn_once
 
 
 class ParlAILRScheduler(object):
@@ -55,6 +56,9 @@ class ParlAILRScheduler(object):
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
+    def get_state_dict(self):
+        return self.scheduler.state_dict()
+
     @classmethod
     def lr_scheduler_factory(cls, opt, optimizer, states, hard_reset=False):
         """
@@ -80,14 +84,14 @@ class ParlAILRScheduler(object):
                 "to disable learning rate scheduling. Adjust --lr-scheduler-decay "
                 "if this is not correct."
             )
-            self.scheduler = None
+            scheduler = None
         elif opt.get('lr_scheduler') == 'reduceonplateau':
             scheduler = ReduceOnPlateauLRScheduler(
-                optimizer, states, hard_reset, patience, decay, warmup_updates,
+                optimizer, states, hard_reset, patience, decay, warmup_updates
             )
         elif opt.get('lr_scheduler') == 'fixed':
             scheduler = FixedLRScheduler(
-                optimizer, states, hard_reset, patience, decay, warmup_updates,
+                optimizer, states, hard_reset, patience, decay, warmup_updates
             )
         elif opt.get('lr_scheduler') == 'invsqrt':
             scheduler = InvSqrtLRScheduler(
@@ -190,7 +194,7 @@ class ParlAILRScheduler(object):
 
 class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
     def __init__(self, optimizer, states, hard_reset, patience, decay, warmup_updates):
-        super().__init__(optimizer, states, hard_reset, warmup_updates,)
+        super().__init__(optimizer, states, hard_reset, warmup_updates)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', factor=decay, patience=patience, verbose=True
         )
@@ -212,7 +216,7 @@ class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
 
 class FixedLRScheduler(ParlAILRScheduler):
     def __init__(self, optimizer, states, hard_reset, patience, decay, warmup_updates):
-        super().__init__(optimizer, states, hard_reset, warmup_updates,)
+        super().__init__(optimizer, states, hard_reset, warmup_updates)
         self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
 
     def train_step(self, scheduler_steps):
@@ -242,9 +246,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
             raise ValueError('--lr-scheduler invsqrt requires setting --max_lr_steps')
         self.max_lr_steps = max_lr_steps
         self.decay_factor = np.sqrt(max(1, max_lr_steps))
-        self.scheduler = optim.lr_scheduler.LambdaLR(
-            optimizer, self._invsqrt_lr
-        )
+        self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
     def _invsqrt_lr(self, step):
         return self.decay_factor / np.sqrt(max(1, step))
@@ -271,7 +273,7 @@ class CosineLRScheduler(ParlAILRScheduler):
         warmup_updates,
         max_lr_steps,
     ):
-        super().__init__(optimizer, states, hard_reset, warmup_updates,)
+        super().__init__(optimizer, states, hard_reset, warmup_updates)
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler cosine requires setting --max_lr_steps')
         self.max_lr_steps = max_lr_steps
@@ -289,6 +291,7 @@ class CosineLRScheduler(ParlAILRScheduler):
 class LinearLRScheduler(ParlAILRScheduler):
     """ Scheduler that decays linearly.
     """
+
     def __init__(
         self,
         optimizer,
@@ -299,7 +302,7 @@ class LinearLRScheduler(ParlAILRScheduler):
         warmup_updates,
         max_lr_steps,
     ):
-        super().__init__(optimizer, states, hard_reset, warmup_updates,)
+        super().__init__(optimizer, states, hard_reset, warmup_updates)
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler linear requires setting --max_lr_steps')
         self.max_lr_steps = max_lr_steps

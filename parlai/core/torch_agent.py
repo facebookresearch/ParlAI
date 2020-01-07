@@ -25,7 +25,6 @@ from copy import deepcopy
 from collections import deque
 import json
 import random
-import numpy as np
 import os
 import torch
 from torch import optim
@@ -502,10 +501,7 @@ class TorchAgent(ABC, Agent):
             '--lr-scheduler',
             type=str,
             default='reduceonplateau',
-            choices=[
-                'reduceonplateau', 'none', 'fixed', 'invsqrt', 'cosine',
-                'linear'
-            ],
+            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt', 'cosine', 'linear'],
             help='Learning rate scheduler.',
         )
         lr_group.add_argument(
@@ -888,7 +884,6 @@ class TorchAgent(ABC, Agent):
                 self.optimizer.load_state_dict(optim_states)
             except ValueError:
                 print('WARNING: not loading optim state since model params changed.')
-
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -1599,7 +1594,7 @@ class TorchAgent(ABC, Agent):
         else:
             states['number_training_updates'] = self._number_training_updates
             if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler'] = self.scheduler.get_state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
             if getattr(self, 'warmup_scheduler', None):
                 states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
