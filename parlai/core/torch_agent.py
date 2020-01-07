@@ -1568,13 +1568,7 @@ class TorchAgent(ABC, Agent):
         observation = Message(observation)
 
         # Sanity check everything is in order
-        self._validate_observe_invariants()
-
-        if observation.get('episode_done'):
-            self.__expecting_clear_history = True
-        elif 'labels' in observation or 'eval_labels' in observation:
-            # make sure we note that we're expecting a reply in the future
-            self.__expecting_to_reply = True
+        self._validate_observe_invariants(observation)
 
         self.observation = observation
         # update the history using the observation
@@ -1644,7 +1638,7 @@ class TorchAgent(ABC, Agent):
 
         raise RuntimeError("Unexpected case in self_observe.")
 
-    def _validate_observe_invariants(self):
+    def _validate_observe_invariants(self, observation):
         """
         Check that we properly called self_observe after the last batch_act.
         """
@@ -1663,6 +1657,12 @@ class TorchAgent(ABC, Agent):
                 "act(). This was changed in #2043. File a GitHub issue if you require "
                 "assistance."
             )
+
+        if observation.get('episode_done'):
+            self.__expecting_clear_history = True
+        elif 'labels' in observation or 'eval_labels' in observation:
+            # make sure we note that we're expecting a reply in the future
+            self.__expecting_to_reply = True
 
     def _validate_self_observe_invariants(self):
         """

@@ -60,6 +60,7 @@ class TestLoadParlAIInternal(unittest.TestCase):
     """
 
     def setUp(self):
+        # create a parlai_internal folder if it does not exist
         self.parlai_internal_exists = os.path.exists('parlai_internal')
         if not self.parlai_internal_exists:
             os.mkdir('parlai_internal')
@@ -68,6 +69,7 @@ class TestLoadParlAIInternal(unittest.TestCase):
         if not self.agent_folder_exists:
             os.mkdir('parlai_internal/agents')
 
+        # copy over the example agent from example_parlai_internal
         shutil.copytree(
             'example_parlai_internal/agents/parrot', 'parlai_internal/agents/parrot'
         )
@@ -77,6 +79,8 @@ class TestLoadParlAIInternal(unittest.TestCase):
         assert agent_module, 'Could not load internal agent'
 
     def tearDown(self):
+        # clean up: remove all folders that we created over the course
+        # of this test
         if not self.parlai_internal_exists:
             shutil.rmtree('parlai_internal/')
         elif not self.agent_folder_exists:
