@@ -4,19 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Basic script which allows local human keyboard input to talk to a trained model.
-
-Examples
---------
-
-.. code-block:: shell
-
-  python examples/interactive.py -m drqa -mf "models:drqa/squad/model"
-
-When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
-
-Input is often model or task specific, but in drqa, it is always
-``context '\\n' question``.
+Basic script which allows to profile interaction with a model using repeat_query
+to avoid human interaction (so we can time it, only).
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
@@ -81,7 +70,7 @@ def interactive(opt, print_parser=None):
 
     pr = cProfile.Profile()
     pr.enable()
-        
+
     # Run
     cnt = 0
     while True:
@@ -101,7 +90,8 @@ def interactive(opt, print_parser=None):
     sortby = 'cumulative'
     ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
     ps.print_stats()
-    print(s.getvalue())        
+    print(s.getvalue())
+
 
 if __name__ == '__main__':
     random.seed(42)

@@ -12,6 +12,7 @@ Useful as a baseline for metrics like F1.
 from parlai.core.agents import Agent
 from parlai.core.message import Message
 
+
 class RepeatQueryAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
