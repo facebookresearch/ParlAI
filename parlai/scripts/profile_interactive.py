@@ -47,7 +47,7 @@ def setup_args(parser=None):
     return parser
 
 
-def interactive(opt, print_parser=None):
+def profile_interactive(opt, print_parser=None):
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
@@ -95,4 +95,4 @@ def interactive(opt, print_parser=None):
 if __name__ == '__main__':
     random.seed(42)
     parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    profile_interactive(parser.parse_args(print_args=False), print_parser=parser)
