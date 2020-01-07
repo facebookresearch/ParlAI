@@ -69,6 +69,13 @@ class ParlAIChecker:
             for line in diff:
                 if line.startswith('@@'):
                     fields = line.split()
+                    # find out the beginning line of the docstring reformat. Example:
+                    # --- /path/to/original  timestamp
+                    # +++ /path/to/new       timestamp
+                    # @@ -1,3 +1,9 @@
+                    # that -1 says the first line changed, and 3 lines were removed
+                    # with a new offset belonging at the first line, and 9
+                    # inserted lines.
                     line_no, _ = fields[1].split(',')
                     line_no = -int(line_no)
                     yield (
