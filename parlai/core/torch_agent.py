@@ -887,9 +887,10 @@ class TorchAgent(ABC, Agent):
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
-        Create the learning rate scheduler, and assign it to self.scheduler.
-        This scheduler will be updated upon a call to receive_metrics.
-        May also create self.warmup_scheduler, if appropriate.
+        Create the learning rate scheduler, and assign it to self.scheduler. This
+        scheduler will be updated upon a call to receive_metrics. May also create
+        self.warmup_scheduler, if appropriate.
+
         :param state_dict states: Possible state_dict provided by model
             checkpoint, for restoring LR state
         :param bool hard_reset: If true, the LR scheduler should ignore the
