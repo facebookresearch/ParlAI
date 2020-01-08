@@ -19,9 +19,7 @@ from parlai.utils.misc import warn_once
 
 task_queue = Queue()
 onboarding_tasks = {}
-onboarding_conv_ids = []
 desired_tasks = {}
-conversations_to_tasks = {}
 
 workers_tasks_completed = {}
 workers_to_conversations_seen = {}
@@ -37,22 +35,16 @@ def add_args(from_argv=False):
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     argparser.add_argument(
-        '--dialogs_path',
-        type=str,
-        default=None,
-        help='path to folder with conversation log files for evaluation',
-    )
-    argparser.add_argument(
         '--annotations_per_pair',
         type=int,
         default=1,
         help='Number of annotations per conversation comparison pair',
     )
     argparser.add_argument(
-        '--pair_data',
-        type=list,
+        '--pairings_file',
+        type=str,
         default=None,
-        help='list of (conv1, conv2, hit, desc) (for pre-chosen pairs, e.g. for replicating previous experiments)',
+        help='',
     )
     argparser.add_argument(
         '--s1_choice',
@@ -73,27 +65,10 @@ def add_args(from_argv=False):
         help='question to present to turker for comparison (e.g. "Which speaker is better?")',
     )
     argparser.add_argument(
-        '--model_comparisons',
-        type=str,
-        help='list of model pairs to compare, comma separated. E.g. ["transformer,human_eval"] ',
-    )
-    argparser.add_argument(
-        '--pairs_per_matchup',
-        type=int,
-        default=160,
-        help='Number of conversation pairs to generate for the comparison',
-    )
-    argparser.add_argument(
         '--block_on_onboarding_fail',
         type=bool,
         default=True,
         help='whether to block on onboarding failure',
-    )
-    argparser.add_argument(
-        '--onboarding_tasks',
-        type=list,
-        default=None,
-        help='onboarding tasks to screen workers with, list of (wrong_convid, right_convid, matchup) tuples',
     )
     argparser.add_argument(
         '--subtasks_per_hit',
@@ -115,103 +90,17 @@ def add_args(from_argv=False):
         return argparser.parse_args(args=[])
 
 
-def list_files(folder):
-    for fn in os.listdir(folder):
-        full_fn = os.path.join(folder, fn)
-        if os.path.isfile(full_fn):
-            yield full_fn
-        elif os.path.isdir(full_fn):
-            for sfn in list_files(full_fn):
-                yield sfn
-
-
 def setup_task_queue(opt):
     """ Initialize task queue to contain the specified number of instances of
     each pairing
     """
     # hacky fix for the parlai parser hacky fix
-    data_folder = opt['dialogs_path'].replace('-', '_')
     annotations_per_pair = opt['annotations_per_pair']
-    all_conv_data = {}
-    conv_ids_by_model = {}
-    internal_id = 0
-
-    # read in all conversation data
-    for data_fn in os.listdir(data_folder):
-        full_data_fn = os.path.join(data_folder, data_fn)
-        with open(full_data_fn, 'r') as dialog_data_file:
-            model_name = data_fn.split('.')[0]
-            model_convs = []
-            conv_ids_by_model[model_name] = model_convs
-
-            for l in dialog_data_file:
-                try:
-                    single_task_json = json.loads(l)
-                except:
-                    print("ILLEGAL FORMATTING:", l)
-                    raise RuntimeError('One or more files are not valid .jsonl')
-                id = single_task_json.get('conversation_id')
-                all_conv_data[id] = single_task_json
-                model_convs.append(id)
 
     ## Set up onboarding tasks
-    if opt['onboarding_tasks']:
-        for (id1, id2, matchup) in opt['onboarding_tasks']:
-            make_task_from_ids(
-                id1,
-                id2,
-                internal_id,
-                all_conv_data,
-                opt['s1_choice'],
-                opt['s2_choice'],
-                opt['question'],
-                matchup=matchup,
-                is_qual=True,
-            )
-            internal_id += 1
-    else:
-        warn_once("No onboarding task provided")
-
-    ## Create main tasks from list of tuples
-    if opt['pair_data']:
-        print('Creating {} tasks from --pair_data'.format(len(opt['pair_data'])))
-        for (id1, id2, hit_id, matchup) in opt['pair_data']:
-            make_task_from_ids(
-                id1,
-                id2,
-                internal_id,
-                all_conv_data,
-                opt['s1_choice'],
-                opt['s2_choice'],
-                opt['question'],
-                hit_id,
-                matchup,
-            )
-            internal_id += 1
-    # make desired tasks randomly from scratch
-    elif opt['model_comparisons']:
-        print('Creating random tasks for model pairs in --model_comparisons')
-        for model_0, model_1 in opt['model_comparisons']:
-            if model_0 not in conv_ids_by_model:
-                raise Error("{} is not a valid model name".format(model0))
-            if model_1 not in conv_ids_by_model:
-                raise Error("{} is not a valid model name".format(model1))
-            num_pairs = opt['pairs_per_matchup']
-            matchup_name = '{},{}'.format(model_0, model_1)
-            conv_pairs = []
-            all_model1_convs = [
-                id for id in conv_ids_by_model[model_0] if id not in onboarding_conv_ids
-            ]
-            all_model2_convs = [
-                id for id in conv_ids_by_model[model_1] if id not in onboarding_conv_ids
-            ]
-            while len(conv_pairs) < num_pairs:
-                id1 = np.random.choice(all_model1_convs)
-                id2 = np.random.choice(all_model2_convs)
-                if (id1, id2) in conv_pairs:
-                    continue
-                conv_pairs.append((id1, id2))
-
+    if opt['pairings_files']: ## TODO @margaretli changed opt
+        with open(opt['pairings_files'], 'r') as pf:
+            for l in pf:
                 make_task_from_ids(
                     id1,
                     id2,
@@ -220,11 +109,12 @@ def setup_task_queue(opt):
                     opt['s1_choice'],
                     opt['s2_choice'],
                     opt['question'],
-                    matchup=matchup_name,
+                    matchup=matchup,
+                    is_qual=True,
                 )
-                internal_id += 1
+                internal_id += 1`
     else:
-        raise NotImplementedError("Provide --pair_data or --model_comparison")
+        raise Exception("You must provide a pairings file")
 
     ## Fill task queue
     for i in range(annotations_per_pair):
