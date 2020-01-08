@@ -10,14 +10,17 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 processes.
 """
 
+import re
+from abc import ABC, abstractmethod
+from collections import Counter
+from numbers import Number
+from typing import Union
+
+import torch
+
 from parlai.utils.thread import SharedTable
 from parlai.utils.misc import round_sigfigs, no_lock
-from collections import Counter
 from parlai.utils.misc import warn_once
-from numbers import Number
-
-from abc import ABC, abstractmethod
-import re
 
 DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -56,7 +59,7 @@ class Metric(ABC):
         return f'{self.report():.4g}'
 
     def __repr__(self) -> str:
-        return f'{self.__class__}({self.report():.4g})'
+        return f'{self.__class__} ({self.report():.4g})'
 
 
 class SumMetric(Metric):
@@ -64,7 +67,10 @@ class SumMetric(Metric):
     Class that keeps a running sum of some metric.
     """
 
-    def __init__(self, sum_: Number):
+    def __init__(self, sum_: Union[Number, torch.Tensor]):
+        if isinstance(sum_, torch.Tensor):
+            sum_ = sum_.item()
+        assert isinstance(sum_, Number)
         self.sum = sum_
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
@@ -82,7 +88,15 @@ class AverageMetric(Metric):
     Class that keeps a running average of some metric.
     """
 
-    def __init__(self, numer: Number, denom: int):
+    def __init__(
+        self, numer: Union[Number, torch.Tensor], denom: Union[int, torch.Tensor]
+    ):
+        if isinstance(numer, torch.Tensor):
+            numer = numer.item()
+        if isinstance(denom, torch.Tensor):
+            denom = denom.item()
+        assert isinstance(numer, Number)
+        assert isinstance(denom, int)
         self.numer = numer
         self.denom = denom
 
