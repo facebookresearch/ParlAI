@@ -60,7 +60,7 @@ EVAL_ARGS = {
     'compute_tokenized_bleu': True,
 }
 
-#
+
 @unittest.skip(
     "need pytorch 1.4 release, https://github.com/pytorch/vision/issues/1712"
 )
