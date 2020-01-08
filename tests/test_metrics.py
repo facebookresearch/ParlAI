@@ -23,11 +23,17 @@ class TestUtils(unittest.TestCase):
         for input_, output in passing_inputs_and_outputs:
             actual_output = SumMetric(input_).report()
             self.assertEqual(actual_output, output)
+            # Value should be equal here. For the rest they'll only be equal to some
+            # precision
             self.assertIsInstance(actual_output, float)
 
-        failing_inputs = ['4', [6.8], torch.Tensor([1, 3.8])]
-        for input_ in failing_inputs:
-            with self.assertRaises(AssertionError):
+        failing_inputs = [
+            ('4', AssertionError),
+            ([6.8], AssertionError),
+            (torch.Tensor([1, 3.8]), ValueError),  # Tensor has more than 1 element
+        ]
+        for input_, error in failing_inputs:
+            with self.assertRaises(error):
                 _ = SumMetric(input_)
 
     def test_sum_metric_additions(self):
@@ -40,7 +46,7 @@ class TestUtils(unittest.TestCase):
         ]
         for input1, input2, output in input_pairs_and_outputs:
             actual_output = (SumMetric(input1) + SumMetric(input2)).report()
-            self.assertEqual(actual_output, output)
+            self.assertAlmostEqual(actual_output, output)
             self.assertIsInstance(actual_output, float)
 
     def test_average_metric_inputs(self):
@@ -51,20 +57,20 @@ class TestUtils(unittest.TestCase):
             ((torch.Tensor([2.3]), torch.LongTensor([2])), 1.15),
             ((torch.Tensor([2.3]), torch.Tensor([2])), 1.15),
         ]
-        for input, output in passing_inputs_and_outputs:
-            actual_output = AverageMetric(input[0], input[1]).report()
-            self.assertEqual(actual_output, output)
+        for input_, output in passing_inputs_and_outputs:
+            actual_output = AverageMetric(input_[0], input_[1]).report()
+            self.assertAlmostEqual(actual_output, output)
             self.assertIsInstance(actual_output, float)
 
         failing_inputs = [
-            (2, '4'),
-            (2, 4.0),  # Can't pass in floats as the denominator
-            (torch.Tensor([1, 1]), torch.Tensor([2])),
-            (torch.Tensor([3.2]), torch.Tensor([4.0])),
+            ((2, '4'), AssertionError),
+            ((2, 4.0), AssertionError),  # Can't pass in floats as the denominator
+            ((torch.Tensor([1, 1]), torch.Tensor([2])), ValueError),
+            ((torch.Tensor([3.2]), torch.Tensor([4.0])), AssertionError),
         ]
-        for input in failing_inputs:
-            with self.assertRaises(AssertionError):
-                _ = AverageMetric(input[0], input[1])
+        for input_, error in failing_inputs:
+            with self.assertRaises(error):
+                _ = AverageMetric(input_[0], input_[1])
 
     def test_average_metric_additions(self):
 
@@ -81,8 +87,8 @@ class TestUtils(unittest.TestCase):
                 AverageMetric(input1[0], input1[1])
                 + AverageMetric(input2[0], input2[1])
             ).report()
-            self.assertEqual(actual_output, output)
-            self.assertIsInstance(actual_output, output)
+            self.assertAlmostEqual(actual_output, output)
+            self.assertIsInstance(actual_output, float)
 
 
 if __name__ == '__main__':
