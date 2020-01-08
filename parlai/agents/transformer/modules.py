@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 import numpy as np
 import torch
@@ -1025,13 +1025,15 @@ class MultiHeadAttention(nn.Module):
 
         nn.init.xavier_normal_(self.out_lin.weight)
 
-    def forward(
+    def forward(  # type: ignore
+        # TODO: remove type ignore with pytorch 1.5:
+        # https://github.com/pytorch/pytorch/pull/31057
         self,
         query: torch.Tensor,
-        key: torch.Tensor = None,
-        value: torch.Tensor = None,
+        key: Optional[torch.Tensor] = None,
+        value: Optional[torch.Tensor] = None,
         mask: torch.Tensor = None,
-        incr_state: Dict[str, torch.Tensor] = None,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
@@ -1077,10 +1079,13 @@ class MultiHeadAttention(nn.Module):
         if key is None and value is None:
             # self attention
             key = value = query
+            _, _key_len, dim = query.size()
         elif value is None:
             # key and value are the same, but query differs
             # self attention
             value = key
+
+        assert key is not None  # let mypy know we sorted this
         _, _key_len, dim = key.size()
 
         q = prepare_head(self.q_lin(query))
