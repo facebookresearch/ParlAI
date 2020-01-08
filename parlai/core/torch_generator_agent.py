@@ -18,7 +18,7 @@ Contains the following utilities:
 """
 
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import TypeVar, List
 import math
 from operator import attrgetter
 
@@ -31,6 +31,19 @@ from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.torch import padded_tensor, neginf
+
+
+try:
+    from nltk.translate import bleu_score as nltkbleu
+
+except ImportError:
+    nltkbleu = None
+
+try:
+    from fairseq import bleu as fairseq_bleu
+
+except ImportError:
+    fairseq_bleu = None
 
 
 class TorchGeneratorModel(nn.Module, ABC):
@@ -309,6 +322,12 @@ class TorchGeneratorAgent(TorchAgent):
         agent.add_argument(
             '--topp', type=float, default=0.9, help='p used in nucleus sampling'
         )
+        agent.add_argument(
+            '--compute-tokenized-bleu',
+            type='bool',
+            default=False,
+            help='if true, compute tokenized bleu scores',
+        )
 
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
@@ -322,10 +341,13 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
         self.output_token_losses = opt.get('verbose', False)
+        self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
 
         if shared:
             # set up shared properties
             states = shared.get('states', {})
+            self.fairseq_bleu_scorer = shared['fairseq_bleu_scorer']
+            self.ntlk_bleu_scores = shared['nltk_bleu_scores']
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
@@ -336,6 +358,7 @@ class TorchGeneratorAgent(TorchAgent):
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
+            self._init_and_reset_bleu_scorers()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
 
@@ -451,6 +474,18 @@ class TorchGeneratorAgent(TorchAgent):
                 else:
                     raise e
 
+    def _init_and_reset_bleu_scorers(self):
+        if not hasattr(self, 'fairseq_bleu_scorer'):
+            if fairseq_bleu is None:
+                self.fairseq_bleu_scorer = None
+            else:
+                self.fairseq_bleu_scorer = fairseq_bleu.Scorer(
+                    self.NULL_IDX, self.END_IDX, self.dict[self.dict.unk_token]
+                )
+        self.nltk_bleu_scores = {
+            f'bleu-{i}': {'score': 0, 'cnt': 0} for i in range(1, 5)
+        }
+
     def reset_metrics(self):
         """
         Reset metrics for reporting loss and perplexity.
@@ -462,6 +497,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
+        self._init_and_reset_bleu_scorers()
 
     def share(self):
         """
@@ -472,6 +508,8 @@ class TorchGeneratorAgent(TorchAgent):
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
             }
+        shared['fairseq_bleu_scorer'] = self.fairseq_bleu_scorer
+        shared['nltk_bleu_scores'] = self.nltk_bleu_scores
         return shared
 
     def report(self):
@@ -480,6 +518,8 @@ class TorchGeneratorAgent(TorchAgent):
 
         Note that this includes predicting __END__ and __UNK__ tokens and may differ
         from a truly independent measurement.
+
+        Additionally report tokenized bleu scores, if desired.
         """
         base = super().report()
         m = {}
@@ -498,6 +538,27 @@ class TorchGeneratorAgent(TorchAgent):
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             base[k] = round_sigfigs(v, 4)
+        if not self.skip_generation and self.compute_tokenized_bleu:
+            base.update({'fairseq_bleu': 'N/A', 'nltk_bleu_unnormalized': 'N/A'})
+            if fairseq_bleu is not None:
+                try:
+                    fairseq_bleu_scores = {
+                        k: self.fairseq_bleu_scorer.result_string(order=k)
+                        for k in range(1, 5)
+                    }
+                except ZeroDivisionError:
+                    # some preds are REAL bad
+                    fairseq_bleu_scores = {k: '= 0,' for k in range(1, 5)}
+
+                base['fairseq_bleu'] = {
+                    k: float(v[v.index('= ') + 2 : v.index(',')])
+                    for k, v in fairseq_bleu_scores.items()
+                }
+            if nltkbleu is not None:
+                base['nltk_bleu_unnormalized'] = {
+                    k: round_sigfigs(v['score'] / v['cnt'], 4)
+                    for k, v in self.nltk_bleu_scores.items()
+                }
         return base
 
     def vectorize(self, *args, **kwargs):
@@ -554,7 +615,10 @@ class TorchGeneratorAgent(TorchAgent):
         """
         Train on a single batch of examples.
         """
-        batchsize = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
+        elif batch.image is not None:
+            batchsize = len(batch.image)
         # helps with memory usage
         self._init_cuda_buffer(batchsize, self.truncate or 256)
         self.model.train()
@@ -599,13 +663,82 @@ class TorchGeneratorAgent(TorchAgent):
             )
         return token_losses
 
+    def _compute_fairseq_bleu(self, batch: Batch, texts: List[str]):
+        """
+        Compute BLEU score between text and label, using the FAIRSeq BLEU Scorer.
+
+        :param batch:
+            Batch of observations
+        :param texts:
+            list of string predictions
+        """
+        if fairseq_bleu is None:
+            return 0
+        aa = torch.IntTensor(1)
+        for i, t in enumerate(texts):
+            self.fairseq_bleu_scorer.add(
+                batch.label_vec[i].type_as(aa),
+                self._vectorize_text(t, True, True, self.label_truncate, False).type_as(
+                    aa
+                ),
+            )
+
+    def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
+        """
+        Compute BLEU score between text and label(s), using the NLTK BLEU Scorer.
+
+        Note this differs from BLEU in ParlAI metrics in that the answers
+        are unnormalized (no removal of stop words, etc.)
+
+        :param batch:
+            Batch of observations
+        :param texts:
+            list of string predictions
+        """
+
+        def _bleu(guess: str, answers: List[str], weights: List[float]):
+            """
+            Compute approximate BLEU score between guess and a set of answers.
+
+            This function does not process guess or answers
+            """
+            if nltkbleu is None:
+                return 0
+            return nltkbleu.sentence_bleu(
+                [a.split(" ") for a in answers],
+                guess.split(" "),
+                smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
+                weights=weights,
+            )
+
+        for i, p in enumerate(texts):
+            obs = batch.observations[i]
+            references = []
+            for lbl in obs['eval_labels']:
+                references.append(
+                    self._v2t(
+                        self._vectorize_text(
+                            lbl, True, True, self.label_truncate, False
+                        )
+                    )
+                )
+            for i in range(4):
+                weights = [1 / (i + 1) for _ in range(i + 1)]
+                self.nltk_bleu_scores[f'bleu-{i + 1}']['score'] += _bleu(
+                    p, references, weights
+                )
+                self.nltk_bleu_scores[f'bleu-{i + 1}']['cnt'] += 1
+
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
         """
-        if batch.text_vec is None:
+        if batch.text_vec is None and batch.image is None:
             return
-        bsz = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            bsz = batch.text_vec.size(0)
+        else:
+            bsz = len(batch.image)
         self.model.eval()
         cand_scores = None
         token_losses = None
@@ -656,6 +789,10 @@ class TorchGeneratorAgent(TorchAgent):
                 cand_choices.append([batch.candidates[i][o] for o in ordering])
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
+        if text and self.compute_tokenized_bleu:
+            # compute additional bleu scores
+            self._compute_fairseq_bleu(batch, text)
+            self._compute_nltk_bleu(batch, text)
         return Output(text, cand_choices, token_losses=token_losses)
 
     def _treesearch_factory(self, device):
@@ -737,12 +874,22 @@ class TorchGeneratorAgent(TorchAgent):
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
         encoder_states = model.encoder(*self._model_input(batch))
-        dev = batch.text_vec.device
+        if batch.text_vec is not None:
+            dev = batch.text_vec.device
+        else:
+            dev = batch.label_vec.device
 
-        bsz = len(batch.text_lengths)
-        beams = [
-            self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
-        ]
+        bsz = (
+            len(batch.text_lengths)
+            if batch.text_lengths is not None
+            else len(batch.image)
+        )
+        if batch.text_vec is not None:
+            beams = [
+                self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
+            ]
+        else:
+            beams = [self._treesearch_factory(dev) for _ in range(bsz)]
 
         # repeat encoder outputs and decoder inputs
         decoder_input = (

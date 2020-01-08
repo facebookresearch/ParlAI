@@ -1167,6 +1167,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
+        if self.opt['embedding_type'] == 'random':
+            # Random embedding means no copying of pretrained embeddings
+            return
+
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
@@ -1745,7 +1749,7 @@ class TorchAgent(ABC, Agent):
                         # We do not save the state of interactive mode, it is only decided
                         # by scripts or command line.
                         del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle)
+                    json.dump(saved_opts, handle, indent=4)
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 

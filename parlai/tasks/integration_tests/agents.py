@@ -21,7 +21,6 @@ import itertools
 import os
 from PIL import Image
 import string
-import torch
 import json
 from abc import ABC
 
@@ -466,15 +465,13 @@ class ImageTeacher(AbstractImageTeacher):
 
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
-        img_features_dict = {}
-        for img in imgs:
-            image = Image.new('RGB', (100, 100))
+        for i, img in enumerate(imgs):
+            image = Image.new('RGB', (100, 100), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
-            img_features_dict[img] = torch.FloatTensor(opt['image_features_dim'])
-        torch.save(img_features_dict, self.image_features_path)
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
+            random.seed(42)
             data = [
                 {
                     'image_id': img,
@@ -492,6 +489,14 @@ class ImageTeacher(AbstractImageTeacher):
         Return path dummy image features.
         """
         return self.image_features_path
+
+    def image_id_to_image_path(self, image_id):
+        """
+        Return path to image on disk.
+        """
+        return os.path.join(
+            self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg'
+        )
 
 
 class DefaultTeacher(CandidateTeacher):

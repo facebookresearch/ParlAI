@@ -254,7 +254,7 @@ def sync_parameters(model: torch.nn.Module) -> bool:
             dist.all_reduce(p.data, dist.ReduceOp.SUM)
 
     # double check everything synced correctly
-    norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
+    norm2 = sum((p.data ** 2).sum().float().item() for p in model.parameters())
     all_versions = all_gather_list(norm2)
     if not all(n == norm2 for n in all_versions):
         raise AssertionError(

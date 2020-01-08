@@ -23,6 +23,7 @@ Options:
 import random
 
 from parlai.core.agents import Agent
+from parlai.core.message import Message
 
 
 class RepeatLabelAgent(Agent):
@@ -75,5 +76,5 @@ class RepeatLabelAgent(Agent):
                 reply['text'] = self.cantAnswerMessage
         else:
             reply['text'] = self.cantAnswerMessage
-
-        return reply
+        reply['episode_done'] = False
+        return Message(reply)

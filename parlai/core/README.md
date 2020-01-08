@@ -10,6 +10,7 @@ The core library contains the following files:
   - DictionaryAgent: agent which tracks the index and frequency of words in a dictionary, and can parse a sentence into indices into its dictionary or back
 - **gpt2_helper.py**: byte pair encoding utilities from GPT-2
 - **image_featurizers.py**: provides functionality for loading images
+- **loader.py**: functions for loading world, agents, tasks, and teacher modules
 - **logs**: utilities for logging metrics to tensorboard
 - **message**: contains message object
   - **_Message_**: class for objects and observations in ParlAI

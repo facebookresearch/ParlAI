@@ -20,12 +20,19 @@ class TestAbstractImageTeacher(unittest.TestCase):
     Test AbstractImageTeacher.
     """
 
-    def test_display_data(self):
+    def _test_display_output(self, image_mode):
         """
-        Test that, with pre-loaded image features, all examples are different.
+        Test display data output with given image_mode.
         """
+        with testing_utils.tempdir() as tmpdir:
+            data_path = tmpdir
+            os.makedirs(os.path.join(data_path, 'ImageTeacher'))
 
-        def _test_display_output(opt):
+            opt = {
+                'task': 'integration_tests:ImageTeacher',
+                'datapath': data_path,
+                'image_mode': image_mode,
+            }
             output = testing_utils.display_data(opt)
             train_labels = re.findall(r"\[labels: .*\]", output[0])
             valid_labels = re.findall(r"\[eval_labels: .*\]", output[1])
@@ -35,14 +42,19 @@ class TestAbstractImageTeacher(unittest.TestCase):
                 self.assertGreater(len(lbls), 0, 'DisplayData failed')
                 self.assertEqual(len(lbls), len(set(lbls)), output[i])
 
-        with testing_utils.tempdir() as tmpdir:
-            data_path = tmpdir
-            os.makedirs(os.path.join(data_path, 'ImageTeacher'))
+    def test_display_data_no_image(self):
+        """
+        Test that, with no images loaded, all examples are different.
+        """
+        self._test_display_output('no_image_model')
 
-            opt = {'task': 'integration_tests:ImageTeacher', 'datapath': data_path}
-            for image_mode in ['resnet152', 'no_image_model']:
-                opt['image_mode'] = image_mode
-                _test_display_output(opt)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_display_data_resnet(self):
+        """
+        Test that, with pre-loaded image features, all examples are different.
+        """
+        self._test_display_output('resnet152')
 
 
 if __name__ == '__main__':

@@ -143,7 +143,7 @@ class WorldLogger:
         with open(outfile, 'w') as of:
             for episode in tqdm(self._logs):
                 dialog = {'dialog': episode}
-                json_episode = json.dumps(dialog)
+                json_episode = json.dumps(dialog, indent=4)
                 of.write(json_episode + '\n')
 
     def write(self, outfile, file_format='jsonl'):
