@@ -1084,8 +1084,6 @@ class MultiHeadAttention(nn.Module):
             # key and value are the same, but query differs
             # self attention
             value = key
-        else:
-            raise ValueError("Can't have key None and value not None")
 
         assert key is not None  # let mypy know we sorted this
         _, _key_len, dim = key.size()
