@@ -31,6 +31,7 @@ import os
 import signal
 
 from parlai.core.agents import create_agent, create_agent_from_shared
+from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.params import ParlaiParser, print_announcements
@@ -44,7 +45,6 @@ from parlai.utils.distributed import (
     is_distributed,
     num_workers,
 )
-from parlai.utils.exceptions import StopTrainException
 from parlai.utils.misc import Timer, round_sigfigs, warn_once
 
 

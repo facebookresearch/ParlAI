@@ -13,7 +13,7 @@ from abc import abstractmethod
 from torch import optim
 import numpy as np
 
-from parlai.utils.exceptions import StopTrainException
+from parlai.core.exceptions import StopTrainException
 from parlai.utils.misc import warn_once
 
 
@@ -136,7 +136,7 @@ class ParlAILRScheduler(object):
             'set for --lr_scheduler cosine or linear',
         )
         lr_group.add_argument(
-            '--invsqrt_lr_decay_gamma',
+            '--invsqrt-lr-decay-gamma',
             type=int,
             default=-1,
             help='Constant used only to find the lr multiplier for the invsqrt '
@@ -404,8 +404,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         invsqrt_lr_decay_gamma,
     ):
         """
-        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root
-        scheduler.
+        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root scheduler.
 
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
