@@ -68,10 +68,14 @@ class SumMetric(Metric):
     """
 
     def __init__(self, sum_: Union[Number, torch.Tensor]):
+
+        # Convert sum to float
         if isinstance(sum_, torch.Tensor):
             sum_ = sum_.item()
         assert isinstance(sum_, Number)
-        self.sum = float(sum_)
+        sum_ = float(sum_)
+
+        self.sum = sum_
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
@@ -89,15 +93,24 @@ class AverageMetric(Metric):
     """
 
     def __init__(
-        self, numer: Union[Number, torch.Tensor], denom: Union[int, torch.Tensor]
+        self, numer: Union[Number, torch.Tensor], denom: Union[int, float, torch.Tensor]
     ):
+
+        # Convert numer to float
         if isinstance(numer, torch.Tensor):
             numer = numer.item()
+        assert isinstance(numer, Number)
+        numer = float(numer)
+
+        # Convert denom to int
         if isinstance(denom, torch.Tensor):
             denom = denom.item()
-        assert isinstance(numer, Number)
+        if isinstance(denom, float):
+            assert denom.is_integer()
+            denom = int(denom)
         assert isinstance(denom, int)
-        self.numer = float(numer)
+
+        self.numer = numer
         self.denom = denom
 
     def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
