@@ -81,3 +81,7 @@ class TestUtils(unittest.TestCase):
             ).report()
             self.assertEqual(actual_output, output)
             self.assertIsInstance(actual_output, output)
+
+
+if __name__ == '__main__':
+    unittest.main()
