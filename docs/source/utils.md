@@ -13,6 +13,13 @@ ParlAI has very many utilities, roughly organized by function.
   :members:
 ```
 
+
+## Torch Utilities
+```eval_rst
+.. automodule:: parlai.utils.torch
+  :members:
+```
+
 ## Uncategorized Utils
 ```eval_rst
 .. automodule:: parlai.utils.misc

@@ -25,15 +25,22 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_tensorboard
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Tasks & Model Zoo
 
    tasks
    zoo
 
 .. toctree::
+  :maxdepth: 2
+  :caption: Agents
+  :includehidden:
+
+  agents_list
+
+.. toctree::
    :maxdepth: 1
-   :caption: Core Library
+   :caption: Core Library API
 
    observations
    agents
@@ -46,12 +53,6 @@ ParlAI is a one-stop-shop for dialog research.
    worlds
    utils
 
-.. toctree::
-  :maxdepth: 0
-  :caption: Agents
-  :glob:
-
-  agent_refs/*
 
 .. toctree::
    :maxdepth: 2
