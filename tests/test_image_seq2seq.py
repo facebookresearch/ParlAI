@@ -60,7 +60,8 @@ EVAL_ARGS = {
     'compute_tokenized_bleu': True,
 }
 
-
+# TODO: need pytorch 1.4 release, https://github.com/pytorch/vision/issues/1712
+@unittest.skip
 @unittest.skipUnless(TORCH_AVAILABLE, 'Must use torch 1.2 or above')
 class TestImageSeq2Seq(unittest.TestCase):
     """
