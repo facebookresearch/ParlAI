@@ -684,7 +684,7 @@ class DictionaryAgent(Agent):
 
         # save opt file
         with open(filename + '.opt', 'w', encoding='utf-8') as handle:
-            json.dump(self.opt, handle)
+            json.dump(self.opt, handle, indent=4)
 
     def sort(self, trim=True):
         """
