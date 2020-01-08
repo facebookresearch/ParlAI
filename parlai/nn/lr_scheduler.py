@@ -133,7 +133,14 @@ class ParlAILRScheduler(object):
             default=-1,
             help='Number of train steps the scheduler should take after warmup. '
             'Training is terminated after this many steps. This should only be '
-            'set for --lr_scheduler invsqrt, cosine, or linear',
+            'set for --lr_scheduler cosine or linear',
+        )
+        lr_group.add_argument(
+            '--invsqrt_lr_decay_gamma',
+            type=int,
+            default=-1,
+            help='Constant used only to find the lr multiplier for the invsqrt '
+            'scheduler. Must be set for --lr_scheduler invsqrt',
         )
         lr_group.add_argument(
             '--warmup-updates',
@@ -185,6 +192,7 @@ class ParlAILRScheduler(object):
         warmup_updates = opt.get('warmup_updates', -1)
         warmup_rate = opt.get('warmup_rate', 1e-4)
         max_lr_steps = opt.get('max_lr_steps', -1)
+        invsqrt_lr_decay_gamma = opt.get('invsqrt_lr_decay_gamma', -1)
 
         print(opt.get('lr_scheduler'))
         if opt.get('lr_scheduler') == 'none':
@@ -225,7 +233,7 @@ class ParlAILRScheduler(object):
                 decay,
                 warmup_updates,
                 warmup_rate,
-                max_lr_steps,
+                invsqrt_lr_decay_gamma,
             )
         elif opt.get('lr_scheduler') == 'cosine':
             scheduler = CosineLRScheduler(
@@ -393,18 +401,18 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         decay,
         warmup_updates,
         warmup_rate,
-        max_lr_steps,
+        invsqrt_lr_decay_gamma,
     ):
         """
-        max_lr_steps determines the cycle length of the inverse square root scheduler.
+        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root scheduler.
 
-        When steps taken == max_lr_steps, the lr multiplier is 1
+        When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
         super().__init__(optimizer, states, hard_reset, warmup_updates, warmup_rate)
-        if max_lr_steps <= 0:
-            raise ValueError('--lr-scheduler invsqrt requires setting --max_lr_steps')
-        self.max_lr_steps = max_lr_steps
-        self.decay_factor = np.sqrt(max(1, max_lr_steps))
+        if invsqrt_lr_decay_gamma <= 0:
+            raise ValueError('--lr-scheduler invsqrt requires setting --invsqrt_lr_decay_gamma')
+        self.invsqrt_lr_decay_gamma = invsqrt_lr_decay_gamma
+        self.decay_factor = np.sqrt(max(1, invsqrt_lr_decay_gamma))
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
     def _invsqrt_lr(self, step):
