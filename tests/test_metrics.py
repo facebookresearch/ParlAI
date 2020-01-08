@@ -77,8 +77,8 @@ class TestUtils(unittest.TestCase):
         input_pairs_and_outputs = [
             ((2, 4), (1.5, 1), 0.7),
             (
-                (torch.FloatTensor([[[2]]]), torch.Tensor([4])),
-                (torch.LongTensor([1.5]), 1),
+                (torch.LongTensor([[[2]]]), torch.Tensor([4])),
+                (torch.FloatTensor([1.5]), 1),
                 0.7,
             ),
         ]
