@@ -181,6 +181,7 @@ jobs:
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -201,6 +202,7 @@ jobs:
   unittests_37:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -221,6 +223,7 @@ jobs:
   unittests_gpu11:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -248,6 +251,7 @@ jobs:
   unittests_gpu12:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
