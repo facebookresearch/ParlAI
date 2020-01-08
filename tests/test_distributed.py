@@ -15,7 +15,7 @@ import parlai.scripts.multiprocessing_train as mp_train
 def _forced_parse(parser, opt):
     parser.set_params(**opt)
     parser.set_params(log_every_n_sec=10)
-    popt = parser.parse_args(print_args=False)
+    popt = parser.parse_args([], print_args=False)
     # in some rare cases, like for instance if the model class also
     # overrides its default params, the params override will not
     # be taken into account.

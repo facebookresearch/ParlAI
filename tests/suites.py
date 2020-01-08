@@ -11,6 +11,7 @@ Various test loaders.
 import os
 import unittest
 import random
+import time
 from itertools import chain
 
 
@@ -35,17 +36,6 @@ def _circleci_parallelism(suite):
     return unittest.TestSuite(tests)
 
 
-def _clear_cmdline_args(fn):
-    """
-    Decorate to make sure 'python setup.py test' doesn't look like a parlai call.
-    """
-    import sys
-
-    sys.argv = sys.argv[:1]
-    return fn
-
-
-@_clear_cmdline_args
 def datatests():
     """
     Test for data integrity.
@@ -57,7 +47,6 @@ def datatests():
     return test_suite
 
 
-@_clear_cmdline_args
 def nightly_gpu():
     """
     Nightly GPU tests.
@@ -70,7 +59,6 @@ def nightly_gpu():
     return test_suite
 
 
-@_clear_cmdline_args
 def unittests():
     """
     Short tests.
@@ -83,7 +71,6 @@ def unittests():
     return test_suite
 
 
-@_clear_cmdline_args
 def mturk():
     """
     Mechanical Turk tests.
@@ -93,7 +80,6 @@ def mturk():
     return test_suite
 
 
-@_clear_cmdline_args
 def internal_tests():
     """
     Internal Tests.
@@ -101,3 +87,49 @@ def internal_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai_internal/tests")
     return test_suite
+
+
+class TimeLoggingTestResult(unittest.runner.TextTestResult):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.test_timings = []
+
+    def startTest(self, test):
+        self._test_started_at = time.time()
+        super().startTest(test)
+
+    def addSuccess(self, test):
+        elapsed = time.time() - self._test_started_at
+        name = self.getDescription(test)
+        self.test_timings.append((name, elapsed))
+        super().addSuccess(test)
+
+    def getTestTimings(self):
+        return self.test_timings
+
+
+class TimeLoggingTestRunner(unittest.TextTestRunner):
+    def __init__(self, slow_test_threshold=10.0, *args, **kwargs):
+        self.slow_test_threshold = slow_test_threshold
+        return super().__init__(resultclass=TimeLoggingTestResult, *args, **kwargs)
+
+    def run(self, test):
+        result = super().run(test)
+
+        self.stream.writeln("\nSlow Tests (>{:.03}s):".format(self.slow_test_threshold))
+        for name, elapsed in result.getTestTimings():
+            if elapsed > self.slow_test_threshold:
+                self.stream.writeln("({:.03}s) {}".format(elapsed, name))
+
+        return result
+
+
+MySuite = unittests()
+
+
+def main():
+    unittest.main(testRunner=TimeLoggingTestRunner)
+
+
+if __name__ == '__main__':
+    main()

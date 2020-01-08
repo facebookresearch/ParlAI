@@ -73,7 +73,7 @@ class TestParlaiParser(unittest.TestCase):
         )
 
         with testing_utils.capture_output() as _:
-            parser.parse_args()
+            parser.parse_args([])
         help_str = parser.format_help()
         assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
 
@@ -92,7 +92,7 @@ class TestParlaiParser(unittest.TestCase):
             recommended=[5, 10, 15],
         )
         with testing_utils.capture_output() as _:
-            parser.parse_args()
+            parser.parse_args([])
 
         help_str = parser.format_help()
         assert re.search(r'Test Group:\n', help_str)
