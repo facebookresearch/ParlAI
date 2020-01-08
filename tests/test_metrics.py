@@ -46,7 +46,7 @@ class TestUtils(unittest.TestCase):
         ]
         for input1, input2, output in input_pairs_and_outputs:
             actual_output = (SumMetric(input1) + SumMetric(input2)).report()
-            self.assertAlmostEqual(actual_output, output)
+            self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
     def test_average_metric_inputs(self):
@@ -59,7 +59,7 @@ class TestUtils(unittest.TestCase):
         ]
         for input_, output in passing_inputs_and_outputs:
             actual_output = AverageMetric(input_[0], input_[1]).report()
-            self.assertAlmostEqual(actual_output, output)
+            self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
         failing_inputs = [
@@ -87,7 +87,7 @@ class TestUtils(unittest.TestCase):
                 AverageMetric(input1[0], input1[1])
                 + AverageMetric(input2[0], input2[1])
             ).report()
-            self.assertAlmostEqual(actual_output, output)
+            self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
 
