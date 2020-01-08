@@ -53,9 +53,9 @@ class TestUtils(unittest.TestCase):
 
         passing_inputs_and_outputs = [
             ((2, 4), 0.5),
-            ((17.0, 10), 1.7),
+            ((17.0, 10.0), 1.7),
             ((torch.Tensor([2.3]), torch.LongTensor([2])), 1.15),
-            ((torch.Tensor([2.3]), torch.Tensor([2])), 1.15),
+            ((torch.Tensor([2.3]), torch.Tensor([2.0])), 1.15),
         ]
         for input_, output in passing_inputs_and_outputs:
             actual_output = AverageMetric(input_[0], input_[1]).report()
@@ -64,9 +64,9 @@ class TestUtils(unittest.TestCase):
 
         failing_inputs = [
             ((2, '4'), AssertionError),
-            ((2, 4.0), AssertionError),  # Can't pass in floats as the denominator
+            ((17.0, 10.0000001), AssertionError),
             ((torch.Tensor([1, 1]), torch.Tensor([2])), ValueError),
-            ((torch.Tensor([3.2]), torch.Tensor([4.0])), AssertionError),
+            ((torch.Tensor([3.2]), torch.Tensor([4.2])), AssertionError),
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):
