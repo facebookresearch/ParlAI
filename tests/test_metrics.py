@@ -4,34 +4,52 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.metrics import AverageMetric, SumMetric
-
 import unittest
+
+import torch
+
+from parlai.core.metrics import AverageMetric, SumMetric
 
 
 class TestUtils(unittest.TestCase):
     def test_sum_metric_inputs(self):
-        for input, output in passing_inputs_and_outputs:
-            self.assertEqual(SumMetric(input).report(), output)
-        for input in failing_inputs:
-            self.assertRaises(AssertionError, SumMetric(input))
+
+        passing_inputs_and_outputs = [
+            (2, 2.0),
+            (-5.0, -5.0),
+            (torch.LongTensor([[-1]]), -1.0),
+            (torch.DoubleTensor([34.68]), 34.68),
+        ]
+        for input_, output in passing_inputs_and_outputs:
+            actual_output = SumMetric(input_).report()
+            self.assertEqual(actual_output, output)
+            self.assertIsInstance(actual_output, float)
+
+        failing_inputs = ['4', [6.8], torch.Tensor([1, 3.8])]
+        for input_ in failing_inputs:
+            self.assertRaises(AssertionError, SumMetric(input_))
 
     def test_sum_metric_additions(self):
         for input1, input2, output in input_pairs_and_outputs:
-            self.assertEqual((SumMetric(input1) + SumMetric(input2)).report(), output)
+            actual_output = (SumMetric(input1) + SumMetric(input2)).report()
+            self.assertEqual(actual_output, output)
+            self.assertIsInstance(actual_output, float)
 
     def test_average_metric_inputs(self):
+
         for input, output in passing_inputs_and_outputs:
-            self.assertEqual(AverageMetric(input[0], input[1]).report(), output)
+            actual_output = AverageMetric(input[0], input[1]).report()
+            self.assertEqual(actual_output, output)
+            self.assertIsInstance(actual_output, float)
+
         for input in failing_inputs:
             self.assertRaises(AssertionError, AverageMetric(input[0], input[1]))
 
     def test_average_metric_additions(self):
         for input1, input2, output in input_pairs_and_outputs:
-            self.assertEqual(
-                (
-                    AverageMetric(input1[0], input1[1])
-                    + AverageMetric(input2[0], input2[1])
-                ).report(),
-                output,
-            )
+            actual_output = (
+                AverageMetric(input1[0], input1[1])
+                + AverageMetric(input2[0], input2[1])
+            ).report()
+            self.assertEqual(actual_output, output)
+            self.assertIsInstance(actual_output, output)

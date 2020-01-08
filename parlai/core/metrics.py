@@ -52,7 +52,7 @@ class Metric(ABC):
     """
 
     @abstractmethod
-    def report(self) -> Number:
+    def report(self) -> float:
         pass
 
     def __str__(self) -> str:
@@ -71,7 +71,7 @@ class SumMetric(Metric):
         if isinstance(sum_, torch.Tensor):
             sum_ = sum_.item()
         assert isinstance(sum_, Number)
-        self.sum = sum_
+        self.sum = float(sum_)
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
@@ -79,7 +79,7 @@ class SumMetric(Metric):
         full_sum = self.sum + other.sum
         return SumMetric(sum_=full_sum)
 
-    def report(self) -> Number:
+    def report(self) -> float:
         return self.sum
 
 
@@ -97,7 +97,7 @@ class AverageMetric(Metric):
             denom = denom.item()
         assert isinstance(numer, Number)
         assert isinstance(denom, int)
-        self.numer = numer
+        self.numer = float(numer)
         self.denom = denom
 
     def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
@@ -107,7 +107,7 @@ class AverageMetric(Metric):
         full_denom = self.denom + other.denom
         return AverageMetric(numer=full_numer, denom=full_denom)
 
-    def report(self) -> Number:
+    def report(self) -> float:
         return self.numer / self.denom
 
 
