@@ -404,19 +404,22 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         invsqrt_lr_decay_gamma,
     ):
         """
-        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root scheduler.
+        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root
+        scheduler.
 
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
         super().__init__(optimizer, states, hard_reset, warmup_updates, warmup_rate)
         if invsqrt_lr_decay_gamma <= 0:
-            raise ValueError('--lr-scheduler invsqrt requires setting --invsqrt_lr_decay_gamma')
+            raise ValueError(
+                '--lr-scheduler invsqrt requires setting --invsqrt_lr_decay_gamma'
+            )
         self.invsqrt_lr_decay_gamma = invsqrt_lr_decay_gamma
         self.decay_factor = np.sqrt(max(1, invsqrt_lr_decay_gamma))
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
     def _invsqrt_lr(self, step):
-        return self.decay_factor / np.sqrt(max(1, step))
+        return self.decay_factor / np.sqrt(max(1, self.invsqrt_lr_decay_gamma + step))
 
     def train_step(self, scheduler_steps):
         self.scheduler.step(epoch=scheduler_steps)
