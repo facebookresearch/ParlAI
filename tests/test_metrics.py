@@ -27,14 +27,15 @@ class TestUtils(unittest.TestCase):
 
         failing_inputs = ['4', [6.8], torch.Tensor([1, 3.8])]
         for input_ in failing_inputs:
-            self.assertRaises(AssertionError, SumMetric(input_))
+            with self.assertRaises(AssertionError):
+                _ = SumMetric(input_)
 
     def test_sum_metric_additions(self):
 
         input_pairs_and_outputs = [
             (1, 2, 3.0),
             (3, -5.0, -2.0),
-            (torch.HalfTensor([[[4.2]]]), 3, 7.2),
+            (torch.Tensor([[[4.2]]]), 3, 7.2),
             (torch.DoubleTensor([1]), torch.LongTensor([[-1]]), 0.0),
         ]
         for input1, input2, output in input_pairs_and_outputs:
@@ -62,7 +63,8 @@ class TestUtils(unittest.TestCase):
             (torch.Tensor([3.2]), torch.Tensor([4.0])),
         ]
         for input in failing_inputs:
-            self.assertRaises(AssertionError, AverageMetric(input[0], input[1]))
+            with self.assertRaises(AssertionError):
+                _ = AverageMetric(input[0], input[1])
 
     def test_average_metric_additions(self):
 
@@ -70,7 +72,7 @@ class TestUtils(unittest.TestCase):
             ((2, 4), (1.5, 1), 0.7),
             (
                 (torch.FloatTensor([[[2]]]), torch.Tensor([4])),
-                (torch.LongTensor(1.5), 1),
+                (torch.LongTensor([1.5]), 1),
                 0.7,
             ),
         ]
