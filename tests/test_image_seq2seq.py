@@ -10,7 +10,7 @@ import parlai.utils.testing as testing_utils
 try:
     import torch
 
-    version = float('.'.join(torch.__version__.split('.')[:2]))
+    version = float('.'.join(torch.__version__.split('.')[:2]))  # type: ignore
     TORCH_AVAILABLE = version >= 1.2
 except ImportError:
     TORCH_AVAILABLE = False
@@ -45,7 +45,7 @@ IMAGE_ARGS = {
 }
 
 MULTITASK_ARGS = {
-    'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),
+    'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),  # type: ignore
     'num_epochs': 10,
     'multitask_weights': [1, 50],
     'image_mode': 'resnet152',
@@ -61,6 +61,9 @@ EVAL_ARGS = {
 }
 
 
+@unittest.skip(
+    "need pytorch 1.4 release, https://github.com/pytorch/vision/issues/1712"
+)
 @unittest.skipUnless(TORCH_AVAILABLE, 'Must use torch 1.2 or above')
 class TestImageSeq2Seq(unittest.TestCase):
     """
