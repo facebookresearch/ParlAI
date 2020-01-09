@@ -17,10 +17,10 @@ import parlai
 try:
     import git
 
-    __GIT_AVAILABLE = True
+    GIT_AVAILABLE = True
 except ImportError:
     # silence the error
-    __GIT_AVAILABLE = False
+    GIT_AVAILABLE = False
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
@@ -1085,7 +1085,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
-            if __GIT_AVAILABLE:
+            if GIT_AVAILABLE:
                 print_git_commit()
             print_announcements(self.opt)
 
