@@ -404,7 +404,8 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         invsqrt_lr_decay_gamma,
     ):
         """
-        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root scheduler.
+        invsqrt_lr_decay_gamma determines the cycle length of the inverse square root
+        scheduler.
 
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
