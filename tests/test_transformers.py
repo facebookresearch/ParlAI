@@ -830,6 +830,8 @@ class TestLearningRateScheduler(unittest.TestCase):
             embedding_size=4,
             ffn_size=8,
             skip_generation=True,
+            validation_max_exs=1,
+            short_final_eval=True,
         )
 
         args['num_epochs'] = 9 / 500
@@ -854,4 +856,4 @@ class TestLearningRateScheduler(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner=testing_utils.TimeLoggingTestRunner)
