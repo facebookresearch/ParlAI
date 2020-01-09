@@ -25,23 +25,25 @@ follow the instructions below.
 
 The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
-    python parlai/mturk/tasks/acute_eval/run.py --pairings_file parlai/mturk/tasks/acute_eval/example/example_pairings.jsonl
+    python parlai/mturk/tasks/acute_eval/run.py --task_folder parlai/mturk/tasks/acute_eval/example/
 
 However, you can also choose to set the command line arguments with a script. You can find an example run script in `example_script.py`
 
 
 ## Formatting conversation data
 
-This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format within a folder specified by `args['dialogs_path']`. This is a template of the format with the minimal expected fields:
+This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format within your `args['task_folder']` folder as `pairings.jsonl`. You can change the name of the file by setting `--pairings_file`.
+
+This is a template of the expected format with the minimal expected fields:
 
     {
       "is_onboarding": false,
-      "models": ["first_modelname", "second_modelname"],
+      "speakers_to_eval": ["first_modelname", "second_modelname"],
       "dialogue_dicts": [
         {
           "speakers": ["first_modelname", "other_speaker"],
           "conversation_id": "id",
-          "dialog": [
+          "dialogue": [
             {"speaker": "model1", "text": "Hi"},
             {"speaker": "other_speaker", "text": "Hi back"},
             ...
@@ -50,7 +52,7 @@ This task code assumes that you've parsed and saved your collected conversations
         {
           "speakers": ["other_speaker", "second_modelname"],
           "conversation_id": "id",
-          "dialog": [
+          "dialogue": [
             {"speaker": "model1", "text": "Hi"},
             {"speaker": "other_speaker", "text": "Hi back"},
             ...
@@ -63,7 +65,7 @@ For onboarding tasks - tasks used to filter workers, see below for more details 
 
     {
       "is_onboarding": true,
-      "models": ["first_modelname", "second_modelname"],
+      "speakers_to_eval": ["first_modelname", "second_modelname"],
       "correct_answer": "correct_modelname",
       "dialogue_dicts": [
         # as above
@@ -71,7 +73,7 @@ For onboarding tasks - tasks used to filter workers, see below for more details 
     }
 
 
-Note that we assume "dialog" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). See `example/example_pairings.jsonl` for examples of the format required.
+Note that we assume "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `example/example_pairings.jsonl` for examples of the format required.
 
 ## Question phrasing
 
@@ -87,12 +89,14 @@ By default `args['block_on_onboarding']` is set to `True`, which means that work
 By setting `args['onboarding_threshold']`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) which must be answered correctly to pass onboarding.
 
 
-## Creating the pairings_file
-
-If you have some quantity of conversations in the desired `dialogue_dicts` format and would simply like to pair some number of them at random to compare two specific models, you can use `pair_conversations.py`. This may be helpful to you as a starting point even if you already have specific, predetermined pairs of conversations for evaluation.
-
-
 ## Other settings
+
+### Task configuration on MTurk
+
+The title, description, and keywords of the task as shown on MTurk default to values in DEFAULT_TASK_CONFIG shown at the top of `run.py`. If you would like to change any of these values, create a file called `task_config.py` in your `opt['task_folder']`. See the `example/task_config.py` for more guidance.
+
+
+### CLI arguments
 
 A comprehensive list of settings specific to ACUTE-Eval can be found in `add_args()` in `run.py`. ParlAI MTurk arguments can be found in `~/ParlAI/parlai/core/params.py` under `add_mturk_args()`. For the arguments most likely to be useful for running ACUTE-Eval, see `example_script.py`:
 
@@ -103,6 +107,9 @@ A comprehensive list of settings specific to ACUTE-Eval can be found in `add_arg
 Coming soon.
 
 
+## Creating the pairings file
+
+Coming soon.
 
 
 ** **

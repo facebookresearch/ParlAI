@@ -87,13 +87,16 @@ class ChatMessage extends React.Component {
 class MessageList extends React.Component {
   makeMessages() {
     let agent_id = this.props.agent_id;
-    if (this.props.task_data.conversations === undefined) {
+    if (this.props.task_data.pairing_dict === undefined) {
       return <div><p> Loading chats </p></div>;
     }
     let task_data = this.props.task_data;
     let conv_order_ind = task_data.task_specs.conversation_order[this.props.index];
-    let messages = task_data.conversations[conv_order_ind].dialog;
-    let primary_speaker = task_data.task_specs.speakers_to_eval[conv_order_ind];
+    let messages = task_data.pairing_dict.dialogue_dicts[conv_order_ind].dialogue;
+    console.log("MESSAGES");
+    console.log(task_data.pairing_dict.dialogue_dicts[conv_order_ind]);
+    console.log(messages);
+    let primary_speaker = task_data.pairing_dict.speakers_to_eval[conv_order_ind];
 
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
     let onClickMessage = this.props.onClickMessage;
@@ -204,7 +207,6 @@ class EvalResponse extends React.Component {
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleEnterKey = this.handleEnterKey.bind(this);
-    this.onSliderChange = this.onSliderChange.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -242,14 +244,6 @@ class EvalResponse extends React.Component {
     );
   }
 
-  onSliderChange(val) {
-    console.log(val);
-    this.setState(
-      {['speakerChoice']: val},
-      this.checkValidData
-    );
-  }
-
   handleEnterKey(event) {
     event.preventDefault();
     if (this.props.task_done) {
@@ -279,8 +273,14 @@ class EvalResponse extends React.Component {
     }
     let s1_choice = this.props.task_data.task_specs.s1_choice.split('<Speaker 1>');
     let s2_choice = this.props.task_data.task_specs.s2_choice.split('<Speaker 2>');
-    let s1_name = this.props.task_data.task_specs.s1_name;
-    let s2_name = this.props.task_data.task_specs.s2_name;
+    let s1_name, s2_name;
+    if (this.props.task_data.task_specs.conversation_order[0] == 0) {
+      s1_name = this.props.task_data.pairing_dict.speakers_to_eval[0];
+      s2_name = this.props.task_data.pairing_dict.speakers_to_eval[1];
+    } else {
+      s1_name = this.props.task_data.pairing_dict.speakers_to_eval[1];
+      s2_name = this.props.task_data.pairing_dict.speakers_to_eval[0];
+    }
     let form_question = this.props.task_data.task_specs.question;
     let text_question = "Please provide a brief justification for your choice (a few words or a sentence)";
     let text_reason = (
@@ -322,7 +322,7 @@ class EvalResponse extends React.Component {
                     <Col sm={6}>
                         <Radio
                           name="speakerChoice"
-                          value=s1_name
+                          value={s1_name}
                           style={{'width': '100%'}}
                           checked={this.state.speakerChoice == s1_name}
                           onChange={this.handleInputChange}
@@ -333,7 +333,7 @@ class EvalResponse extends React.Component {
                       <Col sm={6}>
                         <Radio
                           name="speakerChoice"
-                          value=s2_name
+                          value={s2_name}
                           style={{'width': '100%'}}
                           checked={this.state.speakerChoice == s2_name}
                           onChange={this.handleInputChange}
