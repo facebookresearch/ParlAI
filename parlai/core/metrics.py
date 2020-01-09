@@ -21,6 +21,7 @@ import torch
 from parlai.utils.thread import SharedTable
 from parlai.utils.misc import round_sigfigs, no_lock
 from parlai.utils.misc import warn_once
+from parlai.utils.typing import TScalar
 
 DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -69,20 +70,22 @@ class SumMetric(Metric):
     Class that keeps a running sum of some metric.
     """
 
-    def __init__(self, sum_: Union[Number, torch.Tensor]):
+    def __init__(self, sum_: TScalar):
 
         # Convert sum to float
         if isinstance(sum_, torch.Tensor):
-            sum_ = sum_.item()
-        assert isinstance(sum_, Number)
-        sum_ = float(sum_)
+            sum_as_number: Union[int, float, bool] = sum_.item()
+        else:
+            sum_as_number = sum_
+        assert isinstance(sum_as_number, Number)
+        sum_as_float = float(sum_as_number)
 
-        self.sum = sum_
+        self.sum: float = sum_as_float
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        full_sum = self.sum + other.sum
+        full_sum: float = self.sum + other.sum
         return SumMetric(sum_=full_sum)
 
     def report(self) -> float:
@@ -95,31 +98,37 @@ class AverageMetric(Metric):
     """
 
     def __init__(
-        self, numer: Union[Number, torch.Tensor], denom: Union[int, float, torch.Tensor]
+        self, numer: TScalar, denom: TScalar,
     ):
 
         # Convert numer to float
         if isinstance(numer, torch.Tensor):
-            numer = numer.item()
-        assert isinstance(numer, Number)
-        numer = float(numer)
+            numer_as_number: Union[int, float, bool] = numer.item()
+        else:
+            numer_as_number = numer
+        assert isinstance(numer_as_number, Number)
+        numer_as_float = float(numer_as_number)
 
         # Convert denom to int
         if isinstance(denom, torch.Tensor):
-            denom = denom.item()
-        if isinstance(denom, float):
-            assert denom.is_integer()
-            denom = int(denom)
-        assert isinstance(denom, int)
+            denom_as_number = denom.item()
+        else:
+            denom_as_number = denom
+        if isinstance(denom_as_number, float):
+            assert denom_as_number.is_integer()
+            denom_as_int = int(denom_as_number)
+        else:
+            denom_as_int = denom_as_number
+        assert isinstance(denom_as_int, int)
 
-        self.numer = numer
-        self.denom = denom
+        self.numer: float = numer_as_float
+        self.denom: int = denom_as_int
 
     def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        full_numer = self.numer + other.numer
-        full_denom = self.denom + other.denom
+        full_numer: float = self.numer + other.numer
+        full_denom: int = self.denom + other.denom
         return AverageMetric(numer=full_numer, denom=full_denom)
 
     def report(self) -> float:
