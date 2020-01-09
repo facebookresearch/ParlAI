@@ -16,19 +16,20 @@ import parlai
 
 try:
     import git
+
+    __GIT_AVAILABLE = True
 except ImportError:
-    pass
+    # silence the error
+    __GIT_AVAILABLE = False
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt, load_opt_file
-from parlai.utils.misc import passUnlessGit
 
 from typing import List, Optional
 
 
-@passUnlessGit
 def print_git_commit():
     """
     Print the current git commit of ParlAI and parlai_internal.
@@ -1084,7 +1085,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
-            print_git_commit()
+            if __GIT_AVAILABLE:
+                print_git_commit()
             print_announcements(self.opt)
 
         return self.opt
