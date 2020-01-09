@@ -299,7 +299,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Poly-Encoder pretrained on Reddit. Use this model as an `--init-model` for a poly-encoder "
+            "Poly-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
@@ -321,7 +321,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Poly-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "Poly-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
@@ -343,7 +343,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Bi-Encoder pretrained on Reddit. Use this model as an `--init-model` for a bi-encoder "
+            "Bi-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a bi-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
@@ -364,7 +364,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Bi-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "Bi-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
@@ -385,7 +385,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Cross-Encoder pretrained on Reddit. Use this model as an `--init-model` for a cross-encoder "
+            "Cross-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a cross-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
@@ -406,7 +406,7 @@ model_list = [
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Cross-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "Cross-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
