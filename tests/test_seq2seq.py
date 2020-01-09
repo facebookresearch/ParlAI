@@ -52,7 +52,7 @@ class TestSeq2Seq(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
@@ -78,7 +78,7 @@ class TestSeq2Seq(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
@@ -163,7 +163,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
