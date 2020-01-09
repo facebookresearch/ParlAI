@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from queue import Queue
-import imp
 import json
 import numpy as np
 import os
@@ -32,8 +31,9 @@ onboarding_failed_workers = []
 
 
 def add_args(from_argv=False):
-    """ Add arguments to parser and either parse from commandline or initialize
-    to defaults (for overriding in scripts)
+    """
+    Add arguments to parser and either parse from commandline or initialize to defaults
+    (for overriding in scripts)
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -45,17 +45,9 @@ def add_args(from_argv=False):
         help='Number of annotations per conversation comparison pair',
     )
     argparser.add_argument(
-        '--pairings-filename',
-        type=str,
-        default='pairings.jsonl',
-        help='',
+        '--pairings-filename', type=str, default='pairings.jsonl', help=''
     )
-    argparser.add_argument(
-        '--task-folder',
-        type=str,
-        default=None,
-        help='',
-    )
+    argparser.add_argument('--task-folder', type=str, default=None, help='')
     argparser.add_argument(
         '--s1-choice',
         type=str,
@@ -101,8 +93,8 @@ def add_args(from_argv=False):
 
 
 def setup_task_queue(opt):
-    """ Initialize task queue to contain the specified number of instances of
-    each pairing
+    """
+    Initialize task queue to contain the specified number of instances of each pairing.
     """
     # hacky fix for the parlai parser hacky fix
     annotations_per_pair = opt['annotations_per_pair']
@@ -114,7 +106,13 @@ def setup_task_queue(opt):
         with open(filename, 'r') as pf:
             for l in pf:
                 pairing_dict = json.loads(l.strip())
-                new_task = read_task_from_jsonl(pairing_dict, internal_pair_id, opt['s1_choice'], opt['s2_choice'], opt['question'])
+                read_task_from_jsonl(
+                    pairing_dict,
+                    internal_pair_id,
+                    opt['s1_choice'],
+                    opt['s2_choice'],
+                    opt['question'],
+                )
                 internal_pair_id += 1
     else:
         raise Exception("You must provide a task folder")
@@ -127,13 +125,16 @@ def setup_task_queue(opt):
             task_queue.put(desired_tasks[internal_pair_id])
     # limit number of hits worker can do by default
     if opt['max_hits_per_worker'] == 0:
-        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) // opt[
-            'subtasks_per_hit'
-        ]
+        opt['max_hits_per_worker'] = (
+            len(desired_tasks) + len(onboarding_tasks)
+        ) // opt['subtasks_per_hit']
 
 
-def read_task_from_jsonl(pairing_dict, internal_pair_id, s1_choice, s2_choice, question):
-    """ Build task dict according to expected format
+def read_task_from_jsonl(
+    pairing_dict, internal_pair_id, s1_choice, s2_choice, question
+):
+    """
+    Build task dict according to expected format.
     """
     conv_orders = [[0, 1], [1, 0]]
     conv_order = conv_orders[np.random.choice([0, 1])]
@@ -151,17 +152,15 @@ def read_task_from_jsonl(pairing_dict, internal_pair_id, s1_choice, s2_choice, q
         onboarding_tasks[internal_pair_id] = task_data
     else:
         desired_tasks[internal_pair_id] = task_data
-        convids = [
-            pairing_dict['dialogue_dicts'][0]['id'],
-            pairing_dict['dialogue_dicts'][1]['id'],
-        ]
 
 
 def get_new_task_data(worker, tasks_per_hit):
-    """ Get next task for worker. Returns the next onboarding task if worker
-    hasn't finished them all, or finds a task from the queue they haven't seen
-    If they've seen everything in the queue, spin up an extra task (one that
-    was in the queue and is now saturated)
+    """
+    Get next task for worker.
+
+    Returns the next onboarding task if worker hasn't finished them all, or finds a task
+    from the queue they haven't seen If they've seen everything in the queue, spin up an
+    extra task (one that was in the queue and is now saturated)
     """
     worker_id = worker.worker_id
     task_data = get_onboarding_tasks(worker_id, tasks_per_hit)
@@ -184,7 +183,7 @@ def get_new_task_data(worker, tasks_per_hit):
         if (  # make sure worker has not seen these conversations before
             internal_pair_id not in completed_tasks
             and dialogue0_id not in seen_conversations
-            and dialogue1_id  not in seen_conversations
+            and dialogue1_id not in seen_conversations
         ):
             completed_tasks.append(next_task['task_specs']['internal_pair_id'])
             workers_tasks_completed[worker_id] = completed_tasks
@@ -201,25 +200,35 @@ def get_new_task_data(worker, tasks_per_hit):
     tasks_chosen = [
         t
         for t in tasks_remaining
-        if desired_tasks[t]['pairing_dict']['dialogue_dicts'][0]['id'] not in seen_conversations
-        and desired_tasks[t]['pairing_dict']['dialogue_dicts'][1]['id'] not in seen_conversations
+        if desired_tasks[t]['pairing_dict']['dialogue_dicts'][0]['id']
+        not in seen_conversations
+        and desired_tasks[t]['pairing_dict']['dialogue_dicts'][1]['id']
+        not in seen_conversations
     ]
     if tasks_still_needed < len(tasks_chosen):
         tasks_chosen = np.random.choice(tasks_chosen, tasks_still_needed, replace=False)
     completed_tasks.extend(tasks_chosen)
     seen_conversations.extend(
-        [desired_tasks[t]['pairing_dict']['dialogue_dicts'][0]['id'] for t in tasks_chosen]
+        [
+            desired_tasks[t]['pairing_dict']['dialogue_dicts'][0]['id']
+            for t in tasks_chosen
+        ]
     )
     seen_conversations.extend(
-        [desired_tasks[t]['pairing_dict']['dialogue_dicts'][1]['id'] for t in tasks_chosen]
+        [
+            desired_tasks[t]['pairing_dict']['dialogue_dicts'][1]['id']
+            for t in tasks_chosen
+        ]
     )
     task_data.extend([desired_tasks[id] for id in tasks_chosen])
     return task_data
 
 
 def return_task_data(worker_id, task_data):
-    """ When worker doesn't complete a task, return it to the queue or
-    change their onboarding status depending on the task"""
+    """
+    When worker doesn't complete a task, return it to the queue or change their
+    onboarding status depending on the task.
+    """
     for subtask_data in task_data:
         if subtask_data['task_specs'].get('is_onboarding', False):
             workers_to_onboarding_tasks_todo[worker_id].append(
@@ -242,9 +251,12 @@ def return_task_data(worker_id, task_data):
 
 
 def get_onboarding_tasks(worker_id, tasks_per_hit):
-    """ Get the next onboarding task for this worker id. If the worker has never
-    done a task, shuffle the onboarding tasks for them. If they've done all
-    of the onboarding tasks or if there are no onboarding tasks, return None
+    """
+    Get the next onboarding task for this worker id.
+
+    If the worker has never done a task, shuffle the onboarding tasks for them. If
+    they've done all of the onboarding tasks or if there are no onboarding tasks, return
+    None
     """
     if len(onboarding_tasks) == 0:
         return []
@@ -264,7 +276,8 @@ def get_onboarding_tasks(worker_id, tasks_per_hit):
 
 
 def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_data):
-    """ Soft block workers who fail onboarding tasks, keep track of their status
+    """
+    Soft block workers who fail onboarding tasks, keep track of their status.
     """
     all_task_data = save_data['worker_data'][worker_id]['task_data']
     response_data = save_data['worker_data'][worker_id]['response']['task_data']
@@ -290,8 +303,9 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
 
 
 def main(opt):
-    """Handles setting up and running a ParlAI-MTurk task by instantiating
-    an MTurk manager and configuring it for the qa_data_collection task
+    """
+    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
+    and configuring it for the qa_data_collection task.
     """
     np.random.seed(opt['seed'])
 
@@ -305,9 +319,10 @@ def main(opt):
     opt['frontend_version'] = 1
     try:
         import sys
+
         sys.path.append(opt['task_folder'])
         from task_config import task_config
-    except:
+    except Exception:
         task_config = DEFAULT_TASK_CONFIG
 
     opt.update(task_config)
@@ -326,7 +341,6 @@ def main(opt):
     )
 
     mturk_manager.set_onboard_function(onboard_function=None)
-
 
     try:
         # Initialize run information
