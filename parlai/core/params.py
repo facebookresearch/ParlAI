@@ -44,6 +44,8 @@ def print_git_commit():
         print(f'[ Current internal commit: {internal_commit} ]')
     except git.GitCommandNotFound:
         pass
+    except git.GitCommandError:
+        pass
 
 
 def print_announcements(opt):
