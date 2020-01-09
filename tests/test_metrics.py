@@ -34,7 +34,7 @@ class TestUtils(unittest.TestCase):
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):
-                _ = SumMetric(input_)
+                SumMetric(input_)
 
     def test_sum_metric_additions(self):
 
@@ -70,7 +70,7 @@ class TestUtils(unittest.TestCase):
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):
-                _ = AverageMetric(input_[0], input_[1])
+                AverageMetric(input_[0], input_[1])
 
     def test_average_metric_additions(self):
 
