@@ -19,11 +19,6 @@ import json
 import numbers
 from parlai.core.opt import Opt
 
-try:
-    from tensorboardX import SummaryWriter
-except ImportError:
-    SummaryWriter = None
-
 
 class TensorboardLogger(object):
     """
@@ -46,7 +41,11 @@ class TensorboardLogger(object):
         )
 
     def __init__(self, opt: Opt):
-        if SummaryWriter is None:
+        try:
+            # tensorboard is a very expensive thing to import. Wait until the
+            # last second to import it.
+            from tensorboardX import SummaryWriter
+        except ImportError:
             raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
         tbpath = opt['model_file'] + '.tensorboard'

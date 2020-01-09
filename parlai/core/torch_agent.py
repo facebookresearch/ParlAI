@@ -1749,7 +1749,7 @@ class TorchAgent(ABC, Agent):
                         # We do not save the state of interactive mode, it is only decided
                         # by scripts or command line.
                         del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle)
+                    json.dump(saved_opts, handle, indent=4)
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 

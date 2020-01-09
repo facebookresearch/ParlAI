@@ -15,11 +15,11 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 
-# Put it first so that "make" without argument is like "make help".
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+# Put it first so that "make" without argument is like "make html".
+all:
+	make html
 
-.PHONY: help Makefile
+.PHONY: all Makefile
 
 clean:
 	rm -rfv "${BUILDDIR}"
