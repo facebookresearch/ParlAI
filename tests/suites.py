@@ -109,6 +109,10 @@ class TimeLoggingTestResult(unittest.runner.TextTestResult):
 
 
 class TimeLoggingTestRunner(unittest.TextTestRunner):
+    """
+    https://hakibenita.com/timing-tests-in-python-for-fun-and-profit
+    """
+
     def __init__(self, slow_test_threshold=10.0, *args, **kwargs):
         self.slow_test_threshold = slow_test_threshold
         return super().__init__(resultclass=TimeLoggingTestResult, *args, **kwargs)

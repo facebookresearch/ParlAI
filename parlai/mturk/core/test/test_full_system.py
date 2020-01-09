@@ -380,7 +380,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args(print_args=False)
+        self.opt = argparser.parse_args([], print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 1
         self.opt['hit_title'] = 'test_hit_title'
