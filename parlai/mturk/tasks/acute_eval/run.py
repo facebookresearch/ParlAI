@@ -118,7 +118,7 @@ def setup_task_queue(opt):
         raise Exception("You must provide a task folder")
 
     ## Fill task queue
-    for i in range(annotations_per_pair):
+    for _i in range(annotations_per_pair):
         all_task_keys = list(desired_tasks.keys())
         np.random.shuffle(all_task_keys)
         for internal_pair_id in all_task_keys:
