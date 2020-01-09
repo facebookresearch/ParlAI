@@ -24,6 +24,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
     search.
 
     For more information, see the following papers:
+
     - Neural Machine Translation by Jointly Learning to Align and Translate
       `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
     - Sequence to Sequence Learning with Neural Networks

@@ -35,10 +35,18 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import sys
+import git
 import sphinx_rtd_theme
+import parlai
+from recommonmark.transform import AutoStructify
 
-
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.githubpages', 'recommonmark']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.githubpages',
+    'recommonmark',
+    'sphinx.ext.linkcode',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -54,8 +62,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ParlAI'
-copyright = '2018, Facebook AI Research'
-author = 'Facebook AI Research'
+copyright = '2020, Facebook AI Research'
+author = 'Facebook AI'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -79,7 +87,7 @@ language = None
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'friendly'  # igor is also good
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -88,7 +96,7 @@ autodoc_default_options = {
     'exclude-members': '__dict__,__weakref__',
     'special-members': '__init__',
     'member-order': 'bysource',
-    'show-inheritance': True,
+    'show-inheritance': False,
 }
 
 # -- Options for HTML output ----------------------------------------------
@@ -98,13 +106,15 @@ autodoc_default_options = {
 #
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+# don't show the "view source" link
+html_show_sourcelink = False
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {'collapse_navigation': False}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -149,6 +159,8 @@ latex_documents = [(master_doc, 'ParlAI.tex', 'ParlAI Documentation', 'FAIR', 'm
 # (source start file, name, description, authors, manual section).
 man_pages = [(master_doc, 'parlai', 'ParlAI Documentation', [author], 1)]
 
+typehints_fully_qualified = False
+
 
 # -- Options for Texinfo output -------------------------------------------
 
@@ -166,3 +178,39 @@ texinfo_documents = [
         'Miscellaneous',
     )
 ]
+
+
+def linkcode_resolve(domain, info):
+    # Resolve function for the linkcode extension.
+    # Stolen shamelessly from Lasagne! Thanks Lasagne!
+    # https://github.com/Lasagne/Lasagne/blob/5d3c63cb315c50b1cbd27a6bc8664b406f34dd99/docs/conf.py#L114-L135
+    def find_source():
+        # try to find the file and line number, based on code from numpy:
+        # https://github.com/numpy/numpy/blob/master/doc/source/conf.py#L286
+        obj = sys.modules[info['module']]
+        for part in info['fullname'].split('.'):
+            obj = getattr(obj, part)
+        import inspect
+        import os
+
+        fn = inspect.getsourcefile(obj)
+        fn = os.path.relpath(fn, start=os.path.dirname(parlai.__file__))
+        source, lineno = inspect.getsourcelines(obj)
+        return fn, lineno, lineno + len(source) - 1
+
+    if domain != 'py' or not info['module']:
+        return None
+    try:
+        filename = 'parlai/%s#L%d-L%d' % find_source()
+        tag = git.Git().rev_parse('HEAD')
+        return "https://github.com/facebookresearch/ParlAI/blob/%s/%s" % (tag, filename)
+    except Exception:
+        return None
+
+
+# At the bottom of conf.py
+def setup(app):
+    app.add_config_value(
+        'recommonmark_config', {'auto_toc_tree_section': 'Contents'}, True
+    )
+    app.add_transform(AutoStructify)
