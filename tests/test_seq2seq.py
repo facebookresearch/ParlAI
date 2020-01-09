@@ -43,7 +43,6 @@ class TestSeq2Seq(unittest.TestCase):
             "hits@1 = {}\nLOG:\n{}".format(valid['ppl'], stdout),
         )
 
-    @testing_utils.retry(ntries=3)
     def test_generation(self):
         """
         This test uses a single-turn sequence repitition task.
@@ -52,7 +51,7 @@ class TestSeq2Seq(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
@@ -69,7 +68,6 @@ class TestSeq2Seq(unittest.TestCase):
             test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         """
         Ensures beam search can generate the correct response.
@@ -78,7 +76,7 @@ class TestSeq2Seq(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
@@ -163,7 +161,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
