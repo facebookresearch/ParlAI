@@ -81,7 +81,8 @@ jobs:
         run: |
           set -eux
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
-          git checkout -f master
+          forkpoint=$(git merge-base --fork-point master HEAD)
+          git checkout -f $forkpoint
           mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
           diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
           cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt

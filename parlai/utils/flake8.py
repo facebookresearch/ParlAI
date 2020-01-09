@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 Custom flake8 rules for ParlAI.
 
@@ -76,7 +80,7 @@ class ParlAIChecker:
                     # that -1 says the first line changed, and 3 lines were removed
                     # with a new offset belonging at the first line, and 9
                     # inserted lines.
-                    line_no, _ = fields[1].split(',')
+                    line_no, *_ = fields[1].split(',')
                     line_no = -int(line_no)
                     yield (
                         line_no,
