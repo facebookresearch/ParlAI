@@ -292,6 +292,134 @@ model_list = [
         ),
     },
     {
+        "title": "Poly-Encoder Transformer Reddit Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
+        "agent": "transformer/polyencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Poly-Encoder pretrained on Reddit. Use this model as an `--init-model` for a poly-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/poly_model_huge_reddit/model "
+            "-t convai2  --model transformer/polyencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --polyencoder-type codes --poly-n-codes 64 "
+            "--poly-attention-type basic --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
+        "title": "Poly-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/poly_model_huge_wikito",
+        "agent": "transformer/polyencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Poly-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/poly_model_huge_wikito/model "
+            "-t convai2  --model transformer/polyencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --polyencoder-type codes --poly-n-codes 64 "
+            "--poly-attention-type basic --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
+        "title": "Bi-Encoder Transformer Reddit Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
+        "agent": "transformer/biencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Bi-Encoder pretrained on Reddit. Use this model as an `--init-model` for a bi-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/bi_model_huge_reddit/model "
+            "-t convai2  --model transformer/biencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
+        "title": "Bi-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/bi_model_huge_wikito",
+        "agent": "transformer/biencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Bi-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/bi_model_huge_wikito/model "
+            "-t convai2  --model transformer/biencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
+        "title": "Cross-Encoder Transformer Reddit Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/cross_model_huge_reddit",
+        "agent": "transformer/crossencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Cross-Encoder pretrained on Reddit. Use this model as an `--init-model` for a cross-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/cross_model_huge_reddit/model "
+            "-t convai2  --model transformer/crossencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
+        "title": "Cross-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/cross_model_huge_wikito",
+        "agent": "transformer/crossencoder",  # noqa: E501
+        "task": "pretrained_transformers",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Cross-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an `--init-model` for a poly-encoder "
+            "when fine-tuning on another task. For more details on how to train, see the project page."
+        ),
+        "example": (
+            "python -u examples/train_model.py "
+            "--init-model zoo:pretrained_transformers/cross_model_huge_wikito/model "
+            "-t convai2  --model transformer/crossencoder --n-positions 1024 "
+            "--variant xlm --reduction-type mean --share-encoders False "
+            "--learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 "
+            "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
+            "--learn-embeddings True --model-file <YOUR MODEL FILE> "
+        ),
+    },
+    {
         "title": "Poly-Encoder Transformer ConvAI2 Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/model_poly",
