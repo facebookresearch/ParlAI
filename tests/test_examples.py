@@ -14,8 +14,7 @@ LR = 1
 
 class TestExampleSeq2Seq(unittest.TestCase):
     """
-    Checks that the example seq2seq generator model gives the expected ppl when trained
-    on ConvAI2.
+    Checks that the example seq2seq generator model gives the expected ppl.
     """
 
     @testing_utils.retry(ntries=3)
@@ -34,6 +33,7 @@ class TestExampleSeq2Seq(unittest.TestCase):
                 gradient_clip=1.0,
                 inference='beam',
                 beam_size=4,
+                skip_generation=True,
             )
         )
 
