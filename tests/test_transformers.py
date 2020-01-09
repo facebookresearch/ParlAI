@@ -145,7 +145,7 @@ class TestTransformerRanker(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/ranker',
                 model_file='zoo:unittest/transformer_ranker/model',
                 dict_file='zoo:unittest/transformer_ranker/model.dict',
@@ -504,14 +504,14 @@ class TestTransformerGenerator(unittest.TestCase):
                     **args,
                 )
             )
-            self.assertGreaterEqual(noblock_valid['f1'], 0.99)
+            self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
             # first confirm all is good without blocking
             _, valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=-1, **args)
             )
-            self.assertGreaterEqual(valid['f1'], 0.99)
-            self.assertGreaterEqual(valid['bleu-4'], 0.99)
+            self.assertGreaterEqual(valid['f1'], 0.95)
+            self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
             # there's a special case for block == 1
             _, valid, test = testing_utils.eval_model(
@@ -529,7 +529,7 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertLessEqual(valid['f1'], noblock_valid['f1'])
             # bleu-1 should be relatively okay
             self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
-            self.assertGreaterEqual(valid['bleu-1'], 0.50)
+            self.assertGreaterEqual(valid['bleu-1'], 0.45)
             # and bleu-2 should be 0 at this point
             self.assertLessEqual(valid['bleu-2'], 0.01)
 
@@ -540,8 +540,8 @@ class TestTransformerGenerator(unittest.TestCase):
             # not as hard a hit from the larger hit
             self.assertLessEqual(valid['f1'], 0.95)
             # bleu-1 and bleu-2 should be relatively okay
-            self.assertGreaterEqual(valid['bleu-1'], 0.70)
-            self.assertGreaterEqual(valid['bleu-2'], 0.30)
+            self.assertGreaterEqual(valid['bleu-1'], 0.60)
+            self.assertGreaterEqual(valid['bleu-2'], 0.25)
             # bleu-3 should be totally screwed
             self.assertLessEqual(valid['bleu-3'], 0.01)
 
@@ -599,7 +599,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
                 model_file='zoo:unittest/transformer_generator2/model',
                 dict_file='zoo:unittest/transformer_generator2/model.dict',

@@ -40,7 +40,7 @@ class TestUpgradeOpt(unittest.TestCase):
         with self.assertRaises(ValueError):
             testing_utils.display_model(
                 dict(
-                    task='integration_tests:multipass',
+                    task='integration_tests:multiturn_nocandidate',
                     model_file='zoo:unittest/transformer_generator2/model',
                     beam_size=5,
                     inference='greedy',
@@ -50,7 +50,7 @@ class TestUpgradeOpt(unittest.TestCase):
         # and we shouldn't if we have inference beam
         testing_utils.display_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model_file='zoo:unittest/transformer_generator2/model',
                 beam_size=5,
                 inference='beam',
