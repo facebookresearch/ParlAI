@@ -48,22 +48,17 @@ class TestSeq2Seq(unittest.TestCase):
         """
         This test uses a single-turn sequence repitition task.
         """
-        stdout, valid, test = testing_utils.train_model(
+        testing_utils.download_unittest_models()
+
+        stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multipass',
                 model='seq2seq',
-                learningrate=LR,
-                batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS,
-                numthreads=1,
+                model_file='zoo:unittest/seq2seq/model',
+                dict_file='zoo:unittest/seq2seq/model.dict',
                 no_cuda=True,
-                embeddingsize=16,
-                hiddensize=16,
-                rnn_class='gru',
-                attention='general',
-                gradient_clip=1.0,
-                dropout=0.0,
-                lookuptable='all',
+                skip_generation=False,
+                inference='greedy',
             )
         )
 
@@ -79,40 +74,27 @@ class TestSeq2Seq(unittest.TestCase):
         """
         Ensures beam search can generate the correct response.
         """
-        stdout, valid, test = testing_utils.train_model(
+        testing_utils.download_unittest_models()
+
+        stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multipass',
                 model='seq2seq',
-                learningrate=LR,
-                batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS,
-                numthreads=1,
+                model_file='zoo:unittest/seq2seq/model',
+                dict_file='zoo:unittest/seq2seq/model.dict',
                 no_cuda=True,
-                embeddingsize=16,
-                hiddensize=16,
-                rnn_class='gru',
-                attention='general',
-                gradient_clip=1.0,
-                dropout=0.0,
-                lookuptable='all',
+                skip_generation=False,
                 inference='beam',
-                beam_size=4,
+                beam_size=5,
             )
         )
-
         self.assertTrue(
-            valid['bleu-4'] > 0.95,
-            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            valid['accuracy'] > 0.95,
+            "valid accuracy = {}\nLOG:\n{}".format(valid['accuracy'], stdout),
         )
         self.assertTrue(
-            test['bleu-4'] > 0.95,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
-        )
-        self.assertTrue(
-            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
-        self.assertTrue(
-            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['accuracy'] > 0.95,
+            "test accuracy = {}\nLOG:\n{}".format(test['accuracy'], stdout),
         )
 
     def test_badinput(self):
