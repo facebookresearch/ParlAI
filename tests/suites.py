@@ -11,8 +11,8 @@ Various test loaders.
 import os
 import unittest
 import random
-import time
 from itertools import chain
+from parlai.utils.testing import TimeLoggingTestRunner
 
 
 def _circleci_parallelism(suite):
@@ -87,48 +87,6 @@ def internal_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai_internal/tests")
     return test_suite
-
-
-class TimeLoggingTestResult(unittest.runner.TextTestResult):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.test_timings = []
-
-    def startTest(self, test):
-        self._test_started_at = time.time()
-        super().startTest(test)
-
-    def addSuccess(self, test):
-        elapsed = time.time() - self._test_started_at
-        name = self.getDescription(test)
-        self.test_timings.append((name, elapsed))
-        super().addSuccess(test)
-
-    def getTestTimings(self):
-        return self.test_timings
-
-
-class TimeLoggingTestRunner(unittest.TextTestRunner):
-    """
-    https://hakibenita.com/timing-tests-in-python-for-fun-and-profit
-    """
-
-    def __init__(self, slow_test_threshold=10.0, *args, **kwargs):
-        self.slow_test_threshold = slow_test_threshold
-        return super().__init__(resultclass=TimeLoggingTestResult, *args, **kwargs)
-
-    def run(self, test):
-        result = super().run(test)
-
-        self.stream.writeln("\nSlow Tests (>{:.03}s):".format(self.slow_test_threshold))
-        for name, elapsed in result.getTestTimings():
-            if elapsed > self.slow_test_threshold:
-                self.stream.writeln("({:.03}s) {}".format(elapsed, name))
-
-        return result
-
-
-MySuite = unittests()
 
 
 def main():
