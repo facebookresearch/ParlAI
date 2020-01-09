@@ -24,6 +24,13 @@ except ImportError:
     # silence the error, we'll have other problems later if it's super necessary
     __TORCH_AVAILABLE = False
 
+try:
+    import git  # noqa: F401
+
+    __GIT_AVAILABLE = True
+except ImportError:
+    # silence error
+    __GIT_AVAILABLE = False
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'episode_done',
@@ -40,6 +47,16 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'label_candidates_vecs',
     'token_losses',
 }
+
+
+def passUnlessGit(func):
+    def _wrapper():
+        if __GIT_AVAILABLE:
+            func()
+        else:
+            # do nothing
+            return None
+    return _wrapper
 
 
 def maintain_dialog_history(

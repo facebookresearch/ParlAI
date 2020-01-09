@@ -13,16 +13,22 @@ import os
 import sys as _sys
 import datetime
 import parlai
-import git
+
+try:
+    import git
+except ImportError:
+    pass
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt, load_opt_file
+from parlai.utils.misc import passUnlessGit
 
 from typing import List, Optional
 
 
+@passUnlessGit
 def print_git_commit():
     """
     Print the current git commit of ParlAI and parlai_internal.
