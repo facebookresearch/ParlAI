@@ -785,7 +785,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         GENERATOR_ARGS = dict(
             task='integration_tests:nocandidate',
             model='transformer/generator',
-            optimizer='adamax',
+            optimizer='sgd',
             learningrate=1e-3,
             batchsize=32,
             num_epochs=1,
@@ -805,7 +805,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         RANKER_ARGS = dict(
             task='integration_tests:candidate',
             model='transformer/ranker',
-            optimizer='adamax',
+            optimizer='sgd',
             learningrate=1e-3,
             batchsize=32,
             num_epochs=1,
@@ -819,7 +819,7 @@ class TestLearningRateScheduler(unittest.TestCase):
 
     def test_invsqrt_learning_rate(self):
         args = dict(
-            task='integration_tests:candidate',
+            task='integration_tests:nocandidate',
             model='transformer/generator',
             learningrate=1,
             batchsize=1,
@@ -827,6 +827,9 @@ class TestLearningRateScheduler(unittest.TestCase):
             lr_scheduler='invsqrt',
             n_layers=1,
             n_heads=1,
+            embedding_size=4,
+            ffn_size=8,
+            skip_generation=True,
         )
 
         args['num_epochs'] = 9 / 500
