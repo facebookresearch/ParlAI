@@ -48,7 +48,9 @@ re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
 class Metric(ABC):
     """
-    Base class for storing metrics. Subclasses should define .report().
+    Base class for storing metrics.
+
+    Subclasses should define .report().
     """
 
     @abstractmethod
