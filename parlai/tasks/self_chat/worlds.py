@@ -40,7 +40,7 @@ def load_openers(opt) -> Optional[List[str]]:
         msg = task_world.get_acts()[0]
         # add only the first message in the episode
         if is_first_turn and msg.get('text'):
-            openers.add(msg.get('text'))
+            openers.add(msg['text'])
         is_first_turn = msg.get('episode_done', False)
 
     print(f'[ loaded {len(openers)} openers ]')
@@ -129,7 +129,8 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]
-            # get the beginning of the conversation
+            # get the beginning of the conversation, which can include contexts 
+            # and/or any number of starting messages
             self.contexts = self.get_contexts(self.episode_cnt)
             self.seed_utterances = self._get_seed_utt_acts(
                 self.episode_cnt, self.agents_ordered
@@ -146,10 +147,12 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 }
                 self.acts[1 - i] = context
                 self.agents_ordered[i].observe(validate(context))
+            # clear contexts so they are only added once per episode
             self.contexts = None
         elif self.seed_utterances:
-            # grab the first two seed messages
+            # pop the next two seed messages (there may be less or more than 2 total)
             utts = self.seed_utterances[:2]
+            self.seed_utterances = self.seed_utterances[2:]
             # process the turn
             for i in [0, 1]:
                 # if we have a seed utterance, add it to the conversation
@@ -159,9 +162,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                         self.agents_ordered[i].self_observe(self.acts[i])
                 else:
                     self.acts[i] = self.agents_ordered[i].act()
-                self.agents_ordered[1 - i].observe(validate(self.acts[i]))
-            # remove the used seed messages from the queue
-            self.seed_utterances = self.seed_utterances[2:]
+                self.agents_ordered[1 - i].observe(validate(self.acts[i]))            
         else:
             # do regular loop
             acts = self.acts
