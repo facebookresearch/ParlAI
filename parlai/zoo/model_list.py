@@ -295,7 +295,7 @@ model_list = [
         "title": "Poly-Encoder Transformer Reddit Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
-        "agent": "transformer/polyencoder",  # noqa: E501
+        "agent": "transformer/polyencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -326,7 +326,7 @@ model_list = [
         "title": "Poly-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/poly_model_huge_wikito",
-        "agent": "transformer/polyencoder",  # noqa: E501
+        "agent": "transformer/polyencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -357,7 +357,7 @@ model_list = [
         "title": "Bi-Encoder Transformer Reddit Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
-        "agent": "transformer/biencoder",  # noqa: E501
+        "agent": "transformer/biencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -390,7 +390,7 @@ model_list = [
         "title": "Bi-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/bi_model_huge_wikito",
-        "agent": "transformer/biencoder",  # noqa: E501
+        "agent": "transformer/biencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -423,7 +423,7 @@ model_list = [
         "title": "Cross-Encoder Transformer Reddit Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/cross_model_huge_reddit",
-        "agent": "transformer/crossencoder",  # noqa: E501
+        "agent": "transformer/crossencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -453,7 +453,7 @@ model_list = [
         "title": "Cross-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/cross_model_huge_wikito",
-        "agent": "transformer/crossencoder",  # noqa: E501
+        "agent": "transformer/crossencoder",
         "task": "pretrained_transformers",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -483,7 +483,7 @@ model_list = [
         "title": "Poly-Encoder Transformer ConvAI2 Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/model_poly",
-        "agent": "transformer/polyencoder",  # noqa: E501
+        "agent": "transformer/polyencoder",
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
@@ -600,7 +600,7 @@ model_list = [
         "title": "Transformer Classifier Single-turn Dialogue Safety Model",
         "id": "dialogue_safety",
         "path": "zoo:dialogue_safety/single_turn/model",
-        "agent": "transformer/classifier",  # noqa: E501
+        "agent": "transformer/classifier",
         "task": "dialogue_safety:adversarial,dialogue_safety:standard",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
         "description": (
@@ -618,7 +618,7 @@ model_list = [
         "title": "BERT Classifier Multi-turn Dialogue Safety Model",
         "id": "dialogue_safety",
         "path": "zoo:dialogue_safety/multi_turn/model",
-        "agent": "bert_classifier",  # noqa: E501
+        "agent": "bert_classifier",
         "task": "dialogue_safety:multiturn",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
         "description": (
