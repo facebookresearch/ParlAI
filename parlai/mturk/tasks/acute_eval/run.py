@@ -7,6 +7,7 @@ from queue import Queue
 import json
 import numpy as np
 import os
+import random
 
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
@@ -45,9 +46,18 @@ def add_args(from_argv=False):
         help='Number of annotations per conversation comparison pair',
     )
     argparser.add_argument(
-        '--pairings-filename', type=str, default='pairings.jsonl', help=''
+        '--pairings-filename',
+        type=str,
+        default='pairings.jsonl',
+        help='name of the file containing the task dictionaries',
     )
-    argparser.add_argument('--task-folder', type=str, default=None, help='')
+    argparser.add_argument(
+        '--task-folder',
+        type=str,
+        default=None,
+        help='path to folder containing the pairings file and, optionally, '
+        'the task config',
+    )
     argparser.add_argument(
         '--s1-choice',
         type=str,
@@ -84,7 +94,9 @@ def add_args(from_argv=False):
         default=0.75,
         help='minimum accuracy on onboarding tasks, as a float 0-1.0',
     )
-    argparser.add_argument('--seed', type=int, default=42, help='np.random seed')
+    argparser.add_argument(
+        '--seed', type=int, default=42, help='seed for random and np.random'
+    )
     argparser.set_defaults(allowed_conversation=1)
     if from_argv:
         return argparser.parse_args()
@@ -136,8 +148,7 @@ def read_task_from_jsonl(
     """
     Build task dict according to expected format.
     """
-    conv_orders = [[0, 1], [1, 0]]
-    conv_order = conv_orders[np.random.choice([0, 1])]
+    conv_order = random.choice([[0, 1], [1, 0]])
     task_data = {}
     specs = {}
     task_data['task_specs'] = specs
@@ -185,6 +196,7 @@ def get_new_task_data(worker, tasks_per_hit):
             and dialogue0_id not in seen_conversations
             and dialogue1_id not in seen_conversations
         ):
+            # track tasks and conversations seen
             completed_tasks.append(next_task['task_specs']['internal_pair_id'])
             workers_tasks_completed[worker_id] = completed_tasks
             seen_conversations.extend([dialogue0_id, dialogue1_id])
@@ -197,6 +209,7 @@ def get_new_task_data(worker, tasks_per_hit):
     # task queue is exhausted
     tasks_still_needed = tasks_per_hit - len(task_data)
     tasks_remaining = [id for id in desired_tasks.keys() if id not in completed_tasks]
+    # get any tasks with conversations this worker has not seen
     tasks_chosen = [
         t
         for t in tasks_remaining
@@ -262,11 +275,14 @@ def get_onboarding_tasks(worker_id, tasks_per_hit):
         return []
     onboarding_tasks_todo = workers_to_onboarding_tasks_todo.get(worker_id)
     if onboarding_tasks_todo is None:
+        # new worker, instantiate their list of onboarding tasks
         onboarding_tasks_todo = list(onboarding_tasks.keys())
         np.random.shuffle(onboarding_tasks_todo)
         workers_to_onboarding_tasks_todo[worker_id] = onboarding_tasks_todo
     if len(onboarding_tasks_todo) == 0:
+        # worker has completed all required onboarding tasks
         return []
+    # get onboarding tasks for workers needing them
     num_tasks_to_return = min(len(onboarding_tasks_todo), tasks_per_hit)
     onboarding_tasks_chosen = onboarding_tasks_todo[:num_tasks_to_return]
     workers_to_onboarding_tasks_todo[worker_id] = onboarding_tasks_todo[
@@ -283,21 +299,28 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
     response_data = save_data['worker_data'][worker_id]['response']['task_data']
     num_onboarding_tasks = 0
     num_correct = 0
+
     for i in range(len(all_task_data)):
         is_onboarding = all_task_data[i]['pairing_dict'].get('is_onboarding', False)
         if not is_onboarding:
+            # not an onboarding task, no need to check correctness
             continue
         worker_response = response_data[i]['speakerChoice']
         expected_response = all_task_data[i]['pairing_dict']['correct_answer']
         num_onboarding_tasks += 1
         if worker_response == expected_response:
+            # count correct answers
             num_correct += 1
     if num_onboarding_tasks == 0:
+        # no onboarding tasks found
         if worker_id in onboarding_failed_workers:
+            # worker already failed onboarding, add pairings back to queue
             return_task_data(worker_id, all_task_data)
         return
     if (num_correct / num_onboarding_tasks) >= threshold:
+        # worker did not fail onboarding
         return
+    # worker failed onboarding, soft block and record
     mturk_manager.soft_block_worker(worker_id)
     onboarding_failed_workers.append(worker_id)
 
@@ -307,6 +330,7 @@ def main(opt):
     Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
     and configuring it for the qa_data_collection task.
     """
+    random.seed(opt['seed'])
     np.random.seed(opt['seed'])
 
     # Set the task name to be the folder name
@@ -323,6 +347,10 @@ def main(opt):
         sys.path.append(opt['task_folder'])
         from task_config import task_config
     except Exception:
+        warn_once(
+            'No task_config.py file provided, using default title, '
+            'description, and tags on MTurk task display'
+        )
         task_config = DEFAULT_TASK_CONFIG
 
     opt.update(task_config)
@@ -381,6 +409,7 @@ def main(opt):
             if not world.did_complete():
                 return_task_data(workers[0].worker_id, task_data)
             elif opt['block_on_onboarding_fail']:
+                # check whether workers failed onboarding
                 check_and_update_worker_approval(
                     mturk_manager,
                     workers[0].worker_id,
