@@ -16,6 +16,7 @@ import tempfile
 import shutil
 import io
 import signal
+import time
 from typing import Tuple
 
 
@@ -131,6 +132,16 @@ class retry(object):
             return testfn(testself, *args, **kwargs)
 
         return _wrapper
+
+
+def print_test_time(func):
+    def _wrapper(*args, **kwargs):
+        start_time = time.time()
+        func(*args, **kwargs)
+        end_time = round(time.time() - start_time, 5)
+        print(f'\n[ Test {func.__name__} completed in {end_time}s ]')
+
+    return _wrapper
 
 
 def git_ls_files(root=None, skip_nonexisting=True):
