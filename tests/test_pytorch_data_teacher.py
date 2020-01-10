@@ -34,16 +34,17 @@ integration_test_parser_defaults = {
     'hiddensize': 16,
     'attention': 'general',
     'rnn_class': 'gru',
-    'no_cuda': True,
     'learningrate': 1,
     'embeddingsize': 16,
     'dropout': 0.0,
     'gradient_clip': 1.0,
     'lookuptable': 'all',
-    'num_epochs': 50,
+    'num_epochs': 30,
+    'validation_metric': 'token_acc',
     'validation_every_n_epochs': 5,
     'log_every_n_secs': 1,
     'batch_length_range': 5,
+    'skip_generation': True,
 }
 
 
@@ -51,8 +52,8 @@ def solved_task(str_output, valid, test):
     return (
         valid['ppl'] < 1.3
         and test['ppl'] < 1.3
-        and valid['accuracy'] > 0.95
-        and test['accuracy'] > 0.95
+        and valid['token_acc'] > 0.95
+        and test['token_acc'] > 0.95
     )
 
 
