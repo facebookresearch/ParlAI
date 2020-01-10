@@ -55,9 +55,10 @@ class TestSeq2Seq(unittest.TestCase):
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
-                no_cuda=True,
                 skip_generation=False,
                 inference='greedy',
+                batchsize=8,
+                num_examples=32,
             )
         )
 
