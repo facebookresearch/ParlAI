@@ -31,8 +31,13 @@ def _circleci_parallelism(suite):
     # others, so we want to flatten it
     tests = [testfile._tests for testfile in suite._tests]
     tests = list(chain.from_iterable(tests))
+    tests = [t._tests for t in tests]
+    tests = list(chain.from_iterable(tests))
+    total_tests = len(tests)
     random.Random(42).shuffle(tests)
     tests = [t for i, t in enumerate(tests) if i % total == index]
+    tests_to_run = len(tests)
+    print(f"Parallelism running only {tests_to_run}/{total_tests} tests.")
     return unittest.TestSuite(tests)
 
 
