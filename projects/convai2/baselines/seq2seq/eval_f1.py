@@ -13,7 +13,7 @@ from parlai.core.build_data import download_models
 from projects.convai2.eval_f1 import setup_args, eval_f1
 
 
-def main():
+def main(args=None):
     parser = setup_args()
     parser.set_params(
         model='legacy:seq2seq:0',
@@ -22,7 +22,7 @@ def main():
         dict_lower=True,
         batchsize=32,
     )
-    opt = parser.parse_args(print_args=False)
+    opt = parser.parse_args(args=args, print_args=False)
     if (
         opt.get('model_file', '').find('convai2/seq2seq/convai2_self_seq2seq_model')
         != -1
