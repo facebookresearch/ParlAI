@@ -129,7 +129,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]
-            # get the beginning of the conversation, which can include contexts 
+            # get the beginning of the conversation, which can include contexts
             # and/or any number of starting messages
             self.contexts = self.get_contexts(self.episode_cnt)
             self.seed_utterances = self._get_seed_utt_acts(
@@ -162,7 +162,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                         self.agents_ordered[i].self_observe(self.acts[i])
                 else:
                     self.acts[i] = self.agents_ordered[i].act()
-                self.agents_ordered[1 - i].observe(validate(self.acts[i]))            
+                self.agents_ordered[1 - i].observe(validate(self.acts[i]))
         else:
             # do regular loop
             acts = self.acts
