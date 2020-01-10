@@ -24,7 +24,6 @@ jobs:
         run: |
           set -eux
           git fetch origin master
-          git fetch HEAD
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
@@ -63,7 +62,6 @@ jobs:
         run: |
           set -eux
           git fetch origin master
-          git log master | head -n 200
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
@@ -84,7 +82,7 @@ jobs:
           set -eux
           git --version
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
-          forkpoint=$(git merge-base --fork-point master HEAD)
+          forkpoint=$(git merge-base master HEAD)
           git show -p master
           git show -p HEAD
           git checkout -f $forkpoint
