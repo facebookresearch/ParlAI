@@ -80,6 +80,7 @@ jobs:
       - name: mypy
         run: |
           set -eux
+          git --version
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
           forkpoint=$(git merge-base --fork-point master HEAD)
           git show -p master
