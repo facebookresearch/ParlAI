@@ -13,7 +13,14 @@ import os
 import sys as _sys
 import datetime
 import parlai
-import git
+
+try:
+    import git
+
+    GIT_AVAILABLE = True
+except ImportError:
+    # silence the error
+    GIT_AVAILABLE = False
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
@@ -43,6 +50,8 @@ def print_git_commit():
         internal_commit = git_.rev_parse('HEAD')
         print(f'[ Current internal commit: {internal_commit} ]')
     except git.GitCommandNotFound:
+        pass
+    except git.GitCommandError:
         pass
 
 
@@ -1076,7 +1085,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
-            print_git_commit()
+            if GIT_AVAILABLE:
+                print_git_commit()
             print_announcements(self.opt)
 
         return self.opt
