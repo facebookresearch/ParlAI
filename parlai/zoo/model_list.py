@@ -321,6 +321,10 @@ model_list = [
             "--poly-attention-type basic --dict-endtoken __start__ "
             "--model-file <YOUR MODEL FILE>"
         ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.8942 ...}"
+        ),
     },
     {
         "title": "Poly-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
@@ -351,6 +355,10 @@ model_list = [
             "--learn-embeddings True --polyencoder-type codes --poly-n-codes 64 "
             "--poly-attention-type basic --dict-endtoken __start__ "
             "--model-file <YOUR MODEL FILE>"
+        ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.861 ...}"
         ),
     },
     {
@@ -385,6 +393,10 @@ model_list = [
             "--share-word-embeddings False --dict-endtoken __start__ --fp16 True "
             "--model-file <YOUR MODEL FILE>"
         ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.8686 ...}"
+        ),
     },
     {
         "title": "Bi-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
@@ -418,6 +430,10 @@ model_list = [
             "--share-word-embeddings False --dict-endtoken __start__ --fp16 True "
             "--model-file <YOUR MODEL FILE>"
         ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.846 ...}"
+        ),
     },
     {
         "title": "Cross-Encoder Transformer Reddit Pretrained Model",
@@ -448,6 +464,10 @@ model_list = [
             "--learn-embeddings True --dict-endtoken __start__ "
             "--model-file <YOUR MODEL FILE>"
         ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.903 ...}"
+        ),
     },
     {
         "title": "Cross-Encoder Transformer Wikipedia/Toronto Books Pretrained Model",
@@ -477,6 +497,10 @@ model_list = [
             "--embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 "
             "--learn-embeddings True --dict-endtoken __start__ "
             "--model-file <YOUR MODEL FILE>"
+        ),
+        "result": (
+            "(subject to some variance, you may see the following as a result of validation of the model)\n"
+            "{'exs': 7801, 'accuracy': 0.873 ...}"
         ),
     },
     {
