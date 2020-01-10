@@ -87,8 +87,6 @@ class TestMemnn(unittest.TestCase):
         """
         Tests that the memnn model files continue to works over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests',

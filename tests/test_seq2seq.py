@@ -46,8 +46,6 @@ class TestSeq2Seq(unittest.TestCase):
         """
         This test uses a single-turn sequence repitition task.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',
@@ -72,8 +70,6 @@ class TestSeq2Seq(unittest.TestCase):
         """
         Ensures beam search can generate the correct response.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',
@@ -155,8 +151,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
     """
 
     def test_backwards_compatibility(self):
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
