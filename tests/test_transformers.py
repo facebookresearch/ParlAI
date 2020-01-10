@@ -687,78 +687,77 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
 
-def test_learning_rate_resuming(self, args):
-    """
-    Test learning rate resumes correctly.
-    """
-    mdl = args['model']
-    with testing_utils.tempdir() as tmpdir:
-        model_file = os.path.join(tmpdir, 'model')
-        stdout1, valid1, test1 = testing_utils.train_model(
-            dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-        )
-        stdout2, valid2, test2 = testing_utils.train_model(
-            dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-        )
-        # make sure the number of updates is being tracked correctly
-        self.assertGreater(
-            valid2['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) Number of updates is not increasing'.format(mdl),
-        )
-        # make sure the learning rate is decreasing
-        self.assertLess(
-            valid2['lr'],
-            valid1['lr'],
-            '({}) Learning rate is not decreasing'.format(mdl),
-        )
-        # but make sure we're not loading the scheduler if we're fine
-        # tuning
-        stdout3, valid3, test3 = testing_utils.train_model(
-            dict(
-                init_model=os.path.join(tmpdir, 'model'),
-                model_file=os.path.join(tmpdir, 'newmodel'),
-                lr_scheduler='invsqrt',
-                **args,
-            )
-        )
-        self.assertEqual(
-            valid3['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) Finetuning LR scheduler reset failed '
-            '(total_train_updates).'.format(mdl),
-        )
-        self.assertEqual(
-            valid3['lr'],
-            valid1['lr'],
-            '({}) Finetuning LR scheduler reset failed ' '(lr).'.format(mdl),
-        )
-        # and make sure we're not loading the scheduler if it changes
-        stdout4, valid4, test4 = testing_utils.train_model(
-            dict(
-                init_model=os.path.join(tmpdir, 'model'),
-                model_file=os.path.join(tmpdir, 'newmodel2'),
-                lr_scheduler='reduceonplateau',
-                **args,
-            )
-        )
-        self.assertEqual(
-            valid4['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) LR scheduler change reset failed (total_train_updates).'
-            '\n{}'.format(mdl, stdout4),
-        )
-        self.assertEqual(
-            valid4['lr'],
-            1e-3,
-            '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
-        )
-
-
 class TestLearningRateScheduler(unittest.TestCase):
     """
     Test learning rate scheduler for both generative and ranking transformers.
     """
+
+    def test_learning_rate_resuming(self, args):
+        """
+        Test learning rate resumes correctly.
+        """
+        mdl = args['model']
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model')
+            stdout1, valid1, test1 = testing_utils.train_model(
+                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
+            )
+            stdout2, valid2, test2 = testing_utils.train_model(
+                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
+            )
+            # make sure the number of updates is being tracked correctly
+            self.assertGreater(
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) Number of updates is not increasing'.format(mdl),
+            )
+            # make sure the learning rate is decreasing
+            self.assertLess(
+                valid2['lr'],
+                valid1['lr'],
+                '({}) Learning rate is not decreasing'.format(mdl),
+            )
+            # but make sure we're not loading the scheduler if we're fine
+            # tuning
+            stdout3, valid3, test3 = testing_utils.train_model(
+                dict(
+                    init_model=os.path.join(tmpdir, 'model'),
+                    model_file=os.path.join(tmpdir, 'newmodel'),
+                    lr_scheduler='invsqrt',
+                    **args,
+                )
+            )
+            self.assertEqual(
+                valid3['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) Finetuning LR scheduler reset failed '
+                '(total_train_updates).'.format(mdl),
+            )
+            self.assertEqual(
+                valid3['lr'],
+                valid1['lr'],
+                '({}) Finetuning LR scheduler reset failed ' '(lr).'.format(mdl),
+            )
+            # and make sure we're not loading the scheduler if it changes
+            stdout4, valid4, test4 = testing_utils.train_model(
+                dict(
+                    init_model=os.path.join(tmpdir, 'model'),
+                    model_file=os.path.join(tmpdir, 'newmodel2'),
+                    lr_scheduler='reduceonplateau',
+                    **args,
+                )
+            )
+            self.assertEqual(
+                valid4['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) LR scheduler change reset failed (total_train_updates).'
+                '\n{}'.format(mdl, stdout4),
+            )
+            self.assertEqual(
+                valid4['lr'],
+                1e-3,
+                '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
+            )
 
     def test_resuming_generator(self):
         """
