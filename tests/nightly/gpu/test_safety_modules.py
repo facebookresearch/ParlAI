@@ -6,7 +6,7 @@
 
 from parlai.utils.safety import OffensiveLanguageClassifier
 from parlai.utils.safety import OffensiveStringMatcher
-from parlai.utils.testing import skipUnlessBPE
+from parlai.utils.testing import skipUnlessBPE, skipUnlessGPU
 
 
 import unittest
@@ -29,6 +29,7 @@ class TestSafetyModules(unittest.TestCase):
         for phrase in DEFINITELY_GOOD:
             assert phrase not in sm, f'`{phrase}` is not offensive'
 
+    @skipUnlessGPU
     @skipUnlessBPE
     def test_classifier(self):
         lc = OffensiveLanguageClassifier()
