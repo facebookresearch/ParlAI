@@ -80,11 +80,8 @@ jobs:
       - name: mypy
         run: |
           set -eux
-          git --version
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
           forkpoint=$(git merge-base master HEAD)
-          git show -p master
-          git show -p HEAD
           git checkout -f $forkpoint
           mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
           diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
