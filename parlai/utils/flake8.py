@@ -51,7 +51,7 @@ class ParlAIChecker:
                 '',
             )
 
-        # check copyrighting next
+        # check doc formatting
         source = "".join(self.lines)
         formatted_source = docformatter.format_code(
             source,
@@ -90,6 +90,8 @@ class ParlAIChecker:
                     )
 
         # the rest is checking copyright, but there are some exceptions
+        # copyright must appear in the first 16 lines of the file.
+        source = "".join(self.lines[:16])
         if any(wl in source for wl in WHITELIST_PHRASES):
             return
 
