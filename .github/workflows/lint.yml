@@ -23,8 +23,8 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch origin/master --depth 0
-          git fetch HEAD --depth 0
+          git fetch origin/master
+          git fetch HEAD
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
@@ -62,7 +62,8 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch --all
+          git fetch origin/master
+          git fetch HEAD
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
