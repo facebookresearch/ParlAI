@@ -308,6 +308,9 @@ class MultiturnCandidateTeacher(CandidateTeacher):
                     i == 0,
                 )
 
+    def num_examples(self):
+        return self.example_size * self.num_episodes()
+
 
 class NocandidateTeacher(CandidateTeacher):
     """
