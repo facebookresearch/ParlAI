@@ -141,8 +141,6 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Tests that the transformer ranker model files continue to work over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
@@ -581,8 +579,6 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Tests that the generator model files work over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',

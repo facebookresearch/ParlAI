@@ -655,4 +655,20 @@ model_list = [
             "{'exs': 3000, 'accuracy': 0.9317, 'f1': 0.9317, 'bleu': 9.317e-10, 'lr': 5e-09, 'total_train_updates': 0, 'examples': 3000, 'mean_loss': 0.008921, 'class___notok___recall': 0.7067, 'class___notok___prec': 0.6444, 'class___notok___f1': 0.6741, 'class___ok___recall': 0.9567, 'class___ok___prec': 0.9671, 'class___ok___f1': 0.9618, 'weighted_f1': 0.9331}"
         ),
     },
+    {
+        "title": "Integration Test Models",
+        "id": "unittest",
+        "path": "zoo:unittest/transformer_ranker/model",
+        "task": "integration_tests",
+        "description": (
+            "Model files used to check backwards compatibility and code coverage of important standard models."
+        ),
+        "example": (
+            "python examples/eval_model.py -mf zoo:unittest/transformer_generator2/model -t integration_tests:multiturn_candidate -m transformer/generator"
+        ),
+        "external_website": '',
+        "result": (
+            """{'exs': 400, 'accuracy': 1.0, 'f1': 1.0, 'bleu-4': 0.2503, 'lr': 0.001, 'total_train_updates': 5000, 'gpu_mem_percent': 9.37e-05, 'loss': 0.0262, 'token_acc': 1.0, 'nll_loss': 7.935e-05, 'ppl': 1.0}"""
+        ),
+    },
 ]

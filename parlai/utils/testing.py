@@ -393,21 +393,3 @@ def display_model(opt) -> Tuple[str, str, str]:
         popt['datatype'] = 'test:stream'
         dm.display_model(popt)
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
-
-
-def download_unittest_models():
-    """
-    Download the unittest pretrained models.
-    """
-    from parlai.core.params import ParlaiParser
-    from parlai.core.build_data import download_models
-
-    opt = ParlaiParser().parse_args([], print_args=False)
-    model_filenames = [
-        'seq2seq.tar.gz',
-        'transformer_ranker.tar.gz',
-        'transformer_generator2.tar.gz',
-        'memnn.tar.gz',
-    ]
-    with capture_output():
-        download_models(opt, model_filenames, 'unittest', version='v3.0')

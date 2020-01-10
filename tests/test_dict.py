@@ -138,7 +138,6 @@ class TestDictionary(unittest.TestCase):
             shutil.rmtree(os.path.join(datapath, 'models/unittest'))
         except FileNotFoundError:
             pass
-        testing_utils.download_unittest_models()
 
         zoo_path = 'zoo:unittest/seq2seq/model'
         model_path = modelzoo_path(datapath, zoo_path)
