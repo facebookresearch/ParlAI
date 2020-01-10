@@ -22,7 +22,7 @@ gpu: &gpu
   environment:
     CUDA_VERSION: "10.2"
   machine:
-    image: ubuntu-1804:201903-01
+    image: ubuntu-1604:201903-01
   resource_class: gpu.small # tesla m60
 # -------------------------------------------------------------------------------------
 
@@ -111,11 +111,11 @@ setupcuda: &setupcuda
     command: |
       # download and install nvidia drivers, cuda, etc
       wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      wget --no-clobber -P ~/nvidia-downloads 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin'
-      wget --no-clobber -P ~/nvidia-downloads 'http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb'
+      wget --no-clobber -P ~/nvidia-downloads 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin'
+      wget --no-clobber -P ~/nvidia-downloads 'http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb'
       sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
       time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-      time sudo dpkg -i cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.de
+      time sudo dpkg -i cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
       echo "Done installing CUDA."
       pyenv versions
       nvidia-smi
