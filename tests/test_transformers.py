@@ -550,21 +550,14 @@ class TestTransformerGenerator(unittest.TestCase):
         Test nucleus generation.
         """
         # Nucleus is inherently stochastic, just ensure no crash.
-        testing_utils.train_model(
+        testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
+                model_file='zoo:unittest/transformer_generator2/model',
                 batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
                 inference='nucleus',
                 topp=0.3,
-                beam_size=5,
             )
         )
 
@@ -573,21 +566,14 @@ class TestTransformerGenerator(unittest.TestCase):
         Test topk generation.
         """
         # Topk is inherently stochastic, just ensure no crash.
-        testing_utils.train_model(
+        testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
+                model_file='zoo:unittest/transformer_generator2/model',
                 batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
                 inference='topk',
                 topk=5,
-                beam_size=5,
             )
         )
 

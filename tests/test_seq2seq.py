@@ -43,7 +43,6 @@ class TestSeq2Seq(unittest.TestCase):
             "hits@1 = {}\nLOG:\n{}".format(valid['ppl'], stdout),
         )
 
-    @testing_utils.retry(ntries=3)
     def test_generation(self):
         """
         This test uses a single-turn sequence repitition task.
@@ -69,7 +68,6 @@ class TestSeq2Seq(unittest.TestCase):
             test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         """
         Ensures beam search can generate the correct response.
