@@ -27,22 +27,18 @@ class TestExampleSeq2Seq(unittest.TestCase):
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
                 numthreads=1,
-                no_cuda=True,
-                embeddingsize=16,
-                hiddensize=16,
+                hidden_size=16,
                 gradient_clip=1.0,
-                inference='beam',
-                beam_size=4,
                 skip_generation=True,
             )
         )
 
         self.assertTrue(
-            valid['token_acc'] > 0.9,
+            valid['token_acc'] > 0.8,
             "valid token_acc = {}\nLOG:\n{}".format(valid['token_acc'], stdout),
         )
         self.assertTrue(
-            test['token_acc'] > 0.9,
+            test['token_acc'] > 0.8,
             "test token_acc = {}\nLOG:\n{}".format(test['token_acc'], stdout),
         )
 
