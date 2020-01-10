@@ -21,7 +21,7 @@ class TestUtils(unittest.TestCase):
             (torch.DoubleTensor([34.68]), 34.68),
         ]
         for input_, output in passing_inputs_and_outputs:
-            actual_output = SumMetric(input_).report()
+            actual_output = SumMetric(input_).value()
             self.assertEqual(actual_output, output)
             # Value should be equal here. For the rest they'll only be equal to some
             # precision
@@ -45,7 +45,7 @@ class TestUtils(unittest.TestCase):
             (torch.DoubleTensor([1]), torch.LongTensor([[-1]]), 0.0),
         ]
         for input1, input2, output in input_pairs_and_outputs:
-            actual_output = (SumMetric(input1) + SumMetric(input2)).report()
+            actual_output = (SumMetric(input1) + SumMetric(input2)).value()
             self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
@@ -58,7 +58,7 @@ class TestUtils(unittest.TestCase):
             ((torch.Tensor([2.3]), torch.Tensor([2.0])), 1.15),
         ]
         for input_, output in passing_inputs_and_outputs:
-            actual_output = AverageMetric(input_[0], input_[1]).report()
+            actual_output = AverageMetric(input_[0], input_[1]).value()
             self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
@@ -86,7 +86,7 @@ class TestUtils(unittest.TestCase):
             actual_output = (
                 AverageMetric(input1[0], input1[1])
                 + AverageMetric(input2[0], input2[1])
-            ).report()
+            ).value()
             self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 

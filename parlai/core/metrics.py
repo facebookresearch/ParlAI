@@ -51,18 +51,18 @@ class Metric(ABC):
     """
     Base class for storing metrics.
 
-    Subclasses should define .report().
+    Subclasses should define .value().
     """
 
     @abstractmethod
-    def report(self) -> float:
+    def value(self) -> float:
         pass
 
     def __str__(self) -> str:
-        return f'{self.report():.4g}'
+        return f'{self.value():.4g}'
 
     def __repr__(self) -> str:
-        return f'{self.__class__} ({self.report():.4g})'
+        return f'{self.__class__} ({self.value():.4g})'
 
 
 class SumMetric(Metric):
@@ -88,7 +88,7 @@ class SumMetric(Metric):
         full_sum: float = self.sum + other.sum
         return SumMetric(sum_=full_sum)
 
-    def report(self) -> float:
+    def value(self) -> float:
         return self.sum
 
 
@@ -131,7 +131,7 @@ class AverageMetric(Metric):
         full_denom: int = self.denom + other.denom
         return AverageMetric(numer=full_numer, denom=full_denom)
 
-    def report(self) -> float:
+    def value(self) -> float:
         return self.numer / self.denom
 
 
