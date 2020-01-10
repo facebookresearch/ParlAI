@@ -697,6 +697,7 @@ class TorchAgent(ABC, Agent):
         self.id = type(self).__name__.replace("Agent", "")
 
         # now set up any fields that all instances may need
+        self.empty: str
         self.EMPTY = torch.zeros(0, dtype=torch.long)
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
