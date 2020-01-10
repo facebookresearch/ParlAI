@@ -87,8 +87,7 @@ jobs:
           diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
           cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
-        # uses: pytorch/add-annotations-github-action@master
-        uses: stephenroller/add-annotations-github-action@master
+        uses: stephenroller/add-annotations-github-action@28105dae287bccb6298c9bc8f872de4703f3464e
         with:
           check_name: 'mypy'
           linter_output_path: 'output-annotations.txt'
