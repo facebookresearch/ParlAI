@@ -842,4 +842,4 @@ class TestLearningRateScheduler(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(testRunner=testing_utils.TimeLoggingTestRunner)
+    unittest.main()

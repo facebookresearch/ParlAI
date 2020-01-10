@@ -87,11 +87,3 @@ def internal_tests():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai_internal/tests")
     return test_suite
-
-
-def main():
-    unittest.main(testRunner=TimeLoggingTestRunner)
-
-
-if __name__ == '__main__':
-    main()
