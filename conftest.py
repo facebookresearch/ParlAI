@@ -34,12 +34,13 @@ def pytest_collection_modifyitems(config, items):
     rootdir = pathlib.Path(config.rootdir)
     parallels = [i % total == index for i in range(len(items))]
     random.Random(42).shuffle(parallels)
+    deselected = []
     for parallel, item in zip(parallels, items):
-        if not parallel:
-            skip = pytest.mark.skip(reason="CircleCI parallelism")
-            item.add_marker(skip)
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
-        if "nightly/gpu/" in rel_path:
+        if not parallel:
+            deselected.add(item)
+            config.hook.pytest_deselected(item)
+        elif "nightly/gpu/" in rel_path:
             item.add_marker("nightly_gpu")
         elif "nightly/cpu/" in rel_path:
             item.add_marker("nightly_cpu")
@@ -47,9 +48,9 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker("data")
         elif "tasks/" in rel_path:
             item.add_marker("tasks")
-        elif rel_path.startswith("parlai/mturk/core/test"):
-            item.add_marker("mturk")
-        elif rel_path.startswith("tests/") and "/" not in rel_path[6:]:
+        elif "/" not in rel_path[6:]:
             item.add_marker("unit")
         else:
-            raise ValueError(f"Couldn't categorize 'rel_path'")
+            raise ValueError(f"Couldn't categorize '{rel_path}'")
+    for d in deselected:
+        items.remove(d)
