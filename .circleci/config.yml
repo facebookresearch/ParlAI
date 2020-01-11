@@ -150,7 +150,7 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Data tests
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m datatests
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -171,9 +171,6 @@ jobs:
             - "~/venv/lib"
       - <<: *installtorchcpuosx
       - run:
-          name: output test split
-          command: circleci tests split --split-by=timings --timings-type=classname
-      - run:
           name: Unit tests (OSX)
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
@@ -186,6 +183,9 @@ jobs:
     parallelism: 8
     steps:
       - checkout
+      - run:
+          name: output test split
+          command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
