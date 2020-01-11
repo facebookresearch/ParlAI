@@ -47,6 +47,8 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker("data")
         elif "tasks/" in rel_path:
             item.add_marker("tasks")
+        elif "parlai/mturk/core/test/" in rel_path:
+            item.add_marker("mturk")
         elif "/" not in rel_path[6:]:
             item.add_marker("unit")
         else:
