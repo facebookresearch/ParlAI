@@ -52,7 +52,7 @@ class OneCommonTeacher(FixedDialogTeacher):
         data_path = os.path.join(
             opt['datapath'],
             'onecommon',
-            'onecommon-master',
+            'onecommon-1.0',
             'aaai2020',
             'experiments',
             'data',

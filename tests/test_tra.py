@@ -157,7 +157,7 @@ class _AbstractTRATest(unittest.TestCase):
             args['fixed_candidates_path'] = tmp_cands_file
             args['encode_candidate_vecs'] = False  # don't encode before training
             args['ignore_bad_candidates'] = False
-            args['num_epochs'] = 20
+            args['num_epochs'] = 4
             stdout, valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(
                 valid['hits@100'],
@@ -251,7 +251,7 @@ class TestPolyRanker(_AbstractTRATest):
             args['ignore_bad_candidates'] = False
             args['model_file'] = os.path.join(tmpdir, 'model')
             args['dict_file'] = os.path.join(tmpdir, 'model.dict')
-            args['num_epochs'] = 20
+            args['num_epochs'] = 4
             # Train model where it has access to the candidate in labels
             stdout, valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(
