@@ -38,7 +38,7 @@ def pytest_collection_modifyitems(config, items):
     for parallel, item in zip(parallels, items):
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
         if not parallel:
-            deselected.add(item)
+            deselected.append(item)
             config.hook.pytest_deselected(item)
         elif "nightly/gpu/" in rel_path:
             item.add_marker("nightly_gpu")

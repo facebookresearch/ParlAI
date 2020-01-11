@@ -347,7 +347,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m parlai/mturk/core/test
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m parlai/mturk/core/test/*.py
       - <<: *codecov
       - store_test_results:
           path: test-results
