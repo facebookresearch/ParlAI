@@ -44,7 +44,7 @@ def pytest_collection_modifyitems(config, items):
         elif "nightly/cpu/" in rel_path:
             item.add_marker("nightly_cpu")
         elif "datatests/" in rel_path:
-            item.add_marker("data")
+            item.add_marker("datatests")
         elif "tasks/" in rel_path:
             item.add_marker("tasks")
         elif "parlai/mturk/core/test/" in rel_path:

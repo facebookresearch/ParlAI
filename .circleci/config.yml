@@ -154,8 +154,6 @@ jobs:
       - <<: *codecov
       - store_test_results:
           path: test-results
-      - store_artifacts:
-          path: test-results
 
   unittests_osx:
     <<: *osx_cpu37
@@ -177,8 +175,6 @@ jobs:
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
-          path: test-results
-      - store_artifacts:
           path: test-results
 
   unittests_36:
@@ -203,8 +199,6 @@ jobs:
       - <<: *codecov
       - store_test_results:
           path: test-results
-      - store_artifacts:
-          path: test-results
 
   unittests_37:
     <<: *standard_cpu37
@@ -227,8 +221,6 @@ jobs:
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
-          path: test-results
-      - store_artifacts:
           path: test-results
 
   unittests_gpu11:
@@ -260,8 +252,6 @@ jobs:
       - <<: *codecov
       - store_test_results:
           path: test-results
-      - store_artifacts:
-          path: test-results
 
   unittests_gpu12:
     <<: *gpu
@@ -291,8 +281,6 @@ jobs:
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
-          path: test-results
-      - store_artifacts:
           path: test-results
 
   nightly_gpu_tests:
@@ -328,8 +316,6 @@ jobs:
       - <<: *codecov
       - store_test_results:
           path: test-results
-      - store_artifacts:
-          path: test-results
 
   mturk_tests:
     <<: *standard_cpu37
@@ -350,8 +336,6 @@ jobs:
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m parlai/mturk/core/test/*.py
       - <<: *codecov
       - store_test_results:
-          path: test-results
-      - store_artifacts:
           path: test-results
 
   build_website:
