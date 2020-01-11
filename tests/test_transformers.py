@@ -692,7 +692,7 @@ class TestLearningRateScheduler(unittest.TestCase):
     Test learning rate scheduler for both generative and ranking transformers.
     """
 
-    def test_learning_rate_resuming(self, args):
+    def _test_learning_rate_resuming(self, args):
         """
         Test learning rate resumes correctly.
         """
@@ -777,7 +777,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             skip_generation=True,
             warmup_updates=1,
         )
-        test_learning_rate_resuming(self, GENERATOR_ARGS)
+        self._test_learning_rate_resuming(GENERATOR_ARGS)
 
     def test_resuming_ranker(self):
         """
@@ -796,7 +796,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             embedding_size=32,
             warmup_updates=1,
         )
-        test_learning_rate_resuming(self, RANKER_ARGS)
+        self._test_learning_rate_resuming(RANKER_ARGS)
 
     def test_invsqrt_learning_rate(self):
         args = dict(
