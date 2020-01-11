@@ -35,7 +35,6 @@ from parlai.core.worlds import create_task
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, False, 'Load/extract image features')
-    parser.add_pytorch_datateacher_args()
     arg_group = parser.add_argument_group('Image Extraction')
     arg_group.add_argument(
         '--dataset',
