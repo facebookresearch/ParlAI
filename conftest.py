@@ -14,6 +14,7 @@ We use this to split up tests into different circleci runs.
 import os
 import pathlib
 import random
+import pytest
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have

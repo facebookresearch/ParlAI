@@ -481,5 +481,24 @@ class ImageTeacher(AbstractImageTeacher):
         )
 
 
+class RepeatTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = 'unused_path'
+        task = opt.get('task', 'integration_tests:RepeatTeacher:50')
+        self.data_length = int(task.split(':')[-1])
+        super().__init__(opt, shared)
+
+    def setup_data(self, unused_path):
+        for i in range(self.data_length):
+            yield ((str(i), [str(i)]), True)
+
+    def num_examples(self):
+        return self.data_length
+
+    def num_episodes(self):
+        return self.data_length
+
+
 class DefaultTeacher(CandidateTeacher):
     pass

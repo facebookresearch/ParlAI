@@ -25,8 +25,8 @@ class TestHogwild(unittest.TestCase):
         Test the trainer eval with numthreads > 1 and batchsize in [1,2,3].
         """
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(1),
-            evaltask='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
+            task='integration_tests:repeat:{}'.format(1),
+            evaltask='integration_tests:repeat:{}'.format(NUM_EXS),
             model='repeat_label',
             display_examples=False,
             num_epochs=10,
@@ -45,7 +45,7 @@ class TestHogwild(unittest.TestCase):
         Test eval with numthreads > 1 and batchsize in [1,2,3].
         """
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS), model='repeat_label'
+            task='integration_tests:repeat:{}'.format(NUM_EXS), model='repeat_label'
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
