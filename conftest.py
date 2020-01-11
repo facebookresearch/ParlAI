@@ -11,7 +11,9 @@ This is used to configure markers on tests based on filename.
 We use this to split up tests into different circleci runs.
 """
 
+import os
 import pathlib
+import random
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have
@@ -19,9 +21,22 @@ import pathlib
 
 
 def pytest_collection_modifyitems(config, items):
+    # handle circleci parallelism
+    if 'CIRCLE_NODE_TOTAL' in os.environ:
+        total = int(os.environ['CIRCLE_NODE_TOTAL'])
+        index = int(os.environ['CIRCLE_NODE_INDEX'])
+    else:
+        total = 1
+        index = 0
+
     # python 3.4/3.5 compat: rootdir = pathlib.Path(str(config.rootdir))
     rootdir = pathlib.Path(config.rootdir)
-    for item in items:
+    parallels = [i % total == index for i in range(len(items))]
+    random.Random(42).shuffle(parallels)
+    for parallel, item in zip(parallels, items):
+        if not parallel:
+            skip = pytest.mark.skip(reason="CircleCI parallelism")
+            item.add_marker(skip)
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
         if "nightly/gpu/" in rel_path:
             item.add_marker("nightly_gpu")

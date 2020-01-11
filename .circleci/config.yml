@@ -150,7 +150,7 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Data tests
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m datatests
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m datatests
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -174,7 +174,7 @@ jobs:
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -199,7 +199,7 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -224,7 +224,7 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -256,7 +256,7 @@ jobs:
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -288,7 +288,7 @@ jobs:
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -321,7 +321,7 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m nightly_gpu
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.1)
           command: sh tests/test_quickstart.sh
@@ -347,7 +347,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: coverage run -m pytest --circleci-parallelize --junitxml=test-results/junit.xml -m mturk
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk
       - <<: *codecov
       - store_test_results:
           path: test-results
