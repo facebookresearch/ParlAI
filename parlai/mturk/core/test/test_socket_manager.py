@@ -70,7 +70,7 @@ SocketManager.ACK_TIME = {Packet.TYPE_ALIVE: 0.4, Packet.TYPE_MESSAGE: 0.2}
 shared_utils.THREAD_SHORT_SLEEP = 0.05
 shared_utils.THREAD_MEDIUM_SLEEP = 0.15
 
-TIMEOUT_VERIFICATION = 8.25
+TIMEOUT_VERIFICATION = 8.5
 
 
 class TestPacket(unittest.TestCase):
