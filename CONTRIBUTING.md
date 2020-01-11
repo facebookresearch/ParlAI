@@ -12,9 +12,9 @@ We actively welcome your pull requests.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
 4. Autoformat and lint your code (`bash autoformat.sh`)
-5. Ensure the test suite passes. Run `python setup.py test`.
+5. Ensure the test suite passes. Run `python -m pytest -m unit`.
 6. If you've added a new dataset, you should also run
-   `python setup.py test -s tests.suites.datatests`. Copy-paste the output into a
+   `python -m pytest -m datatests`. Copy-paste the output into a
    comment in your PR.
 7. If you haven't already, complete the Contributor License Agreement ("CLA").
 
