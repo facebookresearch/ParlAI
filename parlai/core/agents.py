@@ -44,7 +44,6 @@ from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module
 from parlai.utils.misc import warn_once
 from parlai.core.opt import Opt, load_opt_file
-from .metrics import Metrics, aggregate_metrics
 import copy
 import random
 import os
@@ -210,6 +209,8 @@ class Teacher(Agent):
             if shared and shared.get('metrics'):
                 self.metrics = shared['metrics']
             else:
+                from .metrics import Metrics
+                # TODO: explain why the move
                 self.metrics = Metrics(opt)
         self.epochDone = False
 
@@ -390,6 +391,8 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
+        from .metrics import aggregate_metrics
+        # TODO: explain why the move
         return aggregate_metrics(self.tasks)
 
     def reset(self):
