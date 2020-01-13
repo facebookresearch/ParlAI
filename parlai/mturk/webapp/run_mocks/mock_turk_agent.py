@@ -7,7 +7,7 @@
 import logging
 
 from parlai.mturk.core.agents import MTurkAgent, TIMEOUT_MESSAGE
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 import parlai.mturk.core.shared_utils as shared_utils
 
 

@@ -13,7 +13,7 @@ import time
 import threading
 
 import parlai.mturk.core.shared_utils as shared_utils
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 
 
 def force_dir(path):

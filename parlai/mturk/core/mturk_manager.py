@@ -23,7 +23,7 @@ import requests
 #     'updating to stable may require some migration, as detailed in <link>.'
 # )
 
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
 from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
