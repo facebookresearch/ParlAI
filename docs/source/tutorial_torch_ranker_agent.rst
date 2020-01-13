@@ -13,6 +13,12 @@ Example Models
 Several existing models in ParlAI inherit from TorchRankerAgent. Try some of
 the examples below:
 
+Train a Bag-of-words Ranker model on ConvAI2:
+
+.. code-block:: bash
+
+    python  examples/train_model.py -m examples/tra  -t convai2 -mf /tmp/test -bs 32
+
 Train a Transformer Ranker model on ConvAI2:
 
 .. code-block:: bash
@@ -36,7 +42,7 @@ Creating a Model
 ----------------
 
 In order to write a ranking model that inherits from TorchRankerAgent, you
-must implement the following functions:
+must implement the following functions: (An example is available at `parlai/agents/examples/tra.py`)
 
 .. code-block:: python
 
