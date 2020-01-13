@@ -30,10 +30,15 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
+import copy
+from typing import List
 
-from parlai.core.agents import Teacher
+from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
+from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
+from parlai.core.metrics import Metrics, aggregate_metrics
+from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
@@ -95,6 +100,86 @@ class DataLoader(Thread):
                 else:
                     future = executor.submit(load_fn, *args)
                 receive_fn(future)
+
+
+class Teacher(Agent):
+    """
+    Basic Teacher agent that keeps track of how many times it's received messages.
+
+    Teachers provide the ``report()`` method to get back metrics.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        if not hasattr(self, 'opt'):
+            self.opt = copy.deepcopy(opt)
+        if not hasattr(self, 'id'):
+            self.id = opt.get('task', 'teacher')
+        if not hasattr(self, 'metrics'):
+            if shared and shared.get('metrics'):
+                self.metrics = shared['metrics']
+            else:
+                self.metrics = Metrics(opt)
+        self.epochDone = False
+
+    # return state/action dict based upon passed state
+    def act(self):
+        """
+        Act upon the previous observation.
+        """
+        if self.observation is not None and 'text' in self.observation:
+            t = {'text': 'Hello agent!'}
+        return t
+
+    def epoch_done(self):
+        """
+        Return whether the epoch is done.
+        """
+        return self.epochDone
+
+    # Default unknown length
+    def num_examples(self):
+        """
+        Return the number of examples (e.g. individual utterances) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
+        return None
+
+    def num_episodes(self):
+        """
+        Return the number of episodes (e.g. conversations) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
+        return None
+
+    def report(self):
+        """
+        Return metrics showing total examples and accuracy if available.
+        """
+        return self.metrics.report()
+
+    def reset(self):
+        """
+        Reset the teacher.
+        """
+        super().reset()
+        self.reset_metrics()
+        self.epochDone = False
+
+    def reset_metrics(self):
+        """
+        Reset metrics.
+        """
+        self.metrics.clear()
+
+    def share(self):
+        """
+        In addition to default Agent shared parameters, share metrics.
+        """
+        shared = super().share()
+        shared['metrics'] = self.metrics
+        return shared
 
 
 class FixedDialogTeacher(Teacher):
@@ -1700,3 +1785,212 @@ class AbstractImageTeacher(FixedDialogTeacher):
         if hasattr(self, 'image_features_dict'):
             shared['image_features_dict'] = self.image_features_dict
         return shared
+
+
+class MultiTaskTeacher(Teacher):
+    """
+    MultiTaskTeacher which teaches multiple tasks.
+
+    Creates a teacher that is actually a set of teachers each based on a task
+    string -- each of these teachers will get called in turn,
+    either randomly or in order.  They are all in the same world (they are the
+    same agent switching tasks).
+
+    The task string format is described for the ``create_task_agents()``
+    function above.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        self.tasks: List[Agent] = []
+        self.opt = opt
+
+        self.id = opt['task']
+        if shared and 'tasks' in shared:
+            self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
+        else:
+            tasks = opt['task'].split(',')
+            for k in tasks:
+                k = k.strip()
+                if k:
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
+                    self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
+        self.task_idx = -1
+        self.new_task = True
+        self.random = opt.get('datatype') == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.tasks)
+        self.task_choices = range(len(self.tasks))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
+
+    def num_examples(self):
+        """
+        Return the number of examples.
+        """
+        if not hasattr(self, 'num_exs'):
+            # num_examples is sum of all examples in all tasks
+            tasks_num_exs = [t.num_examples() for t in self.tasks]
+            if any(num is None for num in tasks_num_exs):
+                self.num_exs = None
+            else:
+                self.num_exs = sum(tasks_num_exs)
+        return self.num_exs
+
+    def num_episodes(self):
+        """
+        Return the number of episodes.
+        """
+        if not hasattr(self, 'num_eps'):
+            # num_episodes is sum of all num_episodes in all tasks
+            tasks_num_eps = [t.num_episodes() for t in self.tasks]
+            if any(num is None for num in tasks_num_eps):
+                self.num_eps = None
+            else:
+                self.num_eps = sum(tasks_num_eps)
+        return self.num_eps
+
+    def observe(self, observation):
+        """
+        Make an observation.
+        """
+        return self.tasks[self.task_idx].observe(observation)
+
+    def act(self):
+        """
+        Act on the previous observation.
+        """
+        if self.new_task:
+            self.new_task = False
+            if self.random:
+                # select random teacher
+                self.task_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights
+                )[0]
+            else:
+                # do at most one full loop looking for unfinished task
+                for _ in range(len(self.tasks)):
+                    self.task_idx = (self.task_idx + 1) % len(self.tasks)
+                    if not self.tasks[self.task_idx].epoch_done():
+                        # if this task has examples ready, break
+                        break
+                if self.tasks[self.task_idx].epoch_done():
+                    # all tasks are done, so return empty action table
+                    return {'episode_done': True}
+        t = self.tasks[self.task_idx].act()
+        if t['episode_done']:
+            self.new_task = True
+        return t
+
+    def epoch_done(self):
+        """
+        Return whether all subtasks are completed.
+        """
+        for t in self.tasks:
+            if not t.epoch_done():
+                return False
+        return True
+
+    # return transformed metrics showing total examples and accuracy if avail.
+    def report(self):
+        """
+        Report aggregated metrics across all subtasks.
+        """
+        return aggregate_metrics(self.tasks)
+
+    def reset(self):
+        """
+        Reset all subtasks.
+        """
+        for t in self.tasks:
+            t.reset()
+
+    def reset_metrics(self):
+        """
+        Reset metrics for each subtask.
+        """
+        for t in self.tasks:
+            t.reset_metrics()
+
+    def save(self):
+        """
+        Save each subtask.
+        """
+        for t in self.tasks:
+            t.save()
+
+    def share(self):
+        """
+        Shares this teacher by sharing each subtask.
+        """
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        shared['tasks'] = [t.share() for t in self.tasks]
+        return shared
+
+    def shutdown(self):
+        """
+        Shutdown each agent.
+        """
+        for t in self.tasks:
+            t.shutdown()
+
+
+def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
+    """
+    Handle task flags provided by the task name itself.
+
+    With this you can set specific opts with `-t task:flag=foo`.
+    """
+    fl = flags.split(':')
+    task = []
+    for f in fl:
+        if '=' in f:
+            one_flag = f.split('=')
+            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
+        else:
+            task.append(f)
+    opt['task'] = ':'.join(task)
+
+
+def create_task_agent_from_taskname(opt: Opt):
+    """
+    Create task agent(s) assuming the input ``task_dir:teacher_class``.
+
+    e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi`` or a
+    complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``, which essentially
+    performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
+    ``opt['task']`` to be used by the class ``Task1kTeacher``.
+    """
+    if not (
+        opt.get('task')
+        or opt.get('pytorch_teacher_task')
+        or opt.get('pytorch_teacher_dataset')
+    ):
+        raise RuntimeError(
+            'No task specified. Please select a task with ' + '--task {task_name}.'
+        )
+    if not opt.get('task'):
+        opt['task'] = 'pytorch_teacher'
+    if ',' not in opt['task']:
+        # Single task
+        teacher_class = load_teacher_module(opt['task'])
+        _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
+        task_agents = teacher_class(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents
+    else:
+        # Multitask teacher/agent
+        task_agents = MultiTaskTeacher(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents

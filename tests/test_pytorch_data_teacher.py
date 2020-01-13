@@ -6,7 +6,8 @@
 from parlai.scripts.build_dict import build_dict
 from parlai.scripts.display_data import setup_args as display_setup_args, display_data
 from parlai.scripts.train_model import setup_args as train_setup_args
-from parlai.core.agents import create_task_agent_from_taskname, create_agent
+from parlai.core.agents import create_agent
+from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
 
