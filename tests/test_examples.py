@@ -49,21 +49,18 @@ class TestExampleSeq2Seq(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_repeater(self):
         """
-        Test a simple TRA based bag-of-words model
+        Test a simple TRA based bag-of-words model.
         """
-        with testing_utils.tempdir() as tmpdir:
-            model_file = os.path.join(tmpdir, 'model')
-            stdout, valid, test = testing_utils.train_model(
-                dict(
-                    task='integration_tests',
-                    model_file=model_file,
-                    model='examples/tra',
-                    eps=1,
-                    bs=100,
-                )
+        stdout, valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests',
+                model='examples/tra',
+                eps=1,
+                bs=100,
             )
-            self.assertEqual(
-                test['exs'],
-                100,
-                'test examples = {}\nLOG:\n{}'.format(valid['exs'], stdout),
-            )
+        )
+        self.assertEqual(
+            test['exs'],
+            100,
+            'test examples = {}\nLOG:\n{}'.format(valid['exs'], stdout),
+        )
