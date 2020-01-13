@@ -14,7 +14,7 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
-from typing import Any
+from typing import Any, Union
 
 import torch
 
@@ -69,14 +69,26 @@ class Metric(ABC):
     def __repr__(self) -> str:
         return f'{self.__class__} ({self.value():.4g})'
 
-    @staticmethod
-    def as_number(obj: Any) -> Number:
+    def as_number(self, obj: Union[int, float, torch.Tensor]) -> Union[int, float]:
         if isinstance(obj, torch.Tensor):
-            obj_as_number = obj.item()
+            obj_as_number: Union[int, float] = obj.item()
         else:
             obj_as_number = obj
-        assert isinstance(obj_as_number, Number)
+        assert isinstance(obj_as_number, int) or isinstance(obj_as_number, float)
         return obj_as_number
+
+    def as_float(self, obj: Union[int, float, torch.Tensor]) -> float:
+        obj_as_number = self.as_number(obj)
+        return float(obj_as_number)
+
+    def as_int(self, obj: Union[int, float, torch.Tensor]) -> int:
+        obj_as_number = self.as_number(obj)
+        if isinstance(obj_as_number, float):
+            assert obj_as_number.is_integer()
+            return int(obj_as_number)
+        else:
+            assert isinstance(obj_as_number, int)
+            return obj_as_number
 
 
 class SumMetric(Metric):
@@ -85,12 +97,7 @@ class SumMetric(Metric):
     """
 
     def __init__(self, sum_: TScalar):
-
-        # Convert sum to float
-        sum_as_number = self.as_number(sum_)
-        sum_as_float = float(sum_as_number)
-
-        self._sum: float = sum_as_float
+        self._sum = self.as_float(sum_)
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
@@ -108,22 +115,8 @@ class AverageMetric(Metric):
     """
 
     def __init__(self, numer: TScalar, denom: TScalar):
-
-        # Convert numer to float
-        numer_as_number = self.as_number(numer)
-        numer_as_float = float(numer_as_number)
-
-        # Convert denom to int
-        denom_as_number = self.as_number(denom)
-        if isinstance(denom_as_number, float):
-            assert denom_as_number.is_integer()
-            denom_as_int = int(denom_as_number)
-        else:
-            denom_as_int = denom_as_number
-        assert isinstance(denom_as_int, int)
-
-        self._numer: float = numer_as_float
-        self._denom: int = denom_as_int
+        self._numer = self.as_float(numer)
+        self._denom = self.as_int(denom)
 
     def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
