@@ -23,7 +23,7 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch --all
+          git fetch origin master
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
@@ -61,7 +61,7 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch --all
+          git fetch origin master
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f master origin/master
           fi
@@ -81,17 +81,19 @@ jobs:
         run: |
           set -eux
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
-          git checkout -f master
+          forkpoint=$(git merge-base master HEAD)
+          git checkout -f $forkpoint
           mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
           diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
           cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
-        uses: pytorch/add-annotations-github-action@master
+        uses: stephenroller/add-annotations-github-action@master
         with:
           check_name: 'mypy'
           linter_output_path: 'output-annotations.txt'
           commit_sha: ${{ github.event.pull_request.head.sha }}
           regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorCode>\w+): (?<errorDesc>.*)'
+          annotation_level: warning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
