@@ -16,7 +16,6 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 import copy
-import parlai.core.agents as core_agents
 from parlai.core.teachers import (
     FixedDialogTeacher,
     MultiTaskTeacher,
