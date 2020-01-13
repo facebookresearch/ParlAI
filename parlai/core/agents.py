@@ -434,5 +434,3 @@ def create_agents_from_shared(shared):
         agent = create_agent_from_shared(shared_agent)
         shared_agents.append(agent)
     return shared_agents
-
-
