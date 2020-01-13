@@ -259,7 +259,7 @@ class ParlAILRScheduler(object):
             )
         else:
             raise ValueError(
-                "Don't know what to do with lr_scheduler '{}'".format(
+                "Don't know what to do with --lr-scheduler '{}'".format(
                     opt.get('lr_scheduler')
                 )
             )
@@ -410,11 +410,15 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
         super().__init__(optimizer, states, hard_reset, warmup_updates, warmup_rate)
-        if invsqrt_lr_decay_gamma <= 0:
-            raise ValueError(
-                '--lr-scheduler invsqrt requires setting --invsqrt_lr_decay_gamma'
-            )
         self.invsqrt_lr_decay_gamma = invsqrt_lr_decay_gamma
+        if invsqrt_lr_decay_gamma <= 0:
+            warn_once(
+                '--lr-scheduler invsqrt requires a value for '
+                '--invsqrt-lr-decay-gamma. Defaulting to set gamma to '
+                '--warmup-updates value for backwards'
+            )
+            self.invsqrt_lr_decay_gamma = self.warmup_updates
+
         self.decay_factor = np.sqrt(max(1, invsqrt_lr_decay_gamma))
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
