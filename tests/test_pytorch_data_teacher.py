@@ -49,7 +49,7 @@ integration_test_parser_defaults = {
 }
 
 
-def solved_task(str_output, valid, test):
+def solved_task(valid, test):
     return (
         valid['ppl'] < 1.3
         and test['ppl'] < 1.3
@@ -295,12 +295,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = datatype
         defaults['shuffle'] = True  # for train:stream
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with args: {}; here is str_output: {}'.format(
-                defaults, str_output
-            ),
+            solved_task(valid, test),
+            'Teacher could not teach seq2seq with args: {}'.format(defaults),
         )
 
     @testing_utils.retry()
@@ -327,12 +325,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = 'train'
         defaults['pytorch_preprocess'] = True
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with preprocessed obs, output: {}'.format(
-                str_output
-            ),
+            solved_task(valid, test),
+            'Teacher could not teach seq2seq with preprocessed obs',
         )
 
     def _pyt_batchsort_train(self, datatype, preprocess):
@@ -350,11 +346,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['pytorch_teacher_batch_sort'] = True
         if preprocess:
             defaults['batch_sort_field'] = 'text_vec'
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
+            solved_task(valid, test),
             'Teacher could not teach seq2seq with batch sort '
-            'and args {} and output {}'.format((datatype, preprocess), str_output),
+            'and args {}'.format((datatype, preprocess)),
         )
 
     @testing_utils.retry()
@@ -424,7 +420,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
             parser = display_setup_args()
             parser.set_defaults(**defaults)
             opt = parser.parse_args([])
-            display_data(opt)
+            with testing_utils.capture_output() as f:
+                display_data(opt)
             str_output = f.getvalue()
             self.assertTrue(
                 '[ loaded {} episodes with a total of {} examples ]'.format(
