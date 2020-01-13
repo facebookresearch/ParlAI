@@ -58,7 +58,8 @@ class Metric(ABC):
     def value(self) -> float:
         """
         Return the value of the metric contained by the metric object, usually a scalar.
-        (For instance, if the metric object is SumMetric, .value() will return the sum 
+
+        (For instance, if the metric object is SumMetric, .value() will return the sum
         stored by the object.)
         """
         pass
@@ -73,7 +74,7 @@ class Metric(ABC):
         if isinstance(obj, torch.Tensor):
             obj_as_number: Union[int, float] = obj.item()
         else:
-            obj_as_number = obj
+            obj_as_number = obj  # type: ignore
         assert isinstance(obj_as_number, int) or isinstance(obj_as_number, float)
         return obj_as_number
 
