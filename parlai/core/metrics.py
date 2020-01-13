@@ -14,14 +14,14 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
-from typing import Any, Union
+from typing import Any
 
 import torch
 
+from parlai.utils.misc import no_lock, round_sigfigs, warn_once
 from parlai.utils.thread import SharedTable
-from parlai.utils.misc import round_sigfigs, no_lock
-from parlai.utils.misc import warn_once
 from parlai.utils.typing import TScalar
+
 
 DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -102,9 +102,7 @@ class AverageMetric(Metric):
     Class that keeps a running average of some metric.
     """
 
-    def __init__(
-        self, numer: TScalar, denom: TScalar,
-    ):
+    def __init__(self, numer: TScalar, denom: TScalar):
 
         # Convert numer to float
         numer_as_number = self.as_number(numer)
