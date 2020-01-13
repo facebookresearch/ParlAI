@@ -69,7 +69,7 @@ class Metric(ABC):
     def __repr__(self) -> str:
         return f'{self.__class__} ({self.value():.4g})'
 
-    def as_number(self, obj: Union[int, float, torch.Tensor]) -> Union[int, float]:
+    def as_number(self, obj: TScalar) -> Union[int, float]:
         if isinstance(obj, torch.Tensor):
             obj_as_number: Union[int, float] = obj.item()
         else:
