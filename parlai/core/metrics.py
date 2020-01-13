@@ -14,7 +14,7 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
-from typing import Any, Union
+from typing import Union
 
 import torch
 
@@ -58,7 +58,7 @@ class Metric(ABC):
     def value(self) -> float:
         """
         Return the value of the metric contained by the metric object, usually a scalar.
-        (For instance, if the metric object is SumMetric, .value() will return the sum 
+        (For instance, if the metric object is SumMetric, .value() will return the sum
         stored by the object.)
         """
         pass
