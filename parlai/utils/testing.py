@@ -46,9 +46,6 @@ except ImportError:
     BPE_INSTALLED = False
 
 
-DEBUG = False  # change this to true to print to stdout anyway
-
-
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -191,29 +188,6 @@ def is_new_task_filename(filename):
     )
 
 
-class TeeStringIO(io.StringIO):
-    """
-    StringIO which also prints to stdout.
-
-    Used in case of DEBUG=False to make sure we get verbose output.
-    """
-
-    def __init__(self, *args):
-        self.stream = sys.stdout
-        super().__init__(*args)
-
-    def write(self, data):
-        """
-        Write data to stdout and the buffer.
-        """
-        if DEBUG and self.stream:
-            self.stream.write(data)
-        super().write(data)
-
-    def __str__(self):
-        return self.getvalue()
-
-
 @contextlib.contextmanager
 def capture_output():
     """
@@ -226,7 +200,7 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    sio = TeeStringIO()
+    sio = io.StringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
 
