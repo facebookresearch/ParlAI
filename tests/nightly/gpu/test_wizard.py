@@ -46,12 +46,11 @@ class TestWizardModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # go ahead and download things here
-        with testing_utils.capture_output():
-            parser = display_data.setup_args()
-            parser.set_defaults(**END2END_OPTIONS)
-            opt = parser.parse_args([], print_args=False)
-            opt['num_examples'] = 1
-            display_data.display_data(opt)
+        parser = display_data.setup_args()
+        parser.set_defaults(**END2END_OPTIONS)
+        opt = parser.parse_args([], print_args=False)
+        opt['num_examples'] = 1
+        display_data.display_data(opt)
 
     def test_end2end(self):
         stdout, valid, _ = testing_utils.eval_model(END2END_OPTIONS)

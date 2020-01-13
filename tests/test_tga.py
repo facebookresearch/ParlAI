@@ -23,12 +23,11 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         Test --inference with simple options.
         """
-        with testing_utils.capture_output():
-            upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 1})
-            self.assertEqual(upgraded['inference'], 'greedy')
+        upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 1})
+        self.assertEqual(upgraded['inference'], 'greedy')
 
-            upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 5})
-            self.assertEqual(upgraded['inference'], 'beam')
+        upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 5})
+        self.assertEqual(upgraded['inference'], 'beam')
 
     def test_no_greedy_largebeam(self):
         """
@@ -59,27 +58,25 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         Test --inference with older model files.
         """
-        with testing_utils.capture_output():
-            pp = ParlaiParser(True, True)
-            opt = pp.parse_args(
-                ['--model-file', 'zoo:unittest/transformer_generator2/model']
-            )
-            agent = create_agent(opt, True)
-            self.assertEqual(agent.opt['inference'], 'greedy')
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(
+            ['--model-file', 'zoo:unittest/transformer_generator2/model']
+        )
+        agent = create_agent(opt, True)
+        self.assertEqual(agent.opt['inference'], 'greedy')
 
-        with testing_utils.capture_output():
-            pp = ParlaiParser(True, True)
-            opt = pp.parse_args(
-                [
-                    '--model-file',
-                    'zoo:unittest/transformer_generator2/model',
-                    '--beam-size',
-                    '5',
-                ],
-                print_args=False,
-            )
-            agent = create_agent(opt, True)
-            self.assertEqual(agent.opt['inference'], 'beam')
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(
+            [
+                '--model-file',
+                'zoo:unittest/transformer_generator2/model',
+                '--beam-size',
+                '5',
+            ],
+            print_args=False,
+        )
+        agent = create_agent(opt, True)
+        self.assertEqual(agent.opt['inference'], 'beam')
 
 
 if __name__ == '__main__':

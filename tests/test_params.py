@@ -41,22 +41,21 @@ class TestParlaiParser(unittest.TestCase):
         Test whether upgrade_opt works.
         """
         with testing_utils.tempdir() as tmp:
-            with testing_utils.capture_output() as _:
-                modfn = os.path.join(tmp, 'model')
-                with open(modfn, 'w') as f:
-                    f.write('Test.')
-                optfn = modfn + '.opt'
-                base_opt = {
-                    'model': 'tests.test_params:_ExampleUpgradeOptAgent',
-                    'dict_file': modfn + '.dict',
-                    'model_file': modfn,
-                }
-                with open(optfn, 'w') as f:
-                    json.dump(base_opt, f)
+            modfn = os.path.join(tmp, 'model')
+            with open(modfn, 'w') as f:
+                f.write('Test.')
+            optfn = modfn + '.opt'
+            base_opt = {
+                'model': 'tests.test_params:_ExampleUpgradeOptAgent',
+                'dict_file': modfn + '.dict',
+                'model_file': modfn,
+            }
+            with open(optfn, 'w') as f:
+                json.dump(base_opt, f)
 
-                pp = ParlaiParser(True, True)
-                opt = pp.parse_args(['--model-file', modfn])
-                agents.create_agent(opt)
+            pp = ParlaiParser(True, True)
+            opt = pp.parse_args(['--model-file', modfn])
+            agents.create_agent(opt)
 
     def test_recommendations_single(self):
         """
@@ -72,8 +71,7 @@ class TestParlaiParser(unittest.TestCase):
             recommended="10",
         )
 
-        with testing_utils.capture_output() as _:
-            parser.parse_args([])
+        parser.parse_args([])
         help_str = parser.format_help()
         assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
 
@@ -91,8 +89,7 @@ class TestParlaiParser(unittest.TestCase):
             help='batch size for minibatch training schemes',
             recommended=[5, 10, 15],
         )
-        with testing_utils.capture_output() as _:
-            parser.parse_args([])
+        parser.parse_args([])
 
         help_str = parser.format_help()
         assert re.search(r'Test Group:\n', help_str)

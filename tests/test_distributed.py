@@ -27,23 +27,22 @@ def _forced_parse(parser, opt):
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
     def _distributed_train_model(self, opt):
-        with testing_utils.capture_output() as output:
-            with testing_utils.tempdir() as tmpdir:
-                if 'model_file' not in opt:
-                    opt['model_file'] = os.path.join(tmpdir, 'model')
-                if 'dict_file' not in opt:
-                    opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+        with testing_utils.tempdir() as tmpdir:
+            if 'model_file' not in opt:
+                opt['model_file'] = os.path.join(tmpdir, 'model')
+            if 'dict_file' not in opt:
+                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
 
-                parser = mp_train.setup_args()
-                popt = _forced_parse(parser, opt)
+            parser = mp_train.setup_args()
+            popt = _forced_parse(parser, opt)
 
-                # we need a prebuilt dictionary
-                parser = build_dict.setup_args()
-                build_dict.build_dict(popt)
+            # we need a prebuilt dictionary
+            parser = build_dict.setup_args()
+            build_dict.build_dict(popt)
 
-                valid, test = mp_train.launch_and_train(popt, 31337)
+            valid, test = mp_train.launch_and_train(popt, 31337)
 
-        return (output.getvalue(), valid, test)
+        return (valid, test)
 
     def tearDown(self):
         # we need to de-initialize the distributed world, otherwise other
@@ -51,7 +50,7 @@ class TestDistributed(unittest.TestCase):
         dist.destroy_process_group()
 
     def test_generator_distributed(self):
-        stdout, valid, test = self._distributed_train_model(
+        valid, test = self._distributed_train_model(
             dict(
                 task='integration_tests:nocandidate',
                 model='transformer/generator',
@@ -68,21 +67,13 @@ class TestDistributed(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(
-            valid['ppl'], 1.20, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.20, "valid ppl = {}".format(valid['ppl']))
         self.assertGreaterEqual(
-            valid['bleu-4'],
-            0.95,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            valid['bleu-4'], 0.95, "valid blue = {}".format(valid['bleu-4']),
         )
-        self.assertLessEqual(
-            test['ppl'], 1.20, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLessEqual(test['ppl'], 1.20, "test ppl = {}".format(test['ppl']))
         self.assertGreaterEqual(
-            test['bleu-4'],
-            0.95,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            test['bleu-4'], 0.95, "test bleu = {}".format(test['bleu-4']),
         )
 
 

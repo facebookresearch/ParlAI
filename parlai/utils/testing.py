@@ -16,7 +16,8 @@ import tempfile
 import shutil
 import io
 import signal
-from typing import Tuple
+from typing import Tuple, Dict, Any
+from parlai.core.opt import Opt
 
 
 try:
@@ -272,7 +273,7 @@ def timeout(time: int = 30):
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
 
-def train_model(opt):
+def train_model(opt: Opt) -> (Dict[str, Any], Dict[str, Any]):
     """
     Run through a TrainLoop.
 
@@ -284,26 +285,25 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    with capture_output() as output:
-        with tempdir() as tmpdir:
-            if 'model_file' not in opt:
-                opt['model_file'] = os.path.join(tmpdir, 'model')
-            if 'dict_file' not in opt:
-                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-            parser = tms.setup_args()
-            # needed at the very least to set the overrides.
-            parser.set_params(**opt)
-            parser.set_params(log_every_n_secs=10)
-            popt = parser.parse_args([], print_args=False)
-            # in some rare cases, like for instance if the model class also
-            # overrides its default params, the params override will not
-            # be taken into account.
-            for k, v in opt.items():
-                popt[k] = v
-            tl = tms.TrainLoop(popt)
-            valid, test = tl.train()
+    with tempdir() as tmpdir:
+        if 'model_file' not in opt:
+            opt['model_file'] = os.path.join(tmpdir, 'model')
+        if 'dict_file' not in opt:
+            opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+        parser = tms.setup_args()
+        # needed at the very least to set the overrides.
+        parser.set_params(**opt)
+        parser.set_params(log_every_n_secs=10)
+        popt = parser.parse_args([], print_args=False)
+        # in some rare cases, like for instance if the model class also
+        # overrides its default params, the params override will not
+        # be taken into account.
+        for k, v in opt.items():
+            popt[k] = v
+        tl = tms.TrainLoop(popt)
+        valid, test = tl.train()
 
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
 def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):

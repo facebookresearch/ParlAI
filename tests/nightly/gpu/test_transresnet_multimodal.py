@@ -31,12 +31,11 @@ class TestTransresnet(unittest.TestCase):
         """
         Set up the test by downloading the model/data.
         """
-        with testing_utils.capture_output():
-            parser = display_data.setup_args()
-            parser.set_defaults(**MODEL_OPTIONS)
-            opt = parser.parse_args([], print_args=False)
-            opt['num_examples'] = 1
-            display_data.display_data(opt)
+        parser = display_data.setup_args()
+        parser.set_defaults(**MODEL_OPTIONS)
+        opt = parser.parse_args([], print_args=False)
+        opt['num_examples'] = 1
+        display_data.display_data(opt)
 
     def test_transresnet(self):
         """

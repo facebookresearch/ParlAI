@@ -58,8 +58,7 @@ class TestNewTasks(unittest.TestCase):
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
                 try:
-                    with testing_utils.capture_output():
-                        text, log = verify(opt, print_parser=False)
+                    text, log = verify(opt, print_parser=False)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()
