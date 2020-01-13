@@ -6,6 +6,7 @@
 
 """
 This is an example how to extend torch ranker agent and use it for your own purpose.
+
 In this example, we will just use a simple bag of words model.
 """
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -15,7 +16,8 @@ from torch import nn
 
 class ExampleBagOfWordsModel(nn.Module):
     """
-    This constructs a simple bag of words model. 
+    This constructs a simple bag of words model.
+
     It contains a encoder for encoding candidates and context.
     """
 
@@ -27,7 +29,7 @@ class ExampleBagOfWordsModel(nn.Module):
 
     def encode_text(self, text_vecs):
         """
-        This function encodes a text_vec to a text encoding. 
+        This function encodes a text_vec to a text encoding.
         """
         return self.encoder(text_vecs)
 
@@ -56,9 +58,8 @@ class TraAgent(TorchRankerAgent):
     """
     Example subclass of TorchRankerAgent.
 
-    This particular implementation is a simple bag-of-words model, which
-    demonstrates the minimum implementation requirements to make a
-    new ranking model.
+    This particular implementation is a simple bag-of-words model, which demonstrates
+    the minimum implementation requirements to make a new ranking model.
     """
 
     @classmethod
@@ -72,19 +73,19 @@ class TraAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
-        This function takes in a Batch object as well as a Tensor of
-        candidate vectors. It must return a list of scores corresponding to
-        the likelihood that the candidate vector at that index is the
-        proper response. If `cand_encs` is not None (when we cache the
-        encoding of the candidate vectors), you may use these instead of
-        calling self.model on `cand_vecs`.
+        This function takes in a Batch object as well as a Tensor of candidate vectors.
+
+        It must return a list of scores corresponding to the likelihood that the
+        candidate vector at that index is the proper response. If `cand_encs` is not
+        None (when we cache the encoding of the candidate vectors), you may use these
+        instead of calling self.model on `cand_vecs`.
         """
         scores = self.model.forward(batch, cand_vecs, cand_encs)
         return scores
 
     def build_model(self):
         """
-        This function is required to build the model and assign to the
-        object `self.model`.
+        This function is required to build the model and assign to the object
+        `self.model`.
         """
         return ExampleBagOfWordsModel(self.opt, self.dict)
