@@ -7,9 +7,17 @@
 """
 Definitions of general ParlAI types.
 """
-from typing import Any, Dict, TypeVar
+from typing import Any, Dict, TypeVar, Union
 
 import torch
+
+
+class _Scalar(Union[int, float, torch.Tensor]):
+    """
+    ParlAI type to represent an object that is theoretically expressible as a scalar
+    value. Ints and floats are clearly scalars, and torch.Tensors can be represented by
+    a scalar if Tensor.numel() == 1. Used as input type for classes derived from Metric.
+    """
 
 
 class _Shared(Dict[str, Any]):
@@ -25,7 +33,4 @@ class _Shared(Dict[str, Any]):
 
 TShared = TypeVar('TShared', bound=_Shared)
 
-# ParlAI type to represent an object that is theoretically expressible as a scalar
-# value. Ints and floats are clearly scalars, and torch.Tensors can be represented by
-# a scalar if Tensor.numel() == 1. Used as input type for classes derived from Metric.
-TScalar = TypeVar('TScalar', int, float, torch.Tensor)
+TScalar = TypeVar('TScalar', bound=_Scalar)

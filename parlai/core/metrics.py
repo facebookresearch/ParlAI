@@ -16,6 +16,8 @@ from collections import Counter
 from numbers import Number
 from typing import Any, Union
 
+import torch
+
 from parlai.utils.thread import SharedTable
 from parlai.utils.misc import round_sigfigs, no_lock
 from parlai.utils.misc import warn_once
@@ -64,7 +66,6 @@ class Metric(ABC):
 
     @staticmethod
     def as_number(obj: Any) -> Number:
-        import torch  # Import here to avoid requiring torch for all metric.py code
         if isinstance(obj, torch.Tensor):
             obj_as_number = obj.item()
         else:
