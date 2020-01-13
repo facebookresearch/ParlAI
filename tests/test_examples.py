@@ -52,7 +52,21 @@ class TestExampleSeq2Seq(unittest.TestCase):
         Test a simple TRA based bag-of-words model.
         """
         stdout, valid, test = testing_utils.train_model(
-            dict(task='integration_tests', model='examples/tra', eps=1, bs=100)
+            dict(
+                task='integration_tests',
+                model='examples/tra',
+                num_epochs=NUM_EPOCHS,
+                batchsize=BATCH_SIZE,
+            )
+        )
+
+        self.assertTrue(
+            valid['accuracy'] > 0.8,
+            "valid accuracy = {}\nLOG:\n{}".format(valid['accuracy'], stdout),
+        )
+        self.assertTrue(
+            test['accuracy'] > 0.8,
+            "test accuracy = {}\nLOG:\n{}".format(test['accuracy'], stdout),
         )
         self.assertEqual(
             test['exs'],
