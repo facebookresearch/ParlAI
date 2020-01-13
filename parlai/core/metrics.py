@@ -14,9 +14,7 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
-from typing import Union
-
-import torch
+from typing import Any, Union
 
 from parlai.utils.thread import SharedTable
 from parlai.utils.misc import round_sigfigs, no_lock
@@ -64,6 +62,16 @@ class Metric(ABC):
     def __repr__(self) -> str:
         return f'{self.__class__} ({self.value():.4g})'
 
+    @staticmethod
+    def as_number(obj: Any) -> Number:
+        import torch  # Import here to avoid requiring torch for all metric.py code
+        if isinstance(obj, torch.Tensor):
+            obj_as_number = obj.item()
+        else:
+            obj_as_number = obj
+        assert isinstance(obj_as_number, Number)
+        return obj_as_number
+
 
 class SumMetric(Metric):
     """
@@ -73,11 +81,7 @@ class SumMetric(Metric):
     def __init__(self, sum_: TScalar):
 
         # Convert sum to float
-        if isinstance(sum_, torch.Tensor):
-            sum_as_number: Union[int, float, bool] = sum_.item()
-        else:
-            sum_as_number = sum_
-        assert isinstance(sum_as_number, Number)
+        sum_as_number = self.as_number(sum_)
         sum_as_float = float(sum_as_number)
 
         self.sum: float = sum_as_float
@@ -102,18 +106,11 @@ class AverageMetric(Metric):
     ):
 
         # Convert numer to float
-        if isinstance(numer, torch.Tensor):
-            numer_as_number: Union[int, float, bool] = numer.item()
-        else:
-            numer_as_number = numer
-        assert isinstance(numer_as_number, Number)
+        numer_as_number = self.as_number(numer)
         numer_as_float = float(numer_as_number)
 
         # Convert denom to int
-        if isinstance(denom, torch.Tensor):
-            denom_as_number = denom.item()
-        else:
-            denom_as_number = denom
+        denom_as_number = self.as_number(denom)
         if isinstance(denom_as_number, float):
             assert denom_as_number.is_integer()
             denom_as_int = int(denom_as_number)

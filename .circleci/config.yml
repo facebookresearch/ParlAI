@@ -318,7 +318,6 @@ jobs:
           key: deps-mturk-v4{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
-      - <<: *installtorchcpu37
       - run:
           name: All mturk tests
           command: coverage run setup.py test -s tests.suites.mturk -v
