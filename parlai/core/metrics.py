@@ -85,16 +85,16 @@ class SumMetric(Metric):
         sum_as_number = self.as_number(sum_)
         sum_as_float = float(sum_as_number)
 
-        self.sum: float = sum_as_float
+        self._sum: float = sum_as_float
 
     def __add__(self, other: 'SumMetric') -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        full_sum: float = self.sum + other.sum
+        full_sum: float = self._sum + other._sum
         return SumMetric(sum_=full_sum)
 
     def value(self) -> float:
-        return self.sum
+        return self._sum
 
 
 class AverageMetric(Metric):
@@ -119,18 +119,18 @@ class AverageMetric(Metric):
             denom_as_int = denom_as_number
         assert isinstance(denom_as_int, int)
 
-        self.numer: float = numer_as_float
-        self.denom: int = denom_as_int
+        self._numer: float = numer_as_float
+        self._denom: int = denom_as_int
 
     def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        full_numer: float = self.numer + other.numer
-        full_denom: int = self.denom + other.denom
+        full_numer: float = self._numer + other._numer
+        full_denom: int = self._denom + other._denom
         return AverageMetric(numer=full_numer, denom=full_denom)
 
     def value(self) -> float:
-        return self.numer / self.denom
+        return self._numer / self._denom
 
 
 def normalize_answer(s):
