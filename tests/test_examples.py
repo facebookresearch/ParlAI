@@ -19,7 +19,7 @@ class TestExampleSeq2Seq(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_generation(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
                 model='examples/seq2seq',
@@ -34,12 +34,10 @@ class TestExampleSeq2Seq(unittest.TestCase):
         )
 
         self.assertTrue(
-            valid['token_acc'] > 0.8,
-            "valid token_acc = {}\nLOG:\n{}".format(valid['token_acc'], stdout),
+            valid['token_acc'] > 0.8, "valid token_acc = {}".format(valid['token_acc']),
         )
         self.assertTrue(
-            test['token_acc'] > 0.8,
-            "test token_acc = {}\nLOG:\n{}".format(test['token_acc'], stdout),
+            test['token_acc'] > 0.8, "test token_acc = {}".format(test['token_acc']),
         )
 
     @testing_utils.retry(ntries=3)

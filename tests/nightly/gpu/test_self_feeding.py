@@ -52,13 +52,13 @@ class TestSelffeeding(unittest.TestCase):
             'batchsize': 32,
             'embeddings_scale': False,
         }
-        _, _, _ = testing_utils.train_model(opt)
+        testing_utils.train_model(opt)
 
     def test_released_model(self):
         """
         Check the pretrained model produces correct results.
         """
-        _, _, test = testing_utils.eval_model(
+        _, test = testing_utils.eval_model(
             {
                 'model_file': 'zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model',
                 'task': 'self_feeding:all',

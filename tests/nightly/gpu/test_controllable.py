@@ -65,7 +65,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the greedy model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -82,7 +82,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the beamsearch baseline produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -105,7 +105,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the finetuned model with repetition blocking produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -130,7 +130,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the question-controlled model (z=7) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 # b11e10 stands for 11 buckets, embedding size 10
                 'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
@@ -157,7 +157,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the question-controlled model (z=10 boost) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -184,7 +184,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the specificity-CT model (z=7) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/control_avgnidf10b10e',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -210,7 +210,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the specificity-weighted decoding model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
                 'task': 'projects.controllable_dialogue.tasks.agents',
@@ -235,7 +235,7 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the responsiveness-weighted decoding model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model(
+        valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
                 'task': 'projects.controllable_dialogue.tasks.agents',

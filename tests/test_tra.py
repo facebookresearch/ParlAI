@@ -46,13 +46,11 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_inline(self):
         args = self._get_args()
         args['candidates'] = 'inline'
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test train batch cands
@@ -60,13 +58,11 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_batch(self):
         args = self._get_args()
         args['candidates'] = 'batch'
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test train fixed
@@ -75,13 +71,11 @@ class _AbstractTRATest(unittest.TestCase):
         args = self._get_args()
         args['candidates'] = 'fixed'
         args['encode_candidate_vecs'] = False
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test train batch all cands
@@ -89,13 +83,11 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_batch_all(self):
         args = self._get_args()
         args['candidates'] = 'batch-all-cands'
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test eval inline ecands
@@ -103,13 +95,11 @@ class _AbstractTRATest(unittest.TestCase):
     def test_eval_inline(self):
         args = self._get_args()
         args['eval_candidates'] = 'inline'
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test eval batch ecands
@@ -117,13 +107,11 @@ class _AbstractTRATest(unittest.TestCase):
     def test_eval_batch(self):
         args = self._get_args()
         args['eval_candidates'] = 'batch'
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            threshold,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
     # test eval fixed ecands
@@ -133,15 +121,13 @@ class _AbstractTRATest(unittest.TestCase):
         args['eval_candidates'] = 'fixed'
         args['encode_candidate_vecs'] = True
         args['ignore_bad_candidates'] = True
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
 
         # none of the train candidates appear in evaluation, so should have
         # zero accuracy: this tests whether the fixed candidates were built
         # properly (i.e., only using candidates from the train set)
         self.assertEqual(
-            valid['hits@1'],
-            0,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], 0, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
         # now try again with a fixed candidate file that includes all possible
@@ -158,11 +144,9 @@ class _AbstractTRATest(unittest.TestCase):
             args['encode_candidate_vecs'] = False  # don't encode before training
             args['ignore_bad_candidates'] = False
             args['num_epochs'] = 4
-            stdout, valid, test = testing_utils.train_model(args)
+            valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(
-                valid['hits@100'],
-                0.1,
-                "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+                valid['hits@100'], 0.1, "valid hits@1 = {}".format(valid['hits@1']),
             )
 
     # test eval vocab ecands
@@ -171,14 +155,12 @@ class _AbstractTRATest(unittest.TestCase):
         args = self._get_args()
         args['eval_candidates'] = 'vocab'
         args['encode_candidate_vecs'] = True
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
 
         # accuracy should be zero, none of the vocab candidates should be the
         # correct label
         self.assertEqual(
-            valid['hits@100'],
-            0,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@100'], 0, "valid hits@1 = {}".format(valid['hits@1']),
         )
 
 
@@ -253,11 +235,9 @@ class TestPolyRanker(_AbstractTRATest):
             args['dict_file'] = os.path.join(tmpdir, 'model.dict')
             args['num_epochs'] = 4
             # Train model where it has access to the candidate in labels
-            stdout, valid, test = testing_utils.train_model(args)
+            valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(
-                valid['hits@100'],
-                0.0,
-                "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+                valid['hits@100'], 0.0, "valid hits@1 = {}".format(valid['hits@1']),
             )
 
             # Evaluate model where label is not in fixed candidates
@@ -268,11 +248,9 @@ class TestPolyRanker(_AbstractTRATest):
                 testing_utils.eval_model(args, skip_valid=True)
 
             args['add_label_to_fixed_cands'] = True
-            stdout, valid, test = testing_utils.eval_model(args, skip_valid=True)
+            valid, test = testing_utils.eval_model(args, skip_valid=True)
             self.assertGreaterEqual(
-                test['hits@100'],
-                0.0,
-                "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
+                test['hits@100'], 0.0, "test hits@1 = {}".format(test['hits@1']),
             )
 
 

@@ -19,7 +19,7 @@ class TestBertModel(unittest.TestCase):
 
     @testing_utils.retry(ntries=3, log_retry=True)
     def test_biencoder(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='convai2',
                 model='bert_ranker/bi_encoder_ranker',
@@ -37,12 +37,12 @@ class TestBertModel(unittest.TestCase):
         self.assertLessEqual(
             test['accuracy'],
             0.5,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy']),
         )
 
     @testing_utils.retry(ntries=3, log_retry=True)
     def test_crossencoder(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='convai2',
                 model='bert_ranker/cross_encoder_ranker',
@@ -63,12 +63,12 @@ class TestBertModel(unittest.TestCase):
         self.assertGreaterEqual(
             test['accuracy'],
             0.03,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy']),
         )
         self.assertLessEqual(
             test['accuracy'],
             0.8,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy']),
         )
 
 

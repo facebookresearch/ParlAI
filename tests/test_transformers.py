@@ -23,7 +23,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Test a simple repeat-after-me model.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
                 model='transformer/ranker',
@@ -43,14 +43,10 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            0.90,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
         )
         self.assertGreaterEqual(
-            test['hits@1'],
-            0.90,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
+            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
         )
 
     def test_resuming(self):
@@ -60,7 +56,7 @@ class TestTransformerRanker(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
 
-            stdout1, valid1, test1 = testing_utils.train_model(
+            valid1, test1 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
                     task='integration_tests:candidate',
@@ -78,7 +74,7 @@ class TestTransformerRanker(unittest.TestCase):
                 )
             )
 
-            stdout2, valid2, test2 = testing_utils.train_model(
+            valid2, test2 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
                     task='integration_tests:candidate',
@@ -105,7 +101,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
-            stdout1, valid1, test1 = testing_utils.train_model(
+            valid1, test1 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
                     task='integration_tests:candidate',
@@ -123,7 +119,7 @@ class TestTransformerRanker(unittest.TestCase):
                 )
             )
 
-            stdout2, valid2, test2 = testing_utils.train_model(
+            valid2, test2 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
                     task='integration_tests:candidate',
@@ -141,7 +137,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Tests that the transformer ranker model files continue to work over time.
         """
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
                 model='transformer/ranker',
@@ -152,38 +148,26 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            0.99,
-            'valid hits@1 = {}\nLOG:\n{}'.format(valid['hits@1'], stdout),
+            valid['hits@1'], 0.99, 'valid hits@1 = {}'.format(valid['hits@1']),
         )
         self.assertGreaterEqual(
-            valid['accuracy'],
-            0.99,
-            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
+            valid['accuracy'], 0.99, 'valid accuracy = {}'.format(valid['accuracy']),
+        )
+        self.assertGreaterEqual(valid['f1'], 0.99, 'valid f1 = {}'.format(valid['f1']))
+        self.assertGreaterEqual(
+            test['hits@1'], 0.99, 'test hits@1 = {}'.format(test['hits@1']),
         )
         self.assertGreaterEqual(
-            valid['f1'], 0.99, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
+            test['accuracy'], 0.99, 'test accuracy = {}'.format(test['accuracy']),
         )
-        self.assertGreaterEqual(
-            test['hits@1'],
-            0.99,
-            'test hits@1 = {}\nLOG:\n{}'.format(test['hits@1'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.99,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.99, 'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
-        )
+        self.assertGreaterEqual(test['f1'], 0.99, 'test f1 = {}'.format(test['f1']))
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
         """
         Test --variant xlm.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
                 model='transformer/ranker',
@@ -205,14 +189,10 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            0.90,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
         )
         self.assertGreaterEqual(
-            test['hits@1'],
-            0.90,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
+            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
         )
 
     @testing_utils.retry(ntries=3)
@@ -220,7 +200,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Test a transformer ranker reduction method other than `mean`.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
                 model='transformer/ranker',
@@ -243,14 +223,10 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            0.90,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
+            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
         )
         self.assertGreaterEqual(
-            test['hits@1'],
-            0.90,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
+            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
         )
 
 
@@ -264,7 +240,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test greedy search.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
                 model='transformer/generator',
@@ -281,21 +257,13 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(
-            valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
         self.assertGreaterEqual(
-            valid['bleu-4'],
-            0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            valid['bleu-4'], 0.90, "valid blue = {}".format(valid['bleu-4']),
         )
-        self.assertLessEqual(
-            test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
         self.assertGreaterEqual(
-            test['bleu-4'],
-            0.90,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            test['bleu-4'], 0.90, "test bleu = {}".format(test['bleu-4']),
         )
 
     @testing_utils.retry(ntries=3)
@@ -303,7 +271,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test beamsearch.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
                 model='transformer/generator',
@@ -320,21 +288,13 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(
-            valid['ppl'], 1.20, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.20, "valid ppl = {}".format(valid['ppl']))
         self.assertGreaterEqual(
-            valid['bleu-4'],
-            0.95,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            valid['bleu-4'], 0.95, "valid blue = {}".format(valid['bleu-4']),
         )
-        self.assertLessEqual(
-            test['ppl'], 1.20, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLessEqual(test['ppl'], 1.20, "test ppl = {}".format(test['ppl']))
         self.assertGreaterEqual(
-            test['bleu-4'],
-            0.95,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            test['bleu-4'], 0.95, "test bleu = {}".format(test['bleu-4']),
         )
 
     @testing_utils.retry(ntries=3)
@@ -345,7 +305,7 @@ class TestTransformerGenerator(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             mf = os.path.join(tmpdir, 'model')
             df = os.path.join(tmpdir, 'model.dict')
-            stdout, valid, test = testing_utils.train_model(
+            valid, test = testing_utils.train_model(
                 dict(
                     task='integration_tests:repeat_words',
                     model='transformer/generator',
@@ -363,7 +323,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     beam_size=2,
                 )
             )
-            stdout_bb, valid_beam_block, test_beam_block = testing_utils.eval_model(
+            valid_beam_block, test_beam_block = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
                     model_file=mf,
@@ -375,7 +335,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     skip_generation=False,
                 )
             )
-            stdout_bb2, valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
+            valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
                     model_file=mf,
@@ -387,87 +347,59 @@ class TestTransformerGenerator(unittest.TestCase):
                     skip_generation=False,
                 )
             )
-        self.assertLessEqual(
-            valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
+        self.assertGreaterEqual(valid['f1'], 0.80, "valid f1 = {}".format(valid['f1']))
         self.assertGreaterEqual(
-            valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
+            valid['bleu-4'], 0.5, "valid bleu = {}".format(valid['bleu-4']),
         )
+        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
+        self.assertGreaterEqual(test['f1'], 0.80, "test f1 = {}".format(test['bleu-4']))
         self.assertGreaterEqual(
-            valid['bleu-4'],
-            0.5,
-            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
-        )
-        self.assertLessEqual(
-            test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu-4'], stdout)
-        )
-        self.assertGreaterEqual(
-            test['bleu-4'],
-            0.5,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            test['bleu-4'], 0.5, "test bleu = {}".format(test['bleu-4']),
         )
 
         # Beam Block 1
         self.assertLessEqual(
             valid_beam_block['f1'],
             0.4,
-            "valid beam block f1 = {}\nLOG:\n{}".format(
-                valid_beam_block['f1'], stdout_bb
-            ),
+            "valid beam block f1 = {}".format(valid_beam_block['f1']),
         )
         self.assertLessEqual(
             valid_beam_block['bleu-4'],
             1e-9,
-            "valid beam block bleu = {}\nLOG:\n{}".format(
-                valid_beam_block['bleu-4'], stdout_bb
-            ),
+            "valid beam block bleu = {}".format(valid_beam_block['bleu-4']),
         )
         self.assertLessEqual(
             test_beam_block['f1'],
             0.4,
-            "test beam block f1 = {}\nLOG:\n{}".format(
-                test_beam_block['f1'], stdout_bb
-            ),
+            "test beam block f1 = {}".format(test_beam_block['f1']),
         )
         self.assertLessEqual(
             test_beam_block['bleu-4'],
             1e-9,
-            "test beam block bleu = {}\nLOG:\n{}".format(
-                test_beam_block['bleu-4'], stdout_bb
-            ),
+            "test beam block bleu = {}".format(test_beam_block['bleu-4']),
         )
 
         # Beam Block 2
         self.assertLessEqual(
             valid_beam_block2['f1'],
             0.6,
-            "valid beam block f1 = {}\nLOG:\n{}".format(
-                valid_beam_block2['f1'], stdout_bb2
-            ),
+            "valid beam block f1 = {}".format(valid_beam_block2['f1']),
         )
         self.assertLessEqual(
             valid_beam_block2['bleu-4'],
             1e-6,
-            "valid beam block bleu = {}\nLOG:\n{}".format(
-                valid_beam_block2['bleu-4'], stdout_bb2
-            ),
+            "valid beam block bleu = {}".format(valid_beam_block2['bleu-4']),
         )
         self.assertLessEqual(
             test_beam_block2['f1'],
             0.6,
-            "test beam block f1 = {}\nLOG:\n{}".format(
-                test_beam_block2['f1'], stdout_bb2
-            ),
+            "test beam block f1 = {}".format(test_beam_block2['f1']),
         )
         self.assertLessEqual(
             test_beam_block2['bleu-4'],
             1e-6,
-            "test beam block bleu = {}\nLOG:\n{}".format(
-                test_beam_block2['bleu-4'], stdout_bb2
-            ),
+            "test beam block bleu = {}".format(test_beam_block2['bleu-4']),
         )
 
     @testing_utils.retry(ntries=3)
@@ -486,7 +418,7 @@ class TestTransformerGenerator(unittest.TestCase):
             args = dict(
                 task='integration_tests', model_file=mf, dict_file=df, metrics='all'
             )
-            _, noblock_valid, _ = testing_utils.train_model(
+            noblock_valid, _ = testing_utils.train_model(
                 dict(
                     model='transformer/generator',
                     optimizer='adamax',
@@ -505,14 +437,14 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
             # first confirm all is good without blocking
-            _, valid, test = testing_utils.eval_model(
+            valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=-1, **args)
             )
             self.assertGreaterEqual(valid['f1'], 0.95)
             self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
             # there's a special case for block == 1
-            _, valid, test = testing_utils.eval_model(
+            valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=1, **args)
             )
             # bleu and f1 should be totally wrecked.
@@ -520,7 +452,7 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertLess(valid['bleu-4'], 0.01)
 
             # a couple general cases
-            _, valid, test = testing_utils.eval_model(
+            valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=2, **args)
             )
             # should take a big hit here
@@ -532,7 +464,7 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertLessEqual(valid['bleu-2'], 0.01)
 
             # larger blocking, we can do better now
-            _, valid, test = testing_utils.eval_model(
+            valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=3, **args)
             )
             # not as hard a hit from the larger hit
@@ -579,7 +511,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Tests that the generator model files work over time.
         """
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
@@ -591,43 +523,27 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
         self.assertGreaterEqual(
-            valid['hits@1'],
-            0.95,
-            'valid hits@1 = {}\nLOG:\n{}'.format(valid['hits@1'], stdout),
+            valid['hits@1'], 0.95, 'valid hits@1 = {}'.format(valid['hits@1']),
         )
-        self.assertLessEqual(
-            valid['ppl'], 1.01, 'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.01, 'valid ppl = {}'.format(valid['ppl']))
         self.assertGreaterEqual(
-            valid['accuracy'],
-            0.99,
-            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
+            valid['accuracy'], 0.99, 'valid accuracy = {}'.format(valid['accuracy']),
         )
+        self.assertGreaterEqual(valid['f1'], 0.99, 'valid f1 = {}'.format(valid['f1']))
         self.assertGreaterEqual(
-            valid['f1'], 0.99, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
+            test['hits@1'], 0.95, 'test hits@1 = {}'.format(test['hits@1']),
         )
+        self.assertLessEqual(test['ppl'], 1.01, 'test ppl = {}'.format(test['ppl']))
         self.assertGreaterEqual(
-            test['hits@1'],
-            0.95,
-            'test hits@1 = {}\nLOG:\n{}'.format(test['hits@1'], stdout),
+            test['accuracy'], 0.99, 'test accuracy = {}'.format(test['accuracy']),
         )
-        self.assertLessEqual(
-            test['ppl'], 1.01, 'test ppl = {}\nLOG:\n{}'.format(test['ppl'], stdout)
-        )
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.99,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.99, 'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
-        )
+        self.assertGreaterEqual(test['f1'], 0.99, 'test f1 = {}'.format(test['f1']))
 
     def test_badinput(self):
         """
         Ensures model doesn't crash on malformed inputs.
         """
-        stdout, _, _ = testing_utils.train_model(
+        testing_utils.train_model(
             dict(
                 task='integration_tests:bad_example',
                 model='transformer/generator',
@@ -640,15 +556,13 @@ class TestTransformerGenerator(unittest.TestCase):
                 hiddensize=16,
             )
         )
-        self.assertIn('valid:{', stdout)
-        self.assertIn('test:{', stdout)
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
         """
         Test --variant xlm.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
                 model='transformer/generator',
@@ -669,21 +583,13 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(
-            valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
         self.assertGreaterEqual(
-            valid['bleu-4'],
-            0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
+            valid['bleu-4'], 0.90, "valid blue = {}".format(valid['bleu-4']),
         )
-        self.assertLessEqual(
-            test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
         self.assertGreaterEqual(
-            test['bleu-4'],
-            0.90,
-            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
+            test['bleu-4'], 0.90, "test bleu = {}".format(test['bleu-4']),
         )
 
 
@@ -699,27 +605,25 @@ class TestLearningRateScheduler(unittest.TestCase):
         mdl = args['model']
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
-            stdout1, valid1, test1 = testing_utils.train_model(
+            valid1, test1 = testing_utils.train_model(
                 dict(model_file=model_file, lr_scheduler='invsqrt', **args)
             )
-            stdout2, valid2, test2 = testing_utils.train_model(
+            valid2, test2 = testing_utils.train_model(
                 dict(model_file=model_file, lr_scheduler='invsqrt', **args)
             )
             # make sure the number of updates is being tracked correctly
             self.assertGreater(
                 valid2['total_train_updates'],
                 valid1['total_train_updates'],
-                '({}) Number of updates is not increasing'.format(mdl),
+                'Number of updates is not increasing',
             )
             # make sure the learning rate is decreasing
             self.assertLess(
-                valid2['lr'],
-                valid1['lr'],
-                '({}) Learning rate is not decreasing'.format(mdl),
+                valid2['lr'], valid1['lr'], 'Learning rate is not decreasing',
             )
             # but make sure we're not loading the scheduler if we're fine
             # tuning
-            stdout3, valid3, test3 = testing_utils.train_model(
+            valid3, test3 = testing_utils.train_model(
                 dict(
                     init_model=os.path.join(tmpdir, 'model'),
                     model_file=os.path.join(tmpdir, 'newmodel'),
@@ -730,16 +634,15 @@ class TestLearningRateScheduler(unittest.TestCase):
             self.assertEqual(
                 valid3['total_train_updates'],
                 valid1['total_train_updates'],
-                '({}) Finetuning LR scheduler reset failed '
-                '(total_train_updates).'.format(mdl),
+                'Finetuning LR scheduler reset failed (total_train_updates).',
             )
             self.assertEqual(
                 valid3['lr'],
                 valid1['lr'],
-                '({}) Finetuning LR scheduler reset failed ' '(lr).'.format(mdl),
+                'Finetuning LR scheduler reset failed ' '(lr).',
             )
             # and make sure we're not loading the scheduler if it changes
-            stdout4, valid4, test4 = testing_utils.train_model(
+            valid4, test4 = testing_utils.train_model(
                 dict(
                     init_model=os.path.join(tmpdir, 'model'),
                     model_file=os.path.join(tmpdir, 'newmodel2'),
@@ -750,13 +653,10 @@ class TestLearningRateScheduler(unittest.TestCase):
             self.assertEqual(
                 valid4['total_train_updates'],
                 valid1['total_train_updates'],
-                '({}) LR scheduler change reset failed (total_train_updates).'
-                '\n{}'.format(mdl, stdout4),
+                'LR scheduler change reset failed (total_train_updates).',
             )
             self.assertEqual(
-                valid4['lr'],
-                1e-3,
-                '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
+                valid4['lr'], 1e-3, '({}) LR is not correct in final resume.'
             )
 
     def test_resuming_generator(self):
@@ -817,10 +717,10 @@ class TestLearningRateScheduler(unittest.TestCase):
 
         args['num_epochs'] = 9 / 500
         args['validation_every_n_epochs'] = 9 / 500
-        stdout1, valid1, test1 = testing_utils.train_model(args)
+        valid1, test1 = testing_utils.train_model(args)
         args['num_epochs'] = 16 / 500
         args['validation_every_n_epochs'] = 16 / 500
-        stdout2, valid2, test2 = testing_utils.train_model(args)
+        valid2, test2 = testing_utils.train_model(args)
 
         self.assertAlmostEqual(
             valid1['lr'],

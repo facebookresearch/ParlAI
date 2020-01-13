@@ -36,9 +36,9 @@ class TestHogwild(unittest.TestCase):
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, valid, test = testing_utils.train_model(opt)
-                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
-                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                valid, test = testing_utils.train_model(opt)
+                self.assertEqual(valid['exs'], NUM_EXS)
+                self.assertEqual(test['exs'], NUM_EXS)
 
     def test_hogwild_eval(self):
         """
@@ -52,9 +52,9 @@ class TestHogwild(unittest.TestCase):
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, valid, test = testing_utils.eval_model(opt)
-                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
-                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                valid, test = testing_utils.eval_model(opt)
+                self.assertEqual(valid['exs'], NUM_EXS)
+                self.assertEqual(test['exs'], NUM_EXS)
 
 
 if __name__ == '__main__':

@@ -44,24 +44,16 @@ class TestTransresnet(unittest.TestCase):
         """
         stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
         self.assertEqual(
-            test['accuracy'],
-            0.4,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+            test['accuracy'], 0.4, 'test accuracy = {}'.format(test['accuracy']),
         )
         self.assertEqual(
-            test['hits@5'],
-            0.9,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
+            test['hits@5'], 0.9, 'test hits@5 = {}'.format(test['hits@5']),
         )
         self.assertEqual(
-            test['hits@10'],
-            0.9,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
+            test['hits@10'], 0.9, 'test hits@10 = {}'.format(test['hits@10']),
         )
         self.assertEqual(
-            test['med_rank'],
-            2.0,
-            'test med_rank = {}\nLOG:\n{}'.format(test['med_rank'], stdout),
+            test['med_rank'], 2.0, 'test med_rank = {}'.format(test['med_rank']),
         )
 
 

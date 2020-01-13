@@ -273,7 +273,7 @@ def timeout(time: int = 30):
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
 
-def train_model(opt: Opt) -> (Dict[str, Any], Dict[str, Any]):
+def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Run through a TrainLoop.
 
@@ -336,13 +336,12 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
-    with capture_output() as output:
-        popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
-        valid = None if skip_valid else ems.eval_model(popt)
-        popt['datatype'] = 'test'
-        test = None if skip_test else ems.eval_model(popt)
+    popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    valid = None if skip_valid else ems.eval_model(popt)
+    popt['datatype'] = 'test'
+    test = None if skip_test else ems.eval_model(popt)
 
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
 def display_data(opt):

@@ -41,31 +41,25 @@ class TestTransresnet(unittest.TestCase):
         """
         Test pretrained model.
         """
-        stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
+        _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
 
         # Overall
         self.assertEqual(
-            test['accuracy'],
-            0.3667,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+            test['accuracy'], 0.3667, 'test accuracy = {}'.format(test['accuracy']),
         )
         self.assertEqual(
-            test['hits@5'],
-            0.633,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
+            test['hits@5'], 0.633, 'test hits@5 = {}'.format(test['hits@5']),
         )
         self.assertEqual(
-            test['hits@10'],
-            0.767,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
+            test['hits@10'], 0.767, 'test hits@10 = {}'.format(test['hits@10']),
         )
 
         # First round
         self.assertEqual(
             test['first_round']['hits@1/100'],
             0.2,
-            'test first round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['first_round']['hits@1/100'], stdout
+            'test first round hits@1/100 = {}'.format(
+                test['first_round']['hits@1/100']
             ),
         )
 
@@ -73,8 +67,8 @@ class TestTransresnet(unittest.TestCase):
         self.assertEqual(
             test['second_round']['hits@1/100'],
             0.5,
-            'test second round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['second_round']['hits@1/100'], stdout
+            'test second round hits@1/100 = {}'.format(
+                test['second_round']['hits@1/100']
             ),
         )
 
@@ -82,8 +76,8 @@ class TestTransresnet(unittest.TestCase):
         self.assertEqual(
             test['third_round+']['hits@1/100'],
             0.4,
-            'test third round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['third_round+']['hits@1/100'], stdout
+            'test third round hits@1/100 = {}'.format(
+                test['third_round+']['hits@1/100']
             ),
         )
 
