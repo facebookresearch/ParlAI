@@ -21,20 +21,19 @@ DEFAULT_TASK_CONFIG = {
     'hit_keywords': 'chat,evaluation,comparison,conversation',
 }
 
-task_queue = Queue()
-onboarding_tasks = {}
-desired_tasks = {}
+task_queue: Queue = Queue()
+onboarding_tasks: Dict[int, Dict] = {}
+desired_tasks: Dict[int, Dict] = {}
 
-workers_tasks_completed = {}
-workers_to_conversations_seen = {}
-workers_to_onboarding_tasks_todo = {}
-onboarding_failed_workers = []
+workers_tasks_completed: Dict[int, List] = {}
+workers_to_conversations_seen: Dict[int, List] = {}
+workers_to_onboarding_tasks_todo: Dict[int, List] = {}
+onboarding_failed_workers: Set = set()
 
 
 def add_args(from_argv=False):
-    """
-    Add arguments to parser and either parse from commandline or initialize to defaults
-    (for overriding in scripts)
+    """ Add arguments to parser and either parse from commandline or initialize
+    to defaults (for overriding in scripts)
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -46,17 +45,17 @@ def add_args(from_argv=False):
         help='Number of annotations per conversation comparison pair',
     )
     argparser.add_argument(
-        '--pairings-filename',
-        type=str,
-        default='pairings.jsonl',
-        help='name of the file containing the task dictionaries',
-    )
-    argparser.add_argument(
-        '--task-folder',
+        '--pairings-filepath',
         type=str,
         default=None,
-        help='path to folder containing the pairings file and, optionally, '
-        'the task config',
+        help='path to the file containing the task dictionaries',
+    )
+    argparser.add_argument(
+        '--task-config',
+        type=dict,
+        default=DEFAULT_TASK_CONFIG,
+        help='dict with keys "hit_title", "hit_description", "hit_keywords", '
+        'determining how task is displayed on MTurk site',
     )
     argparser.add_argument(
         '--s1-choice',
@@ -105,17 +104,15 @@ def add_args(from_argv=False):
 
 
 def setup_task_queue(opt):
+    """ Initialize task queue to contain the specified number of instances of
+    each pairing
     """
-    Initialize task queue to contain the specified number of instances of each pairing.
-    """
-    # hacky fix for the parlai parser hacky fix
     annotations_per_pair = opt['annotations_per_pair']
     internal_pair_id = 0
 
     ## Set up onboarding tasks
-    if opt['task_folder']:
-        filename = os.path.join(opt['task_folder'], opt['pairings_filename'])
-        with open(filename, 'r') as pf:
+    if opt['pairings_filepath']:
+        with open(opt['pairings_filepath'], 'r') as pf:
             for l in pf:
                 pairing_dict = json.loads(l.strip())
                 read_task_from_jsonl(
@@ -127,7 +124,7 @@ def setup_task_queue(opt):
                 )
                 internal_pair_id += 1
     else:
-        raise Exception("You must provide a task folder")
+        raise ValueError("You must provide a --pairings-filepath")
 
     ## Fill task queue
     for _i in range(annotations_per_pair):
@@ -145,8 +142,7 @@ def setup_task_queue(opt):
 def read_task_from_jsonl(
     pairing_dict, internal_pair_id, s1_choice, s2_choice, question
 ):
-    """
-    Build task dict according to expected format.
+    """ Build task dict according to expected format
     """
     conv_order = random.choice([[0, 1], [1, 0]])
     task_data = {}
@@ -166,12 +162,10 @@ def read_task_from_jsonl(
 
 
 def get_new_task_data(worker, tasks_per_hit):
-    """
-    Get next task for worker.
-
-    Returns the next onboarding task if worker hasn't finished them all, or finds a task
-    from the queue they haven't seen If they've seen everything in the queue, spin up an
-    extra task (one that was in the queue and is now saturated)
+    """ Get next task for worker. Returns the next onboarding task if worker
+    hasn't finished them all, or finds a task from the queue they haven't seen
+    If they've seen everything in the queue, spin up an extra task (one that
+    was in the queue and is now saturated)
     """
     worker_id = worker.worker_id
     task_data = get_onboarding_tasks(worker_id, tasks_per_hit)
@@ -206,10 +200,11 @@ def get_new_task_data(worker, tasks_per_hit):
                 return task_data
         else:
             task_queue.put(next_task)
-    # task queue is exhausted
+    # task queue containing num annotations requested of each pair is exhausted
+    # b/c we released enough hits to guarantee reaching the requested num on average
     tasks_still_needed = tasks_per_hit - len(task_data)
     tasks_remaining = [id for id in desired_tasks.keys() if id not in completed_tasks]
-    # get any tasks with conversations this worker has not seen
+    # get any pairings with conversations this worker has not seen to fill this hit
     tasks_chosen = [
         t
         for t in tasks_remaining
@@ -238,10 +233,8 @@ def get_new_task_data(worker, tasks_per_hit):
 
 
 def return_task_data(worker_id, task_data):
-    """
-    When worker doesn't complete a task, return it to the queue or change their
-    onboarding status depending on the task.
-    """
+    """ When worker doesn't complete a task, return it to the queue or
+    change their onboarding status depending on the task"""
     for subtask_data in task_data:
         if subtask_data['task_specs'].get('is_onboarding', False):
             workers_to_onboarding_tasks_todo[worker_id].append(
@@ -259,17 +252,14 @@ def return_task_data(worker_id, task_data):
                 workers_to_conversations_seen[worker_id].remove(
                     subtask_data['pairing_dict']['dialogue_dicts'][1]['id']
                 )
-            except ValueError():
+            except ValueError:
                 print("WARNING: couldn't remove task from worker's history")
 
 
 def get_onboarding_tasks(worker_id, tasks_per_hit):
-    """
-    Get the next onboarding task for this worker id.
-
-    If the worker has never done a task, shuffle the onboarding tasks for them. If
-    they've done all of the onboarding tasks or if there are no onboarding tasks, return
-    None
+    """ Get the next onboarding task for this worker id. If the worker has never
+    done a task, shuffle the onboarding tasks for them. If they've done all
+    of the onboarding tasks or if there are no onboarding tasks, return None
     """
     if len(onboarding_tasks) == 0:
         return []
@@ -292,8 +282,7 @@ def get_onboarding_tasks(worker_id, tasks_per_hit):
 
 
 def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_data):
-    """
-    Soft block workers who fail onboarding tasks, keep track of their status.
+    """ Soft block workers who fail onboarding tasks, keep track of their status
     """
     all_task_data = save_data['worker_data'][worker_id]['task_data']
     response_data = save_data['worker_data'][worker_id]['response']['task_data']
@@ -322,13 +311,12 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
         return
     # worker failed onboarding, soft block and record
     mturk_manager.soft_block_worker(worker_id)
-    onboarding_failed_workers.append(worker_id)
+    onboarding_failed_workers.add(worker_id)
 
 
 def main(opt):
-    """
-    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
-    and configuring it for the qa_data_collection task.
+    """Handles setting up and running a ParlAI-MTurk task by instantiating
+    an MTurk manager and configuring it for the qa_data_collection task
     """
     random.seed(opt['seed'])
     np.random.seed(opt['seed'])
@@ -341,18 +329,6 @@ def main(opt):
     }
     # append the contents of task_config.py to the configuration
     opt['frontend_version'] = 1
-    try:
-        import sys
-
-        sys.path.append(opt['task_folder'])
-        from task_config import task_config
-    except Exception:
-        warn_once(
-            'No task_config.py file provided, using default title, '
-            'description, and tags on MTurk task display'
-        )
-        task_config = DEFAULT_TASK_CONFIG
-
     opt.update(task_config)
 
     display_agent_name = 'RatingWorker'

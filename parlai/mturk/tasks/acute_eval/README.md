@@ -14,9 +14,8 @@ following BibTex entry:
     title={ACUTE-EVAL: Improved Dialogue Evaluation with Optimized Questions and Multi-turn Comparisons},
     author={Margaret Li and Jason Weston and Stephen Roller},
     year={2019},
-    eprint={1909.03087},
-    archivePrefix={arXiv},
-    primaryClass={cs.CL}
+    journal={Advances in Neural Information Processing Systems, Conversational AI Workshop},
+    url={https://arxiv.org/abs/1909.03087}
   }
 
 # Code Instructions
@@ -25,14 +24,14 @@ follow the instructions below.
 
 The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
-    python parlai/mturk/tasks/acute_eval/run.py --task_folder parlai/mturk/tasks/acute_eval/example/
+    python parlai/mturk/tasks/acute_eval/run.py --pairings-filepath parlai/mturk/tasks/acute_eval/example/pairings.jsonl
 
 However, you can also choose to set the command line arguments with a script. You can find an example run script in `example_script.py`
 
 
 ## Formatting conversation data
 
-This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format within your `args['task_folder']` folder as `pairings.jsonl`. You can change the name of the file by setting `--pairings_file`.
+This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `--pairings-filepath`.
 
 This is a template of the expected format with the minimal expected fields:
 
@@ -73,7 +72,7 @@ For onboarding tasks - tasks used to filter workers, see below for more details 
     }
 
 
-Note that we assume "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `example/example_pairings.jsonl` for examples of the format required.
+Note that we assume "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `example/pairings.jsonl` for examples of the format required.
 
 ## Question phrasing
 
@@ -84,27 +83,41 @@ In our paper, we address the problem of wording the questions and binary choices
 
 As discussed in the paper, we found that we had better annotation quality if we screened turkers with an 'onboarding' comparison, consisting of a weak baseline conversation and a human-human conversation. Our code is set up so that this is optional.
 
-By default `args['block_on_onboarding']` is set to `True`, which means that workers who fail onboarding will be soft blocked - they won't be able to see or complete any more hits from you but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `args['block_qualification']`.
+By default `--block-on-onboarding` is set to `True`, which means that workers who fail onboarding will be soft blocked - they won't be able to see or complete any more hits from you but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `--block-qualification`.
 
-By setting `args['onboarding_threshold']`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) which must be answered correctly to pass onboarding.
+By setting `--onboarding-threshold`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) which must be answered correctly to pass onboarding.
 
 
 ## Other settings
 
 ### Task configuration on MTurk
 
-The title, description, and keywords of the task as shown on MTurk default to values in DEFAULT_TASK_CONFIG shown at the top of `run.py`. If you would like to change any of these values, create a file called `task_config.py` in your `opt['task_folder']`. See the `example/task_config.py` for more guidance.
+The title, description, and keywords of the task as shown on MTurk default to values in DEFAULT_TASK_CONFIG shown at the top of `run.py`. If you would like to change any of these values, pass a dict to the as the `--task-config` argument with the following keys:
+
+  """A short and descriptive title about the kind of task the HIT contains.
+  On the Amazon Mechanical Turk web site, the HIT title appears in search results,
+  and everywhere the HIT is mentioned.
+  """
+  task_config['hit_title'] = 'Which Conversational Partner is Better?'
+
+
+  """A description includes detailed information about the kind of task the HIT contains.
+  On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
+  view of search results, and in the HIT and assignment screens.
+  """
+  task_config['hit_description'] = 'Evaluate quality of conversations through comparison.'
+
+
+  """One or more words or phrases that describe the HIT, separated by commas.
+  On MTurk website, these words are used in searches to find HITs.
+  """
+  task_config['hit_keywords'] = 'chat,evaluation,comparison,conversation'
+
 
 
 ### CLI arguments
 
 A comprehensive list of settings specific to ACUTE-Eval can be found in `add_args()` in `run.py`. ParlAI MTurk arguments can be found in `~/ParlAI/parlai/core/params.py` under `add_mturk_args()`. For the arguments most likely to be useful for running ACUTE-Eval, see `example_script.py`:
-
-
-
-## Retrieving and analyzing results
-
-Coming soon.
 
 
 ## Creating the pairings file

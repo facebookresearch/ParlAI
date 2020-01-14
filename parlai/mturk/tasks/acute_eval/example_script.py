@@ -20,14 +20,10 @@ Help strings for the other arguments can be found in run.py
 
 def set_args():
     args = add_args()
-    # dialog file paths and model pairs to compare
-    args['dialogs_path'] = '/home/ParlAI/parlai/mturk/tasks/acute_eval/example'
-    args['model_comparisons'] = [('modela', 'modelb')]
+    # task folder containing pairings file
+    args['task_folder'] = 'parlai/mturk/tasks/acute_eval/example/'
 
     # onboarding amd blocking
-    args['onboarding_tasks'] = [
-        ('ZYX', 'AGHIJK', 'example_qual')
-    ]  # AGHIJK is the correct choice here
     args['block_on_onboarding'] = True
     args['block_qualification'] = 'onboarding_qual_name'
 
@@ -37,26 +33,28 @@ def set_args():
     args['max_hits_per_worker'] = 1  # max # hits a worker may complete
     args['is_sandbox'] = True  # set to False to release real hits
 
-    args['annotations_per_pair'] = 1  # #times to use the same conversation pair
-    args['pairs_per_matchup'] = 160  # #pairs of conversations per pair of models
+    args['annotations_per_pair'] = 1  # num times to use the same conversation pair
+    args['pairs_per_matchup'] = 160  # num pairs of conversations per pair of models
     args['seed'] = 42  # np and torch random seed
-    args['subtasks_per_hit'] = 2  # #comparisons to show within one hit
+    args['subtasks_per_hit'] = 2  # num comparisons to show within one hit
 
     # question phrasing
     args['s1_choice'] = 'I would prefer to talk to <Speaker 1>'
     args['s2_choice'] = 'I would prefer to talk to <Speaker 2>'
     args['question'] = 'Who would you prefer to talk to for a long conversation?'
 
-    args['task_description'] = {
-        'subtasks_per_hit': args['subtasks_per_hit'],
-        'question': args['question'],
-        'get_task_feedback': True,
-    }  # variables used in the instructions
     args['num_conversations'] = int(
         len(args['model_comparisons'])
         * args['pairs_per_matchup']
         / (args['task_description']['num_subtasks'] - 1)
     )  # release enough hits to finish all annotations requested
+
+    # Task display on MTurk
+    args['task_config'] = {
+        'hit_title': 'Which Conversational Partner is Better?',
+        'hit_description': 'Evaluate quality of conversations through comparison.',
+        'hit_keywords': 'chat,evaluation,comparison,conversation',
+    }
 
     return args
 
