@@ -94,24 +94,24 @@ By setting `--onboarding-threshold`, you can also adjust the minimum proportion 
 
 The title, description, and keywords of the task as shown on MTurk default to values in DEFAULT_TASK_CONFIG shown at the top of `run.py`. If you would like to change any of these values, pass a dict to the as the `--task-config` argument with the following keys:
 
-  """A short and descriptive title about the kind of task the HIT contains.
-  On the Amazon Mechanical Turk web site, the HIT title appears in search results,
-  and everywhere the HIT is mentioned.
-  """
-  task_config['hit_title'] = 'Which Conversational Partner is Better?'
+    """A short and descriptive title about the kind of task the HIT contains.
+    On the Amazon Mechanical Turk web site, the HIT title appears in search results,
+    and everywhere the HIT is mentioned.
+    """
+    task_config['hit_title'] = 'Which Conversational Partner is Better?'
 
 
-  """A description includes detailed information about the kind of task the HIT contains.
-  On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
-  view of search results, and in the HIT and assignment screens.
-  """
-  task_config['hit_description'] = 'Evaluate quality of conversations through comparison.'
+    """A description includes detailed information about the kind of task the HIT contains.
+    On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
+    view of search results, and in the HIT and assignment screens.
+    """
+    task_config['hit_description'] = 'Evaluate quality of conversations through comparison.'
 
 
-  """One or more words or phrases that describe the HIT, separated by commas.
-  On MTurk website, these words are used in searches to find HITs.
-  """
-  task_config['hit_keywords'] = 'chat,evaluation,comparison,conversation'
+    """One or more words or phrases that describe the HIT, separated by commas.
+    On MTurk website, these words are used in searches to find HITs.
+    """
+    task_config['hit_keywords'] = 'chat,evaluation,comparison,conversation'
 
 
 
