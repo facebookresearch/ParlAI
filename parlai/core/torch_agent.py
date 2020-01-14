@@ -829,7 +829,6 @@ class TorchAgent(ABC, Agent):
             except ValueError:
                 print('WARNING: not loading optim state since model params changed.')
 
-
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
@@ -850,7 +849,9 @@ class TorchAgent(ABC, Agent):
             self.opt, optimizer, states, hard_reset
         )
         if self.scheduler:
-            self._number_training_updates = self.scheduler.get_initial_number_training_updates()
+            self._number_training_updates = (
+                self.scheduler.get_initial_number_training_updates()
+            )
 
     def report(self):
         """
