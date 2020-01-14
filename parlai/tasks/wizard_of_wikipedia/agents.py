@@ -16,9 +16,11 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 import copy
-import parlai.core.agents as core_agents
-from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.teachers import (
+    FixedDialogTeacher,
+    MultiTaskTeacher,
+    create_task_agent_from_taskname,
+)
 from .build import build
 
 import json
@@ -422,7 +424,7 @@ class BasicApprenticeDialogTeacher(BasicdialogTeacher):
         self.add_topic = True
 
 
-class BasicBothDialogTeacher(core_agents.MultiTaskTeacher):
+class BasicBothDialogTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt[

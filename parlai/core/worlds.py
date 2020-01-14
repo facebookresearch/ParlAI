@@ -53,14 +53,12 @@ try:
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 
-from parlai.core.agents import (
-    create_agents_from_shared,
-    create_task_agent_from_taskname,
-)
+from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_metrics
-from parlai.utils.misc import Timer, display_messages
 from parlai.core.opt import Opt
+from parlai.core.teachers import create_task_agent_from_taskname
+from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 

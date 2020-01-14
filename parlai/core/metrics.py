@@ -10,13 +10,18 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 processes.
 """
 
-from parlai.utils.thread import SharedTable
-from parlai.utils.misc import round_sigfigs, no_lock
-from collections import Counter
-from parlai.utils.misc import warn_once
-from numbers import Number
-
 import re
+from abc import ABC, abstractmethod
+from collections import Counter
+from numbers import Number
+from typing import Union
+
+import torch
+
+from parlai.utils.misc import no_lock, round_sigfigs, warn_once
+from parlai.utils.thread import SharedTable
+from parlai.utils.typing import TScalar
+
 
 DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -40,6 +45,89 @@ except ImportError:
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
+
+
+class Metric(ABC):
+    """
+    Base class for storing metrics.
+
+    Subclasses should define .value().
+    """
+
+    @abstractmethod
+    def value(self) -> float:
+        """
+        Return the value of the metric contained by the metric object, usually a scalar.
+
+        (For instance, if the metric object is SumMetric, .value() will return the sum
+        stored by the object.)
+        """
+        pass
+
+    def __str__(self) -> str:
+        return f'{self.value():.4g}'
+
+    def __repr__(self) -> str:
+        return f'{self.__class__} ({self.value():.4g})'
+
+    def as_number(self, obj: TScalar) -> Union[int, float]:
+        if isinstance(obj, torch.Tensor):
+            obj_as_number: Union[int, float] = obj.item()
+        else:
+            obj_as_number = obj  # type: ignore
+        assert isinstance(obj_as_number, int) or isinstance(obj_as_number, float)
+        return obj_as_number
+
+    def as_float(self, obj: Union[int, float, torch.Tensor]) -> float:
+        obj_as_number = self.as_number(obj)
+        return float(obj_as_number)
+
+    def as_int(self, obj: Union[int, float, torch.Tensor]) -> int:
+        obj_as_number = self.as_number(obj)
+        if isinstance(obj_as_number, float):
+            assert obj_as_number.is_integer()
+            return int(obj_as_number)
+        else:
+            assert isinstance(obj_as_number, int)
+            return obj_as_number
+
+
+class SumMetric(Metric):
+    """
+    Class that keeps a running sum of some metric.
+    """
+
+    def __init__(self, sum_: TScalar):
+        self._sum = self.as_float(sum_)
+
+    def __add__(self, other: 'SumMetric') -> 'SumMetric':
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        full_sum: float = self._sum + other._sum
+        return SumMetric(sum_=full_sum)
+
+    def value(self) -> float:
+        return self._sum
+
+
+class AverageMetric(Metric):
+    """
+    Class that keeps a running average of some metric.
+    """
+
+    def __init__(self, numer: TScalar, denom: TScalar):
+        self._numer = self.as_float(numer)
+        self._denom = self.as_int(denom)
+
+    def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        full_numer: float = self._numer + other._numer
+        full_denom: int = self._denom + other._denom
+        return AverageMetric(numer=full_numer, denom=full_denom)
+
+    def value(self) -> float:
+        return self._numer / self._denom
 
 
 def normalize_answer(s):

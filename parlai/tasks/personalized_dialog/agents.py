@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-from parlai.core.teachers import FbDialogTeacher
-import parlai.core.agents as core_agents
+from parlai.core.teachers import FbDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -82,7 +80,7 @@ class SmallTaskTeacher(FbDialogTeacher):
 
 # python <script.py> -t personalized_dialog:AllFull
 # By default train on all tasks at once.
-class AllFullTeacher(core_agents.MultiTaskTeacher):
+class AllFullTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join(
@@ -99,7 +97,7 @@ class AllFullTeacher(core_agents.MultiTaskTeacher):
 
 # python <script.py> -t personalized_dialog:AllSmall
 # By default train on all tasks at once.
-class AllSmallTeacher(core_agents.MultiTaskTeacher):
+class AllSmallTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join(

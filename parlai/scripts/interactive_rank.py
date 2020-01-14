@@ -24,7 +24,8 @@ During datatype valid or test, examples are shown in order, not shuffled.
 """
 from parlai.core.metrics import Metrics
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent, create_task_agent_from_taskname
+from parlai.core.agents import create_agent
+from parlai.core.teachers import create_task_agent_from_taskname
 
 import random
 

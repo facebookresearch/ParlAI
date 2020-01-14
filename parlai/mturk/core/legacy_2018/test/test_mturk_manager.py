@@ -12,7 +12,8 @@ import threading
 import pickle
 from unittest import mock
 from parlai.mturk.core.worker_manager import WorkerManager
-from parlai.mturk.core.agents import MTurkAgent, AssignState
+from parlai.mturk.core.agents import MTurkAgent
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.core.socket_manager import SocketManager, Packet
 from parlai.core.params import ParlaiParser

@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-from parlai.core.teachers import FbDialogTeacher
-import parlai.core.agents as core_agents
+from parlai.core.teachers import FbDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -46,10 +44,12 @@ def mod_labels(ys, task):
 # Single bAbI task (1k training).
 class Task1kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        task = opt.get('task', 'babi:Task1k:1')
-        self.task_num = task.split(':')[2]
+        default = '1'
+        task = opt.get('task', f'babi:Task1k:{default}')
+        self.task_num = task.split(':')[2] if len(task.split(':')) >= 3 else default
+        # Default to self.task_num == '1' if not specified
         opt['datafile'] = _path('', self.task_num, opt)
-        opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
+        opt['cands_datafile'] = _path('', self.task_num, opt, 'train')
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -64,10 +64,12 @@ class Task1kTeacher(FbDialogTeacher):
 # Single bAbI task (10k training).
 class Task10kTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        task = opt.get('task', 'babi:Task10k:1')
-        self.task_num = task.split(':')[2]
+        default = '1'
+        task = opt.get('task', f'babi:Task10k:{default}')
+        self.task_num = task.split(':')[2] if len(task.split(':')) >= 3 else default
+        # Default to self.task_num == '1' if not specified
         opt['datafile'] = _path('-10k', self.task_num, opt)
-        opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
+        opt['cands_datafile'] = _path('-10k', self.task_num, opt, 'train')
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -80,7 +82,7 @@ class Task10kTeacher(FbDialogTeacher):
 
 
 # By default train on all tasks at once.
-class All1kTeacher(core_agents.MultiTaskTeacher):
+class All1kTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('babi:Task1k:%d' % (i + 1) for i in range(20))
@@ -88,7 +90,7 @@ class All1kTeacher(core_agents.MultiTaskTeacher):
 
 
 # By default train on all tasks at once.
-class All10kTeacher(core_agents.MultiTaskTeacher):
+class All10kTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('babi:Task10k:%d' % (i + 1) for i in range(20))

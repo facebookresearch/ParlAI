@@ -2,7 +2,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.agents import create_task_agent_from_taskname, create_agent
+from parlai.core.agents import create_agent
+from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager

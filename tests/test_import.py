@@ -17,7 +17,7 @@ class TestImport(unittest.TestCase):
         assert Agent
 
     def test_import_teacher(self):
-        from parlai.core.agents import Teacher
+        from parlai.core.teachers import Teacher
 
         assert Teacher
 

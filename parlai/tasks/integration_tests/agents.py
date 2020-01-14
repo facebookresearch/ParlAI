@@ -11,8 +11,12 @@ can learn simple behavior easily. They are useful as unit tests for the basic mo
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.agents import Teacher
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
+from parlai.core.teachers import (
+    FixedDialogTeacher,
+    DialogTeacher,
+    AbstractImageTeacher,
+    Teacher,
+)
 from parlai.core.opt import Opt
 from torch.utils.data import Dataset
 import copy
