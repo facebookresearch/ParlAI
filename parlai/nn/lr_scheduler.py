@@ -52,7 +52,9 @@ class ParlAILRScheduler(object):
         self.warmup_rate = warmup_rate
         self.hard_reset = hard_reset
 
-    def init_warmup_scheduler(self, optimizer, states, hard_reset, warmup_updates, warmup_rate):
+    def init_warmup_scheduler(
+        self, optimizer, states, hard_reset, warmup_updates, warmup_rate
+    ):
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or self.hard_reset
@@ -286,7 +288,9 @@ class ParlAILRScheduler(object):
             scheduler.load_state(states)
             # do the actual loading (if possible)
 
-        scheduler.init_warmup_scheduler(optimizer, states, hard_reset, warmup_updates, warmup_rate)
+        scheduler.init_warmup_scheduler(
+            optimizer, states, hard_reset, warmup_updates, warmup_rate
+        )
 
         return scheduler
 
