@@ -87,7 +87,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                     with testing_utils.capture_output() as _:
                         parser = display_setup_args()
                         parser.set_defaults(**opt_defaults)
-                        opt = parser.parse_args()
+                        opt = parser.parse_args([])
                         teacher = create_task_agent_from_taskname(opt)[0]
                         if (
                             'ordered' in datatype
@@ -118,7 +118,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
             parser = train_setup_args()
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             build_dict(opt)
             with testing_utils.capture_output() as _:
                 teacher = create_task_agent_from_taskname(opt)[0]
@@ -166,7 +166,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
         def get_acts_epochs_1_and_2(defaults):
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             build_dict(opt)
             agent = create_agent(opt)
             world_data = create_task(opt, agent)
@@ -246,7 +246,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 defaults['model_file'] = os.path.join(tmpdir, 'model')
                 defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
                 parser.set_defaults(**defaults)
-                opt = parser.parse_args()
+                opt = parser.parse_args([])
                 build_dict(opt)
                 agent = create_agent(opt)
                 world_data = create_task(opt, agent)
@@ -384,7 +384,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults['pytorch_teacher_dataset'] = 'integration_tests'
             del defaults['pytorch_teacher_task']
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             teacher = create_task_agent_from_taskname(opt)[0]
             pytorch_teacher_act = teacher.act()
 
@@ -392,7 +392,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults['task'] = 'integration_tests'
             del defaults['pytorch_teacher_dataset']
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             teacher = create_task_agent_from_taskname(opt)[0]
             regular_teacher_act = teacher.act()
 
@@ -426,7 +426,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             with testing_utils.capture_output() as f:
                 parser = display_setup_args()
                 parser.set_defaults(**defaults)
-                opt = parser.parse_args()
+                opt = parser.parse_args([])
                 display_data(opt)
             str_output = f.getvalue()
             self.assertTrue(

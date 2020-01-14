@@ -46,7 +46,7 @@ class TestTfidfRetriever(unittest.TestCase):
                 datatype='train:ordered',
                 num_epochs=1,
             )
-            opt = parser.parse_args(print_args=False)
+            opt = parser.parse_args([], print_args=False)
             with contextlib.redirect_stdout(io.StringIO()):
                 agent = create_agent(opt)
                 train_world = create_task(opt, agent)

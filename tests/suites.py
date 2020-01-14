@@ -35,17 +35,6 @@ def _circleci_parallelism(suite):
     return unittest.TestSuite(tests)
 
 
-def _clear_cmdline_args(fn):
-    """
-    Decorate to make sure 'python setup.py test' doesn't look like a parlai call.
-    """
-    import sys
-
-    sys.argv = sys.argv[:1]
-    return fn
-
-
-@_clear_cmdline_args
 def datatests():
     """
     Test for data integrity.
@@ -57,7 +46,6 @@ def datatests():
     return test_suite
 
 
-@_clear_cmdline_args
 def nightly_gpu():
     """
     Nightly GPU tests.
@@ -70,7 +58,6 @@ def nightly_gpu():
     return test_suite
 
 
-@_clear_cmdline_args
 def unittests():
     """
     Short tests.
@@ -83,7 +70,6 @@ def unittests():
     return test_suite
 
 
-@_clear_cmdline_args
 def mturk():
     """
     Mechanical Turk tests.
@@ -93,7 +79,6 @@ def mturk():
     return test_suite
 
 
-@_clear_cmdline_args
 def internal_tests():
     """
     Internal Tests.
