@@ -58,7 +58,7 @@ class Metric(ABC):
     def value(self) -> float:
         """
         Return the value of the metric contained by the metric object, usually a scalar.
-        
+
         (For instance, if the metric object is SumMetric, .value() will return the sum
         stored by the object.)
         """
