@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from queue import Queue
+from typing import Dict, List, Queue, Set
 import json
 import numpy as np
 import os
+import queue
 import random
 
 from parlai.core.params import ParlaiParser
@@ -21,7 +22,7 @@ DEFAULT_TASK_CONFIG = {
     'hit_keywords': 'chat,evaluation,comparison,conversation',
 }
 
-task_queue: Queue = Queue()
+task_queue: Queue = queue.Queue()
 onboarding_tasks: Dict[int, Dict] = {}
 desired_tasks: Dict[int, Dict] = {}
 
@@ -329,7 +330,7 @@ def main(opt):
     }
     # append the contents of task_config.py to the configuration
     opt['frontend_version'] = 1
-    opt.update(task_config)
+    opt.update(opt['task_config'])
 
     display_agent_name = 'RatingWorker'
 
