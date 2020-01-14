@@ -10,13 +10,13 @@ _[ACUTE-EVAL: Improved Dialogue Evaluation with Optimized Questions and Multi-tu
 If you use this evaluation method in your own work, please cite with the
 following BibTex entry:
 
-  @misc{li2019acuteeval,
-    title={ACUTE-EVAL: Improved Dialogue Evaluation with Optimized Questions and Multi-turn Comparisons},
-    author={Margaret Li and Jason Weston and Stephen Roller},
-    year={2019},
-    journal={Advances in Neural Information Processing Systems, Conversational AI Workshop},
-    url={https://arxiv.org/abs/1909.03087}
-  }
+    @misc{li2019acuteeval,
+      title={ACUTE-EVAL: Improved Dialogue Evaluation with Optimized Questions and Multi-turn Comparisons},
+      author={Margaret Li and Jason Weston and Stephen Roller},
+      year={2019},
+      journal={Advances in Neural Information Processing Systems, Conversational AI Workshop},
+      url={https://arxiv.org/abs/1909.03087}
+    }
 
 # Code Instructions
 Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai),
