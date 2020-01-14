@@ -47,11 +47,15 @@ class ParlAILRScheduler(object):
         :param float warmup_rate:
             Starting multiplier for warmup scheduler.
         """
+        self._number_training_updates = 0
         self.warmup_updates = warmup_updates
         self.warmup_rate = warmup_rate
+        self.hard_reset = hard_reset
+
+    def init_warmup_scheduler(self, optimizer, states, hard_reset, warmup_updates, warmup_rate):
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
-            updates_so_far < self.warmup_updates or hard_reset
+            updates_so_far < self.warmup_updates or self.hard_reset
         ):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
@@ -82,12 +86,14 @@ class ParlAILRScheduler(object):
         """
         Load state of scheduler from states.
         """
-        if 'number_training_updates' in states:
-            self._number_training_updates = states['number_training_updates']
         if self.scheduler and 'lr_scheduler' in states:
             self.scheduler.load_state_dict(states['lr_scheduler'])
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
+        self._number_training_updates = states.get('number_training_updates', 0)
+
+    def get_initial_number_training_updates(self):
+        return self._number_training_updates
 
     def get_state_dict(self):
         """
@@ -194,7 +200,6 @@ class ParlAILRScheduler(object):
         max_lr_steps = opt.get('max_lr_steps', -1)
         invsqrt_lr_decay_gamma = opt.get('invsqrt_lr_decay_gamma', -1)
 
-        print(opt.get('lr_scheduler'))
         if opt.get('lr_scheduler') == 'none':
             return None
         elif decay == 1.0:
@@ -277,12 +282,11 @@ class ParlAILRScheduler(object):
             warn_once("LR scheduler is different from saved. Starting fresh!")
             hard_reset = True
 
-        if hard_reset:
-            # We're not going to use the LR schedule, let's just exit
-            return
-        else:
+        if not hard_reset:
             scheduler.load_state(states)
             # do the actual loading (if possible)
+
+        scheduler.init_warmup_scheduler(optimizer, states, hard_reset, warmup_updates, warmup_rate)
 
         return scheduler
 
