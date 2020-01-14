@@ -18,14 +18,8 @@ class TestDrQAModel(unittest.TestCase):
         _, test = testing_utils.eval_model(
             dict(task='squad:index', model_file='zoo:drqa/squad/model')
         )
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.68,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy']),
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.78, 'test f1 = {}\nLOG:\n{}'.format(test['f1'])
-        )
+        self.assertGreaterEqual(test['accuracy'], 0.68)
+        self.assertGreaterEqual(test['f1'], 0.78)
 
 
 if __name__ == '__main__':
