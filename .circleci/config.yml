@@ -160,6 +160,7 @@ jobs:
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
