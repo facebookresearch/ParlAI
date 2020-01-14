@@ -35,6 +35,5 @@ if __name__ == '__main__':
         ),
         install_requires=reqs.strip().split('\n'),
         include_package_data=True,
-        test_suite='tests.suites.unittests',
         entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
     )

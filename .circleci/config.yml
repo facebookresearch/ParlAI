@@ -51,6 +51,8 @@ setup: &setup
       pip3 install --progress-bar off --upgrade pip
       pip3 install --progress-bar off coverage
       pip3 install --progress-bar off codecov
+      mkdir -p ~/ParlAI/test-results
+
 
 codecov: &codecov
   run:
@@ -150,8 +152,10 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Data tests
-          command: coverage run setup.py test -s tests.suites.datatests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_osx:
     <<: *osx_cpu37
@@ -170,8 +174,10 @@ jobs:
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_36:
     <<: *standard_cpu36
@@ -179,6 +185,9 @@ jobs:
     parallelism: 8
     steps:
       - checkout
+      - run:
+          name: output test split
+          command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
@@ -191,8 +200,10 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_37:
     <<: *standard_cpu37
@@ -212,8 +223,10 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_gpu11:
     <<: *gpu
@@ -240,8 +253,10 @@ jobs:
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_gpu12:
     <<: *gpu
@@ -268,8 +283,10 @@ jobs:
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   nightly_gpu_tests:
     <<: *gpu
@@ -297,11 +314,13 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run setup.py test -s tests.suites.nightly_gpu -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.1)
           command: sh tests/test_quickstart.sh
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   mturk_tests:
     <<: *standard_cpu37
@@ -319,8 +338,10 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: coverage run setup.py test -s tests.suites.mturk -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   build_website:
     <<: *standard_cpu37

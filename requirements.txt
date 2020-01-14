@@ -10,6 +10,7 @@ h5py==2.10.0
 joblib>=0.14.0
 nltk==3.4.5
 numpy>=1.16.0
+pytest==5.3.2
 pexpect==4.7.0
 Pillow>=6.2.0
 py-gfm==0.1.4
