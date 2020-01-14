@@ -98,5 +98,5 @@ class ParlAIChecker:
         for i, msg in enumerate(COPYRIGHT, 1):
             if any(wl in self.filename for wl in WHITELIST_FNS) and i < 3:
                 continue
-            if msg not in source:
+            if source and msg not in source:
                 yield (i, 0, f'PAI20{i} Missing copyright `{msg}`', '')
