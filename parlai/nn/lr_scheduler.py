@@ -211,21 +211,11 @@ class ParlAILRScheduler(object):
             return None
         elif opt.get('lr_scheduler') == 'reduceonplateau':
             scheduler = ReduceOnPlateauLRScheduler(
-                optimizer,
-                hard_reset,
-                patience,
-                decay,
-                warmup_updates,
-                warmup_rate,
+                optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
             )
         elif opt.get('lr_scheduler') == 'fixed':
             scheduler = FixedLRScheduler(
-                optimizer,
-                hard_reset,
-                patience,
-                decay,
-                warmup_updates,
-                warmup_rate,
+                optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
             )
         elif opt.get('lr_scheduler') == 'invsqrt':
             scheduler = InvSqrtLRScheduler(
@@ -329,13 +319,7 @@ class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self,
-        optimizer,
-        hard_reset,
-        patience,
-        decay,
-        warmup_updates,
-        warmup_rate,
+        self, optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
     ):
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
@@ -363,13 +347,7 @@ class FixedLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self,
-        optimizer,
-        hard_reset,
-        patience,
-        decay,
-        warmup_updates,
-        warmup_rate,
+        self, optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
     ):
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
