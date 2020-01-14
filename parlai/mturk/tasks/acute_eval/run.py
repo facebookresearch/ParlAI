@@ -3,11 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from typing import Dict, List, Queue, Set
+from typing import Dict, List, Set
 import json
 import numpy as np
 import os
-import queue
+from queue import Queue
 import random
 
 from parlai.core.params import ParlaiParser
@@ -22,7 +22,7 @@ DEFAULT_TASK_CONFIG = {
     'hit_keywords': 'chat,evaluation,comparison,conversation',
 }
 
-task_queue: Queue = queue.Queue()
+task_queue: Queue = Queue()
 onboarding_tasks: Dict[int, Dict] = {}
 desired_tasks: Dict[int, Dict] = {}
 
@@ -33,8 +33,9 @@ onboarding_failed_workers: Set = set()
 
 
 def add_args(from_argv=False):
-    """ Add arguments to parser and either parse from commandline or initialize
-    to defaults (for overriding in scripts)
+    """
+    Add arguments to parser and either parse from commandline or initialize to defaults
+    (for overriding in scripts)
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -105,8 +106,8 @@ def add_args(from_argv=False):
 
 
 def setup_task_queue(opt):
-    """ Initialize task queue to contain the specified number of instances of
-    each pairing
+    """
+    Initialize task queue to contain the specified number of instances of each pairing.
     """
     annotations_per_pair = opt['annotations_per_pair']
     internal_pair_id = 0
@@ -143,7 +144,8 @@ def setup_task_queue(opt):
 def read_task_from_jsonl(
     pairing_dict, internal_pair_id, s1_choice, s2_choice, question
 ):
-    """ Build task dict according to expected format
+    """
+    Build task dict according to expected format.
     """
     conv_order = random.choice([[0, 1], [1, 0]])
     task_data = {}
@@ -163,10 +165,12 @@ def read_task_from_jsonl(
 
 
 def get_new_task_data(worker, tasks_per_hit):
-    """ Get next task for worker. Returns the next onboarding task if worker
-    hasn't finished them all, or finds a task from the queue they haven't seen
-    If they've seen everything in the queue, spin up an extra task (one that
-    was in the queue and is now saturated)
+    """
+    Get next task for worker.
+
+    Returns the next onboarding task if worker hasn't finished them all, or finds a task
+    from the queue they haven't seen If they've seen everything in the queue, spin up an
+    extra task (one that was in the queue and is now saturated)
     """
     worker_id = worker.worker_id
     task_data = get_onboarding_tasks(worker_id, tasks_per_hit)
@@ -234,8 +238,10 @@ def get_new_task_data(worker, tasks_per_hit):
 
 
 def return_task_data(worker_id, task_data):
-    """ When worker doesn't complete a task, return it to the queue or
-    change their onboarding status depending on the task"""
+    """
+    When worker doesn't complete a task, return it to the queue or change their
+    onboarding status depending on the task.
+    """
     for subtask_data in task_data:
         if subtask_data['task_specs'].get('is_onboarding', False):
             workers_to_onboarding_tasks_todo[worker_id].append(
@@ -258,9 +264,12 @@ def return_task_data(worker_id, task_data):
 
 
 def get_onboarding_tasks(worker_id, tasks_per_hit):
-    """ Get the next onboarding task for this worker id. If the worker has never
-    done a task, shuffle the onboarding tasks for them. If they've done all
-    of the onboarding tasks or if there are no onboarding tasks, return None
+    """
+    Get the next onboarding task for this worker id.
+
+    If the worker has never done a task, shuffle the onboarding tasks for them. If
+    they've done all of the onboarding tasks or if there are no onboarding tasks, return
+    None
     """
     if len(onboarding_tasks) == 0:
         return []
@@ -283,7 +292,8 @@ def get_onboarding_tasks(worker_id, tasks_per_hit):
 
 
 def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_data):
-    """ Soft block workers who fail onboarding tasks, keep track of their status
+    """
+    Soft block workers who fail onboarding tasks, keep track of their status.
     """
     all_task_data = save_data['worker_data'][worker_id]['task_data']
     response_data = save_data['worker_data'][worker_id]['response']['task_data']
@@ -316,8 +326,9 @@ def check_and_update_worker_approval(mturk_manager, worker_id, threshold, save_d
 
 
 def main(opt):
-    """Handles setting up and running a ParlAI-MTurk task by instantiating
-    an MTurk manager and configuring it for the qa_data_collection task
+    """
+    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
+    and configuring it for the qa_data_collection task.
     """
     random.seed(opt['seed'])
     np.random.seed(opt['seed'])
