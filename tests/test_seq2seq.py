@@ -27,7 +27,6 @@ class TestSeq2Seq(unittest.TestCase):
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
                 numthreads=1,
-                no_cuda=True,
                 embeddingsize=16,
                 hiddensize=16,
                 rnn_class='gru',
@@ -81,7 +80,6 @@ class TestSeq2Seq(unittest.TestCase):
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
-                no_cuda=True,
                 skip_generation=False,
                 inference='beam',
                 beam_size=5,
@@ -109,7 +107,6 @@ class TestSeq2Seq(unittest.TestCase):
                 datatype='train:ordered:stream',
                 num_epochs=1,
                 numthreads=1,
-                no_cuda=True,
                 embeddingsize=16,
                 hiddensize=16,
                 inference='greedy',
@@ -166,7 +163,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 model='seq2seq',
                 model_file='zoo:unittest/seq2seq/model',
                 dict_file='zoo:unittest/seq2seq/model.dict',
-                no_cuda=True,
             )
         )
 
