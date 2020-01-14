@@ -79,7 +79,7 @@ class TestWoW(unittest.TestCase):
         with redirect_stdout(f):
             parser = setup_args()
             parser.set_defaults(**kwargs)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             agent = RepeatLabelAgent(opt)
             world = create_task(opt, agent)
             display(opt)
