@@ -42,12 +42,8 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['hits@1'] > 0.95, "valid hits@1 = {}".format(valid['hits@1']),
-        )
-        self.assertTrue(
-            test['hits@1'] > 0.95, "test hits@1 = {}".format(test['hits@1']),
-        )
+        self.assertGreater(valid['hits@1'], 0.95)
+        self.assertGreater(test['hits@1'], 0.95)
 
     @testing_utils.skipIfGPU
     @testing_utils.retry()
@@ -74,12 +70,8 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['hits@1'] > 0.95, "valid hits@1 = {}".format(valid['hits@1']),
-        )
-        self.assertTrue(
-            test['hits@1'] > 0.95, "test hits@1 = {}".format(test['hits@1']),
-        )
+        self.assertGreater(valid['hits@1'], 0.95)
+        self.assertGreater(test['hits@1'], 0.95)
 
     def test_backcomp(self):
         """
@@ -95,14 +87,10 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['accuracy'], 0.88, 'valid accuracy = {}'.format(valid['accuracy']),
-        )
-        self.assertGreaterEqual(valid['f1'], 0.999, 'valid f1 = {}'.format(valid['f1']))
-        self.assertGreaterEqual(
-            test['accuracy'], 0.84, 'test accuracy = {}'.format(test['accuracy']),
-        )
-        self.assertGreaterEqual(test['f1'], 0.999, 'test f1 = {}'.format(test['f1']))
+        self.assertGreaterEqual(valid['accuracy'], 0.88)
+        self.assertGreaterEqual(valid['f1'], 0.999)
+        self.assertGreaterEqual(test['accuracy'], 0.84)
+        self.assertGreaterEqual(test['f1'], 0.999)
 
 
 if __name__ == '__main__':

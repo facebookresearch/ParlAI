@@ -67,14 +67,10 @@ class TestDistributed(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.20, "valid ppl = {}".format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['bleu-4'], 0.95, "valid blue = {}".format(valid['bleu-4']),
-        )
-        self.assertLessEqual(test['ppl'], 1.20, "test ppl = {}".format(test['ppl']))
-        self.assertGreaterEqual(
-            test['bleu-4'], 0.95, "test bleu = {}".format(test['bleu-4']),
-        )
+        self.assertLessEqual(valid['ppl'], 1.20)
+        self.assertGreaterEqual(valid['bleu-4'], 0.95)
+        self.assertLessEqual(test['ppl'], 1.20)
+        self.assertGreaterEqual(test['bleu-4'], 0.95)
 
 
 if __name__ == '__main__':

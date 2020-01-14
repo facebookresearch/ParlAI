@@ -42,12 +42,8 @@ class TestTransformerRanker(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
-        )
-        self.assertGreaterEqual(
-            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
 
     def test_resuming(self):
         """
@@ -147,20 +143,12 @@ class TestTransformerRanker(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['hits@1'], 0.99, 'valid hits@1 = {}'.format(valid['hits@1']),
-        )
-        self.assertGreaterEqual(
-            valid['accuracy'], 0.99, 'valid accuracy = {}'.format(valid['accuracy']),
-        )
-        self.assertGreaterEqual(valid['f1'], 0.99, 'valid f1 = {}'.format(valid['f1']))
-        self.assertGreaterEqual(
-            test['hits@1'], 0.99, 'test hits@1 = {}'.format(test['hits@1']),
-        )
-        self.assertGreaterEqual(
-            test['accuracy'], 0.99, 'test accuracy = {}'.format(test['accuracy']),
-        )
-        self.assertGreaterEqual(test['f1'], 0.99, 'test f1 = {}'.format(test['f1']))
+        self.assertGreaterEqual(valid['hits@1'], 0.99)
+        self.assertGreaterEqual(valid['accuracy'], 0.99)
+        self.assertGreaterEqual(valid['f1'], 0.99)
+        self.assertGreaterEqual(test['hits@1'], 0.99)
+        self.assertGreaterEqual(test['accuracy'], 0.99)
+        self.assertGreaterEqual(test['f1'], 0.99)
 
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
@@ -188,12 +176,8 @@ class TestTransformerRanker(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
-        )
-        self.assertGreaterEqual(
-            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
 
     @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
@@ -222,12 +206,8 @@ class TestTransformerRanker(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['hits@1'], 0.90, "valid hits@1 = {}".format(valid['hits@1']),
-        )
-        self.assertGreaterEqual(
-            test['hits@1'], 0.90, "test hits@1 = {}".format(test['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
 
 
 class TestTransformerGenerator(unittest.TestCase):
@@ -257,14 +237,10 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['bleu-4'], 0.90, "valid blue = {}".format(valid['bleu-4']),
-        )
-        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
-        self.assertGreaterEqual(
-            test['bleu-4'], 0.90, "test bleu = {}".format(test['bleu-4']),
-        )
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
@@ -288,14 +264,10 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.20, "valid ppl = {}".format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['bleu-4'], 0.95, "valid blue = {}".format(valid['bleu-4']),
-        )
-        self.assertLessEqual(test['ppl'], 1.20, "test ppl = {}".format(test['ppl']))
-        self.assertGreaterEqual(
-            test['bleu-4'], 0.95, "test bleu = {}".format(test['bleu-4']),
-        )
+        self.assertLessEqual(valid['ppl'], 1.20)
+        self.assertGreaterEqual(valid['bleu-4'], 0.95)
+        self.assertLessEqual(test['ppl'], 1.20)
+        self.assertGreaterEqual(test['bleu-4'], 0.95)
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch_blocking(self):
@@ -347,16 +319,12 @@ class TestTransformerGenerator(unittest.TestCase):
                     skip_generation=False,
                 )
             )
-        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
-        self.assertGreaterEqual(valid['f1'], 0.80, "valid f1 = {}".format(valid['f1']))
-        self.assertGreaterEqual(
-            valid['bleu-4'], 0.5, "valid bleu = {}".format(valid['bleu-4']),
-        )
-        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
-        self.assertGreaterEqual(test['f1'], 0.80, "test f1 = {}".format(test['bleu-4']))
-        self.assertGreaterEqual(
-            test['bleu-4'], 0.5, "test bleu = {}".format(test['bleu-4']),
-        )
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['f1'], 0.80)
+        self.assertGreaterEqual(valid['bleu-4'], 0.5)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['f1'], 0.80)
+        self.assertGreaterEqual(test['bleu-4'], 0.5)
 
         # Beam Block 1
         self.assertLessEqual(
@@ -522,22 +490,14 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['hits@1'], 0.95, 'valid hits@1 = {}'.format(valid['hits@1']),
-        )
-        self.assertLessEqual(valid['ppl'], 1.01, 'valid ppl = {}'.format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['accuracy'], 0.99, 'valid accuracy = {}'.format(valid['accuracy']),
-        )
-        self.assertGreaterEqual(valid['f1'], 0.99, 'valid f1 = {}'.format(valid['f1']))
-        self.assertGreaterEqual(
-            test['hits@1'], 0.95, 'test hits@1 = {}'.format(test['hits@1']),
-        )
-        self.assertLessEqual(test['ppl'], 1.01, 'test ppl = {}'.format(test['ppl']))
-        self.assertGreaterEqual(
-            test['accuracy'], 0.99, 'test accuracy = {}'.format(test['accuracy']),
-        )
-        self.assertGreaterEqual(test['f1'], 0.99, 'test f1 = {}'.format(test['f1']))
+        self.assertGreaterEqual(valid['hits@1'], 0.95)
+        self.assertLessEqual(valid['ppl'], 1.01)
+        self.assertGreaterEqual(valid['accuracy'], 0.99)
+        self.assertGreaterEqual(valid['f1'], 0.99)
+        self.assertGreaterEqual(test['hits@1'], 0.95)
+        self.assertLessEqual(test['ppl'], 1.01)
+        self.assertGreaterEqual(test['accuracy'], 0.99)
+        self.assertGreaterEqual(test['f1'], 0.99)
 
     def test_badinput(self):
         """
@@ -583,14 +543,10 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.30, "valid ppl = {}".format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['bleu-4'], 0.90, "valid blue = {}".format(valid['bleu-4']),
-        )
-        self.assertLessEqual(test['ppl'], 1.30, "test ppl = {}".format(test['ppl']))
-        self.assertGreaterEqual(
-            test['bleu-4'], 0.90, "test bleu = {}".format(test['bleu-4']),
-        )
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
 
 
 class TestLearningRateScheduler(unittest.TestCase):

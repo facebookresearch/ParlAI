@@ -33,12 +33,8 @@ class TestExampleSeq2Seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['token_acc'] > 0.8, "valid token_acc = {}".format(valid['token_acc']),
-        )
-        self.assertTrue(
-            test['token_acc'] > 0.8, "test token_acc = {}".format(test['token_acc']),
-        )
+        self.assertGreater(valid['token_acc'], 0.8)
+        self.assertGreater(test['token_acc'], 0.8)
 
     @testing_utils.retry(ntries=3)
     def test_repeater(self):

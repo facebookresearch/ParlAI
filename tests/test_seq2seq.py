@@ -58,8 +58,8 @@ class TestSeq2Seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(valid['ppl'] < 1.2, "valid ppl = {}".format(valid['ppl']))
-        self.assertTrue(test['ppl'] < 1.2, "test ppl = {}".format(test['ppl']))
+        self.assertLess(valid['ppl'], 1.2)
+        self.assertLess(test['ppl'], 1.2)
 
     def test_beamsearch(self):
         """
@@ -76,12 +76,8 @@ class TestSeq2Seq(unittest.TestCase):
                 beam_size=5,
             )
         )
-        self.assertTrue(
-            valid['accuracy'] > 0.95, "valid accuracy = {}".format(valid['accuracy']),
-        )
-        self.assertTrue(
-            test['accuracy'] > 0.95, "test accuracy = {}".format(test['accuracy']),
-        )
+        self.assertGreater(valid['accuracy'], 0.95)
+        self.assertGreater(test['accuracy'], 0.95)
 
     def test_badinput(self):
         """
@@ -128,8 +124,8 @@ class TestHogwildSeq2seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(valid['ppl'] < 1.2, "valid ppl = {}".format(valid['ppl']))
-        self.assertTrue(test['ppl'] < 1.2, "test ppl = {}".format(test['ppl']))
+        self.assertLess(valid['ppl'], 1.2)
+        self.assertLess(test['ppl'], 1.2)
 
 
 class TestBackwardsCompatibility(unittest.TestCase):
@@ -147,16 +143,12 @@ class TestBackwardsCompatibility(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.01, 'valid ppl = {}'.format(valid['ppl']))
-        self.assertGreaterEqual(
-            valid['accuracy'], 0.999, 'valid accuracy = {}'.format(valid['accuracy']),
-        )
-        self.assertGreaterEqual(valid['f1'], 0.999, 'valid f1 = {}'.format(valid['f1']))
-        self.assertLessEqual(test['ppl'], 1.01, 'test ppl = {}'.format(test['ppl']))
-        self.assertGreaterEqual(
-            test['accuracy'], 0.999, 'test accuracy = {}'.format(test['accuracy']),
-        )
-        self.assertGreaterEqual(test['f1'], 0.999, 'test f1 = {}'.format(test['f1']))
+        self.assertLessEqual(valid['ppl'], 1.01)
+        self.assertGreaterEqual(valid['accuracy'], 0.999)
+        self.assertGreaterEqual(valid['f1'], 0.999)
+        self.assertLessEqual(test['ppl'], 1.01)
+        self.assertGreaterEqual(test['accuracy'], 0.999)
+        self.assertGreaterEqual(test['f1'], 0.999)
 
 
 if __name__ == '__main__':
