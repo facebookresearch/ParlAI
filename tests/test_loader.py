@@ -17,6 +17,7 @@ from parlai.core.loader import (
     load_world_module,
 )
 from parlai.core.worlds import DialogPartnerWorld
+import parlai.utils.testing as testing_utils
 
 OPTIONS = {
     'task': 'convai2:selfRevised',
@@ -52,6 +53,22 @@ class TestLoader(unittest.TestCase):
             OPTIONS['task'].split(':')[0], interactive_task=False, num_agents=2
         )
         self.assertEqual(world_module, DialogPartnerWorld)
+
+
+class TestZoo(unittest.TestCase):
+    """
+    Test that zoo files import as expected.
+    """
+
+    def test_zoo_no_exists(self):
+        with self.assertRaises(ImportError):
+            testing_utils.display_model(
+                {'model_file': 'zoo:unittests/fake', 'task': 'integration_tests',}
+            )
+        with self.assertRaises(ImportError):
+            testing_utils.display_model(
+                {'model_file': 'zoo:fakemodel', 'task': 'integration_tests'}
+            )
 
 
 class TestLoadParlAIInternal(unittest.TestCase):
