@@ -50,19 +50,9 @@ class TestExampleSeq2Seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['accuracy'] > 0.8,
-            "valid accuracy = {}\nLOG:\n{}".format(valid['accuracy'], stdout),
-        )
-        self.assertTrue(
-            test['accuracy'] > 0.8,
-            "test accuracy = {}\nLOG:\n{}".format(test['accuracy'], stdout),
-        )
-        self.assertEqual(
-            test['exs'],
-            100,
-            'test examples = {}\nLOG:\n{}'.format(valid['exs'], stdout),
-        )
+        self.assertGreater(valid['accuracy'], 0.8)
+        self.assertGreater(test['accuracy'], 0.8)
+        self.assertEqual(test['exs'], 100)
 
 
 if __name__ == '__main__':

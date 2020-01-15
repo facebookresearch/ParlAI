@@ -49,9 +49,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test train batch cands
     @testing_utils.retry(ntries=3)
@@ -61,9 +59,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test train fixed
     @testing_utils.retry(ntries=3)
@@ -74,9 +70,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test train batch all cands
     @testing_utils.retry(ntries=3)
@@ -86,9 +80,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test eval inline ecands
     @testing_utils.retry(ntries=3)
@@ -98,9 +90,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test eval batch ecands
     @testing_utils.retry(ntries=3)
@@ -110,9 +100,7 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
-        self.assertGreaterEqual(
-            valid['hits@1'], threshold, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test eval fixed ecands
     @testing_utils.retry(ntries=3)
@@ -126,9 +114,7 @@ class _AbstractTRATest(unittest.TestCase):
         # none of the train candidates appear in evaluation, so should have
         # zero accuracy: this tests whether the fixed candidates were built
         # properly (i.e., only using candidates from the train set)
-        self.assertEqual(
-            valid['hits@1'], 0, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertEqual(valid['hits@1'], 0)
 
         # now try again with a fixed candidate file that includes all possible
         # candidates
@@ -145,9 +131,7 @@ class _AbstractTRATest(unittest.TestCase):
             args['ignore_bad_candidates'] = False
             args['num_epochs'] = 4
             valid, test = testing_utils.train_model(args)
-            self.assertGreaterEqual(
-                valid['hits@100'], 0.1, "valid hits@1 = {}".format(valid['hits@1']),
-            )
+            self.assertGreaterEqual(valid['hits@100'], 0.1)
 
     # test eval vocab ecands
     @testing_utils.retry(ntries=3)
@@ -159,9 +143,7 @@ class _AbstractTRATest(unittest.TestCase):
 
         # accuracy should be zero, none of the vocab candidates should be the
         # correct label
-        self.assertEqual(
-            valid['hits@100'], 0, "valid hits@1 = {}".format(valid['hits@1']),
-        )
+        self.assertEqual(valid['hits@100'], 0)
 
 
 class TestTransformerRanker(_AbstractTRATest):
@@ -236,9 +218,7 @@ class TestPolyRanker(_AbstractTRATest):
             args['num_epochs'] = 4
             # Train model where it has access to the candidate in labels
             valid, test = testing_utils.train_model(args)
-            self.assertGreaterEqual(
-                valid['hits@100'], 0.0, "valid hits@1 = {}".format(valid['hits@1']),
-            )
+            self.assertGreaterEqual(valid['hits@100'], 0.0)
 
             # Evaluate model where label is not in fixed candidates
             args['fixed_candidates_path'] = tmp_train_val_cands_file
@@ -249,9 +229,7 @@ class TestPolyRanker(_AbstractTRATest):
 
             args['add_label_to_fixed_cands'] = True
             valid, test = testing_utils.eval_model(args, skip_valid=True)
-            self.assertGreaterEqual(
-                test['hits@100'], 0.0, "test hits@1 = {}".format(test['hits@1']),
-            )
+            self.assertGreaterEqual(test['hits@100'], 0.0)
 
 
 if __name__ == '__main__':

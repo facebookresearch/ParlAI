@@ -327,48 +327,16 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertGreaterEqual(test['bleu-4'], 0.5)
 
         # Beam Block 1
-        self.assertLessEqual(
-            valid_beam_block['f1'],
-            0.4,
-            "valid beam block f1 = {}".format(valid_beam_block['f1']),
-        )
-        self.assertLessEqual(
-            valid_beam_block['bleu-4'],
-            1e-9,
-            "valid beam block bleu = {}".format(valid_beam_block['bleu-4']),
-        )
-        self.assertLessEqual(
-            test_beam_block['f1'],
-            0.4,
-            "test beam block f1 = {}".format(test_beam_block['f1']),
-        )
-        self.assertLessEqual(
-            test_beam_block['bleu-4'],
-            1e-9,
-            "test beam block bleu = {}".format(test_beam_block['bleu-4']),
-        )
+        self.assertLessEqual(valid_beam_block['f1'], 0.4)
+        self.assertLessEqual(valid_beam_block['bleu-4'], 1e-9)
+        self.assertLessEqual(test_beam_block['f1'], 0.4)
+        self.assertLessEqual(test_beam_block['bleu-4'], 1e-9)
 
         # Beam Block 2
-        self.assertLessEqual(
-            valid_beam_block2['f1'],
-            0.6,
-            "valid beam block f1 = {}".format(valid_beam_block2['f1']),
-        )
-        self.assertLessEqual(
-            valid_beam_block2['bleu-4'],
-            1e-6,
-            "valid beam block bleu = {}".format(valid_beam_block2['bleu-4']),
-        )
-        self.assertLessEqual(
-            test_beam_block2['f1'],
-            0.6,
-            "test beam block f1 = {}".format(test_beam_block2['f1']),
-        )
-        self.assertLessEqual(
-            test_beam_block2['bleu-4'],
-            1e-6,
-            "test beam block bleu = {}".format(test_beam_block2['bleu-4']),
-        )
+        self.assertLessEqual(valid_beam_block2['f1'], 0.6)
+        self.assertLessEqual(valid_beam_block2['bleu-4'], 1e-6)
+        self.assertLessEqual(test_beam_block2['f1'], 0.6)
+        self.assertLessEqual(test_beam_block2['bleu-4'], 1e-6)
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch_contextblocking(self):
