@@ -8,7 +8,6 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 
 import unittest
-import io
 import itertools
 import parlai.utils.testing as testing_utils
 

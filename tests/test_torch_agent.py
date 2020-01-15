@@ -13,7 +13,6 @@ import unittest
 from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
-import parlai.utils.testing as testing_utils
 
 from collections import deque
 

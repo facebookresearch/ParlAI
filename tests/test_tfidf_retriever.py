@@ -11,8 +11,6 @@ from parlai.utils.logging import logger, ERROR
 
 import os
 import unittest
-import contextlib
-import io
 
 SKIP_TESTS = False
 try:

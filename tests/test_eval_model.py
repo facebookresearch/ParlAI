@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 from examples.eval_model import setup_args
 
-import ast
 import unittest
 import parlai.utils.testing as testing_utils
 

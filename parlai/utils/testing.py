@@ -8,7 +8,6 @@
 General utilities for helping writing ParlAI unit and integration tests.
 """
 
-import sys
 import os
 import unittest
 import contextlib

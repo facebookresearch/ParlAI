@@ -7,7 +7,6 @@
 
 import unittest
 import importlib
-import warnings
 from parlai.tasks.task_list import task_list
 
 SPECIFIC_BUILDS = {

@@ -526,7 +526,6 @@ class TestLearningRateScheduler(unittest.TestCase):
         """
         Test learning rate resumes correctly.
         """
-        mdl = args['model']
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
             valid1, test1 = testing_utils.train_model(
