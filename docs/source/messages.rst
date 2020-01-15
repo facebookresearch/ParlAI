@@ -1,14 +1,15 @@
-observations
+messages
 ============
 
 .. image:: _static/img/act-obs-dict.png
     :width: 60 %
 
 The primary medium for information flow (messages between agents and the environment)
-in ParlAI is a python ``dict`` containing the actions of an agent
-(observable by other agents or the environment).
+in ParlAI is a Message, a subclass of a python ``dict`` containing the actions of an agent
+(observable by other agents or the environment). The Message object is defined at
+``parlai/core/message.py``.
 
-We generally refer to this as an observation dict.
+We generally refer to these messages as observations or acts.
 One should be created by an agent's ``act()`` function, and it will be passed
 to another agent's ``observe()`` function as the sole argument.
 
@@ -20,6 +21,10 @@ or even to multi-task.
 
 If necessary, teachers can include other data in this dict using other field names.
 See `extended fields`_ below.
+
+The primary function of the ``Message`` object is to ensure that agents do not
+unintentionally edit the fields within observations and actions. In order to edit
+the field of a ``Message`` object, one must call ``message.force_set(key, new_value)``.
 
 
 text

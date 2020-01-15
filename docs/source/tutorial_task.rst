@@ -547,7 +547,10 @@ and we only have one question per episode, so we can reuse that definition.
 Next we need to implement the ``get()`` function. This has two arguments: which
 episode we want to pull from, and then the index within that episode of the
 specific example we want. Since every episode has only one entry in this dataset,
-we provide a default for the keyword and ignore it.
+we provide a default for the keyword and ignore it. Actions return from ``get()``
+should be wrapped in the ``Message`` class, defined at ``parlai/core/message.py``,
+which ensures that the fields of the action are not unintentionally edited by
+the agents that observe it.
 
 We also define the DefaultTeacher class to refer to this one.
 This task also includes another teacher which includes multiple choice candidates,
@@ -571,7 +574,7 @@ but we don't include that in this tutorial.
             anno = self.annotation['annotations'][episode_idx]
             action['labels'] = [ans['answer'] for ans in anno['answers']]
 
-        return action
+        return Message(action)
 
 
     class DefaultTeacher(OeTeacher):
