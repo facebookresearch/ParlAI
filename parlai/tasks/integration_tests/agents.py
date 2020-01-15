@@ -288,27 +288,6 @@ class DefaultDataset(CandidateTeacherDataset):
     pass
 
 
-class MultipassTeacher(CandidateTeacher):
-    """
-    Multiturn teacher, where each episode goes:
-
-    call      response 1         1 2         1 2 3         1 2 3 4         1 2 3 4
-    """
-
-    def num_examples(self):
-        return super().num_examples() * self.example_size
-
-    def setup_data(self, fold):
-        raw = super().setup_data(fold)
-        for (t, a, _, cs), _ in raw:
-            split_t = t.split(' ')
-            ans = a[0]
-            for i, bit in enumerate(split_t):
-                label = ans[: 2 * i + 1]
-                cands = [c[: 2 * i + 1] for c in cs]
-                yield (bit, [label], 0, cands), i == 0
-
-
 class MultiturnCandidateTeacher(CandidateTeacher):
     """
     Splits inputs/targets by spaces into multiple turns.
@@ -332,6 +311,9 @@ class MultiturnCandidateTeacher(CandidateTeacher):
                     ),
                     i == 0,
                 )
+
+    def num_examples(self):
+        return self.example_size * self.num_episodes()
 
 
 class NocandidateTeacher(CandidateTeacher):
@@ -501,6 +483,25 @@ class ImageTeacher(AbstractImageTeacher):
         return os.path.join(
             self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg'
         )
+
+
+class RepeatTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = 'unused_path'
+        task = opt.get('task', 'integration_tests:RepeatTeacher:50')
+        self.data_length = int(task.split(':')[-1])
+        super().__init__(opt, shared)
+
+    def setup_data(self, unused_path):
+        for i in range(self.data_length):
+            yield ((str(i), [str(i)]), True)
+
+    def num_examples(self):
+        return self.data_length
+
+    def num_episodes(self):
+        return self.data_length
 
 
 class DefaultTeacher(CandidateTeacher):

@@ -20,7 +20,7 @@ class TestBuildData(unittest.TestCase):
     dest_filenames = ('mnist0.tar.gz', 'mnist1.tar.gz', 'mnist2.tar.gz')
 
     def setUp(self):
-        self.datapath = ParlaiParser().parse_args(print_args=False)['datapath']
+        self.datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
         self.datapath = os.path.join(self.datapath, 'build_data_pyt_data')
         os.makedirs(self.datapath, exist_ok=True)
 

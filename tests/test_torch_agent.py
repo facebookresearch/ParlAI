@@ -39,7 +39,7 @@ def get_agent(**kwargs):
     parser = ParlaiParser()
     MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
-    opt = parser.parse_args(print_args=False)
+    opt = parser.parse_args([], print_args=False)
     with testing_utils.capture_output():
         return MockTorchAgent(opt)
 
@@ -976,7 +976,7 @@ class TestTorchAgent(unittest.TestCase):
         def get_popt_and_tl(opt):
             parser = tms.setup_args()
             parser.set_params(**opt)
-            popt = parser.parse_args(print_args=False)
+            popt = parser.parse_args([], print_args=False)
             for k, v in opt.items():
                 popt[k] = v
             return popt, tms.TrainLoop(popt)
@@ -1016,30 +1016,3 @@ class TestTorchAgent(unittest.TestCase):
                 init_model_file, is_finetune = agent._get_init_model(popt, None)
                 self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
                 self.assertFalse(is_finetune)
-
-
-class TestLegacyVersioning(unittest.TestCase):
-    def test_legacy_version(self):
-        # simply tries to load and run some models with versioning attached
-        with capture_output():
-            with self.assertRaises(RuntimeError):
-                testing_utils.display_model(
-                    {
-                        'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
-                        'task': 'convai2',
-                        'no_cuda': True,
-                    }
-                )
-
-            testing_utils.display_model(
-                {
-                    'model': 'legacy:seq2seq:0',
-                    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
-                    'task': 'convai2',
-                    'no_cuda': True,
-                }
-            )
-
-
-if __name__ == '__main__':
-    unittest.main()

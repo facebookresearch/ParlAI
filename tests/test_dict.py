@@ -104,7 +104,7 @@ class TestDictionary(unittest.TestCase):
         """
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args(print_args=False)
+        opt = argparser.parse_args([], print_args=False)
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 
@@ -132,13 +132,12 @@ class TestDictionary(unittest.TestCase):
         Check that moving a model without moving the dictfile raises an error.
         """
         # Download model, move to a new location
-        datapath = ParlaiParser().parse_args(print_args=False)['datapath']
+        datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
         try:
             # remove unittest models if there before
             shutil.rmtree(os.path.join(datapath, 'models/unittest'))
         except FileNotFoundError:
             pass
-        testing_utils.download_unittest_models()
 
         zoo_path = 'zoo:unittest/seq2seq/model'
         model_path = modelzoo_path(datapath, zoo_path)
@@ -161,7 +160,7 @@ class TestDictionary(unittest.TestCase):
         with testing_utils.capture_output():
             parser = tms.setup_args()
             parser.set_params(task='babi:task1k:1', model='seq2seq')
-            popt = parser.parse_args(print_args=False)
+            popt = parser.parse_args([], print_args=False)
             with self.assertRaises(RuntimeError):
                 tms.TrainLoop(popt)
 

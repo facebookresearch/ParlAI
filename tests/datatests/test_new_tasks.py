@@ -23,7 +23,7 @@ class TestNewTasks(unittest.TestCase):
 
     def test_verify_data(self):
         parser = setup_args()
-        opt = parser.parse_args(print_args=False)
+        opt = parser.parse_args([], print_args=False)
         changed_task_files = [
             fn
             for fn in testing_utils.git_changed_files()

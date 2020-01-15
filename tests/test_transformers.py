@@ -141,11 +141,9 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Tests that the transformer ranker model files continue to work over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/ranker',
                 model_file='zoo:unittest/transformer_ranker/model',
                 dict_file='zoo:unittest/transformer_ranker/model.dict',
@@ -504,14 +502,14 @@ class TestTransformerGenerator(unittest.TestCase):
                     **args,
                 )
             )
-            self.assertGreaterEqual(noblock_valid['f1'], 0.99)
+            self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
             # first confirm all is good without blocking
             _, valid, test = testing_utils.eval_model(
                 dict(beam_context_block_ngram=-1, **args)
             )
-            self.assertGreaterEqual(valid['f1'], 0.99)
-            self.assertGreaterEqual(valid['bleu-4'], 0.99)
+            self.assertGreaterEqual(valid['f1'], 0.95)
+            self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
             # there's a special case for block == 1
             _, valid, test = testing_utils.eval_model(
@@ -529,7 +527,7 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertLessEqual(valid['f1'], noblock_valid['f1'])
             # bleu-1 should be relatively okay
             self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
-            self.assertGreaterEqual(valid['bleu-1'], 0.50)
+            self.assertGreaterEqual(valid['bleu-1'], 0.45)
             # and bleu-2 should be 0 at this point
             self.assertLessEqual(valid['bleu-2'], 0.01)
 
@@ -540,8 +538,8 @@ class TestTransformerGenerator(unittest.TestCase):
             # not as hard a hit from the larger hit
             self.assertLessEqual(valid['f1'], 0.95)
             # bleu-1 and bleu-2 should be relatively okay
-            self.assertGreaterEqual(valid['bleu-1'], 0.70)
-            self.assertGreaterEqual(valid['bleu-2'], 0.30)
+            self.assertGreaterEqual(valid['bleu-1'], 0.60)
+            self.assertGreaterEqual(valid['bleu-2'], 0.25)
             # bleu-3 should be totally screwed
             self.assertLessEqual(valid['bleu-3'], 0.01)
 
@@ -550,21 +548,14 @@ class TestTransformerGenerator(unittest.TestCase):
         Test nucleus generation.
         """
         # Nucleus is inherently stochastic, just ensure no crash.
-        testing_utils.train_model(
+        testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
+                model_file='zoo:unittest/transformer_generator2/model',
                 batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
                 inference='nucleus',
                 topp=0.3,
-                beam_size=5,
             )
         )
 
@@ -573,21 +564,14 @@ class TestTransformerGenerator(unittest.TestCase):
         Test topk generation.
         """
         # Topk is inherently stochastic, just ensure no crash.
-        testing_utils.train_model(
+        testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
+                model_file='zoo:unittest/transformer_generator2/model',
                 batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
                 inference='topk',
                 topk=5,
-                beam_size=5,
             )
         )
 
@@ -595,11 +579,9 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Tests that the generator model files work over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
                 model_file='zoo:unittest/transformer_generator2/model',
                 dict_file='zoo:unittest/transformer_generator2/model.dict',
@@ -705,78 +687,77 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
 
-def test_learning_rate_resuming(self, args):
-    """
-    Test learning rate resumes correctly.
-    """
-    mdl = args['model']
-    with testing_utils.tempdir() as tmpdir:
-        model_file = os.path.join(tmpdir, 'model')
-        stdout1, valid1, test1 = testing_utils.train_model(
-            dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-        )
-        stdout2, valid2, test2 = testing_utils.train_model(
-            dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-        )
-        # make sure the number of updates is being tracked correctly
-        self.assertGreater(
-            valid2['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) Number of updates is not increasing'.format(mdl),
-        )
-        # make sure the learning rate is decreasing
-        self.assertLess(
-            valid2['lr'],
-            valid1['lr'],
-            '({}) Learning rate is not decreasing'.format(mdl),
-        )
-        # but make sure we're not loading the scheduler if we're fine
-        # tuning
-        stdout3, valid3, test3 = testing_utils.train_model(
-            dict(
-                init_model=os.path.join(tmpdir, 'model'),
-                model_file=os.path.join(tmpdir, 'newmodel'),
-                lr_scheduler='invsqrt',
-                **args,
-            )
-        )
-        self.assertEqual(
-            valid3['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) Finetuning LR scheduler reset failed '
-            '(total_train_updates).'.format(mdl),
-        )
-        self.assertEqual(
-            valid3['lr'],
-            valid1['lr'],
-            '({}) Finetuning LR scheduler reset failed ' '(lr).'.format(mdl),
-        )
-        # and make sure we're not loading the scheduler if it changes
-        stdout4, valid4, test4 = testing_utils.train_model(
-            dict(
-                init_model=os.path.join(tmpdir, 'model'),
-                model_file=os.path.join(tmpdir, 'newmodel2'),
-                lr_scheduler='reduceonplateau',
-                **args,
-            )
-        )
-        self.assertEqual(
-            valid4['total_train_updates'],
-            valid1['total_train_updates'],
-            '({}) LR scheduler change reset failed (total_train_updates).'
-            '\n{}'.format(mdl, stdout4),
-        )
-        self.assertEqual(
-            valid4['lr'],
-            1e-3,
-            '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
-        )
-
-
 class TestLearningRateScheduler(unittest.TestCase):
     """
     Test learning rate scheduler for both generative and ranking transformers.
     """
+
+    def _test_learning_rate_resuming(self, args):
+        """
+        Test learning rate resumes correctly.
+        """
+        mdl = args['model']
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model')
+            stdout1, valid1, test1 = testing_utils.train_model(
+                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
+            )
+            stdout2, valid2, test2 = testing_utils.train_model(
+                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
+            )
+            # make sure the number of updates is being tracked correctly
+            self.assertGreater(
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) Number of updates is not increasing'.format(mdl),
+            )
+            # make sure the learning rate is decreasing
+            self.assertLess(
+                valid2['lr'],
+                valid1['lr'],
+                '({}) Learning rate is not decreasing'.format(mdl),
+            )
+            # but make sure we're not loading the scheduler if we're fine
+            # tuning
+            stdout3, valid3, test3 = testing_utils.train_model(
+                dict(
+                    init_model=os.path.join(tmpdir, 'model'),
+                    model_file=os.path.join(tmpdir, 'newmodel'),
+                    lr_scheduler='invsqrt',
+                    **args,
+                )
+            )
+            self.assertEqual(
+                valid3['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) Finetuning LR scheduler reset failed '
+                '(total_train_updates).'.format(mdl),
+            )
+            self.assertEqual(
+                valid3['lr'],
+                valid1['lr'],
+                '({}) Finetuning LR scheduler reset failed ' '(lr).'.format(mdl),
+            )
+            # and make sure we're not loading the scheduler if it changes
+            stdout4, valid4, test4 = testing_utils.train_model(
+                dict(
+                    init_model=os.path.join(tmpdir, 'model'),
+                    model_file=os.path.join(tmpdir, 'newmodel2'),
+                    lr_scheduler='reduceonplateau',
+                    **args,
+                )
+            )
+            self.assertEqual(
+                valid4['total_train_updates'],
+                valid1['total_train_updates'],
+                '({}) LR scheduler change reset failed (total_train_updates).'
+                '\n{}'.format(mdl, stdout4),
+            )
+            self.assertEqual(
+                valid4['lr'],
+                1e-3,
+                '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
+            )
 
     def test_resuming_generator(self):
         """
@@ -785,7 +766,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         GENERATOR_ARGS = dict(
             task='integration_tests:nocandidate',
             model='transformer/generator',
-            optimizer='adamax',
+            optimizer='sgd',
             learningrate=1e-3,
             batchsize=32,
             num_epochs=1,
@@ -796,7 +777,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             skip_generation=True,
             warmup_updates=1,
         )
-        test_learning_rate_resuming(self, GENERATOR_ARGS)
+        self._test_learning_rate_resuming(GENERATOR_ARGS)
 
     def test_resuming_ranker(self):
         """
@@ -805,7 +786,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         RANKER_ARGS = dict(
             task='integration_tests:candidate',
             model='transformer/ranker',
-            optimizer='adamax',
+            optimizer='sgd',
             learningrate=1e-3,
             batchsize=32,
             num_epochs=1,
@@ -815,11 +796,11 @@ class TestLearningRateScheduler(unittest.TestCase):
             embedding_size=32,
             warmup_updates=1,
         )
-        test_learning_rate_resuming(self, RANKER_ARGS)
+        self._test_learning_rate_resuming(RANKER_ARGS)
 
     def test_invsqrt_learning_rate(self):
         args = dict(
-            task='integration_tests:candidate',
+            task='integration_tests:nocandidate',
             model='transformer/generator',
             learningrate=1,
             batchsize=1,
@@ -827,6 +808,11 @@ class TestLearningRateScheduler(unittest.TestCase):
             lr_scheduler='invsqrt',
             n_layers=1,
             n_heads=1,
+            embedding_size=4,
+            ffn_size=8,
+            skip_generation=True,
+            validation_max_exs=1,
+            short_final_eval=True,
         )
 
         args['num_epochs'] = 9 / 500

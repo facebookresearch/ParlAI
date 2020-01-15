@@ -6,10 +6,12 @@ version: 2
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
+  resource_class: large
 
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
+  resource_class: large
 
 osx_cpu37: &osx_cpu37
   macos:
@@ -49,6 +51,8 @@ setup: &setup
       pip3 install --progress-bar off --upgrade pip
       pip3 install --progress-bar off coverage
       pip3 install --progress-bar off codecov
+      mkdir -p ~/ParlAI/test-results
+
 
 codecov: &codecov
   run:
@@ -110,19 +114,12 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run
-      sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-      sudo sh ~/nvidia-downloads/cuda_10.2.89_440.33.01_linux.run --silent
-      # old instructions
-      # wget --no-clobber -P ~/nvidia-downloads https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
-      # wget --no-clobber -P ~/nvidia-downloads http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      # sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
-      # sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run -s --no-drm
-      # sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      # sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
-      # sudo apt-get update
-      # sudo apt-get -y install cuda
+      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin'
+      wget --quiet --no-clobber -P ~/nvidia-downloads 'http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb'
+      sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
+      time sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
       echo "Done installing CUDA."
       pyenv versions
       nvidia-smi
@@ -155,12 +152,15 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Data tests
-          command: coverage run setup.py test -s tests.suites.datatests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -175,14 +175,20 @@ jobs:
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
+      - run:
+          name: output test split
+          command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
@@ -195,12 +201,15 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_37:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -215,20 +224,23 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_gpu11:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
@@ -242,20 +254,23 @@ jobs:
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   unittests_gpu12:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
@@ -269,8 +284,10 @@ jobs:
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
-          command: coverage run setup.py test -s tests.suites.unittests -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   nightly_gpu_tests:
     <<: *gpu
@@ -280,10 +297,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v2
+          key: nvidia-downloads-v3
           paths:
             - "~/nvidia-downloads/"
       - <<: *setup
@@ -298,11 +315,13 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run setup.py test -s tests.suites.nightly_gpu -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.1)
           command: sh tests/test_quickstart.sh
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   mturk_tests:
     <<: *standard_cpu37
@@ -320,8 +339,10 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: coverage run setup.py test -s tests.suites.mturk -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
       - <<: *codecov
+      - store_test_results:
+          path: test-results
 
   build_website:
     <<: *standard_cpu37

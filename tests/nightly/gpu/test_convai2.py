@@ -27,35 +27,15 @@ class TestConvai2Seq2Seq(unittest.TestCase):
         import projects.convai2.baselines.seq2seq.eval_hits as eval_hits
 
         with testing_utils.capture_output() as stdout:
-            report = eval_hits.main()
+            report = eval_hits.main(args=[])
         self.assertEqual(report['hits@1'], 0.1250, str(stdout))
 
     def test_seq2seq_f1(self):
         import projects.convai2.baselines.seq2seq.eval_f1 as eval_f1
 
         with testing_utils.capture_output() as stdout:
-            report = eval_f1.main()
+            report = eval_f1.main(args=[])
         self.assertEqual(report['f1'], 0.1682, str(stdout))
-
-
-class TestConvai2KVMemnn(unittest.TestCase):
-    """
-    Checks that the KV Profile Memory model produces correct results.
-    """
-
-    def test_kvmemnn_hits1(self):
-        import projects.convai2.baselines.kvmemnn.eval_hits as eval_hits
-
-        with testing_utils.capture_output() as stdout:
-            report = eval_hits.main()
-        self.assertEqual(report['hits@1'], 0.5510, str(stdout))
-
-    def test_kvmemnn_f1(self):
-        import projects.convai2.baselines.kvmemnn.eval_f1 as eval_f1
-
-        with testing_utils.capture_output() as stdout:
-            report = eval_f1.main()
-        self.assertAlmostEqual(report['f1'], 0.1173, delta=0.0002, msg=str(stdout))
 
 
 @testing_utils.skipUnlessGPU
@@ -68,8 +48,31 @@ class TestConvai2LanguageModel(unittest.TestCase):
         import projects.convai2.baselines.language_model.eval_f1 as eval_f1
 
         with testing_utils.capture_output() as stdout:
-            report = eval_f1.main()
+            report = eval_f1.main(args=[])
         self.assertEqual(report['f1'], 0.1531, str(stdout))
+
+
+class TestLegacyVersioning(unittest.TestCase):
+    @testing_utils.skipUnlessGPU
+    def test_legacy_version(self):
+        # simply tries to load and run some models with versioning attached
+        with self.assertRaises(RuntimeError):
+            testing_utils.display_model(
+                {
+                    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                    'task': 'convai2',
+                    'no_cuda': True,
+                }
+            )
+
+        testing_utils.display_model(
+            {
+                'model': 'legacy:seq2seq:0',
+                'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                'task': 'convai2',
+                'no_cuda': True,
+            }
+        )
 
 
 if __name__ == '__main__':

@@ -34,13 +34,11 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         Ensures that --beam-size > 1 and --inference greedy causes a failure.
         """
-        testing_utils.download_unittest_models()
-
         # we should have an exception if we mix beam size > 1 with inference greedy
         with self.assertRaises(ValueError):
             testing_utils.display_model(
                 dict(
-                    task='integration_tests:multipass',
+                    task='integration_tests:multiturn_nocandidate',
                     model_file='zoo:unittest/transformer_generator2/model',
                     beam_size=5,
                     inference='greedy',
@@ -50,7 +48,7 @@ class TestUpgradeOpt(unittest.TestCase):
         # and we shouldn't if we have inference beam
         testing_utils.display_model(
             dict(
-                task='integration_tests:multipass',
+                task='integration_tests:multiturn_nocandidate',
                 model_file='zoo:unittest/transformer_generator2/model',
                 beam_size=5,
                 inference='beam',
@@ -61,7 +59,6 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         Test --inference with older model files.
         """
-        testing_utils.download_unittest_models()
         with testing_utils.capture_output():
             pp = ParlaiParser(True, True)
             opt = pp.parse_args(

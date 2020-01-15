@@ -59,7 +59,7 @@ class TestControllableDialogue(unittest.TestCase):
             short_final_eval=True,
         )
         with testing_utils.capture_output():
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             tcs2s.TrainLoop(opt).train()
 
     def test_convai2_finetuned_greedy(self):

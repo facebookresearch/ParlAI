@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import unittest
 import parlai.utils.testing as testing_utils
 
@@ -51,6 +52,7 @@ class TestMemnn(unittest.TestCase):
         )
 
     @testing_utils.skipIfGPU
+    @testing_utils.retry()
     def test_labelcands_multi(self):
         """
         This test uses a multi-turn task and multithreading.
@@ -61,8 +63,8 @@ class TestMemnn(unittest.TestCase):
                 model='memnn',
                 lr=LR,
                 batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS * 3,
-                numthreads=4,
+                num_epochs=NUM_EPOCHS,
+                numthreads=min(4, os.cpu_count()),
                 no_cuda=True,
                 embedding_size=32,
                 gradient_clip=1.0,
@@ -87,8 +89,6 @@ class TestMemnn(unittest.TestCase):
         """
         Tests that the memnn model files continue to works over time.
         """
-        testing_utils.download_unittest_models()
-
         stdout, valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests',

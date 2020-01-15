@@ -48,10 +48,12 @@ class Encoder(nn.Module):
         # must call super on all nn.Modules.
         super().__init__()
 
-        _vocab_size, esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
-            input_size=esz, hidden_size=hidden_size, num_layers=1, batch_first=True
+            input_size=hidden_size,
+            hidden_size=hidden_size,
+            num_layers=1,
+            batch_first=True,
         )
 
     def forward(self, input_tokens):
@@ -93,10 +95,12 @@ class Decoder(nn.Module):
         Arguments here can be used to provide hyperparameters.
         """
         super().__init__()
-        _vocab_size, self.esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
-            input_size=self.esz, hidden_size=hidden_size, num_layers=1, batch_first=True
+            input_size=hidden_size,
+            hidden_size=hidden_size,
+            num_layers=1,
+            batch_first=True,
         )
 
     def forward(self, input, encoder_state, incr_state=None):
@@ -135,14 +139,14 @@ class ExampleModel(tga.TorchGeneratorModel):
     final output layer.
     """
 
-    def __init__(self, dictionary, esz=256, hidden_size=1024):
+    def __init__(self, dictionary, hidden_size=1024):
         super().__init__(
             padding_idx=dictionary[dictionary.null_token],
             start_idx=dictionary[dictionary.start_token],
             end_idx=dictionary[dictionary.end_token],
             unknown_idx=dictionary[dictionary.unk_token],
         )
-        self.embeddings = nn.Embedding(len(dictionary), esz)
+        self.embeddings = nn.Embedding(len(dictionary), hidden_size)
         self.encoder = Encoder(self.embeddings, hidden_size)
         self.decoder = Decoder(self.embeddings, hidden_size)
 

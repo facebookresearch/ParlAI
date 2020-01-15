@@ -4,13 +4,13 @@
 
 `parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract parent class that provides functionality for building autoregressive generative models. Extending `TorchGeneratorAgent` requires your model conform to a strict interface, but then provides you rich functionality like beam search and sampling.
 
-
 ## Example Models
 
 Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try the transformer with the example below:
 
-```
-python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtransformer \
+```bash
+python examples/train_model -m transformer/generator \
+  -t convai2 -mf /tmp/testtransformer \
   --beam-size 5 -bs 16
 ```
 
@@ -19,7 +19,6 @@ python examples/train_model -m transformer/generator -t convai2 -mf /tmp/testtra
 In order to write a generative model, your agent should extend `TorchGeneratorAgent`. This parent class implements `train_step` and `eval_step`, so you only need to implement your model and instantiate it through `build_model`. `TorchGeneratorAgent` will take care of many common generator features, such as forced decoding, beam search, n-gram beam blocking, top-k and top-p/nucleus sampling, etc.
 
 Additionally, your model should implement the `TorchGeneratorModel` interface: see the tutorial below for an example of this.
-
 
 ## Tutorial
 
@@ -33,7 +32,7 @@ In `build_model()`, we instantiate our example model (defined below) by passing 
 
 Altogether, our example agent is defined as follows:
 
-```
+```python
 import parlai.core.torch_generator_agent as tga
 
 
@@ -60,33 +59,34 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
 
 We now subclass `TorchGeneratorModel` to create `ExampleModel`. We initialize this by first calling `super().__init__()` and passing in dictionary tokens for padding, start, end, and UNKs; we then create an embedding lookup table with `nn.Embedding` and instantiate the encoder and decoder, described in the following sections.
 
-```
+```python
 import torch.nn as nn
 import torch.nn.functional as F
 
 class ExampleModel(tga.TorchGeneratorModel):
 
-    def __init__(self, dictionary, esz=256, hidden_size=1024):
+    def __init__(self, dictionary, hidden_size=1024):
         super().__init__(
             padding_idx=dictionary[dictionary.null_token],
             start_idx=dictionary[dictionary.start_token],
             end_idx=dictionary[dictionary.end_token],
             unknown_idx=dictionary[dictionary.unk_token],
         )
-        self.embeddings = nn.Embedding(len(dictionary), esz)
+        self.embeddings = nn.Embedding(len(dictionary), hidden_size)
         self.encoder = Encoder(self.embeddings, hidden_size)
         self.decoder = Decoder(self.embeddings, hidden_size)
 ```
 
 We next define a function to project the output of the decoder back into the token space:
 
-```
+```python
     def output(self, decoder_output):
         return F.linear(decoder_output, self.embeddings.weight)
 ```
 
 Lastly, we define two functions to reindex the latent states of the encoder and decoder. For the encoder, the indices that we pass in index the samples in the batch, and for the decoder, the indices index the candidates that we want to retain for the next step of decoding (for instance, in beam search). We reindex the encoder at the very beginning of beam search and when ranking candidates during eval, and we reindex the decoder after each step of decoding. Since our encoder and decoder both are based on LSTMs, these encoder/decoder states are the hidden and cell states:
-```
+
+```python
     def reorder_encoder_states(self, encoder_states, indices):
         h, c = encoder_states
         return h[:, indices, :], c[:, indices, :]
@@ -100,7 +100,7 @@ Lastly, we define two functions to reindex the latent states of the encoder and 
 
 The encoder is straightfoward: it contains an embedding layer and an LSTM, and a forward pass through the encoder consists of passing the sequences of input tokens through both of them sequentially. The final hidden state is returned.
 
-```
+```python
 class Encoder(nn.Module):
 
     def __init__(self, embeddings, hidden_size):
@@ -147,7 +147,7 @@ class Decoder(nn.Module):
 
 The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
 
-```
+```bash
 python examples/train_model.py -m examples/seq2seq \
     -mf /tmp/example_model \
     -t convai2 -bs 32 -eps 2 --truncate 128

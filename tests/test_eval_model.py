@@ -47,7 +47,7 @@ class TestEvalModel(unittest.TestCase):
             display_examples=False,
         )
 
-        opt = parser.parse_args(print_args=False)
+        opt = parser.parse_args([], print_args=False)
         str_output, valid, test = testing_utils.eval_model(opt)
         self.assertGreater(len(str_output), 0, "Output is empty")
 
@@ -81,7 +81,7 @@ class TestEvalModel(unittest.TestCase):
             metrics='all',
         )
 
-        opt = parser.parse_args(print_args=False)
+        opt = parser.parse_args([], print_args=False)
         str_output, valid, test = testing_utils.eval_model(opt)
         self.assertGreater(len(str_output), 0, "Output is empty")
 
@@ -114,7 +114,7 @@ class TestEvalModel(unittest.TestCase):
             metrics='accuracy,rouge',
         )
 
-        opt = parser.parse_args(print_args=False)
+        opt = parser.parse_args([], print_args=False)
         str_output, valid, test = testing_utils.eval_model(opt)
         self.assertGreater(len(str_output), 0, "Output is empty")
 
