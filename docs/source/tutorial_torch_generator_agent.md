@@ -1,6 +1,6 @@
 # Using Torch Generator Agent
 
-Authors: Eric Smith
+**Authors**: Eric Smith
 
 `parlai.core.torch_generator_agent.TorchGeneratorAgent` is an abstract parent class that provides functionality for building autoregressive generative models. Extending `TorchGeneratorAgent` requires your model conform to a strict interface, but then provides you rich functionality like beam search and sampling.
 

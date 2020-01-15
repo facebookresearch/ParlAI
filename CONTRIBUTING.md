@@ -14,8 +14,7 @@ We actively welcome your pull requests.
 4. Autoformat and lint your code (`bash autoformat.sh`)
 5. Ensure the test suite passes. Run `python -m pytest -m unit`.
 6. If you've added a new dataset, you should also run
-   `python -m pytest -m datatests`. Copy-paste the output into a
-   comment in your PR.
+   `python -m pytest -m data`. Copy-paste the output into a comment in your PR.
 7. If you haven't already, complete the Contributor License Agreement ("CLA").
 
 Our continuous integration suite will run only fast tests before merging. We also
