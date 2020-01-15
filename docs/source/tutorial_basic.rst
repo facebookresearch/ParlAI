@@ -58,14 +58,14 @@ and updates this agent's internal state accordingly.
 return the next batch of examples. For a neural net agent, this could be a train step or eval step.
 
 
-Observations
+Messages
 ^^^^^^^^^^^^
-Observations are what we call the objects returned by an agent's act function and are so named
-because they are input to other agents' observe() functions.
-This is the primary way messages are passed between agents and the environment in ParlAI.
-Observations are usually in the form of python dictionaries containing different types of information.
+Messages are what we call the objects both observed by an agent (observations) and returned by an agent's act function (actions).
+These observations and actions are the primary way agents in ParlAI communicate with each other within their enviroment.
+The Message object is a subclass of a python dict, whose key function is to prevent users from editing
+fields in an action or observation unintentionally.
 
-The :doc:`observations <observations>` documentation goes into more detail about
+The :doc:`messages <messages>` documentation goes into more detail about
 each field, but the following table shows the basics.
 
 
