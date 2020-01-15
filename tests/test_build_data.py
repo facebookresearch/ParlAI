@@ -64,9 +64,9 @@ class TestBuildData(unittest.TestCase):
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 
-        self.assertIn('mnist0.tar.gz', output_filenames, 'missing file mnist0.tar.gz')
-        self.assertIn('mnist1.tar.gz', output_filenames, 'missing file mnist1.tar.gz')
-        self.assertIn('mnist2.tar.gz', output_filenames, 'missing file mnist2.tar.gz')
+        self.assertIn('mnist0.tar.gz', output_filenames)
+        self.assertIn('mnist1.tar.gz', output_filenames)
+        self.assertIn('mnist2.tar.gz', output_filenames)
         self.assertIn(200, output_statuses, 'unexpected error code')
         self.assertIn(403, output_statuses, 'unexpected error code')
 
