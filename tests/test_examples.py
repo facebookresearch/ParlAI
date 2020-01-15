@@ -41,7 +41,7 @@ class TestExampleSeq2Seq(unittest.TestCase):
         """
         Test a simple TRA based bag-of-words model.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests',
                 model='examples/tra',
