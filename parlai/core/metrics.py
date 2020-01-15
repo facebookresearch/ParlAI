@@ -14,16 +14,16 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
-from typing import Union
+from typing import Union, List, Optional, Tuple, Set
 
 import torch
 
+from parlai.core.message import Message
 from parlai.utils.misc import no_lock, round_sigfigs, warn_once
-from parlai.utils.thread import SharedTable
 from parlai.utils.typing import TScalar
 
 
-DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
+DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
 BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3'}
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS
@@ -57,18 +57,18 @@ class Metric(ABC):
     @abstractmethod
     def value(self) -> float:
         """
-        Return the value of the metric contained by the metric object, usually a scalar.
-
-        (For instance, if the metric object is SumMetric, .value() will return the sum
-        stored by the object.)
+        Return the value of the metric as a float.
         """
         pass
+
+    def __iadd__(self, other):
+        return self.__radd__(other)
 
     def __str__(self) -> str:
         return f'{self.value():.4g}'
 
     def __repr__(self) -> str:
-        return f'{self.__class__} ({self.value():.4g})'
+        return f'{self.__class__.__name__}({self.value():.4g})'
 
     def as_number(self, obj: TScalar) -> Union[int, float]:
         if isinstance(obj, torch.Tensor):
@@ -78,18 +78,11 @@ class Metric(ABC):
         assert isinstance(obj_as_number, int) or isinstance(obj_as_number, float)
         return obj_as_number
 
-    def as_float(self, obj: Union[int, float, torch.Tensor]) -> float:
-        obj_as_number = self.as_number(obj)
-        return float(obj_as_number)
+    def as_float(self, obj: TScalar) -> float:
+        return float(self.as_number(obj))
 
-    def as_int(self, obj: Union[int, float, torch.Tensor]) -> int:
-        obj_as_number = self.as_number(obj)
-        if isinstance(obj_as_number, float):
-            assert obj_as_number.is_integer()
-            return int(obj_as_number)
-        else:
-            assert isinstance(obj_as_number, int)
-            return obj_as_number
+    def as_int(self, obj: TScalar) -> int:
+        return int(self.as_number(obj))
 
 
 class SumMetric(Metric):
@@ -97,13 +90,18 @@ class SumMetric(Metric):
     Class that keeps a running sum of some metric.
     """
 
-    def __init__(self, sum_: TScalar):
-        self._sum = self.as_float(sum_)
+    def __init__(self, sum_: TScalar = 0):
+        if isinstance(sum_, torch.Tensor):
+            self._sum = sum_.item()
+        else:
+            self._sum = sum_
 
-    def __add__(self, other: 'SumMetric') -> 'SumMetric':
+    def __radd__(self, other: Optional['SumMetric']) -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
-        full_sum: float = self._sum + other._sum
+        if other is None:
+            return self
+        full_sum = self._sum + other._sum
         return SumMetric(sum_=full_sum)
 
     def value(self) -> float:
@@ -115,13 +113,15 @@ class AverageMetric(Metric):
     Class that keeps a running average of some metric.
     """
 
-    def __init__(self, numer: TScalar, denom: TScalar):
+    def __init__(self, numer: TScalar = 0, denom: TScalar = 1):
         self._numer = self.as_float(numer)
         self._denom = self.as_int(denom)
 
-    def __add__(self, other: 'AverageMetric') -> 'AverageMetric':
+    def __radd__(self, other: Optional['AverageMetric']) -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
+        if other is None:
+            return self
         full_numer: float = self._numer + other._numer
         full_denom: int = self._denom + other._denom
         return AverageMetric(numer=full_numer, denom=full_denom)
@@ -130,24 +130,138 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
+class F1Metric(AverageMetric):
+    """
+    Helper class which computes token-level F1.
+    """
+
+    @staticmethod
+    def _prec_recall_f1_score(pred_items, gold_items):
+        """
+        Compute precision, recall and f1 given a set of gold and prediction items.
+
+        :param pred_items: iterable of predicted values
+        :param gold_items: iterable of gold values
+
+        :return: tuple (p, r, f1) for precision, recall, f1
+        """
+        common = Counter(gold_items) & Counter(pred_items)
+        num_same = sum(common.values())
+        if num_same == 0:
+            return 0, 0, 0
+        precision = 1.0 * num_same / len(pred_items)
+        recall = 1.0 * num_same / len(gold_items)
+        f1 = (2 * precision * recall) / (precision + recall)
+        return precision, recall, f1
+
+    @staticmethod
+    def compute(guess: str, answers: List[str]) -> 'F1Metric':
+        if guess is None or answers is None:
+            return AverageMetric(0, 0)
+        g_tokens = normalize_answer(guess).split()
+        scores = [
+            F1Metric._prec_recall_f1_score(g_tokens, normalize_answer(a).split())
+            for a in answers
+        ]
+        return F1Metric(max(f1 for p, r, f1 in scores), 1)
+
+
+class ExactMatchMetric(AverageMetric):
+    @staticmethod
+    def compute(guess: str, answers: List[str]) -> 'ExactMatchMetric':
+        if guess is None or answers is None:
+            return None
+        guess = normalize_answer(guess)
+        for a in answers:
+            if guess == normalize_answer(a):
+                return ExactMatchMetric(1)
+        return ExactMatchMetric(0)
+
+
+class BleuMetric(AverageMetric):
+    @staticmethod
+    def compute(guess: str, answers: List[str], k: int = 4) -> Optional['BleuMetric']:
+        """
+        Compute approximate BLEU score between guess and a set of answers.
+        """
+        if nltkbleu is None:
+            # bleu library not installed, just return a default value
+            return None
+        # Warning: BLEU calculation *should* include proper tokenization and
+        # punctuation etc. We're using the normalize_answer for everything though,
+        # so we're over-estimating our BLEU scores.  Also note that NLTK's bleu is
+        # going to be slower than fairseq's (which is written in C), but fairseq's
+        # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
+        # works with strings, which is better suited for this module.
+        weights = [1 / k for _ in range(k)]
+        score = nltkbleu.sentence_bleu(
+            [normalize_answer(a).split(" ") for a in answers],
+            normalize_answer(guess).split(" "),
+            smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
+            weights=weights,
+        )
+        return BleuMetric(score)
+
+
+class RougeMetric(AverageMetric):
+    _evaluator = None
+
+    @staticmethod
+    def compute_many(
+        guess: str, answers: List[str]
+    ) -> Tuple[
+        Optional['RougeMetric'], Optional['RougeMetric'], Optional['RougeMetric']
+    ]:
+        """
+        Compute ROUGE score between guess and *any* answer.
+
+        Done with compute_many due to increased efficiency.
+
+        :return: (rouge-1, rouge-2, rouge-L)
+        """
+        # possible global initialization
+        global rouge
+        if rouge is None:
+            return None, None, None
+        if RougeMetric._evaluator is None:
+            RougeMetric._evaluator = rouge.Rouge(
+                metrics=['rouge-n', 'rouge-l'], max_n=2
+            )
+        try:
+            scores = [
+                RougeMetric._evaluator.get_scores(
+                    normalize_answer(guess), normalize_answer(a)
+                )
+                for a in answers
+            ]
+        except LookupError:
+            warn_once(
+                'ROUGE requires nltk punkt tokenizer. Please run '
+                '`python -c "import nltk; nltk.download(\'punkt\')`'
+            )
+            return None, None, None
+
+        scores_rouge1 = max(score['rouge-1']['r'] for score in scores)
+        scores_rouge2 = max(score['rouge-2']['r'] for score in scores)
+        scores_rougeL = max(score['rouge-l']['r'] for score in scores)
+        return (
+            RougeMetric(scores_rouge1),
+            RougeMetric(scores_rouge2),
+            RougeMetric(scores_rougeL),
+        )
+
+
 def normalize_answer(s):
     """
     Lower text and remove punctuation, articles and extra whitespace.
     """
 
-    def remove_articles(text):
-        return re_art.sub(' ', text)
-
-    def white_space_fix(text):
-        return ' '.join(text.split())
-
-    def remove_punc(text):
-        return re_punc.sub(' ', text)  # convert punctuation to spaces
-
-    def lower(text):
-        return text.lower()
-
-    return white_space_fix(remove_articles(remove_punc(lower(s))))
+    s = s.lower()
+    s = re_punc.sub(' ', s)
+    s = re_art.sub(' ', s)
+    # TODO: this could almost certainly be faster with a regex \s+ -> ' '
+    s = ' '.join(s.split())
+    return s
 
 
 def aggregate_task_reports(reports, tasks, micro=False):
@@ -193,100 +307,6 @@ def aggregate_task_reports(reports, tasks, micro=False):
     if micro:
         total_report['warning'] += ' and weighted by the number of examples ' 'per task'
     return total_report
-
-
-def _exact_match(guess, answers):
-    """
-    Check if guess is a (normalized) exact match with any answer.
-    """
-    if guess is None or answers is None:
-        return False
-    guess = normalize_answer(guess)
-    for a in answers:
-        if guess == normalize_answer(a):
-            return True
-    return False
-
-
-def _prec_recall_f1_score(pred_items, gold_items):
-    """
-    Compute precision, recall and f1 given a set of gold and prediction items.
-
-    :param pred_items: iterable of predicted values
-    :param gold_items: iterable of gold values
-
-    :return: tuple (p, r, f1) for precision, recall, f1
-    """
-    common = Counter(gold_items) & Counter(pred_items)
-    num_same = sum(common.values())
-    if num_same == 0:
-        return 0, 0, 0
-    precision = 1.0 * num_same / len(pred_items)
-    recall = 1.0 * num_same / len(gold_items)
-    f1 = (2 * precision * recall) / (precision + recall)
-    return precision, recall, f1
-
-
-def _f1_score(guess, answers):
-    """
-    Return the max F1 score between the guess and *any* answer.
-    """
-    if guess is None or answers is None:
-        return 0
-    g_tokens = normalize_answer(guess).split()
-    scores = [
-        _prec_recall_f1_score(g_tokens, normalize_answer(a).split()) for a in answers
-    ]
-    return max(f1 for p, r, f1 in scores)
-
-
-def _bleu(guess, answers, weights=None):
-    """
-    Compute approximate BLEU score between guess and a set of answers.
-    """
-    if nltkbleu is None:
-        # bleu library not installed, just return a default value
-        return None
-    # Warning: BLEU calculation *should* include proper tokenization and
-    # punctuation etc. We're using the normalize_answer for everything though,
-    # so we're over-estimating our BLEU scores.  Also note that NLTK's bleu is
-    # going to be slower than fairseq's (which is written in C), but fairseq's
-    # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
-    # works with strings, which is better suited for this module.
-    if weights is None:
-        # default bleu-4
-        weights = [1 / 4 for _ in range(4)]
-    return nltkbleu.sentence_bleu(
-        [normalize_answer(a).split(" ") for a in answers],
-        normalize_answer(guess).split(" "),
-        smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
-        weights=weights,
-    )
-
-
-def _rouge(guess, answers):
-    global rouge
-    """Compute ROUGE score between guess and *any* answers. Return the best."""
-    if rouge is None:
-        return None, None, None
-    evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'], max_n=2)
-    try:
-        scores = [
-            evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
-            for a in answers
-        ]
-    except LookupError:
-        warn_once(
-            'ROUGE requires nltk punkt tokenizer. Please run '
-            '`python -c "import nltk; nltk.download(\'punkt\')`'
-        )
-        rouge = None
-        return None, None, None
-
-    scores_rouge1 = [score['rouge-1']['r'] for score in scores]
-    scores_rouge2 = [score['rouge-2']['r'] for score in scores]
-    scores_rougeL = [score['rouge-l']['r'] for score in scores]
-    return max(scores_rouge1), max(scores_rouge2), max(scores_rougeL)
 
 
 def aggregate_metrics(reporters):
@@ -338,45 +358,34 @@ class Metrics(object):
     Class that maintains evaluation metrics over dialog.
     """
 
+    @staticmethod
+    def _infer_metrics(cli_arg: str) -> Set[str]:
+        """
+        Parse the CLI metric into a list of metrics we wish to compute.
+        """
+        col: Set[str] = set()
+        names = cli_arg.split(",")
+        for n in names:
+            if n == 'default':
+                col |= DEFAULT_METRICS
+            elif n == 'rouge':
+                col |= ROUGE_METRICS
+            elif n == 'bleu':
+                col |= BLEU_METRICS
+            elif n == 'all':
+                col |= ALL_METRICS
+            else:
+                col.add(n)
+        return col
+
     def __init__(self, opt):
         self.metrics = {}
-        self.metrics['cnt'] = 0
-        self.metrics_list = set()
-        optional_metrics_list = []
-        metrics_arg = opt.get('metrics', 'default')
-        if metrics_arg == 'default':
-            optional_metrics_list = DEFAULT_METRICS
-        elif metrics_arg == 'all':
-            optional_metrics_list = ALL_METRICS
-        else:
-            optional_metrics_list = set(metrics_arg.split(','))
-            optional_metrics_list.add('correct')
-        for each_m in optional_metrics_list:
-            if each_m.startswith('rouge'):
-                if rouge is not None:
-                    # only compute rouge if rouge is available
-                    self.metrics_list.add(each_m)
-            elif each_m == 'bleu' and nltkbleu is None:
-                # only compute bleu if bleu is available
-                pass
-            else:
-                self.metrics_list.add(each_m)
-        self._print_metrics_list = (
-            self.metrics_list
-            if 'rouge' not in self.metrics_list
-            else self.metrics_list | ROUGE_METRICS
-        )
-        for k in self._print_metrics_list:
-            self.metrics[k] = 0.0
-            self.metrics[k + '_cnt'] = 0
+        self.metrics.setdefault(None)
+        self.metrics_list = Metrics._infer_metrics(opt.get('metrics', 'default'))
         self.eval_pr = [1, 5, 10, 100]
-        for k in self.eval_pr:
-            self.metrics['hits@' + str(k)] = 0
-        self.metrics['hits@_cnt'] = 0
-        self.flags = {'has_text_cands': False, 'print_prediction_metrics': False}
+
         if opt.get('numthreads', 1) > 1:
-            self.metrics = SharedTable(self.metrics)
-            self.flags = SharedTable(self.flags)
+            raise NotImplementedError()
 
     def __str__(self):
         return str(self.metrics)
@@ -397,140 +406,83 @@ class Metrics(object):
         text_cands = observation.get('text_candidates', None)
         if text_cands is None:
             return
-        else:
-            # Now loop through text candidates, assuming they are sorted.
-            # If any of them is a label then score a point.
-            # maintain hits@1, 5, 10, 50, 100,  etc.
-            label_set = set(normalize_answer(l) for l in labels)
-            cnts = {k: 0 for k in self.eval_pr}
-            cnt = 0
-            for c in text_cands:
-                cnt += 1
-                if normalize_answer(c) in label_set:
-                    for k in self.eval_pr:
-                        if cnt <= k:
-                            cnts[k] += 1
-            # hits metric is 1 if cnts[k] > 0.
-            # (other metrics such as p@k and r@k take
-            # the value of cnt into account.)
-            with self._lock():
-                self.flags['has_text_cands'] = True
-                for k in self.eval_pr:
-                    if cnts[k] > 0:
-                        self.metrics['hits@' + str(k)] += 1
-                self.metrics['hits@_cnt'] += 1
 
-    def update(self, observation, labels):
+        # Now loop through text candidates, assuming they are sorted.
+        # If any of them is a label then score a point.
+        # maintain hits@1, 5, 10, 50, 100,  etc.
+        label_set = set(normalize_answer(l) for l in labels)
+        cnts = {k: 0 for k in self.eval_pr}
+        cnt = 0
+        for c in text_cands:
+            cnt += 1
+            if normalize_answer(c) in label_set:
+                for k in self.eval_pr:
+                    if cnt <= k:
+                        cnts[k] += 1
+        # hits metric is 1 if cnts[k] > 0.
+        # (other metrics such as p@k and r@k take
+        # the value of cnt into account.)
+        with self._lock():
+            for k in self.eval_pr:
+                self._add(f'hits@{k}', AverageMetric(cnts[k] > 0))
+
+    def _add(self, key: str, value: Optional[Metric]) -> Metric:
+        """
+        Add the metric to our records.
+        """
+        with self._lock():
+            if key not in self.metrics:
+                self.metrics[key] = value
+            else:
+                self.metrics[key] += value
+            return self.metrics[key]
+
+    def update(self, observation: Message, labels: List[str]) -> None:
         """
         Update metrics based on an observation and true labels.
         """
-        with self._lock():
-            self.metrics['cnt'] += 1
-
-        # Exact match metric.
-        correct = 0
         prediction = observation.get('text', None)
-        if prediction is not None:
-            if _exact_match(prediction, labels):
-                correct = 1
-            with self._lock():
-                self.flags['print_prediction_metrics'] = True
-                self.metrics['correct'] += correct
-                self.metrics['correct_cnt'] += 1
 
-            # F1 and BLEU metrics.
-            if 'f1' in self.metrics_list:
-                f1 = _f1_score(prediction, labels)
-            bleu_scores = {}
-            rouge1 = rouge2 = rougeL = None
-            if 'bleu-4' in self.metrics_list:
-                bleu_scores['bleu-4'] = _bleu(prediction, labels)
-            if 'bleu-1' in self.metrics_list:
-                for i in range(3):
-                    weights = [1 / (i + 1) for _ in range(i + 1)]
-                    bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
-            if 'rouge-L' in self._print_metrics_list:
-                rouge1, rouge2, rougeL = _rouge(prediction, labels)
-            with self._lock():
-                if 'f1' in self.metrics:
-                    self.metrics['f1'] += f1
-                    self.metrics['f1_cnt'] += 1
-                if 'bleu-4' in self.metrics:
-                    self.metrics['bleu-4'] += bleu_scores.pop('bleu-4')
-                    self.metrics['bleu-4_cnt'] += 1
-                if 'bleu-1' in self.metrics:
-                    for b, b_score in bleu_scores.items():
-                        self.metrics[b] += b_score
-                        self.metrics[f'{b}_cnt'] += 1
-                if 'rouge-L' in self.metrics and rouge1 is not None:
-                    self.metrics['rouge-1'] += rouge1
-                    self.metrics['rouge-1_cnt'] += 1
-                    self.metrics['rouge-2'] += rouge2
-                    self.metrics['rouge-2_cnt'] += 1
-                    self.metrics['rouge-L'] += rougeL
-                    self.metrics['rouge-L_cnt'] += 1
+        self._add('exs', SumMetric(1))
+
+        if prediction is not None:
+            self._add('accuracy', ExactMatchMetric.compute(prediction, labels))
+            self._add('f1', F1Metric.compute(prediction, labels))
+
+            for k in range(1, 5):  # 1..4
+                if f'bleu-{k}' in self.metrics_list:
+                    self._add(f'bleu-{k}', BleuMetric.compute(prediction, labels, k))
+            # if any of the rouges are in the list
+            if self.metrics_list & ROUGE_METRICS:
+                r1, r2, rL = RougeMetric.compute_many(prediction, labels)
+                if 'rouge-1' in self.metrics_list:
+                    self._add('rouge-1', r1)
+                if 'rouge-2' in self.metrics_list:
+                    self._add('rouge-2', r2)
+                if 'rouge-L' in self.metrics_list:
+                    self._add('rouge-L', rL)
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
 
         # User-reported metrics
         if 'metrics' in observation:
-            for k, v in observation['metrics'].items():
-                if k not in ALL_METRICS and k != 'rouge':
-                    if k in self.metrics_list:
-                        with self._lock():
-                            self.metrics[k] += v
-                            self.metrics[k + '_cnt'] += 1
-                    else:
-                        if type(self.metrics) is SharedTable:
-                            # can't share custom metrics during hogwild
-                            pass
-                        else:
-                            # no need to lock because not SharedTable
-                            if k not in self.metrics:
-                                self.metrics[k] = v
-                                self.metrics_list.add(k)
-                                self.metrics[k + '_cnt'] = 1.0
-                            else:
-                                self.metrics[k] += v
-
-        # Return a dict containing the metrics for this specific example.
-        # Metrics across all data is stored internally in the class, and
-        # can be accessed with the report method.
-        loss = {}
-        loss['correct'] = correct
-        return loss
+            for uk, v in observation['metrics'].items():
+                if uk in ALL_METRICS:
+                    # don't let the user override our metrics
+                    uk = f'USER_{k}'
+                assert isinstance(k, str)
+                assert isinstance(v, Metric)
+                self._add(uk, v)
 
     def report(self):
         """
         Report the metrics over all data seen so far.
         """
-        m = {}
-        total = self.metrics['cnt']
-        m['exs'] = total
-        if total > 0:
-            if self.flags['print_prediction_metrics']:
-                if 'accuracy' in self.metrics_list:
-                    m['accuracy'] = round_sigfigs(
-                        self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4
-                    )
-                if 'f1' in self.metrics_list:
-                    m['f1'] = round_sigfigs(
-                        self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4
-                    )
-            if self.flags['has_text_cands']:
-                for k in self.eval_pr:
-                    m['hits@' + str(k)] = round_sigfigs(
-                        self.metrics['hits@' + str(k)]
-                        / max(1, self.metrics['hits@_cnt']),
-                        3,
-                    )
-            for k in self._print_metrics_list:
-                if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
-                    m[k] = round_sigfigs(
-                        self.metrics[k] / max(1, self.metrics[k + '_cnt']), 4
-                    )
-        return m
+        return {
+            k: v.value() if isinstance(v, Metric) else v
+            for k, v in self.metrics.items()
+        }
 
     def clear(self):
         """
@@ -538,22 +490,4 @@ class Metrics(object):
         """
         # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
-            self.metrics['cnt'] = 0
-            metrics_list = (
-                self.metrics_list
-                if 'rouge' not in self.metrics_list
-                else self.metrics_list | ROUGE_METRICS
-            )
-            for k in metrics_list:
-                v = self.metrics[k]
-                v_typ = type(v)
-                if 'Tensor' in str(v_typ):
-                    self.metrics[k].zero_()
-                if isinstance(v, int):
-                    self.metrics[k] = 0
-                else:
-                    self.metrics[k] = 0.0
-                self.metrics[k + '_cnt'] = 0
-            for k in self.eval_pr:
-                self.metrics['hits@' + str(k)] = 0
-            self.metrics['hits@_cnt'] = 0
+            self.metrics.clear()
