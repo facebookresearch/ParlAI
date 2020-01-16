@@ -8,7 +8,6 @@ Glove vectors.
 """
 
 import os
-from parlai.core.build_data import download_models
 import torchtext.vocab as vocab
 
 
