@@ -85,6 +85,26 @@ model_list = [
         ),
     },
     {
+        "title": "ConvAI2 Language model",
+        "id": "convai2",
+        "path": "zoo:convai2/language_model/model",
+        "agent": "language_model",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
+        "external_website": "http://convai.io/",
+        "description": (
+            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
+        ),
+        "example": (
+            "python -m parlai.scripts.interactive -mf "
+            "zoo:convai2/language_model/model"
+        ),
+        "result": (
+            "Enter Your Message: Hi, have you ever been on an airplane?\n"
+            "[LanguageModel]: no , i do not . i am a big fan of the walking dead ."
+        ),
+    },
+    {
         "title": "DrQA SQuAD model",
         "id": "drqa",
         "path": "zoo:drqa/squad/model",
