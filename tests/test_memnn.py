@@ -23,7 +23,7 @@ class TestMemnn(unittest.TestCase):
         This test uses a single-turn task, so doesn't test memories.
         """
 
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
                 model='memnn',
@@ -42,14 +42,8 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['hits@1'] > 0.95,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
-        )
-        self.assertTrue(
-            test['hits@1'] > 0.95,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
-        )
+        self.assertGreater(valid['hits@1'], 0.95)
+        self.assertGreater(test['hits@1'], 0.95)
 
     @testing_utils.skipIfGPU
     @testing_utils.retry()
@@ -57,7 +51,7 @@ class TestMemnn(unittest.TestCase):
         """
         This test uses a multi-turn task and multithreading.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:multiturn_candidate',
                 model='memnn',
@@ -76,20 +70,14 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['hits@1'] > 0.95,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
-        )
-        self.assertTrue(
-            test['hits@1'] > 0.95,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
-        )
+        self.assertGreater(valid['hits@1'], 0.95)
+        self.assertGreater(test['hits@1'], 0.95)
 
     def test_backcomp(self):
         """
         Tests that the memnn model files continue to works over time.
         """
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests',
                 model='memnn',
@@ -99,22 +87,10 @@ class TestMemnn(unittest.TestCase):
             )
         )
 
-        self.assertGreaterEqual(
-            valid['accuracy'],
-            0.88,
-            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            valid['f1'], 0.999, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
-        )
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.84,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.999, 'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
-        )
+        self.assertGreaterEqual(valid['accuracy'], 0.88)
+        self.assertGreaterEqual(valid['f1'], 0.999)
+        self.assertGreaterEqual(test['accuracy'], 0.84)
+        self.assertGreaterEqual(test['f1'], 0.999)
 
 
 if __name__ == '__main__':

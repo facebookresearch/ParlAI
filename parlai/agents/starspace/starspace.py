@@ -60,7 +60,6 @@ class StarspaceAgent(Agent):
                 'random',
                 'glove',
                 'glove-fixed',
-                'glove-twitter-fixed',
                 'fasttext',
                 'fasttext-fixed',
                 'fasttext_cc',

@@ -14,7 +14,7 @@ import parlai.utils.testing as testing_utils
 
 class TestTrainModel(unittest.TestCase):
     def test_fast_final_eval(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             {
                 'task': 'integration_tests',
                 'validation_max_exs': 10,
@@ -27,7 +27,7 @@ class TestTrainModel(unittest.TestCase):
         self.assertEqual(test['exs'], 10, 'Test exs is wrong')
 
     def test_multitasking_metrics(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             {
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
@@ -48,7 +48,7 @@ class TestTrainModel(unittest.TestCase):
             'Task accuracy is averaged incorrectly',
         )
 
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             {
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',

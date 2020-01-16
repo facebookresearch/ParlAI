@@ -46,44 +46,23 @@ class TestWizardModel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # go ahead and download things here
-        with testing_utils.capture_output():
-            parser = display_data.setup_args()
-            parser.set_defaults(**END2END_OPTIONS)
-            opt = parser.parse_args([], print_args=False)
-            opt['num_examples'] = 1
-            display_data.display_data(opt)
+        parser = display_data.setup_args()
+        parser.set_defaults(**END2END_OPTIONS)
+        opt = parser.parse_args([], print_args=False)
+        opt['num_examples'] = 1
+        display_data.display_data(opt)
 
     def test_end2end(self):
         stdout, valid, _ = testing_utils.eval_model(END2END_OPTIONS)
-        self.assertEqual(
-            valid['ppl'], 61.21, 'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout)
-        )
-        self.assertEqual(
-            valid['f1'], 0.1717, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
-        )
-        self.assertGreaterEqual(
-            valid['know_acc'],
-            0.2201,
-            'valid know_acc = {}\nLOG:\n{}'.format(valid['know_acc'], stdout),
-        )
+        self.assertEqual(valid['ppl'], 61.21)
+        self.assertEqual(valid['f1'], 0.1717)
+        self.assertGreaterEqual(valid['know_acc'], 0.2201)
 
     def test_retrieval(self):
         stdout, _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.86,
-            'test acc = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['hits@5'],
-            0.98,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['hits@10'],
-            0.99,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
-        )
+        self.assertGreaterEqual(test['accuracy'], 0.86)
+        self.assertGreaterEqual(test['hits@5'], 0.98)
+        self.assertGreaterEqual(test['hits@10'], 0.99)
 
 
 class TestKnowledgeRetriever(unittest.TestCase):

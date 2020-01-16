@@ -11,9 +11,8 @@ Unit tests for TorchAgent.
 import os
 import unittest
 from parlai.core.agents import create_agent_from_shared
-from parlai.utils.testing import capture_output, tempdir
+from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
-import parlai.utils.testing as testing_utils
 
 from collections import deque
 
@@ -40,8 +39,7 @@ def get_agent(**kwargs):
     MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
     opt = parser.parse_args([], print_args=False)
-    with testing_utils.capture_output():
-        return MockTorchAgent(opt)
+    return MockTorchAgent(opt)
 
 
 @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
@@ -993,26 +991,25 @@ class TestTorchAgent(unittest.TestCase):
                 'log_every_n_secs': 10,
             }
 
-        with capture_output():
-            with tempdir() as tmpdir:
-                # First train model with init_model path set
-                mf = os.path.join(tmpdir, 'model')
-                init_mf = os.path.join(tmpdir, 'init_model')
-                with open(init_mf, 'w') as f:
-                    f.write(' ')
-                opt = get_opt(init_mf, mf)
-                popt, tl = get_popt_and_tl(opt)
-                agent = tl.agent
-                # init model file should be set appropriately
-                init_model_file, is_finetune = agent._get_init_model(popt, None)
-                self.assertEqual(init_model_file, init_mf)
-                self.assertTrue(is_finetune)
-                valid, test = tl.train()
-                # now, train the model for another epoch
-                opt = get_opt('{}.checkpoint'.format(mf), mf)
-                opt['load_from_checkpoint'] = True
-                popt, tl = get_popt_and_tl(opt)
-                agent = tl.agent
-                init_model_file, is_finetune = agent._get_init_model(popt, None)
-                self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
-                self.assertFalse(is_finetune)
+        with tempdir() as tmpdir:
+            # First train model with init_model path set
+            mf = os.path.join(tmpdir, 'model')
+            init_mf = os.path.join(tmpdir, 'init_model')
+            with open(init_mf, 'w') as f:
+                f.write(' ')
+            opt = get_opt(init_mf, mf)
+            popt, tl = get_popt_and_tl(opt)
+            agent = tl.agent
+            # init model file should be set appropriately
+            init_model_file, is_finetune = agent._get_init_model(popt, None)
+            self.assertEqual(init_model_file, init_mf)
+            self.assertTrue(is_finetune)
+            valid, test = tl.train()
+            # now, train the model for another epoch
+            opt = get_opt('{}.checkpoint'.format(mf), mf)
+            opt['load_from_checkpoint'] = True
+            popt, tl = get_popt_and_tl(opt)
+            agent = tl.agent
+            init_model_file, is_finetune = agent._get_init_model(popt, None)
+            self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
+            self.assertFalse(is_finetune)

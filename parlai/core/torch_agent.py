@@ -32,7 +32,6 @@ from torch import optim
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.utils.thread import SharedTable
-from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
@@ -407,7 +406,6 @@ class TorchAgent(ABC, Agent):
                 'random',
                 'glove',
                 'glove-fixed',
-                'glove-twitter-fixed',
                 'fasttext',
                 'fasttext-fixed',
                 'fasttext_cc',
@@ -912,25 +910,11 @@ class TorchAgent(ABC, Agent):
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
-        try:
-            import torchtext.vocab as vocab
-        except ImportError as ex:
-            print('Please install torch text with `pip install torchtext`')
-            raise ex
-        pretrained_dim = 300
         if emb_type.startswith('glove'):
-            if 'twitter' in emb_type:
-                init = 'glove-twitter'
-                name = 'twitter.27B'
-                pretrained_dim = 200
-            else:
-                init = 'glove'
-                name = '840B'
-            embs = vocab.GloVe(
-                name=name,
-                dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'), 'zoo:glove_vectors'),
-            )
+            init = 'glove'
+            from parlai.zoo.glove_vectors.build import download
+
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             from parlai.zoo.fasttext_cc_vectors.build import download

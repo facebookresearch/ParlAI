@@ -408,7 +408,10 @@ def modelzoo_path(datapath, path):
         zoo_len = len(zoo) + 1
         model_path = path[zoo_len:]
         # Check if we need to download the model
-        animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        if "/" in path:
+            animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        else:
+            animal = path[zoo_len:]
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
