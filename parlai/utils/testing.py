@@ -45,7 +45,7 @@ except ImportError:
     BPE_INSTALLED = False
 
 
-DEBUG = True  # change this to true to print to stdout anyway
+DEBUG = False  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
