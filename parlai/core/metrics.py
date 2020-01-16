@@ -449,7 +449,7 @@ class Metrics(object):
                 for i in range(3):
                     weights = [1 / (i + 1) for _ in range(i + 1)]
                     bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
-            if 'rouge-L' in self.metrics_list:
+            if 'rouge-L' in self._print_metrics_list:
                 rouge1, rouge2, rougeL = _rouge(prediction, labels)
             with self._lock():
                 if 'f1' in self.metrics:

@@ -79,9 +79,9 @@ class TestImageSeq2Seq(unittest.TestCase):
         """
         args = BASE_ARGS.copy()
         args.update(TEXT_ARGS)
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task: {stdout}'
+            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task'
         )
 
     @testing_utils.retry(ntries=3)
@@ -96,9 +96,9 @@ class TestImageSeq2Seq(unittest.TestCase):
         args = BASE_ARGS.copy()
         args.update(IMAGE_ARGS)
 
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task: {stdout}'
+            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task'
         )
 
     @testing_utils.retry(ntries=3)
@@ -111,11 +111,9 @@ class TestImageSeq2Seq(unittest.TestCase):
         args = BASE_ARGS.copy()
         args.update(MULTITASK_ARGS)
 
-        stdout, valid, test = testing_utils.train_model(args)
+        valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'],
-            5.0,
-            f'failed to train image_seq2seq on image+text task: {stdout}',
+            valid['ppl'], 5.0, f'failed to train image_seq2seq on image+text task',
         )
 
     def test_compute_tokenized_bleu(self):
@@ -125,7 +123,7 @@ class TestImageSeq2Seq(unittest.TestCase):
         args = BASE_ARGS.copy()
         args.update(EVAL_ARGS)
 
-        stdout, valid, _ = testing_utils.eval_model(args, skip_test=True)
+        valid, _ = testing_utils.eval_model(args, skip_test=True)
         self.assertIn('fairseq_bleu', valid)
         self.assertIn('nltk_bleu_unnormalized', valid)
 

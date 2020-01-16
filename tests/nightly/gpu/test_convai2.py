@@ -26,16 +26,14 @@ class TestConvai2Seq2Seq(unittest.TestCase):
     def test_seq2seq_hits1(self):
         import projects.convai2.baselines.seq2seq.eval_hits as eval_hits
 
-        with testing_utils.capture_output() as stdout:
-            report = eval_hits.main(args=[])
-        self.assertEqual(report['hits@1'], 0.1250, str(stdout))
+        report = eval_hits.main(args=[])
+        self.assertEqual(report['hits@1'], 0.1250)
 
     def test_seq2seq_f1(self):
         import projects.convai2.baselines.seq2seq.eval_f1 as eval_f1
 
-        with testing_utils.capture_output() as stdout:
-            report = eval_f1.main(args=[])
-        self.assertEqual(report['f1'], 0.1682, str(stdout))
+        report = eval_f1.main(args=[])
+        self.assertEqual(report['f1'], 0.1682)
 
 
 @testing_utils.skipUnlessGPU
@@ -47,9 +45,8 @@ class TestConvai2LanguageModel(unittest.TestCase):
     def test_languagemodel_f1(self):
         import projects.convai2.baselines.language_model.eval_f1 as eval_f1
 
-        with testing_utils.capture_output() as stdout:
-            report = eval_f1.main(args=[])
-        self.assertEqual(report['f1'], 0.1531, str(stdout))
+        report = eval_f1.main(args=[])
+        self.assertEqual(report['f1'], 0.1531)
 
 
 class TestLegacyVersioning(unittest.TestCase):

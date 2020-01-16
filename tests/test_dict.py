@@ -26,9 +26,8 @@ class TestDictionary(unittest.TestCase):
     """
 
     def test_gpt2_bpe_tokenize(self):
-        with testing_utils.capture_output():
-            opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
-            agent = DictionaryAgent(opt)
+        opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
+        agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
             agent.gpt2_tokenize(u'Hello, ParlAI! \U0001f600'),
@@ -157,12 +156,11 @@ class TestDictionary(unittest.TestCase):
         """
         import parlai.scripts.train_model as tms
 
-        with testing_utils.capture_output():
-            parser = tms.setup_args()
-            parser.set_params(task='babi:task1k:1', model='seq2seq')
-            popt = parser.parse_args([], print_args=False)
-            with self.assertRaises(RuntimeError):
-                tms.TrainLoop(popt)
+        parser = tms.setup_args()
+        parser.set_params(task='babi:task1k:1', model='seq2seq')
+        popt = parser.parse_args([], print_args=False)
+        with self.assertRaises(RuntimeError):
+            tms.TrainLoop(popt)
 
 
 if __name__ == '__main__':

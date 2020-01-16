@@ -26,13 +26,11 @@ class TestConvai2KVMemnn(unittest.TestCase):
     def test_kvmemnn_hits1(self):
         import projects.convai2.baselines.kvmemnn.eval_hits as eval_hits
 
-        with testing_utils.capture_output() as stdout:
-            report = eval_hits.main(args=[])
-        self.assertEqual(report['hits@1'], 0.5510, str(stdout))
+        report = eval_hits.main(args=[])
+        self.assertEqual(report['hits@1'], 0.5510)
 
     def test_kvmemnn_f1(self):
         import projects.convai2.baselines.kvmemnn.eval_f1 as eval_f1
 
-        with testing_utils.capture_output() as stdout:
-            report = eval_f1.main(args=[])
-        self.assertAlmostEqual(report['f1'], 0.1173, delta=0.0002, msg=str(stdout))
+        report = eval_f1.main(args=[])
+        self.assertAlmostEqual(report['f1'], 0.1173, delta=0.0002)

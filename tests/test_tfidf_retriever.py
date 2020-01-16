@@ -11,8 +11,6 @@ from parlai.utils.logging import logger, ERROR
 
 import os
 import unittest
-import contextlib
-import io
 
 SKIP_TESTS = False
 try:
@@ -47,9 +45,8 @@ class TestTfidfRetriever(unittest.TestCase):
                 num_epochs=1,
             )
             opt = parser.parse_args([], print_args=False)
-            with contextlib.redirect_stdout(io.StringIO()):
-                agent = create_agent(opt)
-                train_world = create_task(opt, agent)
+            agent = create_agent(opt)
+            train_world = create_task(opt, agent)
             # pass examples to dictionary
             while not train_world.epoch_done():
                 train_world.parley()

@@ -19,7 +19,7 @@ class TestSeq2Seq(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_ranking(self):
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:candidate',
                 model='seq2seq',
@@ -38,15 +38,14 @@ class TestSeq2Seq(unittest.TestCase):
             )
         )
         self.assertTrue(
-            valid['hits@1'] >= 0.95,
-            "hits@1 = {}\nLOG:\n{}".format(valid['ppl'], stdout),
+            valid['hits@1'] >= 0.95, "hits@1 = {}".format(valid['ppl']),
         )
 
     def test_generation(self):
         """
         This test uses a single-turn sequence repitition task.
         """
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
@@ -59,18 +58,14 @@ class TestSeq2Seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
-        self.assertTrue(
-            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLess(valid['ppl'], 1.2)
+        self.assertLess(test['ppl'], 1.2)
 
     def test_beamsearch(self):
         """
         Ensures beam search can generate the correct response.
         """
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
@@ -81,20 +76,14 @@ class TestSeq2Seq(unittest.TestCase):
                 beam_size=5,
             )
         )
-        self.assertTrue(
-            valid['accuracy'] > 0.95,
-            "valid accuracy = {}\nLOG:\n{}".format(valid['accuracy'], stdout),
-        )
-        self.assertTrue(
-            test['accuracy'] > 0.95,
-            "test accuracy = {}\nLOG:\n{}".format(test['accuracy'], stdout),
-        )
+        self.assertGreater(valid['accuracy'], 0.95)
+        self.assertGreater(test['accuracy'], 0.95)
 
     def test_badinput(self):
         """
         Ensures model doesn't crash on malformed inputs.
         """
-        stdout, _, _ = testing_utils.train_model(
+        testing_utils.train_model(
             dict(
                 task='integration_tests:bad_example',
                 model='seq2seq',
@@ -108,8 +97,6 @@ class TestSeq2Seq(unittest.TestCase):
                 inference='greedy',
             )
         )
-        self.assertIn('valid:{', stdout)
-        self.assertIn('test:{', stdout)
 
 
 class TestHogwildSeq2seq(unittest.TestCase):
@@ -118,7 +105,7 @@ class TestHogwildSeq2seq(unittest.TestCase):
         """
         This test uses a multi-turn task and multithreading.
         """
-        stdout, valid, test = testing_utils.train_model(
+        valid, test = testing_utils.train_model(
             dict(
                 task='integration_tests:multiturn_nocandidate',
                 model='seq2seq',
@@ -137,12 +124,8 @@ class TestHogwildSeq2seq(unittest.TestCase):
             )
         )
 
-        self.assertTrue(
-            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
-        )
-        self.assertTrue(
-            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
-        )
+        self.assertLess(valid['ppl'], 1.2)
+        self.assertLess(test['ppl'], 1.2)
 
 
 class TestBackwardsCompatibility(unittest.TestCase):
@@ -151,7 +134,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
     """
 
     def test_backwards_compatibility(self):
-        stdout, valid, test = testing_utils.eval_model(
+        valid, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
                 model='seq2seq',
@@ -160,28 +143,12 @@ class TestBackwardsCompatibility(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(
-            valid['ppl'], 1.01, 'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout)
-        )
-        self.assertGreaterEqual(
-            valid['accuracy'],
-            0.999,
-            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            valid['f1'], 0.999, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
-        )
-        self.assertLessEqual(
-            test['ppl'], 1.01, 'test ppl = {}\nLOG:\n{}'.format(test['ppl'], stdout)
-        )
-        self.assertGreaterEqual(
-            test['accuracy'],
-            0.999,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertGreaterEqual(
-            test['f1'], 0.999, 'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
-        )
+        self.assertLessEqual(valid['ppl'], 1.01)
+        self.assertGreaterEqual(valid['accuracy'], 0.999)
+        self.assertGreaterEqual(valid['f1'], 0.999)
+        self.assertLessEqual(test['ppl'], 1.01)
+        self.assertGreaterEqual(test['accuracy'], 0.999)
+        self.assertGreaterEqual(test['f1'], 0.999)
 
 
 if __name__ == '__main__':

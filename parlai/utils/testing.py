@@ -8,7 +8,6 @@
 General utilities for helping writing ParlAI unit and integration tests.
 """
 
-import sys
 import os
 import unittest
 import contextlib
@@ -16,7 +15,8 @@ import tempfile
 import shutil
 import io
 import signal
-from typing import Tuple
+from typing import Tuple, Dict, Any
+from parlai.core.opt import Opt
 
 
 try:
@@ -43,9 +43,6 @@ try:
     BPE_INSTALLED = True
 except ImportError:
     BPE_INSTALLED = False
-
-
-DEBUG = False  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
@@ -190,29 +187,6 @@ def is_new_task_filename(filename):
     )
 
 
-class TeeStringIO(io.StringIO):
-    """
-    StringIO which also prints to stdout.
-
-    Used in case of DEBUG=False to make sure we get verbose output.
-    """
-
-    def __init__(self, *args):
-        self.stream = sys.stdout
-        super().__init__(*args)
-
-    def write(self, data):
-        """
-        Write data to stdout and the buffer.
-        """
-        if DEBUG and self.stream:
-            self.stream.write(data)
-        super().write(data)
-
-    def __str__(self):
-        return self.getvalue()
-
-
 @contextlib.contextmanager
 def capture_output():
     """
@@ -225,7 +199,7 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    sio = TeeStringIO()
+    sio = io.StringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
 
@@ -272,7 +246,7 @@ def timeout(time: int = 30):
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
 
-def train_model(opt):
+def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Run through a TrainLoop.
 
@@ -284,26 +258,25 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    with capture_output() as output:
-        with tempdir() as tmpdir:
-            if 'model_file' not in opt:
-                opt['model_file'] = os.path.join(tmpdir, 'model')
-            if 'dict_file' not in opt:
-                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-            parser = tms.setup_args()
-            # needed at the very least to set the overrides.
-            parser.set_params(**opt)
-            parser.set_params(log_every_n_secs=10)
-            popt = parser.parse_args([], print_args=False)
-            # in some rare cases, like for instance if the model class also
-            # overrides its default params, the params override will not
-            # be taken into account.
-            for k, v in opt.items():
-                popt[k] = v
-            tl = tms.TrainLoop(popt)
-            valid, test = tl.train()
+    with tempdir() as tmpdir:
+        if 'model_file' not in opt:
+            opt['model_file'] = os.path.join(tmpdir, 'model')
+        if 'dict_file' not in opt:
+            opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+        parser = tms.setup_args()
+        # needed at the very least to set the overrides.
+        parser.set_params(**opt)
+        parser.set_params(log_every_n_secs=10)
+        popt = parser.parse_args([], print_args=False)
+        # in some rare cases, like for instance if the model class also
+        # overrides its default params, the params override will not
+        # be taken into account.
+        for k, v in opt.items():
+            popt[k] = v
+        tl = tms.TrainLoop(popt)
+        valid, test = tl.train()
 
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
 def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
@@ -336,13 +309,12 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
-    with capture_output() as output:
-        popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
-        valid = None if skip_valid else ems.eval_model(popt)
-        popt['datatype'] = 'test'
-        test = None if skip_test else ems.eval_model(popt)
+    popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    valid = None if skip_valid else ems.eval_model(popt)
+    popt['datatype'] = 'test'
+    test = None if skip_test else ems.eval_model(popt)
 
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
 def display_data(opt):
