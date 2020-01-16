@@ -408,10 +408,16 @@ def modelzoo_path(datapath, path):
         zoo_len = len(zoo) + 1
         model_path = path[zoo_len:]
         # Check if we need to download the model
-        animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        if "/" in path:
+            animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        else:
+            animal = path[zoo_len:]
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
+        print(module_name)
+        if path == 'zoo:glove_vector':
+            __import__("ipdb").set_trace()  # FIXME
         try:
             my_module = importlib.import_module(module_name)
             my_module.download(datapath)
@@ -424,6 +430,7 @@ def modelzoo_path(datapath, path):
                 my_module.download(datapath)
             except (ImportError, AttributeError):
                 # truly give up
+                __import__("ipdb").set_trace()  # FIXME
                 raise ImportError(
                     f'Could not find pretrained model in {module_name} or {module_name_}.'
                 )

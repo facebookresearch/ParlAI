@@ -8,6 +8,7 @@ Fastext Common Crawl vectors, e.g. use with filename
 "models:fasttext_cc_vectors/crawl-300d-2M.vec".
 """
 
+import os
 import torchtext.vocab as vocab
 from parlai.core.build_data import modelzoo_path
 
@@ -18,5 +19,5 @@ def download(datapath):
     return vocab.Vectors(
         name='crawl-300d-2M.vec',
         url=URL,
-        cache=modelzoo_path(datapath, 'models:fasttext_cc_vectors'),
+        cache=os.path.join(datapath, 'models', 'fasttext_cc_vectors'),
     )

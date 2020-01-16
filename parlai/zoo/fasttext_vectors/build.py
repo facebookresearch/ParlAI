@@ -7,6 +7,7 @@
 Fastext vectors, e.g. use with filename "models:fasttext_vectors/wiki.en.vec".
 """
 
+import os
 import torchtext.vocab as vocab
 from parlai.core.build_data import modelzoo_path
 
@@ -17,5 +18,5 @@ def download(datapath):
     return vocab.Vectors(
         name='wiki.en.vec',
         url=URL,
-        cache=modelzoo_path(datapath, 'models:fasttext_vectors'),
+        cache=os.path.join(datapath, 'models', 'fasttext_vectors'),
     )
