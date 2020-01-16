@@ -101,7 +101,7 @@ installtorchcpu: &installtorchcpu
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      pip3 install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0 torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
       python -c 'import torch; print("Torch version:", torch.__version__)'
 
 setupcuda: &setupcuda
