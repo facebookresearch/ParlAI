@@ -19,6 +19,7 @@ See below for documentation on each specific tool.
 """
 
 from parlai.core.agents import Agent
+from parlai.core.build_data import modelzoo_path
 from .dict_v1 import DictionaryAgent
 from .utils_v1 import set_namedtuple_defaults, argsort, padded_tensor, NEAR_INF
 
@@ -30,7 +31,6 @@ except ImportError:
 
 from torch import optim
 from collections import deque, namedtuple, Counter
-import os
 import json
 import random
 import math
@@ -162,6 +162,7 @@ class TorchAgent(Agent):
                 'random',
                 'glove',
                 'glove-fixed',
+                'glove-twitter-fixed',
                 'fasttext',
                 'fasttext-fixed',
                 'fasttext_cc',
@@ -407,26 +408,33 @@ class TorchAgent(Agent):
             raise ex
         pretrained_dim = 300
         if emb_type.startswith('glove'):
-            init = 'glove'
-            name = '840B'
+            if 'twitter' in emb_type:
+                init = 'glove-twitter'
+                name = 'twitter.27B'
+                pretrained_dim = 200
+            else:
+                init = 'glove'
+                name = '840B'
             embs = vocab.GloVe(
                 name=name,
                 dim=pretrained_dim,
-                cache=os.path.join(self.opt.get('datapath'), 'models/glove_vectors'),
+                cache=modelzoo_path(self.opt.get('datapath'), 'models:glove_vectors'),
             )
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             embs = vocab.FastText(
                 language='en',
-                cache=os.path.join(
-                    self.opt.get('datapath'), 'models/fasttext_cc_vectors'
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_cc_vectors'
                 ),
             )
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             embs = vocab.FastText(
                 language='en',
-                cache=os.path.join(self.opt.get('datapath'), 'models/fasttext_vectors'),
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_vectors'
+                ),
             )
         else:
             raise RuntimeError(
