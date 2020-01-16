@@ -34,15 +34,31 @@ class FullTeacher(DialogTeacher):
             opt['datapath'], 'wikipedia/full/wiki_full_extracted'
         )
         self.id = 'wikipedia'
+        self.dt = self.opt['datatype'].split(':')[0]
         super().__init__(opt, shared)
 
     def setup_data(self, path):
         print('loading: ' + path)
-        for subdir in os.listdir(path):
-            if subdir == 'README.md':
-                continue
+        all_subdirs = os.listdir(path)
+        if self.dt == 'train':
+            subdirs = [x for x in all_subdirs if (x != 'ET' and x != 'README.md')]
+        else:
+            # valid and test pull from the 'ET subdirs
+            subdirs = ['ET']
+        for subdir in subdirs:
+            print(f'[ loading subdirectory {subdir}... ]')
             subdir_path = os.path.join(path, subdir)
-            for wiki_file in os.listdir(subdir_path):
+            all_wiki_files = os.listdir(subdir_path)
+            if self.dt == 'train':
+                wiki_files = all_wiki_files
+            else:
+                assert len(all_wiki_files) == 48, 'Missing files'
+                if self.dt == 'valid':
+                    wiki_files = all_wiki_files[:24]
+                else:
+                    # self. dt == 'test'
+                    wiki_files = all_wiki_files[24:]
+            for wiki_file in wiki_files:
                 wiki_file_path = os.path.join(subdir_path, wiki_file)
                 with open(wiki_file_path) as wf:
                     for article_json in wf:
