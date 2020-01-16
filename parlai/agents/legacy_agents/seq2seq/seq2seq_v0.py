@@ -282,7 +282,7 @@ class Seq2seqAgent(Agent):
             '-emb',
             '--embedding-type',
             default='random',
-            choices=['random', 'glove', 'glove-fixed', 'fasttext', 'fasttext-fixed',],
+            choices=['random', 'glove', 'glove-fixed', 'fasttext', 'fasttext-fixed'],
             help='Choose between different strategies '
             'for word embeddings. Default is random, '
             'but can also preinitialize from Glove or '

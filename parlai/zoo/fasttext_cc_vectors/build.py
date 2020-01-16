@@ -10,7 +10,6 @@ Fastext Common Crawl vectors, e.g. use with filename
 
 import os
 import torchtext.vocab as vocab
-from parlai.core.build_data import modelzoo_path
 
 URL = 'https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M.vec.zip'
 
