@@ -32,7 +32,6 @@ from torch import optim
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.utils.thread import SharedTable
-from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
@@ -911,12 +910,6 @@ class TorchAgent(ABC, Agent):
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
-        try:
-            import torchtext.vocab as vocab
-        except ImportError as ex:
-            print('Please install torch text with `pip install torchtext`')
-            raise ex
-        pretrained_dim = 300
         if emb_type.startswith('glove'):
             init = 'glove'
             from parlai.zoo.glove_vectors.build import download
