@@ -92,6 +92,17 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
+def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
+    skip = False
+    if not TORCH_AVAILABLE:
+        skip = True
+    else:
+        version = tuple(int(x) for x in torch.__version__.split('.'))  # type: ignore
+        if version < (1, 4):
+            skip = True
+    return unittest.skipIf(skip, reason)(testfn)
+
+
 class retry(object):
     """
     Decorator for flaky tests. Test is run up to ntries times, retrying on failure.

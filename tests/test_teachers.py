@@ -48,9 +48,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         self._test_display_output('no_image_model')
 
-    # TODO: need pytorch 1.4 release, https://github.com/pytorch/vision/issues/1712
-    @unittest.skip
-    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessTorch14
     @testing_utils.skipUnlessGPU
     def test_display_data_resnet(self):
         """
