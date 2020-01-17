@@ -10,6 +10,7 @@ import uuid
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.shared_utils import AssignState
+import parlai.utils.testing as testing_utils
 
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils
@@ -516,6 +517,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
             )
             time.sleep(0.1)
 
+    @testing_utils.retry()
     def test_init_and_socket_shutdown(self):
         """
         Test initialization of a socket manager with a failed shutdown.
@@ -563,6 +565,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.assertFalse(nop_called)
         socket_manager.shutdown()
 
+    @testing_utils.retry()
     def test_init_and_socket_shutdown_then_restart(self):
         """
         Test restoring connection to a socket.
@@ -613,6 +616,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.assertFalse(server_death_called)
         socket_manager.shutdown()
 
+    @testing_utils.retry()
     def test_init_world_dead(self):
         """
         Test initialization of a socket manager with a failed startup.
@@ -1109,6 +1113,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.socket_manager.shutdown()
         self.fake_socket.close()
 
+    @testing_utils.retry()
     def test_alive_send_and_disconnect(self):
         acked_packet = None
         incoming_hb = None
@@ -1196,6 +1201,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertEqual(self.dead_assignment_id, TEST_ASSIGNMENT_ID_1)
         self.assertGreater(hb_count, 1)
 
+    @testing_utils.retry()
     def test_failed_ack_resend(self):
         """
         Ensures when a message from the manager is dropped, it gets retried until it
@@ -1278,6 +1284,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
             6,
         )
 
+    @testing_utils.retry()
     def test_one_agent_disconnect_other_alive(self):
         acked_packet = None
         incoming_hb = None
