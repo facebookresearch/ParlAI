@@ -16,7 +16,6 @@ from parlai.core.params import ParlaiParser
 
 import parlai.mturk.core.worker_manager as WorkerManagerFile
 import parlai.mturk.core.data_model as data_model
-import parlai.utils.testing as testing_utils
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 WorkerManagerFile.DISCONNECT_FILE_NAME = 'disconnect-test.pickle'
