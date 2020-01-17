@@ -13,11 +13,13 @@ using 'wikipedia:summary'
 To put the article in the labels and the title in the text, specify
 ':key-value' at the end (for a title/content key-value association)
 """
-from parlai.core.teachers import DialogTeacher
+from parlai.core.teachers import DialogTeacher, ChunkTeacher
+from parlai.core.message import Message
 from .build import build
 
 import json
 import os
+from typing import List, Tuple
 
 
 class FullTeacher(DialogTeacher):
@@ -74,6 +76,85 @@ class FullTeacher(DialogTeacher):
         )
 
         return instructions
+
+
+class FullSplitTeacher(ChunkTeacher):
+    """
+    Full Wikipedia teacher that splits the chunks into train/valid/test.
+    """
+    def _get_data_folder(self):
+        return os.path.join(
+            self.opt['datapath'], 'wikipedia/full/wiki_full_extracted'
+        )
+
+    def _get_num_samples(self, datatype) -> int:
+        """
+        Return the number of samples given the datatype.
+        """
+        if 'train' in datatype:
+            return 5437097
+        elif 'valid' in datatype:
+            return 71052
+        else:
+            # test
+            return 39975
+
+    def _get_fold_chunks(self, datatype) -> List[int]:   # type: ignore
+        """
+        Return a list of chunk IDs (integer).
+
+        Given the datatype (train/test/valid), return the list of
+        chunk IDs that correspond to that split.
+        """
+        all_subdirs = sorted([
+            x for x in os.listdir(self.folder) if 'README' not in x
+        ])
+        self.chunk_idx_to_file = {i: x for i, x in enumerate(all_subdirs)}
+        all_chunk_idxs = list(self.chunk_idx_to_file.keys())
+        if 'train' in datatype:
+            return all_chunk_idxs[:-2]
+        elif 'valid' in datatype:
+            return [all_chunk_idxs[-2]]
+        else:
+            return [all_chunk_idxs[-1]]
+
+    def _load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, ...]]:
+        """
+        Given the chunk index, load examples from that chunk.
+
+        Return a list of tuples. The function `_create_message` will take
+        these tuples to form the Message object that is returned by the
+        teacher.
+        """
+        output = []
+        chunk_path = os.path.join(
+            self.folder,
+            self.chunk_idx_to_file[chunk_idx],
+        )
+        for wiki_file in os.listdir(chunk_path):
+            wiki_file_path = os.path.join(chunk_path, wiki_file)
+            with open(wiki_file_path) as wf:
+                for article_json in wf:
+                    article = json.loads(article_json)
+                    title = article['title']
+                    text = article['text']
+                    output.append((title, text))
+
+        return output
+
+    def _create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
+        """
+        [Abstract] Given the tuple output of the queue, return an act.
+        """
+        title, text = queue_output
+        return Message(
+            {
+                'title': title,
+                'text': text,
+                'labels': [''],
+                'episode_done': True,
+            }
+        )
 
 
 class SummaryTeacher(DialogTeacher):

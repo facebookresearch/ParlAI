@@ -31,7 +31,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List
+from typing import List, Tuple
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -42,7 +42,7 @@ from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 import concurrent.futures
 import multiprocessing
@@ -56,6 +56,7 @@ import os
 import torch
 import json
 import argparse
+import logging
 
 
 class DataLoader(Thread):
@@ -1942,6 +1943,224 @@ class MultiTaskTeacher(Teacher):
         """
         for t in self.tasks:
             t.shutdown()
+
+
+class ChunkTeacher(FixedDialogTeacher, ABC):
+    """
+    Useful for loading large amounts of data.
+
+    Data is separated into chunks and loaded one chunk at a
+    time. Loads the data off of the main thread.
+    """
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+        # make logging print to stdout
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+        self.buffersize = 100000
+
+        if 'stream' not in opt['datatype']:
+            # TODO: possibly make an exception for test/valid?
+            raise ValueError(
+                'Chunk teacher should be used with streaming. '
+            )
+        if opt.get('pytorch_teacher_task') is not None:
+            raise ValueError(
+                'Chunk teacher is not compatible with pytorch '
+                'data teacher.'
+            )
+        if opt['numthreads'] > 1:
+            raise ValueError(
+                'Chunk teacher is not compatible with Hogwild.'
+            )
+
+        self.set_datasettings(opt['datatype'])
+        chunks = self.fold_chunks[:]
+
+        if (
+            shared is None
+            and self.is_train
+            and self.opt.get('distributed_world_size') is not None
+        ):
+            dws = int(self.opt['distributed_world_size'])
+            rank = int(self.opt['rank'])
+            self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
+
+        if self.is_train:
+            random.Random().shuffle(chunks)
+
+        if shared is not None:
+            self.chunks = shared['chunks']
+            self.samples = shared['samples']
+            self.rng = shared['rng']
+            self.is_root_teacher = False
+        else:
+            self.is_root_teacher = True
+            self.samples = queue.Queue(maxsize=self.buffersize)
+            self.chunks = queue.Queue()
+            if self.is_train:
+                self.rng = random.Random()
+            else:
+                self.rng = random.Random(4)
+            self._enqueue_chunks()
+            # launch queue loader on the main thread
+            self._enqueue_request()
+
+        self.episode_done = True
+
+    def _get_data_folder(self):
+        if not self.opt.get('datafile'):
+            raise RuntimeError(
+                'Must specify datafile or override this function '
+                'to return the data folder.'
+            )
+
+        return self.opt['datafile']
+
+    @abstractmethod
+    def _get_num_samples(self, datatype) -> int:
+        """
+        [Abstract] Return the number of samples given the datatype.
+        """
+        pass
+
+    @abstractmethod
+    def _get_fold_chunks(self, datatype) -> List[int]:   # type: ignore
+        """
+        [Abstract] Return a list of chunk IDs (integer).
+
+        Given the datatype (train/test/valid), return the list of
+        chunk IDs that correspond to that split.
+        """
+        pass
+
+    def set_datasettings(self, datatype):
+        self.folder = self._get_data_folder()
+        self.num_samples = self._get_num_samples(datatype)
+        self.fold_chunks = self._get_fold_chunks(datatype)
+
+        self.is_train = 'train' in datatype and 'evalmode' not in datatype
+
+    def share(self):
+        shared = super().share()
+        shared['samples'] = self.samples
+        shared['chunks'] = self.chunks
+        shared['rng'] = self.rng
+        return shared
+
+    def _setup_data(self, datatype):
+        pass
+
+    def num_episodes(self):
+        return self.num_samples
+
+    def num_examples(self):
+        return self.num_samples
+
+    def _enqueue_request(self):
+        """
+        Queue a request for loading to the data loader.
+        """
+        self.data_loader.request_load(self.receive_data, self._get_chunk, ())
+
+    def receive_data(self, future):
+        """
+        Loads data.
+
+        Load data into self.samples until buffersize is
+        reached.
+        """
+        data = future.result()
+        if data is None:
+            logging.debug('No longer queueing')
+            return
+        while data:
+            # self.samples is a queue with maxsize
+            # self.buffersize, so will block if the
+            # buffer gets full
+            self.samples.put(data.pop(0))
+        # and start loading the next chunk
+        self._enqueue_request()
+
+    def _enqueue_chunks(self):
+        """
+        Shuffles and queues fold chunks for loading.
+        """
+        self.rng.shuffle(self.fold_chunks)
+        for c in self.fold_chunks:
+            self.chunks.put(c)
+
+    @abstractmethod
+    def _load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, ...]]:
+        """
+        [Abstract] Given the chunk index, load examples from that chunk.
+
+        Return a list of tuples. The function `_create_message` will take
+        these tuples to form the Message object that is returned by the
+        teacher.
+        """
+        pass
+
+    @abstractmethod
+    def _create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
+        """
+        [Abstract] Given the tuple output of the queue, return an act.
+        """
+        pass
+
+    def _get_chunk(self):
+        """
+        Refill the buffer.
+        """
+        if self.chunks.empty():
+            if self.is_train:
+                self._enqueue_chunks()
+            else:
+                logging.debug('Not enqueueing any more chunks.')
+                # if we're in valid/test, we need to actually signal the end
+                return None
+
+        next_chunk = self.chunks.get()
+        logging.info(f'Loading chunk {next_chunk}: {self.is_root_teacher}')
+        # abstract method `_load_chunk_idx` returns a list of tuples
+        output = self._load_chunk_idx(next_chunk)
+
+        if self.is_train:
+            # randomize the samples
+            random.Random().shuffle(output)
+        else:
+            random.Random(42).shuffle(output)
+        logging.info(
+            f'Done loading chunk {next_chunk}: {self.is_root_teacher} ({len(output)} examples)'
+        )
+        return output
+
+    def get(self, episode_idx, entry_idx=0):
+        queue_output = self.samples.get()
+        if queue_output is None:
+            logging.error('Returning None.')
+            return None
+
+        # create a Message object from the queue output
+        return self._create_message(queue_output)
+
+    def _drain(self, q):
+        while not q.empty():
+            try:
+                q.get()
+            except queue.Empty:
+                return
+
+    def reset(self):
+        super().reset()
+        if self.is_root_teacher:
+            # drain the queues and refill the chunk queue with a new epoch.
+            # additionally, we have to relaunch the loader
+            self._drain(self.samples)
+            self._drain(self.chunks)
+            self._enqueue_chunks()
+            self._enqueue_request()
 
 
 def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
