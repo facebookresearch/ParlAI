@@ -13,6 +13,7 @@ from datetime import datetime
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.shared_utils import AssignState
 
+import parlai.utils.testing as testing_utils
 import parlai.mturk.core.mturk_data_handler as DataHandlerFile
 
 data_dir = os.path.dirname(os.path.abspath(__file__))
