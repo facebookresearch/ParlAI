@@ -2017,8 +2017,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         [Abstract] Return the number of samples.
 
-        Returns a tuple of (num_examples, num_episodes) based on the
-        data split.
+        Returns a tuple of (num_examples, num_episodes) based on the data split.
         """
         pass
 
@@ -2128,9 +2127,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             random.Random().shuffle(output)
         else:
             random.Random(42).shuffle(output)
-        print(
-            f'Done loading chunk {next_chunk}. ({len(output)} examples)'
-        )
+        print(f'Done loading chunk {next_chunk}. ({len(output)} examples)')
         return output
 
     def get(self, episode_idx, entry_idx=0):
