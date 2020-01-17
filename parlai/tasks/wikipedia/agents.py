@@ -86,19 +86,19 @@ class FullSplitTeacher(ChunkTeacher):
     def _get_data_folder(self):
         return os.path.join(self.opt['datapath'], 'wikipedia/full/wiki_full_extracted')
 
-    def _get_num_samples(self, datatype) -> int:
+    def get_num_samples(self, datatype) -> int:
         """
         Return the number of samples given the datatype.
         """
         if 'train' in datatype:
-            return 5437097
+            return 5437097, 5437097
         elif 'valid' in datatype:
-            return 71052
+            return 71052, 71052
         else:
             # test
-            return 39975
+            return 39975, 39975
 
-    def _get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
+    def get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
         """
         Return a list of chunk IDs (integer).
 
@@ -115,7 +115,7 @@ class FullSplitTeacher(ChunkTeacher):
         else:
             return [all_chunk_idxs[-1]]
 
-    def _load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, ...]]:
+    def load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, str]]:
         """
         Given the chunk index, load examples from that chunk.
 
@@ -135,13 +135,13 @@ class FullSplitTeacher(ChunkTeacher):
 
         return output
 
-    def _create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
+    def create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
         """
-        [Abstract] Given the tuple output of the queue, return an act.
+        Given the tuple output of the queue, return an act.
         """
         title, text = queue_output
         return Message(
-            {'title': title, 'text': text, 'labels': [''], 'episode_done': True,}
+            {'title': title, 'text': text, 'labels': [''], 'episode_done': True}
         )
 
 

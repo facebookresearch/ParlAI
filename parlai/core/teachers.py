@@ -31,7 +31,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple
+from typing import List, Tuple, TypeVar
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -56,7 +56,9 @@ import os
 import torch
 import json
 import argparse
-import logging
+
+
+T = TypeVar('T')
 
 
 class DataLoader(Thread):
@@ -1955,10 +1957,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-
-        # make logging print to stdout
-        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
         self.buffersize = 100000
 
         if 'stream' not in opt['datatype']:
@@ -1995,6 +1993,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.samples = queue.Queue(maxsize=self.buffersize)
             self.chunks = queue.Queue()
             if self.is_train:
+                # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
             else:
                 self.rng = random.Random(4)
@@ -2014,14 +2013,17 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return self.opt['datafile']
 
     @abstractmethod
-    def _get_num_samples(self, datatype) -> int:
+    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
         """
-        [Abstract] Return the number of samples given the datatype.
+        [Abstract] Return the number of samples.
+
+        Returns a tuple of (num_examples, num_episodes) based on the
+        data split.
         """
         pass
 
     @abstractmethod
-    def _get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
+    def get_fold_chunks(self, datatype: str) -> List[int]:  # type: ignore
         """
         [Abstract] Return a list of chunk IDs (integer).
 
@@ -2032,8 +2034,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
     def set_datasettings(self, datatype):
         self.folder = self._get_data_folder()
-        self.num_samples = self._get_num_samples(datatype)
-        self.fold_chunks = self._get_fold_chunks(datatype)
+        self.num_samples, self.num_eps = self.get_num_samples(datatype)
+        self.fold_chunks = self.get_fold_chunks(datatype)
 
         self.is_train = 'train' in datatype and 'evalmode' not in datatype
 
@@ -2045,10 +2047,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return shared
 
     def _setup_data(self, datatype):
+        """
+        Passthrough.
+        """
         pass
 
     def num_episodes(self):
-        return self.num_samples
+        return self.num_eps
 
     def num_examples(self):
         return self.num_samples
@@ -2057,7 +2062,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Queue a request for loading to the data loader.
         """
-        self.data_loader.request_load(self.receive_data, self._get_chunk, ())
+        self.data_loader.request_load(self.receive_data, self.get_chunk, ())
 
     def receive_data(self, future):
         """
@@ -2067,7 +2072,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         data = future.result()
         if data is None:
-            logging.debug('No longer queueing')
             return
         while data:
             # self.samples is a queue with maxsize
@@ -2081,12 +2085,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Shuffles and queues fold chunks for loading.
         """
-        self.rng.shuffle(self.fold_chunks)
+        if self.is_train:
+            self.rng.shuffle(self.fold_chunks)
         for c in self.fold_chunks:
             self.chunks.put(c)
 
     @abstractmethod
-    def _load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, ...]]:
+    def load_chunk_idx(self, chunk_idx: int) -> List[Tuple[T, ...]]:
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
@@ -2096,13 +2101,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def _create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
+    def create_message(self, queue_output: Tuple[T, ...]) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
         """
         pass
 
-    def _get_chunk(self):
+    def get_chunk(self):
         """
         Refill the buffer.
         """
@@ -2110,33 +2115,31 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if self.is_train:
                 self._enqueue_chunks()
             else:
-                logging.debug('Not enqueueing any more chunks.')
                 # if we're in valid/test, we need to actually signal the end
                 return None
 
         next_chunk = self.chunks.get()
-        logging.info(f'Loading chunk {next_chunk}: {self.is_root_teacher}')
+        print(f'Loading chunk {next_chunk}')
         # abstract method `_load_chunk_idx` returns a list of tuples
-        output = self._load_chunk_idx(next_chunk)
+        output = self.load_chunk_idx(next_chunk)
 
         if self.is_train:
             # randomize the samples
             random.Random().shuffle(output)
         else:
             random.Random(42).shuffle(output)
-        logging.info(
-            f'Done loading chunk {next_chunk}: {self.is_root_teacher} ({len(output)} examples)'
+        print(
+            f'Done loading chunk {next_chunk}. ({len(output)} examples)'
         )
         return output
 
     def get(self, episode_idx, entry_idx=0):
         queue_output = self.samples.get()
         if queue_output is None:
-            logging.error('Returning None.')
             return None
 
         # create a Message object from the queue output
-        return self._create_message(queue_output)
+        return self.create_message(queue_output)
 
     def _drain(self, q):
         while not q.empty():
