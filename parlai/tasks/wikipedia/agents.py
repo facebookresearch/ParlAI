@@ -82,10 +82,9 @@ class FullSplitTeacher(ChunkTeacher):
     """
     Full Wikipedia teacher that splits the chunks into train/valid/test.
     """
+
     def _get_data_folder(self):
-        return os.path.join(
-            self.opt['datapath'], 'wikipedia/full/wiki_full_extracted'
-        )
+        return os.path.join(self.opt['datapath'], 'wikipedia/full/wiki_full_extracted')
 
     def _get_num_samples(self, datatype) -> int:
         """
@@ -99,16 +98,14 @@ class FullSplitTeacher(ChunkTeacher):
             # test
             return 39975
 
-    def _get_fold_chunks(self, datatype) -> List[int]:   # type: ignore
+    def _get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
         """
         Return a list of chunk IDs (integer).
 
-        Given the datatype (train/test/valid), return the list of
-        chunk IDs that correspond to that split.
+        Given the datatype (train/test/valid), return the list of chunk IDs that
+        correspond to that split.
         """
-        all_subdirs = sorted([
-            x for x in os.listdir(self.folder) if 'README' not in x
-        ])
+        all_subdirs = sorted([x for x in os.listdir(self.folder) if 'README' not in x])
         self.chunk_idx_to_file = {i: x for i, x in enumerate(all_subdirs)}
         all_chunk_idxs = list(self.chunk_idx_to_file.keys())
         if 'train' in datatype:
@@ -122,15 +119,11 @@ class FullSplitTeacher(ChunkTeacher):
         """
         Given the chunk index, load examples from that chunk.
 
-        Return a list of tuples. The function `_create_message` will take
-        these tuples to form the Message object that is returned by the
-        teacher.
+        Return a list of tuples. The function `_create_message` will take these tuples
+        to form the Message object that is returned by the teacher.
         """
         output = []
-        chunk_path = os.path.join(
-            self.folder,
-            self.chunk_idx_to_file[chunk_idx],
-        )
+        chunk_path = os.path.join(self.folder, self.chunk_idx_to_file[chunk_idx],)
         for wiki_file in os.listdir(chunk_path):
             wiki_file_path = os.path.join(chunk_path, wiki_file)
             with open(wiki_file_path) as wf:
@@ -148,12 +141,7 @@ class FullSplitTeacher(ChunkTeacher):
         """
         title, text = queue_output
         return Message(
-            {
-                'title': title,
-                'text': text,
-                'labels': [''],
-                'episode_done': True,
-            }
+            {'title': title, 'text': text, 'labels': [''], 'episode_done': True,}
         )
 
 

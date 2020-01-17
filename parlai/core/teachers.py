@@ -1949,9 +1949,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     """
     Useful for loading large amounts of data.
 
-    Data is separated into chunks and loaded one chunk at a
-    time. Loads the data off of the main thread.
+    Data is separated into chunks and loaded one chunk at a time. Loads the data off of
+    the main thread.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -1961,18 +1962,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.buffersize = 100000
 
         if 'stream' not in opt['datatype']:
-            raise ValueError(
-                'Chunk teacher should be used with streaming. '
-            )
+            raise ValueError('Chunk teacher should be used with streaming. ')
         if opt.get('pytorch_teacher_task') is not None:
             raise ValueError(
-                'Chunk teacher is not compatible with pytorch '
-                'data teacher.'
+                'Chunk teacher is not compatible with pytorch ' 'data teacher.'
             )
         if opt['numthreads'] > 1:
-            raise ValueError(
-                'Chunk teacher is not compatible with Hogwild.'
-            )
+            raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
         self.set_datasettings(opt['datatype'])
         chunks = self.fold_chunks[:]
@@ -2025,12 +2021,12 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def _get_fold_chunks(self, datatype) -> List[int]:   # type: ignore
+    def _get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
         """
         [Abstract] Return a list of chunk IDs (integer).
 
-        Given the datatype (train/test/valid), return the list of
-        chunk IDs that correspond to that split.
+        Given the datatype (train/test/valid), return the list of chunk IDs that
+        correspond to that split.
         """
         pass
 
@@ -2067,8 +2063,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Loads data.
 
-        Load data into self.samples until buffersize is
-        reached.
+        Load data into self.samples until buffersize is reached.
         """
         data = future.result()
         if data is None:
@@ -2095,9 +2090,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
-        Return a list of tuples. The function `_create_message` will take
-        these tuples to form the Message object that is returned by the
-        teacher.
+        Return a list of tuples. The function `_create_message` will take these tuples
+        to form the Message object that is returned by the teacher.
         """
         pass
 
