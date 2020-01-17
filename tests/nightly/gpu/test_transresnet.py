@@ -42,7 +42,7 @@ class TestTransresnet(unittest.TestCase):
         """
         Test pretrained model.
         """
-        stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
+        _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
         self.assertEqual(test['accuracy'], 0.4)
         self.assertEqual(test['hits@5'], 0.9)
         self.assertEqual(test['hits@10'], 0.9)
