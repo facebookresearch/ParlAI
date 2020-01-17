@@ -53,13 +53,13 @@ class TestWizardModel(unittest.TestCase):
         display_data.display_data(opt)
 
     def test_end2end(self):
-        stdout, valid, _ = testing_utils.eval_model(END2END_OPTIONS)
+        valid, _ = testing_utils.eval_model(END2END_OPTIONS)
         self.assertEqual(valid['ppl'], 61.21)
         self.assertEqual(valid['f1'], 0.1717)
         self.assertGreaterEqual(valid['know_acc'], 0.2201)
 
     def test_retrieval(self):
-        stdout, _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
+        _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
         self.assertGreaterEqual(test['accuracy'], 0.86)
         self.assertGreaterEqual(test['hits@5'], 0.98)
         self.assertGreaterEqual(test['hits@10'], 0.99)
