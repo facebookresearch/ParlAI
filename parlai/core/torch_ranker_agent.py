@@ -488,6 +488,8 @@ class TorchRankerAgent(TorchAgent):
 
         if self.opt.get('inference', 'max') == 'max':
             preds = [cand_preds[i][0] for i in range(batchsize)]
+            #print(preds)
+            #import pdb; pdb.set_trace()
         else:
             # Top-k inference.
             preds = []
@@ -509,7 +511,7 @@ class TorchRankerAgent(TorchAgent):
         for cp in cand_preds:
             np = []
             for c in cp:
-                if c not in history_strings:
+                if c not in history_strings and c.count(' ') > 1:
                     np.append(c)
             new_preds.append(np)
         return new_preds

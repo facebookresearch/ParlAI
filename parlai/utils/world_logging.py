@@ -17,7 +17,6 @@ from tqdm import tqdm
 
 KEEP_ALL = 'all'
 
-
 class WorldLogger:
     """
     Logs actions/observations in a world and saves in a JSONL format.
