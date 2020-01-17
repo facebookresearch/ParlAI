@@ -1961,7 +1961,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.buffersize = 100000
 
         if 'stream' not in opt['datatype']:
-            # TODO: possibly make an exception for test/valid?
             raise ValueError(
                 'Chunk teacher should be used with streaming. '
             )
