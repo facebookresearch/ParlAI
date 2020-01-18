@@ -140,7 +140,7 @@ def write_all_agents():
         file object to write to
     """
     os.makedirs('agent_refs', exist_ok=True)
-    agents = [name for _, name, _ in pkgutil.iter_modules([parlai.agents.__path__[0]])]
+    agents = [name for _, name, _ in pkgutil.iter_modules(parlai.agents.__path__)]
     for agent in agents:
         with open(f'agent_refs/{agent}.md', 'w') as fout:
             fout.write(''.join(prepare_agent_readme(agent)))
