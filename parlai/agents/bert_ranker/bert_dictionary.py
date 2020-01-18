@@ -8,11 +8,10 @@ from parlai.zoo.bert.build import download
 
 try:
     from pytorch_pretrained_bert import BertTokenizer
+
+    BERT_AVAILABLE = True
 except ImportError:
-    raise ImportError(
-        'BERT rankers needs pytorch-pretrained-BERT installed. \n '
-        'pip install pytorch-pretrained-bert'
-    )
+    BERT_AVAILABLE = False
 
 from .helpers import VOCAB_PATH
 
@@ -26,6 +25,11 @@ class BertDictionaryAgent(DictionaryAgent):
 
     def __init__(self, opt):
         super().__init__(opt)
+        if not BERT_AVAILABLE:
+            raise ImportError(
+                'BERT rankers needs pytorch-pretrained-BERT installed. \n '
+                'pip install pytorch-pretrained-bert'
+            )
         # initialize from vocab path
         download(opt['datapath'])
         vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models', VOCAB_PATH)
