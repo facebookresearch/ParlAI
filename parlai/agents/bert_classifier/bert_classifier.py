@@ -25,10 +25,11 @@ import torch
 
 try:
     from pytorch_pretrained_bert import BertModel
-
-    BERT_AVAILABLE = True
 except ImportError:
-    BERT_AVAILABLE = False
+    raise ImportError(
+        "BERT rankers needs pytorch-pretrained-BERT installed. \n "
+        "pip install pytorch-pretrained-bert"
+    )
 
 
 class BertClassifierHistory(History):
@@ -143,11 +144,6 @@ class BertClassifierAgent(TorchClassifierAgent):
         Construct the model.
         """
         num_classes = len(self.class_list)
-        if not BERT_AVAILABLE:
-            raise ImportError(
-                "BERT rankers needs pytorch-pretrained-BERT installed. \n "
-                "pip install pytorch-pretrained-bert"
-            )
         return BertWrapper(BertModel.from_pretrained(self.pretrained_path), num_classes)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):

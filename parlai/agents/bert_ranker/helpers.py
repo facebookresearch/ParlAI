@@ -14,10 +14,11 @@ from parlai.utils.torch import neginf, fp16_optimizer_wrapper
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
     from pytorch_pretrained_bert import BertModel  # NOQA
-
-    BERT_AVAILABLE = True
 except ImportError:
-    BERT_AVAILABLE = False
+    raise ImportError(
+        'This model requires that huggingface\'s transformers is '
+        'installed. Install with:\n `pip install transformers`.'
+    )
 
 
 import torch
@@ -109,12 +110,6 @@ class BertWrapper(torch.nn.Module):
         aggregation="first",
     ):
         super(BertWrapper, self).__init__()
-
-        if not BERT_AVAILABLE:
-            raise ImportError(
-                'This model requires that huggingface\'s transformers is '
-                'installed. Install with:\n `pip install transformers`.'
-            )
         self.layer_pulled = layer_pulled
         self.aggregation = aggregation
         self.add_transformer_layer = add_transformer_layer

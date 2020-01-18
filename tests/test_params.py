@@ -9,7 +9,6 @@ Test ParlaiParser and other opt/params.py code.
 """
 
 import os
-import re
 import json
 import unittest
 from parlai.core.params import ParlaiParser
