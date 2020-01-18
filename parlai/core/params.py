@@ -241,6 +241,7 @@ class ParlaiParser(argparse.ArgumentParser):
             allow_abbrev=False,
             conflict_handler='resolve',
             formatter_class=CustomHelpFormatter,
+            add_help=add_parlai_args,
         )
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)

@@ -44,6 +44,7 @@ from recommonmark.transform import AutoStructify
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
+    'sphinxarg.ext',
     'recommonmark',
     'sphinx.ext.linkcode',
 ]
