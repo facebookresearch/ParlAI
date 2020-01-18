@@ -5,54 +5,81 @@
 
 import parlai.core.agents
 import parlai.agents
+from parlai.core.params import ParlaiParser
 
 import os
 import pkgutil
 import importlib
 import inspect
+import io
+import csv
+
 
 """
-                    parser = ParlaiParser(False, False)
-                    item.add_cmdline_args(parser)
-                    readme.append(f"## {itemname} Options\n\n")
-                    for ag in parser._action_groups:
-                        actions = []
-                        for action in ag._group_actions:
-                            action_strings = ", ".join(action.option_strings)
-                            help_ = action.help or ''
-                            if action.choices:
-                                type_ = (
-                                    "{"
-                                    + ", ".join(str(c) for c in action.choices)
-                                    + "}"
-                                )
-                            elif type(action.type) is str:
-                                type_ = action.type
-                            elif action.type is not None:
-                                type_ = action.type.__name__
-                            else:
-                                type_ = "?"
-                            actions.append((action_strings, type_, help_))
-                        if not actions:
-                            continue
-                        readme.append(f"### {ag.title} Arguments\n\n")
-                        actions.insert(0, ("Options", "Choices", "Help"))
-                        widths = [max(len(z) for z in item) for item in zip(*actions)]
-                        formatters = ["{:<%ds}" % w for w in widths]
-                        for i, action in enumerate(actions):
-                            formatted = (
-                                f.format(s) for f, s in zip(formatters, action)
-                            )
-                            readme.append("| " + " | ".join(formatted) + " |\n")
-                            if i == 0:
-                                readme.append(
-                                    "| "
-                                    + " | ".join("-" * (w + 0) for w in widths)
-                                    + " |\n"
-                                )
-
-                        readme.append("\n\n")
+Extract the readme and CLI args for all of the standard agents.
 """
+
+
+def _make_argparse_table(class_):
+    """
+    Build the reStructuredText table containing the args and descriptions.
+    """
+    readme = []
+    parser = ParlaiParser(False, False)
+    class_.add_cmdline_args(parser)
+    # group by whatever ArgumentGroups there are
+    for ag in parser._action_groups:
+        actions = []
+        # get options defined within only this group
+        for action in ag._group_actions:
+            if hasattr(action, 'hidden') and action.hidden:
+                # some options are marked hidden
+                continue
+            action_strings = ",  ".join(f'``{a}``' for a in action.option_strings)
+            description = []
+            # start with the help message
+            if action.help:
+                h = action.help
+                if not h[0].isupper():
+                    h = h[0].upper() + h[1:]
+                description += [h]
+            # list choices if there are any
+            if action.choices:
+                description += [
+                    "Choices: " + ", ".join(f'``{c}``' for c in action.choices) + "."
+                ]
+            # list default and recommended values.
+            default_value = ""
+            if action.default is not None:
+                default_value += f"Default: ``{action.default}``.  "
+            if hasattr(action, 'recommended') and action.recommended:
+                default_value += f"Recommended: ``{action.recommended}``. "
+
+            # special escape for a few args which use a literal newline as their default
+            if default_value:
+                default_value = default_value.replace("\n", "\\n")
+                description.append(default_value)
+
+            description = "\n".join(description)
+            # escape for the fact that we're inserting this inside a table
+            description = description.replace("\n", "\n   \n   ")
+            actions.append((action_strings, description))
+
+        if not actions:
+            continue
+
+        # render the table
+        readme.append(f"```eval_rst\n")
+        readme.append(f".. csv-table:: {ag.title}\n")
+        readme.append(f'   :widths: 35, 65\n\n')
+        cout = io.StringIO()
+        csvw = csv.writer(cout, csv.unix_dialect, delimiter=",")
+        for row in actions:
+            cout.write("   ")
+            csvw.writerow(row)
+        readme.append(cout.getvalue())
+        readme.append("```\n\n")
+    return readme
 
 
 def prepare_agent_readme(agent):
@@ -74,50 +101,35 @@ def prepare_agent_readme(agent):
     if '# ' not in readme[0]:
         readme[0] = f'# {agent}'
 
+    # try to import all of the agents and look for their classes
     root = os.path.join(parlai.agents.__path__[0], agent)
     submodules = pkgutil.iter_modules([root])
-    argkeepers = []
     for sm in submodules:
+        # look in the main folder
         if not (sm.name == agent or sm.name == 'agents'):
             continue
-        print(f"importing 'parlai.agents.{agent}.{sm.name}'")
         module_name = f'parlai.agents.{agent}.{sm.name}'
         module = importlib.import_module(module_name)
         for itemname in dir(module):
+            # skip all private items
             if itemname.startswith('_'):
                 continue
             item = getattr(module, itemname)
+            # avoid catching TorchAgent/TorchRankerAgent/...
             if (
                 inspect.isclass(item)
                 and issubclass(item, parlai.core.agents.Agent)
                 and hasattr(item, 'add_cmdline_args')
                 and not inspect.isabstract(item)
             ):
-                if itemname != 'BertClassifierAgent':
-                    continue
-                readme.append(f"## {itemname} CLI options\n")
-                readme.append("```eval_rst\n.. argparse::\n")
-                readme.append(f"   :filename: source/agent_refs/{agent}.py\n")
-                readme.append(f"   :func: {itemname}\n")
-                readme.append(f"   :prog: foo\n")
+                # gather all the options
+                options = _make_argparse_table(item)
+                if options:
+                    # if there were no options, don't mention it
+                    readme.append(f"## {itemname} Options\n\n")
+                    readme += options
 
-                #readme.append(f"   :passparser:\n")
-                #readme.append(f"   :markdown:\n")
-                readme.append("```\n\n")
-                argkeepers.append((module_name, itemname))
-
-
-    if argkeepers:
-        with open(f'agent_refs/{agent}.py', 'w') as fout:
-            fout.write("from parlai.core.params import ParlaiParser\n")
-            for module_name, classname in argkeepers:
-                fout.write(f"import {module_name} as {classname}_\n")
-                fout.write(f"def {classname}():\n")
-                fout.write(f"    pp = ParlaiParser(False, False)\n")
-                fout.write(f"    {classname}_.{classname}.add_cmdline_args(pp)\n")
-                fout.write(f"    return pp\n")
-    with open(f'agent_refs/{agent}.md', 'w') as fout:
-        fout.write(''.join(readme))
+    return readme
 
 
 def write_all_agents():
@@ -130,7 +142,8 @@ def write_all_agents():
     os.makedirs('agent_refs', exist_ok=True)
     agents = [name for _, name, _ in pkgutil.iter_modules([parlai.agents.__path__[0]])]
     for agent in agents:
-        prepare_agent_readme(agent)
+        with open(f'agent_refs/{agent}.md', 'w') as fout:
+            fout.write(''.join(prepare_agent_readme(agent)))
 
 
 if __name__ == '__main__':

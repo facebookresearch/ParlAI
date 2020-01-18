@@ -8,7 +8,7 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
+SPHINXOPTS    = -W --keep-going  # make sure we fail on warnings
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = ParlAI
 SOURCEDIR     = source
