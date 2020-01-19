@@ -93,6 +93,8 @@ class SumMetric(Metric):
     Class that keeps a running sum of some metric.
     """
 
+    __slots__ = ['_sum']
+
     def __init__(self, sum_: TScalar = 0):
         if isinstance(sum_, torch.Tensor):
             self._sum = sum_.item()
@@ -116,6 +118,8 @@ class AverageMetric(Metric):
     """
     Class that keeps a running average of some metric.
     """
+
+    __slots__ = ['_numer', '_denom']
 
     def __init__(self, numer: TScalar = 0, denom: TScalar = 1):
         self._numer = self.as_number(numer)
