@@ -64,6 +64,9 @@ class Metric(ABC):
     def __iadd__(self, other):
         return self.__radd__(other)
 
+    def __add__(self, other):
+        return self.__radd__(other)
+
     def __str__(self) -> str:
         return f'{self.value():.4g}'
 
@@ -94,6 +97,7 @@ class SumMetric(Metric):
         if isinstance(sum_, torch.Tensor):
             self._sum = sum_.item()
         else:
+            assert isinstance(sum_, (int, float))
             self._sum = sum_
 
     def __radd__(self, other: Optional['SumMetric']) -> 'SumMetric':
@@ -114,8 +118,8 @@ class AverageMetric(Metric):
     """
 
     def __init__(self, numer: TScalar = 0, denom: TScalar = 1):
-        self._numer = self.as_float(numer)
-        self._denom = self.as_int(denom)
+        self._numer = self.as_number(numer)
+        self._denom = self.as_number(denom)
 
     def __radd__(self, other: Optional['AverageMetric']) -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
