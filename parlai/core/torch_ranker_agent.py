@@ -488,8 +488,6 @@ class TorchRankerAgent(TorchAgent):
 
         if self.opt.get('inference', 'max') == 'max':
             preds = [cand_preds[i][0] for i in range(batchsize)]
-            #print(preds)
-            #import pdb; pdb.set_trace()
         else:
             # Top-k inference.
             preds = []
