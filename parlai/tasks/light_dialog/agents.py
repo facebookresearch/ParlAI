@@ -175,8 +175,9 @@ class SelfchatTeacher(SimpleTeacher):
     """
     Teacher used to create candidates for selfchats, if needed.
     """
+
     pass
-        
+
 
 def create_agents(opt):
     if not opt.get('interactive_task', False):

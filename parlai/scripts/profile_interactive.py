@@ -67,10 +67,8 @@ def profile_interactive(opt, print_parser=None):
         print_parser.opt = agent.opt
         print_parser.print_args()
 
-    print("start timing!")
     pr = cProfile.Profile()
     pr.enable()
-    world.profiler = pr # allow world to disable pr if it wants to
     
     # Run
     cnt = 0

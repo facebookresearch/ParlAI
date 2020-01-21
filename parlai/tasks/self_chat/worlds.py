@@ -45,7 +45,7 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0:
             self.acts = [None, None]
             # choose speaking order:
-            if True: #random.choice([0, 1]):
+            if random.choice([0, 1]):
                 self.agents_ordered = [self.agents[0], self.agents[1]]
             else:
                 self.agents_ordered = [self.agents[1], self.agents[0]]

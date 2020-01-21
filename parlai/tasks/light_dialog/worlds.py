@@ -14,6 +14,7 @@ import random
 import pickle
 import os
 
+
 class InteractiveSimpleWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
@@ -130,16 +131,22 @@ class InteractiveSelfchatWorld(SelfChatBaseWorld):
         for k, c in self.db['characters'].items():
             cs.append(c)
         self.db['all_characters'] = cs
-        
+
     def make_context(self, room, c1, c2):
-        s  = '_task_speech\n'
-        s += '_setting_name ' + room.get('setting', '') + ', ' + room.get('category','') + '\n'
+        s = '_task_speech\n'
+        s += (
+            '_setting_name '
+            + room.get('setting', '')
+            + ', '
+            + room.get('category', '')
+            + '\n'
+        )
         s += '_setting_desc ' + room.get('description', '') + '\n'
         s += '_partner_name ' + c2.get('name', '') + '\n'
         s += '_self_name ' + c1.get('name', '') + '\n'
         s += '_self_persona ' + random.choice(c1.get('personas', ['']))
         return s
-        
+
     def get_contexts(self):
         room = random.choice(self.db['rooms'])
         if len(room.get('in_characters', [])) > 0:
@@ -150,4 +157,3 @@ class InteractiveSelfchatWorld(SelfChatBaseWorld):
         p1 = self.make_context(room, c1, c2)
         p2 = self.make_context(room, c2, c1)
         return [p1, p2]
-            
