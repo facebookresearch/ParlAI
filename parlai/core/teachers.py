@@ -1969,7 +1969,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
         self.set_datasettings(opt['datatype'])
-        chunks = self.fold_chunks[:]
 
         if (
             shared is None
@@ -1980,14 +1979,11 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             rank = int(self.opt['rank'])
             self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
 
-        if self.is_train:
-            random.Random().shuffle(chunks)
-
         if shared is not None:
+            self.is_root_teacher = False
             self.chunks = shared['chunks']
             self.samples = shared['samples']
             self.rng = shared['rng']
-            self.is_root_teacher = False
         else:
             self.is_root_teacher = True
             self.samples = queue.Queue(maxsize=self.buffersize)

@@ -83,6 +83,15 @@ class FullSplitTeacher(ChunkTeacher):
     Full Wikipedia teacher that splits the chunks into train/valid/test.
     """
 
+    def __init__(self, opt, shared=None):
+        if shared is None:
+            # set map
+            self.opt = opt
+            self._set_chunk_idx_to_file()
+        else:
+            self.chunk_idx_to_file = shared['chunk_idx_to_file']
+        super().__init__(opt, shared)
+
     def _get_data_folder(self):
         return os.path.join(self.opt['datapath'], 'wikipedia/full/wiki_full_extracted')
 
@@ -97,6 +106,11 @@ class FullSplitTeacher(ChunkTeacher):
         else:
             # test
             return 39975, 39975
+
+    def _set_chunk_idx_to_file(self):
+        folder = self._get_data_folder()
+        all_subdirs = sorted([x for x in os.listdir(folder) if 'README' not in x])
+        self.chunk_idx_to_file = {i: x for i, x in enumerate(all_subdirs)}
 
     def get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
         """
@@ -143,6 +157,11 @@ class FullSplitTeacher(ChunkTeacher):
         return Message(
             {'title': title, 'text': text, 'labels': [''], 'episode_done': True}
         )
+
+    def share(self):
+        shared = super().share()
+        shared['chunk_idx_to_file'] = self.chunk_idx_to_file
+        return shared
 
 
 class SummaryTeacher(DialogTeacher):
