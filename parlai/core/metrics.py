@@ -98,7 +98,7 @@ class SumMetric(Metric):
     Class that keeps a running sum of some metric.
     """
 
-    __slots__ = ['_sum']
+    __slots__ = ('_sum',)
 
     def __init__(self, sum_: TScalar = 0):
         if isinstance(sum_, torch.Tensor):
@@ -124,7 +124,7 @@ class AverageMetric(Metric):
     Class that keeps a running average of some metric.
     """
 
-    __slots__ = ['_numer', '_denom']
+    __slots__ = ('_numer', '_denom')
 
     def __init__(self, numer: TScalar = 0, denom: TScalar = 1):
         self._numer = self.as_number(numer)
@@ -397,14 +397,13 @@ class Metrics(object):
         self.eval_pr = [1, 5, 10, 100]
 
         if opt.get('numthreads', 1) > 1:
-            import sys
-
-            sys.stderr.write("\n\nCREATING MANAGER SERVER\n\n")
-            self.manager = multiprocessing.Manager()
-            self.metrics = self.manager.dict()
-            self.__lock = self.manager.Lock()
+            # self.manager = multiprocessing.Manager()
+            # self.metrics = self.manager.dict()
+            # self.__lock = self.manager.Lock()
+            self.__lock = no_lock()
+            self._queue = multiprocessing.Queue()
         else:
-            self._lock = no_lock()
+            self.__lock = no_lock()
 
     def __str__(self):
         return str(self.metrics)
@@ -439,16 +438,13 @@ class Metrics(object):
         for k in self.eval_pr:
             self._add(f'hits@{k}', AverageMetric(cnts[k] > 0))
 
-    def _add(self, key: str, value: Optional[Metric]) -> Metric:
+    def _add(self, key: str, value: Optional[Metric]) -> None:
         """
         Add the metric to our records.
         """
-        with self._lock():
-            if key not in self.metrics:
-                self.metrics[key] = value
-            else:
-                self.metrics[key] += value
-            return self.metrics[key]
+        # newvalue = self.metrics.get(key) + value
+        # self.metrics[key] = newvalue
+        self._queue.put((key, value))
 
     def update(self, observation: Message, labels: List[str]) -> None:
         """
@@ -492,6 +488,13 @@ class Metrics(object):
         """
         Report the metrics over all data seen so far.
         """
+        while not self._queue.empty():
+            try:
+                key, v = self._queue.get()
+                self.metrics[key] = self.metrics.get(key) + v
+            except queue.Empty:
+                break
+
         return {
             k: v.value() if isinstance(v, Metric) else v
             for k, v in self.metrics.items()
