@@ -16,7 +16,7 @@ import sys
 from parlai.core.agents import create_agent
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
-import parlai.chat_service.services.messenger.shared_utils as shared_utils
+import parlai.chat_service.core.shared_utils as shared_utils
 from parlai.chat_service.services.websocket.sockets import MessageSocketHandler
 from agents import WebsocketAgent
 import tornado

@@ -11,7 +11,7 @@ Used to run the terminal chat server.
 
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.terminal_chat.terminal_manager import TerminalManager
-from parlai.chat_service.services.messenger import shared_utils as utils
+from parlai.chat_service.core import shared_utils as utils
 
 
 SERVICE_NAME = 'terminal'
