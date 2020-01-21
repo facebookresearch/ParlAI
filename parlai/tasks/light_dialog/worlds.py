@@ -123,12 +123,12 @@ class InteractiveSelfchatWorld(SelfChatBaseWorld):
         self.db = pickle.load(file)
         # compact list of rooms
         rs = []
-        for k, r in self.db['rooms'].items():
+        for _k, r in self.db['rooms'].items():
             rs.append(r)
         self.db['rooms'] = rs
         # compact list of characters
         cs = []
-        for k, c in self.db['characters'].items():
+        for _k, c in self.db['characters'].items():
             cs.append(c)
         self.db['all_characters'] = cs
 
