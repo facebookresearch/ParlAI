@@ -49,6 +49,7 @@ def setup_args(parser=None):
     WorldLogger.add_cmdline_args(parser)
     return parser
 
+
 def self_chat(opt, print_parser=None):
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
