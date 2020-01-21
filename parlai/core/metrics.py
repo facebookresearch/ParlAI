@@ -22,6 +22,11 @@ from parlai.core.message import Message
 from parlai.utils.misc import no_lock, round_sigfigs, warn_once
 from parlai.utils.typing import TScalar
 
+try:
+    import torch.multiprocessing as multiprocessing
+except ImportError:
+    import multiprocessing
+
 
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -388,12 +393,18 @@ class Metrics(object):
 
     def __init__(self, opt):
         self.metrics = {}
-        self.metrics.setdefault(None)
         self.metrics_list = Metrics._infer_metrics(opt.get('metrics', 'default'))
         self.eval_pr = [1, 5, 10, 100]
 
         if opt.get('numthreads', 1) > 1:
-            raise NotImplementedError()
+            import sys
+
+            sys.stderr.write("\n\nCREATING MANAGER SERVER\n\n")
+            self.manager = multiprocessing.Manager()
+            self.metrics = self.manager.dict()
+            self.__lock = self.manager.Lock()
+        else:
+            self._lock = no_lock()
 
     def __str__(self):
         return str(self.metrics)
@@ -403,12 +414,7 @@ class Metrics(object):
         return representation.replace('>', ': {}>'.format(repr(self.metrics)))
 
     def _lock(self):
-        if hasattr(self.metrics, 'get_lock'):
-            # use the shared_table's lock
-            return self.metrics.get_lock()
-        else:
-            # otherwise do nothing
-            return no_lock()
+        return self.__lock
 
     def _update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
@@ -430,9 +436,8 @@ class Metrics(object):
         # hits metric is 1 if cnts[k] > 0.
         # (other metrics such as p@k and r@k take
         # the value of cnt into account.)
-        with self._lock():
-            for k in self.eval_pr:
-                self._add(f'hits@{k}', AverageMetric(cnts[k] > 0))
+        for k in self.eval_pr:
+            self._add(f'hits@{k}', AverageMetric(cnts[k] > 0))
 
     def _add(self, key: str, value: Optional[Metric]) -> Metric:
         """
