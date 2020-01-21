@@ -69,7 +69,7 @@ def profile_interactive(opt, print_parser=None):
 
     pr = cProfile.Profile()
     pr.enable()
-    
+
     # Run
     cnt = 0
     while True:
