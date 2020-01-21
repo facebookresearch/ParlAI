@@ -2114,7 +2114,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 return None
 
         next_chunk = self.chunks.get()
-        print(f'Loading chunk {next_chunk}')
         # abstract method `_load_chunk_idx` returns a list of tuples
         output = self.load_chunk_idx(next_chunk)
 
@@ -2123,7 +2122,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             random.Random().shuffle(output)
         else:
             random.Random(42).shuffle(output)
-        print(f'Done loading chunk {next_chunk}. ({len(output)} examples)')
         return output
 
     def get(self, episode_idx, entry_idx=0):
