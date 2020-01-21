@@ -226,7 +226,7 @@ def fp16_optimizer_wrapper(
 
 def fp16_available() -> bool:
     try:
-        import apex.fp16_utils
+        import apex.fp16_utils  # noqa: F401
 
         return True
     except ImportError:
