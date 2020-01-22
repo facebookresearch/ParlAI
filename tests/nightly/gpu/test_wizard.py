@@ -54,15 +54,15 @@ class TestWizardModel(unittest.TestCase):
 
     def test_end2end(self):
         valid, _ = testing_utils.eval_model(END2END_OPTIONS)
-        self.assertEqual(valid['ppl'], 61.21)
-        self.assertEqual(valid['f1'], 0.1717)
-        self.assertGreaterEqual(valid['know_acc'], 0.2201)
+        self.assertAlmostEqual(valid['ppl'], 61.21, places=2)
+        self.assertAlmostEqual(valid['f1'], 0.1717, places=4)
+        self.assertAlmostEqual(valid['know_acc'], 0.2201, places=4)
 
     def test_retrieval(self):
         _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
-        self.assertGreaterEqual(test['accuracy'], 0.86)
-        self.assertGreaterEqual(test['hits@5'], 0.98)
-        self.assertGreaterEqual(test['hits@10'], 0.99)
+        self.assertAlmostEqual(test['accuracy'], 0.86, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.98, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.99, places=4)
 
 
 class TestKnowledgeRetriever(unittest.TestCase):
