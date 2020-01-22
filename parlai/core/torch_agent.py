@@ -36,7 +36,12 @@ from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
-from parlai.utils.torch import argsort, fp16_optimizer_wrapper, padded_tensor
+from parlai.utils.torch import (
+    argsort,
+    fp16_optimizer_wrapper,
+    padded_tensor,
+    fp16_available,
+)
 
 
 class Batch(AttrDict):
@@ -606,7 +611,7 @@ class TorchAgent(ABC, Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False) and fp16_available()
 
         if shared is None:
             # intitialize any important structures from scratch

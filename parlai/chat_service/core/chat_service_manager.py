@@ -12,8 +12,8 @@ import threading
 import time
 import traceback
 from parlai.chat_service.core.agents import ChatServiceAgent
-import parlai.chat_service.services.messenger.server_utils as server_utils
-import parlai.chat_service.services.messenger.shared_utils as shared_utils
+import parlai.chat_service.core.server_utils as server_utils
+import parlai.chat_service.core.shared_utils as shared_utils
 from parlai.chat_service.core.manager_utils import ChatServiceWorldRunner
 from abc import ABC, abstractmethod
 
