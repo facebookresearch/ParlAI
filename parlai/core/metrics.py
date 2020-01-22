@@ -129,7 +129,7 @@ class AverageMetric(Metric):
 
     __slots__ = ('_numer', '_denom')
 
-    def __init__(self, numer: TScalar = 0, denom: TScalar = 1):
+    def __init__(self, numer: TScalar, denom: TScalar = 1):
         self._numer = self.as_number(numer)
         self._denom = self.as_number(denom)
 
