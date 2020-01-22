@@ -43,7 +43,7 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 1
    :caption: Core Library API
 
-   observations
+   messages
    agents
    torch_agent
    build_data

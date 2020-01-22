@@ -241,7 +241,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         return scores, preds, encoder_states
 
 
-class TorchGeneratorAgent(TorchAgent):
+class TorchGeneratorAgent(TorchAgent, ABC):
     """
     Abstract Generator agent; only meant to be extended.
 

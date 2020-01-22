@@ -49,8 +49,8 @@ Sometimes it is useful to generate models talking to themselves. You can do this
    # Self-chatting Poly-Encoder model on ConvAI2
    python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t convai2:selfchat --inference topk -ne 10 --display-examples True -dt valid
 
-The task set by '-t' (in the above case "convai2:selfchat") links to a parlAI world that handles the particular nature of interactions, see e.g. `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98>`_ 
-or `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106>`_.
+The task set by '-t' (in the above case "convai2:selfchat") links to a parlAI world that handles the particular nature of interactions, see e.g. `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98>`__ 
+or `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106>`__.
 If the model does not need to run on a particular task you can also use:
   
 
