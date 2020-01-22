@@ -20,7 +20,7 @@ T = TypeVar('T', bound='MessageSocketHandler')
 
 class MessageSocketHandler(WebSocketHandler):
     def __init__(self: T, *args, **kwargs):
-        self.subs: Dict[int, T] = {}
+        self.subs: Dict[int, T] = kwargs.pop('subs')
 
         def _default_callback(message, socketID):
             logging.warn(f"No callback defined for new WebSocket messages.")
