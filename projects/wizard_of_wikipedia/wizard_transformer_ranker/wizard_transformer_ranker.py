@@ -23,7 +23,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         """
         Add command-line arguments specifically for this agent.
         """
-        super(WizardTransformerRankerAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Wizard Transformer Ranker Arguments')
         agent.add_argument(
             '--use-knowledge',

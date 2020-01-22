@@ -254,7 +254,7 @@ class TorchGeneratorAgent(TorchAgent):
     @classmethod
     def upgrade_opt(cls, opt_from_disk: Opt):
         # call the parent upgrades
-        opt_from_disk = super(TorchGeneratorAgent, cls).upgrade_opt(opt_from_disk)
+        opt_from_disk = super().upgrade_opt(opt_from_disk)
 
         # 2019-08-18: Adding support for generation other than beam search
         # Previously, selecting --beam-size > 1 enabled beam search and == 1 was
@@ -329,7 +329,7 @@ class TorchGeneratorAgent(TorchAgent):
             help='if true, compute tokenized bleu scores',
         )
 
-        super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt: Opt, shared=None):

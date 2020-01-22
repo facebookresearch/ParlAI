@@ -29,7 +29,7 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
         """
         Override to include new arg.
         """
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('AddLabelFixedCandsTRA')
         agent.add_argument(
             '--add-label-to-fixed-cands',
@@ -132,10 +132,4 @@ class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA, BiencoderAgent):
     Bi-encoder agent that allows for adding label to fixed cands.
     """
 
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        """
-        Add cmd line args.
-        """
-        super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
-        super(BiencoderAgent, cls).add_cmdline_args(argparser)
+    pass

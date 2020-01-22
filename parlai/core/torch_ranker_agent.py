@@ -44,7 +44,7 @@ class TorchRankerAgent(TorchAgent):
         """
         Add CLI args.
         """
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands',

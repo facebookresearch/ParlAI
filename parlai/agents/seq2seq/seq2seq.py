@@ -136,7 +136,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
             help='Probability of replacing tokens with UNK in training.',
         )
 
-        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         return agent
 
     @staticmethod

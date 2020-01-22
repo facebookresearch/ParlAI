@@ -23,7 +23,7 @@ class _AbstractTRATest(unittest.TestCase):
     def setUpClass(cls):
         if cls is _AbstractTRATest:
             raise unittest.SkipTest('Skip abstract parent class')
-        super(_AbstractTRATest, cls).setUpClass()
+        super().setUpClass()
 
     def _get_args(self):
         # Add arguments for the Torch Ranker Agent to test

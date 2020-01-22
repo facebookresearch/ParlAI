@@ -131,7 +131,7 @@ class BertClassifierAgent(TorchClassifierAgent):
         """
         Upgrade opts from older model files.
         """
-        super(BertClassifierAgent, cls).upgrade_opt(opt_on_disk)
+        super().upgrade_opt(opt_on_disk)
 
         # 2019-06-25: previous versions of the model did not add a CLS token
         # to the beginning of text_vec.

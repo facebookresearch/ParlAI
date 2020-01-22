@@ -25,7 +25,7 @@ class _ExampleUpgradeOptAgent(agents.Agent):
 
     @classmethod
     def upgrade_opt(cls, opt):
-        opt = super(_ExampleUpgradeOptAgent, cls).upgrade_opt(opt)
+        opt = super().upgrade_opt(opt)
         assert 'is_upgraded' not in opt
         opt['is_upgraded'] = True
         return opt

@@ -46,7 +46,7 @@ class _GenericWizardAgent(TransformerGeneratorAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         argparser.set_defaults(**DEFAULT_OPTS)
-        super(_GenericWizardAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
 
     def batchify(self, obs_batch):
         batch = super().batchify(obs_batch)
@@ -285,7 +285,7 @@ class EndToEndAgent(_GenericWizardAgent):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        super(EndToEndAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         group = argparser.add_argument_group("EndToEnd Agent")
         group.add_argument(
             '--knowledge-alpha',

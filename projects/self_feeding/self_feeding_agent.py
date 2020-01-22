@@ -285,7 +285,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         """
         Upgrade opts from older model files.
         """
-        super(SelfFeedingAgent, cls).upgrade_opt(opt_on_disk)
+        super().upgrade_opt(opt_on_disk)
 
         # 2019-06-25: previous versions of the model did not add a CLS token
         # to the beginning of text_vec.

@@ -29,7 +29,7 @@ class SubClassA(TorchGeneratorAgent):
     @classmethod
     def add_cmdline_args(cls, parser):
         parser.add_argument('--withclassinheritence', default='a')
-        super(SubClassA, cls).add_cmdline_args(parser)
+        super().add_cmdline_args(parser)
 
 
 class SubClassB(SubClassA):

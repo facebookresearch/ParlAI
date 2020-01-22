@@ -45,7 +45,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         """
         Override to add one arg.
         """
-        super(ImageSeq2seqAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         group = argparser.add_argument_group('Image Encoder Args')
         group.add_argument(
             '--image-features-dim', type=int, default=2048, help='dim for image feats'
