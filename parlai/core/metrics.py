@@ -26,7 +26,7 @@ from parlai.utils.typing import TScalar
 try:
     import torch.multiprocessing as multiprocessing
 except ImportError:
-    import multiprocessing
+    import multiprocessing  # type: ignore
 
 
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
@@ -138,8 +138,8 @@ class AverageMetric(Metric):
         # we drop Python 3.6
         if other is None:
             return self
-        full_numer: float = self._numer + other._numer
-        full_denom: int = self._denom + other._denom
+        full_numer: TScalar = self._numer + other._numer
+        full_denom: TScalar = self._denom + other._denom
         return AverageMetric(numer=full_numer, denom=full_denom)
 
     def value(self) -> float:
