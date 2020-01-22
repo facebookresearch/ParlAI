@@ -81,7 +81,11 @@ class Metric(ABC):
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.value():.4g})'
 
-    def as_number(self, obj: TScalar) -> Union[int, float]:
+    def __float__(self) -> float:
+        return self.value()
+
+    @classmethod
+    def as_number(cls, obj: TScalar) -> Union[int, float]:
         if isinstance(obj, torch.Tensor):
             obj_as_number: Union[int, float] = obj.item()
         else:
@@ -89,11 +93,13 @@ class Metric(ABC):
         assert isinstance(obj_as_number, int) or isinstance(obj_as_number, float)
         return obj_as_number
 
-    def as_float(self, obj: TScalar) -> float:
-        return float(self.as_number(obj))
+    @classmethod
+    def as_float(cls, obj: TScalar) -> float:
+        return float(cls.as_number(obj))
 
-    def as_int(self, obj: TScalar) -> int:
-        return int(self.as_number(obj))
+    @classmethod
+    def as_int(cls, obj: TScalar) -> int:
+        return int(cls.as_number(obj))
 
 
 class SumMetric(Metric):
@@ -353,7 +359,7 @@ def aggregate_metrics(reporters):
             # prevent name clobbering if using multiple tasks with same ID
             task_id += '_'
         m['tasks'][task_id] = task_report
-        total += task_report['exs']
+        total += task_report.get('exs', 0)
         found_any = False
         for k in sums.keys():
             if k in task_report:
