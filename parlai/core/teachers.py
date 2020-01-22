@@ -31,7 +31,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple, TypeVar
+from typing import List, Tuple, TypeVar, Generic
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -1957,13 +1957,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.buffersize = 100000
+        self.buffersize = self.get_buffersize()
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
         if opt.get('pytorch_teacher_task') is not None:
             raise ValueError(
-                'Chunk teacher is not compatible with pytorch ' 'data teacher.'
+                'Chunk teacher is not compatible with pytorch data teacher.'
             )
         if opt['numthreads'] > 1:
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
@@ -1992,7 +1992,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
             else:
-                self.rng = random.Random(4)
+                self.rng = random.Random(42)
             self._enqueue_chunks()
             # launch queue loader on the main thread
             self._enqueue_request()
@@ -2027,9 +2027,17 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         pass
 
+    def get_buffersize(self):
+        """
+        Size of buffer.
+
+        Override this in your child class to change the buffer size.
+        """
+        return 100000
+
     def set_datasettings(self, datatype):
         self.folder = self._get_data_folder()
-        self.num_samples, self.num_eps = self.get_num_samples(datatype)
+        self.num_exs, self.num_eps = self.get_num_samples(datatype)
         self.fold_chunks = self.get_fold_chunks(datatype)
 
         self.is_train = 'train' in datatype and 'evalmode' not in datatype
@@ -2051,7 +2059,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return self.num_eps
 
     def num_examples(self):
-        return self.num_samples
+        return self.num_exs
 
     def _enqueue_request(self):
         """
@@ -2086,7 +2094,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.chunks.put(c)
 
     @abstractmethod
-    def load_chunk_idx(self, chunk_idx: int) -> List[Tuple[T, ...]]:
+    def load_from_chunk(self, chunk_idx: int) -> List[Generic[T, ...]]:
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
@@ -2096,7 +2104,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def create_message(self, queue_output: Tuple[T, ...]) -> 'Message':
+    def create_message(self, queue_output: Generic[T, ...]) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
         """
@@ -2114,8 +2122,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 return None
 
         next_chunk = self.chunks.get()
-        # abstract method `_load_chunk_idx` returns a list of tuples
-        output = self.load_chunk_idx(next_chunk)
+        # abstract method `load_from_chunk` returns a list of tuples
+        output = self.load_from_chunk(next_chunk)
 
         if self.is_train:
             # randomize the samples

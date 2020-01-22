@@ -84,6 +84,10 @@ class FullSplitTeacher(ChunkTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.TRAINSIZE = 5437097
+        self.VALIDSIZE = 71052
+        self.TESTSIZE = 39975
+
         if shared is None:
             # set map
             self.opt = opt
@@ -95,17 +99,17 @@ class FullSplitTeacher(ChunkTeacher):
     def _get_data_folder(self):
         return os.path.join(self.opt['datapath'], 'wikipedia/full/wiki_full_extracted')
 
-    def get_num_samples(self, datatype) -> int:
+    def get_num_samples(self, datatype) -> Tuple[int, int]:
         """
         Return the number of samples given the datatype.
         """
         if 'train' in datatype:
-            return 5437097, 5437097
+            return self.TRAINSIZE, self.TRAINSIZE
         elif 'valid' in datatype:
-            return 71052, 71052
+            return self.VALIDSIZE, self.VALIDSIZE
         else:
             # test
-            return 39975, 39975
+            return self.TESTSIZE, self.TESTSIZE
 
     def _set_chunk_idx_to_file(self):
         folder = self._get_data_folder()
@@ -119,8 +123,6 @@ class FullSplitTeacher(ChunkTeacher):
         Given the datatype (train/test/valid), return the list of chunk IDs that
         correspond to that split.
         """
-        all_subdirs = sorted([x for x in os.listdir(self.folder) if 'README' not in x])
-        self.chunk_idx_to_file = {i: x for i, x in enumerate(all_subdirs)}
         all_chunk_idxs = list(self.chunk_idx_to_file.keys())
         if 'train' in datatype:
             return all_chunk_idxs[:-2]
@@ -129,7 +131,7 @@ class FullSplitTeacher(ChunkTeacher):
         else:
             return [all_chunk_idxs[-1]]
 
-    def load_chunk_idx(self, chunk_idx: int) -> List[Tuple[str, str]]:
+    def load_from_chunk(self, chunk_idx: int) -> List[Tuple[str, str]]:
         """
         Given the chunk index, load examples from that chunk.
 
@@ -137,7 +139,7 @@ class FullSplitTeacher(ChunkTeacher):
         to form the Message object that is returned by the teacher.
         """
         output = []
-        chunk_path = os.path.join(self.folder, self.chunk_idx_to_file[chunk_idx],)
+        chunk_path = os.path.join(self.folder, self.chunk_idx_to_file[chunk_idx])
         for wiki_file in os.listdir(chunk_path):
             wiki_file_path = os.path.join(chunk_path, wiki_file)
             with open(wiki_file_path) as wf:
