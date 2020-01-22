@@ -54,6 +54,19 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
 }
 
 
+def fp16_available() -> bool:
+    try:
+        import apex.fp16_utils  # noqa: F401
+
+        return True
+    except ImportError:
+        warn_once(
+            'You set --fp16 true, but fp16 is unavailable. To use fp16, please '
+            'install APEX from https://github.com/NVIDIA/apex.'
+        )
+        return False
+
+
 def neginf(dtype):
     """Return a representable finite number near -inf for a dtype."""
     if dtype is torch.float16:
