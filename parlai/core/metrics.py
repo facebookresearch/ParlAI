@@ -31,7 +31,7 @@ except ImportError:
 
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
-BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3'}
+BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS
 
 
@@ -70,8 +70,10 @@ class Metric(ABC):
     def __iadd__(self, other):
         return self.__radd__(other)
 
-    def __add__(self, other):
-        return self.__radd__(other)
+    def __radd__(self, other):
+        if other is None:
+            return self
+        return self.__add__(other)
 
     def __str__(self) -> str:
         return f'{self.value():.4g}'
@@ -108,7 +110,7 @@ class SumMetric(Metric):
             assert isinstance(sum_, (int, float))
             self._sum = sum_
 
-    def __radd__(self, other: Optional['SumMetric']) -> 'SumMetric':
+    def __add__(self, other: Optional['SumMetric']) -> 'SumMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
         if other is None:
@@ -131,7 +133,7 @@ class AverageMetric(Metric):
         self._numer = self.as_number(numer)
         self._denom = self.as_number(denom)
 
-    def __radd__(self, other: Optional['AverageMetric']) -> 'AverageMetric':
+    def __add__(self, other: Optional['AverageMetric']) -> 'AverageMetric':
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
         if other is None:
