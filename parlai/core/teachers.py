@@ -31,7 +31,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple, TypeVar, Generic
+from typing import List, Tuple
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -56,9 +56,6 @@ import os
 import torch
 import json
 import argparse
-
-
-T = TypeVar('T')
 
 
 class DataLoader(Thread):
@@ -2094,7 +2091,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.chunks.put(c)
 
     @abstractmethod
-    def load_from_chunk(self, chunk_idx: int) -> List[Generic[T, ...]]:
+    def load_from_chunk(self, chunk_idx: int):
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
@@ -2104,7 +2101,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def create_message(self, queue_output: Generic[T, ...]) -> 'Message':
+    def create_message(self, queue_output) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
         """
