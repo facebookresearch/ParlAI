@@ -121,7 +121,7 @@ html_theme_options = {'collapse_navigation': False}
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_style = 'css/parlai_theme.css'
+html_css_files = ['css/parlai_theme.css']
 
 
 # -- Options for HTMLHelp output ------------------------------------------
