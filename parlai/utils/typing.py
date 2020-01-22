@@ -26,7 +26,7 @@ class _Shared(Dict[str, Any]):
 TShared = TypeVar('TShared', bound=_Shared)
 
 TScalar = Union[int, float, torch.Tensor]
-TScalar.__doc__ = """
+"""
 ParlAI type to represent an object that is theoretically expressible as a scalar value.
 Ints and floats are clearly scalars, and torch.Tensors can be represented by a scalar if
 Tensor.numel() == 1. Used as input type for classes derived from Metric.
