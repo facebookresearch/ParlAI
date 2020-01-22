@@ -14,12 +14,13 @@ import re
 from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
+import queue
 from typing import Union, List, Optional, Tuple, Set
 
 import torch
 
 from parlai.core.message import Message
-from parlai.utils.misc import no_lock, round_sigfigs, warn_once
+from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.typing import TScalar
 
 try:
@@ -396,14 +397,13 @@ class Metrics(object):
         self.metrics_list = Metrics._infer_metrics(opt.get('metrics', 'default'))
         self.eval_pr = [1, 5, 10, 100]
 
-        if opt.get('numthreads', 1) > 1:
-            # self.manager = multiprocessing.Manager()
-            # self.metrics = self.manager.dict()
-            # self.__lock = self.manager.Lock()
-            self.__lock = no_lock()
+        self._hogwild = opt.get('numthreads', 1) > 1
+        if self._hogwild:
+            # Hogwild metrics tracking works by keeping a queue that workers can
+            # push updates to. the main worker works through the queue at report
+            # time. We could add some buffering to improve performance, but we
+            # are deprioritizing hogwild performance at this time.
             self._queue = multiprocessing.Queue()
-        else:
-            self.__lock = no_lock()
 
     def __str__(self):
         return str(self.metrics)
@@ -411,9 +411,6 @@ class Metrics(object):
     def __repr__(self):
         representation = super().__repr__()
         return representation.replace('>', ': {}>'.format(repr(self.metrics)))
-
-    def _lock(self):
-        return self.__lock
 
     def _update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
@@ -442,9 +439,10 @@ class Metrics(object):
         """
         Add the metric to our records.
         """
-        # newvalue = self.metrics.get(key) + value
-        # self.metrics[key] = newvalue
-        self._queue.put((key, value))
+        if self._hogwild:
+            self._queue.put((key, value))
+        else:
+            self.metrics[key] = self.metrics.get(key) + value
 
     def update(self, observation: Message, labels: List[str]) -> None:
         """
@@ -488,7 +486,7 @@ class Metrics(object):
         """
         Report the metrics over all data seen so far.
         """
-        while not self._queue.empty():
+        while self._hogwild and not self._queue.empty():
             try:
                 key, v = self._queue.get()
                 self.metrics[key] = self.metrics.get(key) + v
@@ -504,6 +502,11 @@ class Metrics(object):
         """
         Clear all the metrics.
         """
-        # TODO: rename to reset for consistency with rest of ParlAI
-        with self._lock():
-            self.metrics.clear()
+        # drain the queue to ensure
+        while self._hogwild and not self._queue.empty():
+            try:
+                self._queue.get()
+            except queue.Empty:
+                break
+
+        self.metrics.clear()
