@@ -8,7 +8,7 @@ Messenger Runner.
 """
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.messenger.messenger_manager import MessengerManager
-import shared_utils as utils
+import parlai.chat_service.core.shared_utils as utils
 
 
 SERVICE_NAME = 'messenger'

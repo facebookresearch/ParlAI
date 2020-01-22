@@ -4,11 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from copy import deepcopy
-
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+
+from copy import deepcopy
+import random
+import pickle
+import os
 
 
 class InteractiveSimpleWorld(DialogPartnerWorld):
@@ -107,3 +111,49 @@ class InteractiveSimpleWorld(DialogPartnerWorld):
             print("CHAT DONE ")
             print("\n... preparing new chat... \n")
             self.cnt = 0
+
+
+class InteractiveSelfchatWorld(SelfChatBaseWorld):
+    def init_contexts(self):
+        print('[ loading contexts.. ]')
+        data_path = os.path.join(
+            self.opt['datapath'], 'light_dialogue', 'light_environment.pkl'
+        )
+        file = open(data_path, 'rb')
+        self.db = pickle.load(file)
+        # compact list of rooms
+        rs = []
+        for _k, r in self.db['rooms'].items():
+            rs.append(r)
+        self.db['rooms'] = rs
+        # compact list of characters
+        cs = []
+        for _k, c in self.db['characters'].items():
+            cs.append(c)
+        self.db['all_characters'] = cs
+
+    def make_context(self, room, c1, c2):
+        s = '_task_speech\n'
+        s += (
+            '_setting_name '
+            + room.get('setting', '')
+            + ', '
+            + room.get('category', '')
+            + '\n'
+        )
+        s += '_setting_desc ' + room.get('description', '') + '\n'
+        s += '_partner_name ' + c2.get('name', '') + '\n'
+        s += '_self_name ' + c1.get('name', '') + '\n'
+        s += '_self_persona ' + random.choice(c1.get('personas', ['']))
+        return s
+
+    def get_contexts(self):
+        room = random.choice(self.db['rooms'])
+        if len(room.get('in_characters', [])) > 0:
+            c1 = self.db['characters'][random.choice(room['in_characters'])]
+        else:
+            c1 = random.choice(self.db['all_characters'])
+        c2 = random.choice(self.db['all_characters'])
+        p1 = self.make_context(room, c1, c2)
+        p2 = self.make_context(room, c2, c1)
+        return [p1, p2]

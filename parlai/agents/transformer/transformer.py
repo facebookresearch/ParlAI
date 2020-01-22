@@ -153,7 +153,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             type=str,
             default='sqrt',
             choices=['cosine', 'dot', 'sqrt'],
-            help='similarity for basic attention mechanism'
+            help='similarity for basic attention mechanism '
             'when using transformer to encode memories',
         )
         # model specific arguments
