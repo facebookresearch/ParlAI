@@ -361,9 +361,9 @@ class DialogPartnerWorld(World):
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
     @lru_cache(maxsize=1)
     def num_examples(self):
@@ -461,9 +461,9 @@ class MultiAgentDialogWorld(World):
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
     def shutdown(self):
         """
@@ -696,7 +696,8 @@ class MultiWorld(World):
         Report aggregate metrics across all subworlds.
         """
         metrics = aggregate_metrics(self.worlds)
-        self.total_exs += metrics.get('exs', 0)
+        if 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
         return metrics
 
     def reset(self):

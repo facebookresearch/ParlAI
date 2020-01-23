@@ -22,7 +22,7 @@ import torch
 
 from parlai.core.message import Message
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.typing import TScalar
+from parlai.utils.typing import TScalar, TVector
 
 try:
     import torch.multiprocessing as multiprocessing
@@ -114,6 +114,15 @@ class Metric(ABC):
     @classmethod
     def as_int(cls, obj: TScalar) -> int:
         return int(cls.as_number(obj))
+
+    @classmethod
+    def build_many(cls, *objs: List[TVector]) -> List['Metric']:
+        """
+        Construct many of a Metric from the base parts.
+
+        Useful if you separately compute numerators and denomenators, etc.
+        """
+        return [cls(*items) for items in zip(*objs)]
 
 
 class SumMetric(Metric):
@@ -424,10 +433,7 @@ class Metrics(object):
         Report the metrics over all data seen so far.
         """
         self._sync()
-        return {
-            k: v.value() if isinstance(v, Metric) else v
-            for k, v in self._metrics.items()
-        }
+        return {k: v for k, v in self._metrics.items()}
 
     def _sync(self):
         """

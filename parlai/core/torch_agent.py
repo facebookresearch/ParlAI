@@ -35,13 +35,14 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
-from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
+from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.torch import (
     argsort,
     fp16_optimizer_wrapper,
     padded_tensor,
     fp16_available,
 )
+from parlai.core.metrics import Metrics, AverageMetric, SumMetric
 
 
 class Batch(AttrDict):
@@ -633,13 +634,10 @@ class TorchAgent(ABC, Agent):
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
+            # batch_metrics keeps track of batch-level or global-level metrics
+            self.batch_metrics = Metrics(opt.get('numthreads', 1) > 1)
+            # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
-            # gradient norms
-            self.metrics['gnorm'] = 0.0
-            # gradient clipping rate
-            self.metrics['clip'] = 0.0
-            # number of calls to optimizer.step()
-            self.metrics['updates'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -647,6 +645,7 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
+            self.batch_metrics = shared['batch_metrics']
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -886,22 +885,16 @@ class TorchAgent(ABC, Agent):
 
         Report includes learning rate and number of training updates.
         """
-        metrics = {}
+        report = self.batch_metrics.report()
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
-            metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['total_train_updates'] = self._number_training_updates
-
-        steps = self.metrics['updates']
-        if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
-            metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
-            metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
+            report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
+        report['total_train_updates'] = self._number_training_updates
 
         if self.use_cuda:
-            metrics['gpu_mem_percent'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+            report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
 
-        return metrics
+        return report
 
     def _gpu_usage(self):
         """
@@ -1040,6 +1033,7 @@ class TorchAgent(ABC, Agent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
+        shared['batch_metrics'] = self.batch_metrics
 
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -1664,9 +1658,7 @@ class TorchAgent(ABC, Agent):
         Reset all TorchAgentMetrics.
         """
         super().reset_metrics()
-        self.metrics['gnorm'] = 0.0
-        self.metrics['clip'] = 0.0
-        self.metrics['updates'] = 0
+        self.batch_metrics.clear()
 
     def act(self):
         """
@@ -1784,10 +1776,12 @@ class TorchAgent(ABC, Agent):
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
-            self.metrics['gnorm'] += grad_norm
-            self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
+            self.batch_metrics.add('gnorm', AverageMetric(grad_norm))
+            self.batch_metrics.add(
+                'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
+            )
 
-        self.metrics['updates'] += 1
+        self.batch_metrics.add('updates', SumMetric(1))
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor

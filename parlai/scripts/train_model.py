@@ -30,6 +30,7 @@ import numpy as np
 import os
 import signal
 
+from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
@@ -476,6 +477,9 @@ class TrainLoop:
                 f,
             )
 
+    def _values_only(self, report):
+        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
+
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
@@ -495,7 +499,7 @@ class TrainLoop:
         )
         v = valid_report.copy()
         v['train_time'] = self.train_time.time()
-        self.valid_reports.append(v)
+        self.valid_reports.append(self._values_only(v))
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
@@ -522,6 +526,9 @@ class TrainLoop:
             new_valid = valid_report['tasks'][subtask][validation_metric]
         else:
             new_valid = valid_report[opt['validation_metric']]
+
+        if isinstance(new_valid, Metric):
+            new_valid = new_valid.value()
 
         # check if this is the best validation so far
         if (

@@ -282,6 +282,10 @@ class TimeLogger:
             log dict contains pairs of all items to log, which includes
             percentage complete and projected time left if total > 0
         """
+        from parlai.core.metrics import Metric  # delay import to prevent circular dep
+
+        if isinstance(done, Metric):
+            done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
         log = {}
