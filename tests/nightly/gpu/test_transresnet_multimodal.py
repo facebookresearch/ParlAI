@@ -45,8 +45,8 @@ class TestTransresnet(unittest.TestCase):
 
         # Overall
         self.assertAlmostEqual(test['accuracy'], 0.3667, places=4)
-        self.assertAlmostEqual(test['hits@5'], 0.633, places=4)
-        self.assertAlmostEqual(test['hits@10'], 0.767, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.6333, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.7667, places=4)
 
         # First round
         self.assertAlmostEqual(test['first_round']['hits@1/100'], 0.2, places=4)
@@ -55,7 +55,7 @@ class TestTransresnet(unittest.TestCase):
         self.assertAlmostEqual(test['second_round']['hits@1/100'], 0.5, places=4)
 
         # Third round
-        self.assertEqual(test['third_round+']['hits@1/100'], 0.4, places=4)
+        self.assertAlmostEqual(test['third_round+']['hits@1/100'], 0.4, places=4)
 
 
 if __name__ == '__main__':

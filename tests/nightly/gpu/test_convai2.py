@@ -27,7 +27,7 @@ class TestConvai2Seq2Seq(unittest.TestCase):
         import projects.convai2.baselines.seq2seq.eval_hits as eval_hits
 
         report = eval_hits.main(args=[])
-        self.assertAlmostEqual(report['hits@1'], 0.1250, places=4)
+        self.assertAlmostEqual(report['hits@1'], 0.1247, places=4)
 
     def test_seq2seq_f1(self):
         import projects.convai2.baselines.seq2seq.eval_f1 as eval_f1
