@@ -355,7 +355,8 @@ jobs:
           working_directory: ~/ParlAI/
           name: more build website dependencies
           command: |
-            pip install s3cmd linkchecker
+            pip install s3cmd
+            sudo apt-get install linkchecker
       - save_cache:
           key: deps-bw-v9{{ checksum "requirements.txt" }}
           paths:
@@ -367,6 +368,7 @@ jobs:
           command: |
             python -m http.server --directory website/build >/dev/null &
             linkchecker http://localhost:8000/
+            kill %1
 
   deploy_website:
     <<: *standard_cpu37
