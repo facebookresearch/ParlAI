@@ -486,7 +486,10 @@ class Metrics(object):
                 if uk in ALL_METRICS:
                     # don't let the user override our metrics
                     uk = f'USER_{k}'
-                assert isinstance(k, str)
+                assert isinstance(uk, str), type(k)
+                if not isinstance(v, Metric):
+                    warn_once(f'Metric {uk} is assumed to be averaged per example.')
+                    v = AverageMetric(v)
                 assert isinstance(v, Metric)
                 self._add(uk, v)
 
