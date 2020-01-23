@@ -11,10 +11,10 @@ VQA (Visual Question Answering).
 Its goal is to provide researchers:
 
 - **80+ popular datasets available all in one place, with the same API**, among them [PersonaChat](https://arxiv.org/abs/1801.07243), [DailyDialog](https://arxiv.org/abs/1710.03957), [Wizard of Wikipedia](https://openreview.net/forum?id=r1l73iRqKm), [Empathetic Dialogues](https://arxiv.org/abs/1811.00207), [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [MS MARCO](http://www.msmarco.org/), [QuAC](https://www.aclweb.org/anthology/D18-1241), [HotpotQA](https://hotpotqa.github.io/), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php),  [Image Chat](https://arxiv.org/abs/1811.00945), [VQA](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py).
-- a wide set of [**reference models**](https://www.parl.ai/docs/agents_list.html) -- from retrieval baselines to transformers.
+- a wide set of [**reference models**](https://parl.ai/docs/agents_list.html) -- from retrieval baselines to Transformers.
 - a large [zoo of **pretrained models**](https://parl.ai/docs/zoo.html) ready to use off-the-shelf
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
-- **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
+- **integration with [Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)** to connect agents with humans in a chat interface
 - a large range of **helpers to create your own agents** and train on several tasks with **multitasking**
 - **multimodality**, some tasks use text and images
 
@@ -24,7 +24,7 @@ or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrj
 
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
-<p align="center"><img width="90%" src="docs/source/_static/img/parlai_example.png" /></p>
+<p align="center"><img width="90%" src="https://raw.githubusercontent.com/facebookresearch/ParlAI/master/docs/source/_static/img/parlai_example.png" /></p>
 
 ## Installing ParlAI
 
@@ -50,33 +50,33 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if
  - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
  - [Basics: world, agents, teachers, action and observations](https://parl.ai/docs/tutorial_basic.html)
  - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
- - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html)
- - [List of available agents](./parlai/agents)
+ - [Creating a dataset/task](http://parl.ai/docs/tutorial_task.html)
+ - [List of available agents](https://parl.ai/docs/agents_list.html)
  - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#)
  - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
  - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
- - [Plug into Facebook Messenger](http://parl.ai/docs/tutorial_messenger.html)
+ - [Plug into Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)
 
 
 ## Examples
 
-A large set of examples can be found in [this directory](./examples). Here are a few of them.
+A large set of scripts can be found in `parlai/scripts`. Here are a few of them.
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
 
 Display 10 random examples from the SQuAD task
 ```bash
-python examples/display_data.py -t squad
+python -m parlai.scripts.display_data -t squad
 ```
 
 Evaluate an IR baseline model on the validation set of the Personachat task:
 ```bash
-python examples/eval_model.py -m ir_baseline -t personachat -dt valid
+python -m parlai.scripts.eval_model -m ir_baseline -t personachat -dt valid
 ```
 
 Train a single layer transformer on PersonaChat (requires pytorch and torchtext).
 Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
-python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
+python -m parlai.scripts.train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
 
 
@@ -85,13 +85,13 @@ python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/mod
 
 The code is set up into several main directories:
 
-- [**core**](./parlai/core): contains the primary code for the framework
-- [**agents**](./parlai/agents): contains agents which can interact with the different tasks (e.g. machine learning models)
-- [**examples**](./parlai/examples): contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
-- [**tasks**](./parlai/tasks): contains code for the different tasks available from within ParlAI
-- [**mturk**](./parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
-- [**messenger**](./parlai/chat_service/services/messenger): contains code for interfacing with Facebook Messenger
-- [**zoo**](./parlai/zoo): contains code to directly download and use pretrained models from our model zoo
+- [**core**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/core): contains the primary code for the framework
+- [**agents**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents): contains agents which can interact with the different tasks (e.g. machine learning models)
+- [**scripts**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts): contains a number of useful scripts, like training, evaluating, interactive chatting, ...
+- [**tasks**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks): contains code for the different tasks available from within ParlAI
+- [**mturk**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
+- [**messenger**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/messenger): contains code for interfacing with Facebook Messenger
+- [**zoo**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo): contains code to directly download and use pretrained models from our model zoo
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).

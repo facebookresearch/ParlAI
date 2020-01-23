@@ -348,19 +348,27 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v8{{ checksum "requirements.txt" }}
+          key: deps-bw-v9{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu14
+      - run:
+          working_directory: ~/ParlAI/
+          name: more build website dependencies
+          command: |
+            pip install s3cmd
+            sudo apt-get install linkchecker
       - save_cache:
-          key: deps-bw-v8{{ checksum "requirements.txt" }}
+          key: deps-bw-v9{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:
+          name: check for bad links
           working_directory: ~/ParlAI/
-          name: temp check
           command: |
-            pip install s3cmd
+            python -m http.server --directory website/build >/dev/null &
+            linkchecker http://localhost:8000/
+            kill %1
 
   deploy_website:
     <<: *standard_cpu37
