@@ -652,7 +652,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
     A teacher that loads data using Pytorch Datasets.
 
     For details on how to use, please follow the tutorial here:
-    http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
+    http://parl.ai/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
     """
 
     def __init__(self, opt, shared=None):

@@ -30,7 +30,7 @@ described entirely in natural language. Within that game world, we collect 11,00
 character interactions (talking and acting).
 
 You can view the data or train your own ParlAI agent on the LIGHT tasks with
-`-t light_dialog`. See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
+`-t light_dialog`. See the [ParlAI quickstart for help](http://parl.ai/docs/tutorial_quick.html).
 
 ## Pretrained Models
 
