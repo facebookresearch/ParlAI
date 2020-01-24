@@ -117,7 +117,8 @@ class Teacher(Agent):
                 self.metrics = shared['metrics']
             else:
                 self.metrics = TeacherMetrics(
-                    opt.get('numthreads', 1) > 1, opt.get('metrics', 'default')
+                    threadsafe=opt.get('numthreads', 1) > 1,
+                    metrics_list=opt.get('metrics', 'default'),
                 )
         self.epochDone = False
 

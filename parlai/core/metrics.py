@@ -442,7 +442,7 @@ class Metrics(object):
         """
         if not self._threadsafe:
             return
-        while self._queue.empty():
+        while not self._queue.empty():
             try:
                 yield self._queue.get()
             except queue.Empty:
