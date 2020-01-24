@@ -405,7 +405,7 @@ class Metrics(object):
             self._queue = multiprocessing.Queue()
 
     def __str__(self):
-        return str(self.metrics)
+        return str(self._metrics)
 
     def __repr__(self):
         return f'Metrics({repr(self._metrics)})'
@@ -426,7 +426,7 @@ class Metrics(object):
         self._sync()
         return {
             k: v.value() if isinstance(v, Metric) else v
-            for k, v in self.metrics.items()
+            for k, v in self._metrics.items()
         }
 
     def _sync(self):
@@ -434,7 +434,7 @@ class Metrics(object):
         Process all items on the queue to ensure it is up to date.
         """
         for key, value in self._drain_queue():
-            self._metrics[key] = self.metrics.get(key) + value
+            self._metrics[key] = self._metrics.get(key) + value
 
     def _drain_queue(self):
         """
@@ -454,7 +454,7 @@ class Metrics(object):
         """
         for _ in self._drain_queue():
             pass
-        self.metrics.clear()
+        self._metrics.clear()
 
 
 class TeacherMetrics(Metrics):
