@@ -615,10 +615,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Train on a single batch of examples.
         """
-        if batch.text_vec is not None:
-            batchsize = batch.text_vec.size(0)
-        elif batch.image is not None:
-            batchsize = len(batch.image)
         # helps with memory usage
         # note we want to use the opt's batchsize instead of the observed batch size
         # in case dynamic batching is in use
@@ -637,7 +633,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 print(
                     '| WARNING: ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
-                    'truncate the inputs to the model.: ' + str(e)
+                    'truncate the inputs to the model.'
                 )
                 self.metrics['total_skipped_batches'] += 1
                 # gradients are synced on backward, now this model is going to be

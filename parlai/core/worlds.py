@@ -174,6 +174,12 @@ class World(object):
         """
         raise NotImplementedError('Implement in subworld')
 
+    def get_model_agent(self):
+        """
+        Return model agent, if applicable.
+        """
+        raise NotImplementedError('Implement in subworld')
+
     def get_acts(self):
         """
         Return the last act of each agent.
@@ -317,6 +323,12 @@ class DialogPartnerWorld(World):
         """
         return self.get_agents()[0]
 
+    def get_model_agent(self):
+        """
+        Return model agent, if applicable.
+        """
+        return self.get_agents()[1]
+
     def parley(self):
         """
         Agent 0 goes first.
@@ -427,6 +439,12 @@ class MultiAgentDialogWorld(World):
         Return task agent.
         """
         return self.get_agents()[0]
+
+    def get_model_agent(self):
+        """
+        Return model agent.
+        """
+        return self.get_agents()[1]
 
     def epoch_done(self):
         """
@@ -616,6 +634,12 @@ class MultiWorld(World):
         Not possible/well-defined in this setting.
         """
         raise RuntimeError('get_task_agent not defined for Multiworld')
+
+    def get_model_agent(self):
+        """
+        Not implemented.
+        """
+        raise NotImplementedError('Not implemented in MultiWorld.')
 
     def get_acts(self):
         """
@@ -916,6 +940,12 @@ class BatchWorld(World):
         """
         return self.world.get_task_agent()
 
+    def get_model_agent(self):
+        """
+        Return model agent of the root world.
+        """
+        return self.world.get_model_agent()
+
     def episode_done(self):
         """
         Return whether the episode is done.
@@ -996,7 +1026,7 @@ class DynamicBatchWorld(World):
                 "Dynamic batch only works in a fixed dialog world with two agents."
             )
 
-        if not hasattr(world.get_agents()[1], 'batch_act'):
+        if not hasattr(world.get_model_agent(), 'batch_act'):
             raise TypeError("Model agent doesn't have batch_act.")
 
         self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
@@ -1015,7 +1045,6 @@ class DynamicBatchWorld(World):
         self.world = world
         # TODO: maybe generalize this
         self.max_size = (self.l_truncate + self.truncate) * opt['batchsize']
-        self.rng = random.Random(4)
 
         # buffer worlds
         self.worlds = [
@@ -1092,8 +1121,8 @@ class DynamicBatchWorld(World):
             if hasattr(self.world, 'parley_init'):
                 self.worlds[i].parley_init()
 
-            act = self.worlds[i].get_agents()[0].act()
-            obs = self.worlds[i].get_agents()[1].observe(act)
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
 
             self._scores[i] = self._score(obs)
@@ -1144,23 +1173,24 @@ class DynamicBatchWorld(World):
 
         # Always have a batch size that's a multiple of 4, for fp16's sake.
         while len(batch) > 4 and len(batch) % 4 != 0:
-            batch.pop(0)
+            # pop off the shortest one. it's easiest to pack in later
+            batch.pop(-1)
 
         # double check our assumed invariant
         assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
 
         # great, this batch is good to go! let's run it!
-        acts = self.world.get_agents()[1].batch_act([self._obs[i] for i in batch])
+        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result
-            self.worlds[i].get_agents()[0].observe(act)
+            self.worlds[i].get_task_agent().observe(act)
             # and that the agent copies saw their own voice
-            self.worlds[i].get_agents()[1].self_observe(act)
+            self.worlds[i].get_model_agent().self_observe(act)
 
             # move these worlds forward
-            act = self.worlds[i].get_agents()[0].act()
-            obs = self.worlds[i].get_agents()[1].observe(act)
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)
             self._obs[i] = obs
 
@@ -1172,9 +1202,7 @@ class DynamicBatchWorld(World):
         return self.total_exs / self.num_examples()
 
     def report(self):
-        report = self.world.report()
-        # override that world's view of 'exs'
-        return report
+        return self.world.report()
 
 
 class HogwildProcess(Process):
@@ -1366,6 +1394,12 @@ class HogwildWorld(World):
         Return task agent of inner world.
         """
         return self.inner_world.get_task_agent()
+
+    def get_model_agent(self):
+        """
+        Return model agent of inner world.
+        """
+        return self.inner_world.get_model_agent()
 
     def get_total_exs(self):
         """

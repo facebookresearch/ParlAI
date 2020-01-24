@@ -385,7 +385,7 @@ class DictionaryAgent(Agent):
         # return index from token, or unk_token's index, or None
         return self.tok2ind.get(key, self._unk_token_idx)
 
-    def _int_lookup(self, key):
+    def _index_lookup(self, key):
         # return token from index, or unk_token
         return self.ind2tok.get(key, self.unk_token)
 
@@ -401,7 +401,7 @@ class DictionaryAgent(Agent):
         if type(key) == str:
             return self._word_lookup(key)
         if type(key) == int:
-            return self._int_lookup(key)
+            return self._index_lookup(key)
 
     def __len__(self):
         return len(self.tok2ind)

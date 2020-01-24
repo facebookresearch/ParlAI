@@ -30,7 +30,7 @@ _DEFAULT_OPTIONS = {
 
 
 class TestDynamicBatching(unittest.TestCase):
-    def _test_correct_processed(self, num_goal, **kwargs: Dict[str, Any]):
+    def _test_correct_processed(self, num_goal: int, **kwargs: Dict[str, Any]):
         opt = Opt({**_DEFAULT_OPTIONS, **kwargs})
         train_log, valid_report, test_report = testing_utils.train_model(opt)
         self.assertEqual(valid_report['exs'], num_goal)
