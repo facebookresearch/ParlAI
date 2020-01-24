@@ -15,6 +15,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 from numbers import Number
 import queue
+import functools
 from typing import Union, List, Optional, Tuple, Set
 
 import torch
@@ -53,6 +54,7 @@ re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
 
+@functools.total_ordering
 class Metric(ABC):
     """
     Base class for storing metrics.
@@ -83,6 +85,18 @@ class Metric(ABC):
 
     def __float__(self) -> float:
         return self.value()
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, Metric):
+            return self.value() == other.value()
+        else:
+            return self.value() == other
+
+    def __lt__(self, other: Any) -> bool:
+        if isinstance(other, Metric):
+            return self.value() < other.value()
+        else:
+            return self.value() < other
 
     @classmethod
     def as_number(cls, obj: TScalar) -> Union[int, float]:
