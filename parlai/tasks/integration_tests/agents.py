@@ -325,6 +325,12 @@ class MultiturnCandidateTeacher(CandidateTeacher):
         return self.example_size * self.num_episodes()
 
 
+class MultiturnTeacher(MultiturnCandidateTeacher):
+    """Simple alias."""
+
+    pass
+
+
 class NocandidateTeacher(CandidateTeacher):
     """
     Strips the candidates so the model can't see any options.

@@ -633,13 +633,13 @@ class MultiWorld(World):
         """
         Not possible/well-defined in this setting.
         """
-        raise RuntimeError('get_task_agent not defined for Multiworld')
+        return self.worlds[self.world_idx].get_task_agent()
 
     def get_model_agent(self):
         """
         Not implemented.
         """
-        raise NotImplementedError('Not implemented in MultiWorld.')
+        return self.worlds[self.world_idx].get_model_agent()
 
     def get_acts(self):
         """

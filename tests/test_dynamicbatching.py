@@ -32,7 +32,7 @@ _DEFAULT_OPTIONS = {
 class TestDynamicBatching(unittest.TestCase):
     def _test_correct_processed(self, num_goal: int, **kwargs: Dict[str, Any]):
         opt = Opt({**_DEFAULT_OPTIONS, **kwargs})
-        train_log, valid_report, test_report = testing_utils.train_model(opt)
+        valid_report, test_report = testing_utils.train_model(opt)
         self.assertEqual(valid_report['exs'], num_goal)
         self.assertEqual(test_report['exs'], num_goal)
 
@@ -69,13 +69,13 @@ class TestDynamicBatching(unittest.TestCase):
     def test_multiworld(self):
         self._test_correct_processed(
             NUM_TEST + NUM_TEST * EXAMPLE_SIZE,
-            task='integration_tests:variable_length,integration_tests:multipass',
+            task='integration_tests:variable_length,integration_tests:multiturn',
         )
 
     def test_multiworld_stream(self):
         self._test_correct_processed(
             NUM_TEST + NUM_TEST * EXAMPLE_SIZE,
-            task='integration_tests:variable_length,integration_tests:multipass',
+            task='integration_tests:variable_length,integration_tests:multiturn',
             datatype='train:stream',
         )
 
