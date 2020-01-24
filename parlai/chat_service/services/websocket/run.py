@@ -8,7 +8,7 @@ Websocket Runner.
 """
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.websocket.websocket_manager import WebsocketManager
-from parlai.chat_service.services.messenger import shared_utils as utils
+from parlai.chat_service.core import shared_utils as utils
 
 
 SERVICE_NAME = 'websocket'

@@ -26,11 +26,9 @@ import torch
 try:
     from pytorch_pretrained_bert import BertModel
 except ImportError:
-    raise Exception(
-        (
-            "BERT rankers needs pytorch-pretrained-BERT installed. \n "
-            "pip install pytorch-pretrained-bert"
-        )
+    raise ImportError(
+        "BERT rankers needs pytorch-pretrained-BERT installed. \n "
+        "pip install pytorch-pretrained-bert"
     )
 
 
