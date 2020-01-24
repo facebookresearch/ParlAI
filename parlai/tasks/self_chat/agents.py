@@ -7,8 +7,7 @@
 Model self chat.
 """
 
-from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.teachers import Teacher
+from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 
 
 class DefaultTeacher(Teacher):
@@ -18,7 +17,7 @@ class DefaultTeacher(Teacher):
         )
 
 
-def create_agents(opt, task):
+def create_agents(opt):
     if not opt.get('interactive_task', False):
         return create_task_agent_from_taskname(opt)
     else:

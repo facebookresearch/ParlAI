@@ -9,6 +9,6 @@ extend-ignore =
     E266
     W503
     F403
-select = C,E,F,W,B,B950,RST
+select = C,E,F,W,B,B950,RST,PAI,BLK
 
 max-line-length=80

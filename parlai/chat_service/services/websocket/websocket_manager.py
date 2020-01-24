@@ -16,7 +16,7 @@ import sys
 from parlai.core.agents import create_agent
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
-import parlai.chat_service.services.messenger.shared_utils as shared_utils
+import parlai.chat_service.core.shared_utils as shared_utils
 from parlai.chat_service.services.websocket.sockets import MessageSocketHandler
 from agents import WebsocketAgent
 import tornado
@@ -43,7 +43,7 @@ class WebsocketManager(ChatServiceManager):
         super().__init__(opt)
         self.opt = opt
         self.port = opt.get('port')
-        self.subs = []
+        self.subs = {}
 
         self.app = None
         self.debug = opt.get('is_debug', False)
@@ -227,7 +227,7 @@ class WebsocketManager(ChatServiceManager):
                 (
                     r"/websocket",
                     MessageSocketHandler,
-                    {'message_callback': message_callback},
+                    {'subs': self.subs, 'message_callback': message_callback},
                 )
             ],
             debug=self.debug,
@@ -254,10 +254,10 @@ class WebsocketManager(ChatServiceManager):
         )
 
         asyncio.set_event_loop(asyncio.new_event_loop())
-        if socket_id not in MessageSocketHandler.subs:
+        if socket_id not in self.subs:
             self.agent_id_to_overworld_future[socket_id].cancel()
             return
-        return MessageSocketHandler.subs[socket_id].write_message(message)
+        return self.subs[socket_id].write_message(message)
 
     def observe_payload(self, socket_id, payload, quick_replies=None):
         """
@@ -278,10 +278,10 @@ class WebsocketManager(ChatServiceManager):
         payload = json.dumps(message)
 
         asyncio.set_event_loop(asyncio.new_event_loop())
-        if socket_id not in MessageSocketHandler.subs:
+        if socket_id not in self.subs:
             self.agent_id_to_overworld_future[socket_id].cancel()
             return
-        return MessageSocketHandler.subs[socket_id].write_message(message)
+        return self.subs[socket_id].write_message(message)
 
     def restructure_message(self):
         """

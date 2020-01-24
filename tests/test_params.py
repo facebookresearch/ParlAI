@@ -9,7 +9,6 @@ Test ParlaiParser and other opt/params.py code.
 """
 
 import os
-import re
 import json
 import unittest
 from parlai.core.params import ParlaiParser
@@ -41,47 +40,45 @@ class TestParlaiParser(unittest.TestCase):
         Test whether upgrade_opt works.
         """
         with testing_utils.tempdir() as tmp:
-            with testing_utils.capture_output() as _:
-                modfn = os.path.join(tmp, 'model')
-                with open(modfn, 'w') as f:
-                    f.write('Test.')
-                optfn = modfn + '.opt'
-                base_opt = {
-                    'model': 'tests.test_params:_ExampleUpgradeOptAgent',
-                    'dict_file': modfn + '.dict',
-                    'model_file': modfn,
-                }
-                with open(optfn, 'w') as f:
-                    json.dump(base_opt, f)
+            modfn = os.path.join(tmp, 'model')
+            with open(modfn, 'w') as f:
+                f.write('Test.')
+            optfn = modfn + '.opt'
+            base_opt = {
+                'model': 'tests.test_params:_ExampleUpgradeOptAgent',
+                'dict_file': modfn + '.dict',
+                'model_file': modfn,
+            }
+            with open(optfn, 'w') as f:
+                json.dump(base_opt, f)
 
-                pp = ParlaiParser(True, True)
-                opt = pp.parse_args(['--model-file', modfn])
-                agents.create_agent(opt)
+            pp = ParlaiParser(True, True)
+            opt = pp.parse_args(['--model-file', modfn])
+            agents.create_agent(opt)
 
     def test_recommendations_single(self):
         """
         Test whether recommended args work for non-group.
         """
-        parser = ParlaiParser()
+        parser = ParlaiParser(False, False)
         parser.add_argument(
             '-bs',
             '--batchsize',
             default=1,
             type=int,
             help='batch size for minibatch training schemes',
-            recommended="10",
+            recommended=1337,
         )
-
-        with testing_utils.capture_output() as _:
-            parser.parse_args()
+        parser.parse_args([])
         help_str = parser.format_help()
-        assert re.search(r'--batchsize[^\n]*\n[^\n]*\(recommended: 10\)', help_str)
+        assert 'recommended:' in help_str
+        assert '1337' in help_str
 
     def test_recommendations_group(self):
         """
         Test whether recommended args work for a group.
         """
-        parser = ParlaiParser()
+        parser = ParlaiParser(False, False)
         parser_grp = parser.add_argument_group('Test Group')
         parser_grp.add_argument(
             '-bs',
@@ -89,16 +86,15 @@ class TestParlaiParser(unittest.TestCase):
             default=1,
             type=int,
             help='batch size for minibatch training schemes',
-            recommended=[5, 10, 15],
+            recommended=1337,
         )
-        with testing_utils.capture_output() as _:
-            parser.parse_args()
+        parser.parse_args([])
 
         help_str = parser.format_help()
-        assert re.search(r'Test Group:\n', help_str)
-        assert re.search(
-            r'--batchsize[^\n]*\n[^\n]*\(recommended: \[5, 10, 15\]\)', help_str
-        )
+        assert 'Test Group' in help_str
+        _, latter = help_str.split('Test Group')
+        assert 'recommended:' in latter
+        assert '1337' in latter
 
 
 if __name__ == '__main__':

@@ -1,8 +1,3 @@
-..
-  Copyright (c) Facebook, Inc. and its affiliates.
-  This source code is licensed under the MIT license found in the
-  LICENSE file in the root directory of this source tree.
-
 Tips and Tricks
 ===================================
 
@@ -42,6 +37,38 @@ This can be done on the command line in the following way:
 
 That is, by adding a colon ":" followed by the flag name, an equals sign, and the value.
 You can add multiple flags, all separated by ":".
+
+
+Self-Chats
+##########
+
+Sometimes it is useful to generate models talking to themselves. You can do this with:
+
+.. code-block:: python
+
+   # Self-chatting Poly-Encoder model on ConvAI2
+   python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t convai2:selfchat --inference topk -ne 10 --display-examples True -dt valid
+
+The task set by '-t' (in the above case "convai2:selfchat") links to a parlAI world that handles the particular nature of interactions, see e.g. `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98>`__ 
+or `here <https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106>`__.
+If the model does not need to run on a particular task you can also use:
+  
+
+.. code-block:: python
+
+   # Self-chatting Poly-Encoder model on a generic task (so e.g., no ConvAI2 personas are input)
+   python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t self_chat --inference topk -ne 10 --display-examples True -dt valid
+
+
+Prettifying Display of Chats
+############################
+
+This handy script can prettify the display of json file of chats (sequences of parlai messages):
+
+.. code-block:: python
+
+   # Display conversation in HTML format.
+   python parlai/scripts/convo_render.py projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
 
 
 Internal Agents, Tasks and More

@@ -30,14 +30,19 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
+import copy
+from typing import List, Tuple
 
-from parlai.core.agents import Teacher
+from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
+from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
+from parlai.core.metrics import Metrics, aggregate_metrics
+from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 import concurrent.futures
 import multiprocessing
@@ -95,6 +100,86 @@ class DataLoader(Thread):
                 else:
                     future = executor.submit(load_fn, *args)
                 receive_fn(future)
+
+
+class Teacher(Agent):
+    """
+    Basic Teacher agent that keeps track of how many times it's received messages.
+
+    Teachers provide the ``report()`` method to get back metrics.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        if not hasattr(self, 'opt'):
+            self.opt = copy.deepcopy(opt)
+        if not hasattr(self, 'id'):
+            self.id = opt.get('task', 'teacher')
+        if not hasattr(self, 'metrics'):
+            if shared and shared.get('metrics'):
+                self.metrics = shared['metrics']
+            else:
+                self.metrics = Metrics(opt)
+        self.epochDone = False
+
+    # return state/action dict based upon passed state
+    def act(self):
+        """
+        Act upon the previous observation.
+        """
+        if self.observation is not None and 'text' in self.observation:
+            t = {'text': 'Hello agent!'}
+        return t
+
+    def epoch_done(self):
+        """
+        Return whether the epoch is done.
+        """
+        return self.epochDone
+
+    # Default unknown length
+    def num_examples(self):
+        """
+        Return the number of examples (e.g. individual utterances) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
+        return None
+
+    def num_episodes(self):
+        """
+        Return the number of episodes (e.g. conversations) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
+        return None
+
+    def report(self):
+        """
+        Return metrics showing total examples and accuracy if available.
+        """
+        return self.metrics.report()
+
+    def reset(self):
+        """
+        Reset the teacher.
+        """
+        super().reset()
+        self.reset_metrics()
+        self.epochDone = False
+
+    def reset_metrics(self):
+        """
+        Reset metrics.
+        """
+        self.metrics.clear()
+
+    def share(self):
+        """
+        In addition to default Agent shared parameters, share metrics.
+        """
+        shared = super().share()
+        shared['metrics'] = self.metrics
+        return shared
 
 
 class FixedDialogTeacher(Teacher):
@@ -1335,20 +1420,25 @@ class AbstractImageTeacher(FixedDialogTeacher):
     path as per get_image_features_path().
 
     Important methods and properties (override in subclass if needed):
+
     - get_data_path(): where data file is found (default: <datapath>/<task>)
     - get_image_path(): where images found (default: <datapath>/<task>/images)
     - get_image_features_path(): dict of image features (default:
       <datapath>/<task>/image_features)
     - @property image_id_key: which key in data file objects represents image_id
     - @property text_key: which key in data file objects represents text
+
     Note: Assumes data files are named <dt>.json
 
-    @abstractmethod image_id_to_image_path() must be implemented in
-    subclass
+    @abstractmethod image_id_to_image_path() must be implemented in subclass
 
     Example with the key defaults (but the keys can be customized):
-    obs = {'text': <caption>,
-        'image': <image features if specified else image>
+
+    .. code-block:: python
+
+        obs = {
+            'text': <caption>,
+            'image': <image features if specified else image>
         }
     """
 
@@ -1376,9 +1466,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         self.image_path = self.get_image_path(opt)
         self.image_loader = None
-        self.image_features_dict = self.get_image_features_path(
-            self.task, self.image_mode, self.datatype
-        )
         self.image_features_dim = opt.get('image_features_dim')
         self.blank_image_features = torch.FloatTensor(self.image_features_dim).fill_(0)
 
@@ -1393,6 +1480,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             # This will happen when building the dictionary - is normal
             # build_dict sets image_mode to 'none'
             warn_once('AbstractImageTeacher self.include_image was False')
+            self.image_features_dict = None
 
         # TODO: won't need this after we have proper logging levels set
         self.__verbose = False
@@ -1408,7 +1496,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         ImageNet).
         """
         available_model_names = ImageLoader.get_available_model_names()
-        return ['no_image_model'] + available_model_names
+        return ['no_image_model', 'raw', 'ascii'] + available_model_names
 
     def _validate_image_mode_name(self, a):
         """
@@ -1575,7 +1663,10 @@ class AbstractImageTeacher(FixedDialogTeacher):
         In the (very odd) case that the resnet or resnext dicts (models
         buildable using ImageLoader) are not found, we build them.
         """
-
+        if self.image_mode in ['raw', 'ascii']:
+            self.image_features_dict = None
+            self.image_loader = ImageLoader(self.opt)
+            return
         image_mode_features_dict_path = self.get_image_features_path(
             self.task, self.image_mode, self.datatype
         )
@@ -1665,6 +1756,15 @@ class AbstractImageTeacher(FixedDialogTeacher):
         to load a large image feature dict in memory). #TODO Could be the default option
         if we are using -dt train:stream
         """
+        if self.image_mode in ['raw', 'ascii']:
+            try:
+                image = self.image_loader.load(
+                    self.image_id_to_image_path(example['image_id'])
+                )
+            except FileNotFoundError:
+                # No Image Here
+                image = None
+            return image
 
         key = str(example[self.image_id_key])
         if not self.include_image or key not in self.image_features_dict:
@@ -1686,46 +1786,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
             'episode_done': True,
         }
 
-    def next_example(self):
-        """
-        Load queued example.
-
-        When self.image_features_dict is not `none`, this is essentially a no-op.
-        However, this is necessary/useful if self.image_mode is e.g. raw or ascii.
-        """
-        return_result = None
-        if self.include_image:
-            if self.image_features_dict is not None:
-                # We have specified an image model and it uses image features either
-                # generated by ImageLoader or by pre-computation and manually
-                # placed on path
-                return_result = super().next_example()
-            else:
-                # We have specified an image model/mode but it's not based on
-                # calculating features, (e.g. "raw" or "ascii") so we try to load
-                # the image from the DataLoader
-                if self.example is not None:
-                    # Move the image we previously loaded in the background via
-                    # the DataLoader into the example
-                    image = self.data_queue.get()
-                    self.example['image'] = image
-                    return_result = self.example, self.imageEpochDone
-                else:
-                    return_result = super().next_example()
-
-                # Now, get next base example and put it to load in the background
-                self.example, self.imageEpochDone = super().next_example()
-                img_path = self.image_id_to_image_path(self.example['image_id'])
-                self.data_loader.request_load(
-                    self.receive_data, self.image_loader.load, (img_path,)
-                )
-        else:
-            # No image model specified
-            return_result = super().next_example()
-        if self.__verbose:
-            print(f'AbstractImageTeacher - next_example(): {return_result}')
-        return return_result
-
     def share(self):
         shared = super().share()
         shared['data'] = self.data
@@ -1733,3 +1793,423 @@ class AbstractImageTeacher(FixedDialogTeacher):
         if hasattr(self, 'image_features_dict'):
             shared['image_features_dict'] = self.image_features_dict
         return shared
+
+
+class MultiTaskTeacher(Teacher):
+    """
+    MultiTaskTeacher which teaches multiple tasks.
+
+    Creates a teacher that is actually a set of teachers each based on a task
+    string -- each of these teachers will get called in turn,
+    either randomly or in order.  They are all in the same world (they are the
+    same agent switching tasks).
+
+    The task string format is described for the ``create_task_agents()``
+    function above.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        self.tasks: List[Agent] = []
+        self.opt = opt
+
+        self.id = opt['task']
+        if shared and 'tasks' in shared:
+            self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
+        else:
+            tasks = opt['task'].split(',')
+            for k in tasks:
+                k = k.strip()
+                if k:
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
+                    self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
+        self.task_idx = -1
+        self.new_task = True
+        self.random = opt.get('datatype') == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.tasks)
+        self.task_choices = range(len(self.tasks))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
+
+    def num_examples(self):
+        """
+        Return the number of examples.
+        """
+        if not hasattr(self, 'num_exs'):
+            # num_examples is sum of all examples in all tasks
+            tasks_num_exs = [t.num_examples() for t in self.tasks]
+            if any(num is None for num in tasks_num_exs):
+                self.num_exs = None
+            else:
+                self.num_exs = sum(tasks_num_exs)
+        return self.num_exs
+
+    def num_episodes(self):
+        """
+        Return the number of episodes.
+        """
+        if not hasattr(self, 'num_eps'):
+            # num_episodes is sum of all num_episodes in all tasks
+            tasks_num_eps = [t.num_episodes() for t in self.tasks]
+            if any(num is None for num in tasks_num_eps):
+                self.num_eps = None
+            else:
+                self.num_eps = sum(tasks_num_eps)
+        return self.num_eps
+
+    def observe(self, observation):
+        """
+        Make an observation.
+        """
+        return self.tasks[self.task_idx].observe(observation)
+
+    def act(self):
+        """
+        Act on the previous observation.
+        """
+        if self.new_task:
+            self.new_task = False
+            if self.random:
+                # select random teacher
+                self.task_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights
+                )[0]
+            else:
+                # do at most one full loop looking for unfinished task
+                for _ in range(len(self.tasks)):
+                    self.task_idx = (self.task_idx + 1) % len(self.tasks)
+                    if not self.tasks[self.task_idx].epoch_done():
+                        # if this task has examples ready, break
+                        break
+                if self.tasks[self.task_idx].epoch_done():
+                    # all tasks are done, so return empty action table
+                    return {'episode_done': True}
+        t = self.tasks[self.task_idx].act()
+        if t['episode_done']:
+            self.new_task = True
+        return t
+
+    def epoch_done(self):
+        """
+        Return whether all subtasks are completed.
+        """
+        for t in self.tasks:
+            if not t.epoch_done():
+                return False
+        return True
+
+    # return transformed metrics showing total examples and accuracy if avail.
+    def report(self):
+        """
+        Report aggregated metrics across all subtasks.
+        """
+        return aggregate_metrics(self.tasks)
+
+    def reset(self):
+        """
+        Reset all subtasks.
+        """
+        for t in self.tasks:
+            t.reset()
+
+    def reset_metrics(self):
+        """
+        Reset metrics for each subtask.
+        """
+        for t in self.tasks:
+            t.reset_metrics()
+
+    def save(self):
+        """
+        Save each subtask.
+        """
+        for t in self.tasks:
+            t.save()
+
+    def share(self):
+        """
+        Shares this teacher by sharing each subtask.
+        """
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
+        shared['tasks'] = [t.share() for t in self.tasks]
+        return shared
+
+    def shutdown(self):
+        """
+        Shutdown each agent.
+        """
+        for t in self.tasks:
+            t.shutdown()
+
+
+class ChunkTeacher(FixedDialogTeacher, ABC):
+    """
+    Useful for loading large amounts of data.
+
+    Data is separated into chunks and loaded one chunk at a time. Loads the data off of
+    the main thread.
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.buffersize = self.get_buffersize()
+
+        if 'stream' not in opt['datatype']:
+            raise ValueError('Chunk teacher should be used with streaming. ')
+        if opt.get('pytorch_teacher_task') is not None:
+            raise ValueError(
+                'Chunk teacher is not compatible with pytorch data teacher.'
+            )
+        if opt['numthreads'] > 1:
+            raise ValueError('Chunk teacher is not compatible with Hogwild.')
+
+        self.set_datasettings(opt['datatype'])
+
+        if (
+            shared is None
+            and self.is_train
+            and self.opt.get('distributed_world_size') is not None
+        ):
+            dws = int(self.opt['distributed_world_size'])
+            rank = int(self.opt['rank'])
+            self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
+
+        if shared is not None:
+            self.is_root_teacher = False
+            self.chunks = shared['chunks']
+            self.samples = shared['samples']
+            self.rng = shared['rng']
+        else:
+            self.is_root_teacher = True
+            self.samples = queue.Queue(maxsize=self.buffersize)
+            self.chunks = queue.Queue()
+            if self.is_train:
+                # TODO: possible need a fixed seed here in the future
+                self.rng = random.Random()
+            else:
+                self.rng = random.Random(42)
+            self._enqueue_chunks()
+            # launch queue loader on the main thread
+            self._enqueue_request()
+
+        self.episode_done = True
+
+    def _get_data_folder(self):
+        if not self.opt.get('datafile'):
+            raise RuntimeError(
+                'Must specify datafile or override this function '
+                'to return the data folder.'
+            )
+
+        return self.opt['datafile']
+
+    @abstractmethod
+    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+        """
+        [Abstract] Return the number of samples.
+
+        Returns a tuple of (num_examples, num_episodes) based on the data split.
+        """
+        pass
+
+    @abstractmethod
+    def get_fold_chunks(self, datatype: str) -> List[int]:  # type: ignore
+        """
+        [Abstract] Return a list of chunk IDs (integer).
+
+        Given the datatype (train/test/valid), return the list of chunk IDs that
+        correspond to that split.
+        """
+        pass
+
+    def get_buffersize(self):
+        """
+        Size of buffer.
+
+        Override this in your child class to change the buffer size.
+        """
+        return 100000
+
+    def set_datasettings(self, datatype):
+        self.folder = self._get_data_folder()
+        self.num_exs, self.num_eps = self.get_num_samples(datatype)
+        self.fold_chunks = self.get_fold_chunks(datatype)
+
+        self.is_train = 'train' in datatype and 'evalmode' not in datatype
+
+    def share(self):
+        shared = super().share()
+        shared['samples'] = self.samples
+        shared['chunks'] = self.chunks
+        shared['rng'] = self.rng
+        return shared
+
+    def _setup_data(self, datatype):
+        """
+        Passthrough.
+        """
+        pass
+
+    def num_episodes(self):
+        return self.num_eps
+
+    def num_examples(self):
+        return self.num_exs
+
+    def _enqueue_request(self):
+        """
+        Queue a request for loading to the data loader.
+        """
+        self.data_loader.request_load(self.receive_data, self.get_chunk, ())
+
+    def receive_data(self, future):
+        """
+        Loads data.
+
+        Load data into self.samples until buffersize is reached.
+        """
+        data = future.result()
+        if data is None:
+            return
+        while data:
+            # self.samples is a queue with maxsize
+            # self.buffersize, so will block if the
+            # buffer gets full
+            self.samples.put(data.pop(0))
+        # and start loading the next chunk
+        self._enqueue_request()
+
+    def _enqueue_chunks(self):
+        """
+        Shuffles and queues fold chunks for loading.
+        """
+        if self.is_train:
+            self.rng.shuffle(self.fold_chunks)
+        for c in self.fold_chunks:
+            self.chunks.put(c)
+
+    @abstractmethod
+    def load_from_chunk(self, chunk_idx: int):
+        """
+        [Abstract] Given the chunk index, load examples from that chunk.
+
+        Return a list of tuples. The function `_create_message` will take these tuples
+        to form the Message object that is returned by the teacher.
+        """
+        pass
+
+    @abstractmethod
+    def create_message(self, queue_output) -> 'Message':
+        """
+        [Abstract] Given the tuple output of the queue, return an act.
+        """
+        pass
+
+    def get_chunk(self):
+        """
+        Refill the buffer.
+        """
+        if self.chunks.empty():
+            if self.is_train:
+                self._enqueue_chunks()
+            else:
+                # if we're in valid/test, we need to actually signal the end
+                return None
+
+        next_chunk = self.chunks.get()
+        # abstract method `load_from_chunk` returns a list of tuples
+        output = self.load_from_chunk(next_chunk)
+
+        if self.is_train:
+            # randomize the samples
+            random.Random().shuffle(output)
+        else:
+            random.Random(42).shuffle(output)
+        return output
+
+    def get(self, episode_idx, entry_idx=0):
+        queue_output = self.samples.get()
+        if queue_output is None:
+            return None
+
+        # create a Message object from the queue output
+        return self.create_message(queue_output)
+
+    def _drain(self, q):
+        while not q.empty():
+            try:
+                q.get()
+            except queue.Empty:
+                return
+
+    def reset(self):
+        super().reset()
+        if self.is_root_teacher:
+            # drain the queues and refill the chunk queue with a new epoch.
+            # additionally, we have to relaunch the loader
+            self._drain(self.samples)
+            self._drain(self.chunks)
+            self._enqueue_chunks()
+            self._enqueue_request()
+
+
+def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
+    """
+    Handle task flags provided by the task name itself.
+
+    With this you can set specific opts with `-t task:flag=foo`.
+    """
+    fl = flags.split(':')
+    task = []
+    for f in fl:
+        if '=' in f:
+            one_flag = f.split('=')
+            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
+        else:
+            task.append(f)
+    opt['task'] = ':'.join(task)
+
+
+def create_task_agent_from_taskname(opt: Opt):
+    """
+    Create task agent(s) assuming the input ``task_dir:teacher_class``.
+
+    e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi`` or a
+    complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``, which essentially
+    performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
+    ``opt['task']`` to be used by the class ``Task1kTeacher``.
+    """
+    if not (
+        opt.get('task')
+        or opt.get('pytorch_teacher_task')
+        or opt.get('pytorch_teacher_dataset')
+    ):
+        raise RuntimeError(
+            'No task specified. Please select a task with ' + '--task {task_name}.'
+        )
+    if not opt.get('task'):
+        opt['task'] = 'pytorch_teacher'
+    if ',' not in opt['task']:
+        # Single task
+        teacher_class = load_teacher_module(opt['task'])
+        _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
+        task_agents = teacher_class(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents
+    else:
+        # Multitask teacher/agent
+        task_agents = MultiTaskTeacher(opt)
+        if type(task_agents) != list:
+            task_agents = [task_agents]
+        return task_agents

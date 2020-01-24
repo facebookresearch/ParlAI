@@ -11,8 +11,12 @@ can learn simple behavior easily. They are useful as unit tests for the basic mo
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.agents import Teacher
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
+from parlai.core.teachers import (
+    FixedDialogTeacher,
+    DialogTeacher,
+    AbstractImageTeacher,
+    Teacher,
+)
 from parlai.core.opt import Opt
 from torch.utils.data import Dataset
 import copy
@@ -21,7 +25,6 @@ import itertools
 import os
 from PIL import Image
 import string
-import torch
 import json
 from abc import ABC
 
@@ -294,27 +297,6 @@ class DefaultDataset(CandidateTeacherDataset):
     pass
 
 
-class MultipassTeacher(CandidateTeacher):
-    """
-    Multiturn teacher, where each episode goes:
-
-    call      response 1         1 2         1 2 3         1 2 3 4         1 2 3 4
-    """
-
-    def num_examples(self):
-        return super().num_examples() * self.example_size
-
-    def setup_data(self, fold):
-        raw = super().setup_data(fold)
-        for (t, a, _, cs), _ in raw:
-            split_t = t.split(' ')
-            ans = a[0]
-            for i, bit in enumerate(split_t):
-                label = ans[: 2 * i + 1]
-                cands = [c[: 2 * i + 1] for c in cs]
-                yield (bit, [label], 0, cands), i == 0
-
-
 class MultiturnCandidateTeacher(CandidateTeacher):
     """
     Splits inputs/targets by spaces into multiple turns.
@@ -338,6 +320,9 @@ class MultiturnCandidateTeacher(CandidateTeacher):
                     ),
                     i == 0,
                 )
+
+    def num_examples(self):
+        return self.example_size * self.num_episodes()
 
 
 class NocandidateTeacher(CandidateTeacher):
@@ -475,15 +460,13 @@ class ImageTeacher(AbstractImageTeacher):
 
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
-        img_features_dict = {}
-        for img in imgs:
-            image = Image.new('RGB', (100, 100))
+        for i, img in enumerate(imgs):
+            image = Image.new('RGB', (100, 100), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
-            img_features_dict[img] = torch.FloatTensor(opt['image_features_dim'])
-        torch.save(img_features_dict, self.image_features_path)
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
+            random.seed(42)
             data = [
                 {
                     'image_id': img,
@@ -501,6 +484,33 @@ class ImageTeacher(AbstractImageTeacher):
         Return path dummy image features.
         """
         return self.image_features_path
+
+    def image_id_to_image_path(self, image_id):
+        """
+        Return path to image on disk.
+        """
+        return os.path.join(
+            self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg'
+        )
+
+
+class RepeatTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = 'unused_path'
+        task = opt.get('task', 'integration_tests:RepeatTeacher:50')
+        self.data_length = int(task.split(':')[-1])
+        super().__init__(opt, shared)
+
+    def setup_data(self, unused_path):
+        for i in range(self.data_length):
+            yield ((str(i), [str(i)]), True)
+
+    def num_examples(self):
+        return self.data_length
+
+    def num_episodes(self):
+        return self.data_length
 
 
 class DefaultTeacher(CandidateTeacher):

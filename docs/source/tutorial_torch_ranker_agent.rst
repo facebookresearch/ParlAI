@@ -1,8 +1,3 @@
-..
-  Copyright (c) Facebook, Inc. and its affiliates.
-  This source code is licensed under the MIT license found in the
-  LICENSE file in the root directory of this source tree.
-
 Using Torch Ranker Agent
 ========================
 **Authors**: Emily Dinan
@@ -17,6 +12,12 @@ Example Models
 
 Several existing models in ParlAI inherit from TorchRankerAgent. Try some of
 the examples below:
+
+Train a Bag-of-words Ranker model on ConvAI2:
+
+.. code-block:: bash
+
+    python  examples/train_model.py -m examples/tra  -t convai2 -mf /tmp/test -bs 32
 
 Train a Transformer Ranker model on ConvAI2:
 
@@ -41,7 +42,7 @@ Creating a Model
 ----------------
 
 In order to write a ranking model that inherits from TorchRankerAgent, you
-must implement the following functions:
+must implement the following functions: (An example is available at `parlai/agents/examples/tra.py`)
 
 .. code-block:: python
 
@@ -71,31 +72,31 @@ There are several options:
 
 Possible sources of candidates:
 
-1. **batch:**
-  Use all labels in the batch as the candidate set (with all but the
-  example's label being treated as negatives).
-  Note: with this setting, the candidate set is identical for all
-  examples in a batch. This option may be undesirable if it is possible
-  for duplicate labels to occur in a batch, since the second instance of
-  the correct label will be treated as a negative.
-2. **batch-all-cands:**
-  Use all inline candidates in the batch as candidate set.
-  Note 1: This can result in a very large number of candidates.
-  Note 2: In this case we will deduplicate candidates.
-  Note 3: just like with 'batch' the candidate set is identical for all
-  examples in a batch.
-3. **inline:**
-  If each example comes with a list of possible label candidates, use those.
-  Each teacher act for the task should contain the field 'label_candidates'.
-  Note: With this setting, each example will have its own candidate set.
-4. **fixed:**
-  Use a global candidates list, provided by the user.
-  If self.fixed_candidates is not None, use a set of fixed candidates for
-  all examples.
-  Note: this setting is not recommended for training unless the
-  universe of possible candidates is very small.
-  To use this, add the path to your text file with the candidates to the
-  flag ``--fixed-candidates-path`` or ``-fcp``.
+1. **batch**
+      Use all labels in the batch as the candidate set (with all but the
+      example's label being treated as negatives).
+      Note: with this setting, the candidate set is identical for all
+      examples in a batch. This option may be undesirable if it is possible
+      for duplicate labels to occur in a batch, since the second instance of
+      the correct label will be treated as a negative.
+2. **batch-all-cands**
+      Use all inline candidates in the batch as candidate set.
+      Note 1: This can result in a very large number of candidates.
+      Note 2: In this case we will deduplicate candidates.
+      Note 3: just like with 'batch' the candidate set is identical for all
+      examples in a batch.
+3. **inline**
+      If each example comes with a list of possible label candidates, use those.
+      Each teacher act for the task should contain the field 'label_candidates'.
+      Note: With this setting, each example will have its own candidate set.
+4. **fixed**
+      Use a global candidates list, provided by the user.
+      If self.fixed_candidates is not None, use a set of fixed candidates for
+      all examples.
+      Note: this setting is not recommended for training unless the
+      universe of possible candidates is very small.
+      To use this, add the path to your text file with the candidates to the
+      flag ``--fixed-candidates-path`` or ``-fcp``.
 
 
 Tracking ranking metrics

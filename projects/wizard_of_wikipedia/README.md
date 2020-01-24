@@ -29,7 +29,7 @@ important research direction.
 
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
-See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
+See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
 [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
@@ -69,7 +69,7 @@ Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/a
 You can view the standard training set with:
 
     python examples/display_data.py -t wizard_of_wikipedia -dt train
-    
+
 The knowledge returned from a standard IR system appears in the knowledge field (but you can also use your own knowledge system, accessing Wikipedia yourself, we use the dump in "-t wikipedia".
 The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
 
@@ -103,7 +103,7 @@ This will produce:
 
 You can also interact with the model with:
 
-    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_end2end -t wizard_of_wikipedia
+    python examples/interactive.py -mf models:wizard_of_wikipedia/end2end_generator/model -t wizard_of_wikipedia
 
 ## Retrieval Model
 
@@ -114,7 +114,7 @@ following script:
 
 You can run an interactive session with the model with:
 
-    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+    python projects/wizard_of_wikipedia/scripts/interactive_retrieval_model.py
 
 Check back later for more pretrained models soon!
 

@@ -1,0 +1,125 @@
+name: Lint
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7.x
+          architecture: x64
+      - name: Fetch ParlAI
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Fix git
+        run: |
+          set -eux
+          git fetch origin master
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git branch -f master origin/master
+          fi
+      - name: Run flake8
+        run: |
+          set -eux
+          pip install -q flake8 flake8-bugbear flake8-black docformatter==1.3.0
+          python setup.py develop --no-deps  # get our custom flake8 errors
+          python -c 'import parlai'
+          flake8 --version
+          bash autoformat.sh -c -f | tee ${GITHUB_WORKSPACE}/output-annotations.txt
+      - name: Add annotations
+        uses: pytorch/add-annotations-github-action@master
+        with:
+          check_name: 'lint'
+          linter_output_path: 'output-annotations.txt'
+          commit_sha: ${{ github.event.pull_request.head.sha }}
+          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorCode>\w+\d+) (?<errorDesc>.*)'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7.x
+          architecture: x64
+      - name: Fetch ParlAI
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Fix git
+        run: |
+          set -eux
+          git fetch origin master
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git branch -f master origin/master
+          fi
+      - name: caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip-torch131cpu-v1-${{ hashFiles('**/requirements.txt') }}
+        id: cache
+      - name: install dependencies
+        run: |
+          pip install -q -r requirements.txt
+          pip install -q mypy mypy-extensions
+          pip install -q git+https://github.com/numpy/numpy-stubs.git
+          pip install -q torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      - name: mypy
+        run: |
+          set -eux
+          mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
+          forkpoint=$(git merge-base master HEAD)
+          git checkout -f $forkpoint
+          mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
+          diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
+          cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
+      - name: Add annotations
+        uses: stephenroller/add-annotations-github-action@master
+        with:
+          check_name: 'mypy'
+          linter_output_path: 'output-annotations.txt'
+          commit_sha: ${{ github.event.pull_request.head.sha }}
+          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorCode>\w+): (?<errorDesc>.*)'
+          annotation_level: warning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+  jslint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch ParlAI
+        uses: actions/checkout@v1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup
+        working-directory: parlai/mturk/
+        run: |
+          set -eux
+          npm install
+          node_modules/.bin/eslint --format unix . | \
+            sed "s#${GITHUB_WORKSPACE}#.#" | \
+            tee ${GITHUB_WORKSPACE}/output-annotations.txt
+      - name: Add annotations
+        uses: pytorch/add-annotations-github-action@master
+        with:
+          check_name: 'jslint'
+          linter_output_path: 'output-annotations.txt'
+          commit_sha: ${{ github.event.pull_request.head.sha }}
+          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

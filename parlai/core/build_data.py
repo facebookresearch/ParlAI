@@ -21,7 +21,11 @@ import hashlib
 import tqdm
 import math
 import zipfile
-from multiprocessing import Pool
+
+try:
+    from torch.multiprocessing import Pool
+except ImportError:
+    from multiprocessing import Pool
 
 
 class DownloadableFile:
@@ -404,7 +408,10 @@ def modelzoo_path(datapath, path):
         zoo_len = len(zoo) + 1
         model_path = path[zoo_len:]
         # Check if we need to download the model
-        animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        if "/" in path:
+            animal = path[zoo_len : path.rfind('/')].replace('/', '.')
+        else:
+            animal = path[zoo_len:]
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
@@ -412,7 +419,17 @@ def modelzoo_path(datapath, path):
             my_module = importlib.import_module(module_name)
             my_module.download(datapath)
         except (ImportError, AttributeError):
-            pass
+            try:
+                # maybe we didn't find a specific model, let's try generic .build
+                animal_ = '.'.join(animal.split(".")[:-1]) + '.build'
+                module_name_ = 'parlai.zoo.{}'.format(animal_)
+                my_module = importlib.import_module(module_name_)
+                my_module.download(datapath)
+            except (ImportError, AttributeError):
+                # truly give up
+                raise ImportError(
+                    f'Could not find pretrained model in {module_name} or {module_name_}.'
+                )
 
         return os.path.join(datapath, 'models', model_path)
     else:
@@ -437,20 +454,27 @@ def download_multiprocess(
     urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None
 ):
     """
-    Download items in parallel (e.g. for an image + dialogue task)
+    Download items in parallel (e.g. for an image + dialogue task).
 
-    Note: "of threading, multiprocess and pytorch.multiprocessing pick two".
-    These three don't all play well together. On OS X, may hang upon successful finish.
+    WARNING: may have issues with OS X.
 
-    :param urls: Array of urls to download
-    :param path: directory to save items in
-    :param num_processes: number of processes to use
-    :param chunk_size: chunk size to use
-    :param dest_filenames: optional array of same length as url with filenames.
-     Images will be saved as path + dest_filename
-    :param error_path: where to save error logs
-    :return: array of tuples of (destination filename, http status code, error
-    message if any). Note that upon failure, file may not actually be created.
+    :param urls:
+        Array of urls to download
+    :param path:
+        directory to save items in
+    :param num_processes:
+        number of processes to use
+    :param chunk_size:
+        chunk size to use
+    :param dest_filenames:
+        optional array of same length as url with filenames.  Images will be
+        saved as path + dest_filename
+    :param error_path:
+        where to save error logs
+    :return:
+        array of tuples of (destination filename, http status code, error
+        message if any). Note that upon failure, file may not actually be
+        created.
     """
 
     pbar = tqdm.tqdm(total=len(urls), position=0)

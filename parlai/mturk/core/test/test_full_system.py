@@ -10,7 +10,7 @@ import uuid
 import os
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 
@@ -20,6 +20,7 @@ import parlai.mturk.core.shared_utils as shared_utils
 import threading
 from websocket_server import WebsocketServer
 import json
+import parlai.utils.testing as testing_utils
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 MTurkManagerFile.parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -380,7 +381,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args(print_args=False)
+        self.opt = argparser.parse_args([], print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 1
         self.opt['hit_title'] = 'test_hit_title'
@@ -455,6 +456,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent.wait_for_alive()
         agent.send_heartbeat()
 
+    @testing_utils.retry()
     def test_successful_convo(self):
         manager = self.mturk_manager
 
@@ -523,6 +525,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
         )
 
+    @testing_utils.retry()
     def test_disconnect_end(self):
         manager = self.mturk_manager
 
@@ -598,6 +601,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
         )
 
+    @testing_utils.retry()
     def test_expire_onboarding(self):
         manager = self.mturk_manager
 
@@ -636,6 +640,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             10,
         )
 
+    @testing_utils.retry()
     def test_reconnect_complete(self):
         manager = self.mturk_manager
 
@@ -725,6 +730,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
         )
 
+    @testing_utils.retry()
     def test_attempt_break_unique(self):
         manager = self.mturk_manager
         unique_worker_qual = 'is_unique_qual'
@@ -836,6 +842,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 3, 2
         )
 
+    @testing_utils.retry()
     def test_break_multi_convo(self):
         manager = self.mturk_manager
         manager.opt['allowed_conversations'] = 1
@@ -933,6 +940,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 3, 2
         )
 
+    @testing_utils.retry()
     def test_no_onboard_expire_waiting(self):
         manager = self.mturk_manager
         manager.set_onboard_function(None)
@@ -964,6 +972,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: len([x for x in manager.socket_manager.run.values() if not x]), 1, 2
         )
 
+    @testing_utils.retry()
     def test_return_to_waiting_on_world_start(self):
         manager = self.mturk_manager
 

@@ -6,5 +6,7 @@ https://www.pandorabots.com/pandora/talk?botid=b8d616e35e36e881 is a working dem
 
 More information: https://en.wikipedia.org/wiki/Artificial_Linguistic_Internet_Computer_Entity
 
-# Setup
+## Setup
+```bash
 pip install git+https://github.com/paulovn/python-aiml.git
+```

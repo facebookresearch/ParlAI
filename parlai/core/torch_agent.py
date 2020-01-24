@@ -13,6 +13,8 @@ Contains the following main utilities:
   the TorchAgent class
 * Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
+* History class which handles tracking the dialogue state over the course of an episode.
+
 
 See below for documentation on each specific tool.
 """
@@ -23,7 +25,6 @@ from copy import deepcopy
 from collections import deque
 import json
 import random
-import numpy as np
 import os
 import torch
 from torch import optim
@@ -31,23 +32,16 @@ from torch import optim
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.utils.thread import SharedTable
-from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
+from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
-from parlai.utils.misc import (
-    AttrDict,
-    warn_once,
-    round_sigfigs,
-)
+from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import (
     argsort,
     fp16_optimizer_wrapper,
     padded_tensor,
+    fp16_available,
 )
-
-
-class StopTrainException(Exception):
-    pass
 
 
 class Batch(AttrDict):
@@ -417,7 +411,6 @@ class TorchAgent(ABC, Agent):
                 'random',
                 'glove',
                 'glove-fixed',
-                'glove-twitter-fixed',
                 'fasttext',
                 'fasttext-fixed',
                 'fasttext_cc',
@@ -504,55 +497,6 @@ class TorchAgent(ABC, Agent):
             default=None,
             help='Weight decay on the weights.',
         )
-
-        # lr scheduler
-        lr_group = agent.add_argument_group('Learning Rate Scheduler')
-        lr_group.add_argument(
-            '--lr-scheduler',
-            type=str,
-            default='reduceonplateau',
-            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
-            help='Learning rate scheduler.',
-        )
-        lr_group.add_argument(
-            '--lr-scheduler-patience',
-            type=int,
-            default=3,
-            help='LR scheduler patience. In number of validation runs. If using '
-            'fixed scheduler, LR is decayed every <patience> validations.',
-        )
-        lr_group.add_argument(
-            '--lr-scheduler-decay',
-            type=float,
-            default=0.5,
-            help='Decay factor for LR scheduler, or how much LR is multiplied by '
-            'when it is lowered.',
-        )
-        lr_group.add_argument(
-            '--warmup-updates',
-            type=int,
-            default=-1,
-            hidden=True,
-            help='Learning rate warmup period, in number of SGD updates. '
-            'Linearly scales up LR over period. Only enabled if > 0.',
-        )
-        lr_group.add_argument(
-            '--warmup-rate',
-            type=float,
-            default=1e-4,
-            hidden=True,
-            help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
-            'this value. Linearly adjusted up to 1.0 across --warmup-updates '
-            'steps.',
-        )
-        lr_group.add_argument(
-            '--update-freq',
-            type=int,
-            default=1,
-            hidden=True,
-            help='Accumulate gradients N times before performing an optimizer.step().',
-        )
-
         # preprocessing arguments
         agent.add_argument(
             '-rc',
@@ -646,6 +590,7 @@ class TorchAgent(ABC, Agent):
         )
 
         cls.dictionary_class().add_cmdline_args(argparser)
+        ParlAILRScheduler.add_cmdline_args(argparser)
 
     def __init__(self, opt: Opt, shared=None):
         """
@@ -666,7 +611,7 @@ class TorchAgent(ABC, Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False) and fp16_available()
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -796,6 +741,7 @@ class TorchAgent(ABC, Agent):
 
         return init_model, is_finetune
 
+    @abstractmethod
     def build_model(self):
         """
         Construct the model and return it.
@@ -889,103 +835,28 @@ class TorchAgent(ABC, Agent):
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
-        Create the learning rate scheduler, and assign it to self.scheduler.
-
-        This scheduler will be updated upon a call to receive_metrics.
-        May also create self.warmup_scheduler, if appropriate.
+        Create the learning rate scheduler, and assign it to self.scheduler. This
+        scheduler will be updated upon a call to receive_metrics. May also create
+        self.warmup_scheduler, if appropriate.
 
         :param state_dict states: Possible state_dict provided by model
             checkpoint, for restoring LR state
-
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
-        # first make sure there are no null pointers
         if states is None:
             states = {}
         optimizer = self.optimizer
         if self.fp16:
             # lr schedulers don't work with apex, they expect the "real" optimizer
             optimizer = optimizer.optimizer
-
-        warmup_updates = self.opt.get('warmup_updates', -1)
-        updates_so_far = states.get('number_training_updates', 0)
-        if warmup_updates > 0 and (updates_so_far < warmup_updates or hard_reset):
-
-            def _warmup_lr(step):
-                start = self.opt['warmup_rate']
-                end = 1.0
-                progress = min(1.0, step / self.opt['warmup_updates'])
-                lr_mult = start + (end - start) * progress
-                return lr_mult
-
-            self.warmup_scheduler = optim.lr_scheduler.LambdaLR(optimizer, _warmup_lr)
-        else:
-            self.warmup_scheduler = None
-
-        patience = self.opt.get('lr_scheduler_patience', 3)
-        decay = self.opt.get('lr_scheduler_decay', 0.5)
-
-        if self.opt.get('lr_scheduler') == 'none':
-            self.scheduler = None
-        elif decay == 1.0:
-            warn_once(
-                "Your LR decay is set to 1.0. Assuming you meant you wanted "
-                "to disable learning rate scheduling. Adjust --lr-scheduler-decay "
-                "if this is not correct."
+        self.scheduler = ParlAILRScheduler.lr_scheduler_factory(
+            self.opt, optimizer, states, hard_reset
+        )
+        if self.scheduler:
+            self._number_training_updates = (
+                self.scheduler.get_initial_number_training_updates()
             )
-            self.scheduler = None
-        elif self.opt.get('lr_scheduler') == 'reduceonplateau':
-            self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                optimizer, 'min', factor=decay, patience=patience, verbose=True
-            )
-        elif self.opt.get('lr_scheduler') == 'fixed':
-            self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
-        elif self.opt.get('lr_scheduler') == 'invsqrt':
-            if self.opt.get('warmup_updates', -1) <= 0:
-                raise ValueError(
-                    '--lr-scheduler invsqrt requires setting --warmup-updates'
-                )
-            warmup_updates = self.opt['warmup_updates']
-            decay_factor = np.sqrt(max(1, warmup_updates))
-
-            def _invsqrt_lr(step):
-                return decay_factor / np.sqrt(max(1, step))
-
-            self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _invsqrt_lr)
-        else:
-            raise ValueError(
-                "Don't know what to do with lr_scheduler '{}'".format(
-                    self.opt.get('lr_scheduler')
-                )
-            )
-
-        # time to load LR state from the checkpoint, if possible.
-        if (
-            # there is already an old LR scheduler saved on disk
-            states
-            and
-            # and the old LR scheduler is different
-            states.get('lr_scheduler_type') != self.opt['lr_scheduler']
-            and
-            # and we're not already using a fresh scheduler
-            not hard_reset
-        ):
-            # the LR scheduler changed, start things fresh
-            warn_once("LR scheduler is different from saved. Starting fresh!")
-            hard_reset = True
-
-        if hard_reset:
-            # We're not going to use the LR schedule, let's just exit
-            return
-
-        # do the actual loading (if possible)
-        if 'number_training_updates' in states:
-            self._number_training_updates = states['number_training_updates']
-        if self.scheduler and 'lr_scheduler' in states:
-            self.scheduler.load_state_dict(states['lr_scheduler'])
-        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
-            self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
         """
@@ -1038,75 +909,18 @@ class TorchAgent(ABC, Agent):
             )
         return memory_used / memory_avail
 
-    def _is_lr_warming_up(self):
-        """
-        Check if we're warming up the learning rate.
-        """
-        return (
-            self.warmup_scheduler is not None
-            and self._number_training_updates <= self.opt['warmup_updates']
-        )
-
     def receive_metrics(self, metrics_dict):
-        """
-        Use the metrics to decide when to adjust LR schedule.
-
-        This uses the loss as the validation metric if present, if not this
-        function does nothing. Note that the model must be reporting loss for
-        this to work.
-
-        Override this to override the behavior.
-        """
         if not hasattr(self, 'scheduler') or self.scheduler is None:
             return
-
-        if self._is_lr_warming_up():
-            # we're not done warming up, so don't start using validation
-            # metrics to adjust schedule
-            return
-
-        if self.opt['lr_scheduler'] == 'none':
-            # no scheduler, nothing to adjust here
-            pass
-        elif self.opt['lr_scheduler'] == 'reduceonplateau':
-            if 'loss' not in metrics_dict:
-                # nothing to step on, just skip
-                warn_once("LR scheduler expected to see loss metric, but didn't.")
-                return
-            self.scheduler.step(metrics_dict['loss'])
-        elif self.opt['lr_scheduler'] == 'fixed':
-            self.scheduler.step()
-        elif self.opt['lr_scheduler'] == 'invsqrt':
-            # this is a training step lr scheduler, nothing to adjust in validation
-            pass
-        else:
-            raise ValueError(
-                "Don't know how to work with lr scheduler '{}'".format(
-                    self.opt['lr_scheduler']
-                )
-            )
+        self.scheduler.valid_step(metrics_dict)
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
-        try:
-            import torchtext.vocab as vocab
-        except ImportError as ex:
-            print('Please install torch text with `pip install torchtext`')
-            raise ex
-        pretrained_dim = 300
         if emb_type.startswith('glove'):
-            if 'twitter' in emb_type:
-                init = 'glove-twitter'
-                name = 'twitter.27B'
-                pretrained_dim = 200
-            else:
-                init = 'glove'
-                name = '840B'
-            embs = vocab.GloVe(
-                name=name,
-                dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'), 'zoo:glove_vectors'),
-            )
+            init = 'glove'
+            from parlai.zoo.glove_vectors.build import download
+
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             from parlai.zoo.fasttext_cc_vectors.build import download
@@ -1173,6 +987,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
+        if self.opt['embedding_type'] == 'random':
+            # Random embedding means no copying of pretrained embeddings
+            return
+
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
@@ -1714,10 +1532,9 @@ class TorchAgent(ABC, Agent):
         else:
             states['number_training_updates'] = self._number_training_updates
             if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler'] = self.scheduler.get_state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler', None):
-                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1751,7 +1568,7 @@ class TorchAgent(ABC, Agent):
                         # We do not save the state of interactive mode, it is only decided
                         # by scripts or command line.
                         del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle)
+                    json.dump(saved_opts, handle, indent=4)
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 
@@ -1922,15 +1739,7 @@ class TorchAgent(ABC, Agent):
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
 
-        # compute warmup adjustment if needed
-        if self.opt.get('warmup_updates', -1) > 0:
-            if not hasattr(self, 'warmup_scheduler'):
-                raise RuntimeError('Looks like you forgot to call build_lr_scheduler')
-            if self._is_lr_warming_up():
-                self.warmup_scheduler.step(epoch=self._number_training_updates)
-
-        if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
-            # training step scheduler
+        if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
 
     def zero_grad(self):

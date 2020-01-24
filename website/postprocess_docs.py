@@ -6,18 +6,6 @@
 
 import os
 
-NEEDLE1 = '<a href="#" class="icon icon-home"> ParlAI'
-NEEDLE2 = '<a href="index.html" class="icon icon-home"> ParlAI'
-REPLACEMENT = """
-<a href="/" style="float: left">
-    <img style="padding: 0px; background-color: #fff; width: 53px; height: 53px; margin-left: 70px;" src="/static/img/icon.png">
-</a>
-<a href="/" style="color: #000; float: left; margin-top: 12px; font-size: 20px; font-weight: 600">
-    ParlAI
-</a>
-"""  # noqa: E501
-
-
 NEEDLE3 = '<title>ParlAI Documentation &mdash; ParlAI  documentation</title>'
 REPLACEMENT3 = """
 <title>ParlAI Documentation &mdash; ParlAI  documentation</title>
@@ -35,8 +23,6 @@ if __name__ == '__main__':
                 print("Postprocessing ", file_path)
                 with open(file_path, 'r') as fin:
                     content = fin.read()
-                    content = content.replace(NEEDLE1, REPLACEMENT)
-                    content = content.replace(NEEDLE2, REPLACEMENT)
                     content = content.replace(NEEDLE3, REPLACEMENT3)
                 with open(file_path, 'w') as fout:
                     fout.write(content)

@@ -6,7 +6,8 @@
 from parlai.scripts.build_dict import build_dict
 from parlai.scripts.display_data import setup_args as display_setup_args, display_data
 from parlai.scripts.train_model import setup_args as train_setup_args
-from parlai.core.agents import create_task_agent_from_taskname, create_agent
+from parlai.core.agents import create_agent
+from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
 
@@ -34,25 +35,26 @@ integration_test_parser_defaults = {
     'hiddensize': 16,
     'attention': 'general',
     'rnn_class': 'gru',
-    'no_cuda': True,
     'learningrate': 1,
     'embeddingsize': 16,
     'dropout': 0.0,
     'gradient_clip': 1.0,
     'lookuptable': 'all',
-    'num_epochs': 50,
+    'num_epochs': 30,
+    'validation_metric': 'token_acc',
     'validation_every_n_epochs': 5,
     'log_every_n_secs': 1,
     'batch_length_range': 5,
+    'skip_generation': True,
 }
 
 
-def solved_task(str_output, valid, test):
+def solved_task(valid, test):
     return (
         valid['ppl'] < 1.3
         and test['ppl'] < 1.3
-        and valid['accuracy'] > 0.95
-        and test['accuracy'] > 0.95
+        and valid['token_acc'] > 0.95
+        and test['token_acc'] > 0.95
     )
 
 
@@ -83,27 +85,26 @@ class TestPytorchDataTeacher(unittest.TestCase):
                         'datatype': datatype,
                         'shuffle': shuffle,
                     }
-                    with testing_utils.capture_output() as _:
-                        parser = display_setup_args()
-                        parser.set_defaults(**opt_defaults)
-                        opt = parser.parse_args()
-                        teacher = create_task_agent_from_taskname(opt)[0]
-                        if (
-                            'ordered' in datatype
-                            or ('stream' in datatype and not opt.get('shuffle'))
-                            or 'train' not in datatype
-                        ):
-                            self.assertIsInstance(
-                                teacher.pytorch_dataloader.sampler,
-                                Sequential,
-                                'PytorchDataTeacher failed with args: {}'.format(opt),
-                            )
-                        else:
-                            self.assertIsInstance(
-                                teacher.pytorch_dataloader.sampler,
-                                RandomSampler,
-                                'PytorchDataTeacher failed with args: {}'.format(opt),
-                            )
+                    parser = display_setup_args()
+                    parser.set_defaults(**opt_defaults)
+                    opt = parser.parse_args([])
+                    teacher = create_task_agent_from_taskname(opt)[0]
+                    if (
+                        'ordered' in datatype
+                        or ('stream' in datatype and not opt.get('shuffle'))
+                        or 'train' not in datatype
+                    ):
+                        self.assertIsInstance(
+                            teacher.pytorch_dataloader.sampler,
+                            Sequential,
+                            'PytorchDataTeacher failed with args: {}'.format(opt),
+                        )
+                    else:
+                        self.assertIsInstance(
+                            teacher.pytorch_dataloader.sampler,
+                            RandomSampler,
+                            'PytorchDataTeacher failed with args: {}'.format(opt),
+                        )
 
     def test_pyt_preprocess(self):
         """
@@ -117,17 +118,16 @@ class TestPytorchDataTeacher(unittest.TestCase):
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
             parser = train_setup_args()
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             build_dict(opt)
-            with testing_utils.capture_output() as _:
-                teacher = create_task_agent_from_taskname(opt)[0]
+            teacher = create_task_agent_from_taskname(opt)[0]
             agent = create_agent(opt)
             act = teacher.act()
             if teacher_processed:
                 return act, agent
             return agent.observe(act), agent
 
-        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+        with testing_utils.tempdir() as tmpdir:
             defaults = unit_test_parser_defaults.copy()
             defaults['batch_size'] = 1
             defaults['datatype'] = 'train:stream:ordered'
@@ -165,7 +165,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
         def get_acts_epochs_1_and_2(defaults):
             parser.set_defaults(**defaults)
-            opt = parser.parse_args()
+            opt = parser.parse_args([])
             build_dict(opt)
             agent = create_agent(opt)
             world_data = create_task(opt, agent)
@@ -206,7 +206,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['datatype'] = 'train:stream:ordered'
         defaults['pytorch_teacher_batch_sort'] = True
 
-        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+        with testing_utils.tempdir() as tmpdir:
             # Get processed act from agent
             defaults['pytorch_teacher_task'] = 'babi:task1k:1'
             defaults['batch_sort_cache_type'] = 'index'
@@ -239,13 +239,13 @@ class TestPytorchDataTeacher(unittest.TestCase):
         max_range = defaults['batch_length_range']
 
         def verify_batch_lengths(defaults):
-            with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+            with testing_utils.tempdir() as tmpdir:
                 # Get processed act from agent
                 parser = train_setup_args()
                 defaults['model_file'] = os.path.join(tmpdir, 'model')
                 defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
                 parser.set_defaults(**defaults)
-                opt = parser.parse_args()
+                opt = parser.parse_args([])
                 build_dict(opt)
                 agent = create_agent(opt)
                 world_data = create_task(opt, agent)
@@ -295,12 +295,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = datatype
         defaults['shuffle'] = True  # for train:stream
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with args: {}; here is str_output: {}'.format(
-                defaults, str_output
-            ),
+            solved_task(valid, test),
+            'Teacher could not teach seq2seq with args: {}'.format(defaults),
         )
 
     @testing_utils.retry()
@@ -327,12 +325,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = 'train'
         defaults['pytorch_preprocess'] = True
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with preprocessed obs, output: {}'.format(
-                str_output
-            ),
+            solved_task(valid, test),
+            'Teacher could not teach seq2seq with preprocessed obs',
         )
 
     def _pyt_batchsort_train(self, datatype, preprocess):
@@ -350,11 +346,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['pytorch_teacher_batch_sort'] = True
         if preprocess:
             defaults['batch_sort_field'] = 'text_vec'
-        str_output, valid, test = testing_utils.train_model(defaults)
+        valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output, valid, test),
+            solved_task(valid, test),
             'Teacher could not teach seq2seq with batch sort '
-            'and args {} and output {}'.format((datatype, preprocess), str_output),
+            'and args {}'.format((datatype, preprocess)),
         )
 
     @testing_utils.retry()
@@ -377,23 +373,22 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['datatype'] = 'train:stream'
         defaults['image_mode'] = 'ascii'
 
-        with testing_utils.capture_output():
-            # Get processed act from agent
-            parser = display_setup_args()
-            defaults['pytorch_teacher_dataset'] = 'integration_tests'
-            del defaults['pytorch_teacher_task']
-            parser.set_defaults(**defaults)
-            opt = parser.parse_args()
-            teacher = create_task_agent_from_taskname(opt)[0]
-            pytorch_teacher_act = teacher.act()
+        # Get processed act from agent
+        parser = display_setup_args()
+        defaults['pytorch_teacher_dataset'] = 'integration_tests'
+        del defaults['pytorch_teacher_task']
+        parser.set_defaults(**defaults)
+        opt = parser.parse_args([])
+        teacher = create_task_agent_from_taskname(opt)[0]
+        pytorch_teacher_act = teacher.act()
 
-            parser = display_setup_args()
-            defaults['task'] = 'integration_tests'
-            del defaults['pytorch_teacher_dataset']
-            parser.set_defaults(**defaults)
-            opt = parser.parse_args()
-            teacher = create_task_agent_from_taskname(opt)[0]
-            regular_teacher_act = teacher.act()
+        parser = display_setup_args()
+        defaults['task'] = 'integration_tests'
+        del defaults['pytorch_teacher_dataset']
+        parser.set_defaults(**defaults)
+        opt = parser.parse_args([])
+        teacher = create_task_agent_from_taskname(opt)[0]
+        regular_teacher_act = teacher.act()
 
         keys = set(pytorch_teacher_act.keys()).intersection(
             set(regular_teacher_act.keys())
@@ -422,10 +417,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         """
 
         def run_display_test(defaults, ep_and_ex_counts):
+            parser = display_setup_args()
+            parser.set_defaults(**defaults)
+            opt = parser.parse_args([])
             with testing_utils.capture_output() as f:
-                parser = display_setup_args()
-                parser.set_defaults(**defaults)
-                opt = parser.parse_args()
                 display_data(opt)
             str_output = f.getvalue()
             self.assertTrue(

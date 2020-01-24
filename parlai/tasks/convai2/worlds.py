@@ -4,13 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from copy import deepcopy
+
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatBaseWorld
 
-from copy import deepcopy
 import random
+from typing import List
 
 
 def load_personas(opt):
@@ -48,9 +50,20 @@ def load_personas(opt):
 
 
 class InteractiveWorld(DialogPartnerWorld):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        parser = argparser.add_argument_group('ConvAI2 Interactive World')
+        parser.add_argument(
+            '--display-partner-persona',
+            type='bool',
+            default=True,
+            help='Display your partner persona at the end of the chat',
+        )
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.personas_list = load_personas(self.opt)
+        self.display_partner_persona = self.opt['display_partner_persona']
         self.cnt = 0
 
     def get_new_personas(self):
@@ -69,29 +82,36 @@ class InteractiveWorld(DialogPartnerWorld):
             self.p1, self.p2 = self.get_new_personas()
 
         acts = self.acts
-        agents = self.agents
+        human_agent, model_agent = self.agents
         if self.cnt == 0:
-            # add the persona on to the first message to agent 0
+            # add the persona on to the first message to human agent
             act = {}
             act['text'] = self.p1
             act['episode_done'] = False
             act['id'] = 'persona'
-            agents[0].observe(validate(act))
-        act = deepcopy(agents[0].act())
+            human_agent.observe(validate(act))
+        act = deepcopy(human_agent.act())
         if self.cnt == 0:
-            # add the persona on to the first message to agent 1
+            # add the persona on to the first message to model agent
             act.force_set('text', self.p2 + act.get('text', 'hi'))
-            agents[1].observe(validate(act))
+            model_agent.observe(validate(act))
         else:
-            agents[1].observe(validate(act))
-        acts[1] = agents[1].act()
-        agents[0].observe(validate(acts[1]))
+            model_agent.observe(validate(act))
+        acts[1] = model_agent.act()
+        human_agent.observe(validate(acts[1]))
         self.update_counters()
         self.cnt += 1
 
         if act['episode_done']:
-            print("CHAT DONE ")
-            print("\n... preparing new chat... \n")
+            print("\nCHAT DONE.\n")
+            if self.display_partner_persona:
+                partner_persona = self.p2.replace(
+                    'your persona:', 'partner\'s persona:'
+                )
+                print(
+                    f"Your partner was playing the following persona:\n{partner_persona}"
+                )
+            print("[ Preparing new chat ... ]\n")
             self.cnt = 0
 
 
@@ -99,7 +119,7 @@ class InteractiveSelfchatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         self.personas_list = load_personas(self.opt)
 
-    def get_contexts(self):
+    def get_contexts(self, episode_num: int) -> List[str]:
         random.seed()
         personas_1 = random.choice(self.personas_list)
         personas_2 = random.choice(self.personas_list)

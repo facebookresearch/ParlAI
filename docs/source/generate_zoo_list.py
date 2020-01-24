@@ -24,10 +24,10 @@ def model_text(model_dict, fout):
     fout.write('\n')
 
     links = ''
-    if 'project' in model:
+    if 'project' in model and model['project']:
         link = model['project']
         links += '`[related project] <' + link + '/>`__ '
-    if 'external_website' in model:
+    if 'external_website' in model and model['external_website']:
         link = model['external_website']
         links += '`[external website] <' + link + '/>`__ '
     if links != "":
@@ -67,7 +67,7 @@ def model_text(model_dict, fout):
 fout = open('zoo_list.inc', 'w')
 
 for task_name in category_zoo_list:
-    s = 'Task: ' + task_name.capitalize() + '\n'
+    s = task_name.title().replace('_', ' ') + ' models\n'
     fout.write(s)
     fout.write('-' * len(s) + '\n\n')
 
