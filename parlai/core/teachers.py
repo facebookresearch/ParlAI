@@ -35,7 +35,7 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
-from parlai.core.metrics import Metrics, aggregate_metrics
+from parlai.core.metrics import TeacherMetrics, aggregate_metrics
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -116,7 +116,7 @@ class Teacher(Agent):
             if shared and shared.get('metrics'):
                 self.metrics = shared['metrics']
             else:
-                self.metrics = Metrics(opt)
+                self.metrics = TeacherMetrics(opt['numthreads'] > 1, opt['metrics'])
         self.epochDone = False
 
     # return state/action dict based upon passed state
@@ -444,7 +444,7 @@ class FixedDialogTeacher(Teacher):
             self.lastYs[self.batchindex] = None
 
         if hasattr(self, 'lastY') and self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
+            self.metrics.evaluate_response(observation, self.lastY)
             self.lastY = None
         return observation
 
