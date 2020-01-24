@@ -56,7 +56,9 @@ class SplitTeacher(Teacher):
             if shared and shared.get('factmetrics'):
                 self.factmetrics = shared['factmetrics']
             else:
-                self.factmetrics = TeacherMetrics(opt['numthreads'] > 1, opt['metrics'])
+                self.factmetrics = TeacherMetrics(
+                    opt.get('numthreads', 1) > 1, opt.get('metrics', 'default')
+                )
             self.datatype = opt['datatype']
         questions_path, trainset_path, self.image_path = _path(opt)
 

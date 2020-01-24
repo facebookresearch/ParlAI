@@ -116,7 +116,9 @@ class Teacher(Agent):
             if shared and shared.get('metrics'):
                 self.metrics = shared['metrics']
             else:
-                self.metrics = TeacherMetrics(opt['numthreads'] > 1, opt['metrics'])
+                self.metrics = TeacherMetrics(
+                    opt.get('numthreads', 1) > 1, opt.get('metrics', 'default')
+                )
         self.epochDone = False
 
     # return state/action dict based upon passed state
