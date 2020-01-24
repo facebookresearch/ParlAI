@@ -1140,23 +1140,23 @@ class DynamicBatchWorld(World):
         # now let's build the batch
         batch = []
 
-        # start with a random item. index_index is the lookup into indices, but
+        # start with a random item. indices_idx is the lookup into indices, but
         # index is the actual world.
         width = 0
-        index_index = random.randint(0, len(indices) - 1)
+        indices_idx = random.randint(0, len(indices) - 1)
 
         # we picked a random spot, but we can get better packing if we start at
         # the last example with the same score, since we always pick move down
         # to smaller examples.
-        while index_index < len(indices) - 1 and (
-            sum(self._scores[indices[index_index]])
-            == sum(self._scores[indices[index_index + 1]])
+        while indices_idx < len(indices) - 1 and (
+            sum(self._scores[indices[indices_idx]])
+            == sum(self._scores[indices[indices_idx + 1]])
         ):
-            index_index += 1
+            indices_idx += 1
 
         # quit early if we eat our full buffer
         while indices:
-            index = indices[index_index]
+            index = indices[indices_idx]
             this_width = self._ceil(sum(self._scores[index]))
             new_width = max(width, this_width)
             # compute the cost of the new batch
@@ -1165,8 +1165,8 @@ class DynamicBatchWorld(World):
                 # cool, this one fits, let's add it
                 width = new_width
                 batch.append(index)
-                indices.pop(index_index)
-                index_index = max(index_index - 1, 0)
+                indices.pop(indices_idx)
+                indices_idx = max(indices_idx - 1, 0)
             else:
                 # we'd overfill our buffer, give up
                 break
