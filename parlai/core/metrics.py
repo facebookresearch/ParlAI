@@ -391,35 +391,12 @@ def aggregate_metrics(reporters):
 
 class Metrics(object):
     """
-    Class that maintains evaluation metrics over dialog.
+    Threadsafe metrics container focused on aggregation.
     """
 
-    @staticmethod
-    def _infer_metrics(cli_arg: str) -> Set[str]:
-        """
-        Parse the CLI metric into a list of metrics we wish to compute.
-        """
-        col: Set[str] = set()
-        names = cli_arg.split(",")
-        for n in names:
-            if n == 'default':
-                col |= DEFAULT_METRICS
-            elif n == 'rouge':
-                col |= ROUGE_METRICS
-            elif n == 'bleu':
-                col |= BLEU_METRICS
-            elif n == 'all':
-                col |= ALL_METRICS
-            else:
-                col.add(n)
-        return col
-
-    def __init__(self, opt):
-        self.metrics = {}
-        self.metrics_list = Metrics._infer_metrics(opt.get('metrics', 'default'))
-        self.eval_pr = [1, 5, 10, 100]
-
-        self._hogwild = opt.get('numthreads', 1) > 1
+    def __init__(self, hogwild=False):
+        self._metrics = {}
+        self._hogwild = hogwild
         if self._hogwild:
             # Hogwild metrics tracking works by keeping a queue that workers can
             # push updates to. the main worker works through the queue at report
@@ -535,3 +512,34 @@ class Metrics(object):
                 break
 
         self.metrics.clear()
+
+
+class TeacherMetrics(Metrics):
+    """
+    Helper container which encapsulates standard metrics (F1, BLEU, ...).
+    """
+
+    def __init__(self, threadsafe: bool=False, metrics_list: str) -> None:
+        super().__init__(threadsafe=threadsafe)
+        self._metrics_list = self._infer_metrics(metrics_list)
+        self.eval_pr = [1, 5, 10, 100]
+
+    @staticmethod
+    def _infer_metrics(cli_arg: str) -> Set[str]:
+        """
+        Parse the CLI metric into a list of metrics we wish to compute.
+        """
+        col: Set[str] = set()
+        names = cli_arg.split(",")
+        for n in names:
+            if n == 'default':
+                col |= DEFAULT_METRICS
+            elif n == 'rouge':
+                col |= ROUGE_METRICS
+            elif n == 'bleu':
+                col |= BLEU_METRICS
+            elif n == 'all':
+                col |= ALL_METRICS
+            else:
+                col.add(n)
+        return col
