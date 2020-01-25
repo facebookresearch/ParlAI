@@ -310,10 +310,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         self._pyt_train('train:stream')
 
     @testing_utils.retry()
-    def test_pyt_train_stream_ordered(self):
-        self._pyt_train('train:stream:ordered')
-
-    @testing_utils.retry()
     def test_pyt_preprocess_train(self):
         """
         Test that the preprocess functionality works with the PytorchDataTeacher with a

@@ -1015,23 +1015,24 @@ class StreamDialogData(DialogData):
 
         When episode is done returns first entry of next episode.
         """
-        with self._lock():
-            if self.cur_episode is self._FIRST_PASS:
-                # first go around, always read off the episode
-                self.cur_episode = next(self.data)
-            if self.cur_episode == self._END_OF_EPOCH:
-                # we're done here
-                return {'episode_done': True}, True
-            entry = self.cur_episode[self.entry_idx]
-            table = self.build_table(entry)
-            episode_done = self.entry_idx == len(self.cur_episode) - 1
-            table['episode_done'] = episode_done
-            if episode_done:
-                self.cur_episode = next(self.data)
-                self.entry_idx = 0
-            else:
-                self.entry_idx += 1
-            return table, self.cur_episode == self._END_OF_EPOCH
+        if self.cur_episode is self._FIRST_PASS:
+            # first go around, always read off the episode
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+        if self.cur_episode == self._END_OF_EPOCH:
+            # we're done here
+            return {'episode_done': True}, True
+        entry = self.cur_episode[self.entry_idx]
+        table = self.build_table(entry)
+        episode_done = self.entry_idx == len(self.cur_episode) - 1
+        table['episode_done'] = episode_done
+        if episode_done:
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+            self.entry_idx = 0
+        else:
+            self.entry_idx += 1
+        return table, self.cur_episode == self._END_OF_EPOCH
 
     def reset(self):
         """
@@ -1045,6 +1046,7 @@ class StreamDialogData(DialogData):
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
         self.entry_idx = 0
+        self.cur_episode = self._FIRST_PASS
         return self.data
 
 
