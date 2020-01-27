@@ -29,7 +29,7 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
     @abstractmethod
     def get_tokenizer(self, opt):
         """
-        Instantiate the HuggingFace tokenizer for your model
+        Instantiate the HuggingFace tokenizer for your model.
         """
         pass
 
@@ -58,7 +58,7 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
 class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
     def get_tokenizer(self, opt):
         """
-        Instantiate tokenizer
+        Instantiate tokenizer.
         """
         return GPT2Tokenizer.from_pretrained('gpt2')
 

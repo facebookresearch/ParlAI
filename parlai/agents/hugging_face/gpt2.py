@@ -14,11 +14,12 @@ import torch
 
 class DummyEncoder(torch.nn.Module):
     """
-    Dummy encoder that just does a forward pass here
+    Dummy encoder that just does a forward pass here.
     """
+
     def forward(self, xs):
         """
-        Identity
+        Identity.
         """
         return xs
 
@@ -36,10 +37,7 @@ class GPT2Decoder(torch.nn.Module):
             # get rid of START token
             # TODO: consider whether we always want to do this
             model_input = input[:, -1].unsqueeze(1)
-        transformer_outputs = self.transformer(
-            model_input,
-            past=incr_state,
-        )
+        transformer_outputs = self.transformer(model_input, past=incr_state,)
         hidden_states = transformer_outputs[0]
         new_incr_state = transformer_outputs[1]
 
@@ -56,7 +54,9 @@ class HFGPT2Model(TorchGeneratorModel):
         self.decoder = GPT2Decoder(opt, dict)
 
         self.config = self.decoder.transformer.config
-        self.lm_head = torch.nn.Linear(self.config.n_embd, self.config.vocab_size, bias=False)
+        self.lm_head = torch.nn.Linear(
+            self.config.n_embd, self.config.vocab_size, bias=False
+        )
         self.tie_weights(self.lm_head, self.decoder.transformer.wte)
 
     def tie_weights(self, output_embeddings, input_embeddings):
@@ -79,7 +79,9 @@ class HFGPT2Model(TorchGeneratorModel):
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         new_incr_state = []
         for layer_past in incremental_state:
-            reordered_layer_past = [layer_past[:, i].unsqueeze(1).clone().detach() for i in inds]
+            reordered_layer_past = [
+                layer_past[:, i].unsqueeze(1).clone().detach() for i in inds
+            ]
             reordered_layer_past = torch.cat(reordered_layer_past, dim=1)
             new_incr_state.append(reordered_layer_past)
 

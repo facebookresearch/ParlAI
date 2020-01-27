@@ -7,16 +7,13 @@
 """
 Integration with Hugging Face Transformers.
 
-Please see <https://huggingface.co/transformers/>.
-Currently, the only implementation is GPT2. To use this model,
-run with `-m hugging_face/gpt2`.
+Please see <https://huggingface.co/transformers/>. Currently, the only implementation is
+GPT2. To use this model, run with `-m hugging_face/gpt2`.
 """
 try:
     import transformers  # noqa: F401
 except ImportError as e:
-    raise e(
-        'Please run `pip install transformers`.'
-    )
+    raise e('Please run `pip install transformers`.')
 
 
 class HuggingFaceAgent:
