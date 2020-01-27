@@ -187,6 +187,7 @@ class ChatServiceManager(ABC):
             task: cfg.task_name for task, cfg in self.task_configs.items()
         }
         self.service_reference_id = None
+        self.parse_additional_args(opt)
 
     @abstractmethod
     def parse_additional_args(self, opt):
