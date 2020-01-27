@@ -48,10 +48,6 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --progress-bar off --upgrade pip setuptools
-      pip3 install --progress-bar off coverage
-      pip3 install --progress-bar off codecov
-      mkdir -p ~/ParlAI/test-results
 
 
 codecov: &codecov
@@ -64,6 +60,10 @@ installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
+      pip3 install --progress-bar off --upgrade pip setuptools
+      pip3 install --progress-bar off coverage
+      pip3 install --progress-bar off codecov
+      mkdir -p ~/ParlAI/test-results
       pip install -q -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
@@ -139,10 +139,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dt-v7{{ checksum "requirements.txt" }}
+          key: deps-dt-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-dt-v7{{ checksum "requirements.txt" }}
+          key: deps-dt-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu
@@ -162,11 +162,11 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-osx-v7{{ checksum "requirements.txt" }}
+          key: deps-osx-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-osx-v7{{ checksum "requirements.txt" }}
+          key: deps-osx-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -188,11 +188,11 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut36-v7{{ checksum "requirements.txt" }}
+          key: deps-ut36-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-ut36-v7{{ checksum "requirements.txt" }}
+          key: deps-ut36-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -211,11 +211,11 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut37-v7{{ checksum "requirements.txt" }}
+          key: deps-ut37-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-ut37-v7{{ checksum "requirements.txt" }}
+          key: deps-ut37-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -241,11 +241,11 @@ jobs:
             - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu13-v7{{ checksum "requirements.txt" }}
+          key: deps-gpu13-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu13
       - save_cache:
-          key: deps-gpu13-v7{{ checksum "requirements.txt" }}
+          key: deps-gpu13-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -271,11 +271,11 @@ jobs:
             - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-gpu14-v7{{ checksum "requirements.txt" }}
+          key: deps-gpu14-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-gpu14-v7{{ checksum "requirements.txt" }}
+          key: deps-gpu14-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -301,11 +301,11 @@ jobs:
             - "~/nvidia-downloads/"
       - <<: *setup
       - restore_cache:
-          key: deps-nightly-v7{{ checksum "requirements.txt" }}
+          key: deps-nightly-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-nightly-v7{{ checksum "requirements.txt" }}
+          key: deps-nightly-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -327,10 +327,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-mturk-v7{{ checksum "requirements.txt" }}
+          key: deps-mturk-v8{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-mturk-v7{{ checksum "requirements.txt" }}
+          key: deps-mturk-v8{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - run:
@@ -348,7 +348,7 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-bw-v9{{ checksum "requirements.txt" }}
+          key: deps-bw-v10{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu14
       - run:
@@ -358,7 +358,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-bw-v9{{ checksum "requirements.txt" }}
+          key: deps-bw-v10{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *buildwebsite
@@ -378,11 +378,11 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-dw-v8{{ checksum "requirements.txt" }}
+          key: deps-dw-v9{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-dw-v8{{ checksum "requirements.txt" }}
+          key: deps-dw-v9{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *buildwebsite
