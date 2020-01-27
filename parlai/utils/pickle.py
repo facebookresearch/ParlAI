@@ -22,14 +22,7 @@ import pickle
 
 
 class FakeAPEXClass:
-    def __init__(self, *args, **kwargs):
-        self._fakeattr = "Hi"
-
-    def __getattr__(self, key):
-        if key == '_fakeattr':
-            return super().__getattr__(key)
-        else:
-            return self._fakeattr
+    pass
 
 
 class Unpickler(pickle._Unpickler):
