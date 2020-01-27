@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 ParlAI's custom unpickler.
 
@@ -14,9 +18,7 @@ This module is to handle both of these issues. It is used like this:
 >>> state_dict = torch.load(filename, pickle_module=parlai.utils.pickle)
 """
 
-import sys
 import pickle
-import unittest.mock as mock
 
 
 class FakeAPEXClass:
