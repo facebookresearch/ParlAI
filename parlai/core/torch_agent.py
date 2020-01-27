@@ -19,6 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+
 from typing import Dict, Any
 from abc import ABC, abstractmethod
 from copy import deepcopy
@@ -785,6 +786,21 @@ class TorchAgent(ABC, Agent):
             # set adam optimizer, but only if user specified it
             if opt.get('adam_eps'):
                 kwargs['eps'] = opt['adam_eps']
+
+        # handle fused_adam where the user doesn't have apex installed
+        if saved_optim_type == 'fused_adam' and 'fused_adam' not in self.optim_opts():
+            # we trained with apex, but the user doesn't have apex installed.
+            saved_optim_type = 'adam'
+
+        if (
+            self.opt['optimizer'] == 'fused_adam'
+            and 'fused_adam' not in self.optim_opts()
+        ):
+            raise ImportError(
+                'You are using --optimizer fused_adam, but you do not have APEX '
+                'installed. Please install APEX (https://github.com/NVIDIA/apex) or '
+                'switch to --optimizer adam.'
+            )
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)

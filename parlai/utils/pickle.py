@@ -14,17 +14,36 @@ This module is to handle both of these issues. It is used like this:
 >>> state_dict = torch.load(filename, pickle_module=parlai.utils.pickle)
 """
 
-from pickle import Unpickler as PythonUnpickler
+import sys
+import pickle
+import unittest.mock as mock
 
 
-class Unpickler(PythonUnpickler):
+class FakeAPEXClass:
+    def __init__(self, *args, **kwargs):
+        self._fakeattr = "Hi"
+
+    def __getattr__(self, key):
+        if key == '_fakeattr':
+            return super().__getattr__(key)
+        else:
+            return self._fakeattr
+
+
+class Unpickler(pickle._Unpickler):
     """
     Custom unpickler to handle moved classes and optional libraries.
     """
 
     def find_class(self, module, name):
-        print(module, name)
-        return super().find_class(module, name)
+        try:
+            return super().find_class(module, name)
+        except ModuleNotFoundError:
+            if module.startswith('apex.'):
+                # user doesn't have apex installed. We'll deal with this later.
+                return FakeAPEXClass
+            else:
+                raise
 
 
 def load(*args, **kwargs):
