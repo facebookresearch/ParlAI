@@ -13,7 +13,7 @@ from parlai.core.build_data import download_models
 def download(datapath):
     opt = {'datapath': datapath}
     version = ['v1.0']
-    fnames = [f'convai2_single_task_{version}.tar.gz']
+    fnames = [f'bst_single_task_{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
