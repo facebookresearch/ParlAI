@@ -63,14 +63,11 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         return GPT2Tokenizer.from_pretrained('gpt2')
 
     def override_special_tokens(self, opt):
-        self.start_token = '<|endoftext|>'   # double check on this
-        self.end_token = '<|endoftext|>'
-        self.start_idx = self.tokenizer.convert_tokens_to_ids([self.start_token])[0]
+        self.start_idx = -1  # hack, we end up removing this anyway
+        self.end_token = self.tokenizer.eos_token  # "<|endoftext|>"
         self.end_idx = self.tokenizer.convert_tokens_to_ids([self.end_token])[0]
         self.pad_idx = 0
         # set tok2ind for special tokens
-        self.tok2ind[self.start_token] = self.start_idx
         self.tok2ind[self.end_token] = self.end_idx
         # set ind2tok for special tokens
-        self.ind2tok[self.start_idx] = self.start_token
         self.ind2tok[self.end_idx] = self.end_token

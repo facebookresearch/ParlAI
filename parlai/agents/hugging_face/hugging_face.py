@@ -11,10 +11,6 @@ Please see <https://huggingface.co/transformers/>.
 Currently, the only implementation is GPT2. To use this model,
 run with `-m hugging_face/gpt2`.
 """
-
-from parlai.agents.hugging_face.dict import HuggingFaceDictionaryAgent
-from parlai.core.torch_generator_agent import TorchGeneratorAgent
-
 try:
     import transformers  # noqa: F401
 except ImportError as e:

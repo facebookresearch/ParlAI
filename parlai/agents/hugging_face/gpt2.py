@@ -34,8 +34,8 @@ class GPT2Decoder(torch.nn.Module):
             model_input = encoder_state
         else:
             # get rid of START token
-            # TODO: check whether or not we always want to do this?
-            model_input = input[:, -1].unsqueeze(0)
+            # TODO: consider whether we always want to do this
+            model_input = input[:, -1].unsqueeze(1)
         transformer_outputs = self.transformer(
             model_input,
             past=incr_state,
@@ -63,13 +63,9 @@ class HFGPT2Model(TorchGeneratorModel):
         output_embeddings.weight = input_embeddings.weight
 
     def _get_special_tokens(self, opt, dict):
-        """
-        TODO: double check on special tokens
-        """
         return dict.pad_idx, dict.start_idx, dict.end_idx
 
     def reorder_encoder_states(self, encoder_states, indices):
-        # TODO: double check that this is correct
         enc = torch.index_select(encoder_states, 0, indices)
         return enc
 
