@@ -54,7 +54,7 @@ codecov: &codecov
   run:
     name: Coverage report
     command: |
-      codecov --flags $CIRCLE_JOB
+      python -m codecov --flags $CIRCLE_JOB
 
 installdeps: &installdeps
   run:
@@ -148,7 +148,7 @@ jobs:
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m data
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -171,7 +171,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (OSX)
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -197,7 +197,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -220,7 +220,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py37)
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -250,7 +250,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.3)
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -280,7 +280,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -311,7 +311,7 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
@@ -335,7 +335,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
       - <<: *codecov
       - store_test_results:
           path: test-results
