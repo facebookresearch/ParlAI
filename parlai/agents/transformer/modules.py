@@ -30,9 +30,12 @@ from parlai.utils.torch import neginf
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
+
+    APEX_LAYER_NORM = True
 except ImportError:
-    warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
+
+    APEX_LAYER_NORM = False
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
@@ -41,6 +44,8 @@ def _normalize(tensor, norm_layer):
     """
     Broadcast layer norm.
     """
+    if not APEX_LAYER_NORM:
+        warn_once("Installing APEX can give a significant speed boost.")
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 

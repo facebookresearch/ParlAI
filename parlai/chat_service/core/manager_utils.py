@@ -12,7 +12,7 @@ import websocket
 import datetime
 from concurrent import futures
 import parlai.mturk.core.shared_utils as shared_utils
-import parlai.chat_service.services.messenger.shared_utils as utils
+import parlai.chat_service.core.shared_utils as utils
 
 SOCKET_TIMEOUT = 6
 

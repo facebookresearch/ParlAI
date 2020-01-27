@@ -139,14 +139,14 @@ class ParlAILRScheduler(object):
             default=-1,
             help='Number of train steps the scheduler should take after warmup. '
             'Training is terminated after this many steps. This should only be '
-            'set for --lr_scheduler cosine or linear',
+            'set for --lr-scheduler cosine or linear',
         )
         lr_group.add_argument(
             '--invsqrt-lr-decay-gamma',
             type=int,
             default=-1,
             help='Constant used only to find the lr multiplier for the invsqrt '
-            'scheduler. Must be set for --lr_scheduler invsqrt',
+            'scheduler. Must be set for --lr-scheduler invsqrt',
         )
         lr_group.add_argument(
             '--warmup-updates',
@@ -431,7 +431,7 @@ class CosineLRScheduler(ParlAILRScheduler):
         """
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
-            raise ValueError('--lr-scheduler cosine requires setting --max_lr_steps')
+            raise ValueError('--lr-scheduler cosine requires setting --max-lr-steps')
         self.max_lr_steps = max_lr_steps
         self.scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, max_lr_steps)
 
@@ -466,7 +466,7 @@ class LinearLRScheduler(ParlAILRScheduler):
         """
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
-            raise ValueError('--lr-scheduler linear requires setting --max_lr_steps')
+            raise ValueError('--lr-scheduler linear requires setting --max-lr-steps')
         self.max_lr_steps = max_lr_steps
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._linear_lr)
 

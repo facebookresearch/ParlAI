@@ -191,7 +191,7 @@ def fix_underscores(args):
     return args
 
 
-class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+class CustomHelpFormatter(argparse.HelpFormatter):
     """
     Produce a custom-formatted `--help` option.
 
@@ -199,8 +199,8 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_help_position'] = 8
-        kwargs['width'] = 130
+        kwargs['max_help_position'] = 6
+        kwargs['width'] = 80
         super().__init__(*args, **kwargs)
 
     def _format_action_invocation(self, action):
@@ -209,6 +209,22 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
         default = self._get_default_metavar_for_optional(action)
         args_string = self._format_args(action, default)
         return ', '.join(action.option_strings) + ' ' + args_string
+
+    def _get_help_string(self, action):
+        help = action.help
+        if '%(default)' not in action.help:
+            if action.default is not argparse.SUPPRESS:
+                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+                if action.option_strings or action.nargs in defaulting_nargs:
+                    help += ' (default: %(default)s)'
+        if (
+            hasattr(action, 'recommended')
+            and action.recommended
+            and action.recommended != action.default
+        ):
+            help += '(recommended: %(recommended)s)'
+            help = help.replace(')(recommended', ', recommended')
+        return help
 
 
 class ParlaiParser(argparse.ArgumentParser):
@@ -241,6 +257,7 @@ class ParlaiParser(argparse.ArgumentParser):
             allow_abbrev=False,
             conflict_handler='resolve',
             formatter_class=CustomHelpFormatter,
+            add_help=add_parlai_args,
         )
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
@@ -1135,35 +1152,32 @@ class ParlaiParser(argparse.ArgumentParser):
             self._show_advanced_args = True
         return self._show_advanced_args
 
-    def _handle_hidden_args(self, kwargs):
+    def _handle_custom_options(self, kwargs):
         """
-        Hide help messages for arguments marked as hidden.
-        """
-        if 'hidden' in kwargs:
-            flag = kwargs['hidden']
-            del kwargs['hidden']
-            if flag and not self.show_advanced_args:
-                kwargs['help'] = argparse.SUPPRESS
-        return kwargs
+        Handle custom parlai options.
 
-    def _augment_help_msg(self, kwargs):
+        Includes hidden, recommended. Future may include no_save and no_override.
         """
-        Add recommended value to help string if recommended exists.
-        """
-        if 'help' in kwargs:
-            if 'recommended' in kwargs:
-                kwargs['help'] += " (recommended: " + str(kwargs['recommended']) + ")"
-                del kwargs['recommended']
-        return kwargs
+        action_attr = {}
+        if 'recommended' in kwargs:
+            rec = kwargs.pop('recommended')
+            action_attr['recommended'] = rec
+        action_attr['hidden'] = kwargs.get('hidden', False)
+        if 'hidden' in kwargs:
+            hidden = kwargs.pop('hidden')
+            if hidden:
+                kwargs['help'] = argparse.SUPPRESS
+        return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):
         """
         Override to convert underscores to hyphens for consistency.
         """
-        kwargs = self._augment_help_msg(kwargs)
-        return super().add_argument(
-            *fix_underscores(args), **self._handle_hidden_args(kwargs)
-        )
+        kwargs, newattr = self._handle_custom_options(kwargs)
+        action = super().add_argument(*fix_underscores(args), **kwargs)
+        for k, v in newattr.items():
+            setattr(action, k, v)
+        return action
 
     def add_argument_group(self, *args, **kwargs):
         """
@@ -1173,10 +1187,11 @@ class ParlaiParser(argparse.ArgumentParser):
         original_add_arg = arg_group.add_argument
 
         def ag_add_argument(*args, **kwargs):
-            kwargs = self._augment_help_msg(kwargs)
-            return original_add_arg(
-                *fix_underscores(args), **self._handle_hidden_args(kwargs)
-            )
+            kwargs, newattr = self._handle_custom_options(kwargs)
+            action = original_add_arg(*fix_underscores(args), **kwargs)
+            for k, v in newattr.items():
+                setattr(action, k, v)
+            return action
 
         arg_group.add_argument = ag_add_argument  # override _ => -
         arg_group.add_argument_group = self.add_argument_group
