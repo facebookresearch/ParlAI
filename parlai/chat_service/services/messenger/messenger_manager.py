@@ -43,7 +43,7 @@ class MessengerManager(ChatServiceManager):
         self._complete_setup()
 
     def parse_additional_args(self, opt):
-        self.service_reference_id = self.config['page_id']
+        self.service_reference_id = self.config['additional_args']['page_id']
         if self.service_reference_id == 1:
             raise RuntimeError(
                 'Please configure your own page in order to run this task. '
