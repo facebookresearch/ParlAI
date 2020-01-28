@@ -431,7 +431,6 @@ class Metrics(object):
         correct = 0
         prediction = observation.get('text', None)
         if prediction is not None:
-            # import ipdb; ipdb.set_trace()
             if _exact_match(prediction, labels):
                 correct = 1
             with self._lock():
@@ -519,13 +518,6 @@ class Metrics(object):
                     m['f1'] = round_sigfigs(
                         self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4
                     )
-                if 'rouge' in self.metrics_list:
-                    for each_rouge in ROUGE_METRICS:
-                        m[each_rouge] = round_sigfigs(
-                            self.metrics[each_rouge]
-                            / max(1, self.metrics['{}_cnt'.format(each_rouge)]),
-                            4,
-                        )
             if self.flags['has_text_cands']:
                 for k in self.eval_pr:
                     m['hits@' + str(k)] = round_sigfigs(
