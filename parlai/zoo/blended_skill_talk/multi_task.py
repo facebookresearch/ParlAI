@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained polyencoder retrieval model on the ConvAI2 dialogue task.
+Pretrained polyencoder retrieval model trained on the ConvAI2, EmpatheticDialogues, and 
+Wizard of Wikipedia dialogue tasks.
 """
 
 from parlai.core.build_data import download_models
