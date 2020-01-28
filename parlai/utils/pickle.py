@@ -25,7 +25,7 @@ class FakeAPEXClass:
     pass
 
 
-class Unpickler(pickle._Unpickler):
+class Unpickler(pickle._Unpickler):  # type: ignore
     """
     Custom unpickler to handle moved classes and optional libraries.
     """
