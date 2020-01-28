@@ -27,7 +27,9 @@ class DummyEncoder(torch.nn.Module):
 class GPT2Decoder(torch.nn.Module):
     def __init__(self, opt, dict):
         super().__init__()
-        self.transformer = GPT2Model.from_pretrained('gpt2')
+        model_sz = opt['gpt2_size']
+        fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
+        self.transformer = GPT2Model.from_pretrained(fle_key)
 
     def forward(self, input, encoder_state, incr_state=None):
         if incr_state is None:
@@ -89,6 +91,19 @@ class HFGPT2Model(TorchGeneratorModel):
 
 
 class Gpt2Agent(TorchGeneratorAgent):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        agent = argparser.add_argument_group('Gpt2 Args')
+        agent.add_argument(
+            '--gpt2-size',
+            type=str,
+            default='small',
+            choices=['small', 'medium', 'large', 'xl'],
+            help='Which size model to initialize.',
+        )
+        super(Gpt2Agent, cls).add_cmdline_args(argparser)
+        return agent
+
     @staticmethod
     def dictionary_class():
         """
@@ -103,21 +118,3 @@ class Gpt2Agent(TorchGeneratorAgent):
         Build and return model.
         """
         return HFGPT2Model(self.opt, self.dict)
-
-    def _v2t(self, vec):
-        """
-        Override because for GPT2, the start token = end token.
-        """
-        new_vec = []
-        if hasattr(vec, 'cpu'):
-            vec = vec.cpu()
-
-        idx = 0
-        for i in vec:
-            if i == self.END_IDX and idx != 0:
-                break
-            elif i != self.START_IDX:
-                new_vec.append(i)
-            idx += 1
-
-        return self.dict.vec2txt(new_vec)

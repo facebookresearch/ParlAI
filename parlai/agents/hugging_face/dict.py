@@ -60,7 +60,9 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        return GPT2Tokenizer.from_pretrained('gpt2')
+        model_sz = opt['gpt2_size']
+        fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
+        return GPT2Tokenizer.from_pretrained(fle_key)
 
     def override_special_tokens(self, opt):
         self.start_idx = -1  # hack, we end up removing this anyway
