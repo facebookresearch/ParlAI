@@ -12,13 +12,13 @@ from parlai.core.build_data import download_models
 
 def download(datapath):
     opt = {'datapath': datapath}
-    version = ['v1.0']
+    version = 'v1.0'
     fnames = [f'multi_task_bst_tuned_{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
         model_folder='blended_skill_talk',
         version=version,
-        path='http://localhost:8000/',
+        path='http://localhost:8000/blended_skill_talk',
     )
     # TODO: remove `path` arg
