@@ -14,13 +14,14 @@ from parlai.core.build_data import download_models
 def download(datapath):
     model_type = 'two_stage_classifier'
     version = 'v1.0'
-    opt = {'datapath': datapath}
-    fnames = [f'{model_type}_{version}.tar.gz']
+    opt = {'datapath': datapath, 'model_type': model_type}
+    fnames = [f'{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
         model_folder='blended_skill_talk',
         version=version,
-        path='http://localhost:8000/blended_skill_talk',
+        path=f'http://localhost:8000/blended_skill_talk/{model_type}',
+        use_model_type=True,
     )
     # TODO: remove `path` arg

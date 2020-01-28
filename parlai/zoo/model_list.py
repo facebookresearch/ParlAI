@@ -691,4 +691,15 @@ model_list = [
             """{'exs': 400, 'accuracy': 1.0, 'f1': 1.0, 'bleu-4': 0.2503, 'lr': 0.001, 'total_train_updates': 5000, 'gpu_mem_percent': 9.37e-05, 'loss': 0.0262, 'token_acc': 1.0, 'nll_loss': 7.935e-05, 'ppl': 1.0}"""
         ),
     },
+    {
+        "title": "BlendedSkillTalk: BlendedSkillTalk single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/bst_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "description": "Pretrained polyencoder retrieval model on the BlendedSkillTalk dialogue task.",
+        "project": None,  # TODO: will fill in once dataset is released
+        "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
+        "result": None,  # TODO
+    },
 ]
