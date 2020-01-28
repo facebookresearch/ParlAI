@@ -29,7 +29,7 @@ important research direction.
 
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
-See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
+See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
 [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),

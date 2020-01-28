@@ -531,7 +531,7 @@ model_list = [
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
+            "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits @ 1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
         "example": (
             "python examples/interactive.py -mf "
@@ -561,7 +561,7 @@ model_list = [
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
-            "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits@1/20."
+            "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits @ 1/20."
         ),
         "example": (
             "python examples/interactive.py -mf "
