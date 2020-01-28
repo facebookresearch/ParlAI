@@ -18,5 +18,6 @@ def download(datapath):
         'transformer_ranker.tar.gz',
         'transformer_generator2.tar.gz',
         'memnn.tar.gz',
+        'apex_v1.tar.gz',
     ]
-    download_models(opt, model_filenames, 'unittest', version='v3.0')
+    download_models(opt, model_filenames, 'unittest', version='v4.0')
