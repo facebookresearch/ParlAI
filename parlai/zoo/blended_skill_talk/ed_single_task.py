@@ -11,9 +11,10 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    opt = {'datapath': datapath}
+    model_type = 'ed_single_task'
     version = 'v1.0'
-    fnames = [f'ed_single_task_{version}.tar.gz']
+    opt = {'datapath': datapath}
+    fnames = [f'{model_type}_{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,

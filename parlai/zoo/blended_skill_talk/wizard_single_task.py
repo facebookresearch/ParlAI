@@ -11,15 +11,15 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
+    model_type = 'wizard_single_task'
     version = 'v1.0'
-    opt = {'datapath': datapath, 'model_type': f'wizard_single_task_{version}'}
-    fnames = ['model', 'model.dict', 'model.dict.codecs', 'model.dict.opt', 'model.opt']
+    opt = {'datapath': datapath}
+    fnames = [f'{model_type}_{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
         model_folder='blended_skill_talk',
         version=version,
         path='http://localhost:8000/blended_skill_talk',
-        use_model_type=True,
     )
     # TODO: remove `path` arg

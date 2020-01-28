@@ -12,9 +12,10 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    opt = {'datapath': datapath}
+    model_type = 'two_stage_classifier'
     version = 'v1.0'
-    fnames = [f'two_stage_classifier_{version}.tar.gz']
+    opt = {'datapath': datapath}
+    fnames = [f'{model_type}_{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
