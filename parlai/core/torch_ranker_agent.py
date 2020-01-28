@@ -432,7 +432,6 @@ class TorchRankerAgent(TorchAgent):
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.eval_candidates, mode='eval'
         )
-        # import ipdb; ipdb.set_trace()
 
         cand_encs = None
         if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
@@ -579,7 +578,6 @@ class TorchRankerAgent(TorchAgent):
                 exception of self.NULL_IDX.
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
-        # import ipdb; ipdb.set_trace()
         label_inds = None
         batchsize = (
             batch.text_vec.size(0)
@@ -659,7 +657,6 @@ class TorchRankerAgent(TorchAgent):
                 )
 
             cands = batch.candidates
-            # import ipdb; ipdb.set_trace()
             cand_vecs = padded_3d(
                 batch.candidate_vecs,
                 self.NULL_IDX,
@@ -719,7 +716,6 @@ class TorchRankerAgent(TorchAgent):
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[batch_idx] == -1:
-                        # import ipdb; ipdb.set_trace()
                         bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
@@ -742,7 +738,6 @@ class TorchRankerAgent(TorchAgent):
             # the set of vocab candidates
         else:
             raise Exception("Unrecognized source: %s" % source)
-        # import ipdb; ipdb.set_trace()
         return (cands, cand_vecs, label_inds)
 
     @staticmethod
