@@ -6,10 +6,15 @@
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
+from parlai.utils.misc import warn_once
 
 from transformers import GPT2Model
 
 import torch
+
+############################################
+## Modules
+############################################
 
 
 class DummyEncoder(torch.nn.Module):
@@ -29,17 +34,30 @@ class GPT2Decoder(torch.nn.Module):
         super().__init__()
         model_sz = opt['gpt2_size']
         fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
+        self.start_idx = dict.start_idx
+        self.pad_idx = dict.pad_idx
         self.transformer = GPT2Model.from_pretrained(fle_key)
+        self.transformer.resize_token_embeddings(len(dict.tokenizer))
 
     def forward(self, input, encoder_state, incr_state=None):
+        attention_mask = None
         if incr_state is None:
-            # we are on the first step
-            model_input = encoder_state
+            # first step
+            if input.size(1) == 1 and int(input[0][0]) == self.start_idx:
+                # generating: ignore the start token
+                model_input = encoder_state
+            else:
+                # forced decoding: concatenate the context
+                # with the labels
+                model_input = torch.cat([encoder_state, input], 1)
+                attention_mask = model_input != self.pad_idx
         else:
-            # get rid of START token
-            # TODO: consider whether we always want to do this
+            # generation: get the last token input
             model_input = input[:, -1].unsqueeze(1)
-        transformer_outputs = self.transformer(model_input, past=incr_state,)
+
+        transformer_outputs = self.transformer(
+            model_input, past=incr_state, attention_mask=attention_mask
+        )
         hidden_states = transformer_outputs[0]
         new_incr_state = transformer_outputs[1]
 
@@ -61,6 +79,8 @@ class HFGPT2Model(TorchGeneratorModel):
         )
         self.tie_weights(self.lm_head, self.decoder.transformer.wte)
 
+        self.enc_sz = None
+
     def tie_weights(self, output_embeddings, input_embeddings):
         output_embeddings.weight = input_embeddings.weight
 
@@ -76,6 +96,10 @@ class HFGPT2Model(TorchGeneratorModel):
         Compute output logits.
         """
         # project back to vocabulary
+        if self.enc_sz is not None and self.enc_sz[1] - 1 < tensor.size(1):
+            # keep only label scores
+            # -1 here is because we do not at a start token.
+            tensor = tensor[:, self.enc_sz[1] - 1 :, :]
         return self.lm_head(tensor)
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
@@ -89,6 +113,30 @@ class HFGPT2Model(TorchGeneratorModel):
 
         return tuple(new_incr_state)
 
+    def decode_forced(self, encoder_states, ys):
+        """
+        Override to get rid of start token input.
+        """
+        seqlen = ys.size(1)
+        inputs = ys.narrow(1, 0, seqlen - 1)
+        latent, _ = self.decoder(inputs, encoder_states)
+        logits = self.output(latent)
+        _, preds = logits.max(dim=2)
+        return logits, preds
+
+    def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
+        if ys is not None:
+            self.enc_sz = xs[0].size()
+        else:
+            self.enc_sz = None
+
+        return super().forward(*xs, ys=ys, prev_enc=prev_enc, maxlen=maxlen, bsz=bsz)
+
+
+############################################
+## Agent
+############################################
+
 
 class Gpt2Agent(TorchGeneratorAgent):
     @classmethod
@@ -101,7 +149,13 @@ class Gpt2Agent(TorchGeneratorAgent):
             choices=['small', 'medium', 'large', 'xl'],
             help='Which size model to initialize.',
         )
+        argparser.set_defaults(
+            text_truncate=768,
+            label_truncate=256,
+            dict_maxexs=0,  # skip building dictionary
+        )
         super(Gpt2Agent, cls).add_cmdline_args(argparser)
+        warn_once('WARNING: this model is in beta and the API is ' 'subject to change.')
         return agent
 
     @staticmethod
