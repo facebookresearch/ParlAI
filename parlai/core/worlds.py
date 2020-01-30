@@ -46,18 +46,12 @@ import random
 import time
 
 from functools import lru_cache
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore, Queue
 except ImportError:
-    from multiprocessing import (
-        Process,
-        Value,
-        Semaphore,
-        Condition,
-        Queue,
-    )  # noqa: F401
+    from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
@@ -1265,14 +1259,12 @@ class QBatchWorld(BatchWorld):
         world: World,
         produce_queue: Queue,
         consume_queue: Queue,
-        produce_cond: Condition,
-        consume_cond: Condition,
+        worker_idx: int,
     ):
         super().__init__(opt, world)
         self.produce_queue = produce_queue
         self.consume_queue = consume_queue
-        self.produce_cond = produce_cond
-        self.consume_cond = consume_cond
+        self.worker_idx = worker_idx
 
     def parley(self):
         """
@@ -1285,28 +1277,17 @@ class QBatchWorld(BatchWorld):
                 w.parley_init()
         teacher_idx = 0
         agent_idx = 1
-        with self.produce_cond:
-            self.produce_cond.wait_for(self.produce_queue.empty)
-            batch_act = self.batch_act(teacher_idx, None)
-            batch_obs = self.batch_observe(agent_idx, batch_act, teacher_idx)
-            self.produce_queue.put(batch_obs)
-        with self.consume_cond:
-            self.consume_cond.wait_for(self.consume_queue.full)
-            batch_act = self.consume_queue.get()
-            for other_idx in range(len(self.world.get_agents())):
-                self.batch_observe(other_idx, batch_act, agent_idx)
+        batch_act = self.batch_act(teacher_idx, None)
+        batch_obs = self.batch_observe(agent_idx, batch_act, teacher_idx)
+        self.produce_queue.put((batch_obs, self.worker_idx))
+        batch_act = self.consume_queue.get()
+        for other_idx in range(len(self.world.get_agents())):
+            self.batch_observe(other_idx, batch_act, agent_idx)
         self.update_counters()
 
 
-def run_q_world(opt, world, mp_structs):
-    world = QBatchWorld(
-        opt,
-        world,
-        mp_structs['produce_queue'],
-        mp_structs['consume_queue'],
-        mp_structs['produce_cond'],
-        mp_structs['consume_cond'],
-    )
+def run_q_world(opt, world, produce_queue, consume_queue, worker_idx):
+    world = QBatchWorld(opt, world, produce_queue, consume_queue, worker_idx)
     while not world.epoch_done():
         world.parley()
 
@@ -1323,28 +1304,20 @@ class QueueWorld(BatchWorld):
         # QueueWorld init
         self.world: World = world
         self.processes: List[Process] = []
-        self.structs: List[Dict[str, Union[Queue, Condition]]] = []
+        # self.structs: List[Dict[str, Union[Queue, Condition]]] = []
+        self.consume_queues: List[Queue] = []
         self.worlds: List[World] = []
-        for _ in range(opt['numworkers']):
-            produce_cond = Condition()
-            consume_cond = Condition()
-            produce_queue = Queue(maxsize=1)
-            consume_queue = Queue(maxsize=1)
+        self.produce_queue: Queue = Queue()
+        for worker_idx in range(opt['numworkers']):
+            consume_queue = Queue()
             shared = world.share()
             subworld = shared['world_class'](opt, None, shared)
             self.worlds.append(subworld)
-            self.structs.append(
-                {
-                    'produce_queue': produce_queue,
-                    'consume_queue': consume_queue,
-                    'produce_cond': produce_cond,
-                    'consume_cond': consume_cond,
-                }
-            )
+            self.consume_queues.append(consume_queue)
             self.processes.append(
                 Process(
                     target=run_q_world,
-                    args=(opt, subworld, self.structs[-1]),
+                    args=(opt, subworld, self.produce_queue, consume_queue, worker_idx),
                     daemon=True,
                 )
             )
@@ -1353,18 +1326,9 @@ class QueueWorld(BatchWorld):
 
     def parley(self):
         batch_obs: List[Message] = None
-        chosen_p: Dict[str, Union[Queue, Condition]] = None
-        # Get batch obs
-        while batch_obs is None:
-            chosen_p = random.choice(self.structs)
-            with chosen_p['produce_cond']:
-                if chosen_p['produce_queue'].full():
-                    batch_obs = chosen_p['produce_queue'].get()
-        # Batch Act on that obs
+        batch_obs, worker_idx = self.produce_queue.get()
         batch_acts = self.batch_act(1, batch_obs)
-        with chosen_p['consume_cond']:
-            chosen_p['consume_queue'].put_nowait(batch_acts)
-            chosen_p['consume_cond'].notify()
+        self.consume_queues[worker_idx].put(batch_acts)
         self.update_counters()
 
     def shutdown(self):
