@@ -51,7 +51,13 @@ from typing import List, Dict, Any, Union
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore, Queue
 except ImportError:
-    from multiprocessing import Process, Value, Semaphore, Condition, Queue  # noqa: F401
+    from multiprocessing import (
+        Process,
+        Value,
+        Semaphore,
+        Condition,
+        Queue,
+    )  # noqa: F401
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
@@ -1248,7 +1254,9 @@ class HogwildWorld(World):
 
 class QBatchWorld(BatchWorld):
     """
-    BatchWorld Where batch_act is Fake!! World just queues up the batch!
+    BatchWorld Where batch_act is Fake!!
+
+    World just queues up the batch!
     """
 
     def __init__(
@@ -1269,6 +1277,7 @@ class QBatchWorld(BatchWorld):
     def parley(self):
         """
         Produce a batch observation.
+
         Consume a batch act.
         """
         if hasattr(self.world, 'parley_init'):
@@ -1304,8 +1313,11 @@ def run_q_world(opt, world, mp_structs):
 
 class QueueWorld(BatchWorld):
     """
-    QueueWorld creates subprocess worlds. They create their own batches.
+    QueueWorld creates subprocess worlds.
+
+    They create their own batches.
     """
+
     def __init__(self, opt: Opt, world: World):
         World.__init__(self, opt)
         # QueueWorld init
@@ -1326,11 +1338,15 @@ class QueueWorld(BatchWorld):
                     'produce_queue': produce_queue,
                     'consume_queue': consume_queue,
                     'produce_cond': produce_cond,
-                    'consume_cond': consume_cond
+                    'consume_cond': consume_cond,
                 }
             )
             self.processes.append(
-                Process(target=run_q_world, args=(opt, subworld, self.structs[-1]), daemon=True)
+                Process(
+                    target=run_q_world,
+                    args=(opt, subworld, self.structs[-1]),
+                    daemon=True,
+                )
             )
         for p in self.processes:
             p.start()
