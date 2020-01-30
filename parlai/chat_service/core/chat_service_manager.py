@@ -313,8 +313,8 @@ class ChatServiceManager(ABC):
 
     def _remove_agent(self, agent_id):
         """
-        Remove an agent from the system (after they disconnect or 
-        leave in some other way)
+        Remove an agent from the system (after they disconnect or leave in some other
+        way)
         """
         self.observe_message(agent_id, 'See you later!')
         for world_type in self.agent_pool:
@@ -327,8 +327,8 @@ class ChatServiceManager(ABC):
 
     def _launch_overworld(self, agent_id):
         """
-        Launch an overworld for the given agent id, replacing the existing 
-        overworld if it exists already
+        Launch an overworld for the given agent id, replacing the existing overworld if
+        it exists already.
         """
         agent_state = self.get_agent_state(agent_id)
         task_id = 'overworld-{}-{}'.format(agent_id, time.time())
@@ -598,7 +598,7 @@ class ChatServiceManager(ABC):
 
     def _get_done_callback_for_agents(self, task_id, world_type, agents):
         """
-        Create a done callback for finishing a task world with particular agents
+        Create done callback for finishing task world with particular agents.
         """
 
         def _done_callback(fut):

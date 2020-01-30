@@ -11,8 +11,6 @@ ParlAI via websockets.
 import json
 import asyncio
 import logging
-import traceback
-import sys
 from parlai.core.agents import create_agent
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
