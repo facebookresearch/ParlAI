@@ -347,11 +347,6 @@ class ChatServiceWorldRunner:
                 utils.print_and_log(logging.INFO, 'onboarding/overworld complete')
                 time.sleep(5)
 
-                # sleep until agent returns from task world
-                while agent_state.get_active_agent() != overworld_agent:
-                    time.sleep(2)
-                overworld.return_overworld()
-            utils.print_and_log(logging.INFO, 'exiting overworld')
             return world_type
 
         fut = self.executor.submit(_world_function)

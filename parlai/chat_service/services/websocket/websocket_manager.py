@@ -87,35 +87,6 @@ class WebsocketManager(ChatServiceManager):
         An iteration of the manager's main loop to launch worlds.
         """
 
-        def _done_callback(fut):
-            """
-            Log and raise exception of task world, if there is one.
-
-            Additionally, set active agent to overworld agent.
-            """
-            e = fut.exception()
-            if e is not None:
-                shared_utils.print_and_log(
-                    logging.ERROR,
-                    'World {} had error {}'.format(world_type, repr(e)),
-                    should_print=True,
-                )
-                traceback.print_exc(file=sys.stdout)
-                for agent in agents:
-                    self.observe_message(
-                        agent.id, 'Sorry, this world closed. Returning to overworld.'
-                    )
-            else:
-                shared_utils.print_and_log(
-                    logging.INFO,
-                    'World {} had no error'.format(world_type),
-                    should_print=True,
-                )
-            self.active_worlds[task_id] = None
-            for agent in agents:
-                agent_state = self.get_agent_state(agent.id)
-                agent_state.set_active_agent(agent_state.get_overworld_agent())
-
         with self.agent_pool_change_condition:
             valid_pools = self._get_unique_pool()
             for world_type, agent_pool in valid_pools.items():
@@ -168,11 +139,16 @@ class WebsocketManager(ChatServiceManager):
                         partner_list = agents.copy()
                         partner_list.remove(a)
                         a.message_partners = partner_list
+
+                    done_callback = self._get_done_callback_for_agents(
+                        task_id, world_type, agents
+                    )
+
                     # launch task world.
                     future = self.world_runner.launch_task_world(
                         task_id, self.taskworld_map[world_type], agents
                     )
-                    future.add_done_callback(_done_callback)
+                    future.add_done_callback(done_callback)
                     self.active_worlds[task_id] = future
 
     def start_task(self):
