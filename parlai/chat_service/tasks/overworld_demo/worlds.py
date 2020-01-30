@@ -252,6 +252,7 @@ class MessengerOverworld(World):
             MessengerOnboardDataTaskWorld,
         ),
         'chat': (MessengerChatOnboardWorld, MessengerChatTaskWorld),
+        'EXIT': (None, None),
     }
 
     def __init__(self, opt, agent):

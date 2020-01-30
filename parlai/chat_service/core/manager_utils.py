@@ -334,6 +334,10 @@ class ChatServiceWorldRunner:
                     time.sleep(0.5)
                     continue
 
+                if world_type == self.manager.EXIT_STR:
+                    self.manager._remove_agent(overworld_agent.id)
+                    return world_type
+
                 # perform onboarding
                 onboard_type = onboard_map.get(world_type)
                 if onboard_type:
@@ -345,7 +349,6 @@ class ChatServiceWorldRunner:
                     agent_state.onboard_data = onboard_data
                 self.manager.add_agent_to_pool(agent_state, world_type)
                 utils.print_and_log(logging.INFO, 'onboarding/overworld complete')
-                time.sleep(5)
 
             return world_type
 
