@@ -74,15 +74,15 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         self.tokenizer.add_special_tokens(SPECIAL_TOKENS)
         self.start_token = SPECIAL_TOKENS["bos_token"]
         self.end_token = SPECIAL_TOKENS["eos_token"]
-        self.pad_token = SPECIAL_TOKENS["pad_token"]
+        self.null_token = SPECIAL_TOKENS["pad_token"]
         self.start_idx = self.tokenizer.convert_tokens_to_ids([self.start_token])[0]
         self.end_idx = self.tokenizer.convert_tokens_to_ids([self.end_token])[0]
-        self.pad_idx = self.tokenizer.convert_tokens_to_ids([self.pad_token])[0]
+        self.null_idx = self.tokenizer.convert_tokens_to_ids([self.null_token])[0]
         # set tok2ind for special tokens
         self.tok2ind[self.end_token] = self.end_idx
         self.tok2ind[self.start_token] = self.start_idx
-        self.tok2ind[self.pad_token] = self.pad_idx
+        self.tok2ind[self.null_token] = self.null_idx
         # set ind2tok for special tokens
         self.ind2tok[self.end_idx] = self.end_token
         self.ind2tok[self.start_idx] = self.start_token
-        self.ind2tok[self.pad_idx] = self.pad_token
+        self.ind2tok[self.null_idx] = self.null_token

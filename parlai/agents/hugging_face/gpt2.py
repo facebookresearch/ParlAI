@@ -7,6 +7,7 @@
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.torch import DummyEncoder, concat_without_padding
 
 from transformers import GPT2Model
 
@@ -17,27 +18,19 @@ import torch
 ############################################
 
 
-class DummyEncoder(torch.nn.Module):
-    """
-    Dummy encoder that just does a forward pass here.
-    """
-
-    def forward(self, xs):
-        """
-        Identity.
-        """
-        return xs
-
-
 class GPT2Decoder(torch.nn.Module):
     def __init__(self, opt, dict):
         super().__init__()
+        # load model
         model_sz = opt['gpt2_size']
         fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
-        self.start_idx = dict.start_idx
-        self.pad_idx = dict.pad_idx
         self.transformer = GPT2Model.from_pretrained(fle_key)
+        # add special tokens
+        self.start_idx = dict.start_idx
+        self.null_idx = dict.null_idx
         self.transformer.resize_token_embeddings(len(dict.tokenizer))
+        # use cuda
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
 
     def forward(self, input, encoder_state, incr_state=None):
         attention_mask = None
@@ -49,8 +42,13 @@ class GPT2Decoder(torch.nn.Module):
             else:
                 # forced decoding: concatenate the context
                 # with the labels
-                model_input = torch.cat([encoder_state, input], 1)
-                attention_mask = model_input != self.pad_idx
+                model_input, _ = concat_without_padding(
+                    encoder_state,
+                    input,
+                    use_cuda=self.use_cuda,
+                    null_idx=self.null_idx,
+                )
+                attention_mask = model_input != self.null_idx
         else:
             # generation: get the last token input
             model_input = input[:, -1].unsqueeze(1)
@@ -66,8 +64,10 @@ class GPT2Decoder(torch.nn.Module):
 
 class HFGPT2Model(TorchGeneratorModel):
     def __init__(self, opt, dict):
-        self.pad_idx, self.start_idx, self.end_idx = self._get_special_tokens(opt, dict)
-        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
+        self.null_idx, self.start_idx, self.end_idx = self._get_special_tokens(
+            opt, dict
+        )
+        super().__init__(self.null_idx, self.start_idx, self.end_idx)
 
         # init the model
         self.encoder = DummyEncoder()
@@ -79,13 +79,13 @@ class HFGPT2Model(TorchGeneratorModel):
         )
         self.tie_weights(self.lm_head, self.decoder.transformer.wte)
 
-        self.enc_sz = None
+        self.text_lengths = None  # used to reverse concatenation of context and labels
 
     def tie_weights(self, output_embeddings, input_embeddings):
         output_embeddings.weight = input_embeddings.weight
 
     def _get_special_tokens(self, opt, dict):
-        return dict.pad_idx, dict.start_idx, dict.end_idx
+        return dict.null_idx, dict.start_idx, dict.end_idx
 
     def reorder_encoder_states(self, encoder_states, indices):
         enc = torch.index_select(encoder_states, 0, indices)
@@ -95,11 +95,20 @@ class HFGPT2Model(TorchGeneratorModel):
         """
         Compute output logits.
         """
-        # project back to vocabulary
-        if self.enc_sz is not None and self.enc_sz[1] - 1 < tensor.size(1):
-            # keep only label scores
-            # -1 here is because we do not at a start token.
-            tensor = tensor[:, self.enc_sz[1] - 1 :, :]
+        # get only scores for labels
+        if self.text_lengths is not None:
+            total_length = max(self.text_lengths)
+            to_select = tensor.size(1) - total_length + 1
+            if to_select > 0:
+                # select only label scores
+                bsz = tensor.size(0)
+                new_tensors = []
+                for i in range(bsz):
+                    start = self.text_lengths[i] - 1
+                    end = start + to_select
+                    new_tensors.append(tensor[i, start:end, :].unsqueeze(0))
+                tensor = torch.cat(new_tensors, 0)
+
         return self.lm_head(tensor)
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
@@ -125,12 +134,15 @@ class HFGPT2Model(TorchGeneratorModel):
         return logits, preds
 
     def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
+        model_input, text_lengths = xs
         if ys is not None:
-            self.enc_sz = xs[0].size()
+            self.text_lengths = text_lengths
         else:
-            self.enc_sz = None
+            self.text_lengths = None
 
-        return super().forward(*xs, ys=ys, prev_enc=prev_enc, maxlen=maxlen, bsz=bsz)
+        return super().forward(
+            model_input, ys=ys, prev_enc=prev_enc, maxlen=maxlen, bsz=bsz
+        )
 
 
 ############################################
@@ -172,3 +184,9 @@ class Gpt2Agent(TorchGeneratorAgent):
         Build and return model.
         """
         return HFGPT2Model(self.opt, self.dict)
+
+    def _model_input(self, batch):
+        """
+        Override to pass in text lengths and label lengths.
+        """
+        return (batch.text_vec, batch.text_lengths)
