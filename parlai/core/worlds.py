@@ -46,15 +46,16 @@ import random
 import time
 
 from functools import lru_cache
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 try:
-    from torch.multiprocessing import Process, Value, Condition, Semaphore
+    from torch.multiprocessing import Process, Value, Condition, Semaphore, Queue
 except ImportError:
-    from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
+    from multiprocessing import Process, Value, Semaphore, Condition, Queue  # noqa: F401
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
+from parlai.core.message import Message
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
@@ -1245,6 +1246,117 @@ class HogwildWorld(World):
         self.inner_world.shutdown()
 
 
+class QBatchWorld(BatchWorld):
+    """
+    BatchWorld Where batch_act is Fake!! World just queues up the batch!
+    """
+
+    def __init__(
+        self,
+        opt: Opt,
+        world: World,
+        produce_queue: Queue,
+        consume_queue: Queue,
+        produce_cond: Condition,
+        consume_cond: Condition,
+    ):
+        super().__init__(opt, world)
+        self.produce_queue = produce_queue
+        self.consume_queue = consume_queue
+        self.produce_cond = produce_cond
+        self.consume_cond = consume_cond
+
+    def parley(self):
+        """
+        Produce a batch observation.
+        Consume a batch act.
+        """
+        if hasattr(self.world, 'parley_init'):
+            for w in self.worlds:
+                w.parley_init()
+        teacher_idx = 0
+        agent_idx = 1
+        with self.produce_cond:
+            self.produce_cond.wait_for(self.produce_queue.empty)
+            batch_act = self.batch_act(teacher_idx, None)
+            batch_obs = self.batch_observe(agent_idx, batch_act, teacher_idx)
+            self.produce_queue.put(batch_obs)
+        with self.consume_cond:
+            self.consume_cond.wait_for(self.consume_queue.full)
+            batch_act = self.consume_queue.get()
+            for other_idx in range(len(self.world.get_agents())):
+                self.batch_observe(other_idx, batch_act, agent_idx)
+        self.update_counters()
+
+
+def run_q_world(opt, world, mp_structs):
+    world = QBatchWorld(
+        opt,
+        world,
+        mp_structs['produce_queue'],
+        mp_structs['consume_queue'],
+        mp_structs['produce_cond'],
+        mp_structs['consume_cond'],
+    )
+    while not world.epoch_done():
+        world.parley()
+
+
+class QueueWorld(BatchWorld):
+    """
+    QueueWorld creates subprocess worlds. They create their own batches.
+    """
+    def __init__(self, opt: Opt, world: World):
+        World.__init__(self, opt)
+        # QueueWorld init
+        self.world: World = world
+        self.processes: List[Process] = []
+        self.structs: List[Dict[str, Union[Queue, Condition]]] = []
+        self.worlds: List[World] = []
+        for _ in range(opt['numworkers']):
+            produce_cond = Condition()
+            consume_cond = Condition()
+            produce_queue = Queue(maxsize=1)
+            consume_queue = Queue(maxsize=1)
+            shared = world.share()
+            subworld = shared['world_class'](opt, None, shared)
+            self.worlds.append(subworld)
+            self.structs.append(
+                {
+                    'produce_queue': produce_queue,
+                    'consume_queue': consume_queue,
+                    'produce_cond': produce_cond,
+                    'consume_cond': consume_cond
+                }
+            )
+            self.processes.append(
+                Process(target=run_q_world, args=(opt, subworld, self.structs[-1]), daemon=True)
+            )
+        for p in self.processes:
+            p.start()
+
+    def parley(self):
+        batch_obs: List[Message] = None
+        chosen_p: Dict[str, Union[Queue, Condition]] = None
+        # Get batch obs
+        while batch_obs is None:
+            chosen_p = random.choice(self.structs)
+            with chosen_p['produce_cond']:
+                if chosen_p['produce_queue'].full():
+                    batch_obs = chosen_p['produce_queue'].get()
+        # Batch Act on that obs
+        batch_acts = self.batch_act(1, batch_obs)
+        with chosen_p['consume_cond']:
+            chosen_p['consume_queue'].put_nowait(batch_acts)
+            chosen_p['consume_cond'].notify()
+        self.update_counters()
+
+    def shutdown(self):
+        super().shutdown()
+        for p in self.processes:
+            p.terminate()
+
+
 ################################################################################
 # Functions for creating tasks/worlds given options.
 ################################################################################
@@ -1334,6 +1446,8 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
+    elif opt.get('numworkers', 1) > 1:
+        world = QueueWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)
