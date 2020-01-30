@@ -187,6 +187,9 @@ class Gpt2Agent(TorchGeneratorAgent):
 
     def _model_input(self, batch):
         """
-        Override to pass in text lengths and label lengths.
+        Override to pass in text lengths.
         """
         return (batch.text_vec, batch.text_lengths)
+
+    def _encoder_input(self, batch):
+        return (batch.text_vec,)
