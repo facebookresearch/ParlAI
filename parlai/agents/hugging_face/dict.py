@@ -70,11 +70,23 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
         return GPT2Tokenizer.from_pretrained(fle_key)
 
+    def _define_special_tokens(self, opt):
+        if opt['add_special_tokens']:
+            # Add addtional start/end/pad tokens
+            self.tokenizer.add_special_tokens(SPECIAL_TOKENS)
+            self.start_token = SPECIAL_TOKENS["bos_token"]
+            self.end_token = SPECIAL_TOKENS["eos_token"]
+            self.null_token = SPECIAL_TOKENS["pad_token"]
+        else:
+            # Only special token is end of text
+            self.start_token = "x"  # hack, we cut off the start token
+            self.end_token = "<|endoftext|>"
+            self.null_token = "<|endoftext|>"
+
     def override_special_tokens(self, opt):
-        self.tokenizer.add_special_tokens(SPECIAL_TOKENS)
-        self.start_token = SPECIAL_TOKENS["bos_token"]
-        self.end_token = SPECIAL_TOKENS["eos_token"]
-        self.null_token = SPECIAL_TOKENS["pad_token"]
+        # define special tokens
+        self._define_special_tokens(opt)
+        # now override
         self.start_idx = self.tokenizer.convert_tokens_to_ids([self.start_token])[0]
         self.end_idx = self.tokenizer.convert_tokens_to_ids([self.end_token])[0]
         self.null_idx = self.tokenizer.convert_tokens_to_ids([self.null_token])[0]

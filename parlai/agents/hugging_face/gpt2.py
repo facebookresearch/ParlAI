@@ -28,7 +28,8 @@ class GPT2Decoder(torch.nn.Module):
         # add special tokens
         self.start_idx = dict.start_idx
         self.null_idx = dict.null_idx
-        self.transformer.resize_token_embeddings(len(dict.tokenizer))
+        if opt['add_special_tokens']:
+            self.transformer.resize_token_embeddings(len(dict.tokenizer))
         # use cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
 
@@ -161,6 +162,13 @@ class Gpt2Agent(TorchGeneratorAgent):
             choices=['small', 'medium', 'large', 'xl'],
             help='Which size model to initialize.',
         )
+        agent.add_argument(
+            '--add-special-tokens',
+            type='bool',
+            default=True,
+            help='Add special tokens (like PAD, etc.). If False, '
+            'Can only use with batch size 1.',
+        )
         argparser.set_defaults(
             text_truncate=768,
             label_truncate=256,
@@ -169,6 +177,13 @@ class Gpt2Agent(TorchGeneratorAgent):
         super(Gpt2Agent, cls).add_cmdline_args(argparser)
         warn_once('WARNING: this model is in beta and the API is ' 'subject to change.')
         return agent
+
+    def __init__(self, opt, shared=None):
+        if not opt['add_special_tokens'] and opt['batchsize'] > 1:
+            raise RuntimeError(
+                'If using batchsize > 1, --add-special-tokens ' 'must be True.'
+            )
+        super().__init__(opt, shared)
 
     @staticmethod
     def dictionary_class():
