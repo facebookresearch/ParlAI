@@ -270,9 +270,11 @@ def fp16_available() -> bool:
         return False
 
 
-class DummyEncoder(torch.nn.Module):
+class IdentityLayer(torch.nn.Module):
     """
-    Dummy encoder that just does a forward pass here.
+    Identity layer module.
+
+    Useful for decoder-only Torch Generator agents.
     """
 
     def forward(self, xs):

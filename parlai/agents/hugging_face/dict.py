@@ -7,8 +7,8 @@ from parlai.core.dict import DictionaryAgent
 
 try:
     from transformers import GPT2Tokenizer
-except ImportError as e:
-    raise e(
+except ImportError:
+    raise ImportError(
         'Need to install Hugging Face transformers repository. '
         'Try `pip install transformers`.'
     )
@@ -19,6 +19,8 @@ SPECIAL_TOKENS = {
     "eos_token": "<eos>",
     "pad_token": "<pad>",
 }
+
+NO_OP = "x"
 
 
 class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
@@ -79,7 +81,7 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
             self.null_token = SPECIAL_TOKENS["pad_token"]
         else:
             # Only special token is end of text
-            self.start_token = "x"  # hack, we cut off the start token
+            self.start_token = NO_OP  # hack, we cut off the start token
             self.end_token = "<|endoftext|>"
             self.null_token = "<|endoftext|>"
 

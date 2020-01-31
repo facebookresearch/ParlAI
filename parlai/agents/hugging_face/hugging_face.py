@@ -12,12 +12,13 @@ GPT2. To use this model, run with `-m hugging_face/gpt2`.
 """
 try:
     import transformers  # noqa: F401
-except ImportError as e:
-    raise e('Please run `pip install transformers`.')
+except ImportError:
+    raise ImportError('Please run `pip install transformers`.')
 
 
 class HuggingFaceAgent:
-    raise RuntimeError(
-        '`-m hugging_face` is not a valid choice. Please run with '
-        '`-m hugging_face/gpt2`.'
-    )
+    def __init__(self, opt, shared=None):
+        raise RuntimeError(
+            '`-m hugging_face` is not a valid choice. Please run with '
+            '`-m hugging_face/gpt2`.'
+        )
