@@ -10,8 +10,7 @@ Training script for ParlAI.
 The standard way to train a model. After training, also computes validation
 and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task`` or
-``--pytorch-teacher-task``).
+The user must provide a model (with ``--model``) and a task (with ``--task``).
 
 Examples
 --------
@@ -37,7 +36,6 @@ from parlai.core.metrics import aggregate_task_reports
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
-from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
@@ -60,7 +58,6 @@ def setup_args(parser=None) -> ParlaiParser:
     """
     if parser is None:
         parser = ParlaiParser(True, True, 'Train a model')
-    parser.add_pytorch_datateacher_args()
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument(
         '-et',
@@ -223,11 +220,6 @@ def load_eval_worlds(agent, opt, datatype):
         datatype += ':stream'
     opt = opt.copy()
     opt['datatype'] = datatype
-    if opt.get('pytorch_teacher_task'):
-        # never use pytorch teachers for evaluation
-        # but don't forget what we were normally using
-        opt['task'] = opt['pytorch_teacher_task']
-        del opt['pytorch_teacher_task']
     if opt.get('evaltask'):
         # if a different eval task is specified, use it.
         opt['task'] = opt['evaltask']
@@ -355,10 +347,7 @@ class TrainLoop:
                 'model_file or dict_file.'
             )
         if 'dict_file' in opt:
-            # If data built via pytorch data teacher, we need to load prebuilt dict
-            if opt.get('pytorch_teacher_task'):
-                opt['dict_file'] = get_pyt_dict_file(opt)
-            elif opt['dict_file'] is None and opt.get('model_file'):
+            if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
             build_dict(opt, skip_if_built=True)
