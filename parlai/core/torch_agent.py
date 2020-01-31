@@ -433,6 +433,13 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--fp16', type='bool', default=False, help='Use fp16 computations.'
         )
+        agent.add_argument(
+            '--force-fp16-tokens',
+            type='bool',
+            default=False,
+            hidden=True,
+            help='Add the special fp16 tokens even if not using fp16.',
+        )
         # optimizer arguments
         optim_group = agent.add_argument_group('Optimizer Arguments')
         optim_group.add_argument(
@@ -617,7 +624,7 @@ class TorchAgent(ABC, Agent):
             # intitialize any important structures from scratch
             self.dict = self.build_dictionary()
 
-            if opt.get('fp16'):
+            if opt.get('fp16') or opt.get('force_fp16_tokens'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
                 # such, we need some extra magic to ensure the dictionary is padded
@@ -791,6 +798,21 @@ class TorchAgent(ABC, Agent):
             # set adam optimizer, but only if user specified it
             if opt.get('adam_eps'):
                 kwargs['eps'] = opt['adam_eps']
+
+        # handle fused_adam where the user doesn't have apex installed
+        if saved_optim_type == 'fused_adam' and 'fused_adam' not in self.optim_opts():
+            # we trained with apex, but the user doesn't have apex installed.
+            saved_optim_type = 'adam'
+
+        if (
+            self.opt['optimizer'] == 'fused_adam'
+            and 'fused_adam' not in self.optim_opts()
+        ):
+            raise ImportError(
+                'You are using --optimizer fused_adam, but you do not have APEX '
+                'installed. Please install APEX (https://github.com/NVIDIA/apex) or '
+                'switch to --optimizer adam.'
+            )
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
@@ -1578,7 +1600,21 @@ class TorchAgent(ABC, Agent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
-        self.model.load_state_dict(state_dict)
+        try:
+            self.model.load_state_dict(state_dict)
+        except RuntimeError as msg:
+            msg_ = str(msg)
+            if 'size mismatch' in msg_ and 'embedding' in msg_:
+                raise RuntimeError(
+                    f'{msg_}\n'
+                    '-----------------\n'
+                    'Could not load the model due to a size mismatch in the '
+                    'embeddings. A common reason for this is trying to load '
+                    'a model trained with fp16 but loaded without fp16. Try '
+                    'adding --fp16 true or --force-fp16-tokens true.'
+                )
+            else:
+                raise
 
     def load(self, path: str) -> Dict[str, Any]:
         """
@@ -1586,12 +1622,30 @@ class TorchAgent(ABC, Agent):
 
         Override this method for more specific loading.
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        import parlai.utils.pickle
+
+        states = torch.load(
+            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+        )
         if 'model' in states:
             self.load_state_dict(states['model'])
         if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
+
+    @classmethod
+    def upgrade_opt(cls, opt_from_disk: Opt):
+        # call the parent upgrades
+        opt_from_disk = super(TorchAgent, cls).upgrade_opt(opt_from_disk)
+
+        if opt_from_disk.get('fp16'):
+            # 2020-01-28 If the model was trained with fp16, we might not have saved
+            # the dict with the special fp16 tokens (https://git.io/Jvm7N), IF the
+            # dict was built the same time as the model. We set this to tell the
+            # model it MUST add the fp16 tokens, even if it's not fp16 mode now.
+            opt_from_disk['force_fp16_tokens'] = True
+
+        return opt_from_disk
 
     def reset(self):
         """

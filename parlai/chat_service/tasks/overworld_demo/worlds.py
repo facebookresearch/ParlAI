@@ -252,6 +252,7 @@ class MessengerOverworld(World):
             MessengerOnboardDataTaskWorld,
         ),
         'chat': (MessengerChatOnboardWorld, MessengerChatTaskWorld),
+        'EXIT': (None, None),
     }
 
     def __init__(self, opt, agent):
@@ -259,9 +260,6 @@ class MessengerOverworld(World):
         self.opt = opt
         self.first_time = True
         self.episodeDone = False
-
-    def return_overworld(self):
-        self.first_time = True
 
     @staticmethod
     def generate_world(opt, agents):
