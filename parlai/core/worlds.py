@@ -49,7 +49,7 @@ from functools import lru_cache
 from typing import List, Dict, Any
 
 try:
-    from torch.multiprocessing import Process, Value, Condition, Semaphore, Queue
+    from torch.multiprocessing import Process, Value, Semaphore, Queue
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
 
@@ -848,6 +848,7 @@ class BatchWorld(World):
         """
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
+        parley_start = time.time()
         num_agents = len(self.world.get_agents())
         batch_observations = self.batch_observations
 
@@ -857,17 +858,23 @@ class BatchWorld(World):
 
         for agent_idx in range(num_agents):
             # The agent acts.
+            batch_start = time.time()
             batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
+            batch_time = time.time() - batch_start
+            print(f'Batch Time: {batch_time}')
             self.acts[agent_idx] = batch_act
             # We possibly execute this action in the world.
             if hasattr(self.world, 'execute'):
                 for w in self.worlds:
                     w.execute(w.agents[agent_idx], batch_act[agent_idx])
             # All agents (might) observe the results.
+            observe_time = time.time()
             for other_index in range(num_agents):
                 obs = self.batch_observe(other_index, batch_act, agent_idx)
                 if obs is not None:
                     batch_observations[other_index] = obs
+            print(f'Observe Time: {time.time() - observe_time}')
+        print(f'Parley time: {time.time() - parley_start}\n')
         self.update_counters()
 
     def display(self):
@@ -1279,7 +1286,9 @@ class QBatchWorld(BatchWorld):
         agent_idx = 1
         batch_act = self.batch_act(teacher_idx, None)
         batch_obs = self.batch_observe(agent_idx, batch_act, teacher_idx)
-        self.produce_queue.put((batch_obs, self.worker_idx))
+        if hasattr(self.world.agents[agent_idx], 'batchify'):
+            batch_obs = self.world.agents[agent_idx].batchify(batch_obs)
+        self.produce_queue.put_nowait((batch_obs, self.worker_idx))
         batch_act = self.consume_queue.get()
         for other_idx in range(len(self.world.get_agents())):
             self.batch_observe(other_idx, batch_act, agent_idx)
@@ -1304,7 +1313,6 @@ class QueueWorld(BatchWorld):
         # QueueWorld init
         self.world: World = world
         self.processes: List[Process] = []
-        # self.structs: List[Dict[str, Union[Queue, Condition]]] = []
         self.consume_queues: List[Queue] = []
         self.worlds: List[World] = []
         self.produce_queue: Queue = Queue()
@@ -1325,10 +1333,15 @@ class QueueWorld(BatchWorld):
             p.start()
 
     def parley(self):
+        parley_start = time.time()
         batch_obs: List[Message] = None
         batch_obs, worker_idx = self.produce_queue.get()
+        get_time = time.time()
+        print(f'Get time: {time.time() - parley_start}')
         batch_acts = self.batch_act(1, batch_obs)
+        print(f'Batch Time: {time.time() - get_time}')
         self.consume_queues[worker_idx].put(batch_acts)
+        print(f'Parley time: {time.time() - parley_start}\n')
         self.update_counters()
 
     def shutdown(self):

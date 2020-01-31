@@ -709,7 +709,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-nw',
             '--numworkers',
             type=int,
-            default=4,
+            default=1,
             help='how many workers the Pytorch dataloader should use',
             hidden=True,
         )

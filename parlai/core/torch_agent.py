@@ -1303,7 +1303,10 @@ class TorchAgent(ABC, Agent):
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
-                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
+                _xs,
+                self.NULL_IDX,
+                self.use_cuda if self.opt['numworkers'] == 1 else False,
+                fp16friendly=self.opt.get('fp16')
             )
             if sort:
                 sort = False  # now we won't sort on labels
@@ -1326,7 +1329,7 @@ class TorchAgent(ABC, Agent):
             ys, y_lens = padded_tensor(
                 label_vecs,
                 self.NULL_IDX,
-                self.use_cuda,
+                self.use_cuda if self.opt['numworkers'] == 1 else False,
                 fp16friendly=self.opt.get('fp16'),
             )
             if sort and xs is None:
@@ -1344,7 +1347,8 @@ class TorchAgent(ABC, Agent):
         imgs = None
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
-
+        xs.share_memory_()
+        ys.share_memory_()
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
@@ -1689,7 +1693,10 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
-        batch_size = len(observations)
+        if not isinstance(observations, Batch):
+            batch_size = len(observations)
+        else:
+            batch_size = len(observations.observations)
         # initialize a list of replies with this agent's id
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False})
@@ -1700,7 +1707,13 @@ class TorchAgent(ABC, Agent):
         self.is_training = any('labels' in obs for obs in observations)
 
         # create a batch from the vectors
-        batch = self.batchify(observations)
+        if not isinstance(observations, Batch):
+            batch = self.batchify(observations)
+        else:
+            batch = observations    
+            if self.use_cuda:
+                batch.text_vec = batch.text_vec.cuda()
+                batch.label_vec = batch.label_vec.cuda()
 
         if self.is_training:
             output = self.train_step(batch)

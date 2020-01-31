@@ -99,6 +99,7 @@ def build_dict(opt, skip_if_built=False):
 
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
+    ordered_opt['numworkers'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
     ordered_opt['image_mode'] = 'no_image_model'
