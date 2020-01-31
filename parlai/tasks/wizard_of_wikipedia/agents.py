@@ -931,10 +931,11 @@ class SelfchatTeacher(BasicBothDialogTeacher):
 
     pass
 
+
 class PersonalityTeacherWithBlankImage(WizardDialogKnowledgeTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.blank_uru_features = torch.zeros((1, 2048)).detach()
+        self.blank_uru_features = torch.zeros((2048)).detach()
         self.blank_detectron_features = torch.zeros((100, 2048)).detach()
 
     def get(self, episode_idx, entry_idx=0):
@@ -943,6 +944,7 @@ class PersonalityTeacherWithBlankImage(WizardDialogKnowledgeTeacher):
         action['detectron_image'] = self.blank_detectron_features
         action['image'] = self.blank_uru_features
         return action
+
 
 def create_agents(opt):
     if not opt.get('interactive_task', False):
