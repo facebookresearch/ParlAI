@@ -543,7 +543,7 @@ class TeacherMetrics(Metrics):
             for uk, v in observation['metrics'].items():
                 if uk in ALL_METRICS:
                     # don't let the user override our metrics
-                    uk = f'USER_{k}'
+                    uk = f'USER_{uk}'
                 assert isinstance(uk, str), type(k)
                 if not isinstance(v, Metric):
                     warn_once(f'Metric {uk} is assumed to be averaged per example.')
