@@ -326,7 +326,9 @@ class MultiturnCandidateTeacher(CandidateTeacher):
 
 
 class MultiturnTeacher(MultiturnCandidateTeacher):
-    """Simple alias."""
+    """
+    Simple alias.
+    """
 
     pass
 
