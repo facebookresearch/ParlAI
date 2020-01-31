@@ -26,6 +26,7 @@ from .build import build
 import json
 import os
 import random
+import torch
 
 
 TOKEN_NOCHOSEN = 'no_passages_used'
@@ -930,6 +931,18 @@ class SelfchatTeacher(BasicBothDialogTeacher):
 
     pass
 
+class PersonalityTeacherWithBlankImage(WizardDialogKnowledgeTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.blank_uru_features = torch.zeros((1, 2048)).detach()
+        self.blank_detectron_features = torch.zeros((100, 2048)).detach()
+
+    def get(self, episode_idx, entry_idx=0):
+        action = super().get(episode_idx, entry_idx)
+        action['personality'] = 'Wow'
+        action['detectron_image'] = self.blank_detectron_features
+        action['image'] = self.blank_uru_features
+        return action
 
 def create_agents(opt):
     if not opt.get('interactive_task', False):

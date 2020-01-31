@@ -8,6 +8,7 @@ import os
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 import numpy as np
+import torch
 
 
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
@@ -223,3 +224,16 @@ class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
 
 class DefaultTeacher(EmpatheticDialoguesTeacher):
     pass
+
+class PersonalityTeacherWithBlankImage(EmpatheticDialoguesTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.blank_uru_features = torch.zeros((1, 2048)).detach()
+        self.blank_detectron_features = torch.zeros((100, 2048)).detach()
+
+    def get(self, episode_idx, entry_idx=0):
+        action = super().get(episode_idx, entry_idx)
+        action['personality'] = 'EmpatheticDialogue'
+        action['detectron_image'] = self.blank_detectron_features
+        action['image'] = self.blank_uru_features
+        return action

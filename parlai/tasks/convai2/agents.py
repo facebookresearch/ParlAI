@@ -7,6 +7,7 @@
 from parlai.core.teachers import FbDialogTeacher, create_task_agent_from_taskname
 from parlai.utils.misc import warn_once
 from .build import build
+import torch
 
 import copy
 import os
@@ -105,3 +106,17 @@ def create_agents(opt):
     else:
         # interactive task has no task agents (they are attached as user agents)
         return []
+
+
+class PersonalityTeacherWithBlankImage(SelfOriginalTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.blank_uru_features = torch.zeros((1, 2048)).detach()
+        self.blank_detectron_features = torch.zeros((100, 2048)).detach()
+
+    def get(self, episode_idx, entry_idx=0):
+        action = super().get(episode_idx, entry_idx)
+        action['personality'] = 'Convai2'
+        action['detectron_image'] = self.blank_detectron_features
+        action['image'] = self.blank_uru_features
+        return action
