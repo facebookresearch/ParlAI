@@ -899,7 +899,9 @@ class StreamDialogData(DialogData):
         reached without reset being called.
     """
 
-    _FIRST_RUN = None
+    # represents that we haven't read in any data at all
+    _FIRST_PASS = None
+    # represents that we are out of data.
     _END_OF_EPOCH = -1
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
@@ -927,7 +929,7 @@ class StreamDialogData(DialogData):
                 )
                 self.lock = Lock()
         self.entry_idx = 0
-        self.next_episode = self._FIRST_RUN
+        self.next_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
 
@@ -1016,7 +1018,7 @@ class StreamDialogData(DialogData):
         # first look up data
         if self.next_episode != -1 or self.entry_idx != 0:
             with self._lock():
-                if self.next_episode is self._FIRST_RUN:
+                if self.next_episode is self._FIRST_PASS:
                     self.next_episode = next(self.data)
                 if self.entry_idx == 0:
                     self.cur_episode = self.next_episode
@@ -1052,12 +1054,12 @@ class StreamDialogData(DialogData):
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
-            self.next_episode = self._FIRST_RUN
+            self.next_episode = self._FIRST_PASS
         elif not self.is_reset:
             # if main instance is not reset, reset datastream
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
-            self.next_episode = self._FIRST_RUN
+            self.next_episode = self._FIRST_PASS
         self.entry_idx = 0
         return self.data
 
