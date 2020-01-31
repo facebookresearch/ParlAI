@@ -899,6 +899,9 @@ class StreamDialogData(DialogData):
         reached without reset being called.
     """
 
+    _FIRST_RUN = None
+    _END_OF_EPOCH = -1
+
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
@@ -924,7 +927,7 @@ class StreamDialogData(DialogData):
                 )
                 self.lock = Lock()
         self.entry_idx = 0
-        self.next_episode = None
+        self.next_episode = self._FIRST_RUN
         self.num_eps = None
         self.num_exs = None
 
@@ -958,7 +961,7 @@ class StreamDialogData(DialogData):
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
             while not self.cycle:
-                yield -1
+                yield self._END_OF_EPOCH
 
     def load_length(self):
         """
@@ -1013,12 +1016,12 @@ class StreamDialogData(DialogData):
         # first look up data
         if self.next_episode != -1 or self.entry_idx != 0:
             with self._lock():
-                if self.next_episode is None:
+                if self.next_episode is self._FIRST_RUN:
                     self.next_episode = next(self.data)
                 if self.entry_idx == 0:
                     self.cur_episode = self.next_episode
                     self.next_episode = next(self.data)
-                if self.cur_episode == -1:
+                if self.cur_episode == self._END_OF_EPOCH:
                     return {'episode_done': True}, True
                 entry = self.cur_episode[self.entry_idx]
 
@@ -1030,7 +1033,7 @@ class StreamDialogData(DialogData):
                     self.entry_idx = 0
                 else:
                     self.entry_idx += 1
-                end_of_data = episode_done and self.next_episode is -1
+                end_of_data = episode_done and self.next_episode is self._END_OF_EPOCH
                 if end_of_data and self.cycle:
                     self.next_episode = next(self.data)
 
@@ -1049,12 +1052,12 @@ class StreamDialogData(DialogData):
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
-            self.next_episode = None
+            self.next_episode = self._FIRST_RUN
         elif not self.is_reset:
             # if main instance is not reset, reset datastream
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
-            self.next_episode = None
+            self.next_episode = self._FIRST_RUN
         self.entry_idx = 0
         return self.data
 
