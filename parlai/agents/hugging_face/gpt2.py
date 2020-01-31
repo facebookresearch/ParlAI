@@ -148,11 +148,7 @@ class HFGPT2Model(TorchGeneratorModel):
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         new_incr_state = []
         for layer_past in incremental_state:
-            reordered_layer_past = [
-                layer_past[:, i].unsqueeze(1).clone().detach() for i in inds
-            ]
-            reordered_layer_past = torch.cat(reordered_layer_past, dim=1)
-            new_incr_state.append(reordered_layer_past)
+            new_incr_state.append(torch.index_select(layer_past, 1, inds))
 
         return tuple(new_incr_state)
 
