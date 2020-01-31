@@ -1306,7 +1306,7 @@ class TorchAgent(ABC, Agent):
                 _xs,
                 self.NULL_IDX,
                 self.use_cuda if self.opt['numworkers'] == 1 else False,
-                fp16friendly=self.opt.get('fp16')
+                fp16friendly=self.opt.get('fp16'),
             )
             if sort:
                 sort = False  # now we won't sort on labels
@@ -1710,7 +1710,7 @@ class TorchAgent(ABC, Agent):
         if not isinstance(observations, Batch):
             batch = self.batchify(observations)
         else:
-            batch = observations    
+            batch = observations
             if self.use_cuda:
                 batch.text_vec = batch.text_vec.cuda()
                 batch.label_vec = batch.label_vec.cuda()
