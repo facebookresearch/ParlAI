@@ -129,6 +129,8 @@ class ChatServiceManager(ABC):
         def typing_on(self, receiver_id, persona_id=None):
             pass
 
+    EXIT_STR = 'EXIT'
+
     def __init__(self, opt):
         """
         Create a ChatServiceManager using the given setup options.
@@ -187,6 +189,7 @@ class ChatServiceManager(ABC):
             task: cfg.task_name for task, cfg in self.task_configs.items()
         }
         self.service_reference_id = None
+        self.parse_additional_args(opt)
 
     @abstractmethod
     def parse_additional_args(self, opt):
@@ -308,6 +311,56 @@ class ChatServiceManager(ABC):
                 # send a message observed event to everyone else in the chat
                 self.sender.send_read(partner.id)
 
+    def _remove_agent(self, agent_id):
+        """
+        Remove an agent from the system (after they disconnect or leave in some other
+        way)
+        """
+        self.observe_message(agent_id, 'See you later!')
+        for world_type in self.agent_pool:
+            agent_state = self.get_agent_state(agent_id)
+            if agent_state in self.agent_pool[world_type]:
+                self.agent_pool[world_type].remove(agent_state)
+                self.remove_agent_from_pool(agent_state, world_type=world_type)
+        del self.messenger_agent_states[agent_id]
+        del self.agent_id_to_overworld_future[agent_id]
+
+    def _launch_overworld(self, agent_id):
+        """
+        Launch an overworld for the given agent id, replacing the existing overworld if
+        it exists already.
+        """
+        agent_state = self.get_agent_state(agent_id)
+        task_id = 'overworld-{}-{}'.format(agent_id, time.time())
+        if agent_state is None:
+            # new agent
+            agent = self._create_agent(task_id, agent_id)
+            agent_state = AgentState(agent_id, agent)
+            self.messenger_agent_states[agent_id] = agent_state
+        else:
+            agent = agent_state.overworld_agent
+            # kill existing overworld
+            self.agent_id_to_overworld_future[agent_id].cancel()
+
+        # launch overworld
+        future = self.world_runner.launch_overworld(
+            task_id, self.overworld, self.onboard_map, agent
+        )
+
+        def _done_callback(fut):
+            e = fut.exception()
+            if e is not None:
+                shared_utils.print_and_log(
+                    logging.ERROR,
+                    'World {} had error {}'.format(task_id, repr(e)),
+                    should_print=True,
+                )
+                if self.debug:
+                    raise e
+
+        future.add_done_callback(_done_callback)
+        self.agent_id_to_overworld_future[agent_id] = future
+
     def _on_first_message(self, message):
         """
         Handle first message from player.
@@ -331,40 +384,7 @@ class ChatServiceManager(ABC):
                 )
                 return
 
-        task_id = 'overworld-{}-{}'.format(agent_id, time.time())
-        agent = self._create_agent(task_id, agent_id)
-        agent_state = AgentState(agent_id, agent)
-        if self.opt['password'] is not None:
-            agent_state.stored_data['first_message'] = message
-        self.messenger_agent_states[agent_id] = agent_state
-
-        # launch overworld
-        future = self.world_runner.launch_overworld(
-            task_id, self.overworld, self.onboard_map, agent
-        )
-
-        def _done_callback(fut):
-            e = fut.exception()
-            if e is not None:
-                shared_utils.print_and_log(
-                    logging.ERROR,
-                    'World {} had error {}'.format(task_id, repr(e)),
-                    should_print=True,
-                )
-                if self.debug:
-                    raise e
-            else:
-                self.observe_message(agent_id, 'See you later!')
-                for world_type in self.agent_pool:
-                    agent_state = self.get_agent_state(agent_id)
-                    if agent_state in self.agent_pool[world_type]:
-                        self.agent_pool[world_type].remove(agent_state)
-                        self.remove_agent_from_pool(agent_state, world_type=world_type)
-                del self.messenger_agent_states[agent_id]
-                del self.agent_id_to_overworld_future[agent_id]
-
-        future.add_done_callback(_done_callback)
-        self.agent_id_to_overworld_future[agent_id] = future
+        self._launch_overworld(agent_id)
 
     def _on_new_message(self, message):
         """
@@ -418,7 +438,7 @@ class ChatServiceManager(ABC):
         Add the agent to pool.
 
         :param agent:
-            MessengerAgent object
+            AgentState object
         :param world_type:
             Name of world whose pool should now contain agent
         """
@@ -576,13 +596,9 @@ class ChatServiceManager(ABC):
                     self.sender.typing_on(agent_state.service_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
-    def start_task(self):
+    def _get_done_callback_for_agents(self, task_id, world_type, agents):
         """
-        Begin handling task.
-
-        Periodically check to see when enough agents are in the agent pool to start an
-        instance of the task. Continue doing this until the desired number of
-        conversations is had.
+        Create done callback for finishing task world with particular agents.
         """
 
         def _done_callback(fut):
@@ -613,7 +629,28 @@ class ChatServiceManager(ABC):
             for agent in agents:
                 self.after_agent_removed(agent.id)
                 agent_state = self.get_agent_state(agent.id)
-                agent_state.set_active_agent(agent_state.get_overworld_agent())
+                next_task = agent.data.get("next_task")
+                shared_utils.print_and_log(
+                    logging.INFO, "Next task: {}".format(next_task)
+                )
+                if next_task is None:
+                    self._launch_overworld(agent.id)
+                    agent_state.set_active_agent(agent_state.get_overworld_agent())
+                elif next_task == self.EXIT_STR:
+                    self._remove_agent(agent.id)
+                else:
+                    self.add_agent_to_pool(agent_state, next_task)
+
+        return _done_callback
+
+    def start_task(self):
+        """
+        Begin handling task.
+
+        Periodically check to see when enough agents are in the agent pool to start an
+        instance of the task. Continue doing this until the desired number of
+        conversations is had.
+        """
 
         self.running = True
         while self.running:
@@ -671,11 +708,16 @@ class ChatServiceManager(ABC):
                             partner_list = agents.copy()
                             partner_list.remove(a)
                             a.message_partners = partner_list
+
+                        done_callback = self._get_done_callback_for_agents(
+                            task_id, world_type, agents
+                        )
+
                         # launch task world.
                         future = self.world_runner.launch_task_world(
                             task_id, self.taskworld_map[world_type], agents
                         )
-                        future.add_done_callback(_done_callback)
+                        future.add_done_callback(done_callback)
                         self.active_worlds[task_id] = future
 
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)

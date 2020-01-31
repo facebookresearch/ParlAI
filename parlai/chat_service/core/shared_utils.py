@@ -196,9 +196,6 @@ def parse_configuration_file(config_path):
         result["overworld"] = cfg.get("overworld")
         if not result["overworld"]:
             raise ValueError("Did not specify overworld")
-        result["page_id"] = cfg.get("page_id")
-        if not result["page_id"]:
-            raise ValueError("Did not specify page_id")
         result["max_workers"] = cfg.get("max_workers")
         if not result["max_workers"]:
             raise ValueError("Did not specify max_workers")
@@ -220,7 +217,8 @@ def parse_configuration_file(config_path):
                 agents_required=configuration.get("agents_required") or 1,
                 backup_task=configuration.get("backup_task"),
             )
-        # get world options
+        # get world options, additional args
         result["world_opt"] = cfg.get("opt", {})
+        result["additional_args"] = cfg.get("additional_args", {})
 
     return result

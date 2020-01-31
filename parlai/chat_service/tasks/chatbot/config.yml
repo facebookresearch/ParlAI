@@ -7,7 +7,6 @@ tasks:
 task_name: chatbot
 world_module: parlai.chat_service.tasks.chatbot.worlds
 overworld: MessengerOverworld
-page_id: 1 # Configure Your Own Page
 max_workers: 30
 opt:
   debug: True
@@ -15,3 +14,7 @@ opt:
   model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
   override:
     model: legacy:seq2seq:0
+    no_cuda: True
+  no_cuda: True
+additional_args:
+  page_id: 1 # Configure Your Own Page

@@ -31,7 +31,6 @@ tasks:
 task_name: chatbot
 world_module: parlai.chat_service.tasks.chatbot.worlds
 overworld: MessengerOverworld
-page_id: 1 # Configure Your Own Page
 max_workers: 30
 opt:  # Additional model opts go here
   debug: True
@@ -39,9 +38,11 @@ opt:  # Additional model opts go here
   model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
   override:
     model: legacy:seq2seq:0
+additional_args:
+  page_id: 1 # configure your own page
 ```
 
-After following the set-up instructions (detailed below), this task could be run with the following command from the `parlai/chat_service/services/messenger` directory:
+After following the set-up instructions (detailed below) and filling in your own page id, this task could be run with the following command from the `parlai/chat_service/services/messenger` directory:
 ```
 python run.py --config-path ../../tasks/chatbot/config.yml
 ```
