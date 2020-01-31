@@ -303,6 +303,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             help='Size n-grams to block in beam search. val <= 0 implies no blocking',
         )
         agent.add_argument(
+            '--beam-length-penalty',
+            type=float,
+            default=0.65,
+            help='Applies a length penalty. Set to 0 for no penalty.',
+        )
+        agent.add_argument(
             '--skip-generation',
             type='bool',
             default=False,
@@ -802,6 +808,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 min_length=0,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -813,6 +820,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -825,6 +833,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -837,6 +846,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -974,6 +984,7 @@ class TreeSearch(object):
         eos_token=2,
         min_length=3,
         device='cpu',
+        length_penalty=0.65,
     ):
         """
         Instantiate Beam object.
@@ -996,6 +1007,7 @@ class TreeSearch(object):
             What device to use for computations
         """
         self.beam_size = beam_size
+        self.length_penalty = length_penalty
         self.block_ngram = block_ngram
         self.min_length = min_length
         self.eos = eos_token
@@ -1235,7 +1247,7 @@ class TreeSearch(object):
         for finished_item in self.finished:
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
-            length_penalty = math.pow((1 + current_length) / 6, 0.65)
+            length_penalty = math.pow((1 + current_length) / 6, self.length_penalty)
             rescored_finished.append(
                 _HypothesisTail(
                     timestep=finished_item.timestep,

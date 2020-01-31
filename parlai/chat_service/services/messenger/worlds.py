@@ -19,9 +19,6 @@ class SimpleMessengerOverworld(World):
         self.agent = agent
         self.opt = opt
 
-    def return_overworld(self):
-        pass
-
     @staticmethod
     def generate_world(opt, agents):
         return SimpleMessengerOverworld(opt, agents[0])

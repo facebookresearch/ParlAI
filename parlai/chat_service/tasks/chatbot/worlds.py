@@ -96,9 +96,6 @@ class MessengerOverworld(World):
         self.first_time = True
         self.episodeDone = False
 
-    def return_overworld(self):
-        self.first_time = True
-
     @staticmethod
     def generate_world(opt, agents):
         return MessengerOverworld(opt, agents[0])
