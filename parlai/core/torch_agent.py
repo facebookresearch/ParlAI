@@ -634,8 +634,8 @@ class TorchAgent(ABC, Agent):
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
-            # batch_metrics keeps track of batch-level or global-level metrics
-            self.batch_metrics = Metrics(opt.get('numthreads', 1) > 1)
+            # global_metrics keeps track of batch-level or global-level metrics
+            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1)
             # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
         else:
@@ -645,7 +645,7 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            self.batch_metrics = shared['batch_metrics']
+            self.global_metrics = shared['global_metrics']
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -885,7 +885,7 @@ class TorchAgent(ABC, Agent):
 
         Report includes learning rate and number of training updates.
         """
-        report = self.batch_metrics.report()
+        report = self.global_metrics.report()
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
@@ -1033,7 +1033,7 @@ class TorchAgent(ABC, Agent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
-        shared['batch_metrics'] = self.batch_metrics
+        shared['global_metrics'] = self.global_metrics
 
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -1658,7 +1658,7 @@ class TorchAgent(ABC, Agent):
         Reset all TorchAgentMetrics.
         """
         super().reset_metrics()
-        self.batch_metrics.clear()
+        self.global_metrics.clear()
 
     def act(self):
         """
@@ -1776,12 +1776,12 @@ class TorchAgent(ABC, Agent):
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
-            self.batch_metrics.add('gnorm', AverageMetric(grad_norm))
-            self.batch_metrics.add(
+            self.global_metrics.add('gnorm', AverageMetric(grad_norm))
+            self.global_metrics.add(
                 'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
             )
 
-        self.batch_metrics.add('updates', SumMetric(1))
+        self.global_metrics.add('updates', SumMetric(1))
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor
