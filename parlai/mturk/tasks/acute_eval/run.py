@@ -9,11 +9,15 @@ import numpy as np
 import os
 from queue import Queue
 import random
+import time
 
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
 from parlai.mturk.core.worlds import StaticMTurkTaskWorld
 from parlai.utils.misc import warn_once
+from parlai_internal.mturk.tasks.blended_skill_talk.human_and_bot_convos.constants import (
+    FULL_BLOCKLIST,
+)
 
 
 DEFAULT_TASK_CONFIG = {
@@ -405,6 +409,23 @@ def main(opt):
                     save_data,
                 )
             return save_data
+
+        if not opt['is_sandbox']:
+
+            # Soft-block all chosen workers
+            violating_workers_path = '/private/home/ems/GitHub/facebookresearch/ParlAI/parlai_internal/mturk/tasks/pairwise_dialogue_eval/scripts/workers.txt'
+            violating_workers = []
+            with open(violating_workers_path, 'r') as f:
+                for line in f:
+                    violating_workers.append(line.strip())
+            import pdb; pdb.set_trace()
+            for w in set(FULL_BLOCKLIST + violating_workers):
+                try:
+                    print('Soft Blocking {}\n'.format(w))
+                    mturk_manager.soft_block_worker(w)
+                except Exception as e:
+                    print(f'Did not soft block worker {w}: {e}')
+                time.sleep(0.1)
 
         print("This run id: {}".format(task_group_id))
 
