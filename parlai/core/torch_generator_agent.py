@@ -31,6 +31,7 @@ from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.torch import padded_tensor, neginf
+from parlai.core.metrics import SumMetric, AverageMetric
 
 
 try:
@@ -240,6 +241,11 @@ class TorchGeneratorModel(nn.Module, ABC):
         return scores, preds, encoder_states
 
 
+class PPLMetric(AverageMetric):
+    def value(self):
+        return math.exp(super().value())
+
+
 class TorchGeneratorAgent(TorchAgent, ABC):
     """
     Abstract Generator agent; only meant to be extended.
@@ -356,10 +362,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics['nll_loss'] = 0.0
-            self.metrics['loss'] = 0.0
-            self.metrics['correct_tokens'] = 0
-            self.metrics['total_skipped_batches'] = 0
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
@@ -466,7 +468,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                loss = self.compute_loss(
+                    self._dummy_batch(batchsize, maxlen), skip_metrics=True
+                )
                 self.backward(loss)
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -499,10 +503,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         super().reset_metrics()
         # Note: we cannot change the type of metrics ahead of time, so you
         # should correctly initialize to floats or ints here
-        self.metrics['loss'] = 0.0
-        self.metrics['nll_loss'] = 0.0
-        self.metrics['num_tokens'] = 0
-        self.metrics['correct_tokens'] = 0
         self._init_and_reset_bleu_scorers()
 
     def share(self):
@@ -529,21 +529,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         base = super().report()
         m = {}
-        num_tok = self.metrics['num_tokens']
-        if num_tok > 0:
-            m['loss'] = self.metrics['loss']
-            if self.metrics['correct_tokens'] > 0:
-                m['token_acc'] = self.metrics['correct_tokens'] / num_tok
-            m['nll_loss'] = self.metrics['nll_loss'] / num_tok
-            try:
-                m['ppl'] = math.exp(m['nll_loss'])
-            except OverflowError:
-                m['ppl'] = float('inf')
-        if self.metrics['total_skipped_batches'] > 0:
-            m['total_skipped_batches'] = self.metrics['total_skipped_batches']
-        for k, v in m.items():
-            # clean up: rounds to sigfigs and converts tensors to floats
-            base[k] = round_sigfigs(v, 4)
         if not self.skip_generation and self.compute_tokenized_bleu:
             base.update({'fairseq_bleu': 'N/A', 'nltk_bleu_unnormalized': 'N/A'})
             if fairseq_bleu is not None:
@@ -603,7 +588,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return self._model_input(batch)
 
-    def compute_loss(self, batch, return_output=False):
+    def compute_loss(self, batch, return_output=False, skip_metrics=False):
         """
         Compute and return the loss for the given batch.
 
@@ -617,15 +602,25 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1)).sum()
+        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        loss = loss.view(scores.shape[:2]).sum(dim=1)
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
-        target_tokens = notnull.long().sum().item()
-        correct = ((batch.label_vec == preds) * notnull).sum().item()
-        self.metrics['correct_tokens'] += correct
-        self.metrics['nll_loss'] += loss.item()
-        self.metrics['num_tokens'] += target_tokens
-        loss /= target_tokens  # average loss per token
+        target_tokens = notnull.long().sum(dim=-1)
+        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
+
+        if not skip_metrics:
+            self.record_local_metric(
+                'nll_loss', AverageMetric.many(loss, target_tokens)
+            )
+            ppl = PPLMetric.many(loss, target_tokens)
+            self.record_local_metric('ppl', ppl)
+            self.record_local_metric(
+                'token_acc', AverageMetric.many(correct, target_tokens)
+            )
+        # actually do backwards loss
+        loss = loss.sum()
+        loss /= target_tokens.sum()  # average loss per token
         if return_output:
             return (loss, model_output)
         else:
@@ -646,7 +641,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         try:
             loss = self.compute_loss(batch)
-            self.metrics['loss'] += loss.item()
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -657,7 +651,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
-                self.metrics['total_skipped_batches'] += 1
+                self.global_metrics.update('skipped_batches', SumMetric(1))
                 # gradients are synced on backward, now this model is going to be
                 # out of sync! catch up with the other workers
                 self._init_cuda_buffer(8, 8, True)

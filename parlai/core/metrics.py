@@ -116,7 +116,7 @@ class Metric(ABC):
         return int(cls.as_number(obj))
 
     @classmethod
-    def build_many(cls, *objs: List[TVector]) -> List['Metric']:
+    def many(cls, *objs: List[TVector]) -> List['Metric']:
         """
         Construct many of a Metric from the base parts.
 
@@ -145,7 +145,8 @@ class SumMetric(Metric):
         if other is None:
             return self
         full_sum = self._sum + other._sum
-        return SumMetric(sum_=full_sum)
+        # always keep the same return type
+        return type(self)(sum_=full_sum)
 
     def value(self) -> float:
         return self._sum
@@ -169,7 +170,8 @@ class AverageMetric(Metric):
             return self
         full_numer: TScalar = self._numer + other._numer
         full_denom: TScalar = self._denom + other._denom
-        return AverageMetric(numer=full_numer, denom=full_denom)
+        # always keep the same return type
+        return type(self)(numer=full_numer, denom=full_denom)
 
     def value(self) -> float:
         return self._numer / self._denom

@@ -623,7 +623,7 @@ class TorchAgent(ABC, Agent):
 
         if shared is None:
             # intitialize any important structures from scratch
-            self.__local_metrics: Dict[str, List[Metric]] = {}
+            self._local_metrics: Dict[str, List[Metric]] = {}
             self.dict = self.build_dictionary()
 
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
@@ -880,7 +880,7 @@ class TorchAgent(ABC, Agent):
                 self.scheduler.get_initial_number_training_updates()
             )
 
-    def record_local_metric(self, keyname: str, values: Metric):
+    def record_local_metric(self, keyname: str, values: List[Metric]):
         """
         Record an example-level metric for all items in the batch.
 
@@ -892,7 +892,10 @@ class TorchAgent(ABC, Agent):
         Example local metrics include ppl, token_acc, any other agent-specific
         metrics.
         """
-        pass
+        if keyname in self._local_metrics:
+            # we could relax this already
+            raise KeyError(f"Already recorded metrics for {keyname}")
+        self._local_metrics[keyname] = values
 
     def report(self):
         """
@@ -1406,17 +1409,6 @@ class TorchAgent(ABC, Agent):
             for i, sub_val in zip(valid_inds, v):
                 batch_reply[i][k] = sub_val
 
-        for k, values in self.__local_metrics:
-            if len(values) != len(valid_inds):
-                raise IndexError(
-                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
-                    f"expected {len(valid_inds)}"
-                )
-            for i, value in zip(valid_inds, values):
-                if 'metrics' not in batch_reply[i]:
-                    batch_reply['metrics'] = {}
-                batch_reply['metrics'][k] = value
-
         return batch_reply
 
     def observe(self, observation):
@@ -1708,6 +1700,9 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
+        # clear local metrics before anything else
+        self._local_metrics.clear()
+
         batch_size = len(observations)
 
         # initialize a list of replies with this agent's id
@@ -1722,9 +1717,6 @@ class TorchAgent(ABC, Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        # local metrics will need to go
-        self.__local_metrics: Dict[str, List[Metric]] = {}
-
         if self.is_training:
             output = self.train_step(batch)
         else:
@@ -1734,7 +1726,20 @@ class TorchAgent(ABC, Agent):
                 output = self.eval_step(batch)
 
         if output is not None:
+            # local metrics are automatically matched up
             self.match_batch(batch_reply, batch.valid_indices, output)
+
+        # broadcast the metrics back
+        for k, values in self._local_metrics.items():
+            if len(values) != len(batch.valid_indices):
+                raise IndexError(
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"expected {len(valid_inds)}"
+                )
+            for i, value in zip(batch.valid_indices, values):
+                if 'metrics' not in batch_reply[i]:
+                    batch_reply[i]['metrics'] = {}
+                batch_reply[i]['metrics'][k] = value
 
         return batch_reply
 
