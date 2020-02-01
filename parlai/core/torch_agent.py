@@ -19,7 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -42,7 +42,7 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-from parlai.core.metrics import Metrics, AverageMetric, SumMetric
+from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric
 
 
 class Batch(AttrDict):
@@ -623,6 +623,7 @@ class TorchAgent(ABC, Agent):
 
         if shared is None:
             # intitialize any important structures from scratch
+            self.__local_metrics: Dict[str, List[Metric]] = {}
             self.dict = self.build_dictionary()
 
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
@@ -878,6 +879,20 @@ class TorchAgent(ABC, Agent):
             self._number_training_updates = (
                 self.scheduler.get_initial_number_training_updates()
             )
+
+    def record_local_metric(self, keyname: str, values: Metric):
+        """
+        Record an example-level metric for all items in the batch.
+
+        Local metrics are maybe recorded anywhere within batch act. They will
+        automatically be collated and returned at the end of batch_act. The
+        beginning of batch_act resets these, so you may not use them during
+        observe.
+
+        Example local metrics include ppl, token_acc, any other agent-specific
+        metrics.
+        """
+        pass
 
     def report(self):
         """
@@ -1390,6 +1405,18 @@ class TorchAgent(ABC, Agent):
                 continue
             for i, sub_val in zip(valid_inds, v):
                 batch_reply[i][k] = sub_val
+
+        for k, values in self.__local_metrics:
+            if len(values) != len(valid_inds):
+                raise IndexError(
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"expected {len(valid_inds)}"
+                )
+            for i, value in zip(valid_inds, values):
+                if 'metrics' not in batch_reply[i]:
+                    batch_reply['metrics'] = {}
+                batch_reply['metrics'][k] = value
+
         return batch_reply
 
     def observe(self, observation):
@@ -1682,6 +1709,7 @@ class TorchAgent(ABC, Agent):
         present in the observations batch; otherwise, the latter is called.
         """
         batch_size = len(observations)
+
         # initialize a list of replies with this agent's id
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False})
@@ -1694,18 +1722,20 @@ class TorchAgent(ABC, Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
+        # local metrics will need to go
+        self.__local_metrics: Dict[str, List[Metric]] = {}
+
         if self.is_training:
             output = self.train_step(batch)
         else:
             with torch.no_grad():
                 # save memory and compute by disabling autograd.
-                # use `with torch.enable_grad()` to gain back graidients.
+                # use `with torch.enable_grad()` to gain back gradients.
                 output = self.eval_step(batch)
 
-        if output is None:
-            return batch_reply
+        if output is not None:
+            self.match_batch(batch_reply, batch.valid_indices, output)
 
-        self.match_batch(batch_reply, batch.valid_indices, output)
         return batch_reply
 
     @abstractmethod
