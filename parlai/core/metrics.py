@@ -122,6 +122,9 @@ class Metric(ABC):
 
         Useful if you separately compute numerators and denomenators, etc.
         """
+        lengths = [len(o) for o in objs]
+        if len(set(lengths)) != 1:
+            raise IndexError(f'Uneven {cls.__name__} constructions: {lengths}')
         return [cls(*items) for items in zip(*objs)]
 
 
@@ -175,6 +178,33 @@ class AverageMetric(Metric):
 
     def value(self) -> float:
         return self._numer / self._denom
+
+
+class LegacyMetric(AverageMetric):
+    """
+    Legacy Metrics are reported by agent as float.
+    """
+
+    pass
+
+
+class FixedMetric(Metric):
+    """
+    A fixed metric doesn't change when combined.
+    """
+
+    def __init__(self, value: TScalar):
+        self._value = self.as_number(value)
+
+    def value(self) -> float:
+        return self._value
+
+    def __add__(self, other: Optional['FixedMetric']) -> 'FixedMetric':
+        if other is None:
+            return self
+        if self != other:
+            raise ValueError(f'Trying to two unequal fixed metrics: {self} != {other}')
+        return self
 
 
 class F1Metric(AverageMetric):

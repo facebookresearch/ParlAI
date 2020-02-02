@@ -350,13 +350,15 @@ class DialogPartnerWorld(World):
         """
         Report all metrics of all subagents.
         """
+        from parlai.core.metrics import Metric, LegacyMetric
 
-        # DEPRECATIONDAY: should we get rid of this option?
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
                 m = a.report()
                 for k, v in m.items():
+                    if not isinstance(v, Metric):
+                        v = LegacyMetric(v)
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%

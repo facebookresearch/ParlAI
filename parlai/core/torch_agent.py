@@ -42,7 +42,7 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric
+from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
 
 
 class Batch(AttrDict):
@@ -611,6 +611,9 @@ class TorchAgent(ABC, Agent):
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
+        # used for sharing metrics back to the teacher
+        self._local_metrics: Dict[str, List[Metric]] = {}
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -623,7 +626,6 @@ class TorchAgent(ABC, Agent):
 
         if shared is None:
             # intitialize any important structures from scratch
-            self._local_metrics: Dict[str, List[Metric]] = {}
             self.dict = self.build_dictionary()
 
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
@@ -907,7 +909,7 @@ class TorchAgent(ABC, Agent):
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
-        report['total_train_updates'] = self._number_training_updates
+        report['total_train_updates'] = FixedMetric(self._number_training_updates)
 
         if self.use_cuda:
             report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())

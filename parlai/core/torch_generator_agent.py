@@ -613,8 +613,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.record_local_metric(
                 'nll_loss', AverageMetric.many(loss, target_tokens)
             )
-            ppl = PPLMetric.many(loss, target_tokens)
-            self.record_local_metric('ppl', ppl)
+            self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
             self.record_local_metric(
                 'token_acc', AverageMetric.many(correct, target_tokens)
             )
@@ -760,7 +759,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
             loss, model_output = self.compute_loss(batch, return_output=True)
-            self.metrics['loss'] += loss.item()
             if self.output_token_losses:
                 token_losses = self._construct_token_losses(
                     batch.label_vec, model_output
