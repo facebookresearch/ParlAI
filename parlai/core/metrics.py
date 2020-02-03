@@ -16,7 +16,7 @@ from collections import Counter
 from numbers import Number
 import queue
 import functools
-from typing import Union, List, Optional, Tuple, Set, Any
+from typing import Union, List, Optional, Tuple, Set, Any, Dict
 
 import torch
 
@@ -344,92 +344,29 @@ def normalize_answer(s):
     return s
 
 
-def aggregate_task_reports(reports, tasks, micro=False):
-    """
-    Aggregate separate task reports into a single report.
-
-    :param reports: list of report dicts from separate tasks
-    :param tasks: list of tasks
-    :param micro: average per example if True, else average over t
-
-    :return: aggregated report dicts
-    """
-    if len(reports) == 1:
-        # singular task
-        return reports[0]
-    # multiple tasks, aggregate metrics
-    metrics = {}
-    exs = {}
-    total_report = {'tasks': {}}
-    # collect metrics from all reports
-    for i, report in enumerate(reports):
-        total_report['tasks'][tasks[i]] = report
-        for metric, val in report.items():
-            if metric == 'exs':
-                exs[tasks[i]] = val
-            else:
-                metrics.setdefault(metric, {})[tasks[i]] = val
-    # now aggregate
-    total_exs = sum(exs.values())
-    total_report['exs'] = total_exs
-    for metric, task_vals in metrics.items():
-        if all([isinstance(v, Number) for v in task_vals.values()]):
-            if micro:
-                # average over the number of examples
-                vals = [task_vals[task] * exs[task] for task in tasks]
-                total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
-            else:  # macro
-                # average over tasks
-                vals = task_vals.values()
-                total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
-    # add a warning describing how metrics were averaged across tasks.
-    total_report['warning'] = 'metrics are averaged across tasks'
-    if micro:
-        total_report['warning'] += ' and weighted by the number of examples ' 'per task'
-    return total_report
-
-
-def aggregate_metrics(reporters):
+def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     """
     Aggregate metrics from multiple reports.
+
+    :param reports: Dict of tasks -> metrics.
     """
     # reporters is a list of teachers or worlds
     m = {}
-    m['tasks'] = {}
-    sums = {}
-    num_tasks = 0
-    total = 0
-    for i in range(len(reporters)):
-        task_id = reporters[i].getID()
-        task_report = reporters[i].report()
+    for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
-            if isinstance(value, float):
-                sums[each_metric] = 0.0
-                m[each_metric] = 0.0
-            elif isinstance(value, Number):
-                sums[each_metric] = 0
-                m[each_metric] = 0
+            m[each_metric] = m.get(each_metric) + value
+            m[f'{task_id}/{each_metric}'] = value
+    return m
 
-    for i in range(len(reporters)):
-        task_id = reporters[i].getID()
-        task_report = reporters[i].report()
-        while task_id in m['tasks']:
-            # prevent name clobbering if using multiple tasks with same ID
-            task_id += '_'
-        m['tasks'][task_id] = task_report
-        total += task_report.get('exs', 0)
-        found_any = False
-        for k in sums.keys():
-            if k in task_report:
-                sums[k] += task_report[k]
-                found_any = True
-        if found_any:
-            num_tasks += 1
-    m['exs'] = total
-    m['accuracy'] = 0
-    if num_tasks > 0:
-        for k in sums.keys():
-            m[k] = round_sigfigs(sums[k] / num_tasks, 4)
+
+def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]):
+    """
+    Combines metrics without regard for tracking provenence.
+    """
+    m = {}
+    for task_report in reports:
+        for each_metric, value in task_report.items():
+            m[each_metric] = m.get(each_metric) + value
     return m
 
 

@@ -34,7 +34,7 @@ from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_task_reports
+from parlai.core.metrics import aggregate_named_reports, aggregate_unnamed_reports
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
@@ -175,14 +175,6 @@ def setup_args(parser=None) -> ParlaiParser:
         'currently defaults to False.',
     )
     train.add_argument(
-        '-micro',
-        '--aggregate-micro',
-        type='bool',
-        default=False,
-        help='If multitasking, average metrics over the number of examples. '
-        'If false, averages over the number of tasks.',
-    )
-    train.add_argument(
         '-mcs',
         '--metrics',
         type=str,
@@ -299,9 +291,8 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         reports.append(task_report)
 
     tasks = [world.getID() for world in valid_worlds]
-    report = aggregate_task_reports(
-        reports, tasks, micro=opt.get('aggregate_micro', True)
-    )
+    named_reports = dict(zip(tasks, reports))
+    report = aggregate_named_reports(named_reports)
 
     metrics = f'{datatype}:{report}'
     print(f'[ eval completed in {timer.time():.2f}s ]')
@@ -517,15 +508,7 @@ class TrainLoop:
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        if 'tasks' in valid_report and '/' in opt['validation_metric']:
-            # if you are multitasking and want your validation metric to be
-            # a metric specific to a subtask, specify your validation metric
-            # as -vmt subtask/metric
-            subtask = opt['validation_metric'].split('/')[0]
-            validation_metric = opt['validation_metric'].split('/')[1]
-            new_valid = valid_report['tasks'][subtask][validation_metric]
-        else:
-            new_valid = valid_report[opt['validation_metric']]
+        new_valid = valid_report[opt['validation_metric']]
 
         if isinstance(new_valid, Metric):
             new_valid = new_valid.value()
@@ -578,59 +561,18 @@ class TrainLoop:
             return True
         return False
 
-    def _average_dicts(self, all_versions):
-        # instead of a list-of-dicts with like keys, make a dict-of-lists with
-        # keys to reduce
-        to_reduce = {}
-        for d in all_versions:
-            for k, v in d.items():
-                to_reduce.setdefault(k, []).append(v)
-        # now perform the reduction
-        finalized = {}
-        for k, values in to_reduce.items():
-            if k == 'exs' or k == 'total_skipped_batches':
-                # sum across workers
-                finalized[k] = np.sum(values)
-            elif isinstance(values[0], dict):
-                # do the same procedure recursively
-                finalized[k] = self._average_dicts(values)
-            elif isinstance(values[0], str):
-                finalized[k] = values[0]
-            else:
-                # all other cases, take the mean across the workers
-                finalized[k] = np.mean(values)
-                if all(isinstance(v, int) for v in values):
-                    finalized[k] = int(finalized[k])
-        return finalized
-
-    def _cleanup_inaccurate_metrics(self, metrics):
-        """
-        Remove inaccurate multiworld metrics.
-
-        When training in multitask mode, agent-level metrics may be shown,
-        but are actually averages
-        not distinguished across the worlds. This method adds a warning.
-
-        Issue: https://github.com/facebookresearch/ParlAI/issues/1750
-        """
-        # TODO: fix the root issue
-        if 'tasks' in metrics:
-            metrics[
-                'warning'
-            ] = 'agent level metrics (e.g. loss, mean_loss, ppl) are averaged over tasks'
-
     def _sync_training_metrics(self, metrics):
         """
         Sync training metrics across workers.
 
-        A handful of special cases are handled as exceptions, and the remaining metrics
-        are simply averaged across workers.
+        A handful of special cases are handled as exceptions, and the remaining
+        metrics are simply averaged across workers.
         """
         if not is_distributed():
             # nothing special needed
             return metrics
         all_versions = all_gather_list(metrics)
-        return self._average_dicts(all_versions)
+        return aggregate_unnamed_reports(all_versions)
 
     def _nice_format(self, dictionary):
         rounded = {}
@@ -639,6 +581,12 @@ class TrainLoop:
                 rounded[k] = self._nice_format(v)
             elif isinstance(v, float):
                 rounded[k] = round_sigfigs(v, 4)
+            elif isinstance(v, Metric):
+                v = v.value()
+                if isinstance(v, float):
+                    rounded[k] = rounded_sigfigs(v.value(), 4)
+                else:
+                    rounded[k] = v
             else:
                 rounded[k] = v
         return rounded
@@ -678,7 +626,6 @@ class TrainLoop:
         logs = []
         # get report
         train_report = self.world.report()
-        self._cleanup_inaccurate_metrics(train_report)
         train_report = self._sync_training_metrics(train_report)
         self.world.reset_metrics()
 
@@ -707,12 +654,6 @@ class TrainLoop:
 
         :return: tuple of reports (validation_report, test_report)
         """
-        if is_distributed():
-            warn_once(
-                "Distributed training outputs average-per-worker metrics during "
-                "training, and may be slightly distorted. Validation/test are "
-                "unadulterated."
-            )
         opt = self.opt
         world = self.world
         with world:

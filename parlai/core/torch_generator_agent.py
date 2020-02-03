@@ -530,7 +530,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         base = super().report()
         m = {}
         if not self.skip_generation and self.compute_tokenized_bleu:
-            base.update({'fairseq_bleu': 'N/A', 'nltk_bleu_unnormalized': 'N/A'})
             if fairseq_bleu is not None:
                 try:
                     fairseq_bleu_scores = {

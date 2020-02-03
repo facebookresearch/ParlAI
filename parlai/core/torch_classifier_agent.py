@@ -13,6 +13,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.core.metrics import AverageMetric
 from collections import defaultdict
 
 import torch

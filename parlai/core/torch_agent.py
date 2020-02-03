@@ -1736,7 +1736,7 @@ class TorchAgent(ABC, Agent):
             if len(values) != len(batch.valid_indices):
                 raise IndexError(
                     f"Batchsize mismatch on metric {k} (got {len(values)}, "
-                    f"expected {len(valid_inds)}"
+                    f"expected {len(batch.valid_indices)}"
                 )
             for i, value in zip(batch.valid_indices, values):
                 if 'metrics' not in batch_reply[i]:

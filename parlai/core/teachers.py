@@ -35,7 +35,7 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
-from parlai.core.metrics import TeacherMetrics, aggregate_metrics
+from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -1904,7 +1904,7 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
-        return aggregate_metrics(self.tasks)
+        return aggregate_named_reports({t.getID(): t.report() for t in self.tasks})
 
     def reset(self):
         """
