@@ -176,7 +176,7 @@ class TorchClassifierAgent(TorchAgent):
 
     def build_criterion(self):
         weight_tensor = torch.FloatTensor(self.class_weights)
-        return torch.nn.CrossEntropyLoss(weight_tensor)
+        return torch.nn.CrossEntropyLoss(weight=weight_tensor, reduction='none')
 
     def share(self):
         """
@@ -247,12 +247,10 @@ class TorchClassifierAgent(TorchAgent):
         labels = self._get_labels(batch)
         scores = self.score(batch)
         loss = self.criterion(scores, labels)
+        self.record_local_metric('loss', AverageMetric.many(loss))
+        loss = loss.mean()
         loss.backward()
         self.update_params()
-
-        # update metrics
-        self.metrics['loss'] += loss.item()
-        self.metrics['examples'] += len(batch.text_vec)
 
         # get predictions
         _, prediction_id = torch.max(scores.cpu(), 1)
@@ -286,8 +284,8 @@ class TorchClassifierAgent(TorchAgent):
         else:
             labels = self._get_labels(batch)
             loss = self.criterion(scores, labels)
-            self.metrics['loss'] += loss.item()
-            self.metrics['examples'] += len(batch.text_vec)
+            self.record_local_metric('loss', AverageMetric.many(loss))
+            loss = loss.mean()
             self._update_confusion_matrix(batch, preds)
 
         return Output(preds)
@@ -299,7 +297,6 @@ class TorchClassifierAgent(TorchAgent):
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
         self.metrics['examples'] = 0
-        self.metrics['loss'] = 0.0
 
     def _report_prec_recall_metrics(self, confmat, class_name, metrics):
         """
@@ -345,9 +342,7 @@ class TorchClassifierAgent(TorchAgent):
         m = super().report()
         examples = self.metrics['examples']
         if examples > 0:
-            m['examples'] = examples
-            m['mean_loss'] = self.metrics['loss'] / examples
-
+            # TODO: upgrade the confusion matrix to newer metrics
             # get prec/recall metrics
             confmat = self.metrics['confusion_matrix']
             if self.opt.get('get_all_metrics'):
