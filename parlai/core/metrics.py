@@ -83,7 +83,10 @@ class Metric(ABC):
         return f'{self.__class__.__name__}({self.value():.4g})'
 
     def __float__(self) -> float:
-        return self.value()
+        return float(self.value())
+
+    def __int__(self) -> int:
+        return int(self.value())
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Metric):
