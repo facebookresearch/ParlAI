@@ -19,7 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, Union, List, Tuple
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -1255,6 +1255,30 @@ class TorchAgent(ABC, Agent):
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
 
+    def _pad_tensor(
+        self,
+        items: List[Union[List[int], torch.LongTensor]]
+    ) -> Tuple[torch.LongTensor, List[int]]:
+        """
+        Create a right padded matrix from an uneven list of lists.
+
+        Returns (padded, lengths), where padded is the padded matrix, and lengths
+        is a list containing the lengths of each row.
+
+        :param list[iter[int]] items: List of items
+        :returns: (padded, lengths) tuple
+        :rtype: (Tensor[int64], list[int])
+
+        This is intentionally overridable so that models can control how
+        to pad their input.
+        """
+        return padded_tensor(
+            items,
+            pad_idx=self.NULL_IDX,
+            use_cuda=self.use_cuda,
+            fp16friendly=self.fp16,
+        )
+
     def is_valid(self, obs):
         """
         Determine if an observation is valid or not.
@@ -1302,9 +1326,7 @@ class TorchAgent(ABC, Agent):
         xs, x_lens = None, None
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(
-                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
-            )
+            xs, x_lens = self._pad_tensor(_xs)
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -1323,12 +1345,8 @@ class TorchAgent(ABC, Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(
-                label_vecs,
-                self.NULL_IDX,
-                self.use_cuda,
-                fp16friendly=self.opt.get('fp16'),
-            )
+            ys, y_lens = self._pad_tensor(label_vecs)
+
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens, descending=True

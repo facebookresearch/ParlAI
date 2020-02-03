@@ -7,7 +7,7 @@
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import IdentityLayer, concat_without_padding
+from parlai.utils.torch import IdentityLayer, concat_without_padding, padded_tensor
 
 try:
     from transformers import GPT2Model
@@ -262,3 +262,14 @@ class Gpt2Agent(TorchGeneratorAgent):
 
     def _encoder_input(self, batch):
         return (batch.text_vec,)
+
+    def _pad_tensor(self, items):
+        """
+        Override to always set fp16friendly to False.
+        """
+        return padded_tensor(
+            items,
+            pad_idx=self.NULL_IDX,
+            use_cuda=self.use_cuda,
+            fp16friendly=False,
+        )

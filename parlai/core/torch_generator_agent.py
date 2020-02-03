@@ -30,7 +30,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.torch import padded_tensor, neginf
+from parlai.utils.torch import neginf, FP16SafeCrossEntropy
 
 
 try:
@@ -418,7 +418,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
-        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
+        if not self.fp16:
+            return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
+        else:
+            # FP16 safe cross entropy (softmax done in FP32)
+            return FP16SafeCrossEntropy(ignore_index=self.NULL_IDX, reduction='none')
 
     def _v2t(self, vec):
         """
@@ -792,9 +796,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             for i in range(bsz):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-                cands, _ = padded_tensor(
-                    batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
-                )
+                cands, _ = self._pad_tensor(batch.candidate_vecs[i])
                 scores, _ = self.model.decode_forced(enc, cands)
                 cand_losses = F.cross_entropy(
                     scores.view(num_cands * cands.size(1), -1),
