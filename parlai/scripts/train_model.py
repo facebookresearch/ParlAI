@@ -442,6 +442,9 @@ class TrainLoop:
             except KeyboardInterrupt:
                 pass
 
+    def _safe_report(self, report):
+        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
+
     def _save_train_stats(self, suffix=None):
         fn = self.opt['model_file']
         if suffix:
@@ -456,7 +459,7 @@ class TrainLoop:
                         + num_workers() * self.world.get_total_epochs()
                     ),
                     'impatience': self.impatience,
-                    'valid_reports': self.valid_reports,
+                    'valid_reports': [self._safe_report(v) for v in self.valid_reports],
                 },
                 f,
             )
