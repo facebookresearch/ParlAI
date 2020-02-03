@@ -237,7 +237,6 @@ class TorchGeneratorModel(nn.Module, ABC):
 
         # use teacher forcing
         scores, preds = self.decode_forced(encoder_states, ys)
-
         return scores, preds, encoder_states
 
 
@@ -458,6 +457,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         return Batch(
             text_vec=torch.ones(batchsize, maxlen).long().cuda(),
             label_vec=torch.ones(batchsize, 2).long().cuda(),
+            text_lengths=[maxlen] * batchsize,
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -588,6 +588,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         additional inputs.
         """
         return (batch.text_vec,)
+
+    def _encoder_input(self, batch):
+        """
+        Create the input (x) value for the encoder.
+
+        Must return a tuple.  This will be passed directly into the encoder via
+        `*args`, i.e.,
+
+        >>> model.encoder(*_encoder_input(batch))
+
+        This is intentionally overridable so that richer models can pass the
+        additional inputs directly to the encoder.
+        """
+        return self._model_input(batch)
 
     def compute_loss(self, batch, return_output=False):
         """
@@ -774,7 +788,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.rank_candidates:
             # compute roughly ppl to rank candidates
             cand_choices = []
-            encoder_states = self.model.encoder(*self._model_input(batch))
+            encoder_states = self.model.encoder(*self._encoder_input(batch))
             for i in range(bsz):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
@@ -883,7 +897,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model = self.model
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
-        encoder_states = model.encoder(*self._model_input(batch))
+        encoder_states = model.encoder(*self._encoder_input(batch))
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:

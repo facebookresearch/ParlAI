@@ -23,9 +23,6 @@ class TestUtils(unittest.TestCase):
         for input_, output in passing_inputs_and_outputs:
             actual_output = SumMetric(input_).value()
             self.assertEqual(actual_output, output)
-            # Value should be equal here. For the rest they'll only be equal to some
-            # precision
-            self.assertIsInstance(actual_output, float)
 
         failing_inputs = [
             ('4', AssertionError),
@@ -39,15 +36,14 @@ class TestUtils(unittest.TestCase):
     def test_sum_metric_additions(self):
 
         input_pairs_and_outputs = [
-            (1, 2, 3.0),
+            (1, 2, 3),
             (3, -5.0, -2.0),
             (torch.Tensor([[[4.2]]]), 3, 7.2),
-            (torch.DoubleTensor([1]), torch.LongTensor([[-1]]), 0.0),
+            (torch.DoubleTensor([1]), torch.LongTensor([[-1]]), 0),
         ]
         for input1, input2, output in input_pairs_and_outputs:
             actual_output = (SumMetric(input1) + SumMetric(input2)).value()
             self.assertAlmostEqual(actual_output, output, places=6)
-            self.assertIsInstance(actual_output, float)
 
     def test_average_metric_inputs(self):
 
@@ -64,9 +60,7 @@ class TestUtils(unittest.TestCase):
 
         failing_inputs = [
             ((2, '4'), AssertionError),
-            ((17.0, 10.0000001), AssertionError),
             ((torch.Tensor([1, 1]), torch.Tensor([2])), ValueError),
-            ((torch.Tensor([3.2]), torch.Tensor([4.2])), AssertionError),
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):

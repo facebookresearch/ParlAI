@@ -308,15 +308,6 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     return report
 
 
-def _save_best_valid(model_file, best_valid):
-    """
-    Save the best validation score to disk.
-    """
-    f = open(model_file + '.best_valid', 'w')
-    f.write(str(best_valid))
-    f.close()
-
-
 class TrainLoop:
     """
     TrainLoop contains the core training loop logic.
@@ -396,11 +387,7 @@ class TrainLoop:
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.valid_reports = []
         self.best_valid = None
-        if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
-            with open(opt['model_file'] + ".best_valid", 'r') as f:
-                x = f.readline()
-                self.best_valid = float(x)
-                f.close()
+
         self.impatience = 0
         self.saved = False
         self.valid_worlds = None
@@ -415,10 +402,22 @@ class TrainLoop:
             # training stats, etc
             with open(opt['model_file'] + trainstats_suffix) as ts:
                 obj = json.load(ts)
+                self.parleys = obj.get('parleys', 0)
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
+                if 'best_valid' in obj:
+                    self.best_valid = obj['best_valid']
+                else:
+                    # old method
+                    if opt.get('model_file') and os.path.isfile(
+                        opt['model_file'] + '.best_valid'
+                    ):
+                        with open(opt['model_file'] + ".best_valid", 'r') as f:
+                            x = f.readline()
+                            self.best_valid = float(x)
+                            f.close()
 
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
@@ -454,6 +453,7 @@ class TrainLoop:
         with open(fn, 'w') as f:
             json.dump(
                 {
+                    'parleys': self.parleys,
                     'train_time': self.train_time.time(),
                     'total_epochs': (
                         self._preempted_epochs
@@ -461,6 +461,7 @@ class TrainLoop:
                     ),
                     'impatience': self.impatience,
                     'valid_reports': self.valid_reports,
+                    'best_valid': self.best_valid,
                 },
                 f,
             )
@@ -488,6 +489,8 @@ class TrainLoop:
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
+            # flush on a validation
+            self.tb_logger.flush()
         # saving
         if (
             opt.get('model_file')
@@ -531,10 +534,6 @@ class TrainLoop:
             if opt.get('model_file') and is_primary_worker():
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.save_model()
-                print(
-                    "[ saving best valid metric: " + opt['model_file'] + ".best_valid ]"
-                )
-                _save_best_valid(opt['model_file'], self.best_valid)
                 self.saved = True
             if (
                 opt['validation_metric'] == 'accuracy'
