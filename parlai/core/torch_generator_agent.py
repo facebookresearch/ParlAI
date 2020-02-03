@@ -419,7 +419,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
         if not self.fp16:
-            return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
+            return torch.nn.CrossEntropyLoss(
+                ignore_index=self.NULL_IDX, reduction='none'
+            )
         else:
             # FP16 safe cross entropy (softmax done in FP32)
             return FP16SafeCrossEntropy(ignore_index=self.NULL_IDX, reduction='none')

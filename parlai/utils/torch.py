@@ -275,9 +275,9 @@ class FP16SafeCrossEntropy(torch.nn.Module):
     """
     FP16-safe cross entropy loss.
 
-    This avoids overflow in the softmax by doing the operation
-    in FP32.
+    This avoids overflow in the softmax by doing the operation in FP32.
     """
+
     def __init__(self, ignore_index, reduction='none'):
         super().__init__()
         self.NULL_IDX = ignore_index
@@ -304,4 +304,3 @@ class IdentityLayer(torch.nn.Module):
         Identity.
         """
         return xs
-

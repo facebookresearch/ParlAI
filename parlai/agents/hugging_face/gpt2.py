@@ -268,8 +268,5 @@ class Gpt2Agent(TorchGeneratorAgent):
         Override to always set fp16friendly to False.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=False,
+            items, pad_idx=self.NULL_IDX, use_cuda=self.use_cuda, fp16friendly=False,
         )
