@@ -528,7 +528,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Additionally report tokenized bleu scores, if desired.
         """
         base = super().report()
-        m = {}
         if not self.skip_generation and self.compute_tokenized_bleu:
             if fairseq_bleu is not None:
                 try:

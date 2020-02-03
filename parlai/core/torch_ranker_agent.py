@@ -25,7 +25,7 @@ from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import padded_3d, padded_tensor
-from parlai.core.metrics import AverageMetric, SumMetric
+from parlai.core.metrics import AverageMetric
 
 
 class TorchRankerAgent(TorchAgent):

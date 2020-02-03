@@ -46,7 +46,7 @@ from parlai.utils.distributed import (
     is_distributed,
     num_workers,
 )
-from parlai.utils.misc import Timer, round_sigfigs, warn_once, nice_report
+from parlai.utils.misc import Timer, nice_report
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -565,8 +565,8 @@ class TrainLoop:
         """
         Sync training metrics across workers.
 
-        A handful of special cases are handled as exceptions, and the remaining
-        metrics are simply averaged across workers.
+        A handful of special cases are handled as exceptions, and the remaining metrics
+        are simply averaged across workers.
         """
         if not is_distributed():
             # nothing special needed

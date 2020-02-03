@@ -42,7 +42,7 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
+from parlai.core.metrics import Metrics, Metric, AverageMetric, FixedMetric
 
 
 class Batch(AttrDict):
