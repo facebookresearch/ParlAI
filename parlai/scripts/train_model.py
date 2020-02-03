@@ -286,17 +286,16 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
 
     tasks = [world.getID() for world in valid_worlds]
     named_reports = dict(zip(tasks, reports))
-    report = nice_report(aggregate_named_reports(named_reports))
+    report = aggregate_named_reports(named_reports)
 
-    metrics = f'{datatype}:{report}'
+    metrics = f'{datatype}:{nice_report(report)}'
     print(f'[ eval completed in {timer.time():.2f}s ]')
-    print(metrics)
 
     # write to file
     if write_log and opt.get('model_file'):
         # Write out metrics
         f = open(opt['model_file'] + '.' + datatype, 'a+')
-        f.write(metrics + '\n')
+        f.write(f'{metrics}\n')
         f.close()
 
     return report
@@ -462,9 +461,6 @@ class TrainLoop:
                 f,
             )
 
-    def _values_only(self, report):
-        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
-
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
@@ -487,7 +483,7 @@ class TrainLoop:
         )
         v = valid_report.copy()
         v['train_time'] = self.train_time.time()
-        self.valid_reports.append(self._values_only(v))
+        self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)

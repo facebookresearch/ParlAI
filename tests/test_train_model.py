@@ -37,15 +37,11 @@ class TestTrainModel(unittest.TestCase):
             }
         )
 
-        task1_acc = valid['tasks']['integration_tests:candidate']['accuracy']
-        task2_acc = valid['tasks']['integration_tests:multiturnCandidate']['accuracy']
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
         total_acc = valid['accuracy']
-        # task 2 is 4 times the size of task 1
-        self.assertAlmostEqual(
-            total_acc,
-            (task1_acc + 4 * task2_acc) / 5,
-            4,
-            'Task accuracy is averaged incorrectly',
+        self.assertEqual(
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
         )
 
         valid, test = testing_utils.train_model(
@@ -57,15 +53,12 @@ class TestTrainModel(unittest.TestCase):
                 'aggregate_micro': False,
             }
         )
-        task1_acc = valid['tasks']['integration_tests:candidate']['accuracy']
-        task2_acc = valid['tasks']['integration_tests:multiturnCandidate']['accuracy']
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
         total_acc = valid['accuracy']
         # metrics should be averaged equally across tasks
-        self.assertAlmostEqual(
-            total_acc,
-            (task1_acc + task2_acc) / 2,
-            4,
-            'Task accuracy is averaged incorrectly',
+        self.assertEqual(
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
         )
 
 
