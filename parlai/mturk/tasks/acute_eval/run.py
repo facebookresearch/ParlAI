@@ -418,7 +418,6 @@ def main(opt):
             with open(violating_workers_path, 'r') as f:
                 for line in f:
                     violating_workers.append(line.strip())
-            import pdb; pdb.set_trace()
             for w in set(FULL_BLOCKLIST + violating_workers):
                 try:
                     print('Soft Blocking {}\n'.format(w))
