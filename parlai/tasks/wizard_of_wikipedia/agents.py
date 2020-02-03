@@ -414,14 +414,12 @@ class BasicWizardDialogTeacher(BasicdialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.speaker_label = "wizard"
-        self.add_topic = True
 
 
 class BasicApprenticeDialogTeacher(BasicdialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.speaker_label = 'apprentice'
-        self.add_topic = True
 
 
 class BasicBothDialogTeacher(MultiTaskTeacher):
