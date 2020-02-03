@@ -45,6 +45,7 @@ from parlai.utils.distributed import (
     all_gather_list,
     is_distributed,
     num_workers,
+    get_rank,
 )
 from parlai.utils.misc import Timer, nice_report
 
@@ -187,13 +188,6 @@ def setup_args(parser=None) -> ParlaiParser:
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
-
-
-def _maybe_load_eval_worlds(agent, opt, datatype):
-    if not is_primary_worker():
-        # only need the validation on the main worker
-        return None
-    return load_eval_worlds(agent, opt, datatype)
 
 
 def load_eval_worlds(agent, opt, datatype):
@@ -482,10 +476,13 @@ class TrainLoop:
 
         if self.valid_worlds is None:
             # we need to load the world now
-            self.valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
+            self.valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
-        valid_report = sync_object(
+        max_exs = opt['validation_max_exs'] // num_workers()
+        # some works may need to do some extra examples
+        max_exs += int(opt['validation_max_exs'] % num_workers() < get_rank())
+        valid_report = self._sync_metrics(
             run_eval(self.valid_worlds, opt, 'valid', opt['validation_max_exs'])
         )
         v = valid_report.copy()
@@ -561,7 +558,7 @@ class TrainLoop:
             return True
         return False
 
-    def _sync_training_metrics(self, metrics):
+    def _sync_metrics(self, metrics):
         """
         Sync training metrics across workers.
 
@@ -609,7 +606,7 @@ class TrainLoop:
         logs = []
         # get report
         train_report = self.world.report()
-        train_report = self._sync_training_metrics(train_report)
+        train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
 
         # time elapsed
@@ -721,10 +718,10 @@ class TrainLoop:
             # reload best validation model
             self.agent = create_agent(opt)
 
-        valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
+        valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
         v_report = run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
-        test_worlds = _maybe_load_eval_worlds(self.agent, opt, 'test')
+        test_worlds = load_eval_worlds(self.agent, opt, 'test')
         t_report = run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
         if valid_worlds:
             for valid_world in valid_worlds:
