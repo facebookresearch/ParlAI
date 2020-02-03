@@ -1818,7 +1818,6 @@ class TorchAgent(ABC, Agent):
                 'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
             )
 
-        self.global_metrics.add('updates', SumMetric(1))
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor

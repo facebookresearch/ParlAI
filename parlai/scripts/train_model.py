@@ -46,7 +46,7 @@ from parlai.utils.distributed import (
     is_distributed,
     num_workers,
 )
-from parlai.utils.misc import Timer, round_sigfigs, warn_once
+from parlai.utils.misc import Timer, round_sigfigs, warn_once, nice_report
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -292,7 +292,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
 
     tasks = [world.getID() for world in valid_worlds]
     named_reports = dict(zip(tasks, reports))
-    report = aggregate_named_reports(named_reports)
+    report = nice_report(aggregate_named_reports(named_reports))
 
     metrics = f'{datatype}:{report}'
     print(f'[ eval completed in {timer.time():.2f}s ]')
@@ -574,23 +574,6 @@ class TrainLoop:
         all_versions = all_gather_list(metrics)
         return aggregate_unnamed_reports(all_versions)
 
-    def _nice_format(self, dictionary):
-        rounded = {}
-        for k, v in dictionary.items():
-            if isinstance(v, dict):
-                rounded[k] = self._nice_format(v)
-            elif isinstance(v, float):
-                rounded[k] = round_sigfigs(v, 4)
-            elif isinstance(v, Metric):
-                v = v.value()
-                if isinstance(v, float):
-                    rounded[k] = rounded_sigfigs(v.value(), 4)
-                else:
-                    rounded[k] = v
-            else:
-                rounded[k] = v
-        return rounded
-
     def _compute_eta(self, epochs_completed, time_elapsed):
         """
         Compute the estimated seconds remaining in training.
@@ -641,7 +624,7 @@ class TrainLoop:
         if time_left is not None:
             logs.append('time_left:{}s'.format(max(0, np.ceil(time_left))))
 
-        log = '[ {} ] {}'.format(' '.join(logs), self._nice_format(train_report))
+        log = '[ {} ] {}'.format(' '.join(logs), nice_report(train_report))
         print(log)
         self.log_time.reset()
 
