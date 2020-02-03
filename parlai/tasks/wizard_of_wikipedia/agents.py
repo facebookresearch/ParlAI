@@ -392,6 +392,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
+        assert isinstance(self.add_topic, bool)
         if self.add_topic and entry_idx == 0:
             text = d.get('chosen_topic', '') + '\n' + text
 
