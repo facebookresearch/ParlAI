@@ -26,6 +26,7 @@ from collections import deque
 import json
 import random
 import os
+import time
 import torch
 from torch import optim
 
@@ -42,6 +43,23 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
+
+
+import sys
+import pdb
+
+class ForkedPdb(pdb.Pdb):
+    """A Pdb subclass that may be used
+    from a forked multiprocessing child
+
+    """
+    def interaction(self, *args, **kwargs):
+        _stdin = sys.stdin
+        try:
+            sys.stdin = open('/dev/stdin')
+            pdb.Pdb.interaction(self, *args, **kwargs)
+        finally:
+            sys.stdin = _stdin
 
 
 class Batch(AttrDict):
@@ -1261,7 +1279,7 @@ class TorchAgent(ABC, Agent):
         """
         return 'text_vec' in obs or 'image' in obs
 
-    def batchify(self, obs_batch, sort=False):
+    def batchify(self, obs_batch, sort=False, buffers=None):
         """
         Create a batch of valid observations from an unchecked batch.
 
@@ -1300,13 +1318,16 @@ class TorchAgent(ABC, Agent):
 
         # TEXT
         xs, x_lens = None, None
+        # print(f"in batchify: {buffers['text_vec'].data_ptr()}")
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
                 _xs,
                 self.NULL_IDX,
                 self.use_cuda if self.opt['numworkers'] == 1 else False,
+                # self.use_cuda,
                 fp16friendly=self.opt.get('fp16'),
+                buffer=buffers['text_vec'] if buffers else None,
             )
             if sort:
                 sort = False  # now we won't sort on labels
@@ -1330,7 +1351,9 @@ class TorchAgent(ABC, Agent):
                 label_vecs,
                 self.NULL_IDX,
                 self.use_cuda if self.opt['numworkers'] == 1 else False,
+                # self.use_cuda,
                 fp16friendly=self.opt.get('fp16'),
+                buffer=buffers['label_vec'] if buffers else None,
             )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
@@ -1347,8 +1370,6 @@ class TorchAgent(ABC, Agent):
         imgs = None
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
-        xs.share_memory_()
-        ys.share_memory_()
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
@@ -1425,6 +1446,7 @@ class TorchAgent(ABC, Agent):
         self.observation = observation
         # update the history using the observation
         self.history.update_history(observation)
+        # ForkedPdb().set_trace()
         return self.vectorize(
             observation,
             self.history,
@@ -1693,10 +1715,11 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
+        ba_start = time.time()
         if not isinstance(observations, Batch):
             batch_size = len(observations)
         else:
-            batch_size = len(observations.observations)
+            batch_size = observations.text_vec.size(0)
         # initialize a list of replies with this agent's id
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False})
@@ -1711,9 +1734,11 @@ class TorchAgent(ABC, Agent):
             batch = self.batchify(observations)
         else:
             batch = observations
-            if self.use_cuda:
-                batch.text_vec = batch.text_vec.cuda()
-                batch.label_vec = batch.label_vec.cuda()
+        batchify_time = time.time()
+        # print(f'batchify_time in TA: {batchify_time - ba_start}')
+            # if self.use_cuda:
+            #     batch.text_vec = batch.text_vec.cuda()
+            #     batch.label_vec = batch.label_vec.cuda()
 
         if self.is_training:
             output = self.train_step(batch)
@@ -1722,11 +1747,13 @@ class TorchAgent(ABC, Agent):
                 # save memory and compute by disabling autograd.
                 # use `with torch.enable_grad()` to gain back graidients.
                 output = self.eval_step(batch)
-
+        tst = time.time()
+        # print(f'train step time in ta: {tst - batchify_time}')
         if output is None:
             return batch_reply
 
         self.match_batch(batch_reply, batch.valid_indices, output)
+        # print(f'match batch time in ta: {time.time() - tst}')
         return batch_reply
 
     @abstractmethod
