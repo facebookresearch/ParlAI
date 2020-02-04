@@ -62,6 +62,7 @@ def padded_tensor(
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
     """
+
     # number of items
     n = len(items)
     # length of each item

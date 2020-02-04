@@ -1300,7 +1300,6 @@ class TorchAgent(ABC, Agent):
 
         # TEXT
         xs, x_lens = None, None
-        # print(f"in batchify: {buffers['text_vec'].data_ptr()}")
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
@@ -1345,6 +1344,7 @@ class TorchAgent(ABC, Agent):
         imgs = None
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
+
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
@@ -1421,7 +1421,6 @@ class TorchAgent(ABC, Agent):
         self.observation = observation
         # update the history using the observation
         self.history.update_history(observation)
-        # ForkedPdb().set_trace()
         return self.vectorize(
             observation,
             self.history,
@@ -1716,6 +1715,7 @@ class TorchAgent(ABC, Agent):
                 # save memory and compute by disabling autograd.
                 # use `with torch.enable_grad()` to gain back graidients.
                 output = self.eval_step(batch)
+
         if output is None:
             return batch_reply
 
