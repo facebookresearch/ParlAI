@@ -3,11 +3,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.tasks.image_chat.build import build
 import argparse
+from parlai.tasks.image_chat.build import build
 
 
 def parse_args():
+    """
+    Wrapper to parse CLI arguments
+    :return: args
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-dp", "--datapath", default="/tmp",
