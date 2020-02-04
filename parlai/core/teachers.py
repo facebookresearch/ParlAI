@@ -262,8 +262,7 @@ class FixedDialogTeacher(Teacher):
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
-        self.batchindex = opt.get('batchindex', 0)
-        self.use_batch_act = False  # Batch act disabled by default
+        self.use_batch_act = False
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
@@ -313,10 +312,6 @@ class FixedDialogTeacher(Teacher):
         Share the data and dataloader.
         """
         shared = super().share()
-
-        if hasattr(self, 'lastYs'):
-            # share lastYs to communicate between batch_act and observe
-            shared['lastYs'] = self.lastYs
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
@@ -442,47 +437,10 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
-        if self.use_batch_act:
-            self.lastY = self.lastYs[self.batchindex]
-            self.lastYs[self.batchindex] = None
-
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.lastY = None
         return observation
-
-    def batch_act(self, observations):
-        """
-        Return an entire batch of examples.
-
-        Note: Currently used by PytorchDataTeacher.
-        """
-        # DEPRECATEDAY: looks like this isn't used anymore
-        # we ignore observations
-        if not hasattr(self, 'epochDone'):
-            # reset if haven't yet
-            self.reset()
-
-        batch = self.next_batch()
-        # pad batch
-        if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (
-                self.bsz - len(batch)
-            )
-
-        # remember correct answer if available (for padding, None)
-        for i, ex in enumerate(batch):
-            if 'labels' in ex:
-                labels = ex['labels']
-                self.lastYs[i] = labels
-                if not self.datatype.startswith('train') or 'evalmode' in self.datatype:
-                    del ex['labels']
-                    if not self.opt.get('hide_labels', False):
-                        ex['eval_labels'] = labels
-            else:
-                self.lastYs[i] = ex.get('eval_labels', None)
-
-        return batch
 
     def act(self):
         """
@@ -548,19 +506,18 @@ class DialogTeacher(FixedDialogTeacher):
         )
         self.stream = 'stream' in self.datatype.split(':')
 
-        if not self.use_batch_act:
-            # first initialize any shared objects
-            data_class = StreamDialogData if self.stream else DialogData
-            kwargs = {'cycle': self.training} if self.stream else {}
-            if shared and shared.get('data'):
-                self.data = data_class(opt, shared=shared['data'], **kwargs)
-            else:
-                self.data = data_class(
-                    opt,
-                    data_loader=self.setup_data,
-                    cands=self.label_candidates(),
-                    **kwargs,
-                )
+        # first initialize any shared objects
+        data_class = StreamDialogData if self.stream else DialogData
+        kwargs = {'cycle': self.training} if self.stream else {}
+        if shared and shared.get('data'):
+            self.data = data_class(opt, shared=shared['data'], **kwargs)
+        else:
+            self.data = data_class(
+                opt,
+                data_loader=self.setup_data,
+                cands=self.label_candidates(),
+                **kwargs,
+            )
 
         self.reset()
 
