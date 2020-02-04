@@ -102,6 +102,12 @@ def add_args(from_argv=False):
     argparser.add_argument(
         '--seed', type=int, default=42, help='seed for random and np.random'
     )
+    argparser.add_argument(
+        '--softblock-list-path',
+        type=str,
+        default=None,
+        help='Path to list of workers to softblock, separated by line breaks',
+    )
     argparser.set_defaults(allowed_conversation=1)
     if from_argv:
         return argparser.parse_args()
@@ -410,15 +416,14 @@ def main(opt):
                 )
             return save_data
 
-        if not opt['is_sandbox']:
-
-            # Soft-block all chosen workers
-            violating_workers_path = '/private/home/ems/GitHub/facebookresearch/ParlAI/parlai_internal/mturk/tasks/pairwise_dialogue_eval/scripts/workers.txt'
-            violating_workers = []
-            with open(violating_workers_path, 'r') as f:
+        # Soft-block all chosen workers
+        if not opt['is_sandbox'] and opt['softblock_list_path'] is not None:
+            softblock_list = set()
+            with open(opt['softblock_list_path'], 'r') as f:
                 for line in f:
-                    violating_workers.append(line.strip())
-            for w in set(FULL_BLOCKLIST + violating_workers):
+                    softblock_list.add(line.strip())
+            print(f'Will softblock {len(softblock_list):d} workers.')
+            for w in softblock_list:
                 try:
                     print('Soft Blocking {}\n'.format(w))
                     mturk_manager.soft_block_worker(w)
