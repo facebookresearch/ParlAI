@@ -6,7 +6,7 @@ We offer wrappers for generative transformers from [Hugging Face's transformers 
 To use GPT2, run your command with the flag: `-m hugging_face/gpt2`.
 
 ### Examples
-Talk to GPT2 large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 20:
+Talk to GPT2 large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 25:
 ```bash
 python examples/interactive.py -m hugging_face/gpt2 --add-special-tokens False --gpt2-size large --inference beam --beam-size 10 --beam-context-block-ngram 3 --beam-block-ngram 3 --beam-min-length 25
 ```
