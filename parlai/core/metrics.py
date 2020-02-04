@@ -105,6 +105,14 @@ class Metric(ABC):
         else:
             return self.value() < other
 
+    def __sub__(self, other: Any) -> float:
+        """
+        Used heavily for assertAlmostEqual.
+        """
+        if not isinstance(other, float):
+            raise TypeError('Metrics.__sub__ is intentionally limited to floats.')
+        return self.value() - other
+
     @classmethod
     def as_number(cls, obj: TScalar) -> Union[int, float]:
         if isinstance(obj, torch.Tensor):
