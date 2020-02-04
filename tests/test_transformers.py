@@ -539,8 +539,20 @@ class TestTransformerGenerator(unittest.TestCase):
                 compute_tokenized_bleu=True,
             )
         )
-        assert valid['fairseq_bleu1'] > 0.9
-        assert valid['nltk_bleu1'] > 0.9
+        try:
+            import fairseq  # noqa: F401
+
+            assert valid['fairseq_bleu1'] > 0.9
+        except ImportError:
+            # fairseq not installed, let's just move on
+            pass
+        try:
+            import nltk  # noqa: F401
+
+            assert valid['nltk_bleu1'] > 0.9
+        except ImportError:
+            # nltk not installed, let's just move on
+            pass
 
 
 class TestLearningRateScheduler(unittest.TestCase):
