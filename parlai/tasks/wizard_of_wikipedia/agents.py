@@ -413,14 +413,14 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
 class BasicWizardDialogTeacher(BasicdialogTeacher):
     def __init__(self, opt, shared=None):
+        opt['speaker_label'] = "wizard"
         super().__init__(opt, shared)
-        self.speaker_label = "wizard"
 
 
 class BasicApprenticeDialogTeacher(BasicdialogTeacher):
     def __init__(self, opt, shared=None):
+        opt['speaker_label'] = 'apprentice'
         super().__init__(opt, shared)
-        self.speaker_label = 'apprentice'
 
 
 class BasicBothDialogTeacher(MultiTaskTeacher):
