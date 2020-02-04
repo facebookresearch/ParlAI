@@ -127,6 +127,18 @@ def get_model_name(opt):
     return model
 
 
+def str2none(value: str):
+    """
+    If the value is a variant of `none`, return None.
+
+    Otherwise, return the original value.
+    """
+    if value.lower() == 'none':
+        return None
+    else:
+        return value
+
+
 def str2bool(value):
     """
     Convert 'yes', 'false', '1', etc.
@@ -259,6 +271,7 @@ class ParlaiParser(argparse.ArgumentParser):
             formatter_class=CustomHelpFormatter,
             add_help=add_parlai_args,
         )
+        self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
@@ -663,8 +676,9 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-dynb',
             '--dynamic-batching',
-            default=False,
-            type='bool',
+            default=None,
+            type='nonestr',
+            choices={'none', 'full', 'batchsort'},
             help='Use dynamic batching',
         )
         self.add_parlai_data_path(parlai)

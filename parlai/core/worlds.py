@@ -1040,11 +1040,18 @@ class DynamicBatchWorld(World):
         # size of the buffer we will use to find worlds
         self._BUFFER_SIZE = 1021  # chosen as a prime number
 
+        if opt['dynamic_batching'] == 'full':
+            # full dynamic batching, we can grow our batchsize
+            self.max_batch_size = self._BUFFER_SIZE
+        else:
+            # simple batchsort
+            self.max_batch_size = opt['batchsize']
+
         # TODO: check to ensure the agent has self_observe
         shared = world.share()
         self.world = world
         # TODO: maybe generalize this
-        self.max_size = (self.l_truncate + self.truncate) * opt['batchsize']
+        self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
         self.worlds = [
@@ -1160,8 +1167,9 @@ class DynamicBatchWorld(World):
             this_width = self._ceil(sum(self._scores[index]))
             new_width = max(width, this_width)
             # compute the cost of the new batch
-            new_size = new_width * self._ceil(len(batch) + 1)
-            if new_size <= self.max_size:
+            new_bsz = self._ceil(len(batch) + 1)
+            new_size = new_width * new_bsz
+            if new_size <= self.max_words and new_bsz <= self.max_batch_size:
                 # cool, this one fits, let's add it
                 width = new_width
                 batch.append(index)
@@ -1177,7 +1185,8 @@ class DynamicBatchWorld(World):
             batch.pop(-1)
 
         # double check our assumed invariant
-        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_size
+        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_words
+        assert self._ceil(len(batch)) <= self.max_batch_size
 
         # great, this batch is good to go! let's run it!
         acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
@@ -1559,7 +1568,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
-    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching', False):
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
         world = DynamicBatchWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
