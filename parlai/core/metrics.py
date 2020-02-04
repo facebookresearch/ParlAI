@@ -296,6 +296,7 @@ class BleuMetric(AverageMetric):
 
 
 class FairseqBleuMetric(AverageMetric):
+    @staticmethod
     def compute_many(
         guess: torch.Tensor, answers: torch.Tensor, pad_idx, end_idx, unk_idx
     ):
