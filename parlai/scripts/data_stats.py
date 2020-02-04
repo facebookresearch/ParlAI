@@ -23,7 +23,6 @@ from parlai.core.dict import DictionaryAgent
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
-    parser.add_pytorch_datateacher_args()
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument(

@@ -1,4 +1,22 @@
 ## News
+
+
+2020-2-4: [GPT2 fine-tuning for dialogue](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/hugging_face)  now supported in ParlAI!
+
+2020-1-17: [All-in-One Image-Grounded Conversational Agents project](https://twitter.com/parlai_parley/status/1218204771859017732) built in ParlAI 
+
+2020-1-15: [Seb Ruder's 10 ML & NLP Research Highlights of 2019 post](https://ruder.io/research-highlights-2019/) mentions at least two works built with ParlAI.
+
+2019-12-19: [Amazon's TopicChat dataset uses ParlAI](https://twitter.com/parlai_parley/status/1207716855525367808).
+
+2019-12-11: [OneCommon Corpus is now available in ParlAI](https://twitter.com/futsaludy/status/1204661465967259648). Thanks to our colleague Takato Yamazaki
+
+2019-11-10: [Dialogue unlikelihood project](https://parl.ai/projects/dialogue_unlikelihood/) for improving consistency in dialogue generation. 
+
+2019-11-9: The [Gender bias project page](https://parl.ai/projects/genderation_bias/) mitigates bias in dialogue generation.
+
+2019-11-9: The [Dodeca dialogue project page](https://parl.ai/projects/dodecadialogue/) is up with paper and leaderboard -- multi-tasking on many dialogue tasks with strong results!
+
 2019-09-16: The [Dialogue Safety project page](https://parl.ai/projects/dialogue_safety/) is updated with pretrained models, data, and an interactive demonstration.
 
 2019-06-12: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
@@ -44,8 +62,6 @@
 2018-02-07: Added a [language model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/language_model/language_model.py) adapted from [this](https://github.com/pytorch/examples/tree/master/word_language_model) Pytorch model to parlai/agents.
 
 2018-01-23: Several new tasks added: [SNLI](https://nlp.stanford.edu/projects/snli/), [MultiNLI](https://arxiv.org/abs/1704.05426), [COPA](http://people.ict.usc.edu/~gordon/copa.html), [NarrativeQA](https://github.com/deepmind/narrativeqa), Twitter and [Persona-Chat](https://arxiv.org/abs/1801.07243).
-
-2017-12-14: Fast, multiprocessed data loading supported with [Pytorch data loader](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py)
 
 2017-11-30: Several new tasks added: [SCAN](https://github.com/brendenlake/SCAN), [ConvAI](http://convai.io/data/), [NVLR](http://lic.nlp.cornell.edu/nlvr/) and [ISWLT14](http://wit3.fbk.eu).
 

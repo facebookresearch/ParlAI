@@ -189,7 +189,7 @@ class SeqAttnMatch(nn.Module):
         scores.data.masked_fill_(y_mask.data, -float('inf'))
 
         # Normalize with softmax
-        alpha_flat = F.softmax(scores.view(-1, y.size(1)))
+        alpha_flat = F.softmax(scores.view(-1, y.size(1)), dim=-1)
         alpha = alpha_flat.view(-1, x.size(1), y.size(1))
 
         # Take weighted average
@@ -225,7 +225,7 @@ class BilinearSeqAttn(nn.Module):
         self.xWy = xWy
         if self.training:
             # In training we output log-softmax for NLL
-            alpha = F.log_softmax(xWy)
+            alpha = F.log_softmax(xWy, dim=-1)
         else:
             # ...Otherwise 0-1 probabilities
             # alpha = F.softmax(xWy)
@@ -255,7 +255,7 @@ class LinearSeqAttn(nn.Module):
         x_flat = x.view(-1, x.size(-1))
         scores = self.linear(x_flat).view(x.size(0), x.size(1))
         scores.data.masked_fill_(x_mask.data, -float('inf'))
-        alpha = F.softmax(scores)
+        alpha = F.softmax(scores, dim=-1)
         return alpha
 
 

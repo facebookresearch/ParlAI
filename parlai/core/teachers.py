@@ -16,15 +16,13 @@ This module provides a set of teachers that deal with dialog.
     ``DialogTeacher(FixedDialogTeacher)``
      Base teacher class for doing dialog specifically with fixed chat logs.
 
-    ``FbDialogTeacher(DialogTeacher)``
-     Teacher class that provides access to data in the Facebook Dialog format.
-     See the class description for more details.
-     ** NOTE: ** We plan to deprecate this method soon in favor of ParlAIDialogTeacher,
-     however several existing tasks are currently still using it.
-
     ``ParlAIDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the ParlAI Dialog format.
      See the class description for more details.
+
+    ``FbDialogTeacher(DialogTeacher)``
+     Teacher class that provides access to data in the Facebook Dialog format.
+     See the class description for more details. **This class is deprecated**.
 
 This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
@@ -37,7 +35,7 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
-from parlai.core.metrics import Metrics, aggregate_metrics
+from parlai.core.metrics import TeacherMetrics, aggregate_metrics
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -123,7 +121,10 @@ class Teacher(Agent):
             if shared and shared.get('metrics'):
                 self.metrics = shared['metrics']
             else:
-                self.metrics = Metrics(opt)
+                self.metrics = TeacherMetrics(
+                    threadsafe=opt.get('numthreads', 1) > 1,
+                    metrics_list=opt.get('metrics', 'default'),
+                )
         self.epochDone = False
 
     # return state/action dict based upon passed state
@@ -246,7 +247,7 @@ class FixedDialogTeacher(Teacher):
                 self.datatype.startswith('train') and 'evalmode' not in self.datatype
             )
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         if opt['numworkers'] <= 1:
             self.data_queue = queue.Queue()
@@ -453,7 +454,7 @@ class FixedDialogTeacher(Teacher):
             self.lastYs[self.batchindex] = None
 
         if hasattr(self, 'lastY') and self.lastY is not None:
-            self.metrics.update(observation, self.lastY)
+            self.metrics.evaluate_response(observation, self.lastY)
             self.lastY = None
         return observation
 
@@ -1965,10 +1966,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
-        if opt.get('pytorch_teacher_task') is not None:
-            raise ValueError(
-                'Chunk teacher is not compatible with pytorch data teacher.'
-            )
         if opt['numthreads'] > 1:
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
@@ -2173,7 +2170,24 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     for f in fl:
         if '=' in f:
             one_flag = f.split('=')
-            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
+            key = one_flag[0].replace('-', '_')
+            raw_value = one_flag[1].replace(';', ':')
+
+            # Convert to bool/int/float if necessary
+            if raw_value.lower() == 'true':
+                value = True
+            elif raw_value.lower() == 'false':
+                value = False
+            else:
+                try:
+                    value = int(raw_value)
+                except ValueError:
+                    try:
+                        value = float(raw_value)
+                    except ValueError:
+                        value = raw_value
+
+            opt[key] = value
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
@@ -2188,16 +2202,10 @@ def create_task_agent_from_taskname(opt: Opt):
     performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
     ``opt['task']`` to be used by the class ``Task1kTeacher``.
     """
-    if not (
-        opt.get('task')
-        or opt.get('pytorch_teacher_task')
-        or opt.get('pytorch_teacher_dataset')
-    ):
+    if not opt.get('task'):
         raise RuntimeError(
             'No task specified. Please select a task with ' + '--task {task_name}.'
         )
-    if not opt.get('task'):
-        opt['task'] = 'pytorch_teacher'
     if ',' not in opt['task']:
         # Single task
         teacher_class = load_teacher_module(opt['task'])

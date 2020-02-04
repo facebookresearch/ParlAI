@@ -35,7 +35,6 @@ except ImportError:
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'cProfile a training run')
-    parser.add_pytorch_datateacher_args()
     parser = train_args(parser)
     profile = parser.add_argument_group('Profiler Arguments')
     profile.add_argument(

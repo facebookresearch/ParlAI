@@ -16,7 +16,6 @@ The core library contains the following files:
   - **_Message_**: class for objects and observations in ParlAI
 - **metrics.py**: computes evaluation metrics, e.g. ranking metrics, etc.
 - **params.py**: uses argparse to interpret command line arguments for ParlAI
-- **pytorch_data_teacher**: teacher that uses the PyTorch data loader
 - **teachers.py**: contains teachers that deal with dialogue-based tasks, as well as data classes for storing data
   - **_FixedDialogTeacher_**: base class for a teacher that utilizes fixed data
   - **_DialogTeacher_**: base class for a teacher doing dialogue with fixed chat logs
