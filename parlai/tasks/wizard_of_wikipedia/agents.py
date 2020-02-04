@@ -348,7 +348,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         super().__init__(opt, shared)
         self.speaker_label = opt.get('speaker_label', 'both')
         self.add_topic = opt.get('add_topic', False)
-        self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
+        self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
 
     @staticmethod
     def add_cmdline_args(argparser):
