@@ -679,107 +679,6 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         return grp
 
-    def add_pytorch_datateacher_args(self):
-        """
-        Add CLI args for PytorchDataTeacher.
-        """
-        pytorch = self.add_argument_group('PytorchData Arguments')
-        pytorch.add_argument(
-            '-pyt',
-            '--pytorch-teacher-task',
-            help='Use the PytorchDataTeacher for multiprocessed '
-            'data loading with a standard ParlAI task, e.g. "babi:Task1k"',
-        )
-        pytorch.add_argument(
-            '-pytd',
-            '--pytorch-teacher-dataset',
-            help='Use the PytorchDataTeacher for multiprocessed '
-            'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"',
-        )
-        pytorch.add_argument(
-            '--pytorch-datapath',
-            type=str,
-            default=None,
-            help='datapath for pytorch data loader'
-            '(note: only specify if the data does not reside'
-            'in the normal ParlAI datapath)',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-nw',
-            '--numworkers',
-            type=int,
-            default=4,
-            help='how many workers the Pytorch dataloader should use',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--pytorch-preprocess',
-            type='bool',
-            default=False,
-            help='Whether the agent should preprocess the data while building'
-            'the pytorch data',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pybsrt',
-            '--pytorch-teacher-batch-sort',
-            type='bool',
-            default=False,
-            help='Whether to construct batches of similarly sized episodes'
-            'when using the PytorchDataTeacher (either via specifying `-pyt`',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-sort-cache-type',
-            type=str,
-            choices=['pop', 'index', 'none'],
-            default='pop',
-            help='how to build up the batch cache',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-length-range',
-            type=int,
-            default=5,
-            help='degree of variation of size allowed in batch',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--shuffle',
-            type='bool',
-            default=False,
-            help='Whether to shuffle the data',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-sort-field',
-            type=str,
-            default='text',
-            help='What field to use when determining the length of an episode',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pyclen',
-            '--pytorch-context-length',
-            default=-1,
-            type=int,
-            help='Number of past utterances to remember when building flattened '
-            'batches of data in multi-example episodes.'
-            '(For use with PytorchDataTeacher)',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pyincl',
-            '--pytorch-include-labels',
-            default=True,
-            type='bool',
-            help='Specifies whether or not to include labels as past utterances when '
-            'building flattened batches of data in multi-example episodes.'
-            '(For use with PytorchDataTeacher)',
-            hidden=True,
-        )
-
     def add_model_args(self):
         """
         Add arguments related to models such as model files.
@@ -855,21 +754,6 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_pyt_dataset_args(self, opt):
-        """
-        Add arguments specific to specified pytorch dataset.
-        """
-        from parlai.core.pytorch_data_teacher import get_dataset_classes
-
-        dataset_classes = get_dataset_classes(opt)
-        for dataset, _, _ in dataset_classes:
-            try:
-                if hasattr(dataset, 'add_cmdline_args'):
-                    dataset.add_cmdline_args(self)
-            except argparse.ArgumentError:
-                # already added
-                pass
-
     def add_image_args(self, image_mode):
         """
         Add additional arguments for handling images.
@@ -916,16 +800,6 @@ class ParlaiParser(argparse.ArgumentParser):
         evaltask = parsed.get('evaltask', None)
         if evaltask is not None:
             self.add_task_args(evaltask)
-
-        # find pytorch teacher task if specified, add its specific arguments
-        pytorch_teacher_task = parsed.get('pytorch_teacher_task', None)
-        if pytorch_teacher_task is not None:
-            self.add_task_args(pytorch_teacher_task)
-
-        # find pytorch dataset if specified, add its specific arguments
-        pytorch_teacher_dataset = parsed.get('pytorch_teacher_dataset', None)
-        if pytorch_teacher_dataset is not None:
-            self.add_pyt_dataset_args(parsed)
 
         # find which model specified if any, and add its specific arguments
         model = get_model_name(parsed)

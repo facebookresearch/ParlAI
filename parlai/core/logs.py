@@ -73,3 +73,6 @@ class TensorboardLogger(object):
                 self.writer.add_scalar(f'{setting}/{k}', v.value(), global_step=step)
             else:
                 print(f'k {k} v {v} is not a number')
+
+    def flush(self):
+        self.writer.flush()

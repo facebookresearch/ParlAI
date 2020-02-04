@@ -242,7 +242,7 @@ class FixedDialogTeacher(Teacher):
                 self.datatype.startswith('train') and 'evalmode' not in self.datatype
             )
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -1959,10 +1959,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
-        if opt.get('pytorch_teacher_task') is not None:
-            raise ValueError(
-                'Chunk teacher is not compatible with pytorch data teacher.'
-            )
         if opt['numthreads'] > 1:
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
@@ -2167,7 +2163,24 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     for f in fl:
         if '=' in f:
             one_flag = f.split('=')
-            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
+            key = one_flag[0].replace('-', '_')
+            raw_value = one_flag[1].replace(';', ':')
+
+            # Convert to bool/int/float if necessary
+            if raw_value.lower() == 'true':
+                value = True
+            elif raw_value.lower() == 'false':
+                value = False
+            else:
+                try:
+                    value = int(raw_value)
+                except ValueError:
+                    try:
+                        value = float(raw_value)
+                    except ValueError:
+                        value = raw_value
+
+            opt[key] = value
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
@@ -2182,16 +2195,10 @@ def create_task_agent_from_taskname(opt: Opt):
     performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
     ``opt['task']`` to be used by the class ``Task1kTeacher``.
     """
-    if not (
-        opt.get('task')
-        or opt.get('pytorch_teacher_task')
-        or opt.get('pytorch_teacher_dataset')
-    ):
+    if not opt.get('task'):
         raise RuntimeError(
             'No task specified. Please select a task with ' + '--task {task_name}.'
         )
-    if not opt.get('task'):
-        opt['task'] = 'pytorch_teacher'
     if ',' not in opt['task']:
         # Single task
         teacher_class = load_teacher_module(opt['task'])

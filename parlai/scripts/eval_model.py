@@ -32,7 +32,6 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Evaluate a model')
-    parser.add_pytorch_datateacher_args()
     # Get command line arguments
     parser.add_argument(
         '-rf',
