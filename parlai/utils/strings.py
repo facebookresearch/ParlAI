@@ -9,7 +9,9 @@ Utility functions and classes for handling text strings.
 
 
 def standardize_string(text: str) -> str:
-    """Standardize the capitalization and punctuation spacing of the input text."""
+    """
+    Standardize the capitalization and punctuation spacing of the input text.
+    """
 
     switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
 
@@ -44,7 +46,9 @@ def standardize_string(text: str) -> str:
 
 
 def uppercase(string: str) -> str:
-    """Make the first character of the string uppercase, if the string is non-empty."""
+    """
+    Make the first character of the string uppercase, if the string is non-empty.
+    """
     if len(string) == 0:
         return string
     else:
