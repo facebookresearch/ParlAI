@@ -8,7 +8,7 @@ Utility functions and classes for handling text strings.
 """
 
 
-def format_model_reply(text: str) -> str:
+def standardize_string(text: str) -> str:
     """Standardize the capitalization and punctuation spacing of the input text."""
 
     switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
