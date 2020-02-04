@@ -23,3 +23,6 @@ Enter Your Message: Parrots are
 ```bash
 python examples/train_model.py -m hugging_face/gpt2 --add-special-tokens True --add-start-token True --gpt2-size medium -t convai2 -bs 2 -mf <modelfile>
 ```
+
+## Other models
+_Other models are coming soon -- stay tuned!_
