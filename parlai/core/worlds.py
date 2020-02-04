@@ -1168,8 +1168,8 @@ class DynamicBatchWorld(World):
             new_width = max(width, this_width)
             # compute the cost of the new batch
             new_bsz = self._ceil(len(batch) + 1)
-            new_size = new_width * new_bsz
-            if new_size <= self.max_words and new_bsz <= self.max_batch_size:
+            new_words = new_width * new_bsz
+            if new_words <= self.max_words and new_bsz <= self.max_batch_size:
                 # cool, this one fits, let's add it
                 width = new_width
                 batch.append(index)
