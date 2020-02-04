@@ -48,19 +48,6 @@ from parlai.utils.torch import (
 import sys
 import pdb
 
-class ForkedPdb(pdb.Pdb):
-    """A Pdb subclass that may be used
-    from a forked multiprocessing child
-
-    """
-    def interaction(self, *args, **kwargs):
-        _stdin = sys.stdin
-        try:
-            sys.stdin = open('/dev/stdin')
-            pdb.Pdb.interaction(self, *args, **kwargs)
-        finally:
-            sys.stdin = _stdin
-
 
 class Batch(AttrDict):
     """
@@ -1279,7 +1266,7 @@ class TorchAgent(ABC, Agent):
         """
         return 'text_vec' in obs or 'image' in obs
 
-    def batchify(self, obs_batch, sort=False, buffers=None):
+    def batchify(self, obs_batch, sort=False):
         """
         Create a batch of valid observations from an unchecked batch.
 
@@ -1324,10 +1311,8 @@ class TorchAgent(ABC, Agent):
             xs, x_lens = padded_tensor(
                 _xs,
                 self.NULL_IDX,
-                self.use_cuda if self.opt['numworkers'] == 1 else False,
-                # self.use_cuda,
+                self.use_cuda,
                 fp16friendly=self.opt.get('fp16'),
-                buffer=buffers['text_vec'] if buffers else None,
             )
             if sort:
                 sort = False  # now we won't sort on labels
@@ -1350,10 +1335,8 @@ class TorchAgent(ABC, Agent):
             ys, y_lens = padded_tensor(
                 label_vecs,
                 self.NULL_IDX,
-                self.use_cuda if self.opt['numworkers'] == 1 else False,
-                # self.use_cuda,
+                self.use_cuda,
                 fp16friendly=self.opt.get('fp16'),
-                buffer=buffers['label_vec'] if buffers else None,
             )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
@@ -1715,7 +1698,6 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
-        ba_start = time.time()
         if not isinstance(observations, Batch):
             batch_size = len(observations)
         else:
@@ -1734,11 +1716,6 @@ class TorchAgent(ABC, Agent):
             batch = self.batchify(observations)
         else:
             batch = observations
-        batchify_time = time.time()
-        # print(f'batchify_time in TA: {batchify_time - ba_start}')
-            # if self.use_cuda:
-            #     batch.text_vec = batch.text_vec.cuda()
-            #     batch.label_vec = batch.label_vec.cuda()
 
         if self.is_training:
             output = self.train_step(batch)
@@ -1747,13 +1724,10 @@ class TorchAgent(ABC, Agent):
                 # save memory and compute by disabling autograd.
                 # use `with torch.enable_grad()` to gain back graidients.
                 output = self.eval_step(batch)
-        tst = time.time()
-        # print(f'train step time in ta: {tst - batchify_time}')
         if output is None:
             return batch_reply
 
         self.match_batch(batch_reply, batch.valid_indices, output)
-        # print(f'match batch time in ta: {time.time() - tst}')
         return batch_reply
 
     @abstractmethod

@@ -58,7 +58,6 @@ except ImportError:
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
-from parlai.core.message import Message
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
@@ -852,7 +851,6 @@ class BatchWorld(World):
         """
         # Collect batch together for each agent, and do update.
         # Assumes DialogPartnerWorld, MultiAgentWorld, or MultiWorlds of them.
-        parley_start = time.time()
         num_agents = len(self.world.get_agents())
         batch_observations = self.batch_observations
 
@@ -862,23 +860,17 @@ class BatchWorld(World):
 
         for agent_idx in range(num_agents):
             # The agent acts.
-            batch_start = time.time()
             batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
-            batch_time = time.time() - batch_start
-            # print(f'Batch Time: {batch_time}')
             self.acts[agent_idx] = batch_act
             # We possibly execute this action in the world.
             if hasattr(self.world, 'execute'):
                 for w in self.worlds:
                     w.execute(w.agents[agent_idx], batch_act[agent_idx])
             # All agents (might) observe the results.
-            observe_time = time.time()
             for other_index in range(num_agents):
                 obs = self.batch_observe(other_index, batch_act, agent_idx)
                 if obs is not None:
                     batch_observations[other_index] = obs
-            # print(f'Observe Time: {time.time() - observe_time}')
-        # print(f'Parley time: {time.time() - parley_start}\n')
         self.update_counters()
 
     def display(self):
@@ -1257,24 +1249,7 @@ class HogwildWorld(World):
         self.inner_world.shutdown()
 
 
-import sys
-import pdb
-
-class ForkedPdb(pdb.Pdb):
-    """A Pdb subclass that may be used
-    from a forked multiprocessing child
-
-    """
-    def interaction(self, *args, **kwargs):
-        _stdin = sys.stdin
-        try:
-            sys.stdin = open('/dev/stdin')
-            pdb.Pdb.interaction(self, *args, **kwargs)
-        finally:
-            sys.stdin = _stdin
-
-
-class QBatchWorld(BatchWorld):
+class PBatchWorld(BatchWorld):
     """
     BatchWorld Where batch_act is Fake!!
 
@@ -1288,19 +1263,12 @@ class QBatchWorld(BatchWorld):
         produce_queue: Queue,
         consume_queue: Queue,
         worker_idx: int,
-        text_buffer,
-        label_buffer
     ):
         super().__init__(opt, world)
         self.produce_queue = produce_queue
         self.consume_queue = consume_queue
         self.worker_idx = worker_idx
-        # print(f'in qbatch init: {text_buffer.data_ptr()}')
-        # print(f'in qbatch init: {text_buffer}')
-        self.buffers: Dict = {
-            'text_vec': text_buffer,
-            'label_vec': label_buffer
-        }
+        self.buffers: Dict[str, torch.Tensor] = {}
 
     def parley(self):
         """
@@ -1315,33 +1283,43 @@ class QBatchWorld(BatchWorld):
         agent_idx = 1
         batch_act = self.batch_act(teacher_idx, None)
         batch_obs = self.batch_observe(agent_idx, batch_act, teacher_idx)
+        updated_buffers = {}
+        resized = {}
         if hasattr(self.world.agents[agent_idx], 'batchify'):
-            # print(f"in qbatch parley1: {self.buffers['text_vec'].data_ptr()}")
-            
-            ## BUFFERS ##
-            # print('bouta batchify')
-            batch_obs = self.world.agents[agent_idx].batchify(batch_obs, buffers=self.buffers)
-            # print('done batchifying')
-            # print(f"in qbatch parley2: {self.buffers['text_vec'].data_ptr()}")
-            # # print(f"in qbatch parley3: {self.buffers['text_vec']}")
-            for k in self.buffers:
-                del batch_obs[k]
-            batch_obs.observations = None
-            ########################
-            # batch_obs = self.world.agents[agent_idx].batchify(batch_obs)
-            # print(f"in qbatch parley4: {self.buffers['text_vec']}")
-        # print('bout queue it up')
+            batch_obs = self.world.agents[agent_idx].batchify(batch_obs)
+            for k, v in batch_obs.items():
+                if isinstance(v, torch.Tensor):
+                    try:
+                        self.buffers[k].copy_(v)
+                        self.buffers[k].resize_as(v)
+                        resized[k] = v.size()
+                        setattr(batch_obs, k, None)
+                    except (KeyError, RuntimeError):
+                        # either not broadcastable
+                        # or not in self.buffers
+                        self.buffers[k] = v
+                        self.buffers[k].share_memory_()
+                        updated_buffers[k] = v
+            batch_obs.updated_buffers = updated_buffers
+            batch_obs.resized = resized
+            observations = batch_obs.observations
+            new_obs = []
+            for o in observations:
+                for k in o:
+                    if isinstance(o[k], torch.Tensor):
+                        o.force_set(k, None)
+                new_obs.append(o)
+            batch_obs.observations = new_obs
+
         self.produce_queue.put_nowait((batch_obs, self.worker_idx))
-        # print('done with the queue amigos')
         batch_act = self.consume_queue.get()
         for other_idx in range(len(self.world.get_agents())):
             self.batch_observe(other_idx, batch_act, agent_idx)
         self.update_counters()
 
 
-def run_q_world(opt, world, produce_queue, consume_queue, worker_idx, text_buffer, label_buffer):
-    # print(f"in run q world: {text_buffer.data_ptr()}")
-    world = QBatchWorld(opt, world, produce_queue, consume_queue, worker_idx, text_buffer, label_buffer)
+def run_p_world(opt, world, produce_queue, consume_queue, worker_idx):
+    world = PBatchWorld(opt, world, produce_queue, consume_queue, worker_idx)
     while not world.epoch_done():
         world.parley()
 
@@ -1361,62 +1339,38 @@ class QueueWorld(BatchWorld):
         self.consume_queues: List[Queue] = []
         self.worlds: List[World] = []
         self.produce_queue: Queue = Queue()
-        self.text_buffers = []
-        self.label_buffers = []
-        # for worker_idx in range(opt['numworkers']):
-        for worker_idx in range(1):
+        self.buffers: List[Dict[str, torch.Tensor]] = []
+
+        for worker_idx in range(opt['numworkers']):
             consume_queue = Queue()
             shared = world.share()
             subworld = shared['world_class'](opt, None, shared)
             self.worlds.append(subworld)
             self.consume_queues.append(consume_queue)
-            text_buffer = torch.LongTensor(opt['batchsize'], opt['text_truncate'] or opt['truncate']).fill_(0)
-            text_buffer.share_memory_()
-            # print(f'in q init: {text_buffer.data_ptr()}')
-            # print(f'in q init: {text_buffer}')
-            label_buffer = torch.LongTensor(opt['batchsize'], opt['label_truncate'] or opt['truncate']).fill_(0)
-            label_buffer.share_memory_()
-            if not opt['no_cuda'] and torch.cuda.is_available():
-                text_buffer = text_buffer.cuda()
-                label_buffer = label_buffer.cuda()
-            # print(f'in q init: {text_buffer.data_ptr()}')
             self.processes.append(
                 Process(
-                    target=run_q_world,
-                    args=(opt, subworld, self.produce_queue, consume_queue, worker_idx, text_buffer, label_buffer),
+                    target=run_p_world,
+                    args=(opt, subworld, self.produce_queue, consume_queue, worker_idx),
                     daemon=True,
                 )
             )
-            self.text_buffers.append(text_buffer)
-            self.label_buffers.append(label_buffer)
+            self.buffers.append({})
         for p in self.processes:
             p.start()
 
     def parley(self):
-        parley_start = time.time()
         batch_obs: Batch = None
-        # print('gonna get real quick')
         batch_obs, worker_idx = self.produce_queue.get()
-        # print(f'in q parley: {self.text_buffers[0].data_ptr()}')
-        # print(f'in q parley: {self.text_buffers[0]}')
-        get_time = time.time()
-        # print(f'Get time: {time.time() - parley_start}')
-        
-        ## BUFFERS ##
-        tv = self.text_buffers[worker_idx]
-        import pdb; pdb.set_trace()
-        # batch_obs.text_vec = self.text_buffers[worker_idx].resize_(
-        #     len(batch_obs.valid_indices), max(batch_obs.text_lengths)
-        # )
-        batch_obs.text_vec = self.text_buffers[worker_idx]
-        batch_obs.label_vec = self.label_buffers[worker_idx].resize_(
-            len(batch_obs.valid_indices), max(batch_obs.label_lengths)
-        )
-        
+        if hasattr(self.world.agents[1], 'batchify'):
+            for key, buff in batch_obs.updated_buffers.items():
+                self.buffers[worker_idx][key] = buff
+            for key, new_size in batch_obs.resized.items():
+                self.buffers[worker_idx][key].resize_(new_size)
+            for key, buff in self.buffers[worker_idx].items():
+                setattr(batch_obs, key, buff)
+    
         batch_acts = self.batch_act(1, batch_obs)
-        # print(f'Batch Time: {time.time() - get_time}')
         self.consume_queues[worker_idx].put_nowait(batch_acts)
-        # print(f'Parley time: {time.time() - parley_start}\n')
         self.update_counters()
 
     def shutdown(self):

@@ -45,8 +45,12 @@ from functools import lru_cache
 from abc import ABC, abstractmethod
 
 import concurrent.futures
-import multiprocessing
-from multiprocessing import Value, Lock
+try:
+    import torch.multiprocessing as multiprocessing
+    from multiprocessing import Value, Lock
+except ImportError:
+    import multiprocessing
+    from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
@@ -71,7 +75,7 @@ class DataLoader(Thread):
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
         self.num_workers = opt.get('num_load_threads', 1)
-        self.request_queue = queue.Queue()
+        self.request_queue = multiprocessing.Queue()
 
     def request_load(self, receive_fn, load_fn, args):
         """
@@ -243,7 +247,8 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
         # set up support for multithreaded data loading
-        self.data_queue = queue.Queue()
+        if opt['numworkers'] <= 1:
+            self.data_queue = queue.Queue()
         if shared:
             self.index = shared['index']
             if 'data_loader' in shared:
@@ -255,7 +260,7 @@ class FixedDialogTeacher(Teacher):
         else:
             self.index = AttrDict(value=-1)
 
-        if not hasattr(self, 'data_loader'):
+        if not hasattr(self, 'data_loader') and opt['numworkers'] <= 1:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
 
@@ -279,7 +284,8 @@ class FixedDialogTeacher(Teacher):
         self.lastY = None
         self.episode_done = True
         self.epochDone = False
-        self.data_queue = queue.Queue()
+        if self.opt['numworkers'] <= 1:
+            self.data_queue = queue.Queue()
 
         self.episode_idx = -1
         with self._lock():

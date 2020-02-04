@@ -31,21 +31,6 @@ def neginf(dtype: torch.dtype) -> float:
     else:
         return -NEAR_INF
 
-import sys
-import pdb
-
-class ForkedPdb(pdb.Pdb):
-    """A Pdb subclass that may be used
-    from a forked multiprocessing child
-
-    """
-    def interaction(self, *args, **kwargs):
-        _stdin = sys.stdin
-        try:
-            sys.stdin = open('/dev/stdin')
-            pdb.Pdb.interaction(self, *args, **kwargs)
-        finally:
-            sys.stdin = _stdin
 
 def padded_tensor(
     items: List[Union[List[int], torch.LongTensor]],
@@ -54,7 +39,6 @@ def padded_tensor(
     left_padded: bool = False,
     max_len: Optional[int] = None,
     fp16friendly: bool = False,
-    buffer: torch.Tensor = None,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
     Create a right-padded matrix from an uneven list of lists.
@@ -74,12 +58,10 @@ def padded_tensor(
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
     :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
-    :param torch.Tensor buffer: potentially reusable tensor buffer.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
     """
-    # print(f"in padded: {buffer.data_ptr()}")
     # number of items
     n = len(items)
     # length of each item
@@ -94,15 +76,11 @@ def padded_tensor(
         # pad to be a multiple of 8 to ensure we use the tensor cores
         t += 8 - (t % 8)
 
-    if buffer is None:
-        if isinstance(items[0], torch.Tensor):
-            # keep type of input tensors, they may already be cuda ones
-            output = items[0].new(n, t)  # type: ignore
-        else:
-            output = torch.LongTensor(n, t)  # type: ignore
+    if isinstance(items[0], torch.Tensor):
+        # keep type of input tensors, they may already be cuda ones
+        output = items[0].new(n, t)  # type: ignore
     else:
-        output = buffer
-        output.resize_(n, t)
+        output = torch.LongTensor(n, t)  # type: ignore
     output.fill_(pad_idx)
 
     for i, (item, length) in enumerate(zip(items, lens)):
@@ -121,9 +99,6 @@ def padded_tensor(
 
     if use_cuda:
         output = output.cuda()
-    # print(f"end padded buffer: {buffer.data_ptr()}")
-    # print(f"end padded output: {output.data_ptr()}")
-    ForkedPdb().set_trace()
     return output, lens
 
 
