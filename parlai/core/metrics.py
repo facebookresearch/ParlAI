@@ -137,10 +137,7 @@ class Metric(ABC):
 
         Useful if you separately compute numerators and denomenators, etc.
         """
-        try:
-            lengths = [len(o) for o in objs]
-        except TypeError:
-            __import__("ipdb").set_trace()  # FIXME
+        lengths = [len(o) for o in objs]
         if len(set(lengths)) != 1:
             raise IndexError(f'Uneven {cls.__name__} constructions: {lengths}')
         return [cls(*items) for items in zip(*objs)]
