@@ -189,6 +189,7 @@ def setup_args(parser=None) -> ParlaiParser:
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
     TensorboardLogger.add_cmdline_args(parser)
+    parser.set_defaults(tensorboard_log=True)
     parser = setup_dict_args(parser)
     return parser
 
