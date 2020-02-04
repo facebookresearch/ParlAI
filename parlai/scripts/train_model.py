@@ -282,6 +282,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
 
     metrics = f'{datatype}:{nice_report(report)}'
     print(f'[ eval completed in {timer.time():.2f}s ]')
+    print(metrics)
 
     # write to file
     if write_log and opt.get('model_file'):

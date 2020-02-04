@@ -43,6 +43,11 @@ except ImportError:
     nltkbleu = None
 
 try:
+    from fairseq import bleu as fairseqbleu
+except ImportError:
+    fairseqbleu = None
+
+try:
     import rouge
 except ImportError:
     # User doesn't have py-rouge installed, so we can't use it.
@@ -285,6 +290,22 @@ class BleuMetric(AverageMetric):
         return BleuMetric(score)
 
 
+class FairseqBleuMetric(AverageMetric):
+    def compute_many(
+        guess: torch.Tensor, answers: torch.Tensor, pad_idx, end_idx, unk_idx
+    ):
+        """
+        Return BLEU-1..4 using fairseq and tokens.
+        """
+        if fairseqbleu is None:
+            return None
+        scorer = fairseqbleu.Scorer(pad_idx, end_idx, unk_idx)
+        answers = answers.cpu().int()
+        guess = guess.cpu().int()
+        scorer.add(answers, guess)
+        return [FairseqBleuMetric(scorer.score(i) / 100.0) for i in range(1, 5)]
+
+
 class RougeMetric(AverageMetric):
     _evaluator = None
 
@@ -357,7 +378,8 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
             m[each_metric] = m.get(each_metric) + value
-            m[f'{task_id}/{each_metric}'] = value
+            if len(named_reports) > 1:
+                m[f'{task_id}/{each_metric}'] = value
     return m
 
 

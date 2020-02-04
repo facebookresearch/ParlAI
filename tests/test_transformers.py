@@ -516,6 +516,32 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.30)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
+    def test_compute_tokenized_bleu(self):
+        """
+        Test that the model outputs self-computed bleu correctly.
+        """
+        valid, _ = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=20,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='greedy',
+                beam_size=1,
+                variant='xlm',
+                activation='gelu',
+                compute_tokenized_bleu=True,
+            )
+        )
+        assert valid['fairseq_bleu1'] > 0.9
+        assert valid['nltk_bleu1'] > 0.9
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """

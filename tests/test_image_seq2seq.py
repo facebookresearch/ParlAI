@@ -105,17 +105,6 @@ class TestImageSeq2Seq(unittest.TestCase):
             valid['ppl'], 5.0, f'failed to train image_seq2seq on image+text task',
         )
 
-    def test_compute_tokenized_bleu(self):
-        """
-        Test that the model outputs self-computed bleu correctly.
-        """
-        args = BASE_ARGS.copy()
-        args.update(EVAL_ARGS)
-
-        valid, _ = testing_utils.eval_model(args, skip_test=True)
-        self.assertIn('fairseq_bleu', valid)
-        self.assertIn('nltk_bleu_unnormalized', valid)
-
 
 if __name__ == '__main__':
     unittest.main()

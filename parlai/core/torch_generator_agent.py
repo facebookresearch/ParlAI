@@ -29,9 +29,9 @@ import torch.nn.functional as F
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
-from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.utils.misc import warn_once
 from parlai.utils.torch import padded_tensor, neginf
-from parlai.core.metrics import SumMetric, AverageMetric
+from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
 
 
 try:
@@ -357,15 +357,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if shared:
             # set up shared properties
             states = shared.get('states', {})
-            self.fairseq_bleu_scorer = shared['fairseq_bleu_scorer']
-            self.ntlk_bleu_scores = shared['nltk_bleu_scores']
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            self._init_and_reset_bleu_scorers()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
 
@@ -484,26 +481,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 else:
                     raise e
 
-    def _init_and_reset_bleu_scorers(self):
-        if not hasattr(self, 'fairseq_bleu_scorer'):
-            if fairseq_bleu is None:
-                self.fairseq_bleu_scorer = None
-            else:
-                self.fairseq_bleu_scorer = fairseq_bleu.Scorer(
-                    self.NULL_IDX, self.END_IDX, self.dict[self.dict.unk_token]
-                )
-        self.nltk_bleu_scores = {
-            f'bleu-{i}': {'score': 0, 'cnt': 0} for i in range(1, 5)
-        }
-
     def reset_metrics(self):
         """
         Reset metrics for reporting loss and perplexity.
         """
         super().reset_metrics()
-        # Note: we cannot change the type of metrics ahead of time, so you
-        # should correctly initialize to floats or ints here
-        self._init_and_reset_bleu_scorers()
 
     def share(self):
         """
@@ -514,41 +496,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
             }
-        shared['fairseq_bleu_scorer'] = self.fairseq_bleu_scorer
-        shared['nltk_bleu_scores'] = self.nltk_bleu_scores
         return shared
-
-    def report(self):
-        """
-        Report loss and perplexity from model's perspective.
-
-        Note that this includes predicting __END__ and __UNK__ tokens and may differ
-        from a truly independent measurement.
-
-        Additionally report tokenized bleu scores, if desired.
-        """
-        base = super().report()
-        if not self.skip_generation and self.compute_tokenized_bleu:
-            if fairseq_bleu is not None:
-                try:
-                    fairseq_bleu_scores = {
-                        k: self.fairseq_bleu_scorer.result_string(order=k)
-                        for k in range(1, 5)
-                    }
-                except ZeroDivisionError:
-                    # some preds are REAL bad
-                    fairseq_bleu_scores = {k: '= 0,' for k in range(1, 5)}
-
-                base['fairseq_bleu'] = {
-                    k: float(v[v.index('= ') + 2 : v.index(',')])
-                    for k, v in fairseq_bleu_scores.items()
-                }
-            if nltkbleu is not None:
-                base['nltk_bleu_unnormalized'] = {
-                    k: round_sigfigs(v['score'] / v['cnt'], 4)
-                    for k, v in self.nltk_bleu_scores.items()
-                }
-        return base
 
     def vectorize(self, *args, **kwargs):
         """
@@ -674,7 +622,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             )
         return token_losses
 
-    def _compute_fairseq_bleu(self, batch: Batch, texts: List[str]):
+    def _compute_fairseq_bleu(self, batch: Batch, preds):
         """
         Compute BLEU score between text and label, using the FAIRSeq BLEU Scorer.
 
@@ -683,16 +631,22 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :param texts:
             list of string predictions
         """
-        if fairseq_bleu is None:
-            return 0
-        aa = torch.IntTensor(1)
-        for i, t in enumerate(texts):
-            self.fairseq_bleu_scorer.add(
-                batch.label_vec[i].type_as(aa),
-                self._vectorize_text(t, True, True, self.label_truncate, False).type_as(
-                    aa
-                ),
+        all_results = []
+        for i, t in enumerate(preds):
+            result = FairseqBleuMetric.compute_many(
+                t[1:],
+                batch.label_vec[i].unsqueeze(0),
+                pad_idx=self.NULL_IDX,
+                end_idx=self.END_IDX,
+                unk_idx=self.dict[self.dict.unk_token],
             )
+            if result is None:
+                return
+            all_results.append(result)
+
+        bleu_scores = list(zip(*all_results))
+        for k in range(4):
+            self.record_local_metric(f'fairseq_bleu{k + 1}', bleu_scores[k])
 
     def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
         """
@@ -707,21 +661,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             list of string predictions
         """
 
-        def _bleu(guess: str, answers: List[str], weights: List[float]):
-            """
-            Compute approximate BLEU score between guess and a set of answers.
-
-            This function does not process guess or answers
-            """
-            if nltkbleu is None:
-                return 0
-            return nltkbleu.sentence_bleu(
-                [a.split(" ") for a in answers],
-                guess.split(" "),
-                smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
-                weights=weights,
-            )
-
+        results = {}
         for i, p in enumerate(texts):
             obs = batch.observations[i]
             references = []
@@ -733,12 +673,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                         )
                     )
                 )
-            for i in range(4):
-                weights = [1 / (i + 1) for _ in range(i + 1)]
-                self.nltk_bleu_scores[f'bleu-{i + 1}']['score'] += _bleu(
-                    p, references, weights
-                )
-                self.nltk_bleu_scores[f'bleu-{i + 1}']['cnt'] += 1
+            for k in range(1, 5):
+                b = BleuMetric.compute(p, references, k)
+                if b is None:
+                    b = 0
+                if k not in results:
+                    results[k] = []
+                results[k].append(b)
+
+        for k in range(1, 5):
+            self.record_local_metric(f'nltk_bleu{k}', results[k])
 
     def eval_step(self, batch):
         """
@@ -801,7 +745,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         text = [self._v2t(p) for p in preds] if preds is not None else None
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
-            self._compute_fairseq_bleu(batch, text)
+            self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
         return Output(text, cand_choices, token_losses=token_losses)
 
