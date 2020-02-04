@@ -26,7 +26,6 @@ from collections import deque
 import json
 import random
 import os
-import time
 import torch
 from torch import optim
 
@@ -43,10 +42,6 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-
-
-import sys
-import pdb
 
 
 class Batch(AttrDict):
@@ -1309,10 +1304,7 @@ class TorchAgent(ABC, Agent):
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
-                _xs,
-                self.NULL_IDX,
-                self.use_cuda,
-                fp16friendly=self.opt.get('fp16'),
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
             )
             if sort:
                 sort = False  # now we won't sort on labels

@@ -52,6 +52,7 @@ try:
     from torch.multiprocessing import Process, Value, Semaphore, Queue
     import torch
     import torch.multiprocessing as mp
+
     mp.set_start_method('spawn', force=True)
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
@@ -1368,7 +1369,7 @@ class QueueWorld(BatchWorld):
                 self.buffers[worker_idx][key].resize_(new_size)
             for key, buff in self.buffers[worker_idx].items():
                 setattr(batch_obs, key, buff)
-    
+
         batch_acts = self.batch_act(1, batch_obs)
         self.consume_queues[worker_idx].put_nowait(batch_acts)
         self.update_counters()
