@@ -15,9 +15,6 @@ from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
 from parlai.mturk.core.worlds import StaticMTurkTaskWorld
 from parlai.utils.misc import warn_once
-from parlai_internal.mturk.tasks.blended_skill_talk.human_and_bot_convos.constants import (
-    FULL_BLOCKLIST,
-)
 
 
 DEFAULT_TASK_CONFIG = {
