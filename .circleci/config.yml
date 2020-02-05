@@ -65,7 +65,7 @@ installdeps: &installdeps
       pip3 install --progress-bar off codecov
       mkdir -p ~/ParlAI/test-results
       pip install -q -r requirements.txt
-      python download_data.py develop
+      python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
 installtorchgpu14: &installtorchgpu14
@@ -429,7 +429,7 @@ jobs:
           working_directory: ~/ParlAI/
           command: |
             pip install gitpython
-            python download_data.py develop --no-deps
+            python setup.py develop --no-deps
             python .circleci/triggers.py | while read job; do
               curl -s \
                 --data "build_parameters[CIRCLE_JOB]=${job}" \
