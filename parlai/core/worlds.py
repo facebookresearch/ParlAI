@@ -391,6 +391,12 @@ class DialogPartnerWorld(World):
         for a in self.agents:
             a.shutdown()
 
+    def update_counters(self):
+        super().update_counters()
+        for a in self.agents:
+            if hasattr(a, 'update_counters'):
+                a.update_counters()
+
 
 class MultiAgentDialogWorld(World):
     """
@@ -722,6 +728,11 @@ class MultiWorld(World):
         """
         # Assumes all worlds have same agents, picks first to save.
         self.worlds[0].save_agents()
+
+    def update_counters(self):
+        super().update_counters()
+        for w in self.worlds:
+            w.update_counters()
 
 
 def _override_opts_in_shared(table, overrides):
@@ -1141,6 +1152,14 @@ class HogwildWorld(World):
         # this way it can only queue up to numthreads unprocessed examples
         self.sync['threads_sem'].acquire()
         self.update_counters()
+
+    def update_counters(self):
+        super().update_counters()
+        # some unix systems have a system max of how big the kernel can get. OS X
+        # has one, and so does CI. It's very easy to hit this max, so we need to
+        # flush the hogwild metrics queue every parley, to keep it from filling
+        # up and causing a deadlock.
+        self.inner_world.update_counters()
 
     def getID(self):
         """

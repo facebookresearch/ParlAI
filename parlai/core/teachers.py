@@ -182,6 +182,9 @@ class Teacher(Agent):
         shared['metrics'] = self.metrics
         return shared
 
+    def update_counters(self):
+        self.metrics._sync()
+
 
 class FixedDialogTeacher(Teacher):
     """

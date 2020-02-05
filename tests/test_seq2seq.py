@@ -37,9 +37,7 @@ class TestSeq2Seq(unittest.TestCase):
                 rank_candidates=True,
             )
         )
-        self.assertTrue(
-            valid['hits@1'] >= 0.95, "hits@1 = {}".format(valid['ppl']),
-        )
+        assert valid['hits@1'] >= 0.95
 
     def test_generation(self):
         """
