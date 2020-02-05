@@ -11,14 +11,6 @@ from typing import Union, Optional, Tuple, Any, List, Sized
 from parlai.utils.misc import warn_once
 
 
-# according to the tensor cores documentation from nvidia, the matmuls in fp16
-# must all be multiples of 8 in order to get the speedup from fp16. We set this
-# as a constant here for clarity and convenience.  See
-# https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for more
-# information.
-FP16_PAD_SIZE = 8
-
-
 try:
     import torch
 except ImportError:
@@ -29,6 +21,13 @@ import torch.optim
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
 NEAR_INF_FP16 = 65504
+
+# according to the tensor cores documentation from nvidia, the matmuls in fp16
+# must all be multiples of 8 in order to get the speedup from fp16. We set this
+# as a constant here for clarity and convenience.  See
+# https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for more
+# information.
+FP16_PAD_SIZE = 8
 
 
 def neginf(dtype: torch.dtype) -> float:
