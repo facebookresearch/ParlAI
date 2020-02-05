@@ -10,6 +10,7 @@ from parlai.utils.misc import warn_once
 
 try:
     import torch
+    import torch.nn.functional as F
 except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
@@ -17,6 +18,7 @@ except ImportError:
 ###################################################
 ## General Utilities
 ###################################################
+
 
 class FP16SafeCrossEntropy(torch.nn.Module):
     """
@@ -114,6 +116,7 @@ class DynamicLossScaler(object):
 
     TODO: Add a description here
     """
+
     def __init__(
         self,
         init_scale: float = 2.0 ** 15,
@@ -151,9 +154,9 @@ class DynamicLossScaler(object):
         """
         Update the loss scale.
 
-        If overflow exceeds our tolerance, we decrease the loss scale.
-        If the number of iterations since the last overflow exceeds the
-        scale window, we increase the loss scale.
+        If overflow exceeds our tolerance, we decrease the loss scale. If the number of
+        iterations since the last overflow exceeds the scale window, we increase the
+        loss scale.
         """
         iter_since_rescale = self._iter - self._last_rescale_iter
 
@@ -227,13 +230,17 @@ class ParlAIFP16Optimizer(torch.optim.Optimizer):
         self.wrapped_optimizer.__repr__()
 
     def state_dict(self):
-        """Return the optimizer's state dict."""
+        """
+        Return the optimizer's state dict.
+        """
         state_dict = self.fp32_optimizer.state_dict()
         state_dict['loss_scale'] = self.scaler.loss_scale
         return state_dict
 
     def zero_grad(self):
-        """Clears the gradients of all optimized parameters."""
+        """
+        Clears the gradients of all optimized parameters.
+        """
         for p in self.fp16_params:
             p.grad = None
         if self.has_flat_params:
@@ -257,7 +264,9 @@ class ParlAIFP16Optimizer(torch.optim.Optimizer):
                 if not p.requires_grad:
                     continue
                 numel = p.data.numel()
-                p.data.copy_(self.fp32_params.data[offset:offset+numel].view_as(p.data))
+                p.data.copy_(
+                    self.fp32_params.data[offset : offset + numel].view_as(p.data)
+                )
                 offset += numel
         else:
             for p, p32 in zip(self.fp16_params, self.fp32_params):
@@ -266,12 +275,12 @@ class ParlAIFP16Optimizer(torch.optim.Optimizer):
                 p.data.copy_(p32.data)
 
     def load_state_dict(self, state_dict, optimizer_overrides=None):
-        """Load an optimizer state dict.
+        """
+        Load an optimizer state dict.
 
-        In general we should prefer the configuration of the existing optimizer
-        instance (e.g., learning rate) over that found in the state_dict. This
-        allows us to resume training from a checkpoint using a new set of
-        optimizer args.
+        In general we should prefer the configuration of the existing optimizer instance
+        (e.g., learning rate) over that found in the state_dict. This allows us to
+        resume training from a checkpoint using a new set of optimizer args.
         """
         if 'loss_scale' in state_dict:
             self.scaler.loss_scale = state_dict['loss_scale']
@@ -303,17 +312,23 @@ class ParlAIFP16MemoryEfficientOptimizer(ParlAIFP16Optimizer):
         # TODO: finish
 
     def zero_grad(self):
-        """Clears the gradients of all optimized parameters."""
+        """
+        Clears the gradients of all optimized parameters.
+        """
         self.wrapped_optimizer.zero_grad()
         self._grads_are_scaled = False
 
     def step(self, closure=None):
-        """Performs a single optimization step."""
+        """
+        Performs a single optimization step.
+        """
         self._unscale_grads()
         self.wrapped_optimizer.step(closure)
 
     def state_dict(self):
-        """Return the optimizer's state dict."""
+        """
+        Return the optimizer's state dict.
+        """
         state_dict = self.wrapped_optimizer.state_dict()
         state_dict['loss_scale'] = self.scaler.loss_scale
         return state_dict
@@ -340,7 +355,7 @@ class ParlAIFP16MemoryEfficientOptimizer(ParlAIFP16Optimizer):
             old_id: p
             for old_id, p in zip(
                 chain(*(g['params'] for g in saved_groups)),
-                chain(*(g['params'] for g in groups))
+                chain(*(g['params'] for g in groups)),
             )
         }
         for k, v in state_dict['state'].items():
