@@ -17,6 +17,7 @@ except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 import torch.optim
+import torch.nn.functional as F
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
@@ -49,7 +50,7 @@ def padded_tensor(
     fp16friendly: bool = False,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
-    Create a right-padded matrix from an uneven list of lists.
+    Create a padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
     is a list containing the lengths of each row.
@@ -276,6 +277,27 @@ def fp16_available() -> bool:
             'install APEX from https://github.com/NVIDIA/apex.'
         )
         return False
+
+
+class FP16SafeCrossEntropy(torch.nn.Module):
+    """
+    FP16-safe cross entropy loss.
+
+    This avoids overflow in the softmax by doing the operation in FP32.
+    """
+
+    def __init__(self, ignore_index, reduction='none'):
+        super().__init__()
+        self.NULL_IDX = ignore_index
+        self.reduction = reduction
+
+    def forward(self, scores, targets):
+        return F.nll_loss(
+            F.log_softmax(scores, 1, dtype=torch.float32),
+            targets,
+            ignore_index=self.NULL_IDX,
+            reduction=self.reduction,
+        )
 
 
 class IdentityLayer(torch.nn.Module):

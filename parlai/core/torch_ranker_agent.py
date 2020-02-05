@@ -24,7 +24,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.torch import padded_3d, padded_tensor
+from parlai.utils.torch import padded_3d
 
 
 class TorchRankerAgent(TorchAgent):
@@ -634,12 +634,7 @@ class TorchRankerAgent(TorchAgent):
                         cands.append(cand)
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
-            cand_vecs, _ = padded_tensor(
-                all_cands_vecs,
-                self.NULL_IDX,
-                use_cuda=self.use_cuda,
-                fp16friendly=self.fp16,
-            )
+            cand_vecs, _ = self._pad_tensor(all_cands_vecs)
             label_inds = label_vecs.new_tensor(
                 [cands_to_id[label] for label in batch.labels]
             )
