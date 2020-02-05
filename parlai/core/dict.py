@@ -13,6 +13,7 @@ from .agents import Agent
 from .build_data import make_dir
 from collections import defaultdict
 from .gpt2_helper import Gpt2BpeHelper
+from .hugging_face_bpe_helper import HuggingFaceBpeHelper
 import codecs
 import copy
 import numpy as np
@@ -194,7 +195,7 @@ class DictionaryAgent(Agent):
             default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
             'on whitespace as well as recognizing basic punctuation. '
-            'Other options include nltk, spacy and gpt2.',
+            'Other options include nltk, spacy, gpt2 and bytelevelbpe.',
             hidden=True,
         )
         dictionary.add_argument(
@@ -218,6 +219,7 @@ class DictionaryAgent(Agent):
             'Tasks with additional fields may add to this list to handle '
             'any extra vocabulary.',
         )
+        dictionary = HuggingFaceBpeHelper.add_cmdline_args(dictionary)
         return dictionary
 
     def __init__(self, opt: Opt, shared=None):
@@ -336,6 +338,19 @@ class DictionaryAgent(Agent):
             for each_token in self.gpt2_bpe.list_tokens():
                 self.add_token(each_token)
                 self.freq[each_token] = 1
+        elif self.tokenizer == 'bytelevelbpe':
+            if self.lower:
+                raise ValueError(
+                    'Only use --dict-lower false with --dict-tokenizer bytelevelbpe'
+                )
+            if self.maxtokens > 0 or self.minfreq > 0:
+                raise ValueError(
+                    'You should not filter vocabulary with using --dict-tokenizer bytelevelbpe'
+                    ' (no --dict-minfreq or --dict-maxtokens).'
+                )
+            self.byte_level_bpe = HuggingFaceBpeHelper(opt)
+            self.sync_bytelevelbpe_dict()
+
         if not shared:
             if self.null_token:
                 # fix count for null token to one billion and three
@@ -487,6 +502,12 @@ class DictionaryAgent(Agent):
         Tokenize using Gpt2 BPE tokenizer.
         """
         return self.gpt2_bpe.encode(text)
+
+    def bytelevelbpe_tokenize(self, text):
+        """
+        Tokenize using Gpt2 BPE tokenizer.
+        """
+        return self.byte_level_bpe.encode(text)
 
     @staticmethod
     def re_tokenize(text):
@@ -674,6 +695,9 @@ class DictionaryAgent(Agent):
         elif self.tokenizer == 'gpt2':
             # never remove or sort tokens from gpt2
             pass
+        elif self.tokenizer == 'bytelevelbpe':
+            # never remove or sort tokens from bytelevel bpe
+            pass
         elif sort:
             self.sort(trim=True)
 
@@ -705,6 +729,10 @@ class DictionaryAgent(Agent):
         """
         if trim and self.tokenizer == 'gpt2':
             raise RuntimeError("You should not trim the dictionary when using gpt-2.")
+        if trim and self.tokenizer == 'bytelevelbpe':
+            raise RuntimeError(
+                "You should not trim the dictionary when using bytelevelbpe."
+            )
         # sort first by count, then alphabetically
         if trim:
             self.remove_tail(self.minfreq)
@@ -764,6 +792,8 @@ class DictionaryAgent(Agent):
         """
         if self.tokenizer == 'gpt2' and not self.opt.get('bpe_debug', False):
             return self.gpt2_bpe.decode(self[int(idx)] for idx in vector)
+        if self.tokenizer == 'bytelevelbpe' and not self.opt.get('bpe_debug', False):
+            return self.byte_level_bpe.tokenizer.decode(vector)
         # if we want to debug into this gpt2 bpe, you will get next line
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings
@@ -817,6 +847,26 @@ class DictionaryAgent(Agent):
         Return string representation of frequencies in dictionary.
         """
         return str(self.freq)
+
+    def sync_bytelevelbpe_dict(self):
+        """
+        This will sync the dict agent and the hugging face bytelevel bpe dict.
+        """
+        if self.tokenizer != 'bytelevelbpe':
+            return
+        special_tokens = [
+            self.start_token,
+            self.end_token,
+            self.unk_token,
+            self.null_token,
+        ]
+        self.byte_level_bpe.tokenizer.add_special_tokens(special_tokens)
+        self.ind2tok = {}
+        self.tok2ind = {}
+        for i in range(self.byte_level_bpe.tokenizer.get_vocab_size()):
+            token = self.byte_level_bpe.tokenizer.id_to_token(i)
+            self.add_token(token)
+            self.freq[token] = 1
 
 
 class _BPEHelper(object):

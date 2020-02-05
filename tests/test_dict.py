@@ -60,6 +60,124 @@ class TestDictionary(unittest.TestCase):
             u'Hello, ParlAI! \U0001f600',
         )
 
+    def test_byte_level_bpe_tokenize(self):
+        opt = Opt(
+            {
+                'dict_tokenizer': 'bytelevelbpe',
+                'datapath': './data',
+                'bpe_train_from': './data/ConvAI2/train_both_original_no_cands.txt',
+            }
+        )
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            [
+                'H',
+                'ello',
+                ',',
+                'Ġ',
+                'P',
+                'ar',
+                'l',
+                'A',
+                'I',
+                '!',
+                'Ġ',
+                'ð',
+                'Ł',
+                'ĺ',
+                'Ģ',
+            ],
+        )
+        self.assertEqual(
+            agent.vec2txt(
+                [
+                    agent.tok2ind[w]
+                    for w in [
+                        'H',
+                        'ello',
+                        ',',
+                        'Ġ',
+                        'P',
+                        'ar',
+                        'l',
+                        'A',
+                        'I',
+                        '!',
+                        'Ġ',
+                        'ð',
+                        'Ł',
+                        'ĺ',
+                        'Ģ',
+                    ]
+                ]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        agent.byte_level_bpe.tokenizer.save('./data', 'test-byte-level-bpe')
+
+        # test loading
+        opt = Opt(
+            {
+                'dict_tokenizer': 'bytelevelbpe',
+                'datapath': './data',
+                'bpe_vocab': './data/test-byte-level-bpe-vocab.json',
+                'bpe_merge': './data/test-byte-level-bpe-merges.txt',
+            }
+        )
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            [
+                'H',
+                'ello',
+                ',',
+                'Ġ',
+                'P',
+                'ar',
+                'l',
+                'A',
+                'I',
+                '!',
+                'Ġ',
+                'ð',
+                'Ł',
+                'ĺ',
+                'Ģ',
+            ],
+        )
+        self.assertEqual(
+            agent.vec2txt(
+                [
+                    agent.tok2ind[w]
+                    for w in [
+                        'H',
+                        'ello',
+                        ',',
+                        'Ġ',
+                        'P',
+                        'ar',
+                        'l',
+                        'A',
+                        'I',
+                        '!',
+                        'Ġ',
+                        'ð',
+                        'Ł',
+                        'ĺ',
+                        'Ģ',
+                    ]
+                ]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        os.remove('./data/test-byte-level-bpe-vocab.json')
+        os.remove('./data/test-byte-level-bpe-merges.txt')
+
     def test_space_tokenize(self):
         """
         Space tokenize assumes raw tokenization as input.
