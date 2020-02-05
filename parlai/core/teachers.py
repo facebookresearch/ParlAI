@@ -1904,6 +1904,10 @@ class MultiTaskTeacher(Teacher):
         for t in self.tasks:
             t.shutdown()
 
+    def update_counters(self):
+        for t in self.tasks:
+            t.update_counters()
+
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
     """
