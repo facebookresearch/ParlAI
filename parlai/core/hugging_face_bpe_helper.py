@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 import os
 from parlai.core.opt import Opt
+from typing import List
 
 
 class HuggingFaceBpeHelper(object):
@@ -28,16 +29,14 @@ class HuggingFaceBpeHelper(object):
         try:
             from tokenizers import ByteLevelBPETokenizer
 
-            self.byte_Level_Bpe = ByteLevelBPETokenizer(
-                self.vocab_path, self.merge_path
-            )
+            self.tokenizer = ByteLevelBPETokenizer(self.vocab_path, self.merge_path)
         except ImportError:
             raise ImportError(
                 'Please install huggingface tokenizer with: pip install tokenizers'
             )
 
     def encode(self, text: str) -> List[str]:
-        return self.byte_Level_Bpe.encode(text).tokens
+        return self.tokenizer.encode(text).tokens
 
-    def decode(self, x: List[int]) -> str:
-        return self.byte_Level_Bpe.decode(x)
+    def decode(self, x: List[str]) -> str:
+        return self.tokenizer.decode(self.tokenizer.token_to_id(c) for c in x)

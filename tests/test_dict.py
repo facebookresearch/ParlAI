@@ -60,6 +60,44 @@ class TestDictionary(unittest.TestCase):
             u'Hello, ParlAI! \U0001f600',
         )
 
+    def test_byte_level_bpe_tokenize(self):
+        opt = Opt(
+            {
+                'dict_tokenizer': 'bytelevelbpe',
+                'datapath': './data',
+                'bpe_vocab': '',
+                'bpe_merge': '',
+            }
+        )
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            ['H', 'ell', 'o', ',', 'ĠPar', 'l', 'A', 'I', '!', 'ĠðŁĺ', 'Ģ'],
+        )
+        self.assertEqual(
+            agent.vec2txt(
+                [
+                    agent.tok2ind[w]
+                    for w in [
+                        'H',
+                        'ell',
+                        'o',
+                        ',',
+                        'ĠPar',
+                        'l',
+                        'A',
+                        'I',
+                        '!',
+                        'ĠðŁĺ',
+                        'Ģ',
+                    ]
+                ]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+
     def test_space_tokenize(self):
         """
         Space tokenize assumes raw tokenization as input.

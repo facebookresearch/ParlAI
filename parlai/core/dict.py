@@ -346,8 +346,17 @@ class DictionaryAgent(Agent):
                     ' (no --dict-minfreq or --dict-maxtokens).'
                 )
             self.byte_level_bpe = HuggingFaceBpeHelper(opt)
-            for i in range(self.byte_level_bpe.get_vocab_size()):
-                token = self.byte_level_bpe.id_to_token(i)
+            special_tokens = [
+                self.start_token,
+                self.end_token,
+                self.unk_token,
+                self.null_token,
+            ]
+            self.byte_level_bpe.tokenizer.add_special_tokens(special_tokens)
+            self.ind2tok = {}
+            self.tok2ind = {}
+            for i in range(self.byte_level_bpe.tokenizer.get_vocab_size()):
+                token = self.byte_level_bpe.tokenizer.id_to_token(i)
                 self.add_token(token)
                 self.freq[token] = 1
 
@@ -497,7 +506,7 @@ class DictionaryAgent(Agent):
         """
         return self.gpt2_bpe.encode(text)
 
-    def byte_level_bpe_tokenize(self, text):
+    def bytelevelbpe_tokenize(self, text):
         """
         Tokenize using Gpt2 BPE tokenizer.
         """
@@ -786,7 +795,7 @@ class DictionaryAgent(Agent):
         if self.tokenizer == 'gpt2' and not self.opt.get('bpe_debug', False):
             return self.gpt2_bpe.decode(self[int(idx)] for idx in vector)
         if self.tokenizer == 'bytelevelbpe' and not self.opt.get('bpe_debug', False):
-            return self.byte_level_bpe.decode(self[int(idx)] for idx in vector)
+            return self.byte_level_bpe.tokenizer.decode(vector)
         # if we want to debug into this gpt2 bpe, you will get next line
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings
