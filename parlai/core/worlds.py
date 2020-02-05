@@ -300,7 +300,9 @@ class DialogPartnerWorld(World):
     chance to speak per turn and passing that back to the other one.
     """
 
-    def __init__(self, opt: Opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
+        if not ((agents is not None) ^ (shared is not None)):
+            raise ValueError('You must supply either agents or shared, but not both.')
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
