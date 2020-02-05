@@ -452,7 +452,7 @@ class Metrics(object):
             return
         while not self._queue.empty():
             try:
-                yield self._queue.get()
+                yield self._queue.get(timeout=0.05)
             except queue.Empty:
                 break
 

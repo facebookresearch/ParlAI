@@ -150,7 +150,7 @@ jobs:
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m data
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m data -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -173,7 +173,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (OSX)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -199,7 +199,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -222,7 +222,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py37)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -252,7 +252,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.3)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -282,7 +282,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -313,7 +313,7 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
@@ -337,7 +337,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
+          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
       - <<: *codecov
       - store_test_results:
           path: test-results
