@@ -8,7 +8,7 @@ from parlai.mturk.core.legacy_2018.agents import TIMEOUT_MESSAGE
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.legacy_2018.worlds import MTurkOnboardWorld
 from parlai.core.message import Message
-from parlai.utils.strings import standardize_string
+from parlai.utils.strings import normalize_reply
 
 from joblib import Parallel, delayed
 import numpy as np
@@ -402,7 +402,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 self.model_agent.observe(persona_act)
                 self.bot_seen_persona = True
                 model_act = copy.deepcopy(self.model_agent.act())
-                model_act.force_set('text', standardize_string(model_act['text']))
+                model_act.force_set('text', normalize_reply(model_act['text']))
                 model_act.force_set('id', 'PERSON_2')
                 self.dialog.append((1, model_act.get('text')))
                 _random_delay()
@@ -419,7 +419,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 else:
                     self.dialog.append((1, act.get('text')))
                     act = copy.deepcopy(act)
-                    act.force_set('text', standardize_string(act['text']))
+                    act.force_set('text', normalize_reply(act['text']))
                     self.eval_agent.observe(act)
 
         # Eval agent turn
@@ -463,7 +463,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             self.model_agent.observe(act)
         else:
             act = copy.deepcopy(act)
-            act.force_set('text', standardize_string(act['text']))
+            act.force_set('text', normalize_reply(act['text']))
             self.other_agent.observe(act)
 
         # Model_agent turn
@@ -471,7 +471,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             if self.model_agent is not None:
                 _random_delay()
                 act = _strip_tensors(copy.deepcopy(self.model_agent.act()))
-                act.force_set('text', standardize_string(act['text']))
+                act.force_set('text', normalize_reply(act['text']))
                 act.force_set('id', 'PERSON_2')
                 # NOTE: your model may or may not need to observe itself here
                 # If it does, call model_observes_itself or some other specialized
@@ -488,7 +488,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
 
             self.dialog.append((1, act.get('text')))
             act = copy.deepcopy(act)
-            act.force_set('text', standardize_string(act['text']))
+            act.force_set('text', normalize_reply(act['text']))
             self.eval_agent.observe(act)
 
     def _evaluate_characteristic(self, question, choices, addto):
