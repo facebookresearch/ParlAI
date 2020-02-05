@@ -29,7 +29,6 @@ import tqdm
 def setup_args(parser=None, hidden=True):
     if parser is None:
         parser = ParlaiParser(True, True, 'Build a dictionary.')
-    parser.add_pytorch_datateacher_args()
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
     dict_loop.add_argument(
         '--dict-maxexs',
@@ -102,11 +101,6 @@ def build_dict(opt, skip_if_built=False):
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
     ordered_opt['image_mode'] = 'no_image_model'
-    ordered_opt['pytorch_teacher_batch_sort'] = False
-    if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
-        pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
-        if pytorch_teacher_task != '':
-            ordered_opt['task'] = pytorch_teacher_task
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):

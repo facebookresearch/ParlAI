@@ -178,8 +178,6 @@ def load_task_module(taskname: str):
 
     if '.' in task_path:
         module_name = task_path
-    elif task_path == 'pytorch_teacher':
-        module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = task_path.lower()
         module_name = "%s.tasks.%s.agents" % (repo, task)

@@ -273,10 +273,6 @@ class DictionaryAgent(Agent):
 
             loaded = False
             # If data built via pytorch data teacher, we need to load prebuilt dict
-            if opt.get('pytorch_teacher_task'):
-                from parlai.scripts.build_pytorch_data import get_pyt_dict_file
-
-                opt['dict_file'] = get_pyt_dict_file(opt)
             if opt.get('dict_file'):
                 opt['dict_file'] = modelzoo_path(opt.get('datapath'), opt['dict_file'])
                 if os.path.isfile(opt['dict_file']):

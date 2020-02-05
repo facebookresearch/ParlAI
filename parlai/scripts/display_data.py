@@ -28,7 +28,6 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Display data from a task')
-    parser.add_pytorch_datateacher_args()
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
