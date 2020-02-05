@@ -15,6 +15,31 @@ except ImportError:
 
 
 ###################################################
+## General Utilities
+###################################################
+
+class FP16SafeCrossEntropy(torch.nn.Module):
+    """
+    FP16-safe cross entropy loss.
+
+    This avoids overflow in the softmax by doing the operation in FP32.
+    """
+
+    def __init__(self, ignore_index, reduction='none'):
+        super().__init__()
+        self.NULL_IDX = ignore_index
+        self.reduction = reduction
+
+    def forward(self, scores, targets):
+        return F.nll_loss(
+            F.log_softmax(scores, 1, dtype=torch.float32),
+            targets,
+            ignore_index=self.NULL_IDX,
+            reduction=self.reduction,
+        )
+
+
+###################################################
 ## APEX Wrapper
 ###################################################
 

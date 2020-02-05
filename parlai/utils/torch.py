@@ -15,6 +15,7 @@ except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 import torch.optim
+import torch.nn.functional as F
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
@@ -40,7 +41,7 @@ def padded_tensor(
     fp16friendly: bool = False,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
-    Create a right-padded matrix from an uneven list of lists.
+    Create a padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
     is a list containing the lengths of each row.
