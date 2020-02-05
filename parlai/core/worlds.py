@@ -1055,7 +1055,7 @@ class DynamicBatchWorld(World):
 
         # buffer worlds
         self.worlds = [
-            shared['world_class'](opt, None, shared) for _ in range(self._BUFFER_SIZE)
+            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
         ]
 
         self.reset()
@@ -1091,15 +1091,21 @@ class DynamicBatchWorld(World):
     def num_episodes(self):
         return self.world.num_episodes()
 
-    def _ceil(self, n, r=4):
+    def _ceil(self, n):
         """
-        Round to the nearest multiple of 4.
+        Round to the nearest multiple of 8.
 
-        TensorCores only work when a tensor is a multiple of 4 in all dimensions. This
-        means all examples cost is related to their nearest multiple of 4.
+        TensorCores only work when a tensor is a multiple of 8 in almost all
+        dimensions. This means all examples cost is related to their nearest
+        multiple of 8.
+
+        See https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for
+        more information.
         """
-        # round up to 4, all things are equal
-        return ((n + r - 1) // r) * r
+        # round up to r, all things are equal
+        from parlai.utils.torch import FP16_PAD_SIZE
+
+        return ((n + FP16_PAD_SIZE - 1) // FP16_PAD_SIZE) * FP16_PAD_SIZE
 
     def _score(self, obs):
         if 'text_vec' in obs:
