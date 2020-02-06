@@ -8,6 +8,8 @@ Utility methods for mixed precision training.
 """
 from parlai.utils.misc import warn_once
 
+from itertools import chain
+
 try:
     import torch
     import torch.nn.functional as F
@@ -38,6 +40,26 @@ class FP16SafeCrossEntropy(torch.nn.Module):
             targets,
             ignore_index=self.NULL_IDX,
             reduction=self.reduction,
+        )
+
+
+def clip_grad_norm(params, max_norm):
+    """
+    Clips grad norm.
+    """
+    params = list(params)
+    if len(params) == 1:
+        p = params[0]
+        grad_norm = torch.norm(p)
+        if grad_norm > max_norm > 0:
+            clip_coef = max_norm / (grad_norm + 1e-6)
+            p.mul_(clip_coef)
+        return grad_norm
+    elif max_norm > 0:
+        return torch.nn.utils.clip_grad_norm_(params, max_norm)
+    else:
+        return torch.sqrt(
+            sum(p.grad.data.norm() ** 2 for p in params if p.grad is not None)
         )
 
 
@@ -91,7 +113,7 @@ def fp16_optimizer_wrapper(
     )
 
 
-def fp16_available() -> bool:
+def fp16_apex_available() -> bool:
     # TODO: deprecate this function parlai_fp16_optimizer is available
     try:
         import apex.fp16_utils  # noqa: F401
@@ -112,9 +134,10 @@ def fp16_available() -> bool:
 
 class DynamicLossScaler(object):
     """
-    Directly stolen from fairseq (thanks Myle)!
+    Shamelessly stolen from Fairseq.
 
-    TODO: Add a description here
+    Dynamically adjusts the loss scaling factor.
+    Useful for mixed-precision training.
     """
 
     def __init__(
@@ -198,138 +221,134 @@ class DynamicLossScaler(object):
         return False
 
 
-class ParlAIFP16Optimizer(torch.optim.Optimizer):
-    """
-    Wrap an optimizer to perform mixed precision training.
-
-    Based on the fairseq implementation. This wraps an optimizer to perform
-    FP16 training.
-
-    :param optimizer:
-        Any torch optimizer
-    :param float loss_initial_scale:
-        Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
-    """
-
-    def __init__(
-        init_optimizer: torch.optim.Optimizer,  # type: ignore
-        loss_initial_scale: float = 2.0 ** 17,
-    ):
-        self.wrapped_optimizer = init_optimizer  # wrapped optimizer is FP32 optimizer
-        self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
-        # TODO: finish
-
-    def __getstate__(self):
-        return self.wrapped_optimizer.__getstate__()
-
-    def __setstate__(self, state):
-        self.wrapped_optimizer.__setstate__(state)
-
-    def __repr__(self):
-        self.wrapped_optimizer.__repr__()
-
-    def state_dict(self):
-        """
-        Return the optimizer's state dict.
-        """
-        state_dict = self.fp32_optimizer.state_dict()
-        state_dict['loss_scale'] = self.scaler.loss_scale
-        return state_dict
-
-    def zero_grad(self):
-        """
-        Clears the gradients of all optimized parameters.
-        """
-        for p in self.fp16_params:
-            p.grad = None
-        if self.has_flat_params:
-            self.fp32_params.grad.zero_()
-        else:
-            for p32 in self.fp32_params:
-                p32.grad.zero_()
-        self._needs_sync = False
-
-    def step(self, closure):
-        """
-        Performs a single optimization step.
-        """
-        self._sync_fp16_grads_to_fp32()
-        self.fp32_optimizer.step(closure)
-
-        # copy FP32 params back into FP16 model
-        if self.has_flat_params:
-            offset = 0
-            for p in self.fp16_params:
-                if not p.requires_grad:
-                    continue
-                numel = p.data.numel()
-                p.data.copy_(
-                    self.fp32_params.data[offset : offset + numel].view_as(p.data)
-                )
-                offset += numel
-        else:
-            for p, p32 in zip(self.fp16_params, self.fp32_params):
-                if not p.requires_grad:
-                    continue
-                p.data.copy_(p32.data)
-
-    def load_state_dict(self, state_dict, optimizer_overrides=None):
-        """
-        Load an optimizer state dict.
-
-        In general we should prefer the configuration of the existing optimizer instance
-        (e.g., learning rate) over that found in the state_dict. This allows us to
-        resume training from a checkpoint using a new set of optimizer args.
-        """
-        if 'loss_scale' in state_dict:
-            self.scaler.loss_scale = state_dict['loss_scale']
-        self.fp32_optimizer.load_state_dict(state_dict, optimizer_overrides)
-
-    def add_param_group(self, param_group):
-        self.wrapped_optimizer.add_param_group(param_group)
-
-
-class ParlAIFP16MemoryEfficientOptimizer(ParlAIFP16Optimizer):
+class ParlAIFP16MemoryEfficientOptimizer(torch.optim.Optimizer):
     """
     Wrap an optimizer to perform memory-efficient mixed precision training.
 
-    Based on the fairseq implementation. This wraps an optimizer to perform
-    FP16 training.
+    Heavily based on the fairseq implementation. This wraps an optimizer
+    to perform FP16 training.
 
+    :param params:
+        Model parameters
     :param optimizer:
         Any torch optimizer
     :param float loss_initial_scale:
         Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
+        or high loss values may need this adjusted. Stick with powers of 2
+    :param float min_loss_scale:
+        Throws an error if your loss scale goes below this threshold
     """
 
     def __init__(
+        self,
         init_optimizer: torch.optim.Optimizer,  # type: ignore
         loss_initial_scale: float = 2.0 ** 17,
+        min_loss_scale: float = 1e-4,
     ):
-        self.wrapped_optimizer = init_optimizer
-        # TODO: finish
+        self.optimizer = init_optimizer
+        # TODO: we should probably set a bunch of these args with opt?
+        self.min_loss_scale = min_loss_scale
+        self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
 
-    def zero_grad(self):
+    @property
+    def params(self):
+        """Return an iterable of the parameters held by the optimizer."""
+        for param_group in self.optimizer.param_groups:
+            for p in param_group['params']:
+                yield p
+
+    @property
+    def param_groups(self):
+        return self.optimizer.param_groups
+
+    def __getstate__(self):
+        return self.optimizer.__getstate__()
+
+    def __setstate__(self, state):
+        self.optimizer.__setstate__(state)
+
+    def __repr__(self):
+        self.optimizer.__repr__()
+
+    def add_param_group(self, param_group):
+        self.optimizer.add_param_group(param_group)
+
+    def _unscale_grads(self, multiply_grads=1.0):
+        if self._grads_are_scaled:
+            self._grads_are_scaled = False
+
+            # correct for dynamic loss scaler
+            self.multiply_grads(multiply_grads / self.scaler.loss_scale)
+        else:
+            assert multiply_grads == 1.0
+
+    def clip_master_grads(self, gradient_clip):
         """
-        Clears the gradients of all optimized parameters.
+        Clips gradient norm and updates dynamic loss scaler.
+
+        Returns -1 if the most recently computed gradients overflowed.
         """
-        self.wrapped_optimizer.zero_grad()
-        self._grads_are_scaled = False
+        self._unscale_grads()
+        grad_norm = clip_grad_norm(self.params, gradient_clip)
+        # detect overflow and adjust loss scale
+        overflow = DynamicLossScaler.has_overflow(grad_norm)
+        self.scaler.update_scale(overflow)
+        if overflow:
+            if self.scaler.loss_scale <= self.min_loss_scale:
+                # Use FloatingPointError as an uncommon error that parent
+                # functions can safely catch to stop training.
+                raise FloatingPointError(
+                    (
+                        'Minimum loss scale reached ({}). Your loss is probably exploding. '
+                        'Try lowering the learning rate, using gradient clipping or '
+                        'increasing the batch size.'
+                    ).format(self.min_loss_scale)
+                )
+            warn_once(f'[ Overflow: setting loss scale to {self.scaler.loss_scale} ]')
+            # TODO: dso we want to zero grad here?
+            self.zero_grad()
+            return -1
+
+        return grad_norm
+
+    def update_master_grads(self):
+        # This should be a no-op here
+        pass
+
+    def multiply_grads(self, c):
+        """
+        Multiplies grads by a constant `c`.
+        """
+        if self._grads_are_scaled:
+            self._unscale_grads(c)
+        else:
+            for p in self.params:
+                if p.grad is not None:
+                    p.grad.data.mul_(c)
+
+    def backward(self, loss, update_master_grads=False):
+        """
+        Computes the sum of gradients of the given tensor w.r.t. graph leaves.
+
+        Compared to a regular backwards call , this function dynamically scales the loss
+        to avoid gradient underflow.
+        """
+        loss = loss * self.scaler.loss_scale
+        loss.backward()
+        self._grads_are_scaled = True
 
     def step(self, closure=None):
         """
         Performs a single optimization step.
         """
         self._unscale_grads()
-        self.wrapped_optimizer.step(closure)
+        self.optimizer.step(closure)
 
     def state_dict(self):
         """
         Return the optimizer's state dict.
         """
-        state_dict = self.wrapped_optimizer.state_dict()
+        state_dict = self.optimizer.state_dict()
         state_dict['loss_scale'] = self.scaler.loss_scale
         return state_dict
 
@@ -342,10 +361,10 @@ class ParlAIFP16MemoryEfficientOptimizer(ParlAIFP16Optimizer):
         if 'loss_scale' in state_dict:
             self.scaler.loss_scale = state_dict['loss_scale']
 
-        self.wrapped_optimizer.load_state_dict(state_dict)
+        self.optimizer.load_state_dict(state_dict)
 
         # Hack: PyTorch automatically casts the optimizer state to match the
-        # type of the current parameters. But with --memory-efficient-fp16 the
+        # type of the current parameters. But with memory efficient fp16 the
         # params are FP16 while the optimizer state is FP32 and we don't want
         # to cast. A workaround is to manually copy back the original state
         # after the optimizer has been loaded.
@@ -362,3 +381,10 @@ class ParlAIFP16MemoryEfficientOptimizer(ParlAIFP16Optimizer):
             if k in id_map:
                 param = id_map[k]
                 self.optimizer.state[param] = v
+
+    def zero_grad(self):
+        """
+        Clears the gradients of all optimized parameters.
+        """
+        self.optimizer.zero_grad()
+        self._grads_are_scaled = False

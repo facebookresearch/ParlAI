@@ -15,7 +15,6 @@ except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 import torch.optim
-import torch.nn.functional as F
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20

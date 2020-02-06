@@ -35,9 +35,13 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
-from parlai.utils.fp16 import fp16_available, fp16_optimizer_wrapper
+from parlai.utils.fp16 import (
+    fp16_apex_available,
+    fp16_optimizer_wrapper,
+    ParlAIFP16MemoryEfficientOptimizer
+)
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
-from parlai.utils.torch import argsort
+from parlai.utils.torch import argsort, padded_tensor
 
 
 class Batch(AttrDict):
@@ -430,6 +434,13 @@ class TorchAgent(ABC, Agent):
             '--fp16', type='bool', default=False, help='Use fp16 computations.'
         )
         agent.add_argument(
+            '--fp16-impl',
+            type=str,
+            default='apex',
+            choices=['apex', 'mem_efficient'],
+            help='Implementation of FP16 to use',
+        )
+        agent.add_argument(
             '--force-fp16-tokens',
             type='bool',
             default=False,
@@ -614,7 +625,12 @@ class TorchAgent(ABC, Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False) and fp16_available()
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+        if self.fp16:
+            # check that the implementation requested is available
+            self.fp16_impl = self.opt.get('fp16_impl', 'apex')
+            if self.fp16_impl == 'apex' and not fp16_apex_available():
+                self.fp16 = False
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -813,8 +829,11 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
-
+            if self.fp16_impl == 'apex':
+                self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+            else:
+                # Using memory efficient optimizer
+                self.optimizer = ParlAIFP16MemoryEfficientOptimizer(self.optimizer)
         # TODO: we might want to hard reset optimizers here in the
         # case of fine tuning. Some rudimentary experiments seemed to
         # indicate that keeping adam weights around was desirable, so this
