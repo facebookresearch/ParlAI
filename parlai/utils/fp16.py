@@ -137,7 +137,7 @@ def fp16_apex_available() -> bool:
 
 
 ###################################################
-## ParlAI Wrappers
+## Memory Efficient Wrappers
 ###################################################
 
 
@@ -252,6 +252,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         # TODO: we should probably set a bunch of these args with opt?
         self.min_loss_scale = min_loss_scale
         self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
+        # TODO: add warning here about which optimizers this works with
 
     @property
     def params(self):
@@ -310,7 +311,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                     ).format(self.min_loss_scale)
                 )
             warn_once(f'[ Overflow: setting loss scale to {self.scaler.loss_scale} ]')
-            # TODO: dso we want to zero grad here?
+            # TODO: do we actually want to zero grad here? or in the train loop?
             self.zero_grad()
             return -1
 
