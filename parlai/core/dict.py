@@ -696,7 +696,6 @@ class DictionaryAgent(Agent):
             # never remove or sort tokens from gpt2
             pass
         elif self.tokenizer == 'bytelevelbpe':
-            # never remove or sort tokens from bytelevel bpe
             pass
         elif sort:
             self.sort(trim=True)
@@ -714,6 +713,9 @@ class DictionaryAgent(Agent):
         # save opt file
         with open(filename + '.opt', 'w', encoding='utf-8') as handle:
             json.dump(self.opt, handle, indent=4)
+        # save the byte level bpe model file as well
+        if self.tokenizer == 'bytelevelbpe':
+            self.byte_level_bpe.tokenizer(os.path.dirname(filename), filename)
 
     def sort(self, trim=True):
         """
