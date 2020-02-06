@@ -66,18 +66,14 @@ class TestDictionary(unittest.TestCase):
 
     def test_byte_level_bpe_tokenize(self):
         # test loading
-        download(
-            DEFAULT_BYTELEVEL_BPE_VOCAB, './data', 'test-byte-level-bpe-vocab.json'
-        )
-        download(
-            DEFAULT_BYTELEVEL_BPE_MERGE, './data', 'test-byte-level-bpe-merges.txt'
-        )
+        download(DEFAULT_BYTELEVEL_BPE_VOCAB, './', 'test-byte-level-bpe-vocab.json')
+        download(DEFAULT_BYTELEVEL_BPE_MERGE, './', 'test-byte-level-bpe-merges.txt')
         opt = Opt(
             {
                 'dict_tokenizer': 'bytelevelbpe',
-                'datapath': './data',
-                'bpe_vocab': './data/test-byte-level-bpe-vocab.json',
-                'bpe_merge': './data/test-byte-level-bpe-merges.txt',
+                'datapath': './',
+                'bpe_vocab': './test-byte-level-bpe-vocab.json',
+                'bpe_merge': './test-byte-level-bpe-merges.txt',
             }
         )
         agent = DictionaryAgent(opt)
@@ -128,8 +124,8 @@ class TestDictionary(unittest.TestCase):
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
-        os.remove('./data/test-byte-level-bpe-vocab.json')
-        os.remove('./data/test-byte-level-bpe-merges.txt')
+        os.remove('./test-byte-level-bpe-vocab.json')
+        os.remove('./test-byte-level-bpe-merges.txt')
 
     def test_space_tokenize(self):
         """
