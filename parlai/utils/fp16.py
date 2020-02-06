@@ -354,7 +354,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         Return the optimizer's state dict.
         """
         state_dict = self.optimizer.state_dict()
-        state_dict['loss_scale'] = self.scaler.loss_scale
+        state_dict['loss_scaler'] = self.scaler
         return state_dict
 
     def load_state_dict(self, state_dict):
@@ -363,8 +363,9 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
 
         Override from PyTorch implementation to avoid casting to FP32.
         """
-        if 'loss_scale' in state_dict:
-            self.scaler.loss_scale = state_dict['loss_scale']
+        if 'loss_scaler' in state_dict:
+            # init from the state dict
+            self.scaler = state_dict['loss_scaler']
 
         self.optimizer.load_state_dict(state_dict)
 
