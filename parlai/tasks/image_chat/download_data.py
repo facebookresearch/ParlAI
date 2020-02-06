@@ -9,13 +9,13 @@ from parlai.tasks.image_chat.build import build
 
 def parse_args():
     """
-    Wrapper to parse CLI arguments
+    Wrapper to parse CLI arguments.
+
     :return: args
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-dp", "--datapath", default="/tmp",
-        help="Path where to save data."
+        "-dp", "--datapath", default="/tmp", help="Path where to save data."
     )
 
     args = parser.parse_args()
