@@ -10,6 +10,7 @@ from parlai.tasks.image_chat.build import build
 def parse_args():
     """
     Wrapper to parse CLI arguments.
+
     :return: args
     """
     parser = argparse.ArgumentParser()
