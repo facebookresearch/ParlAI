@@ -18,11 +18,6 @@ class HuggingFaceBpeHelper(object):
         parser.add_argument(
             '--bpe-merge', type=str, help='path to pre-trained tokenizer merge'
         )
-        parser.add_argument(
-            '--bpe-train-from',
-            type=str,
-            help='path to the text files for training the byte level bpe tokenizer',
-        )
         return parser
 
     def __init__(self, opt: Opt, shared=None):
@@ -33,23 +28,13 @@ class HuggingFaceBpeHelper(object):
                 'Please install huggingface tokenizer with: pip install tokenizers'
             )
 
-        if opt.get('bpe_train_from', None) is None:
-            # load trained instead
-            if opt.get('bpe_vocab', None) is None:
-                raise ValueError(
-                    '--bpe-vocab is required for loading pretrained tokenizer'
-                )
-            if opt.get('bpe_merge', None) is None:
-                raise ValueError(
-                    '--bpe-merge is required for loading pretrained tokenizer'
-                )
-            self.vocab_path = opt.get('bpe_vocab')
-            self.merge_path = opt.get('bpe_merge')
-            self.tokenizer = ByteLevelBPETokenizer(self.vocab_path, self.merge_path)
-        else:
-            self.train_corpus = opt.get('bpe_train_from')
-            self.tokenizer = ByteLevelBPETokenizer()
-            self.tokenizer.train(self.train_corpus)
+        if opt.get('bpe_vocab', None) is None:
+            raise ValueError('--bpe-vocab is required for loading pretrained tokenizer')
+        if opt.get('bpe_merge', None) is None:
+            raise ValueError('--bpe-merge is required for loading pretrained tokenizer')
+        self.vocab_path = opt.get('bpe_vocab')
+        self.merge_path = opt.get('bpe_merge')
+        self.tokenizer = ByteLevelBPETokenizer(self.vocab_path, self.merge_path)
 
     def encode(self, text: str) -> List[str]:
         return self.tokenizer.encode(text).tokens

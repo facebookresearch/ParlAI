@@ -18,6 +18,10 @@ import parlai.utils.testing as testing_utils
 import os
 import shutil
 import unittest
+from parlai.core.build_data import download
+
+DEFAULT_BYTELEVEL_BPE_VOCAB = 'https://dl.fbaipublicfiles.com/parlai/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-vocab.json'
+DEFAULT_BYTELEVEL_BPE_MERGE = 'https://dl.fbaipublicfiles.com/parlai/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-merges.txt'
 
 
 class TestDictionary(unittest.TestCase):
@@ -61,64 +65,13 @@ class TestDictionary(unittest.TestCase):
         )
 
     def test_byte_level_bpe_tokenize(self):
-        opt = Opt(
-            {
-                'dict_tokenizer': 'bytelevelbpe',
-                'datapath': './data',
-                'bpe_train_from': './data/ConvAI2/train_both_original_no_cands.txt',
-            }
-        )
-        agent = DictionaryAgent(opt)
-        self.assertEqual(
-            # grinning face emoji
-            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
-            [
-                'H',
-                'ello',
-                ',',
-                'Ġ',
-                'P',
-                'ar',
-                'l',
-                'A',
-                'I',
-                '!',
-                'Ġ',
-                'ð',
-                'Ł',
-                'ĺ',
-                'Ģ',
-            ],
-        )
-        self.assertEqual(
-            agent.vec2txt(
-                [
-                    agent.tok2ind[w]
-                    for w in [
-                        'H',
-                        'ello',
-                        ',',
-                        'Ġ',
-                        'P',
-                        'ar',
-                        'l',
-                        'A',
-                        'I',
-                        '!',
-                        'Ġ',
-                        'ð',
-                        'Ł',
-                        'ĺ',
-                        'Ģ',
-                    ]
-                ]
-            ),
-            # grinning face emoji
-            u'Hello, ParlAI! \U0001f600',
-        )
-        agent.byte_level_bpe.tokenizer.save('./data', 'test-byte-level-bpe')
-
         # test loading
+        download(
+            DEFAULT_BYTELEVEL_BPE_VOCAB, './data', 'test-byte-level-bpe-vocab.json'
+        )
+        download(
+            DEFAULT_BYTELEVEL_BPE_MERGE, './data', 'test-byte-level-bpe-merges.txt'
+        )
         opt = Opt(
             {
                 'dict_tokenizer': 'bytelevelbpe',
