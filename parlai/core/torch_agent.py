@@ -39,6 +39,7 @@ from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
     MemoryEfficientFP16Optimizer,
+    MemoryEfficientFP16Adam,
 )
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import argsort, padded_tensor
@@ -362,6 +363,9 @@ class TorchAgent(ABC, Agent):
         except ImportError:
             # no QHM installed
             pass
+
+        # now pull in memory efficient implementations
+        optims['mem_eff_adam'] = MemoryEfficientFP16Adam
 
         return optims
 
@@ -801,6 +805,9 @@ class TorchAgent(ABC, Agent):
             # turn on amsgrad for adam
             # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
             kwargs['amsgrad'] = True
+            if self.fp16 and self.fp16_impl == 'mem_efficient':
+                # grab this implementation instead
+                opt['optimizer'] = 'mem_eff_adam'
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
@@ -826,6 +833,7 @@ class TorchAgent(ABC, Agent):
                 'switch to --optimizer adam.'
             )
 
+        # TODO: if self.fp16 and self.fp16_impl == 'mem_efficient'... check that class is ok
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
