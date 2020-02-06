@@ -9,6 +9,7 @@ import numpy as np
 import os
 from queue import Queue
 import random
+import time
 
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
@@ -97,6 +98,12 @@ def add_args(from_argv=False):
     )
     argparser.add_argument(
         '--seed', type=int, default=42, help='seed for random and np.random'
+    )
+    argparser.add_argument(
+        '--softblock-list-path',
+        type=str,
+        default=None,
+        help='Path to list of workers to softblock, separated by line breaks',
     )
     argparser.set_defaults(allowed_conversation=1)
     if from_argv:
@@ -405,6 +412,21 @@ def main(opt):
                     save_data,
                 )
             return save_data
+
+        # Soft-block all chosen workers
+        if not opt['is_sandbox'] and opt['softblock_list_path'] is not None:
+            softblock_list = set()
+            with open(opt['softblock_list_path'], 'r') as f:
+                for line in f:
+                    softblock_list.add(line.strip())
+            print(f'Will softblock {len(softblock_list):d} workers.')
+            for w in softblock_list:
+                try:
+                    print('Soft Blocking {}\n'.format(w))
+                    mturk_manager.soft_block_worker(w)
+                except Exception as e:
+                    print(f'Did not soft block worker {w}: {e}')
+                time.sleep(0.1)
 
         print("This run id: {}".format(task_group_id))
 
