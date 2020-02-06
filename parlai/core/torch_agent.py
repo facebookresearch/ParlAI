@@ -38,7 +38,7 @@ from parlai.core.message import Message
 from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
-    ParlAIFP16MemoryEfficientOptimizer
+    ParlAIFP16MemoryEfficientOptimizer,
 )
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import argsort, padded_tensor

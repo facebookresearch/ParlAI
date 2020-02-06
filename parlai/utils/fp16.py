@@ -136,8 +136,7 @@ class DynamicLossScaler(object):
     """
     Shamelessly stolen from Fairseq.
 
-    Dynamically adjusts the loss scaling factor.
-    Useful for mixed-precision training.
+    Dynamically adjusts the loss scaling factor. Useful for mixed-precision training.
     """
 
     def __init__(
@@ -252,7 +251,9 @@ class ParlAIFP16MemoryEfficientOptimizer(torch.optim.Optimizer):
 
     @property
     def params(self):
-        """Return an iterable of the parameters held by the optimizer."""
+        """
+        Return an iterable of the parameters held by the optimizer.
+        """
         for param_group in self.optimizer.param_groups:
             for p in param_group['params']:
                 yield p
