@@ -79,6 +79,7 @@ installtorchgpu14: &installtorchgpu14
       pip3 install --progress-bar off 'torchvision==0.5.0'
       pip3 install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 
 installtorchgpu13: &installtorchgpu13
@@ -90,6 +91,7 @@ installtorchgpu13: &installtorchgpu13
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 
 installtorchcpuosx: &installtorchcpuosx
@@ -98,6 +100,7 @@ installtorchcpuosx: &installtorchcpuosx
     command: |
       pip3 install --progress-bar off torch
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 installtorchcpu: &installtorchcpu
   run:
@@ -105,6 +108,7 @@ installtorchcpu: &installtorchcpu
     command: |
       pip3 install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0 torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 setupcuda: &setupcuda
   run:
@@ -113,12 +117,8 @@ setupcuda: &setupcuda
     command: |
       # download and install nvidia drivers, cuda, etc
       wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin'
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb'
-      sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
       time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-      time sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      echo "Done installing CUDA."
+      echo "Done installing NVIDIA drivers."
       pyenv versions
       nvidia-smi
       pyenv global 3.7.0
@@ -151,7 +151,7 @@ jobs:
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: coverage run pytest --junitxml=test-results/junit.xml -m data -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data -v
       - <<: *codecov
       - store_test_results:
           path: test-results
