@@ -63,6 +63,15 @@ def clip_grad_norm(params, max_norm):
         )
 
 
+def has_overflow(grad_norm):
+    """
+    Detect inf and NaN in grad_norm.
+    """
+    if grad_norm == float('inf') or grad_norm != grad_norm:
+        return True
+    return False
+
+
 ###################################################
 ## APEX Wrapper
 ###################################################
@@ -137,6 +146,8 @@ class DynamicLossScaler(object):
     Shamelessly stolen from Fairseq.
 
     Dynamically adjusts the loss scaling factor. Useful for mixed-precision training.
+    Fairseq implementation can be found here:
+    <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py>
     """
 
     def __init__(
@@ -210,22 +221,15 @@ class DynamicLossScaler(object):
         if self.threshold is not None:
             self.loss_scale = max(self.loss_scale, self.threshold)
 
-    @staticmethod
-    def has_overflow(grad_norm):
-        """
-        Detect inf and NaN in grad_norm.
-        """
-        if grad_norm == float('inf') or grad_norm != grad_norm:
-            return True
-        return False
 
-
-class ParlAIFP16MemoryEfficientOptimizer(torch.optim.Optimizer):
+class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     """
     Wrap an optimizer to perform memory-efficient mixed precision training.
 
-    Heavily based on the fairseq implementation. This wraps an optimizer
-    to perform FP16 training.
+    This class wraps an optimizer to perform FP16 training.
+    This implementation is heavily based on the Fairseq implementation
+    of `MemoryEfficientFP16Optimizer`, which can be found here:
+    <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
 
     :param params:
         Model parameters
@@ -292,7 +296,7 @@ class ParlAIFP16MemoryEfficientOptimizer(torch.optim.Optimizer):
         self._unscale_grads()
         grad_norm = clip_grad_norm(self.params, gradient_clip)
         # detect overflow and adjust loss scale
-        overflow = DynamicLossScaler.has_overflow(grad_norm)
+        overflow = has_overflow(grad_norm)
         self.scaler.update_scale(overflow)
         if overflow:
             if self.scaler.loss_scale <= self.min_loss_scale:
@@ -313,7 +317,7 @@ class ParlAIFP16MemoryEfficientOptimizer(torch.optim.Optimizer):
         return grad_norm
 
     def update_master_grads(self):
-        # This should be a no-op here
+        # No-op
         pass
 
     def multiply_grads(self, c):

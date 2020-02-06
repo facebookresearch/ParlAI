@@ -38,7 +38,7 @@ from parlai.core.message import Message
 from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
-    ParlAIFP16MemoryEfficientOptimizer,
+    MemoryEfficientFP16Optimizer,
 )
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import argsort, padded_tensor
@@ -833,7 +833,7 @@ class TorchAgent(ABC, Agent):
                 self.optimizer = fp16_optimizer_wrapper(self.optimizer)
             else:
                 # Using memory efficient optimizer
-                self.optimizer = ParlAIFP16MemoryEfficientOptimizer(self.optimizer)
+                self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
         # TODO: we might want to hard reset optimizers here in the
         # case of fine tuning. Some rudimentary experiments seemed to
         # indicate that keeping adam weights around was desirable, so this
