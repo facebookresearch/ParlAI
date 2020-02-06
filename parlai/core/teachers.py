@@ -2137,12 +2137,12 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
                 value = False
             else:
                 try:
-                    value = int(raw_value)
+                    value = int(raw_value)  # type: ignore
                 except ValueError:
                     try:
-                        value = float(raw_value)
+                        value = float(raw_value)  # type: ignore
                     except ValueError:
-                        value = raw_value
+                        value = raw_value  # type: ignore
 
             opt[key] = value
         else:

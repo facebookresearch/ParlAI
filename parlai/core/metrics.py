@@ -73,10 +73,14 @@ class Metric(ABC):
         """
         pass
 
+    @abstractmethod
+    def __add__(self, other: Any) -> 'Metric':
+        raise NotImplementedError
+
     def __iadd__(self, other):
         return self.__radd__(other)
 
-    def __radd__(self, other):
+    def __radd__(self, other: Any):
         if other is None:
             return self
         return self.__add__(other)
@@ -380,10 +384,10 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     :param reports: Dict of tasks -> metrics.
     """
     # reporters is a list of teachers or worlds
-    m = {}
+    m: Dict[str, Metric] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
-            m[each_metric] = m.get(each_metric) + value
+            m[each_metric] = m.get(each_metric, None) + value
             if len(named_reports) > 1:
                 m[f'{task_id}/{each_metric}'] = value
     return m
@@ -393,7 +397,7 @@ def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]):
     """
     Combines metrics without regard for tracking provenence.
     """
-    m = {}
+    m: Dict[str, Metric] = {}
     for task_report in reports:
         for each_metric, value in task_report.items():
             m[each_metric] = m.get(each_metric) + value
