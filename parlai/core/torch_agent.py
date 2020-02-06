@@ -916,6 +916,8 @@ class TorchAgent(ABC, Agent):
         Example local metrics include ppl, token_acc, any other agent-specific
         metrics.
         """
+        if not self.__local_metrics_enabled:
+            return
         if keyname in self._local_metrics:
             # we could relax this already
             raise KeyError(f"Already recorded metrics for {keyname}")
