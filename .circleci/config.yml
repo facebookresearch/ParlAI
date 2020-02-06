@@ -151,7 +151,7 @@ jobs:
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: coverage run pytest --junitxml=test-results/junit.xml -m data -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data -v
       - <<: *codecov
       - store_test_results:
           path: test-results
