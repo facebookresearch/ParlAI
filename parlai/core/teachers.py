@@ -510,11 +510,18 @@ class DialogTeacher(FixedDialogTeacher):
         self.training = (
             self.datatype.startswith('train') and 'evalmode' not in self.datatype
         )
-        self.stream = 'stream' in self.datatype.split(':')
+        self.stream = 'stream' in self.datatype
 
         # first initialize any shared objects
         data_class = StreamDialogData if self.stream else DialogData
-        kwargs = {'cycle': self.training} if self.stream else {}
+        kwargs = (
+            # never cycle if "ordered" is in the datatype. this is used by
+            # build_dict to enumerate through the data exactly once while still
+            # marking examples as training examples.
+            {'cycle': self.training and 'ordered' not in self.datatype}
+            if self.stream
+            else {}
+        )
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
@@ -856,6 +863,11 @@ class StreamDialogData(DialogData):
         reached without reset being called.
     """
 
+    # represents that we haven't read in any data at all
+    _FIRST_PASS = None
+    # represents that we are out of data.
+    _END_OF_EPOCH = -1
+
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
@@ -881,7 +893,7 @@ class StreamDialogData(DialogData):
                 )
                 self.lock = Lock()
         self.entry_idx = 0
-        self.next_episode = None
+        self.cur_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
 
@@ -914,9 +926,8 @@ class StreamDialogData(DialogData):
         while True:
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
-            yield -1
             while not self.cycle:
-                yield -1
+                yield self._END_OF_EPOCH
 
     def load_length(self):
         """
@@ -968,35 +979,24 @@ class StreamDialogData(DialogData):
 
         When episode is done returns first entry of next episode.
         """
-        # first look up data
-        if self.next_episode != -1 or self.entry_idx != 0:
-            with self._lock():
-                if self.next_episode is None:
-                    self.next_episode = next(self.data)
-                if self.entry_idx == 0:
-                    self.cur_episode = self.next_episode
-                    self.next_episode = next(self.data)
-                entry = self.cur_episode[self.entry_idx]
-
-                # now pack it in a action-observation dictionary
-                table = self.build_table(entry)
-
-                episode_done = self.entry_idx == len(self.cur_episode) - 1
-                if episode_done:
-                    self.entry_idx = 0
-                else:
-                    self.entry_idx += 1
-                end_of_data = episode_done and self.next_episode is -1
-                if end_of_data and self.cycle:
-                    self.next_episode = next(self.data)
-
-                # last entry in this episode
-                table['episode_done'] = episode_done
+        if self.cur_episode is self._FIRST_PASS:
+            # first go around, always read off the episode
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+        if self.cur_episode == self._END_OF_EPOCH:
+            # we're done here
+            return {'episode_done': True}, True
+        entry = self.cur_episode[self.entry_idx]
+        table = self.build_table(entry)
+        episode_done = self.entry_idx == len(self.cur_episode) - 1
+        table['episode_done'] = episode_done
+        if episode_done:
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+            self.entry_idx = 0
         else:
-            table = {'episode_done': True}
-            end_of_data = True
-
-        return table, end_of_data
+            self.entry_idx += 1
+        return table, self.cur_episode == self._END_OF_EPOCH
 
     def reset(self):
         """
@@ -1005,13 +1005,12 @@ class StreamDialogData(DialogData):
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
-            self.next_episode = None
         elif not self.is_reset:
             # if main instance is not reset, reset datastream
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
-            self.next_episode = None
         self.entry_idx = 0
+        self.cur_episode = self._FIRST_PASS
         return self.data
 
 
