@@ -613,6 +613,10 @@ class TorchAgent(ABC, Agent):
 
         # used for sharing metrics back to the teacher
         self._local_metrics: Dict[str, List[Metric]] = {}
+        # we may want to temporarily disable local metrics, roughly similar to
+        # `with torch.no_grad`. See TorchGeneratorAgent._init_cuda_buffer for
+        # example
+        self.__local_metrics_enabled = True
 
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
@@ -881,6 +885,24 @@ class TorchAgent(ABC, Agent):
             self._number_training_updates = (
                 self.scheduler.get_initial_number_training_updates()
             )
+
+    def _control_local_metrics(self, enabled: bool = False, disabled: bool = False):
+        """
+        Used to temporarily disable local metrics.
+
+        This is useful for things like when you need to call super(), but
+        prevent the parent from recording some some metric. For example,
+        if you're forwarding a dummy batch or calling super() but still want to
+        modify the output.
+
+        You can compare this to torch.no_grad in its goal.
+        """
+        if not (enabled ^ disabled):
+            raise ValueError(
+                'You must provide exactly one of enabled or disabled to '
+                '_control_local_metrics.'
+            )
+        self.__local_metrics_enabled = enabled
 
     def record_local_metric(self, keyname: str, values: List[Metric]):
         """

@@ -468,12 +468,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         """
         Pre-initialize CUDA buffer by doing fake forward pass.
+
+        This is also used in distributed mode to force a worker to sync with others.
         """
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                loss = self.compute_loss(
-                    self._dummy_batch(batchsize, maxlen), skip_metrics=True
-                )
+                self._control_local_metrics(disabled=True)
+                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                self._control_local_metrics(enabled=True)
+                self._temporarily_disable_local_metrics = False
                 self.backward(loss)
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -540,7 +543,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return self._model_input(batch)
 
-    def compute_loss(self, batch, return_output=False, skip_metrics=False):
+    def compute_loss(self, batch, return_output=False):
         """
         Compute and return the loss for the given batch.
 
@@ -561,14 +564,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
-        if not skip_metrics:
-            self.record_local_metric(
-                'nll_loss', AverageMetric.many(loss, target_tokens)
-            )
-            self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
-            self.record_local_metric(
-                'token_acc', AverageMetric.many(correct, target_tokens)
-            )
+        self.record_local_metric('nll_loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        self.record_local_metric(
+            'token_acc', AverageMetric.many(correct, target_tokens)
+        )
         # actually do backwards loss
         loss = loss.sum()
         loss /= target_tokens.sum()  # average loss per token
