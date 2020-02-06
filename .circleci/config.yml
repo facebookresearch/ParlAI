@@ -140,17 +140,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-dt-{{ checksum "requirements.txt" }}
+          key: deps-v3-dt-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v2-dt-{{ checksum "requirements.txt" }}
+          key: deps-v3-dt-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m data
+          command: coverage run pytest --junitxml=test-results/junit.xml -m data -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -163,17 +164,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-osx-{{ checksum "requirements.txt" }}
+          key: deps-v3-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-v2-osx-{{ checksum "requirements.txt" }}
+          key: deps-v3-osx-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (OSX)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -189,17 +191,18 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -212,17 +215,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (py37)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -242,17 +246,18 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu13
       - save_cache:
-          key: deps-v2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.3)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -272,17 +277,18 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -302,18 +308,19 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
@@ -328,16 +335,17 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -349,7 +357,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-bw-{{ checksum "requirements.txt" }}
+          key: deps-v3-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -360,8 +368,9 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-v2-bw-{{ checksum "requirements.txt" }}
+          key: deps-v3-bw-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:
@@ -379,13 +388,14 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-dw-{{ checksum "requirements.txt" }}
+          key: deps-v3-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-dw-{{ checksum "requirements.txt" }}
+          key: deps-v3-dw-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:
