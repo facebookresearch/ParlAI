@@ -1161,8 +1161,8 @@ class DynamicBatchWorld(World):
         indices_idx = random.randint(0, len(indices) - 1)
 
         # we picked a random spot, but we can get better packing if we start at
-        # the last example with the same score, since we always pick move down
-        # to smaller examples.
+        # the last example with the same score, since we always move down to
+        # smaller examples.
         while indices_idx < len(indices) - 1 and (
             sum(self._scores[indices[indices_idx]])
             == sum(self._scores[indices[indices_idx + 1]])
