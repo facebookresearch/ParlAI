@@ -430,7 +430,16 @@ class Metrics(object):
         Record an accumulation to a metric.
         """
         if self._threadsafe:
-            self._queue.put((key, value))
+            try:
+                self._queue.put((key, value), timeout=0.1)
+            except queue.Full:
+                raise SystemError(
+                    "The metrics queue is full. This typically happens on OS X "
+                    "when we aren't reporting frequently enough to keep it drained "
+                    "and we are hitting the OS limit on queue size. Try lowering "
+                    "your batch size, or log more frequently, or avoid hogwild "
+                    "altogether."
+                )
         else:
             self._metrics[key] = self._metrics.get(key) + value
 
@@ -438,12 +447,14 @@ class Metrics(object):
         """
         Report the metrics over all data seen so far.
         """
-        self._sync()
+        self.sync()
         return {k: v for k, v in self._metrics.items()}
 
-    def _sync(self):
+    def sync(self):
         """
         Process all items on the queue to ensure it is up to date.
+
+        Should only be called in the root worker
         """
         for key, value in self._drain_queue():
             self._metrics[key] = self._metrics.get(key) + value

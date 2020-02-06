@@ -392,10 +392,17 @@ class DialogPartnerWorld(World):
             a.shutdown()
 
     def update_counters(self):
+        """
+        Ensure all counters are synchronized across threads.
+        """
         super().update_counters()
         for a in self.agents:
             if hasattr(a, 'update_counters'):
                 a.update_counters()
+            if hasattr(a, 'global_metrics'):
+                # torch agent has "global metrics" that might get backed up on OS X,
+                # see the SystemError exception in Metrics.
+                a.global_metrics.sync()
 
 
 class MultiAgentDialogWorld(World):
