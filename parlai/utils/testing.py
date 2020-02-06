@@ -265,8 +265,8 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     If model_file is not in opt, then this helper will create a temporary
     directory to store the model, dict, etc.
 
-    :return: (stdout, valid_results, test_results)
-    :rtype: (str, dict, dict)
+    :return: (valid_results, test_results)
+    :rtype: (dict, dict)
     """
     import parlai.scripts.train_model as tms
 

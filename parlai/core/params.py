@@ -660,7 +660,7 @@ class ParlaiParser(argparse.ArgumentParser):
             type=int,
             help='batch size for minibatch training schemes',
         )
-        pytorch.add_argument(
+        parlai.add_argument(
             '-nw',
             '--numworkers',
             type=int,

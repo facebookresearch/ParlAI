@@ -1345,6 +1345,11 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        kleenexs = [
+            {k: v for k, v in ex.items() if not isinstance(v, torch.Tensor)}
+            for ex in exs
+        ]
+
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
@@ -1355,7 +1360,7 @@ class TorchAgent(ABC, Agent):
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
-            observations=exs,
+            observations=kleenexs,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -1698,15 +1703,17 @@ class TorchAgent(ABC, Agent):
             Message({'id': self.getID(), 'episode_done': False})
             for _ in range(batch_size)
         ]
-
-        # check if there are any labels available, if so we will train on them
-        self.is_training = any('labels' in obs for obs in observations)
-
+        
         # create a batch from the vectors
         if not isinstance(observations, Batch):
             batch = self.batchify(observations)
         else:
             batch = observations
+
+        # check if there are any labels available, if so we will train on them
+        observations = batch.observations
+        self.is_training = any('labels' in obs for obs in observations)
+
 
         if self.is_training:
             output = self.train_step(batch)
