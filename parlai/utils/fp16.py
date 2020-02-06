@@ -123,7 +123,6 @@ def fp16_optimizer_wrapper(
 
 
 def fp16_apex_available() -> bool:
-    # TODO: deprecate this function parlai_fp16_optimizer is available
     try:
         import apex.fp16_utils  # noqa: F401
 
