@@ -69,9 +69,19 @@ def _build_encoder(
     n_positions=1024,
     n_segments=0,
 ):
+    if opt['num_encoder_layers'] > 0:
+        warn_once(
+            'Building a Asymmetrical Transformer with encoder size of {}.'.format(
+                opt['num_encoder_layers']
+            )
+        )
     return TransformerEncoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=(
+            opt['num_encoder_layers']
+            if opt['num_encoder_layers'] > 0
+            else opt['n_layers']
+        ),
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
@@ -94,9 +104,19 @@ def _build_encoder(
 def _build_decoder(
     opt, dictionary, embedding=None, padding_idx=None, n_positions=1024, n_segments=0
 ):
+    if opt['num_decoder_layers'] > 0:
+        warn_once(
+            'Building a Asymmetrical Transformer with decoder size of {}.'.format(
+                opt['num_decoder_layers']
+            )
+        )
     return TransformerDecoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=(
+            opt['num_encoder_layers']
+            if opt['num_encoder_layers'] > 0
+            else opt['n_layers']
+        ),
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
