@@ -67,6 +67,7 @@ installdeps: &installdeps
       pip install -q -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
+      pip3 install --progress-bar off tokenizers
 
 installtorchgpu14: &installtorchgpu14
   run:
