@@ -103,12 +103,14 @@ def add_common_cmdline_args(argparser):
         'in the memory network',
     )
     argparser.add_argument(
+        '-nel',
         '--n-encoder-layers',
         type=int,
         default=-1,
         help='This will overide the n-layers for asymmetrical transformers',
     )
     argparser.add_argument(
+        '-ndl',
         '--n-decoder-layers',
         type=int,
         default=-1,

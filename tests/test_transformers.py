@@ -519,48 +519,42 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
     def test_asymmetry(self):
-        opt = Opt({
+        opt = Opt({'model': 'transformer/generator', 'n_layers': 1})
+        agent = create_agent(opt)
+        self.assertEqual(agent.model.encoder.n_layers, 1)
+        self.assertEqual(agent.model.decoder.n_layers, 1)
+
+        opt = Opt(
+            {'model': 'transformer/generator', 'n_layers': 1, 'n_encoder_layers': 2}
+        )
+        agent = create_agent(opt)
+        self.assertEqual(agent.model.encoder.n_layers, 2)
+        self.assertEqual(agent.model.decoder.n_layers, 1)
+
+        opt = Opt(
+            {
                 'model': 'transformer/generator',
                 'n_layers': 1,
-           })
-        agent = create_agent(opt)
-        self.assertEqual(agent.model.encoder.n_layers, 1)
-        self.assertEqual(agent.model.decoder.n_layers, 1)
-
-        opt = Opt({
-                'model':'transformer/generator',
-                'n_layers': 1,
-                'n_encoder_layers': 2,
-           })
-        agent = create_agent(opt)
-        self.assertEqual(agent.model.encoder.n_layers, 2)
-        self.assertEqual(agent.model.decoder.n_layers, 1)
-
-        opt = Opt({
-                'model':'transformer/generator',
-                'n_layers': 1,
                 'n_encoder_layers': 2,
                 'n_decoder_layers': 4,
-           })
+            }
+        )
         agent = create_agent(opt)
         self.assertEqual(agent.model.encoder.n_layers, 2)
         self.assertEqual(agent.model.decoder.n_layers, 4)
 
-        opt = Opt({
-                'model':'transformer/generator',
-                'n_layers': 1,
-                'n_decoder_layers': 4,
-           })
+        opt = Opt(
+            {'model': 'transformer/generator', 'n_layers': 1, 'n_decoder_layers': 4}
+        )
         agent = create_agent(opt)
         self.assertEqual(agent.model.encoder.n_layers, 1)
         self.assertEqual(agent.model.decoder.n_layers, 4)
 
-        opt = Opt({
-                'model':'transformer/generator',
-           })
+        opt = Opt({'model': 'transformer/generator'})
         agent = create_agent(opt)
         self.assertEqual(agent.model.encoder.n_layers, 2)
         self.assertEqual(agent.model.decoder.n_layers, 2)
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """
@@ -587,7 +581,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             )
             # make sure the learning rate is decreasing
             self.assertLess(
-                valid2['lr'], valid1['lr'], 'Learning rate is not decreasing',
+                valid2['lr'], valid1['lr'], 'Learning rate is not decreasing'
             )
             # but make sure we're not loading the scheduler if we're fine
             # tuning
