@@ -1274,10 +1274,7 @@ class TorchAgent(ABC, Agent):
         to pad their input.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=self.fp16,
+            items, pad_idx=self.NULL_IDX, use_cuda=self.use_cuda, fp16friendly=self.fp16
         )
 
     def is_valid(self, obs):

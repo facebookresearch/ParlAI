@@ -346,11 +346,11 @@ class NoLock(object):
 
 class ForkedPdb(pdb.Pdb):
     """
-    A Pdb subclass that may be used
-    from a forked multiprocessing child
+    A Pdb subclass that may be used from a forked multiprocessing child.
 
     See https://stackoverflow.com/questions/4716533/how-to-attach-debugger-to-a-python-subproccess
     """
+
     def interaction(self, *args, **kwargs):
         _stdin = sys.stdin
         try:

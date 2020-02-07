@@ -52,13 +52,27 @@ from functools import lru_cache
 from typing import List, Dict, Any, Union, Tuple
 
 try:
-    from torch.multiprocessing import Process, Value, Semaphore, Queue, Condition, JoinableQueue
+    from torch.multiprocessing import (
+        Process,
+        Value,
+        Semaphore,
+        Queue,
+        Condition,
+        JoinableQueue,
+    )
     import torch
     import torch.multiprocessing as mp
 
     mp.set_start_method('spawn', force=True)
 except ImportError:
-    from multiprocessing import Process, Value, Semaphore, Queue, Condition, JoinableQueue  # noqa: F401
+    from multiprocessing import (
+        Process,
+        Value,
+        Semaphore,
+        Queue,
+        Condition,
+        JoinableQueue,
+    )  # noqa: F401
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
@@ -1538,7 +1552,8 @@ class HogwildWorld(World):
 
 
 class QueueSignal(Enum):
-    """Result of getting from Queue
+    """
+    Result of getting from Queue.
 
     BATCH:                normal result; a batch is in the Queue
     WORKER_FINISHED:      a worker is finished sending batch
@@ -1574,6 +1589,7 @@ class PWorld(ABC, World):
     it obtains actions from its ``consume_queue``. Finally, it places
     reports on its ``report_queue``.
     """
+
     def __init__(
         self,
         opt: Opt,
@@ -1661,7 +1677,7 @@ class PWorld(ABC, World):
 
     def _handle_buffers(self, batch_obs: List[Message]) -> Batch:
         """
-        Batchify list of observations and handle tensor buffers
+        Batchify list of observations and handle tensor buffers.
 
         :param batch_obs: a list of Messages
 
@@ -1705,6 +1721,7 @@ class PBatchWorld(PWorld, BatchWorld):
     """
     P Batch World.
     """
+
     def __init__(
         self,
         opt: Opt,
@@ -1714,7 +1731,9 @@ class PBatchWorld(PWorld, BatchWorld):
         consume_queue: Queue,
         worker_idx: int,
     ):
-        PWorld.__init__(self, opt, world, produce_queue, report_queue, consume_queue, worker_idx)
+        PWorld.__init__(
+            self, opt, world, produce_queue, report_queue, consume_queue, worker_idx
+        )
         BatchWorld.__init__(self, opt, world)
 
     def produce_observation(self) -> Union[List[Message], Batch]:
@@ -1739,6 +1758,7 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
     """
     P Dynamic Batchworld.
     """
+
     def __init__(
         self,
         opt: Opt,
@@ -1748,7 +1768,9 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
         consume_queue: Queue,
         worker_idx: int,
     ):
-        PWorld.__init__(self, opt, world, produce_queue, report_queue, consume_queue, worker_idx)
+        PWorld.__init__(
+            self, opt, world, produce_queue, report_queue, consume_queue, worker_idx
+        )
         DynamicBatchWorld.__init__(self, opt, world)
         self.batch_indices = None
 
@@ -1779,7 +1801,7 @@ def run_p_world(
     produce_queue: Queue,
     report_queue: Queue,
     consume_queue: Queue,
-    worker_idx: int
+    worker_idx: int,
 ):
     """
     Construct a pworld and run to completion.
@@ -1789,7 +1811,9 @@ def run_p_world(
 
     Then, it awaits further instruction, depending on what is required of the world.
     """
-    world = pworld_class(opt, world, produce_queue, report_queue, consume_queue, worker_idx)
+    world = pworld_class(
+        opt, world, produce_queue, report_queue, consume_queue, worker_idx
+    )
     while True:
         while not world.epoch_done():
             # print(f'worker parley in run p world: {worker_idx}')
@@ -1903,7 +1927,9 @@ class QueueWorld(World):
         """
         Override to account for finished workers.
         """
-        subworlds_done = self.world.epoch_done() or all(w.epoch_done() for w in self.worlds)
+        subworlds_done = self.world.epoch_done() or all(
+            w.epoch_done() for w in self.worlds
+        )
         return subworlds_done or len(self.finished_workers) == self.numworkers
 
     def save_agents(self):
@@ -1932,7 +1958,15 @@ class QueueWorld(World):
             self.processes.append(
                 Process(
                     target=run_p_world,
-                    args=(opt, subworld, pworld_class, self.produce_queue, self.report_queue, consume_queue, worker_idx),
+                    args=(
+                        opt,
+                        subworld,
+                        pworld_class,
+                        self.produce_queue,
+                        self.report_queue,
+                        consume_queue,
+                        worker_idx,
+                    ),
                     daemon=True,
                 )
             )
@@ -1962,7 +1996,9 @@ class QueueWorld(World):
             for w in self.worlds:
                 w.parley_init()
 
-    def _poll_produce_queue(self) -> Tuple[QueueSignal, Union[List[Message], Batch], int]:
+    def _poll_produce_queue(
+        self
+    ) -> Tuple[QueueSignal, Union[List[Message], Batch], int]:
         """
         Poll the QueueWorld's produce queue.
 
@@ -2018,9 +2054,8 @@ class QueueWorld(World):
         """
         QueueWorld parley.
 
-        QueueWorld receives a batch from its produce queue,
-        gives it to an agent to act, then puts it back on the
-        appropriate consume queue.
+        QueueWorld receives a batch from its produce queue, gives it to an agent to act,
+        then puts it back on the appropriate consume queue.
         """
         # print(f'1 QWORLD {id(self)} begin processes')
         self._maybe_begin_processes()
@@ -2040,9 +2075,11 @@ class QueueWorld(World):
         self.consume_queues[worker_idx].put_nowait((QueueSignal.BATCH, batch_acts))
         self.update_counters()
 
-    def batch_act(self, batch_observation: Union[List[Message], Batch]) -> List[Message]:
+    def batch_act(
+        self, batch_observation: Union[List[Message], Batch]
+    ) -> List[Message]:
         """
-        Batch act on agent
+        Batch act on agent.
 
         :param batch_observation:
             The observation that the agent will act upon
@@ -2097,7 +2134,9 @@ class QueueWorld(World):
 
     def reset_metrics(self):
         """
-        Reset metrics. (TODO possibly reset process metrics)
+        Reset metrics.
+
+        (TODO possibly reset process metrics)
         """
         self.world.reset_metrics()
         # for q in self.consume_queues:
@@ -2105,7 +2144,7 @@ class QueueWorld(World):
 
     def report(self) -> Dict[str, Union[str, int, Dict]]:
         """
-        Aggregate reports from each process
+        Aggregate reports from each process.
 
         :return: report
         :rtype: Dict

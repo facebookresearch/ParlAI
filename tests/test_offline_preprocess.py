@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Unit tests for QWorlds
+Unit tests for QWorlds.
 
 TODO:
     1. Test for normal Q World
@@ -35,19 +35,16 @@ BASE_ARGS = {
     'batchsize': 16,
     'optimizer': 'adamax',
     'learn_positional_embeddings': True,
-    'numworkers': 2
+    'numworkers': 2,
 }
 
-SINGLETASK_ARGS = {
-    'task': 'integration_tests:nocandidate',
-    'num_epochs': 1,
-}
+SINGLETASK_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 1}
 
 SINGLETASK_MULTIVALID_ARGS = {
     'task': 'integration_tests:nocandidate',
     'num_epochs': 2,
     'validation_every_n_epochs': 1,
-    'validation_metric': 'ppl'
+    'validation_metric': 'ppl',
 }
 
 MULTITASK_ARGS = {
@@ -59,7 +56,7 @@ MULTITASK_MULTIVALID_ARGS = {
     'task': 'integration_tests:nocandidate,integration_tests:multiturn_nocandidate',
     'num_epochs': 2,
     'validation_every_n_epochs': 1,
-    'validation_metric': 'ppl'
+    'validation_metric': 'ppl',
 }
 
 
@@ -79,9 +76,7 @@ class TestOfflinePreprocess(unittest.TestCase):
                 args['batchsize'] = bsz
                 valid, test = testing_utils.train_model(args)
                 for report in [valid, test]:
-                    self.assertEqual(
-                        report['exs'], NUM_TEST, f'args: {args}'
-                    )
+                    self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
                 self.assertEqual(
                     valid['total_train_updates'], test['total_train_updates']
                 )
@@ -98,9 +93,7 @@ class TestOfflinePreprocess(unittest.TestCase):
                 args['dynamic_batching'] = dyn_batch
                 valid, test = testing_utils.train_model(args)
                 for report in [valid, test]:
-                    self.assertEqual(
-                        report['exs'], NUM_TEST, f'args: {args}'
-                    )
+                    self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
                 self.assertEqual(
                     valid['total_train_updates'], test['total_train_updates']
                 )
@@ -123,7 +116,8 @@ class TestOfflinePreprocess(unittest.TestCase):
                         rep['tasks']['integration_tests:nocandidate']['exs'], NUM_TEST
                     )
                     self.assertEqual(
-                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'], NUM_TEST * 4
+                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'],
+                        NUM_TEST * 4,
                     )
 
                 self.assertEqual(
@@ -132,7 +126,7 @@ class TestOfflinePreprocess(unittest.TestCase):
 
     def test_multitask_dynamic_batching(self):
         """
-        Multitask dynamic batching
+        Multitask dynamic batching.
         """
         for extra_args in [MULTITASK_ARGS, MULTITASK_MULTIVALID_ARGS]:
             for dyn_batch in ['full', 'batchsort', 'none']:
@@ -149,7 +143,8 @@ class TestOfflinePreprocess(unittest.TestCase):
                         rep['tasks']['integration_tests:nocandidate']['exs'], NUM_TEST
                     )
                     self.assertEqual(
-                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'], NUM_TEST * 4
+                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'],
+                        NUM_TEST * 4,
                     )
 
                 self.assertEqual(
@@ -158,8 +153,8 @@ class TestOfflinePreprocess(unittest.TestCase):
 
     def test_real_train(self):
         """
-            Test if a model trained via offline preprocessing
-            does as well as one that is not.
+        Test if a model trained via offline preprocessing does as well as one that is
+        not.
         """
         pass
 
