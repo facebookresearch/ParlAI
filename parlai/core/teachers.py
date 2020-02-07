@@ -113,13 +113,11 @@ class Teacher(Agent):
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
-            if shared and shared.get('metrics'):
-                self.metrics = shared['metrics']
-            else:
-                self.metrics = TeacherMetrics(
-                    threadsafe=opt.get('numthreads', 1) > 1,
-                    metrics_list=opt.get('metrics', 'default'),
-                )
+            self.metrics = TeacherMetrics(
+                threadsafe=(opt.get('numthreads', 1) > 1),
+                metrics_list=opt.get('metrics', 'default'),
+                shared=shared['metrics'] if shared is not None else None,
+            )
         self.epochDone = False
 
     # return state/action dict based upon passed state
@@ -179,7 +177,7 @@ class Teacher(Agent):
         In addition to default Agent shared parameters, share metrics.
         """
         shared = super().share()
-        shared['metrics'] = self.metrics
+        shared['metrics'] = self.metrics.share()
         return shared
 
     def update_counters(self):

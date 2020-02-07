@@ -644,7 +644,7 @@ class TorchAgent(ABC, Agent):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
             # global_metrics keeps track of batch-level or global-level metrics
-            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1)
+            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1, shared=None)
             # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
         else:
@@ -654,7 +654,9 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            self.global_metrics = shared['global_metrics']
+            self.global_metrics = Metrics(
+                opt.get('numthreads', 1) > 1, shared=shared['global_metrics']
+            )
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -1079,7 +1081,7 @@ class TorchAgent(ABC, Agent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
-        shared['global_metrics'] = self.global_metrics
+        shared['global_metrics'] = self.global_metrics.share()
 
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -1785,6 +1787,9 @@ class TorchAgent(ABC, Agent):
                 if 'metrics' not in batch_reply[i]:
                     batch_reply[i]['metrics'] = {}
                 batch_reply[i]['metrics'][k] = value
+
+        # Make sure we push all the metrics to main thread in hogwild/workers
+        self.global_metrics.flush()
 
         return batch_reply
 

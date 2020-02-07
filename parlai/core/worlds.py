@@ -1524,7 +1524,7 @@ class HogwildWorld(World):
 
         # wait for threads to close
         for t in self.threads:
-            t.join()
+            t.terminate()
         self.inner_world.shutdown()
 
 

@@ -409,15 +409,22 @@ class Metrics(object):
     Threadsafe metrics container focused on aggregation.
     """
 
-    def __init__(self, threadsafe=False):
+    def __init__(self, threadsafe=False, shared=None):
         self._metrics = {}
         self._threadsafe = threadsafe
-        if self._threadsafe:
+        if self._threadsafe and shared is None:
             # Threadsafe metrics tracking works by keeping a queue that workers can
             # push updates to. the main worker works through the queue at report
             # time. We could add some buffering to improve performance, but we
             # are deprioritizing hogwild performance at this time.
-            self._queue = multiprocessing.Queue()
+            self._queue = multiprocessing.SimpleQueue()
+            self._worker = False
+        elif shared:
+            self._queue = shared['queue']
+            self._buffer = []
+            self._worker = True
+        else:
+            self._worker = False
 
     def __str__(self):
         return str(self._metrics)
@@ -430,8 +437,18 @@ class Metrics(object):
         Record an accumulation to a metric.
         """
         if self._threadsafe:
+            self._buffer.append((key, value))
+        else:
+            self._metrics[key] = self._metrics.get(key) + value
+
+    def flush(self):
+        """
+        Clear the local buffer and push it on.
+        """
+        if self._threadsafe and self._buffer:
             try:
-                self._queue.put((key, value), timeout=0.1)
+                self._queue.put(self._buffer[:])
+                self._buffer.clear()
             except queue.Full:
                 raise SystemError(
                     "The metrics queue is full. This typically happens on OS X "
@@ -440,8 +457,6 @@ class Metrics(object):
                     "your batch size, or log more frequently, or avoid hogwild "
                     "altogether."
                 )
-        else:
-            self._metrics[key] = self._metrics.get(key) + value
 
     def report(self):
         """
@@ -456,18 +471,20 @@ class Metrics(object):
 
         Should only be called in the root worker
         """
-        for key, value in self._drain_queue():
-            self._metrics[key] = self._metrics.get(key) + value
+        if self._worker:
+            self.flush()
+        elif self._threadsafe:
+            for buffer_ in self._drain_queue():
+                for key, value in buffer_:
+                    self._metrics[key] = self._metrics.get(key) + value
 
     def _drain_queue(self):
         """
         Drain the queue, yielding all items in it.
         """
-        if not self._threadsafe:
-            return
         while not self._queue.empty():
             try:
-                yield self._queue.get(timeout=0.05)
+                yield self._queue.get()
             except queue.Empty:
                 break
 
@@ -475,9 +492,17 @@ class Metrics(object):
         """
         Clear all the metrics.
         """
-        for _ in self._drain_queue():
-            pass
+        if self._worker:
+            self._buffer.clear()
+        elif self._threadsafe:
+            for _ in self._drain_queue():
+                pass
         self._metrics.clear()
+
+    def share(self):
+        return {
+            'queue': self._queue,
+        }
 
 
 class TeacherMetrics(Metrics):
@@ -485,8 +510,13 @@ class TeacherMetrics(Metrics):
     Helper container which encapsulates standard metrics (F1, BLEU, ...).
     """
 
-    def __init__(self, threadsafe: bool = False, metrics_list: str = "default") -> None:
-        super().__init__(threadsafe=threadsafe)
+    def __init__(
+        self,
+        threadsafe: bool = False,
+        metrics_list: str = "default",
+        shared: Dict[str, Any] = None,
+    ) -> None:
+        super().__init__(threadsafe=threadsafe, shared=shared)
         self._metrics_list = self._infer_metrics(metrics_list)
         self.eval_pr = [1, 5, 10, 100]
 
@@ -573,3 +603,6 @@ class TeacherMetrics(Metrics):
                     v = AverageMetric(v)
                 assert isinstance(v, Metric)
                 self.add(uk, v)
+
+        # always flush at the end of processing this response
+        self.flush()
