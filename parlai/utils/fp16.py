@@ -257,8 +257,8 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     @staticmethod
     def compatible_optimizers():
         return [
-            'sgd',
             'adam',
+            'mem_eff_adam',
             'adafactor',
         ]
 

@@ -854,7 +854,6 @@ class TorchAgent(ABC, Agent):
                 'switch to --optimizer adam.'
             )
 
-        # TODO: if self.fp16 and self.fp16_impl == 'mem_efficient'... check that class is ok
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
@@ -862,6 +861,15 @@ class TorchAgent(ABC, Agent):
                 self.optimizer = fp16_optimizer_wrapper(self.optimizer)
             else:
                 # Using memory efficient optimizer
+                opt_name = opt['optimizer']
+                compatible_list = MemoryEfficientFP16Optimizer.compatible_optimizers()
+                is_compat = opt_name in compatible_list
+                if not is_compat:
+                    raise RuntimeError(
+                        f'The optimizer you selected {opt_name} is not compatible '
+                        'with Memory Efficient FP16. Please select from among this '
+                        f'list:\n{compatible_list}'
+                    )
                 self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
         # TODO: we might want to hard reset optimizers here in the
         # case of fine tuning. Some rudimentary experiments seemed to
