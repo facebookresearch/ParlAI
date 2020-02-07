@@ -52,13 +52,7 @@ from functools import lru_cache
 from typing import List, Dict, Any, Union, Tuple
 
 try:
-    from torch.multiprocessing import (
-        Process,
-        Value,
-        Semaphore,
-        Queue,
-        JoinableQueue,
-    )
+    from torch.multiprocessing import Process, Value, Semaphore, Queue, JoinableQueue
     import torch
     import torch.multiprocessing as mp
 
@@ -2108,7 +2102,7 @@ class QueueWorld(World):
         """
         self.world.reset_metrics()
         # for q in self.consume_queues:
-            # q.put_nowait((QueueSignal.RESET_METRICS, None))
+        # q.put_nowait((QueueSignal.RESET_METRICS, None))
 
     def report(self) -> Dict[str, Union[str, int, Dict]]:
         """
