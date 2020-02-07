@@ -57,7 +57,6 @@ try:
         Value,
         Semaphore,
         Queue,
-        Condition,
         JoinableQueue,
     )
     import torch
@@ -70,7 +69,6 @@ except ImportError:
         Value,
         Semaphore,
         Queue,
-        Condition,
         JoinableQueue,
     )  # noqa: F401
 
@@ -390,11 +388,9 @@ class DialogPartnerWorld(World):
 
         # DEPRECATIONDAY: should we get rid of this option?
         metrics = {}
-        # import pdb; pdb.set_trace()
         for a in self.agents:
             if hasattr(a, 'report'):
                 m = a.report()
-                # import pdb; pdb.set_trace()
                 for k, v in m.items():
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
@@ -1553,7 +1549,7 @@ class HogwildWorld(World):
 
 class QueueSignal(Enum):
     """
-    Result of getting from Queue.
+    Command signal used in the Queues for QueueWorld.
 
     BATCH:                normal result; a batch is in the Queue
     WORKER_FINISHED:      a worker is finished sending batch
@@ -1635,28 +1631,20 @@ class PWorld(ABC, World):
 
         Consume a batch act.
         """
-        # print(f'A worker {id(self)} parley beginning')
         if self.produce_batch and self.begun:
-            # print(f'B worker {id(self)} producing an obs')
             self.num_prod += 1
-            # print(f'num PROCESS prod: {self.num_prod}')
             obs = self.produce_observation()
             self.produce_queue.put_nowait((QueueSignal.BATCH, obs, self.worker_idx))
-        # print(f'C worker {id(self)} getting an act')
         queue_result, act = self.consume_queue.get()
-        # print(f'queue result: {queue_result}')
         if queue_result == QueueSignal.RESET:
-            # print(f'C1 worker {id(self)} reset')
             # RESET
             self.produce_batch = True
             self.reset()
         elif queue_result == QueueSignal.RESET_METRICS:
-            # print(f'C1 worker {id(self)} reset')
             # RESET
             self.produce_batch = True
             self.reset_metrics()
         elif queue_result == QueueSignal.REPORT:
-            # print(f'C2 worker {id(self)} reporting')
             self.produce_batch = False
             self.enqueue_report()
         elif queue_result == QueueSignal.TERMINATE:
@@ -1668,10 +1656,8 @@ class PWorld(ABC, World):
             self.produce_batch = True
             return
         else:  # QueueSignal.BATCH
-            # print(f'C3 worker {id(self)} consuming act')
             self.produce_batch = True
             self.num_consume += 1
-            # print(f'num PROCESS consume: {self.num_consume}')
             self.consume_act(act)
             self.update_counters()
 
@@ -1705,11 +1691,9 @@ class PWorld(ABC, World):
         return batch_obs
 
     def enqueue_report(self):
-        # print(f'A worker {id(self)} enqueue report')
         self.report_queue.put_nowait(self.report())
 
     def reset(self):
-        # print(f'A worker {id(self)} reset')
         super().reset()
         self.has_reset = True
         self.buffers = {}
@@ -1778,7 +1762,6 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
         self.num_prod += 1
         assert self.batch_indices is None
         batch, batch_obs = self._build_batch()
-        # print(batch_obs)
         self.batch_indices = batch
         if hasattr(self.world.get_model_agent(), 'batchify'):
             batch_obs = self._handle_buffers(batch_obs)
@@ -1816,18 +1799,13 @@ def run_p_world(
     )
     while True:
         while not world.epoch_done():
-            # print(f'worker parley in run p world: {worker_idx}')
             world.parley()
-        # print(f'RUN P WORLD {id(world)} epoch done')
         # one more time to observe
-        # world.parley()
         produce_queue.put((QueueSignal.WORKER_FINISHED, None, worker_idx))
         while True:
-            # print(f'RUN P WORLD {id(world)} waiting on consume queue')
             signal, batch = consume_queue.get()
-            # print(f'signal from after epoch done: {signal}')
             if signal == QueueSignal.BATCH:
-                print(batch)
+                # TODO: determine why this happens
                 world.consume_act(batch)
             elif signal == QueueSignal.REPORT:
                 world.enqueue_report()
@@ -1853,6 +1831,8 @@ class QueueWorld(World):
             This allows buffers to be reused amongst processes and signficantly reduces
             overhead. The reason for this is that copying tensors to/from queues is
             _costly_
+
+    Most importantly - please mind your Ps and Qs :)
     """
 
     def __init__(self, opt: Opt, world: World, pworld_class: type):
@@ -1868,7 +1848,6 @@ class QueueWorld(World):
         self.finished_workers: List[int] = []
         self.training = 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']
         self.numworkers = opt['numworkers'] if self.training else 1
-        # print(f'i have {self.numworkers} numworkers')
         self.init_parley = True
         self.num_consume = 0
         self._init_workers(opt, world, pworld_class)
@@ -2019,7 +1998,6 @@ class QueueWorld(World):
                 self.finished_workers.append(worker_idx)
         if queue_result == QueueSignal.BATCH:
             self.num_consume += 1
-            # print(f'num MASTER consumed {self.num_consume}')
         return queue_result, batch_obs, worker_idx
 
     def _maybe_handle_buffers(self, batch_obs: Batch, worker_idx: int) -> Batch:
@@ -2057,21 +2035,13 @@ class QueueWorld(World):
         QueueWorld receives a batch from its produce queue, gives it to an agent to act,
         then puts it back on the appropriate consume queue.
         """
-        # print(f'1 QWORLD {id(self)} begin processes')
         self._maybe_begin_processes()
-        # print(f'2 QWORLD {id(self)} parley init')
         self._maybe_parley_init()
-        # print(f'3 QWORLD {id(self)} polling prod queue')
         queue_result, batch_obs, worker_idx = self._poll_produce_queue()
-        # print(f'4 QWORLD {id(self)} checking if epoch done')
         if self.epoch_done():
-            # print(f'4a QWORLD {id(self)} EPOCH DONE')
             return
-        # print(f'5 QWORLD {id(self)} handling buffers')
         batch_obs = self._maybe_handle_buffers(batch_obs, worker_idx)
-        # print(f'6 QWORLD {id(self)} batch acting')
         batch_acts = self.batch_act(batch_obs)
-        # print(f'7 QWORLD {id(self)} putting on consume queue')
         self.consume_queues[worker_idx].put_nowait((QueueSignal.BATCH, batch_acts))
         self.update_counters()
 
@@ -2103,7 +2073,6 @@ class QueueWorld(World):
         """
         Shutdown subworlds and close all queues.
         """
-        # print(f'1 QWORLD {id(self)} shutting down')
         for w in self.worlds:
             w.shutdown()
         self.world.shutdown()
@@ -2121,7 +2090,6 @@ class QueueWorld(World):
         self.world.reset()
         for w in self.worlds:
             w.reset()
-        # print(f'1 QWORLD {id(self)} resetting')
         while True:
             try:
                 self.produce_queue.get_nowait()
@@ -2140,7 +2108,7 @@ class QueueWorld(World):
         """
         self.world.reset_metrics()
         # for q in self.consume_queues:
-        #     q.put_nowait((QueueSignal.RESET_METRICS, None))
+            # q.put_nowait((QueueSignal.RESET_METRICS, None))
 
     def report(self) -> Dict[str, Union[str, int, Dict]]:
         """
@@ -2149,17 +2117,13 @@ class QueueWorld(World):
         :return: report
         :rtype: Dict
         """
-        # print(f'1 QWORLD {id(self)} reporting')
         for q in self.consume_queues:
             q.put((QueueSignal.REPORT, None))
         reports: List[Dict] = []
         while len(reports) < self.numworkers:
-            # print(f'2 QWORLD {id(self)} len reports: {len(reports)}')
-            # print(f'3 QWORLD {id(self)} num needed: {self.numworkers}')
             reports.append(self.report_queue.get())
         # TODO: Aggregate correctly
         report = {'exs': sum(r.get('exs', 0) for r in reports)}
-        # print(f'4 QWORLD {id(self)} done reporting!: {self.numworkers}')
         report.update(self.world.report())
         return report
 

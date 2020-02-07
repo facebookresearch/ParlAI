@@ -5,14 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Unit tests for QWorlds.
-
-TODO:
-    1. Test for normal Q World
-    2. Test for normal Q Batch World (X)
-    3. Test for multitask Q Batch World (X)
-    4. Test for dynamic batch world
-    5. Test that eval regular model gets same metrics
+Unit tests for QueueWorlds.
 """
 import unittest
 import parlai.utils.testing as testing_utils
@@ -150,13 +143,6 @@ class TestOfflinePreprocess(unittest.TestCase):
                 self.assertEqual(
                     valid['total_train_updates'], test['total_train_updates']
                 )
-
-    def test_real_train(self):
-        """
-        Test if a model trained via offline preprocessing does as well as one that is
-        not.
-        """
-        pass
 
 
 if __name__ == "__main__":
