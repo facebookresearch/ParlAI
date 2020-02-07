@@ -10,16 +10,25 @@ Utility methods for dealing with torch code.
 from typing import Union, Optional, Tuple, Any, List, Sized
 from parlai.utils.misc import warn_once
 
+
 try:
     import torch
 except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 import torch.optim
+import torch.nn.functional as F
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
 NEAR_INF_FP16 = 65504
+
+# according to the tensor cores documentation from nvidia, the matmuls in fp16
+# must all be multiples of 8 in order to get the speedup from fp16. We set this
+# as a constant here for clarity and convenience.  See
+# https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for more
+# information.
+FP16_PAD_SIZE = 8
 
 
 def neginf(dtype: torch.dtype) -> float:
@@ -41,7 +50,7 @@ def padded_tensor(
     fp16friendly: bool = False,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
-    Create a right-padded matrix from an uneven list of lists.
+    Create a padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
     is a list containing the lengths of each row.
@@ -57,7 +66,7 @@ def padded_tensor(
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
-    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
+    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 4.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -73,9 +82,9 @@ def padded_tensor(
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
 
-    if fp16friendly and (t % 8 != 0):
-        # pad to be a multiple of 8 to ensure we use the tensor cores
-        t += 8 - (t % 8)
+    if fp16friendly and (t % FP16_PAD_SIZE != 0):
+        # pad to be fp16 friendly
+        t += FP16_PAD_SIZE - (t % FP16_PAD_SIZE)
 
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
@@ -130,8 +139,8 @@ def padded_3d(
     c = max(len(item) for row in tensors for item in row)  # type: ignore
 
     # pad empty tensors
-    if fp16friendly and c % 8 != 0:
-        c += 8 - (c % 8)
+    if fp16friendly and c % FP16_PAD_SIZE != 0:
+        c += FP16_PAD_SIZE - (c % FP16_PAD_SIZE)
     c = max(c, 1)
 
     output = torch.full((a, b, c), pad_idx, dtype=dtype)
@@ -268,6 +277,27 @@ def fp16_available() -> bool:
             'install APEX from https://github.com/NVIDIA/apex.'
         )
         return False
+
+
+class FP16SafeCrossEntropy(torch.nn.Module):
+    """
+    FP16-safe cross entropy loss.
+
+    This avoids overflow in the softmax by doing the operation in FP32.
+    """
+
+    def __init__(self, ignore_index, reduction='none'):
+        super().__init__()
+        self.NULL_IDX = ignore_index
+        self.reduction = reduction
+
+    def forward(self, scores, targets):
+        return F.nll_loss(
+            F.log_softmax(scores, 1, dtype=torch.float32),
+            targets,
+            ignore_index=self.NULL_IDX,
+            reduction=self.reduction,
+        )
 
 
 class IdentityLayer(torch.nn.Module):

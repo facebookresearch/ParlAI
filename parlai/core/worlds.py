@@ -309,7 +309,9 @@ class DialogPartnerWorld(World):
     chance to speak per turn and passing that back to the other one.
     """
 
-    def __init__(self, opt: Opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
+        if not ((agents is not None) ^ (shared is not None)):
+            raise ValueError('You must supply either agents or shared, but not both.')
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
@@ -334,7 +336,7 @@ class DialogPartnerWorld(World):
 
     def get_model_agent(self):
         """
-        Return model agent.
+        Return model agent, if applicable.
         """
         return self.get_agents()[1]
 
@@ -644,9 +646,12 @@ class MultiWorld(World):
         """
         Not possible/well-defined in this setting.
         """
-        raise RuntimeError('get_task_agent not defined for Multiworld')
+        return self.worlds[self.world_idx].get_task_agent()
 
     def get_model_agent(self):
+        """
+        Not implemented.
+        """
         return self.worlds[self.world_idx].get_model_agent()
 
     def get_acts(self):
@@ -1012,6 +1017,222 @@ class BatchWorld(World):
         for w in self.worlds:
             w.shutdown()
         self.world.shutdown()
+
+
+class DynamicBatchWorld(World):
+    def __init__(self, opt: Opt, world: Union[DialogPartnerWorld, MultiWorld]):
+        super().__init__(opt)
+        self.opt = opt
+
+        # agents is a placeholder just for super.reset
+        self.agents = []
+
+        # check some assumptions
+        if isinstance(
+            world, (ExecutableWorld, BatchWorld, HogwildWorld, MultiAgentDialogWorld)
+        ):
+            raise TypeError(
+                'World must be a DialogPartnerWorld or a '
+                'MultiWorld of DialogPartnerWorld'
+            )
+
+        if len(world.get_agents()) != 2:
+            raise AssertionError(
+                "Dynamic batch only works in a fixed dialog world with two agents."
+            )
+
+        if not hasattr(world.get_model_agent(), 'batch_act'):
+            raise TypeError("Model agent doesn't have batch_act.")
+
+        self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
+        self.l_truncate = opt.get('label_truncate', None) or opt.get('truncate', None)
+        if self.truncate is None or self.truncate < 0:
+            raise ValueError(
+                'You must use --text-truncate or --truncate in order to use '
+                'dynamic batching.'
+            )
+
+        # size of the buffer we will use to find worlds
+        self._BUFFER_SIZE = 1021  # chosen as a prime number
+
+        if opt['dynamic_batching'] == 'full':
+            # full dynamic batching, we can grow our batchsize
+            self.max_batch_size = self._BUFFER_SIZE
+        else:
+            # simple batchsort
+            self.max_batch_size = opt['batchsize']
+
+        # TODO: check to ensure the agent has self_observe
+        shared = world.share()
+        self.world = world
+        # TODO: maybe generalize this
+        self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
+
+        # buffer worlds
+        self.worlds = [
+            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
+        ]
+
+        self.reset()
+
+    def reset(self):
+        super().reset()
+        self._obs = [None for _ in range(self._BUFFER_SIZE)]
+        self._scores = [None for _ in range(self._BUFFER_SIZE)]
+
+        self.number_parleys = 0
+        self.total_exs = 0
+        self.world.reset()
+        self.rng = random.Random(4)
+        for w in self.worlds:
+            w.reset()
+
+    def reset_metrics(self):
+        super().reset_metrics()
+        self.world.reset_metrics()
+        for w in self.worlds:
+            w.reset_metrics()
+
+    def epoch_done(self):
+        return (
+            self.world.epoch_done()
+            or all(w.epoch_done() for w in self.worlds)
+            and all(s is None for s in self._scores)
+        )
+
+    def num_examples(self):
+        return self.world.num_examples()
+
+    def num_episodes(self):
+        return self.world.num_episodes()
+
+    def _ceil(self, n):
+        """
+        Round to the nearest multiple of 8.
+
+        TensorCores only work when a tensor is a multiple of 8 in almost all
+        dimensions. This means all examples cost is related to their nearest
+        multiple of 8.
+
+        See https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for
+        more information.
+        """
+        # round up to r, all things are equal
+        from parlai.utils.torch import FP16_PAD_SIZE
+
+        return ((n + FP16_PAD_SIZE - 1) // FP16_PAD_SIZE) * FP16_PAD_SIZE
+
+    def _score(self, obs):
+        if 'text_vec' in obs:
+            # note that all examples have a cost that is based on their
+            # nearest multiple of 4. We can therefore mix-and-match
+            # anything with the same cost for increased stochasticity,
+            # while not really wasting much padding.
+            return tuple(
+                self._ceil(len(obs[key]))
+                for key in ['text_vec', 'labels_vec', 'eval_labels_vec']
+                if key in obs
+            )
+        else:
+            return None
+
+    def parley(self):
+        # first make sure that all the worlds are processed in the queue
+        indices = []
+        for i in range(self._BUFFER_SIZE):
+            if self._scores[i] is not None:
+                indices.append(i)
+                continue
+            if self.worlds[i].epoch_done():
+                continue
+
+            if hasattr(self.world, 'parley_init'):
+                self.worlds[i].parley_init()
+
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
+            self._obs[i] = obs
+
+            self._scores[i] = self._score(obs)
+            if self._scores[i] is not None:
+                indices.append(i)
+
+        # quick invariant checks
+        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+        assert not any(self._scores[i] is None for i in indices)
+
+        # sort all the indices by their score, so that we can find similarly lengthed
+        # items in O(1)
+        indices = sorted(indices, key=lambda i: self._scores[i] + (self.rng.random(),))
+
+        # now let's build the batch
+        batch = []
+
+        # start with a random item. indices_idx is the lookup into indices, but
+        # index is the actual world.
+        width = 0
+        indices_idx = random.randint(0, len(indices) - 1)
+
+        # we picked a random spot, but we can get better packing if we start at
+        # the last example with the same score, since we always move down to
+        # smaller examples.
+        while indices_idx < len(indices) - 1 and (
+            sum(self._scores[indices[indices_idx]])
+            == sum(self._scores[indices[indices_idx + 1]])
+        ):
+            indices_idx += 1
+
+        # quit early if we eat our full buffer
+        while indices:
+            index = indices[indices_idx]
+            this_width = self._ceil(sum(self._scores[index]))
+            new_width = max(width, this_width)
+            # compute the cost of the new batch
+            new_bsz = self._ceil(len(batch) + 1)
+            new_words = new_width * new_bsz
+            if new_words <= self.max_words and new_bsz <= self.max_batch_size:
+                # cool, this one fits, let's add it
+                width = new_width
+                batch.append(index)
+                indices.pop(indices_idx)
+                indices_idx = max(indices_idx - 1, 0)
+            else:
+                # we'd overfill our buffer, give up
+                break
+
+        # Always have a batch size that's a multiple of 4, for fp16's sake.
+        while len(batch) > 4 and len(batch) % 4 != 0:
+            # pop off the shortest one. it's easiest to pack in later
+            batch.pop(-1)
+
+        # double check our assumed invariant
+        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_words
+        assert self._ceil(len(batch)) <= self.max_batch_size
+
+        # great, this batch is good to go! let's run it!
+        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
+        # broadcast the results back to all the models
+        for i, act in zip(batch, acts):
+            # we need to make sure that the teachers saw the result
+            self.worlds[i].get_task_agent().observe(act)
+            # and that the agent copies saw their own voice
+            self.worlds[i].get_model_agent().self_observe(act)
+
+            # move these worlds forward
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
+            self._scores[i] = self._score(obs)
+            self._obs[i] = obs
+
+        # update metrics
+        self.total_parleys += 1
+        self.total_exs += len(batch)
+
+    def get_total_epochs(self):
+        return self.total_exs / self.num_examples()
+
+    def report(self):
+        return self.world.report()
 
 
 class HogwildProcess(Process):
@@ -1460,6 +1681,13 @@ class PBatchWorld(PWorld, BatchWorld):
         return batch_obs
 
 
+class PDynBatchWorld(PWorld, DynamicBatchWorld):
+    """
+    P Dynamic Batchworld
+    """
+    pass
+
+
 def run_p_world(opt, world, pworld_class, produce_queue, report_queue, consume_queue, worker_idx, op_queue):
     world = pworld_class(opt, world, produce_queue, report_queue, consume_queue, worker_idx)
     running = True
@@ -1755,8 +1983,13 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
     elif opt.get('numworkers', 1) > 1:
-        world = QueueWorld(opt, world, PBatchWorld)
-    elif opt.get('batchsize', 1) >= 1:
+        if opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
+            world = QueueWorld(opt, world, PDynBatchWorld)
+        else:
+            world = QueueWorld(opt, world, PBatchWorld)
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
+        world = DynamicBatchWorld(opt, world)
+    elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)
 
