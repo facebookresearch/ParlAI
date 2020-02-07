@@ -9,7 +9,9 @@ File for miscellaneous utility functions and constants.
 
 from collections import deque
 import math
+import pdb
 import random
+import sys
 import time
 from typing import Union, Optional, Set, Any, Dict, List
 import warnings
@@ -340,6 +342,22 @@ class NoLock(object):
         No-op.
         """
         pass
+
+
+class ForkedPdb(pdb.Pdb):
+    """
+    A Pdb subclass that may be used
+    from a forked multiprocessing child
+
+    See https://stackoverflow.com/questions/4716533/how-to-attach-debugger-to-a-python-subproccess
+    """
+    def interaction(self, *args, **kwargs):
+        _stdin = sys.stdin
+        try:
+            sys.stdin = open('/dev/stdin')
+            pdb.Pdb.interaction(self, *args, **kwargs)
+        finally:
+            sys.stdin = _stdin
 
 
 def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:

@@ -1722,7 +1722,7 @@ class TorchAgent(ABC, Agent):
             Message({'id': self.getID(), 'episode_done': False})
             for _ in range(batch_size)
         ]
-        
+
         # create a batch from the vectors
         if not isinstance(observations, Batch):
             batch = self.batchify(observations)
@@ -1732,7 +1732,6 @@ class TorchAgent(ABC, Agent):
         # check if there are any labels available, if so we will train on them
         observations = batch.observations
         self.is_training = any('labels' in obs for obs in observations)
-
 
         if self.is_training:
             output = self.train_step(batch)

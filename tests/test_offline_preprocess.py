@@ -68,7 +68,7 @@ class TestOfflinePreprocess(unittest.TestCase):
     Test the Q worlds and the P worlds.
     """
 
-    def test_batch_world(self):
+    def test_singletask(self):
         """
         Normal test - test if model can train via batchworld.
         """
@@ -80,13 +80,32 @@ class TestOfflinePreprocess(unittest.TestCase):
                 valid, test = testing_utils.train_model(args)
                 for report in [valid, test]:
                     self.assertEqual(
-                        report['exs'], NUM_TEST
+                        report['exs'], NUM_TEST, f'args: {args}'
                     )
                 self.assertEqual(
                     valid['total_train_updates'], test['total_train_updates']
                 )
 
-    def test_multitask_batch_world(self):
+    def test_singletask_dynb(self):
+        """
+        Test batchworld singletask.
+        """
+        for extra_args in [SINGLETASK_ARGS, SINGLETASK_MULTIVALID_ARGS]:
+            for dyn_batch in ['full', 'batchsort', 'none']:
+                args = BASE_ARGS.copy()
+                args.update(extra_args)
+                args['batchsize'] = 16
+                args['dynamic_batching'] = dyn_batch
+                valid, test = testing_utils.train_model(args)
+                for report in [valid, test]:
+                    self.assertEqual(
+                        report['exs'], NUM_TEST, f'args: {args}'
+                    )
+                self.assertEqual(
+                    valid['total_train_updates'], test['total_train_updates']
+                )
+
+    def test_multitask(self):
         """
         Normal test - test if model can train via batchworld.
         """
@@ -98,7 +117,33 @@ class TestOfflinePreprocess(unittest.TestCase):
                 valid, test = testing_utils.train_model(args)
                 for rep in [valid, test]:
                     self.assertEqual(
-                        rep['exs'], NUM_TEST + (NUM_TEST * 4)
+                        rep['exs'], NUM_TEST + (NUM_TEST * 4), f'args: {args}'
+                    )
+                    self.assertEqual(
+                        rep['tasks']['integration_tests:nocandidate']['exs'], NUM_TEST
+                    )
+                    self.assertEqual(
+                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'], NUM_TEST * 4
+                    )
+
+                self.assertEqual(
+                    valid['total_train_updates'], test['total_train_updates']
+                )
+
+    def test_multitask_dynamic_batching(self):
+        """
+        Multitask dynamic batching
+        """
+        for extra_args in [MULTITASK_ARGS, MULTITASK_MULTIVALID_ARGS]:
+            for dyn_batch in ['full', 'batchsort', 'none']:
+                args = BASE_ARGS.copy()
+                args.update(extra_args)
+                args['batchsize'] = 16
+                args['dynamic_batching'] = dyn_batch
+                valid, test = testing_utils.train_model(args)
+                for rep in [valid, test]:
+                    self.assertEqual(
+                        rep['exs'], NUM_TEST + (NUM_TEST * 4), f'args: {args}'
                     )
                     self.assertEqual(
                         rep['tasks']['integration_tests:nocandidate']['exs'], NUM_TEST
@@ -117,7 +162,6 @@ class TestOfflinePreprocess(unittest.TestCase):
             does as well as one that is not.
         """
         pass
-
 
 
 if __name__ == "__main__":
