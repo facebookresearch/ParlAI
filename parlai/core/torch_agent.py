@@ -40,6 +40,7 @@ from parlai.utils.fp16 import (
     fp16_optimizer_wrapper,
     MemoryEfficientFP16Optimizer,
     MemoryEfficientFP16Adam,
+    Adafactor,
 )
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import argsort, padded_tensor
@@ -366,6 +367,7 @@ class TorchAgent(ABC, Agent):
 
         # now pull in memory efficient implementations
         optims['mem_eff_adam'] = MemoryEfficientFP16Adam
+        optims['adafactor'] = Adafactor
 
         return optims
 
@@ -478,6 +480,13 @@ class TorchAgent(ABC, Agent):
             hidden=True,
             help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
             'large model has stability issues, but prefer the default.',
+        )
+        optim_group.add_argument(
+            '--adafactor-eps',
+            default='1e-30,1e-3',
+            type='floats',
+            help='Epsilon values for adafactor optimizer: regularization'
+            'constants for square gradienta nd parameter scale respectively',
         )
         optim_group.add_argument(
             '-mom',
@@ -811,7 +820,19 @@ class TorchAgent(ABC, Agent):
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
-        if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
+        elif opt['optimizer'] == 'adafactor':
+            # adafactor params
+            kwargs['beta1'] = opt.get('betas', (0.9, 0.999))[0]
+            kwargs['eps'] = opt['adafactor_eps']
+            kwargs['warmup_init'] = opt.get('warmup_updates', -1) > 0
+
+        if opt['optimizer'] in [
+            'adam',
+            'sparseadam',
+            'fused_adam',
+            'adamax',
+            'qhadam',
+        ]:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
             # set adam optimizer, but only if user specified it
