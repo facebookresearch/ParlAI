@@ -410,7 +410,6 @@ class Metrics(object):
     """
 
     def __init__(self, threadsafe=False, shared=None):
-        self._metrics = {}
         self._threadsafe = threadsafe
         if self._threadsafe and shared is None:
             # Threadsafe metrics tracking works by keeping a queue that workers can
@@ -419,19 +418,29 @@ class Metrics(object):
             # are deprioritizing hogwild performance at this time.
             self._queue = multiprocessing.SimpleQueue()
             self._worker = False
+            self._data = None
         elif shared:
-            self._queue = shared['queue']
-            self._buffer = []
-            self._worker = True
+            if 'queue' in shared:
+                # This is a clone, in threadsafe mode
+                self._queue = shared['queue']
+                self._buffer = []
+                self._worker = True
+            else:
+                # This is a clone, in non-threadsafe mode
+                self._queue = True
+                self._data = shared['data']
+                self._worker = False
         else:
+            # The original in non-threadsafe mode
             self._queue = None
             self._worker = False
+            self._data = {}
 
     def __str__(self):
-        return str(self._metrics)
+        return str(self._data)
 
     def __repr__(self):
-        return f'Metrics({repr(self._metrics)})'
+        return f'Metrics({repr(self._data)})'
 
     def add(self, key: str, value: Optional[Metric]) -> None:
         """
@@ -440,7 +449,7 @@ class Metrics(object):
         if self._threadsafe:
             self._buffer.append((key, value))
         else:
-            self._metrics[key] = self._metrics.get(key) + value
+            self._data[key] = self._data.get(key) + value
 
     def flush(self):
         """
@@ -464,7 +473,7 @@ class Metrics(object):
         Report the metrics over all data seen so far.
         """
         self.sync()
-        return {k: v for k, v in self._metrics.items()}
+        return {k: v for k, v in self._data.items()}
 
     def sync(self):
         """
@@ -477,7 +486,7 @@ class Metrics(object):
         elif self._threadsafe:
             for buffer_ in self._drain_queue():
                 for key, value in buffer_:
-                    self._metrics[key] = self._metrics.get(key) + value
+                    self._data[key] = self._data.get(key) + value
 
     def _drain_queue(self):
         """
@@ -498,12 +507,13 @@ class Metrics(object):
         elif self._threadsafe:
             for _ in self._drain_queue():
                 pass
-        self._metrics.clear()
+        self._data.clear()
 
     def share(self):
-        return {
-            'queue': self._queue,
-        }
+        if self._threadsafe:
+            return {'queue': self._queue}
+        else:
+            return {'data': self._data}
 
 
 class TeacherMetrics(Metrics):

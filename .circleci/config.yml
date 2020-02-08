@@ -203,7 +203,7 @@ jobs:
       - run:
           name: Unit tests (py36)
           command: |
-              for i in $(seq 1000); do
+              for i in $(seq 200); do
                 echo $i
                 echo "----------------------------------------------------"
                 pytest -m unit -v -s -k test_generation_multi
