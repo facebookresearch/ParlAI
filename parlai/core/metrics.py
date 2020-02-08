@@ -507,7 +507,8 @@ class Metrics(object):
         elif self._threadsafe:
             for _ in self._drain_queue():
                 pass
-        self._data.clear()
+        if self._data:
+            self._data.clear()
 
     def share(self):
         if self._threadsafe:
