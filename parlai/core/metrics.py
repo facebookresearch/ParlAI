@@ -424,6 +424,7 @@ class Metrics(object):
             self._buffer = []
             self._worker = True
         else:
+            self._queue = None
             self._worker = False
 
     def __str__(self):
