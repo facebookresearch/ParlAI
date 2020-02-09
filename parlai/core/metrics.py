@@ -416,22 +416,25 @@ class Metrics(object):
             # push updates to. the main worker works through the queue at report
             # time. We could add some buffering to improve performance, but we
             # are deprioritizing hogwild performance at this time.
+            self._buffer = None
             self._queue = multiprocessing.SimpleQueue()
             self._worker = False
+            self._data = {}
+        elif shared and 'queue' in shared:
+            # This is a clone, in threadsafe mode
+            self._buffer = []
+            self._queue = shared['queue']
+            self._worker = True
             self._data = None
-        elif shared:
-            if 'queue' in shared:
-                # This is a clone, in threadsafe mode
-                self._queue = shared['queue']
-                self._buffer = []
-                self._worker = True
-            else:
-                # This is a clone, in non-threadsafe mode
-                self._queue = True
-                self._data = shared['data']
-                self._worker = False
+        elif shared and 'data' in shared:
+            # This is a clone, in non-threadsafe mode
+            self._buffer = None
+            self._queue = None
+            self._worker = False
+            self._data = shared['data']
         else:
             # The original in non-threadsafe mode
+            self._buffer = None
             self._queue = None
             self._worker = False
             self._data = {}
@@ -478,12 +481,10 @@ class Metrics(object):
     def sync(self):
         """
         Process all items on the queue to ensure it is up to date.
-
-        Should only be called in the root worker
         """
         if self._worker:
             self.flush()
-        elif self._threadsafe:
+        elif self._threadsafe and not self._worker:
             for buffer_ in self._drain_queue():
                 for key, value in buffer_:
                     self._data[key] = self._data.get(key) + value
@@ -504,7 +505,7 @@ class Metrics(object):
         """
         if self._worker:
             self._buffer.clear()
-        elif self._threadsafe:
+        elif self._threadsafe and not self._worker:
             for _ in self._drain_queue():
                 pass
         if self._data:
