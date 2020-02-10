@@ -55,8 +55,6 @@ try:
     from torch.multiprocessing import Process, Value, Semaphore, Queue, JoinableQueue
     import torch
     import torch.multiprocessing as mp
-
-    mp.set_start_method('spawn', force=True)
 except ImportError:
     from multiprocessing import (
         Process,
@@ -2218,6 +2216,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
     elif opt.get('numworkers', 1) > 1:
+        mp.set_start_method('spawn', force=True)
         if opt.get('dynamic_batching') and opt.get('batchsize', 1) > 1:
             world = QueueWorld(opt, world, PDynamicBatchWorld)
         else:
