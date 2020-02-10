@@ -99,7 +99,7 @@ def _build_decoder(
     return TransformerDecoder(
         n_heads=opt['n_heads'],
         n_layers=(
-            opt['n_encoder_layers'] if opt['n_encoder_layers'] > 0 else opt['n_layers']
+            opt['n_decoder_layers'] if opt['n_decoder_layers'] > 0 else opt['n_layers']
         ),
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
