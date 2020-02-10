@@ -2044,7 +2044,7 @@ class QueueWorld(World):
         batch_obs = self._maybe_handle_buffers(batch_obs, worker_idx)
         batch_acts = self.batch_act(batch_obs)
         self.consume_queues[worker_idx].put_nowait((QueueSignal.BATCH, batch_acts))
-        self.update_counters()
+        self.update_counters(batch_obs)
 
     def batch_act(
         self, batch_observation: Union[List[Message], Batch]
@@ -2129,6 +2129,24 @@ class QueueWorld(World):
         report = {'exs': sum(r.get('exs', 0) for r in reports)}
         report.update(self.world.report())
         return report
+
+    def get_total_epochs(self) -> float:
+        """
+        Return total number of epochs processed.
+        """
+        return self.total_exs / self.num_examples()
+
+    def update_counters(self, batch):
+        """
+        Update world counters.
+
+        Must account for dynamic batching, where number exs processed != batchsize
+
+        :param batch:
+            batch of observations
+        """
+        self.total_exs += len(batch.valid_indices)
+        self.total_parleys += 1
 
 
 ################################################################################
