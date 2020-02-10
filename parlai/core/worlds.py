@@ -49,20 +49,14 @@ import time
 from abc import ABC, abstractmethod
 from enum import auto, Enum
 from functools import lru_cache
-from typing import List, Dict, Any, Union, Tuple
+from typing import List, Dict, Any, Union, Tuple, Optional
 
 try:
-    from torch.multiprocessing import Process, Value, Semaphore, Queue, JoinableQueue
+    from torch.multiprocessing import Process, Value, Semaphore, Queue
     import torch
     import torch.multiprocessing as mp
 except ImportError:
-    from multiprocessing import (
-        Process,
-        Value,
-        Semaphore,
-        Queue,
-        JoinableQueue,
-    )  # noqa: F401
+    from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
 
 from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module
@@ -1176,7 +1170,7 @@ class DynamicBatchWorld(World):
         indices = sorted(indices, key=lambda i: self._scores[i] + (self.rng.random(),))
 
         # now let's build the batch
-        batch = []
+        batch: List[int] = []
 
         # start with a random item. indices_idx is the lookup into indices, but
         # index is the actual world.
@@ -1581,13 +1575,14 @@ class PWorld(ABC, World):
     def __init__(
         self,
         opt: Opt,
-        world: World,
+        world: Union[DialogPartnerWorld, MultiWorld],
         produce_queue: Queue,
         report_queue: Queue,
         consume_queue: Queue,
         worker_idx: int,
     ):
-        super().__init__(opt, world)
+        World.__init__(self, opt)
+        self.world = world
         self.produce_queue = produce_queue
         self.report_queue = report_queue
         self.consume_queue = consume_queue
@@ -1609,7 +1604,7 @@ class PWorld(ABC, World):
         """
 
     @abstractmethod
-    def consume_act(self, act: Union[Message, List[Message]]):
+    def consume_act(self, act: List[Message]):
         """
         Consume an act from the consume_queue.
 
@@ -1647,7 +1642,6 @@ class PWorld(ABC, World):
         elif queue_result == QueueSignal.BEGIN:
             # no op
             self.begin()
-            return
         else:  # QueueSignal.BATCH
             self.num_consume += 1
             self.consume_act(act)
@@ -1664,23 +1658,23 @@ class PWorld(ABC, World):
         """
         updated_buffers = {}
         resized = {}
-        batch_obs = self.world.get_model_agent().batchify(batch_obs)
-        for k, v in batch_obs.items():
+        batch: Batch = self.world.get_model_agent().batchify(batch_obs)
+        for k, v in batch.items():
             if isinstance(v, torch.Tensor):
                 try:
                     self.buffers[k].copy_(v)
                     self.buffers[k].resize_(v.size())
                     resized[k] = v.size()
-                    setattr(batch_obs, k, None)
+                    setattr(batch, k, None)
                 except (KeyError, RuntimeError):
                     # either not broadcastable
                     # or not in self.buffers
                     self.buffers[k] = v
                     self.buffers[k].share_memory_()
                     updated_buffers[k] = v
-        batch_obs.updated_buffers = updated_buffers
-        batch_obs.resized = resized
-        return batch_obs
+        batch.updated_buffers = updated_buffers
+        batch.resized = resized
+        return batch
 
     def enqueue_report(self):
         self.report_queue.put_nowait(self.report())
@@ -1708,7 +1702,7 @@ class PBatchWorld(PWorld, BatchWorld):
     def __init__(
         self,
         opt: Opt,
-        world: World,
+        world: Union[DialogPartnerWorld, MultiWorld],
         produce_queue: Queue,
         report_queue: Queue,
         consume_queue: Queue,
@@ -1749,7 +1743,7 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
     def __init__(
         self,
         opt: Opt,
-        world: World,
+        world: Union[DialogPartnerWorld, MultiWorld],
         produce_queue: Queue,
         report_queue: Queue,
         consume_queue: Queue,
@@ -1759,10 +1753,9 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
             self, opt, world, produce_queue, report_queue, consume_queue, worker_idx
         )
         DynamicBatchWorld.__init__(self, opt, world)
-        self.batch_indices = None
+        self.batch_indices: Optional[List[int]] = None
 
     def produce_observation(self) -> Union[List[Message], Batch]:
-        self.num_prod += 1
         assert self.batch_indices is None
         batch, batch_obs = self._build_batch()
         self.batch_indices = batch
@@ -1798,7 +1791,7 @@ def run_p_world(
 
     Then, it awaits further instruction, depending on what is required of the world.
     """
-    world = pworld_class(
+    world: PWorld = pworld_class(
         opt, world, produce_queue, report_queue, consume_queue, worker_idx
     )
     while True:
@@ -1848,7 +1841,7 @@ class QueueWorld(World):
         self.world: World = world
         self.agents: List[Agent] = world.get_agents()
         self.processes: List[Process] = []
-        self.consume_queues: List[JoinableQueue] = []
+        self.consume_queues: List[Queue] = []
         self.worlds: List[World] = []
         self.produce_queue: Queue = Queue()
         self.report_queue: Queue = Queue()
@@ -1939,7 +1932,7 @@ class QueueWorld(World):
             Which PWorld to use.
         """
         for worker_idx in range(self.numworkers):
-            consume_queue = JoinableQueue()
+            consume_queue: Queue = Queue()
             shared = world.share()
             subworld = shared['world_class'](opt, None, shared)
             self.processes.append(
