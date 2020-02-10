@@ -44,12 +44,8 @@ from abc import ABC, abstractmethod
 
 import concurrent.futures
 
-try:
-    import torch.multiprocessing as multiprocessing
-    from multiprocessing import Value, Lock
-except ImportError:
-    import multiprocessing
-    from multiprocessing import Value, Lock
+import multiprocessing
+from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random

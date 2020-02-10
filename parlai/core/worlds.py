@@ -66,7 +66,7 @@ except ImportError:
         JoinableQueue,
     )  # noqa: F401
 
-from parlai.core.agents import create_agents_from_shared
+from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.message import Message
 from parlai.core.metrics import aggregate_metrics
@@ -1619,38 +1619,38 @@ class PWorld(ABC, World):
             the action from
         """
 
+    def _producing(self):
+        """
+        Determine whether this world should produce.
+        """
+        return self.num_prod == self.num_consume and self.begun
+
     def parley(self):
         """
         Produce a batch observation.
 
         Consume a batch act.
         """
-        if self.produce_batch and self.begun:
+        if self._producing():
             self.num_prod += 1
             obs = self.produce_observation()
             self.produce_queue.put_nowait((QueueSignal.BATCH, obs, self.worker_idx))
         queue_result, act = self.consume_queue.get()
         if queue_result == QueueSignal.RESET:
             # RESET
-            self.produce_batch = True
             self.reset()
         elif queue_result == QueueSignal.RESET_METRICS:
             # RESET
-            self.produce_batch = True
             self.reset_metrics()
         elif queue_result == QueueSignal.REPORT:
-            self.produce_batch = False
             self.enqueue_report()
         elif queue_result == QueueSignal.TERMINATE:
-            self.produce_batch = False
             self.shutdown()
         elif queue_result == QueueSignal.BEGIN:
             # no op
-            self.begun = True
-            self.produce_batch = True
+            self.begin()
             return
         else:  # QueueSignal.BATCH
-            self.produce_batch = True
             self.num_consume += 1
             self.consume_act(act)
             self.update_counters()
@@ -1689,10 +1689,17 @@ class PWorld(ABC, World):
 
     def reset(self):
         super().reset()
-        self.has_reset = True
         self.buffers = {}
         self.num_prod = 0
         self.num_consume = 0
+
+    def begin(self):
+        """
+        Signal world to begin.
+
+        World is ready to produce batches
+        """
+        self.begun = True
 
 
 class PBatchWorld(PWorld, BatchWorld):
@@ -1731,6 +1738,10 @@ class PBatchWorld(PWorld, BatchWorld):
         for other_idx in range(len(self.world.get_agents())):
             self.batch_observe(other_idx, act, agent_idx)
 
+    def reset(self):
+        PWorld.reset(self)
+        BatchWorld.reset(self)
+
 
 class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
     """
@@ -1767,7 +1778,8 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
         self.batch_indices = None
 
     def reset(self):
-        super().reset()
+        DynamicBatchWorld.reset(self)
+        PWorld.reset(self)
         self.batch_indices = None
 
 
@@ -1804,7 +1816,10 @@ def run_p_world(
             elif signal == QueueSignal.REPORT:
                 world.enqueue_report()
             elif signal == QueueSignal.BEGIN:
+                world.begin()
                 break
+            elif signal == QueueSignal.RESET:
+                world.reset()
             elif signal == QueueSignal.TERMINATE:
                 return
 
@@ -1833,6 +1848,7 @@ class QueueWorld(World):
         super().__init__(opt)
         # QueueWorld init
         self.world: World = world
+        self.agents: List[Agent] = world.get_agents()
         self.processes: List[Process] = []
         self.consume_queues: List[JoinableQueue] = []
         self.worlds: List[World] = []
@@ -2081,6 +2097,7 @@ class QueueWorld(World):
         """
         Reset each subworld and additionally each individual process.
         """
+        super().reset()
         self.world.reset()
         for w in self.worlds:
             w.reset()
@@ -2089,9 +2106,9 @@ class QueueWorld(World):
                 self.produce_queue.get_nowait()
             except queue.Empty:
                 break
-
         for q in self.consume_queues:
             q.put((QueueSignal.RESET, None))
+        self.finished_workers = []
         self.init_parley = True
 
     def reset_metrics(self):
@@ -2100,6 +2117,7 @@ class QueueWorld(World):
 
         (TODO possibly reset process metrics)
         """
+        super().reset_metrics()
         self.world.reset_metrics()
         # for q in self.consume_queues:
         # q.put_nowait((QueueSignal.RESET_METRICS, None))
