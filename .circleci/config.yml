@@ -183,7 +183,7 @@ jobs:
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
-    # parallelism: 8
+    parallelism: 8
     steps:
       - checkout
       - run:
@@ -202,13 +202,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
-          command: |
-              for i in $(seq 200); do
-                echo $i
-                echo "----------------------------------------------------"
-                pytest -m unit -v -s -k test_generation_multi
-                echo
-              done
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
