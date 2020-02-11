@@ -203,6 +203,11 @@ def load_eval_worlds(agent, opt, datatype):
     :param string datatype:
         The new datatype.
     """
+    if not is_primary_worker():
+        # don't load worlds in workers
+        # TODO(MW): this block will need to be removed
+        return None
+
     if 'stream' in opt['datatype']:
         datatype += ':stream'
     opt = opt.copy()
@@ -267,7 +272,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     """
     if valid_worlds is None:
         # This isn't the primary worker, so we can just skip evaluation
-        return None
+        return sync_object(None)
 
     print('[ running eval: ' + datatype + ' ]')
     timer = Timer()
@@ -291,7 +296,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         f.write(f'{metrics}\n')
         f.close()
 
-    return report
+    return sync_object(report)
 
 
 class TrainLoop:
@@ -464,17 +469,15 @@ class TrainLoop:
         """
         opt = self.opt
 
-        # TODO(MW): remove the is_primary_worker condition when work is split across
-        # workers
-        if self.valid_worlds is None and is_primary_worker():
+        if self.valid_worlds is None:
             # we need to load the world now
             self.valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
         # TODO(MW): replace sync_object with self._sync_metrics. You'll need some
         # logic to handle 'validation_max_exs' properly
-        valid_report = sync_object(
-            run_eval(self.valid_worlds, opt, 'valid', opt['validation_max_exs'])
+        valid_report = run_eval(
+            self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
         v = valid_report.copy()
         v['train_time'] = self.train_time.time()

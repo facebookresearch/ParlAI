@@ -196,6 +196,11 @@ class AverageMetric(Metric):
         return type(self)(numer=full_numer, denom=full_denom)
 
     def value(self) -> float:
+        if self._numer == 0 and self._denom == 0:
+            # don't nan out if we haven't counted anything
+            return 0.0
+        if self._denom == 0:
+            return float('nan')
         return self._numer / self._denom
 
 
