@@ -18,10 +18,30 @@ import parlai.utils.testing as testing_utils
 import os
 import shutil
 import unittest
-from parlai.core.build_data import download
 
-DEFAULT_BYTELEVEL_BPE_VOCAB = 'https://dl.fbaipublicfiles.com/parlai/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-vocab.json'
-DEFAULT_BYTELEVEL_BPE_MERGE = 'https://dl.fbaipublicfiles.com/parlai/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-merges.txt'
+DEFAULT_BYTELEVEL_BPE_VOCAB = (
+    'zoo:unittests/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-vocab.json'
+)
+DEFAULT_BYTELEVEL_BPE_MERGE = (
+    'zoo:unittests/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-merges.txt'
+)
+BYTELEVEL_BPE_RESULT = [
+    'H',
+    'ello',
+    ',',
+    'Ġ',
+    'P',
+    'ar',
+    'l',
+    'A',
+    'I',
+    '!',
+    'Ġ',
+    'ð',
+    'Ł',
+    'ĺ',
+    'Ģ',
+]
 
 
 class TestDictionary(unittest.TestCase):
@@ -66,61 +86,22 @@ class TestDictionary(unittest.TestCase):
 
     def test_byte_level_bpe_tokenize(self):
         # test loading
-        download(DEFAULT_BYTELEVEL_BPE_VOCAB, './', 'test-byte-level-bpe-vocab.json')
-        download(DEFAULT_BYTELEVEL_BPE_MERGE, './', 'test-byte-level-bpe-merges.txt')
         opt = Opt(
             {
                 'dict_tokenizer': 'bytelevelbpe',
                 'datapath': './',
-                'bpe_vocab': './test-byte-level-bpe-vocab.json',
-                'bpe_merge': './test-byte-level-bpe-merges.txt',
+                'bpe_vocab': DEFAULT_BYTELEVEL_BPE_VOCAB,
+                'bpe_merge': DEFAULT_BYTELEVEL_BPE_MERGE,
             }
         )
         agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
             agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
-            [
-                'H',
-                'ello',
-                ',',
-                'Ġ',
-                'P',
-                'ar',
-                'l',
-                'A',
-                'I',
-                '!',
-                'Ġ',
-                'ð',
-                'Ł',
-                'ĺ',
-                'Ģ',
-            ],
+            BYTELEVEL_BPE_RESULT,
         )
         self.assertEqual(
-            agent.vec2txt(
-                [
-                    agent.tok2ind[w]
-                    for w in [
-                        'H',
-                        'ello',
-                        ',',
-                        'Ġ',
-                        'P',
-                        'ar',
-                        'l',
-                        'A',
-                        'I',
-                        '!',
-                        'Ġ',
-                        'ð',
-                        'Ł',
-                        'ĺ',
-                        'Ģ',
-                    ]
-                ]
-            ),
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )

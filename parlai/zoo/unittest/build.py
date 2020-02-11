@@ -19,5 +19,6 @@ def download(datapath):
         'transformer_generator2.tar.gz',
         'memnn.tar.gz',
         'apex_v1.tar.gz',
+        'test_bytelevel_bpe_v1.tar.gz',
     ]
     download_models(opt, model_filenames, 'unittest', version='v4.0')
