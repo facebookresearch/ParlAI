@@ -485,8 +485,9 @@ class TorchAgent(ABC, Agent):
             '--adafactor-eps',
             default='1e-30,1e-3',
             type='floats',
-            help='Epsilon values for adafactor optimizer: regularization'
-            'constants for square gradienta nd parameter scale respectively',
+            help='Epsilon values for adafactor optimizer: regularization '
+            'constants for square gradient and parameter scale respectively',
+            recommended='1e-30,1e-3',
         )
         optim_group.add_argument(
             '-mom',
