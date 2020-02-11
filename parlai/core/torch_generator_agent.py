@@ -921,7 +921,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(self._get_context(batch, batch_idx))
+                self._treesearch_factory(dev).set_context(
+                    self._get_context(batch, batch_idx)
+                )
                 for batch_idx in range(batchsize)
             ]
         else:
