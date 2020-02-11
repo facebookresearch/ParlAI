@@ -91,4 +91,3 @@ class Batch(AttrDict):
             batchsize=batchsize,
             **kwargs,
         )
-

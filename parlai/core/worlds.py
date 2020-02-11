@@ -1557,6 +1557,7 @@ class PWorldProcess(Process):
     """
     Process that runs a PWorld.
     """
+
     def __init__(
         self,
         opt: Opt = None,
@@ -1579,8 +1580,8 @@ class PWorldProcess(Process):
         """
         Run a PWorld to completion.
 
-        The function first runs a world until `epoch_done()` is True,
-        and then awaits further instruction
+        The function first runs a world until `epoch_done()` is True, and then awaits
+        further instruction
         """
         while True:
             while not self.p_world.epoch_done():
@@ -1952,7 +1953,7 @@ class QueueWorld(World):
                         'report_queue': self.report_queue,
                         'consume_queue': consume_queue,
                         'worker_idx': worker_idx,
-                    },
+                    }
                 )
             )
             self.worlds.append(subworld)
@@ -2229,6 +2230,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
     if opt.get('numthreads', 1) > 1:
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
+        mp.set_start_method('fork', force=True)
         world = HogwildWorld(opt, world)
     elif opt.get('num_workers', 1) > 1:
         mp.set_start_method('spawn', force=True)
