@@ -207,25 +207,6 @@ class LegacyMetric(AverageMetric):
     pass
 
 
-class FixedMetric(Metric):
-    """
-    A fixed metric doesn't change when combined.
-    """
-
-    def __init__(self, value: TScalar):
-        self._value = self.as_number(value)
-
-    def value(self) -> float:
-        return self._value
-
-    def __add__(self, other: Optional['FixedMetric']) -> 'FixedMetric':
-        if other is None:
-            return self
-        if self != other:
-            raise ValueError(f'Trying to two unequal fixed metrics: {self} != {other}')
-        return self
-
-
 class F1Metric(AverageMetric):
     """
     Helper class which computes token-level F1.
@@ -459,17 +440,8 @@ class Metrics(object):
         Clear the local buffer and push it on.
         """
         if self._threadsafe and self._buffer:
-            try:
-                self._queue.put(self._buffer[:])
-                self._buffer.clear()
-            except queue.Full:
-                raise SystemError(
-                    "The metrics queue is full. This typically happens on OS X "
-                    "when we aren't reporting frequently enough to keep it drained "
-                    "and we are hitting the OS limit on queue size. Try lowering "
-                    "your batch size, or log more frequently, or avoid hogwild "
-                    "altogether."
-                )
+            self._queue.put(self._buffer[:])
+            self._buffer.clear()
 
     def report(self):
         """

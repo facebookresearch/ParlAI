@@ -42,7 +42,8 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, FixedMetric
+from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric
+from parlai.utils.distributed import is_primary_worker
 
 
 class Batch(AttrDict):
@@ -934,10 +935,10 @@ class TorchAgent(ABC, Agent):
         Report includes learning rate and number of training updates.
         """
         report = self.global_metrics.report()
+
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
-        report['total_train_updates'] = FixedMetric(self._number_training_updates)
 
         if self.use_cuda:
             report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
@@ -1750,12 +1751,9 @@ class TorchAgent(ABC, Agent):
         # clear local metrics before anything else
         self._local_metrics.clear()
 
-        batch_size = len(observations)
-
         # initialize a list of replies with this agent's id
         batch_reply = [
-            Message({'id': self.getID(), 'episode_done': False})
-            for _ in range(batch_size)
+            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
         ]
 
         # check if there are any labels available, if so we will train on them
@@ -1763,6 +1761,17 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+
+        if 'label_vec' in batch and 'text_vec' in batch:
+            # tokens per batch
+            # we divide by the binary is_primary_worker() so that the numerator is
+            # num_tokens in all workers, and the denominator is 1.
+            tbp = AverageMetric(
+                (batch.label_vec != self.NULL_IDX).sum().item()
+                + (batch.text_vec != self.NULL_IDX).sum().item(),
+                float(is_primary_worker()),
+            )
+            self.global_metrics.add('tokens_per_batch', tbp)
 
         if self.is_training:
             output = self.train_step(batch)
@@ -1870,6 +1879,10 @@ class TorchAgent(ABC, Agent):
 
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
+        if is_primary_worker():
+            # in distributed mode, all workers step together, but we need to only
+            # count it once. Only the primary worker gets to make the count
+            self.global_metrics.add('updates', SumMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
