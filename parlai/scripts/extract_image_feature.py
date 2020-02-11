@@ -115,7 +115,7 @@ def extract_feats(opt):
         """
         One can specify a Pytorch Dataset for custom image loading.
         """
-        nw = opt.get('numworkers', 1)
+        nw = opt.get('num_workers', 1)
         im = opt.get('image_mode', 'raw')
         opt['batchsize'] = 1
         opt['extract_image'] = True

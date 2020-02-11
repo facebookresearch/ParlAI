@@ -53,7 +53,7 @@ MULTITASK_MULTIVALID_ARGS = {
 }
 
 
-class TestOfflinePreprocess(unittest.TestCase):
+class TestBackgroundPreprocess(unittest.TestCase):
     """
     Test the Q worlds and the P worlds.
     """

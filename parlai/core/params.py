@@ -675,7 +675,7 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         parlai.add_argument(
             '-nw',
-            '--numworkers',
+            '--num-workers',
             type=int,
             default=1,
             help='how many workers the Pytorch dataloader should use',

@@ -372,11 +372,7 @@ class TorchRankerAgent(TorchAgent):
         self._maybe_invalidate_fixed_encs_cache()
         if batch.text_vec is None and batch.image is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.batchsize
         self.model.train()
         self.zero_grad()
 
@@ -422,11 +418,7 @@ class TorchRankerAgent(TorchAgent):
         """
         if batch.text_vec is None and batch.image is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.batchsize
         self.model.eval()
 
         cands, cand_vecs, label_inds = self._build_candidates(
@@ -580,11 +572,7 @@ class TorchRankerAgent(TorchAgent):
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.batchsize
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2

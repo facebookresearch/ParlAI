@@ -28,7 +28,8 @@ import torch.nn.functional as F
 
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
-from parlai.core.torch_agent import TorchAgent, Batch, Output
+from parlai.core.torch_agent import TorchAgent, Output
+from parlai.utils.batch import Batch
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.torch import neginf, FP16SafeCrossEntropy
 
@@ -759,10 +760,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         if batch.text_vec is None and batch.image is None:
             return
-        if batch.text_vec is not None:
-            bsz = batch.text_vec.size(0)
-        else:
-            bsz = len(batch.image)
+        bsz = batch.batchsize
         self.model.eval()
         cand_scores = None
         token_losses = None
@@ -905,11 +903,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             dev = batch.label_vec.device
 
-        bsz = (
-            len(batch.text_lengths)
-            if batch.text_lengths is not None
-            else len(batch.image)
-        )
+        bsz = batch.batchsize
         if batch.text_vec is not None:
             beams = [
                 self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec

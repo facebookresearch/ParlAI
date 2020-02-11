@@ -252,7 +252,7 @@ class TorchClassifierAgent(TorchAgent):
 
         # update metrics
         self.metrics['loss'] += loss.item()
-        self.metrics['examples'] += len(batch.text_vec)
+        self.metrics['examples'] += batch.batchsize
 
         # get predictions
         _, prediction_id = torch.max(scores.cpu(), 1)
@@ -287,7 +287,7 @@ class TorchClassifierAgent(TorchAgent):
             labels = self._get_labels(batch)
             loss = self.criterion(scores, labels)
             self.metrics['loss'] += loss.item()
-            self.metrics['examples'] += len(batch.text_vec)
+            self.metrics['examples'] += batch.batchsize
             self._update_confusion_matrix(batch, preds)
 
         return Output(preds)

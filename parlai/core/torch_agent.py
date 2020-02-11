@@ -35,6 +35,7 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
+from parlai.utils.batch import Batch
 from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
 from parlai.utils.torch import (
     argsort,
@@ -42,82 +43,6 @@ from parlai.utils.torch import (
     padded_tensor,
     fp16_available,
 )
-
-
-class Batch(AttrDict):
-    """
-    Batch is a namedtuple containing data being sent to an agent.
-
-    This is the input type of the train_step and eval_step functions.
-    Agents can override the batchify function to return an extended namedtuple
-    with additional fields if they would like, though we recommend calling the
-    parent function to set up these fields as a base.
-
-    :param text_vec:
-        bsz x seqlen tensor containing the parsed text data.
-
-    :param text_lengths:
-        list of length bsz containing the lengths of the text in same order as
-        text_vec; necessary for pack_padded_sequence.
-
-    :param label_vec:
-        bsz x seqlen tensor containing the parsed label (one per batch row).
-
-    :param label_lengths:
-        list of length bsz containing the lengths of the labels in same order as
-        label_vec.
-
-    :param labels:
-        list of length bsz containing the selected label for each batch row (some
-        datasets have multiple labels per input example).
-
-    :param valid_indices:
-        list of length bsz containing the original indices of each example in the
-        batch. we use these to map predictions back to their proper row, since e.g.
-        we may sort examples by their length or some examples may be invalid.
-
-    :param candidates:
-        list of lists of text. outer list has size bsz, inner lists vary in size
-        based on the number of candidates for each row in the batch.
-
-    :param candidate_vecs:
-        list of lists of tensors. outer list has size bsz, inner lists vary in size
-        based on the number of candidates for each row in the batch.
-
-    :param image:
-        list of image features in the format specified by the --image-mode arg.
-
-    :param observations:
-        the original observations in the batched order
-    """
-
-    def __init__(
-        self,
-        text_vec=None,
-        text_lengths=None,
-        label_vec=None,
-        label_lengths=None,
-        labels=None,
-        valid_indices=None,
-        candidates=None,
-        candidate_vecs=None,
-        image=None,
-        observations=None,
-        **kwargs,
-    ):
-        super().__init__(
-            text_vec=text_vec,
-            text_lengths=text_lengths,
-            label_vec=label_vec,
-            label_lengths=label_lengths,
-            labels=labels,
-            valid_indices=valid_indices,
-            candidates=candidates,
-            candidate_vecs=candidate_vecs,
-            image=image,
-            observations=observations,
-            **kwargs,
-        )
 
 
 class Output(AttrDict):
@@ -1361,10 +1286,16 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        # When passing Batch objects along multiprocessing queues, it is
+        # important that no tensors are unnecessarily placed in the batch,
+        # as this requires an expensive tensor copy. Thus, it is necessary
+        # to clean the exs of any tensors (giving us "clean" exs)
         kleenexs = [
             {k: v for k, v in ex.items() if not isinstance(v, torch.Tensor)}
             for ex in exs
         ]
+
+        batch_size = len(valid_inds)
 
         return Batch(
             text_vec=xs,
@@ -1377,6 +1308,7 @@ class TorchAgent(ABC, Agent):
             candidate_vecs=cand_vecs,
             image=imgs,
             observations=kleenexs,
+            batchsize=batch_size
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -1713,7 +1645,7 @@ class TorchAgent(ABC, Agent):
         if not isinstance(observations, Batch):
             batch_size = len(observations)
         else:
-            batch_size = observations.text_vec.size(0)
+            batch_size = observations.batchsize
         # initialize a list of replies with this agent's id
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False})

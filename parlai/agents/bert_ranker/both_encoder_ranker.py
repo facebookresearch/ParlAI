@@ -8,7 +8,8 @@ from .bi_encoder_ranker import BiEncoderRankerAgent
 from .cross_encoder_ranker import CrossEncoderRankerAgent
 from .helpers import add_common_args
 
-from parlai.core.torch_agent import TorchAgent, Output, Batch
+from parlai.core.torch_agent import TorchAgent, Output
+from parlai.utils.batch import Batch
 
 
 class BothEncoderRankerAgent(TorchAgent):

@@ -64,7 +64,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
-from parlai.core.torch_agent import Batch
+from parlai.utils.batch import Batch
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -821,9 +821,7 @@ class BatchWorld(World):
         for i, w in enumerate(self.worlds):
             agents = w.get_agents()
             observation = None
-            if i >= len(batch_actions):
-                batch_actions.append({})
-            elif batch_actions[i] is None:
+            if batch_actions[i] is None:
                 # shouldn't send None, should send empty observations
                 batch_actions[i] = [{}] * len(self.worlds)
 
@@ -1136,10 +1134,10 @@ class DynamicBatchWorld(World):
         """
         Build the batch of observations for the model.
 
-        Return the indices into `self._obs` as well as the list of messages
+        Return the indices into `self._obs`, which is a `self._BUFFER_SIZE` length array
+        of observations for each subworld, as well as the list of messages
 
         :return: (batch, obs)
-        :rtype: (List[Int], List[Message])
         """
         # first make sure that all the worlds are processed in the queue
         indices = []
@@ -1555,6 +1553,56 @@ class QueueSignal(Enum):
     TERMINATE = auto()
 
 
+class PWorldProcess(Process):
+    """
+    Process that runs a PWorld.
+    """
+    def __init__(
+        self,
+        opt: Opt = None,
+        world: Union[DialogPartnerWorld, MultiWorld] = None,
+        pworld_class: type = None,
+        produce_queue: Queue = None,
+        report_queue: Queue = None,
+        consume_queue: Queue = None,
+        worker_idx: int = None,
+    ):
+        super().__init__(daemon=True)
+        self.p_world: PWorld = pworld_class(
+            opt, world, produce_queue, report_queue, consume_queue, worker_idx
+        )
+        self.produce_queue = produce_queue
+        self.consume_queue = consume_queue
+        self.worker_idx = worker_idx
+
+    def run(self):
+        """
+        Run a PWorld to completion.
+
+        The function first runs a world until `epoch_done()` is True,
+        and then awaits further instruction
+        """
+        while True:
+            while not self.p_world.epoch_done():
+                self.p_world.parley()
+            # one more time to observe
+            self.produce_queue.put((QueueSignal.WORKER_FINISHED, None, self.worker_idx))
+            while True:
+                signal, batch = self.consume_queue.get()
+                if signal == QueueSignal.BATCH:
+                    # TODO: determine why this happens
+                    self.p_world.consume_act(batch)
+                elif signal == QueueSignal.REPORT:
+                    self.p_world.enqueue_report()
+                elif signal == QueueSignal.BEGIN:
+                    self.p_world.begin()
+                    break
+                elif signal == QueueSignal.RESET:
+                    self.p_world.reset()
+                elif signal == QueueSignal.TERMINATE:
+                    return
+
+
 class PWorld(ABC, World):
     """
     A PWorld is a world that can be used in a subprocess of the QueueWorld.
@@ -1628,18 +1676,18 @@ class PWorld(ABC, World):
             self.num_prod += 1
             obs = self.produce_observation()
             self.produce_queue.put_nowait((QueueSignal.BATCH, obs, self.worker_idx))
-        queue_result, act = self.consume_queue.get()
-        if queue_result == QueueSignal.RESET:
+        queue_signal, act = self.consume_queue.get()
+        if queue_signal == QueueSignal.RESET:
             # RESET
             self.reset()
-        elif queue_result == QueueSignal.RESET_METRICS:
+        elif queue_signal == QueueSignal.RESET_METRICS:
             # RESET
             self.reset_metrics()
-        elif queue_result == QueueSignal.REPORT:
+        elif queue_signal == QueueSignal.REPORT:
             self.enqueue_report()
-        elif queue_result == QueueSignal.TERMINATE:
+        elif queue_signal == QueueSignal.TERMINATE:
             self.shutdown()
-        elif queue_result == QueueSignal.BEGIN:
+        elif queue_signal == QueueSignal.BEGIN:
             # no op
             self.begin()
         else:  # QueueSignal.BATCH
@@ -1774,52 +1822,11 @@ class PDynamicBatchWorld(PWorld, DynamicBatchWorld):
         self.batch_indices = None
 
 
-def run_p_world(
-    opt: Opt,
-    world: Union[DialogPartnerWorld, MultiWorld],
-    pworld_class: type,
-    produce_queue: Queue,
-    report_queue: Queue,
-    consume_queue: Queue,
-    worker_idx: int,
-):
-    """
-    Construct a pworld and run to completion.
-
-    The run function is on an infinite loop.
-    It first runs through a world until ``world.epoch_done()``.
-
-    Then, it awaits further instruction, depending on what is required of the world.
-    """
-    world: PWorld = pworld_class(
-        opt, world, produce_queue, report_queue, consume_queue, worker_idx
-    )
-    while True:
-        while not world.epoch_done():
-            world.parley()
-        # one more time to observe
-        produce_queue.put((QueueSignal.WORKER_FINISHED, None, worker_idx))
-        while True:
-            signal, batch = consume_queue.get()
-            if signal == QueueSignal.BATCH:
-                # TODO: determine why this happens
-                world.consume_act(batch)
-            elif signal == QueueSignal.REPORT:
-                world.enqueue_report()
-            elif signal == QueueSignal.BEGIN:
-                world.begin()
-                break
-            elif signal == QueueSignal.RESET:
-                world.reset()
-            elif signal == QueueSignal.TERMINATE:
-                return
-
-
 class QueueWorld(World):
     """
-    A QueueWorld for offline preprocessing.
+    A QueueWorld for background preprocessing.
 
-    The QueueWorld spawns ``opt['numworkers']`` subprocesses, which handle
+    The QueueWorld spawns ``opt['num_workers']`` subprocesses, which handle
     preprocessing of batches off the main thread.
 
     The QueueWorld has a number of important structures:
@@ -1848,7 +1855,7 @@ class QueueWorld(World):
         self.buffers: List[Dict[str, torch.Tensor]] = []
         self.finished_workers: List[int] = []
         self.training = 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']
-        self.numworkers = opt['numworkers'] if self.training else 1
+        self.num_workers = opt['num_workers'] if self.training else 1
         self.init_parley = True
         self.num_consume = 0
         self._init_workers(opt, world, pworld_class)
@@ -1910,7 +1917,7 @@ class QueueWorld(World):
         subworlds_done = self.world.epoch_done() or all(
             w.epoch_done() for w in self.worlds
         )
-        return subworlds_done or len(self.finished_workers) == self.numworkers
+        return subworlds_done or len(self.finished_workers) == self.num_workers
 
     def save_agents(self):
         """
@@ -1931,29 +1938,26 @@ class QueueWorld(World):
         :param pworld_class:
             Which PWorld to use.
         """
-        for worker_idx in range(self.numworkers):
+        for worker_idx in range(self.num_workers):
             consume_queue: Queue = Queue()
             shared = world.share()
             subworld = shared['world_class'](opt, None, shared)
             self.processes.append(
-                Process(
-                    target=run_p_world,
-                    args=(
-                        opt,
-                        subworld,
-                        pworld_class,
-                        self.produce_queue,
-                        self.report_queue,
-                        consume_queue,
-                        worker_idx,
-                    ),
-                    daemon=True,
+                PWorldProcess(
+                    kwargs={
+                        'opt': opt,
+                        'world': subworld,
+                        'pworld_class': pworld_class,
+                        'produce_queue': self.produce_queue,
+                        'report_queue': self.report_queue,
+                        'consume_queue': consume_queue,
+                        'worker_idx': worker_idx,
+                    },
                 )
             )
             self.worlds.append(subworld)
             self.consume_queues.append(consume_queue)
             self.buffers.append({})
-
         for p in self.processes:
             p.start()
 
@@ -1991,15 +1995,15 @@ class QueueWorld(World):
             idx:       the worker index that produced the batch
         """
         batch_obs: Union[List[Message], Batch] = None
-        queue_result: QueueSignal = None
+        queue_signal: QueueSignal = None
         worker_idx: int = None
-        while queue_result != QueueSignal.BATCH and not self.epoch_done():
-            queue_result, batch_obs, worker_idx = self.produce_queue.get()
-            if queue_result == QueueSignal.WORKER_FINISHED:
+        while queue_signal != QueueSignal.BATCH and not self.epoch_done():
+            queue_signal, batch_obs, worker_idx = self.produce_queue.get()
+            if queue_signal == QueueSignal.WORKER_FINISHED:
                 self.finished_workers.append(worker_idx)
-        if queue_result == QueueSignal.BATCH:
+        if queue_signal == QueueSignal.BATCH:
             self.num_consume += 1
-        return queue_result, batch_obs, worker_idx
+        return queue_signal, batch_obs, worker_idx
 
     def _maybe_handle_buffers(self, batch_obs: Batch, worker_idx: int) -> Batch:
         """
@@ -2038,7 +2042,7 @@ class QueueWorld(World):
         """
         self._maybe_begin_processes()
         self._maybe_parley_init()
-        queue_result, batch_obs, worker_idx = self._poll_produce_queue()
+        queue_signal, batch_obs, worker_idx = self._poll_produce_queue()
         if self.epoch_done():
             return
         batch_obs = self._maybe_handle_buffers(batch_obs, worker_idx)
@@ -2110,8 +2114,8 @@ class QueueWorld(World):
         """
         super().reset_metrics()
         self.world.reset_metrics()
-        # for q in self.consume_queues:
-        # q.put_nowait((QueueSignal.RESET_METRICS, None))
+        for q in self.consume_queues:
+            q.put_nowait((QueueSignal.RESET_METRICS, None))
 
     def report(self) -> Dict[str, Union[str, int, Dict]]:
         """
@@ -2123,7 +2127,7 @@ class QueueWorld(World):
         for q in self.consume_queues:
             q.put((QueueSignal.REPORT, None))
         reports: List[Dict] = []
-        while len(reports) < self.numworkers:
+        while len(reports) < self.num_workers:
             reports.append(self.report_queue.get())
         # TODO: Aggregate correctly
         report = {'exs': sum(r.get('exs', 0) for r in reports)}
@@ -2226,7 +2230,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
-    elif opt.get('numworkers', 1) > 1:
+    elif opt.get('num_workers', 1) > 1:
         mp.set_start_method('spawn', force=True)
         if opt.get('dynamic_batching') and opt.get('batchsize', 1) > 1:
             world = QueueWorld(opt, world, PDynamicBatchWorld)

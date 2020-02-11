@@ -22,7 +22,6 @@ The core library contains the following files:
   - **_ParlAIDialogTeacher_**: a teacher that implements a simple standard text format for many tasks (non-visual tasks only)
 - **torch_agent**: utility code for building PyTorch-based agents in ParlAI
   - **_TorchAgent_**: class which serves as a useful parent class for other model agents
-  - **_Batch_**: namedtuple which is the input type of the main abstract methods of the TorchAgent class
   - **_Output_**: namedtuple which is the expected output type of the main abstract methods of the TorchAgent class
   - **_History_**: class which handles tracking the dialogue state over the course of an episode.
 - **torch_classifier_agent**: abstract agent which extends TorchAgent and contains useful utilities for classification models

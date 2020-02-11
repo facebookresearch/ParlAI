@@ -245,7 +245,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
-        if opt['numworkers'] <= 1:
+        if opt['num_workers'] <= 1:
             self.data_queue = queue.Queue()
         if shared:
             self.index = shared['index']
@@ -258,7 +258,7 @@ class FixedDialogTeacher(Teacher):
         else:
             self.index = AttrDict(value=-1)
 
-        if not hasattr(self, 'data_loader') and opt['numworkers'] <= 1:
+        if not hasattr(self, 'data_loader') and opt['num_workers'] <= 1:
             self.data_loader = DataLoader(opt)
             self.data_loader.start()
 
@@ -282,7 +282,7 @@ class FixedDialogTeacher(Teacher):
         self.lastY = None
         self.episode_done = True
         self.epochDone = False
-        if self.opt['numworkers'] <= 1:
+        if self.opt['num_workers'] <= 1:
             self.data_queue = queue.Queue()
 
         self.episode_idx = -1
