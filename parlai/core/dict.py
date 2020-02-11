@@ -871,6 +871,7 @@ class DictionaryAgent(Agent):
         for i in range(self.byte_level_bpe.tokenizer.get_vocab_size()):
             token = self.byte_level_bpe.tokenizer.id_to_token(i)
             self.add_token(token)
+            # We don't have access to the hugging face word frequency table, just set it to 1 instead
             self.freq[token] = 1
 
 
