@@ -68,9 +68,9 @@ class TensorboardLogger(object):
         """
         for k, v in report.items():
             if isinstance(v, numbers.Number):
-                self.writer.add_scalar(f'{setting}/{k}', v, global_step=step)
+                self.writer.add_scalar(f'{k}/{setting}', v, global_step=step)
             elif isinstance(v, Metric):
-                self.writer.add_scalar(f'{setting}/{k}', v.value(), global_step=step)
+                self.writer.add_scalar(f'{k}/{setting}', v.value(), global_step=step)
             else:
                 print(f'k {k} v {v} is not a number')
 

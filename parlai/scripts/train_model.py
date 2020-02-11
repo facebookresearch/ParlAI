@@ -464,15 +464,16 @@ class TrainLoop:
         """
         opt = self.opt
 
-        if self.valid_worlds is None:
+        # TODO(MW): remove the is_primary_worker condition when work is split across
+        # workers
+        if self.valid_worlds is None and is_primary_worker():
             # we need to load the world now
             self.valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
-        max_exs = opt['validation_max_exs'] // num_workers()
-        # some works may need to do some extra examples
-        max_exs += int(opt['validation_max_exs'] % num_workers() < get_rank())
-        valid_report = self._sync_metrics(
+        # TODO(MW): replace sync_object with self._sync_metrics. You'll need some
+        # logic to handle 'validation_max_exs' properly
+        valid_report = sync_object(
             run_eval(self.valid_worlds, opt, 'valid', opt['validation_max_exs'])
         )
         v = valid_report.copy()

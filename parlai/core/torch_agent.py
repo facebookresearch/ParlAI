@@ -1762,7 +1762,12 @@ class TorchAgent(ABC, Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        if 'label_vec' in batch and 'text_vec' in batch:
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
