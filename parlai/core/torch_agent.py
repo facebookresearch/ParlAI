@@ -896,9 +896,9 @@ class TorchAgent(ABC, Agent):
         Used to temporarily disable local metrics.
 
         This is useful for things like when you need to call super(), but
-        prevent the parent from recording some some metric. For example,
-        if you're forwarding a dummy batch or calling super() but still want to
-        modify the output.
+        prevent the parent from recording some metric. For example, if you're
+        forwarding a dummy batch or calling super() but still want to modify
+        the output.
 
         You can compare this to torch.no_grad in its goal.
         """

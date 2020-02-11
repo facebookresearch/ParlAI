@@ -266,7 +266,6 @@ class FixedDialogTeacher(Teacher):
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
-        self.use_batch_act = False
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
