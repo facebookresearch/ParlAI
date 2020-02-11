@@ -252,10 +252,9 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         min_loss_scale: float = 1e-4,
     ):
         self.optimizer = init_optimizer
-        # TODO: we should probably set a bunch of these args with opt?
+        # TODO: set some of these args with opt
         self.min_loss_scale = min_loss_scale
         self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
-        # TODO: add warning here about which optimizers this works with
 
     @staticmethod
     def compatible_optimizers():
@@ -325,7 +324,6 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                     ).format(self.min_loss_scale)
                 )
             warn_once(f'[ Overflow: setting loss scale to {self.scaler.loss_scale} ]')
-            # TODO: do we actually want to zero grad here? or in the train loop?
             self.zero_grad()
             return -1
 
@@ -565,7 +563,7 @@ class Adafactor(torch.optim.Optimizer):
 
     def _get_options(self, param_group, param_shape):
         """
-        TODO: this is a weird name
+        Return factored and whether to use first moment (beta1).
         """
         factored = len(param_shape) >= 2
         use_first_moment = param_group['beta1'] is not None
