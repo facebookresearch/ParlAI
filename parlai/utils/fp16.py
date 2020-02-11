@@ -231,6 +231,9 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     of `MemoryEfficientFP16Optimizer`, which can be found here:
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
 
+    This allows you to train bigger models on a single GPU, but can be unstable.
+    Opt for the APEX implementation if you do not have concerns about memory.
+
     :param params:
         Model parameters
     :param optimizer:
@@ -256,6 +259,9 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
 
     @staticmethod
     def compatible_optimizers():
+        """
+        List of compatible optimizers.
+        """
         return [
             'adam',
             'mem_eff_adam',

@@ -888,9 +888,11 @@ class TorchAgent(ABC, Agent):
                 optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
-                # drop the fp16 wrapper from the state_dict and just load
+                # if apex, drop the fp16 wrapper from the state_dict and just load
                 # the fp16 weights into the fp32 tensors
-                optim_states = optim_states['optimizer_state_dict']
+                if 'optimizer_state_dict' in optim_states:
+                    # trained with apex
+                    optim_states = optim_states['optimizer_state_dict']
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
