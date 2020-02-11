@@ -349,7 +349,7 @@ class DictionaryAgent(Agent):
                     ' (no --dict-minfreq or --dict-maxtokens).'
                 )
             self.byte_level_bpe = HuggingFaceBpeHelper(opt)
-            self.sync_bytelevelbpe_dict()
+            self._sync_bytelevelbpe_dict()
 
         if not shared:
             if self.null_token:
@@ -696,6 +696,7 @@ class DictionaryAgent(Agent):
             # never remove or sort tokens from gpt2
             pass
         elif self.tokenizer == 'bytelevelbpe':
+            # never remove or sort tokens from bytelevelbpe, it should be the same as the hugging face tokenizer
             pass
         elif sort:
             self.sort(trim=True)
@@ -715,7 +716,7 @@ class DictionaryAgent(Agent):
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
         if self.tokenizer == 'bytelevelbpe':
-            self.byte_level_bpe.tokenizer(os.path.dirname(filename), filename)
+            self.byte_level_bpe.tokenizer.save(os.path.dirname(filename), filename)
 
     def sort(self, trim=True):
         """
@@ -850,9 +851,11 @@ class DictionaryAgent(Agent):
         """
         return str(self.freq)
 
-    def sync_bytelevelbpe_dict(self):
+    def _sync_bytelevelbpe_dict(self):
         """
-        This will sync the dict agent and the hugging face bytelevel bpe dict.
+        Sync the dictionary agent with Hugging Face tokenizer's BPE dict.
+
+        Called only once on initialization.
         """
         if self.tokenizer != 'bytelevelbpe':
             return
