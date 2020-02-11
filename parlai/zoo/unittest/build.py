@@ -21,4 +21,4 @@ def download(datapath):
         'apex_v1.tar.gz',
         'test_bytelevel_bpe_v1.tar.gz',
     ]
-    download_models(opt, model_filenames, 'unittest', version='v4.0')
+    download_models(opt, model_filenames, 'unittest', version='v5.0')
