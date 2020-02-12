@@ -30,8 +30,9 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.batch import Batch
+from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.torch import neginf, FP16SafeCrossEntropy
+from parlai.utils.torch import neginf
 
 
 try:
@@ -871,6 +872,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
+    def _get_context(self, batch, batch_idx):
+        """
+        Set the beam context for n-gram context blocking.
+
+        Intentionally overridable for more complex model histories.
+        """
+        return batch.text_vec[batch_idx]
+
     def _generate(self, batch, beam_size, max_ts):
         """
         Generate an output with beam search.
@@ -905,8 +914,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         bsz = batch.batchsize
         if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
+                self._treesearch_factory(dev).set_context(
+                    self._get_context(batch, batch_idx)
+                )
+                for batch_idx in range(batchsize)
             ]
         else:
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]
