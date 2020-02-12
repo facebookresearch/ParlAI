@@ -7,14 +7,21 @@
 """
 Poly-encoder Agent.
 """
-from .biencoder import AddLabelFixedCandsTRA
-from .modules import TransformerEncoder
-from .modules import get_n_positions_from_options
-from parlai.core.torch_ranker_agent import TorchRankerAgent
-from .transformer import TransformerRankerAgent
-from .modules import BasicAttention, MultiHeadAttention
-import torch
+
 from typing import List, Optional
+
+import torch
+from torch import nn
+
+from parlai.core.torch_ranker_agent import TorchRankerAgent
+from .biencoder import AddLabelFixedCandsTRA
+from .modules import (
+    BasicAttention,
+    MultiHeadAttention,
+    TransformerEncoder,
+    get_n_positions_from_options,
+)
+from .transformer import TransformerRankerAgent
 
 
 class PolyencoderAgent(TorchRankerAgent):
@@ -531,26 +538,17 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.img_dim = kwargs.pop('image_features_dim')
         self.use_cuda = kwargs.pop('use_cuda')
         super().__init__(*args, **kwargs)
-        self._build_image_encoder()
-        # TODO: revise all of this!
-        self.dummy_image_enc = torch.zeros((self.embedding_size))
+        self.image_encoder = nn.Linear(self.img_dim, self.embedding_size)
+        # Project image features to embedding dimension
+        self.dummy_image_enc = torch.zeros(self.embedding_size)
         self.ones_mask = torch.ones(1).bool()
         if self.use_cuda:
             self.dummy_image_enc = self.dummy_image_enc.cuda()
             self.ones_mask = self.ones_mask.cuda()
 
-    def _build_image_encoder(self):
-        image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
-        for _ in range(self.n_img_layers - 1):
-            image_layers += [
-                nn.ReLU(),
-                nn.Dropout(p=self.opt['dropout']),
-                nn.Linear(self.img_dim, self.embedding_size),
-            ]
-        self.image_encoder = nn.Sequential(*image_layers)
-
     def forward(self, src_tokens, image_features):
         """Encode images with context."""
+        # TODO: revise from here
         context_encoded = context_mask = None
         image_encoded = extra_masks = None
         if src_tokens is not None:
