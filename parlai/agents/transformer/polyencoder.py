@@ -548,11 +548,9 @@ class ContextWithImageEncoder(TransformerEncoder):
 
     def forward(self, src_tokens, image_features):
         """Encode images with context."""
+        context_encoded, context_mask, context_pos = super().forward(src_tokens)
+        # TODO: define full_pos, probably by prepending zeros if we're prepending the image features, right?
         # TODO: revise from here
-        context_encoded = context_mask = None
-        image_encoded = extra_masks = None
-        if src_tokens is not None:
-            context_encoded, context_mask = super().forward(src_tokens)
         if image_features is not None and any(
             feat is not None for feat in image_features
         ):
@@ -580,7 +578,7 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         full_enc = self.cat([context_encoded, image_encoded])
         full_mask = self.cat([context_mask, extra_masks])
-        return full_enc, full_mask
+        return full_enc, full_mask, full_pos
 
     def cat(self, tensors):
         """Handle cat on None tensors."""
