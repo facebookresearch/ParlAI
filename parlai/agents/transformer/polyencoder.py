@@ -43,10 +43,10 @@ class PolyencoderAgent(TorchRankerAgent):
             recommended='codes',
         )
         agent.add_argument(
-            '--polyencoder-image-features',
-            type='bool',
-            default=False,
-            help='Allow passing in image features in the context',
+            '--polyencoder-image-features-dim',
+            type=int,
+            default=0,
+            help='If >0, allows passing in image features of the given dim in the context',
         )
         agent.add_argument(
             '--poly-n-codes',
@@ -227,7 +227,7 @@ class PolyEncoderModule(torch.nn.Module):
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.use_image_features = opt.get('polyencoder_image_features', False)
+        self.use_image_features = opt.get('polyencoder_image_features_dim', 0) > 0
         self.encoder_ctxt = self.get_encoder(
             opt, dict, null_idx, 'none_with_pos_embs', is_context=True
         )
@@ -320,7 +320,7 @@ class PolyEncoderModule(torch.nn.Module):
                 activation=opt['activation'],
                 variant=opt['variant'],
                 output_scaling=opt['output_scaling'],
-                image_features_dim=opt['image_features_dim'],
+                image_features_dim=opt['polyencoder_image_features_dim'],
                 use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
             )
         else:
@@ -525,18 +525,14 @@ class PolyEncoderModule(torch.nn.Module):
 
 
 class ContextWithImageEncoder(TransformerEncoder):
-    # TODO: revise all of this!
-    """ContextWithImage Module.
-
-    Encodes image and context via simple concatenation.
-    """
+    """Encodes image features and context, and combines by summing or concatenation."""
 
     def __init__(self, *args, **kwargs):
-        self.n_img_layers = kwargs.pop('image_encoder_num_layers')
         self.img_dim = kwargs.pop('image_features_dim')
         self.use_cuda = kwargs.pop('use_cuda')
         super().__init__(*args, **kwargs)
         self._build_image_encoder()
+        # TODO: revise all of this!
         self.dummy_image_enc = torch.zeros((self.embedding_size))
         self.ones_mask = torch.ones(1).bool()
         if self.use_cuda:
