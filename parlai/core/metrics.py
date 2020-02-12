@@ -149,14 +149,20 @@ class Metric(ABC):
 
 class FixedMetric(Metric):
     """
-    Fixed metrics are not meant to be combined with others.
+    Fixed metrics are verified to be the same when combined, or throw an error
     """
+
+    __slots__ = ('_value',)
 
     def __init__(self, value: TScalar):
         self._value = self.as_number(value)
 
     def __add__(self, other: Optional['FixedMetric']) -> 'FixedMetric':
-        raise NotImplementedError("Fixed error should not be combined.")
+        if other is None:
+            return self
+        if self != other:
+            raise ValueError(f"FixedMetrics not the same: {self} and {other}")
+        return self
 
     def value(self) -> float:
         return self._value
@@ -423,7 +429,7 @@ class Metrics(object):
             self._data = {}
         elif shared and 'queue' in shared:
             # This is a clone, in threadsafe mode
-            self._buffer = []
+            self._buffer = {}
             self._queue = shared['queue']
             self._worker = True
             self._data = None
@@ -451,7 +457,7 @@ class Metrics(object):
         Record an accumulation to a metric.
         """
         if self._threadsafe and self._worker:
-            self._buffer.append((key, value))
+            self._buffer[key] = self._buffer.get(key) + value
         else:
             self._data[key] = self._data.get(key) + value
 
@@ -460,7 +466,7 @@ class Metrics(object):
         Clear the local buffer and push it on.
         """
         if self._threadsafe and self._buffer:
-            self._queue.put(self._buffer[:])
+            self._queue.put(self._buffer)
             self._buffer.clear()
 
     def report(self):
@@ -478,7 +484,7 @@ class Metrics(object):
             self.flush()
         elif self._threadsafe and not self._worker:
             for buffer_ in self._drain_queue():
-                for key, value in buffer_:
+                for key, value in buffer_.items():
                     self._data[key] = self._data.get(key) + value
 
     def _drain_queue(self):
