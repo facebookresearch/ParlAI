@@ -425,6 +425,7 @@ class TransformerEncoder(nn.Module):
         self.n_layers = n_layers
         self.n_heads = n_heads
         self.dim = embedding_size
+        self.learn_positional_embeddings = learn_positional_embeddings
         self.embeddings_scale = embeddings_scale
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
@@ -459,7 +460,7 @@ class TransformerEncoder(nn.Module):
 
         # create the positional embeddings
         self.position_embeddings = nn.Embedding(n_positions, embedding_size)
-        if not learn_positional_embeddings:
+        if not self.learn_positional_embeddings:
             create_position_codes(
                 n_positions, embedding_size, out=self.position_embeddings.weight
             )
