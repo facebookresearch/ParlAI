@@ -350,8 +350,10 @@ class TorchAgent(ABC, Agent):
         }
         try:
             import apex.optimizers.fused_adam as fused_adam
+            import apex.optimizers.fused_lamb as fused_lamb
 
             optims['fused_adam'] = fused_adam.FusedAdam
+            optims['fused_lamb'] = fused_lamb.FusedLAMB
         except ImportError:
             pass
 
@@ -803,7 +805,14 @@ class TorchAgent(ABC, Agent):
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
-        if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
+        if opt['optimizer'] in [
+            'adam',
+            'sparseadam',
+            'fused_adam',
+            'adamax',
+            'qhadam',
+            'fused_lamb',
+        ]:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
             # set adam optimizer, but only if user specified it
