@@ -43,7 +43,6 @@ from parlai.utils.distributed import (
     all_gather_list,
     is_distributed,
     num_workers,
-    get_rank,
 )
 from parlai.utils.misc import Timer, nice_report
 
