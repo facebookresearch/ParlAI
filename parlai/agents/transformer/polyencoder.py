@@ -14,6 +14,7 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 from .modules import BasicAttention, MultiHeadAttention
 import torch
+from typing import List, Optional
 
 
 class PolyencoderAgent(TorchRankerAgent):
@@ -40,6 +41,12 @@ class PolyencoderAgent(TorchRankerAgent):
             'vectors using codes + attention, or we '
             'simply take the first N vectors.',
             recommended='codes',
+        )
+        agent.add_argument(
+            '--polyencoder-image-features',
+            type='bool',
+            default=False,
+            help='Allow passing in image features in the context',
         )
         agent.add_argument(
             '--poly-n-codes',
@@ -220,8 +227,13 @@ class PolyEncoderModule(torch.nn.Module):
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.encoder_ctxt = self.get_encoder(opt, dict, null_idx, 'none_with_pos_embs')
-        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
+        self.use_image_features = opt.get('polyencoder_image_features', False)
+        self.encoder_ctxt = self.get_encoder(
+            opt, dict, null_idx, 'none_with_pos_embs', is_context=True
+        )
+        self.encoder_cand = self.get_encoder(
+            opt, dict, null_idx, opt['reduction_type'], is_context=False
+        )
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
@@ -267,7 +279,7 @@ class PolyEncoderModule(torch.nn.Module):
                 get_weights=False,
             )
 
-    def get_encoder(self, opt, dict, null_idx, reduction_type):
+    def get_encoder(self, opt, dict, null_idx, reduction_type, is_context: bool):
         """
         Return encoder, given options.
 
@@ -288,26 +300,50 @@ class PolyEncoderModule(torch.nn.Module):
             len(dict), opt['embedding_size'], padding_idx=null_idx
         )
         torch.nn.init.normal_(embeddings.weight, 0, opt['embedding_size'] ** -0.5)
-        return TransformerEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict),
-            embedding=embeddings,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
-            padding_idx=null_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            reduction_type=reduction_type,
-            n_positions=n_positions,
-            n_segments=2,
-            activation=opt['activation'],
-            variant=opt['variant'],
-            output_scaling=opt['output_scaling'],
-        )
+        if is_context and self.use_image_features:
+            return ContextWithImageEncoder(
+                n_heads=opt['n_heads'],
+                n_layers=opt['n_layers'],
+                embedding_size=opt['embedding_size'],
+                ffn_size=opt['ffn_size'],
+                vocabulary_size=len(dict),
+                embedding=embeddings,
+                dropout=opt['dropout'],
+                attention_dropout=opt['attention_dropout'],
+                relu_dropout=opt['relu_dropout'],
+                padding_idx=null_idx,
+                learn_positional_embeddings=opt['learn_positional_embeddings'],
+                embeddings_scale=opt['embeddings_scale'],
+                reduction_type=reduction_type,
+                n_positions=n_positions,
+                n_segments=2,
+                activation=opt['activation'],
+                variant=opt['variant'],
+                output_scaling=opt['output_scaling'],
+                image_features_dim=opt['image_features_dim'],
+                use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
+            )
+        else:
+            return TransformerEncoder(
+                n_heads=opt['n_heads'],
+                n_layers=opt['n_layers'],
+                embedding_size=opt['embedding_size'],
+                ffn_size=opt['ffn_size'],
+                vocabulary_size=len(dict),
+                embedding=embeddings,
+                dropout=opt['dropout'],
+                attention_dropout=opt['attention_dropout'],
+                relu_dropout=opt['relu_dropout'],
+                padding_idx=null_idx,
+                learn_positional_embeddings=opt['learn_positional_embeddings'],
+                embeddings_scale=opt['embeddings_scale'],
+                reduction_type=reduction_type,
+                n_positions=n_positions,
+                n_segments=2,
+                activation=opt['activation'],
+                variant=opt['variant'],
+                output_scaling=opt['output_scaling'],
+            )
 
     def attend(self, attention_layer, queries, keys, values, mask):
         """
@@ -337,12 +373,19 @@ class PolyEncoderModule(torch.nn.Module):
         else:
             raise Exception('Unrecognized type of attention')
 
-    def encode(self, ctxt_tokens, cand_tokens):
+    def encode(
+        self,
+        ctxt_tokens: Optional[torch.Tensor],
+        ctxt_image: Optional[List[Optional[torch.Tensor]]],
+        cand_tokens: Optional[torch.Tensor],
+    ):
         """
         Encode a text sequence.
 
         :param ctxt_tokens:
             2D long tensor, batchsize x sent_len
+        :param ctxt_image:
+            List of tensors (or Nones) of length batchsize
         :param cand_tokens:
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
@@ -370,7 +413,14 @@ class PolyEncoderModule(torch.nn.Module):
             assert len(ctxt_tokens.shape) == 2
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
-            ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(ctxt_tokens)
+            if ctxt_image is not None:
+                assert self.use_image_features is True
+                assert len(ctxt_image) == bsz
+                ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(
+                    ctxt_tokens, image_features=ctxt_image
+                )
+            else:
+                ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(ctxt_tokens)
             att_keys = ctxt_out if self.attention_keys == 'context' else ctxt_pos
             dim = ctxt_out.size(2)
 
@@ -472,6 +522,76 @@ class PolyEncoderModule(torch.nn.Module):
             # ctxt_pos can be none, if we are using codes (not first M)
             return self.score(ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_rep)
         raise Exception('Unsupported operation')
+
+
+class ContextWithImageEncoder(TransformerEncoder):
+    # TODO: revise all of this!
+    """ContextWithImage Module.
+
+    Encodes image and context via simple concatenation.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.n_img_layers = kwargs.pop('image_encoder_num_layers')
+        self.img_dim = kwargs.pop('image_features_dim')
+        self.use_cuda = kwargs.pop('use_cuda')
+        super().__init__(*args, **kwargs)
+        self._build_image_encoder()
+        self.dummy_image_enc = torch.zeros((self.embedding_size))
+        self.ones_mask = torch.ones(1).bool()
+        if self.use_cuda:
+            self.dummy_image_enc = self.dummy_image_enc.cuda()
+            self.ones_mask = self.ones_mask.cuda()
+
+    def _build_image_encoder(self):
+        image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
+        for _ in range(self.n_img_layers - 1):
+            image_layers += [
+                nn.ReLU(),
+                nn.Dropout(p=self.opt['dropout']),
+                nn.Linear(self.img_dim, self.embedding_size),
+            ]
+        self.image_encoder = nn.Sequential(*image_layers)
+
+    def forward(self, src_tokens, image_features):
+        """Encode images with context."""
+        context_encoded = context_mask = None
+        image_encoded = extra_masks = None
+        if src_tokens is not None:
+            context_encoded, context_mask = super().forward(src_tokens)
+        if image_features is not None and any(
+            feat is not None for feat in image_features
+        ):
+            # Only encode real image features; concat 0s for non-images
+            valid_inds = [i for i, img in enumerate(image_features) if img is not None]
+            valid_imgs = torch.stack(
+                [img for i, img in enumerate(image_features) if img is not None]
+            )
+            valid_img_enc = self.image_encoder(valid_imgs)
+
+            extra_masks = []
+            image_encoded = []
+            img_num = 0
+            for i in range(len(image_features)):
+                if i in valid_inds:
+                    extra_masks.append(self.ones_mask)
+                    image_encoded.append(valid_img_enc[img_num, :])
+                    img_num += 1
+                else:
+                    extra_masks.append(~self.ones_mask)
+                    image_encoded.append(self.dummy_image_enc)
+
+            extra_masks = torch.stack(extra_masks)
+            image_encoded = torch.stack(image_encoded).unsqueeze(1)
+
+        full_enc = self.cat([context_encoded, image_encoded])
+        full_mask = self.cat([context_mask, extra_masks])
+        return full_enc, full_mask
+
+    def cat(self, tensors):
+        """Handle cat on None tensors."""
+        tensors = [t for t in tensors if t is not None]
+        return torch.cat([t for t in tensors], dim=1)
 
 
 class PolyBasicAttention(BasicAttention):
