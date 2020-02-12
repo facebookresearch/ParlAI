@@ -80,6 +80,12 @@ class TestTransformerRanker(unittest.TestCase):
                     num_epochs=1,
                 )
             )
+            # make sure the number of updates is being tracked correctly
+            self.assertGreater(
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
+                'Number of updates is not increasing',
+            )
             # make sure the learning rate is decreasing
             self.assertLess(
                 valid2['lr'], valid1['lr'], 'Learning rate is not decreasing'
@@ -605,6 +611,12 @@ class TestLearningRateScheduler(unittest.TestCase):
             valid2, test2 = testing_utils.train_model(
                 dict(model_file=model_file, lr_scheduler='invsqrt', **args)
             )
+            # make sure the number of updates is being tracked correctly
+            self.assertGreater(
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
+                'Number of updates is not increasing',
+            )
             # make sure the learning rate is decreasing
             self.assertLess(
                 valid2['lr'], valid1['lr'], 'Learning rate is not decreasing'
@@ -620,6 +632,11 @@ class TestLearningRateScheduler(unittest.TestCase):
                 )
             )
             self.assertEqual(
+                valid3['total_train_updates'],
+                valid1['total_train_updates'],
+                'Finetuning LR scheduler reset failed (total_train_updates).',
+            )
+            self.assertEqual(
                 valid3['lr'],
                 valid1['lr'],
                 'Finetuning LR scheduler reset failed (lr).',
@@ -632,6 +649,11 @@ class TestLearningRateScheduler(unittest.TestCase):
                     lr_scheduler='reduceonplateau',
                     **args,
                 )
+            )
+            self.assertEqual(
+                valid4['total_train_updates'],
+                valid1['total_train_updates'],
+                'LR scheduler change reset failed (total_train_updates).',
             )
             self.assertEqual(
                 valid4['lr'], 1e-3, '({}) LR is not correct in final resume.'

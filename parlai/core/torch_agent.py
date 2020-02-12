@@ -43,7 +43,7 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric
+from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
 from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, padded_tensor
 
@@ -1000,6 +1000,11 @@ class TorchAgent(ABC, Agent):
 
         if self.use_cuda:
             report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
+
+        if is_primary_worker() and self._number_training_updates:
+            # number train updates doesn't work in hogwild sadly, and should only
+            # be done on the primary worker
+            report['total_train_updates'] = FixedMetric(self._number_training_updates)
 
         return report
 

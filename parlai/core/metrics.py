@@ -147,6 +147,21 @@ class Metric(ABC):
         return [cls(*items) for items in zip(*objs)]
 
 
+class FixedMetric(Metric):
+    """
+    Fixed metrics are not meant to be combined with others.
+    """
+
+    def __init__(self, value: TScalar):
+        self._value = self.as_number(value)
+
+    def __add__(self, other: Optional['FixedMetric']) -> 'FixedMetric':
+        raise NotImplementedError("Fixed error should not be combined.")
+
+    def value(self) -> float:
+        return self._value
+
+
 class SumMetric(Metric):
     """
     Class that keeps a running sum of some metric.
