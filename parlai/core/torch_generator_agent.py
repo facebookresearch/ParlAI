@@ -642,12 +642,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Train on a single batch of examples.
         """
-        if batch.text_vec is not None:
-            batchsize = batch.text_vec.size(0)
-        elif batch.image is not None:
-            batchsize = len(batch.image)
         # helps with memory usage
-        self._init_cuda_buffer(batchsize, self.truncate or 256)
+        # note we want to use the opt's batchsize instead of the observed batch size
+        # in case dynamic batching is in use
+        self._init_cuda_buffer(self.opt['batchsize'], self.label_truncate or 256)
         self.model.train()
         self.zero_grad()
 
@@ -876,6 +874,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
+    def _get_context(self, batch, batch_idx):
+        """
+        Set the beam context for n-gram context blocking.
+
+        Intentionally overridable for more complex model histories.
+        """
+        return batch.text_vec[batch_idx]
+
     def _generate(self, batch, beam_size, max_ts):
         """
         Generate an output with beam search.
@@ -914,8 +920,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else len(batch.image)
         )
         if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
+                self._treesearch_factory(dev).set_context(
+                    self._get_context(batch, batch_idx)
+                )
+                for batch_idx in range(batchsize)
             ]
         else:
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]

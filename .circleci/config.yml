@@ -79,6 +79,7 @@ installtorchgpu14: &installtorchgpu14
       pip3 install --progress-bar off 'torchvision==0.5.0'
       pip3 install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 
 installtorchgpu13: &installtorchgpu13
@@ -90,6 +91,7 @@ installtorchgpu13: &installtorchgpu13
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 
 installtorchcpuosx: &installtorchcpuosx
@@ -98,6 +100,7 @@ installtorchcpuosx: &installtorchcpuosx
     command: |
       pip3 install --progress-bar off torch
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 installtorchcpu: &installtorchcpu
   run:
@@ -105,6 +108,7 @@ installtorchcpu: &installtorchcpu
     command: |
       pip3 install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0 torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
       python -c 'import torch; print("Torch version:", torch.__version__)'
+      python -m torch.utils.collect_env
 
 setupcuda: &setupcuda
   run:
@@ -113,12 +117,8 @@ setupcuda: &setupcuda
     command: |
       # download and install nvidia drivers, cuda, etc
       wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin'
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb'
-      sudo cp ~/nvidia-downloads/cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
       time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-      time sudo dpkg -i ~/nvidia-downloads/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
-      echo "Done installing CUDA."
+      echo "Done installing NVIDIA drivers."
       pyenv versions
       nvidia-smi
       pyenv global 3.7.0
@@ -140,17 +140,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-dt-{{ checksum "requirements.txt" }}
+          key: deps-v3-dt-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v2-dt-{{ checksum "requirements.txt" }}
+          key: deps-v3-dt-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *installtorchcpu
       - run:
           name: Data tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m data
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -163,17 +164,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-osx-{{ checksum "requirements.txt" }}
+          key: deps-v3-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-v2-osx-{{ checksum "requirements.txt" }}
+          key: deps-v3-osx-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (OSX)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -189,17 +191,18 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -212,17 +215,18 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (py37)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -242,17 +246,18 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu13
       - save_cache:
-          key: deps-v2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.3)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -272,17 +277,18 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m unit
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -302,18 +308,19 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
@@ -328,16 +335,17 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python -m coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -349,7 +357,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-bw-{{ checksum "requirements.txt" }}
+          key: deps-v3-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -360,8 +368,9 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-v2-bw-{{ checksum "requirements.txt" }}
+          key: deps-v3-bw-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:
@@ -379,13 +388,14 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v2-dw-{{ checksum "requirements.txt" }}
+          key: deps-v3-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v2-dw-{{ checksum "requirements.txt" }}
+          key: deps-v3-dw-{{ checksum "requirements.txt" }}
           paths:
+            - "~/venv/bin"
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:

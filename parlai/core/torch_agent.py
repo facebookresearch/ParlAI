@@ -350,8 +350,10 @@ class TorchAgent(ABC, Agent):
         }
         try:
             import apex.optimizers.fused_adam as fused_adam
+            import apex.optimizers.fused_lamb as fused_lamb
 
             optims['fused_adam'] = fused_adam.FusedAdam
+            optims['fused_lamb'] = fused_lamb.FusedLAMB
         except ImportError:
             pass
 
@@ -655,8 +657,10 @@ class TorchAgent(ABC, Agent):
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
                 # such, we need some extra magic to ensure the dictionary is padded
                 # with extra tokens to make it a multiple of 8.
-                if len(self.dict) % 8 != 0:
-                    for i in range(8 - len(self.dict) % 8):
+                from parlai.utils.torch import FP16_PAD_SIZE
+
+                if len(self.dict) % FP16_PAD_SIZE != 0:
+                    for i in range(FP16_PAD_SIZE - len(self.dict) % FP16_PAD_SIZE):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
             self.metrics: Dict[str, Any] = {}
@@ -833,6 +837,7 @@ class TorchAgent(ABC, Agent):
             'fused_adam',
             'adamax',
             'qhadam',
+            'fused_lamb',
         ]:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
