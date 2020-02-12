@@ -8,7 +8,6 @@ Utility methods for dealing with torch code.
 """
 
 from typing import Union, Optional, Tuple, Any, List, Sized
-from parlai.utils.misc import warn_once
 
 
 try:
@@ -17,7 +16,6 @@ except ImportError:
     raise ImportError('Parlai requires pytorch. Go to http://pytorch.org to install.')
 
 import torch.optim
-import torch.nn.functional as F
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
@@ -219,85 +217,6 @@ def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
         else:
             output.append([lst[i] for i in ind_sorted])
     return output
-
-
-def fp16_optimizer_wrapper(
-    optimizer: torch.optim.Optimizer,  # type: ignore
-    verbose: bool = False,
-    dynamic_loss_scale: bool = True,
-    loss_initial_scale: float = 2.0 ** 17,
-):
-    """
-    Wrap the an optimizer with FP16 loss scaling protection.
-
-    Requires apex to be installed. Will throw an ImportError if it is not.
-
-    :param optimizer:
-        Any torch optimizer
-    :param bool verbose:
-        Enables verbose output in the FP16 optimizer. Turning this on can help
-        debug when FP16 is underperforming.
-    :param bool dynamic_loss_scaling:
-        FP16 requires loss scaling to avoid underflows. It is recommended this
-        stays on, but advanced users may want it off.
-    :param float loss_initial_scale:
-        Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
-
-    :returns:
-        An APEX FP16 optimizer. Please note this has different requirements on
-        how backward() and step() are called.
-    """
-    try:
-        import apex.fp16_utils
-    except ImportError:
-        raise ImportError(
-            'No fp16 support without apex. Please install it from '
-            'https://github.com/NVIDIA/apex'
-        )
-    return apex.fp16_utils.FP16_Optimizer(
-        optimizer,
-        dynamic_loss_scale=dynamic_loss_scale,
-        verbose=verbose,
-        # TODO: We may later want to remove this flag. Right now it
-        # empirically improves the first few backward passes, but future APEX
-        # improvements may make this unnecessary.
-        dynamic_loss_args={'init_scale': loss_initial_scale},
-    )
-
-
-def fp16_available() -> bool:
-    try:
-        import apex.fp16_utils  # noqa: F401
-
-        return True
-    except ImportError:
-        warn_once(
-            'You set --fp16 true, but fp16 is unavailable. To use fp16, please '
-            'install APEX from https://github.com/NVIDIA/apex.'
-        )
-        return False
-
-
-class FP16SafeCrossEntropy(torch.nn.Module):
-    """
-    FP16-safe cross entropy loss.
-
-    This avoids overflow in the softmax by doing the operation in FP32.
-    """
-
-    def __init__(self, ignore_index, reduction='none'):
-        super().__init__()
-        self.NULL_IDX = ignore_index
-        self.reduction = reduction
-
-    def forward(self, scores, targets):
-        return F.nll_loss(
-            F.log_softmax(scores, 1, dtype=torch.float32),
-            targets,
-            ignore_index=self.NULL_IDX,
-            reduction=self.reduction,
-        )
 
 
 class IdentityLayer(torch.nn.Module):
