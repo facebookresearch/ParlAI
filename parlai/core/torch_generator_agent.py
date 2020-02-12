@@ -29,8 +29,9 @@ import torch.nn.functional as F
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
+from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.torch import neginf, FP16SafeCrossEntropy
+from parlai.utils.torch import neginf
 
 
 try:

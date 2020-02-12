@@ -35,13 +35,15 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
-from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
-from parlai.utils.torch import (
-    argsort,
+from parlai.utils.fp16 import (
+    fp16_apex_available,
     fp16_optimizer_wrapper,
-    padded_tensor,
-    fp16_available,
+    MemoryEfficientFP16Optimizer,
+    MemoryEfficientFP16Adam,
+    Adafactor,
 )
+from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
+from parlai.utils.torch import argsort, padded_tensor
 
 
 class Batch(AttrDict):
@@ -365,6 +367,10 @@ class TorchAgent(ABC, Agent):
             # no QHM installed
             pass
 
+        # now pull in memory efficient implementations
+        optims['mem_eff_adam'] = MemoryEfficientFP16Adam
+        optims['adafactor'] = Adafactor
+
         return optims
 
     @staticmethod
@@ -436,6 +442,13 @@ class TorchAgent(ABC, Agent):
             '--fp16', type='bool', default=False, help='Use fp16 computations.'
         )
         agent.add_argument(
+            '--fp16-impl',
+            type=str,
+            default='apex',
+            choices=['apex', 'mem_efficient'],
+            help='Implementation of FP16 to use',
+        )
+        agent.add_argument(
             '--force-fp16-tokens',
             type='bool',
             default=False,
@@ -469,6 +482,14 @@ class TorchAgent(ABC, Agent):
             hidden=True,
             help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
             'large model has stability issues, but prefer the default.',
+        )
+        optim_group.add_argument(
+            '--adafactor-eps',
+            default='1e-30,1e-3',
+            type='floats',
+            help='Epsilon values for adafactor optimizer: regularization '
+            'constants for square gradient and parameter scale respectively',
+            recommended='1e-30,1e-3',
         )
         optim_group.add_argument(
             '-mom',
@@ -620,7 +641,12 @@ class TorchAgent(ABC, Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False) and fp16_available()
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+        if self.fp16:
+            # check that the implementation requested is available
+            self.fp16_impl = self.opt.get('fp16_impl', 'apex')
+            if self.fp16_impl == 'apex' and not fp16_apex_available():
+                self.fp16 = False
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -793,9 +819,18 @@ class TorchAgent(ABC, Agent):
             # turn on amsgrad for adam
             # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
             kwargs['amsgrad'] = True
+            if self.fp16 and self.fp16_impl == 'mem_efficient':
+                # grab this implementation instead
+                opt['optimizer'] = 'mem_eff_adam'
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
+        elif opt['optimizer'] == 'adafactor':
+            # adafactor params
+            kwargs['beta1'] = opt.get('betas', (0.9, 0.999))[0]
+            kwargs['eps'] = opt['adafactor_eps']
+            kwargs['warmup_init'] = opt.get('warmup_updates', -1) > 0
+
         if opt['optimizer'] in [
             'adam',
             'sparseadam',
@@ -828,8 +863,20 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
-
+            if self.fp16_impl == 'apex':
+                self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+            else:
+                # Using memory efficient optimizer
+                opt_name = opt['optimizer']
+                compatible_list = MemoryEfficientFP16Optimizer.compatible_optimizers()
+                is_compat = opt_name in compatible_list
+                if not is_compat:
+                    raise RuntimeError(
+                        f'The optimizer you selected {opt_name} is not compatible '
+                        'with Memory Efficient FP16. Please select from among this '
+                        f'list:\n{compatible_list}'
+                    )
+                self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
         # TODO: we might want to hard reset optimizers here in the
         # case of fine tuning. Some rudimentary experiments seemed to
         # indicate that keeping adam weights around was desirable, so this
@@ -847,9 +894,11 @@ class TorchAgent(ABC, Agent):
                 optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
-                # drop the fp16 wrapper from the state_dict and just load
+                # if apex, drop the fp16 wrapper from the state_dict and just load
                 # the fp16 weights into the fp32 tensors
-                optim_states = optim_states['optimizer_state_dict']
+                if 'optimizer_state_dict' in optim_states:
+                    # trained with apex
+                    optim_states = optim_states['optimizer_state_dict']
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
