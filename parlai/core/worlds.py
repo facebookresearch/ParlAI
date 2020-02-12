@@ -53,10 +53,10 @@ from typing import List, Dict, Any, Union, Tuple, Optional
 
 try:
     from torch.multiprocessing import Process, Value, Semaphore, Queue
-    import torch
     import torch.multiprocessing as mp
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
+    import multiprocessing as mp
 
 from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module
@@ -1158,7 +1158,6 @@ class DynamicBatchWorld(World):
             self._scores[i] = self._score(obs)
             if self._scores[i] is not None:
                 indices.append(i)
-
         # quick invariant checks
         assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
         assert not any(self._scores[i] is None for i in indices)
@@ -1630,6 +1629,8 @@ class PWorld(ABC, World):
         consume_queue: Queue,
         worker_idx: int,
     ):
+        from torch import Tensor
+
         World.__init__(self, opt)
         self.world = world
         self.produce_queue = produce_queue
@@ -1637,7 +1638,7 @@ class PWorld(ABC, World):
         self.consume_queue = consume_queue
         self.worker_idx = worker_idx
         self.produce_batch: bool = True
-        self.buffers: Dict[str, torch.Tensor] = {}
+        self.buffers: Dict[str, Tensor] = {}
         self.num_prod = 0
         self.num_consume = 0
         self.begun = False
@@ -1703,13 +1704,14 @@ class PWorld(ABC, World):
         :param batch_obs: a list of Messages
 
         :return: batch
-        :rtype: Batch
         """
+        from torch import Tensor
+
         updated_buffers = {}
         resized = {}
         batch: Batch = self.world.get_model_agent().batchify(batch_obs)
         for k, v in batch.items():
-            if isinstance(v, torch.Tensor):
+            if isinstance(v, Tensor):
                 try:
                     self.buffers[k].copy_(v)
                     self.buffers[k].resize_(v.size())
@@ -1776,6 +1778,12 @@ class PBatchWorld(PWorld, BatchWorld):
 
     def consume_act(self, act: List[Message]):
         agent_idx = 1
+        # Agent does not see *all* observations, only valid ones.
+        # So, need to pad the act with some empty messages
+        act += [
+            Message({'id': self.get_model_agent().getID(), 'episode_done': False})
+            for _ in range(self.opt['batchsize'] - len(act))
+        ]
         for other_idx in range(len(self.world.get_agents())):
             self.batch_observe(other_idx, act, agent_idx)
 
@@ -1846,6 +1854,8 @@ class QueueWorld(World):
     def __init__(self, opt: Opt, world: World, pworld_class: type):
         super().__init__(opt)
         # QueueWorld init
+        from torch import Tensor
+
         self.world: World = world
         self.agents: List[Agent] = world.get_agents()
         self.processes: List[Process] = []
@@ -1853,10 +1863,11 @@ class QueueWorld(World):
         self.worlds: List[World] = []
         self.produce_queue: Queue = Queue()
         self.report_queue: Queue = Queue()
-        self.buffers: List[Dict[str, torch.Tensor]] = []
+        self.buffers: List[Dict[str, Tensor]] = []
         self.finished_workers: List[int] = []
         self.training = 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']
-        self.num_workers = opt['num_workers'] if self.training else 1
+        # self.num_workers = opt['num_workers'] if self.training else 1
+        self.num_workers = 1
         self.init_parley = True
         self.num_consume = 0
         self._init_workers(opt, world, pworld_class)
@@ -1945,15 +1956,13 @@ class QueueWorld(World):
             subworld = shared['world_class'](opt, None, shared)
             self.processes.append(
                 PWorldProcess(
-                    kwargs={
-                        'opt': opt,
-                        'world': subworld,
-                        'pworld_class': pworld_class,
-                        'produce_queue': self.produce_queue,
-                        'report_queue': self.report_queue,
-                        'consume_queue': consume_queue,
-                        'worker_idx': worker_idx,
-                    }
+                    opt=opt,
+                    world=subworld,
+                    pworld_class=pworld_class,
+                    produce_queue=self.produce_queue,
+                    report_queue=self.report_queue,
+                    consume_queue=consume_queue,
+                    worker_idx=worker_idx,
                 )
             )
             self.worlds.append(subworld)
@@ -1990,7 +1999,6 @@ class QueueWorld(World):
         Continuously poll the queue until we receive a Batch. Mark finished workers along the way.
 
         :return: (signal, batch_obs, idx)
-        :rtype: (QueueSignal, Union[List[Message], Batch], int)
             signal:    the command signal from the queue
             batch_obs: a batch from one of the producers
             idx:       the worker index that produced the batch
@@ -2022,7 +2030,6 @@ class QueueWorld(World):
             The worker from which the batch came
 
         :return: batch_obs, a batch post-buffer-housekeeping
-        :rtype: Batch
         """
         if hasattr(self.world.get_model_agent(), 'batchify'):
             for key, buff in batch_obs.updated_buffers.items():
@@ -2061,7 +2068,6 @@ class QueueWorld(World):
             The observation that the agent will act upon
 
         :return: batch_actions
-        :rtype: List[Message]
         """
         a = self.world.get_model_agent()
         if hasattr(a, 'batch_act'):
@@ -2069,9 +2075,9 @@ class QueueWorld(World):
         else:
             batch_actions = []
             for w in self.worlds:
-                agents = w.get_agents()
+                agent = w.get_model_agent()
                 acts = w.get_acts()
-                acts[1] = agents[1].act()
+                acts[1] = agent.act()
                 batch_actions.append(acts[1])
         return batch_actions
 
@@ -2123,7 +2129,6 @@ class QueueWorld(World):
         Aggregate reports from each process.
 
         :return: report
-        :rtype: Dict
         """
         for q in self.consume_queues:
             q.put((QueueSignal.REPORT, None))
@@ -2141,7 +2146,7 @@ class QueueWorld(World):
         """
         return self.total_exs / self.num_examples()
 
-    def update_counters(self, batch):
+    def update_counters(self, batch: Batch):
         """
         Update world counters.
 
@@ -2150,7 +2155,7 @@ class QueueWorld(World):
         :param batch:
             batch of observations
         """
-        self.total_exs += len(batch.valid_indices)
+        self.total_exs += batch.batchsize
         self.total_parleys += 1
 
 

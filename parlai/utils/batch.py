@@ -91,3 +91,12 @@ class Batch(AttrDict):
             batchsize=batchsize,
             **kwargs,
         )
+
+    def cuda(self):
+        """
+        Cuda appropriately.
+        """
+        if self.text_vec is not None:
+            self.text_vec = self.text_vec.cuda()
+        if self.label_vec is not None:
+            self.label_vec = self.label_vec.cuda()

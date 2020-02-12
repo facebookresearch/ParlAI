@@ -537,6 +537,8 @@ class TorchAgent(ABC, Agent):
 
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        if self.opt.get('num_workers', 1) > 1 and shared:
+            self.use_cuda = False
         if self.use_cuda:
             if not shared:
                 print('[ Using CUDA ]')
@@ -1236,12 +1238,12 @@ class TorchAgent(ABC, Agent):
             vectors if available, otherwise uses the label vectors if available.
         """
         if len(obs_batch) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -1651,12 +1653,18 @@ class TorchAgent(ABC, Agent):
             Message({'id': self.getID(), 'episode_done': False})
             for _ in range(batch_size)
         ]
+        if batch_size == 0:
+            return batch_reply
 
         # create a batch from the vectors
         if not isinstance(observations, Batch):
             batch = self.batchify(observations)
         else:
+            # the batch has already been batchified in the background
             batch = observations
+
+        if self.use_cuda:
+            batch.cuda()
 
         # check if there are any labels available, if so we will train on them
         observations = batch.observations
