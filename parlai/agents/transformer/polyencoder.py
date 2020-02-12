@@ -175,7 +175,9 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, ctxt_pos, _ = self.model(ctxt_tokens=batch.text_vec)
+        ctxt_rep, ctxt_rep_mask, ctxt_pos, _ = self.model(
+            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
+        )
 
         if cand_encs is not None:
             if bsz == 1:
@@ -426,6 +428,7 @@ class PolyEncoderModule(torch.nn.Module):
     def forward(
         self,
         ctxt_tokens=None,
+        ctxt_image=None,
         cand_tokens=None,
         ctxt_rep=None,
         ctxt_rep_mask=None,
@@ -442,6 +445,8 @@ class PolyEncoderModule(torch.nn.Module):
 
         :param ctxt_tokens:
             tokenized contexts
+        :param ctxt_image:
+            image features in context
         :param cand_tokens:
             tokenized candidates
         :param ctxt_rep:
@@ -458,7 +463,9 @@ class PolyEncoderModule(torch.nn.Module):
             encoded representation of the candidates
         """
         if ctxt_tokens is not None or cand_tokens is not None:
-            return self.encode(ctxt_tokens, cand_tokens)
+            return self.encode(
+                ctxt_tokens=ctxt_tokens, ctxt_image=ctxt_image, cand_tokens=cand_tokens
+            )
         elif (
             ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
         ):
