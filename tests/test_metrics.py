@@ -152,7 +152,7 @@ class TestMetrics(unittest.TestCase):
         ms = [Metrics(threadsafe=True, shared=m.share()) for _ in range(nt)]
 
         # intentionally just over the int overflow
-        for i in range(32768 + 1):
+        for _ in range(32768 + 1):
             ms[random.randint(0, nt - 1)].add('key', SumMetric(1))
         thread_ids = list(range(nt))
         random.shuffle(thread_ids)
@@ -166,7 +166,7 @@ class TestMetrics(unittest.TestCase):
         m2 = Metrics(threadsafe=True, shared=m.share())
 
         # intentionally just over the int overflow
-        for i in range(32768 + 1):
+        for _ in range(32768 + 1):
             m2.add('key', SumMetric(1))
         m2.flush()
 

@@ -149,7 +149,7 @@ class Metric(ABC):
 
 class FixedMetric(Metric):
     """
-    Fixed metrics are verified to be the same when combined, or throw an error
+    Fixed metrics are verified to be the same when combined, or throw an error.
     """
 
     __slots__ = ('_value',)
