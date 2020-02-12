@@ -617,8 +617,14 @@ class ContextWithImageEncoder(TransformerEncoder):
             image_masks = image_encoded = None
 
         if self.image_combination_mode == 'add':
-            pass
-            # {{{TODO: define all 3 output vars}}}
+            full_enc = context_encoded + image_encoded
+            # image_encoded broadcasted along dim=1
+            full_mask = context_mask
+            full_pos = context_pos
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
             full_mask = self.cat([image_masks, context_mask])
@@ -626,6 +632,10 @@ class ContextWithImageEncoder(TransformerEncoder):
                 context_pos.new_zeros((context_pos.size(0), 1))
             )
             full_pos = self.cat([prepended_pos, context_pos])
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove
         else:
             raise ValueError('Image combination mode not recognized!')
 
