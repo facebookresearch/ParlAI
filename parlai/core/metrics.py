@@ -435,7 +435,7 @@ class Metrics(object):
         """
         Record an accumulation to a metric.
         """
-        if self._threadsafe:
+        if self._threadsafe and self._worker:
             self._buffer.append((key, value))
         else:
             self._data[key] = self._data.get(key) + value
