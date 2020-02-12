@@ -431,7 +431,7 @@ class PolyEncoderModule(torch.nn.Module):
             # get context_representation. Now that depends on the cases.
             if ctxt_image is not None:
                 assert self.use_image_features is True
-                assert len(ctxt_image) == bsz
+                assert ctxt_image is None or len(ctxt_image) == bsz
                 ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(
                     ctxt_tokens, image_features=ctxt_image
                 )
@@ -598,6 +598,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             valid_imgs = torch.stack(
                 [img for i, img in enumerate(image_features) if img is not None]
             )
+            import pdb; pdb.set_trace()
             valid_img_enc = self.image_encoder(valid_imgs)
 
             image_masks = []
