@@ -10,6 +10,7 @@ Poly-encoder Agent.
 
 from typing import List, Optional
 
+import numpy as np
 import torch
 from torch import nn
 
@@ -54,6 +55,13 @@ class PolyencoderAgent(TorchRankerAgent):
             type=int,
             default=0,
             help='If >0, allows passing in image features of the given dim in the context',
+        )
+        agent.add_argument(
+            '--polyencoder-image-combination-mode',
+            type=str,
+            default='add',
+            choices=['add', 'prepend'],
+            help='How to combine image embedding (if used) with context embedding',
         )
         agent.add_argument(
             '--poly-n-codes',
@@ -328,6 +336,7 @@ class PolyEncoderModule(torch.nn.Module):
                 variant=opt['variant'],
                 output_scaling=opt['output_scaling'],
                 image_features_dim=opt['polyencoder_image_features_dim'],
+                image_combination_mode=opt['polyencoder_image_combination_mode'],
                 use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
             )
         else:
@@ -535,7 +544,9 @@ class ContextWithImageEncoder(TransformerEncoder):
     """Encodes image features and context, and combines by summing or concatenation."""
 
     def __init__(self, *args, **kwargs):
+
         self.img_dim = kwargs.pop('image_features_dim')
+        self.image_combination_mode = kwargs.pop('image_combination_mode')
         self.use_cuda = kwargs.pop('use_cuda')
         super().__init__(*args, **kwargs)
         self.image_encoder = nn.Linear(self.img_dim, self.embedding_size)
@@ -546,11 +557,39 @@ class ContextWithImageEncoder(TransformerEncoder):
             self.dummy_image_enc = self.dummy_image_enc.cuda()
             self.ones_mask = self.ones_mask.cuda()
 
+        # If we're prepending image features, create a positional embedding for this
+        # position
+        if self.image_combination_mode == 'prepend':
+            self.image_position_embedding = nn.Embedding(1, self.embedding_size)
+            if not self.learn_positional_embeddings:
+                self._create_prepended_position_codes(
+                    dim=self.embedding_size, out=self.image_position_embedding.weight
+                )
+            else:
+                nn.init.normal_(
+                    self.image_position_embedding.weight, 0, self.embedding_size ** -0.5
+                )
+
+    @staticmethod
+    def _create_prepended_position_codes(dim: int, out: torch.Tensor):
+        """
+        Set the weights in `out` to what
+        parlai.agents.transformer.modules.create_position_codes() *would* have set them
+        to if the positions had extended one position to the left
+        """
+        # TODO: test thoroughly
+        pos = -1  # i.e. one position to the left of the original leftmost position
+        position_enc = np.array(
+            [[pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]]
+        )
+        out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
+        out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
+        out.detach_()
+        out.requires_grad = False
+
     def forward(self, src_tokens, image_features):
         """Encode images with context."""
         context_encoded, context_mask, context_pos = super().forward(src_tokens)
-        # TODO: define full_pos, probably by prepending zeros if we're prepending the image features, right?
-        # TODO: revise from here
         if image_features is not None and any(
             feat is not None for feat in image_features
         ):
@@ -561,26 +600,39 @@ class ContextWithImageEncoder(TransformerEncoder):
             )
             valid_img_enc = self.image_encoder(valid_imgs)
 
-            extra_masks = []
+            image_masks = []
             image_encoded = []
             img_num = 0
             for i in range(len(image_features)):
                 if i in valid_inds:
-                    extra_masks.append(self.ones_mask)
+                    image_masks.append(self.ones_mask)
                     image_encoded.append(valid_img_enc[img_num, :])
                     img_num += 1
                 else:
-                    extra_masks.append(~self.ones_mask)
+                    image_masks.append(~self.ones_mask)
                     image_encoded.append(self.dummy_image_enc)
-
-            extra_masks = torch.stack(extra_masks)
+            image_masks = torch.stack(image_masks)
             image_encoded = torch.stack(image_encoded).unsqueeze(1)
+        else:
+            image_masks = image_encoded = None
 
-        full_enc = self.cat([context_encoded, image_encoded])
-        full_mask = self.cat([context_mask, extra_masks])
+        if self.image_combination_mode == 'add':
+            pass
+            # {{{TODO: define all 3 output vars}}}
+        elif self.image_combination_mode == 'prepend':
+            full_enc = self.cat([image_encoded, context_encoded])
+            full_mask = self.cat([image_masks, context_mask])
+            prepended_pos = self.image_position_embedding(
+                context_pos.new_zeros((context_pos.size(0), 1))
+            )
+            full_pos = self.cat([prepended_pos, context_pos])
+        else:
+            raise ValueError('Image combination mode not recognized!')
+
         return full_enc, full_mask, full_pos
 
-    def cat(self, tensors):
+    @staticmethod
+    def cat(tensors: List[torch.Tensor]):
         """Handle cat on None tensors."""
         tensors = [t for t in tensors if t is not None]
         return torch.cat([t for t in tensors], dim=1)
