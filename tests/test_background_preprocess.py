@@ -51,6 +51,12 @@ MULTITASK_MULTIVALID_ARGS = {
     'validation_metric': 'ppl',
 }
 
+MULTIPROCESS_ARGS = {
+    'task': 'integration_tests:nocandidate',
+    'num_epochs': 1,
+    'batchsize': 16,
+}
+
 
 class TestBackgroundPreprocess(unittest.TestCase):
     """
@@ -173,6 +179,39 @@ class TestBackgroundPreprocess(unittest.TestCase):
                 )
 
             self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
+
+    @unittest.skipIf(True, 'Currently Skipping because of MP Train Testing Bug')
+    def test_singletask_distributed(self):
+        """
+        Distributed Training
+        """
+        args = BASE_ARGS.copy()
+        args.update(MULTIPROCESS_ARGS)
+        valid, test = testing_utils.distributed_train_model(args)
+        for report in [valid, test]:
+            self.assertEqual(
+                report['exs'], NUM_TEST, f'args: {args}'
+            )
+        self.assertEqual(
+            valid['total_train_updates'], test['total_train_updates']
+        )
+
+    def test_stream(self):
+        """
+        Test Streaming
+        """
+        args = BASE_ARGS.copy()
+        args.update(SINGLETASK_ARGS)
+        args['batchsize'] = 8
+        args['datatype'] = 'train:stream'
+        valid, test = testing_utils.train_model(args)
+        for report in [valid, test]:
+            self.assertEqual(
+                report['exs'], NUM_TEST, f'args: {args}'
+            )
+        self.assertEqual(
+            valid['total_train_updates'], test['total_train_updates']
+        )
 
 
 if __name__ == "__main__":

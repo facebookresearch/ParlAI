@@ -559,9 +559,7 @@ class TorchAgent(ABC, Agent):
         self.__expecting_to_reply = False
 
         # check for cuda
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
-        if self.opt.get('num_workers', 1) > 1 and shared:
-            self.use_cuda = False
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available() and not (self.opt.get('num_workers', 1) > 1 and shared)
         if self.use_cuda:
             if not shared:
                 print('[ Using CUDA ]')
@@ -601,9 +599,11 @@ class TorchAgent(ABC, Agent):
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
-            self.model = shared['model']
-            self.criterion = shared['criterion']
             self.metrics = shared['metrics']
+
+            if self.opt.get('num_workers', 1) == 1:
+                self.model = shared['model']
+                self.criterion = shared['criterion']
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -1028,9 +1028,11 @@ class TorchAgent(ABC, Agent):
             self.model.share_memory()
         shared['metrics'] = self.metrics
 
+        if self.opt.get('num_workers', 1) == 1:
+            shared['model'] = self.model
+            shared['criterion'] = self.criterion
+
         shared['dict'] = self.dict
-        shared['model'] = self.model
-        shared['criterion'] = self.criterion
         shared['opt'] = self.opt
         return shared
 

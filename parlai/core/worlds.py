@@ -1866,8 +1866,7 @@ class QueueWorld(World):
         self.buffers: List[Dict[str, Tensor]] = []
         self.finished_workers: List[int] = []
         self.training = 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']
-        # self.num_workers = opt['num_workers'] if self.training else 1
-        self.num_workers = 1
+        self.num_workers = opt['num_workers'] if self.training else 1
         self.init_parley = True
         self.num_consume = 0
         self._init_workers(opt, world, pworld_class)
@@ -2235,10 +2234,8 @@ def create_task(opt: Opt, user_agents, default_world=None):
     if opt.get('numthreads', 1) > 1:
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
-        mp.set_start_method('fork', force=True)
         world = HogwildWorld(opt, world)
     elif opt.get('num_workers', 1) > 1:
-        mp.set_start_method('spawn', force=True)
         if opt.get('dynamic_batching') and opt.get('batchsize', 1) > 1:
             world = QueueWorld(opt, world, PDynamicBatchWorld)
         else:

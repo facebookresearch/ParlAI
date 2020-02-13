@@ -258,6 +258,18 @@ def timeout(time: int = 30):
         signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
 
+def _forced_parse(parser, opt):
+    parser.set_params(**opt)
+    parser.set_params(log_every_n_sec=10)
+    popt = parser.parse_args([], print_args=False)
+    # in some rare cases, like for instance if the model class also
+    # overrides its default params, the params override will not
+    # be taken into account.
+    for k, v in opt.items():
+        popt[k] = v
+    return popt
+
+
 def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Run through a TrainLoop.
@@ -276,19 +288,41 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if 'dict_file' not in opt:
             opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
         parser = tms.setup_args()
-        # needed at the very least to set the overrides.
-        parser.set_params(**opt)
-        parser.set_params(log_every_n_secs=10)
-        popt = parser.parse_args([], print_args=False)
-        # in some rare cases, like for instance if the model class also
-        # overrides its default params, the params override will not
-        # be taken into account.
-        for k, v in opt.items():
-            popt[k] = v
+        popt = _forced_parse(parser, opt)
         tl = tms.TrainLoop(popt)
         valid, test = tl.train()
 
     return valid, test
+
+
+def distributed_train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """
+    Run through a Distributed TrainLoop.
+
+    If model_file is not in opt, then this helper will create a temporary
+    directory to store the model, dict, etc.
+
+    :return: (valid_results, test_results)
+    :rtype: (dict, dict)
+    """
+    import parlai.scripts.build_dict as build_dict
+    import parlai.scripts.multiprocessing_train as mp_train
+    with tempdir() as tmpdir:
+        if 'model_file' not in opt:
+            opt['model_file'] = os.path.join(tmpdir, 'model')
+        if 'dict_file' not in opt:
+            opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+
+        parser = mp_train.setup_args()
+        popt = _forced_parse(parser, opt)
+
+        # we need a prebuilt dictionary
+        parser = build_dict.setup_args()
+        build_dict.build_dict(popt)
+
+        valid, test = mp_train.launch_and_train(popt, 31338)
+
+    return (valid, test)
 
 
 def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
