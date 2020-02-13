@@ -89,7 +89,7 @@ class TestDictionary(unittest.TestCase):
         opt = Opt(
             {
                 'dict_tokenizer': 'bytelevelbpe',
-                'datapath': './',
+                'datapath': './data',
                 'bpe_vocab': DEFAULT_BYTELEVEL_BPE_VOCAB,
                 'bpe_merge': DEFAULT_BYTELEVEL_BPE_MERGE,
             }
