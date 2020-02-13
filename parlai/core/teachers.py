@@ -663,7 +663,9 @@ class DialogData(object):
         self.copied_cands = False
         if not isinstance(self, StreamDialogData):
             num_exs = self.num_examples()
-            print(f'DialogData{self.id} num_examples: {num_exs}, shared: {shared is not None}')
+            print(
+                f'DialogData{self.id} num_examples: {num_exs}, shared: {shared is not None}'
+            )
 
     def share(self):
         """
@@ -785,10 +787,14 @@ class DialogData(object):
             single-entry episodes, so this defaults to zero.
         """
         next_episode_idx_for_rank = episode_idx + 1
-        if is_distributed() and any(x in self.opt['datatype'] for x in ('valid', 'test', 'train:evalmode')):
+        if is_distributed() and any(
+            x in self.opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        ):
             raw_episode_idx = episode_idx
             episode_idx = raw_episode_idx * self._num_workers + self._rank
-            next_episode_idx_for_rank = (raw_episode_idx + 1) * self._num_workers + self._rank
+            next_episode_idx_for_rank = (
+                raw_episode_idx + 1
+            ) * self._num_workers + self._rank
             if episode_idx >= len(self.data):
                 # This can occur in spite of the check below if epoch ends
                 # mid-batch b/c BatchWorld calls act() on all the worlds without
