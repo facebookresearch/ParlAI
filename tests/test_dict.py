@@ -20,10 +20,10 @@ import shutil
 import unittest
 
 DEFAULT_BYTELEVEL_BPE_VOCAB = (
-    'zoo:unittests/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
 )
 DEFAULT_BYTELEVEL_BPE_MERGE = (
-    'zoo:unittests/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-merges.txt'
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-merges.txt'
 )
 BYTELEVEL_BPE_RESULT = [
     'H',
