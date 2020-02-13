@@ -86,14 +86,15 @@ class TestDictionary(unittest.TestCase):
 
     def test_byte_level_bpe_tokenize(self):
         # test loading
-        opt = Opt(
-            {
-                'dict_tokenizer': 'bytelevelbpe',
-                'datapath': './data',
-                'bpe_vocab': DEFAULT_BYTELEVEL_BPE_VOCAB,
-                'bpe_merge': DEFAULT_BYTELEVEL_BPE_MERGE,
-            }
+        import parlai.scripts.train_model as tms
+
+        parser = tms.setup_args()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
         )
+        opt = parser.parse_args([], print_args=False)
         agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
