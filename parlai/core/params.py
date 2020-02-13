@@ -949,24 +949,17 @@ class ParlaiParser(argparse.ArgumentParser):
             self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
-        if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['model_file']
-            )
-        if self.opt['override'].get('model_file') is not None:
-            # also check override
-            self.opt['override']['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['model_file']
-            )
-        if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['dict_file']
-            )
-        if self.opt['override'].get('dict_file') is not None:
-            # also check override
-            self.opt['override']['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['dict_file']
-            )
+        options_to_change = {'model_file', 'dict_file', 'bpe-vocab', 'bpe-merge'}
+        for each_key in options_to_change:
+            if self.opt.get(each_key) is not None:
+                self.opt[each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt[each_key]
+                )
+            if self.opt['override'].get(each_key) is not None:
+                # also check override
+                self.opt['override'][each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt['override'][each_key]
+                )
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
