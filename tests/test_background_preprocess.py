@@ -183,22 +183,18 @@ class TestBackgroundPreprocess(unittest.TestCase):
     @unittest.skipIf(True, 'Currently Skipping because of MP Train Testing Bug')
     def test_singletask_distributed(self):
         """
-        Distributed Training
+        Distributed Training.
         """
         args = BASE_ARGS.copy()
         args.update(MULTIPROCESS_ARGS)
         valid, test = testing_utils.distributed_train_model(args)
         for report in [valid, test]:
-            self.assertEqual(
-                report['exs'], NUM_TEST, f'args: {args}'
-            )
-        self.assertEqual(
-            valid['total_train_updates'], test['total_train_updates']
-        )
+            self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
+        self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
 
     def test_stream(self):
         """
-        Test Streaming
+        Test Streaming.
         """
         args = BASE_ARGS.copy()
         args.update(SINGLETASK_ARGS)
@@ -206,12 +202,8 @@ class TestBackgroundPreprocess(unittest.TestCase):
         args['datatype'] = 'train:stream'
         valid, test = testing_utils.train_model(args)
         for report in [valid, test]:
-            self.assertEqual(
-                report['exs'], NUM_TEST, f'args: {args}'
-            )
-        self.assertEqual(
-            valid['total_train_updates'], test['total_train_updates']
-        )
+            self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
+        self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
 
 
 if __name__ == "__main__":

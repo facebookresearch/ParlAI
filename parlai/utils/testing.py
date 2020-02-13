@@ -307,6 +307,7 @@ def distributed_train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     import parlai.scripts.build_dict as build_dict
     import parlai.scripts.multiprocessing_train as mp_train
+
     with tempdir() as tmpdir:
         if 'model_file' not in opt:
             opt['model_file'] = os.path.join(tmpdir, 'model')

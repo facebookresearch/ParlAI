@@ -11,7 +11,6 @@ import parlai.utils.testing as testing_utils
 
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
-
     def tearDown(self):
         # we need to de-initialize the distributed world, otherwise other
         # tests will they're we're distributed when we're really not.

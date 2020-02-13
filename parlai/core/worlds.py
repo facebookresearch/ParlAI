@@ -53,10 +53,8 @@ from typing import List, Dict, Any, Union, Tuple, Optional
 
 try:
     from torch.multiprocessing import Process, Value, Semaphore, Queue
-    import torch.multiprocessing as mp
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
-    import multiprocessing as mp
 
 from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module

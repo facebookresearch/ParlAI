@@ -559,7 +559,11 @@ class TorchAgent(ABC, Agent):
         self.__expecting_to_reply = False
 
         # check for cuda
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available() and not (self.opt.get('num_workers', 1) > 1 and shared)
+        self.use_cuda = (
+            not opt['no_cuda']
+            and torch.cuda.is_available()
+            and not (self.opt.get('num_workers', 1) > 1 and shared)
+        )
         if self.use_cuda:
             if not shared:
                 print('[ Using CUDA ]')
