@@ -763,8 +763,7 @@ class DialogData(object):
         """
         Return number of episodes in the dataset.
         """
-        # return len(self.data)
-        return 50
+        return len(self.data)
 
     @lru_cache(maxsize=1)
     def num_examples(self):
@@ -773,8 +772,7 @@ class DialogData(object):
 
         Each episode has at least one entry, but might have many more.
         """
-        return 50
-        # return sum(len(episode) for episode in self.data)
+        return sum(len(episode) for episode in self.data)
 
     def get(self, episode_idx, entry_idx=0):
         """
