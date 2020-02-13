@@ -20,10 +20,10 @@ import shutil
 import unittest
 
 DEFAULT_BYTELEVEL_BPE_VOCAB = (
-    'zoo:unittests/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-vocab.json'
+    'zoo:unittests/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
 )
 DEFAULT_BYTELEVEL_BPE_MERGE = (
-    'zoo:unittests/test_bytelevel_bpe_v1/test-byte-level-bpe-v1-merges.txt'
+    'zoo:unittests/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-merges.txt'
 )
 BYTELEVEL_BPE_RESULT = [
     'H',
@@ -105,8 +105,6 @@ class TestDictionary(unittest.TestCase):
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
-        os.remove('./test-byte-level-bpe-vocab.json')
-        os.remove('./test-byte-level-bpe-merges.txt')
 
     def test_space_tokenize(self):
         """
