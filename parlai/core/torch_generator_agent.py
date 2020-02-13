@@ -565,7 +565,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
-        self.record_local_metric('nll_loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
