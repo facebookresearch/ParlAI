@@ -83,6 +83,14 @@ class TestDynamicBatching(unittest.TestCase):
             datatype='train:stream',
         )
 
+    def test_weird_batchsize(self):
+        # intentionally a difficult number
+        self._test_correct_processed(NUM_TEST, batchsize=7)
+
+    def test_batchsize4(self):
+        # intentionally an edgecase in the world
+        self._test_correct_processed(NUM_TEST, batchsize=4)
+
 
 class TestBatchSort(unittest.TestCase):
     def _test_correct_processed(self, num_goal: int, **kwargs: Dict[str, Any]):
@@ -130,6 +138,14 @@ class TestBatchSort(unittest.TestCase):
             task='integration_tests:variable_length,integration_tests:multiturn',
             datatype='train:stream',
         )
+
+    def test_weird_batchsize(self):
+        # intentionally a difficult number
+        self._test_correct_processed(NUM_TEST, batchsize=7)
+
+    def test_batchsize4(self):
+        # intentionally an edgecase in the world
+        self._test_correct_processed(NUM_TEST, batchsize=4)
 
 
 if __name__ == '__main__':
