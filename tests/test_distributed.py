@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import copy
 import unittest
 import torch.distributed as dist
 import parlai.utils.testing as testing_utils
@@ -26,8 +27,24 @@ def _forced_parse(parser, opt):
 
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
+    _base_config = dict(
+        task='integration_tests:nocandidate',
+        model='transformer/generator',
+        optimizer='adamax',
+        learningrate=7e-3,
+        batchsize=32,
+        validation_every_n_epochs=5,
+        num_epochs=20,
+        n_layers=1,
+        n_heads=1,
+        ffn_size=32,
+        embedding_size=32,
+        beam_size=1,
+    )
+
     def _distributed_train_model(self, opt):
         with testing_utils.tempdir() as tmpdir:
+            opt['verbose'] = True
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
             if 'dict_file' not in opt:
@@ -44,33 +61,39 @@ class TestDistributed(unittest.TestCase):
 
         return (valid, test)
 
+    def setUp(self):
+        print(f'[Setting up test {self._testMethodName}]')
+
     def tearDown(self):
         # we need to de-initialize the distributed world, otherwise other
         # tests will they're we're distributed when we're really not.
         dist.destroy_process_group()
 
     def test_generator_distributed(self):
-        valid, test = self._distributed_train_model(
-            dict(
-                task='integration_tests:nocandidate',
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                validation_every_n_epochs=5,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
-                beam_size=1,
-            )
-        )
+        valid, test = self._distributed_train_model(self._base_config)
 
         self.assertLessEqual(valid['ppl'], 1.20)
         self.assertGreaterEqual(valid['bleu-4'], 0.95)
         self.assertLessEqual(test['ppl'], 1.20)
         self.assertGreaterEqual(test['bleu-4'], 0.95)
+
+        # Tests that DialogData.get() is doing the right thing
+        # Ensure no duplication of examples among workers
+        # It would be 200 if each worker did all the examples
+        self.assertEqual(valid['exs'].value(), 100)
+        self.assertEqual(test['exs'].value(), 100)
+
+    def test_distributed_eval_streaming(self):
+        # Tests that StreamDialogData get() is doing the right thing
+        # Note: this hangs right now!!
+        config = copy.deepcopy(self._base_config)
+        config['datatype'] = 'train:stream'
+        valid, test = self._distributed_train_model(config)
+
+        # Ensure no duplication of examples among workers
+        # It would be 200 if each worker did all the examples
+        self.assertEqual(valid['exs'].value(), 100)
+        self.assertEqual(test['exs'].value(), 100)
 
 
 if __name__ == '__main__':

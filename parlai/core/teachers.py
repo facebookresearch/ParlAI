@@ -38,6 +38,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.distributed import get_rank, num_workers, is_distributed
 
 from functools import lru_cache
 from abc import ABC, abstractmethod
@@ -511,6 +512,7 @@ class DialogTeacher(FixedDialogTeacher):
 
         # first initialize any shared objects
         data_class = StreamDialogData if self.stream else DialogData
+
         kwargs = (
             # never cycle if "ordered" is in the datatype. this is used by
             # build_dict to enumerate through the data exactly once while still
@@ -644,6 +646,10 @@ class DialogData(object):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
+        self.id = random.randint(0, 10000)
+        self.opt = opt
+        self._rank = get_rank()
+        self._num_workers = num_workers()
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -655,6 +661,9 @@ class DialogData(object):
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
         self.addedCands = []
         self.copied_cands = False
+        if not isinstance(self, StreamDialogData):
+            num_exs = self.num_examples()
+            print(f'DialogData{self.id} num_examples: {num_exs}, shared: {shared is not None}')
 
     def share(self):
         """
@@ -754,7 +763,8 @@ class DialogData(object):
         """
         Return number of episodes in the dataset.
         """
-        return len(self.data)
+        # return len(self.data)
+        return 50
 
     @lru_cache(maxsize=1)
     def num_examples(self):
@@ -763,7 +773,8 @@ class DialogData(object):
 
         Each episode has at least one entry, but might have many more.
         """
-        return sum(len(episode) for episode in self.data)
+        return 50
+        # return sum(len(episode) for episode in self.data)
 
     def get(self, episode_idx, entry_idx=0):
         """
@@ -775,11 +786,23 @@ class DialogData(object):
             which example to return from the episode. Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        next_episode_idx_for_rank = episode_idx + 1
+        if is_distributed() and any(x in self.opt['datatype'] for x in ('valid', 'test', 'train:evalmode')):
+            raw_episode_idx = episode_idx
+            episode_idx = raw_episode_idx * self._num_workers + self._rank
+            next_episode_idx_for_rank = (raw_episode_idx + 1) * self._num_workers + self._rank
+            if episode_idx >= len(self.data):
+                # This can occur in spite of the check below if epoch ends
+                # mid-batch b/c BatchWorld calls act() on all the worlds without
+                # checking if epochDone
+                return {'episode_done': True}, True
+
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
         episode_done = entry_idx == len(episode) - 1
-        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        end_of_data = episode_done and next_episode_idx_for_rank >= len(self.data)
 
         # now pack it in a action-observation dictionary
         table = self.build_table(entry)
