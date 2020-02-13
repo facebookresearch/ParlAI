@@ -949,7 +949,7 @@ class ParlaiParser(argparse.ArgumentParser):
             self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
-        options_to_change = {'model_file', 'dict_file', 'bpe-vocab', 'bpe-merge'}
+        options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
         for each_key in options_to_change:
             if self.opt.get(each_key) is not None:
                 self.opt[each_key] = modelzoo_path(
