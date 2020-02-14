@@ -6,9 +6,12 @@
 """
 Modules for ImageSeq2seqAgent Agent.
 """
+
+from functools import reduce
+from typing import List, Tuple, Optional
+
 import torch
 import torch.nn as nn
-from typing import List, Tuple
 
 from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,

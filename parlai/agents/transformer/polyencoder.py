@@ -8,11 +8,9 @@
 Poly-encoder Agent.
 """
 
-from functools import reduce
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import torch
-from torch import nn
 
 from parlai.agents.image_seq2seq.modules import ContextWithImageEncoder
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -445,7 +443,7 @@ class PolyEncoderModule(torch.nn.Module):
             if self.use_image_features is not None:
                 assert ctxt_image is None or len(ctxt_image) == bsz
                 ctxt_out, ctxt_mask = self.encoder_ctxt(
-                    ctxt_tokens, image_features=ctxt_image
+                    src_tokens=ctxt_tokens, image_features=ctxt_image
                 )
             else:
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
