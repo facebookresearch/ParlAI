@@ -5,7 +5,6 @@
 
 """
 Utility methods for conversations format.
-
 """
 import datetime
 import json
@@ -19,6 +18,7 @@ class Metadata:
 
     Metadata should be saved at <datapath>.metadata.
     """
+
     def __init__(self, datapath):
         self._load(datapath)
 
@@ -45,7 +45,7 @@ class Metadata:
 
     def read(self):
         """
-        Read the relevant metadata
+        Read the relevant metadata.
         """
         print(f'Saved at: {self.datetime}')
         print(f'Self chat: {self.self_chat}')
@@ -116,13 +116,14 @@ class Conversations:
         ...
     }
     """
+
     def __init__(self, datapath):
         self.conversations = self._load_conversations(datapath)
         self.metadata = self._load_metadata(datapath)
 
     @property
     def num_conversations(self):
-        return(len(self.conversations))
+        return len(self.conversations)
 
     def _load_conversations(self, datapath):
         if not os.path.isfile(datapath):
@@ -153,16 +154,12 @@ class Conversations:
             ...
             Other arguments.
         }
-
         """
         try:
             metadata = Metadata(datapath)
             return metadata
         except RuntimeError:
-            print(
-                'Metadata does not exist. Please double check '
-                'your datapath.'
-            )
+            print('Metadata does not exist. Please double check ' 'your datapath.')
             return None
 
     def read_metadata(self):
