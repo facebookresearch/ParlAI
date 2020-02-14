@@ -20,9 +20,9 @@ Examples
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_task_reports
+from parlai.core.metrics import aggregate_named_reports
 from parlai.core.worlds import create_task
-from parlai.utils.misc import TimeLogger
+from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 
 import json
@@ -52,15 +52,6 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument(
-        '-micro',
-        '--aggregate-micro',
-        type='bool',
-        default=False,
-        help='If multitasking, average metrics over the '
-        'number of examples. If false, averages over the '
-        'number of tasks.',
-    )
     parser.add_argument(
         '-mcs',
         '--metrics',
@@ -123,7 +114,9 @@ def _eval_single_world(opt, agent, task):
             print(world.display() + '\n~~')
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(), report)
+            text, report = log_time.log(
+                report.get('exs', 0), world.num_examples(), report
+            )
             print(text)
 
     report = world.report()
@@ -175,9 +168,7 @@ def eval_model(opt, print_parser=None):
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
 
-    report = aggregate_task_reports(
-        reports, tasks, micro=opt.get('aggregate_micro', True)
-    )
+    report = aggregate_named_reports(dict(zip(tasks, reports)))
 
     # print announcments and report
     print_announcements(opt)
@@ -186,7 +177,7 @@ def eval_model(opt, print_parser=None):
             tasks, opt.get('datatype', 'N/A')
         )
     )
-    print(report)
+    print(nice_report(report))
     _save_eval_stats(opt, report)
     return report
 

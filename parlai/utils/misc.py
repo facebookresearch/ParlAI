@@ -15,6 +15,7 @@ import sys
 import time
 from typing import Union, Optional, Set, Any, Dict, List
 import warnings
+import json
 
 from parlai.core.message import Message
 
@@ -284,6 +285,10 @@ class TimeLogger:
             log dict contains pairs of all items to log, which includes
             percentage complete and projected time left if total > 0
         """
+        from parlai.core.metrics import Metric  # delay import to prevent circular dep
+
+        if isinstance(done, Metric):
+            done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
         log = {}
@@ -295,11 +300,13 @@ class TimeLogger:
                 log['time_left'] = str(int(time_left)) + 's'
             z = '%.2f' % (100 * log['%done'])
             log['%done'] = str(z) + '%'
+
         if report:
-            for k, v in report.items():
-                if k not in log:
-                    log[k] = v
-        text = str(int(self.tot_time)) + "s elapsed: " + str(log).replace('\\n', '\n')
+            log = {**report, **log}
+
+        int_time = int(self.tot_time)
+        report_s = json.dumps(nice_report(log))
+        text = f'{int_time}s elapsed: {report_s}'
         return text, log
 
 
@@ -358,6 +365,19 @@ class ForkedPdb(pdb.Pdb):
             pdb.Pdb.interaction(self, *args, **kwargs)
         finally:
             sys.stdin = _stdin
+
+
+def nice_report(report):
+    from parlai.core.metrics import Metric
+
+    output = {}
+    for k, v in report.items():
+        if isinstance(v, Metric):
+            v = v.value()
+        if isinstance(v, float):
+            v = round_sigfigs(v, 4)
+        output[k] = v
+    return output
 
 
 def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:

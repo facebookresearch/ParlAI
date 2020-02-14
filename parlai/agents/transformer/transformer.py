@@ -231,12 +231,6 @@ class TransformerRankerAgent(TorchRankerAgent):
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
 
-    def build_criterion(self):
-        """
-        Build and return criterion, favoring average instead of sum for the loss.
-        """
-        return torch.nn.CrossEntropyLoss(reduction='mean')
-
     def batchify(self, obs_batch, sort=False):
         """
         Override so that we can add memories to the Batch object.
