@@ -540,7 +540,11 @@ class PolyEncoderModule(torch.nn.Module):
 
 
 class NewContextWithImageEncoder(TransformerEncoder):
-    """Encodes image features and context, and combines by summing or concatenation."""
+    """
+    ContentWithImage Module.
+
+    Encodes image features and context, and combines by summing or concatenation.
+    """
 
     def __init__(
         self,
@@ -565,6 +569,12 @@ class NewContextWithImageEncoder(TransformerEncoder):
         image_features_dim=2048,
         image_combination_mode='postpend',
     ):
+        """
+        Override TransformerEncoder __init__.
+
+        Setup the image encoder; create some dummy tensors for inserting image into
+        input
+        """
 
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
@@ -654,7 +664,9 @@ class NewContextWithImageEncoder(TransformerEncoder):
 
         return image_encoded, image_masks
 
-    def forward(self, src_tokens, image_features):
+    def forward(
+        self, src_tokens: torch.Tensor, image_features: List[object]
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Encode images with context.
 
