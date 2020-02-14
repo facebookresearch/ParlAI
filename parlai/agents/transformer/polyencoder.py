@@ -14,6 +14,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from parlai.agents.image_seq2seq.modules import ContextWithImageEncoder
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .biencoder import AddLabelFixedCandsTRA
 from .modules import (
@@ -51,10 +52,16 @@ class PolyencoderAgent(TorchRankerAgent):
             recommended='codes',
         )
         agent.add_argument(
-            '--polyencoder-image-features-dim',
+            '--polyencoder-image-encoder-num-layers',
             type=int,
             default=0,
-            help='If >0, allows passing in image features of the given dim in the context',
+            help='If >0, number of linear layers to encode image features with in the context',
+        )
+        agent.add_argument(
+            '--polyencoder-image-features-dim',
+            type=int,
+            default=2048,
+            help='For passing in image features of the given dim in the context',
         )
         agent.add_argument(
             '--polyencoder-image-combination-mode',
@@ -242,7 +249,7 @@ class PolyEncoderModule(torch.nn.Module):
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.use_image_features = opt.get('polyencoder_image_features_dim', 0) > 0
+        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
         self.encoder_ctxt = self.get_encoder(
             opt, dict, null_idx, 'none_with_pos_embs', is_context=True
         )
@@ -335,6 +342,7 @@ class PolyEncoderModule(torch.nn.Module):
                 activation=opt['activation'],
                 variant=opt['variant'],
                 output_scaling=opt['output_scaling'],
+                image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
                 image_features_dim=opt['polyencoder_image_features_dim'],
                 image_combination_mode=opt['polyencoder_image_combination_mode'],
                 use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
@@ -540,7 +548,7 @@ class PolyEncoderModule(torch.nn.Module):
         raise Exception('Unsupported operation')
 
 
-class ContextWithImageEncoder(TransformerEncoder):
+class OldContextWithImageEncoder(TransformerEncoder):
     """Encodes image features and context, and combines by summing or concatenation."""
 
     def __init__(self, *args, **kwargs):
