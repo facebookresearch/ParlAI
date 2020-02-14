@@ -541,7 +541,7 @@ class PolyEncoderModule(torch.nn.Module):
 
 class NewContextWithImageEncoder(TransformerEncoder):
     """
-    ContentWithImage Module.
+    ContextWithImage Module.
 
     Encodes image features and context, and combines by summing or concatenation.
     """
