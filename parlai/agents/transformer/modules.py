@@ -548,10 +548,7 @@ class TransformerEncoder(nn.Module):
             return output
         elif self.reduction_type is None or 'none' in self.reduction_type:
             output = tensor
-            ret = (output, mask)
-            if self.reduction_type == 'none_with_pos_embs':
-                ret = (output, mask, position_embs)
-            return ret
+            return output, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)

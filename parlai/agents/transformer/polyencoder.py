@@ -10,7 +10,6 @@ Poly-encoder Agent.
 
 from typing import List, Optional
 
-import numpy as np
 import torch
 from torch import nn
 
@@ -88,16 +87,6 @@ class PolyencoderAgent(TorchRankerAgent):
             'encoder (where the candidate representation is'
             'the key)',
             recommended='basic',
-        )
-        agent.add_argument(
-            '--polyencoder-attention-keys',
-            type=str,
-            default='context',
-            choices=['context', 'position'],
-            help='Input emb vectors for the first level of attention. '
-            'Context refers to the context outputs; position refers to the '
-            'computed position embeddings.',
-            recommended='context',
         )
         agent.add_argument(
             '--poly-attention-num-heads',
@@ -193,7 +182,7 @@ class PolyencoderAgent(TorchRankerAgent):
         Encode candidates.
         """
         padded_cands = padded_cands.unsqueeze(1)
-        _, _, _, cand_rep = self.model(cand_tokens=padded_cands)
+        _, _, cand_rep = self.model(cand_tokens=padded_cands)
         return cand_rep
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
@@ -204,7 +193,7 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, ctxt_pos, _ = self.model(
+        ctxt_rep, ctxt_rep_mask, _ = self.model(
             ctxt_tokens=batch.text_vec, ctxt_image=batch.image
         )
 
@@ -215,10 +204,10 @@ class PolyencoderAgent(TorchRankerAgent):
                 cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
         # bsz x num cands x seq len
         elif len(cand_vecs.shape) == 3:
-            _, _, _, cand_rep = self.model(cand_tokens=cand_vecs)
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
         elif len(cand_vecs.shape) == 2:
-            _, _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             num_cands = cand_rep.size(0)  # will be bsz if using batch cands
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
 
@@ -226,7 +215,6 @@ class PolyencoderAgent(TorchRankerAgent):
             ctxt_rep=ctxt_rep,
             ctxt_rep_mask=ctxt_rep_mask,
             cand_rep=cand_rep,
-            ctxt_pos=ctxt_pos,
         )
         return scores
 
@@ -255,21 +243,19 @@ class PolyEncoderModule(torch.nn.Module):
                 opt=opt,
                 dict=dict,
                 null_idx=null_idx,
-                reduction_type='none_with_pos_embs',
             )
         else:
             self.encoder_ctxt = self.get_encoder(
                 opt=opt,
                 dict=dict,
                 null_idx=null_idx,
-                reduction_type='none_with_pos_embs',
+                reduction_type=None,
             )
         self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
         self.attention_type = opt['poly_attention_type']
-        self.attention_keys = opt.get('polyencoder_attention_keys', 'context')
         self.attention_num_heads = opt['poly_attention_num_heads']
         self.codes_attention_type = opt['codes_attention_type']
         self.codes_attention_num_heads = opt['codes_attention_num_heads']
@@ -351,7 +337,7 @@ class PolyEncoderModule(torch.nn.Module):
             output_scaling=opt['output_scaling'],
         )
 
-    def get_context_with_image_encoder(self, opt, dict, null_idx, reduction_type):
+    def get_context_with_image_encoder(self, opt, dict, null_idx):
         """
         Return encoder that allows for image features to be passed in, given options.
 
@@ -381,7 +367,6 @@ class PolyEncoderModule(torch.nn.Module):
             padding_idx=null_idx,
             learn_positional_embeddings=opt['learn_positional_embeddings'],
             embeddings_scale=opt['embeddings_scale'],
-            reduction_type=reduction_type,
             n_positions=n_positions,
             n_segments=2,
             activation=opt['activation'],
@@ -442,18 +427,16 @@ class PolyEncoderModule(torch.nn.Module):
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
         :return:
-            (ctxt_rep, ctxt_mask, ctxt_pos, cand_rep)
+            (ctxt_rep, ctxt_mask, cand_rep)
             - ctxt_rep 3D float tensor, batchsize x n_codes x dim
             - ctxt_mask byte:  batchsize x n_codes (all 1 in case
             of polyencoder with code. Which are the vectors to use
             in the ctxt_rep)
-            - ctxt_pos 3D float tensor, batchsize x sent_len x dim
             - cand_rep (3D float tensor) batchsize x num_cands x dim
         """
         cand_embed = None
         ctxt_rep = None
         ctxt_rep_mask = None
-        ctxt_pos = None
         if cand_tokens is not None:
             assert len(cand_tokens.shape) == 3
             bsz = cand_tokens.size(0)
@@ -467,23 +450,21 @@ class PolyEncoderModule(torch.nn.Module):
             # get context_representation. Now that depends on the cases.
             if self.use_image_features is not None:
                 assert ctxt_image is None or len(ctxt_image) == bsz
-                ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(
+                ctxt_out, ctxt_mask = self.encoder_ctxt(
                     ctxt_tokens, image_features=ctxt_image
                 )
             else:
-                ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(ctxt_tokens)
-            att_keys = ctxt_out if self.attention_keys == 'context' else ctxt_pos
+                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
                 ctxt_rep = self.attend(
                     self.code_attention,
                     queries=self.codes.repeat(bsz, 1, 1),
-                    keys=att_keys,
+                    keys=ctxt_out,
                     values=ctxt_out,
                     mask=ctxt_mask,
                 )
-                ctxt_pos = None  # we don't need this anymore
                 ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
 
             elif self.type == 'n_first':
@@ -492,17 +473,15 @@ class PolyEncoderModule(torch.nn.Module):
                     difference = self.n_codes - ctxt_out.size(1)
                     extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
                     ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                    ctxt_pos = torch.cat([ctxt_pos, extra_rep], dim=1)
                     extra_mask = ctxt_mask.new_zeros(bsz, difference)
                     ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
                 else:
                     ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
-                    ctxt_pos = ctxt_pos[:, 0 : self.n_codes, :]
                     ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
-        return ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed
+        return ctxt_rep, ctxt_rep_mask, cand_embed
 
-    def score(self, ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed):
+    def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
         """
         Score the candidates.
 
@@ -511,17 +490,13 @@ class PolyEncoderModule(torch.nn.Module):
         :param ctxt_rep_mask:
             2D byte tensor, bsz x ctxt_len, in case there are some elements
             of the ctxt that we should not take into account.
-        :param ctx_pos: 3D float tensor, bsz x sent_len x dim
         :param cand_embed: 3D float tensor, bsz x num_cands x dim
 
         :return: scores, 2D float tensor: bsz x num_cands
         """
-        # Attention keys determined by self.attention_keys
-        # 'context' == use context final rep; otherwise use context position embs
-        keys = ctxt_rep if self.attention_keys == 'context' else ctxt_pos
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
         ctxt_final_rep = self.attend(
-            self.attention, cand_embed, keys, ctxt_rep, ctxt_rep_mask
+            self.attention, cand_embed, ctxt_rep, ctxt_rep, ctxt_rep_mask
         )
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
         return scores
@@ -533,7 +508,6 @@ class PolyEncoderModule(torch.nn.Module):
         cand_tokens=None,
         ctxt_rep=None,
         ctxt_rep_mask=None,
-        ctxt_pos=None,
         cand_rep=None,
     ):
         """
@@ -557,9 +531,6 @@ class PolyEncoderModule(torch.nn.Module):
             encoder
         :param ctxt_rep_mask:
             mask for ctxt rep
-        :param ctxt_pos:
-            position embeddings for the ctxt_rep. If self.type == 'codes', these
-            are None, as their use is earlier in the pipeline.
         :param cand_rep:
             encoded representation of the candidates
         """
@@ -570,8 +541,7 @@ class PolyEncoderModule(torch.nn.Module):
         elif (
             ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
         ):
-            # ctxt_pos can be none, if we are using codes (not first M)
-            return self.score(ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_rep)
+            return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation')
 
 
@@ -592,7 +562,6 @@ class NewContextWithImageEncoder(TransformerEncoder):
         padding_idx=0,
         learn_positional_embeddings=False,
         embeddings_scale=False,
-        reduction_type=None,
         n_positions=1024,
         activation='relu',
         variant='aiayn',
@@ -606,6 +575,7 @@ class NewContextWithImageEncoder(TransformerEncoder):
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
+        reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
             n_heads=n_heads,
             n_layers=n_layers,
@@ -644,7 +614,9 @@ class NewContextWithImageEncoder(TransformerEncoder):
 
     def forward(self, src_tokens, image_features):
         """Encode images with context."""
-        context_encoded, context_mask, context_pos = super().forward(src_tokens)
+        context_encoded = context_mask = None
+        if src_tokens is not None:
+            context_encoded, context_mask = super().forward(src_tokens)
         if image_features is not None and any(
             feat is not None for feat in image_features
         ):
@@ -679,7 +651,6 @@ class NewContextWithImageEncoder(TransformerEncoder):
             full_enc = context_encoded + image_encoded
             # image_encoded broadcasted along dim=1
             full_mask = context_mask
-            full_pos = context_pos
             import pdb
 
             pdb.set_trace()
@@ -687,17 +658,9 @@ class NewContextWithImageEncoder(TransformerEncoder):
         elif self.image_combination_mode == 'postpend':
             full_enc = self.cat([context_encoded, image_encoded])
             full_mask = self.cat([context_mask, extra_masks])
-            postpended_pos = context_pos.new_zeros((context_pos.size(0), 1))
-            # Just pad the position embedding (used with self.attention_keys ==
-            # 'position') with zeros
-            full_pos = self.cat([context_pos, postpended_pos])
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
             full_mask = self.cat([extra_masks, context_mask])
-            prepended_pos = context_pos.new_zeros((context_pos.size(0), 1))
-            # Just pad the position embedding (used with self.attention_keys ==
-            # 'position') with zeros
-            full_pos = self.cat([prepended_pos, context_pos])
             import pdb
 
             pdb.set_trace()
@@ -705,12 +668,7 @@ class NewContextWithImageEncoder(TransformerEncoder):
         else:
             raise ValueError('Image combination mode not recognized!')
 
-        if self.reduction_type is None or self.reduction_type == 'none':
-            return full_enc, full_mask
-        elif self.reduction_type == 'none_with_pos_embs':
-            return full_enc, full_mask, full_pos
-        else:
-            raise ValueError('Non-trivial reduction types not supported!')
+        return full_enc, full_mask
 
     @staticmethod
     def cat(tensors: List[torch.Tensor]):
