@@ -237,10 +237,6 @@ class ContextWithImageEncoder(TransformerEncoder):
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
             full_mask = self.cat([extra_masks, context_mask])
-            import pdb
-
-            pdb.set_trace()
-            # TODO: remove
         else:
             raise ValueError('Image combination mode not recognized!')
 
