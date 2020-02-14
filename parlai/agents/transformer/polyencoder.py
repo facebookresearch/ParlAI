@@ -66,8 +66,8 @@ class PolyencoderAgent(TorchRankerAgent):
         agent.add_argument(
             '--polyencoder-image-combination-mode',
             type=str,
-            default='add',
-            choices=['add', 'prepend'],
+            default='postpend',
+            choices=['add', 'prepend', 'postpend'],
             help='How to combine image embedding (if used) with context embedding',
         )
         agent.add_argument(
@@ -345,7 +345,6 @@ class PolyEncoderModule(torch.nn.Module):
                 image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
                 image_features_dim=opt['polyencoder_image_features_dim'],
                 image_combination_mode=opt['polyencoder_image_combination_mode'],
-                use_cuda=not opt['no_cuda'] and torch.cuda.is_available(),
             )
         else:
             return TransformerEncoder(
@@ -548,22 +547,62 @@ class PolyEncoderModule(torch.nn.Module):
         raise Exception('Unsupported operation')
 
 
-class OldContextWithImageEncoder(TransformerEncoder):
+class NewContextWithImageEncoder(TransformerEncoder):
     """Encodes image features and context, and combines by summing or concatenation."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+            self,
+            n_heads,
+            n_layers,
+            embedding_size,
+            ffn_size,
+            vocabulary_size,
+            embedding=None,
+            dropout=0.0,
+            attention_dropout=0.0,
+            relu_dropout=0.0,
+            padding_idx=0,
+            learn_positional_embeddings=False,
+            embeddings_scale=False,
+            reduction_type='mean',
+            n_positions=1024,
+            activation='relu',
+            variant='aiayn',
+            n_segments=0,
+            output_scaling=1.0,
+            image_encoder_num_layers=1,
+            image_features_dim=2048,
+            image_combination_mode='postpend',
+    ):
 
-        self.img_dim = kwargs.pop('image_features_dim')
-        self.image_combination_mode = kwargs.pop('image_combination_mode')
-        self.use_cuda = kwargs.pop('use_cuda')
-        super().__init__(*args, **kwargs)
-        self.image_encoder = nn.Linear(self.img_dim, self.embedding_size)
-        # Project image features to embedding dimension
-        self.dummy_image_enc = torch.zeros(self.embedding_size)
-        self.ones_mask = torch.ones(1).bool()
-        if self.use_cuda:
-            self.dummy_image_enc = self.dummy_image_enc.cuda()
-            self.ones_mask = self.ones_mask.cuda()
+        self.n_img_layers = image_encoder_num_layers
+        self.img_dim = image_features_dim
+        self.image_combination_mode = image_combination_mode
+        super().__init__(
+            n_heads=n_heads,
+            n_layers=n_layers,
+            embedding_size=embedding_size,
+            ffn_size=ffn_size,
+            vocabulary_size=vocabulary_size,
+            embedding=embedding,
+            dropout=dropout,
+            attention_dropout=attention_dropout,
+            relu_dropout=relu_dropout,
+            padding_idx=padding_idx,
+            learn_positional_embeddings=learn_positional_embeddings,
+            embeddings_scale=embeddings_scale,
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            activation=activation,
+            variant=variant,
+            n_segments=n_segments,
+            output_scaling=output_scaling,
+        )
+        self._build_image_encoder()
+        self.dummy_image_enc = torch.nn.Parameter(
+            torch.zeros((self.embedding_size)), requires_grad=False
+        )
+        self.ones_mask = torch.nn.Parameter(torch.ones(1).bool(), requires_grad=False)
 
         # If we're prepending image features, create a positional embedding for this
         # position
@@ -577,6 +616,16 @@ class OldContextWithImageEncoder(TransformerEncoder):
                 nn.init.normal_(
                     self.image_position_embedding.weight, 0, self.embedding_size ** -0.5
                 )
+
+    def _build_image_encoder(self):
+        image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
+        for _ in range(self.n_img_layers - 1):
+            image_layers += [
+                nn.ReLU(),
+                nn.Dropout(p=self.opt['dropout']),
+                nn.Linear(self.img_dim, self.embedding_size),
+            ]
+        self.image_encoder = nn.Sequential(*image_layers)
 
     @staticmethod
     def _create_prepended_position_codes(dim: int, out: torch.Tensor):
@@ -607,6 +656,7 @@ class OldContextWithImageEncoder(TransformerEncoder):
                 [img for i, img in enumerate(image_features) if img is not None]
             )
             import pdb; pdb.set_trace()
+            # TODO: remove
             valid_img_enc = self.image_encoder(valid_imgs)
 
             image_masks = []
