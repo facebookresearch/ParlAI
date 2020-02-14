@@ -13,6 +13,8 @@ from typing import List, Optional
 import torch
 
 from parlai.agents.image_seq2seq.modules import ContextWithImageEncoder
+from parlai.core.message import Message
+from parlai.core.torch_agent import Batch
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .biencoder import AddLabelFixedCandsTRA
 from .modules import (
@@ -153,6 +155,31 @@ class PolyencoderAgent(TorchRankerAgent):
             )
             obs['added_start_end_tokens'] = True
         return obs
+
+    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
+        """
+        Override to handle images.
+        """
+        batch = super().batchify(obs_batch, sort)
+
+        def _process_img(img):
+            if img is not None and isinstance(img, torch.Tensor):
+                assert img.dim() == 1
+                if self.use_cuda:
+                    img = img.cuda()
+                if self.opt.get('fp16'):
+                    img = img.half()
+                else:
+                    img = img.float()
+
+            return img
+
+        if type(batch.image) == list and any(b is not None for b in batch):
+            images = []
+            for img in batch.image:
+                images.append(_process_img(img))
+            batch.image = images
+        return batch
 
     def vectorize_fixed_candidates(self, *args, **kwargs):
         """
