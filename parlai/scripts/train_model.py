@@ -516,14 +516,13 @@ class TrainLoop:
         """
 
         print('[ running eval: ' + datatype + ' ]')
-        print(f'in eval, num_workers(): {num_workers()}, valid_worlds: {len(valid_worlds)}')
+        print(f'eval max exs: {max_exs}')
         timer = Timer()
         reports = []
 
-        max_exs_per_eval = max_exs / (len(valid_worlds) * num_workers())
-        max_exs_per_eval = max_exs_per_eval if max_exs_per_eval > 0 else -1
+        max_exs_per_worker = max_exs / (len(valid_worlds) * num_workers())
         for v_world in valid_worlds:
-            task_report = self._run_single_eval(opt, v_world, max_exs_per_eval)
+            task_report = self._run_single_eval(opt, v_world, max_exs_per_worker)
             reports.append(task_report)
 
         tasks = [world.getID() for world in valid_worlds]

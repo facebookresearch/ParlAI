@@ -48,6 +48,7 @@ def multiprocess_train(
     # we need to manually adjust the rank differently in multiprocessing
     # and distributed train
     rank = rank + rank_offset
+    print(f'multiprocess_train: rank: {rank}, port: {port}')
     opt['rank'] = rank
     if gpu is None:
         # default assumption is local GPUs

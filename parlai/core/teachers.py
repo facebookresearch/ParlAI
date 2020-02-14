@@ -647,9 +647,6 @@ class DialogData(object):
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
         self.id = random.randint(0, 10000)
-        self.opt = opt
-        self._rank = get_rank()
-        self._num_workers = num_workers()
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -659,13 +656,12 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
+        self.dt = opt['datatype']
+        self._rank = get_rank()
+        self._num_workers = num_workers()
+
         self.addedCands = []
         self.copied_cands = False
-        if not isinstance(self, StreamDialogData):
-            num_exs = self.num_examples()
-            print(
-                f'DialogData{self.id} num_examples: {num_exs}, shared: {shared is not None}'
-            )
 
     def share(self):
         """
@@ -788,13 +784,14 @@ class DialogData(object):
         """
         next_episode_idx_for_rank = episode_idx + 1
         if is_distributed() and any(
-            x in self.opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+            x in self.dt for x in ('valid', 'test', 'train:evalmode')
         ):
             raw_episode_idx = episode_idx
             episode_idx = raw_episode_idx * self._num_workers + self._rank
             next_episode_idx_for_rank = (
                 raw_episode_idx + 1
             ) * self._num_workers + self._rank
+            print(f'DialogData{self.id}, raw_episode_idx: {raw_episode_idx}, episode_idx: {episode_idx}, next_episode_idx_for_rank: {next_episode_idx_for_rank}')
             if episode_idx >= len(self.data):
                 # This can occur in spite of the check below if epoch ends
                 # mid-batch b/c BatchWorld calls act() on all the worlds without
