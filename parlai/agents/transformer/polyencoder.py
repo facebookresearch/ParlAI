@@ -252,7 +252,10 @@ class PolyEncoderModule(torch.nn.Module):
         self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
         if self.use_image_features:
             self.encoder_ctxt = self.get_context_with_image_encoder(
-                opt=opt, dict=dict, null_idx=null_idx
+                opt=opt,
+                dict=dict,
+                null_idx=null_idx,
+                reduction_type='none_with_pos_embs',
             )
         else:
             self.encoder_ctxt = self.get_encoder(
@@ -348,7 +351,7 @@ class PolyEncoderModule(torch.nn.Module):
             output_scaling=opt['output_scaling'],
         )
 
-    def get_context_with_image_encoder(self, opt, dict, null_idx):
+    def get_context_with_image_encoder(self, opt, dict, null_idx, reduction_type):
         """
         Return encoder that allows for image features to be passed in, given options.
 
@@ -365,7 +368,6 @@ class PolyEncoderModule(torch.nn.Module):
         embeddings = self._get_embeddings(
             dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
         )
-        reduction_type = None  # We need to pass back output and mask
         return ContextWithImageEncoder(
             n_heads=opt['n_heads'],
             n_layers=opt['n_layers'],
@@ -463,8 +465,7 @@ class PolyEncoderModule(torch.nn.Module):
             assert len(ctxt_tokens.shape) == 2
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
-            if ctxt_image is not None:
-                assert self.use_image_features is True
+            if self.use_image_features is not None:
                 assert ctxt_image is None or len(ctxt_image) == bsz
                 ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(
                     ctxt_tokens, image_features=ctxt_image
@@ -591,7 +592,7 @@ class NewContextWithImageEncoder(TransformerEncoder):
         padding_idx=0,
         learn_positional_embeddings=False,
         embeddings_scale=False,
-        reduction_type='mean',
+        reduction_type=None,
         n_positions=1024,
         activation='relu',
         variant='aiayn',
@@ -697,7 +698,12 @@ class NewContextWithImageEncoder(TransformerEncoder):
         else:
             raise ValueError('Image combination mode not recognized!')
 
-        return full_enc, full_mask, full_pos
+        if self.reduction_type is None or self.reduction_type == 'none':
+            return full_enc, full_mask
+        elif self.reduction_type == 'none_with_pos_embs':
+            return full_enc, full_mask, full_pos
+        else:
+            raise ValueError('Non-trivial reduction types not supported!')
 
     @staticmethod
     def cat(tensors: List[torch.Tensor]):
