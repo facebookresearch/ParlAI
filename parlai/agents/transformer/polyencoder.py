@@ -212,9 +212,7 @@ class PolyencoderAgent(TorchRankerAgent):
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
 
         scores = self.model(
-            ctxt_rep=ctxt_rep,
-            ctxt_rep_mask=ctxt_rep_mask,
-            cand_rep=cand_rep,
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
         return scores
 
@@ -240,16 +238,11 @@ class PolyEncoderModule(torch.nn.Module):
         self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
         if self.use_image_features:
             self.encoder_ctxt = self.get_context_with_image_encoder(
-                opt=opt,
-                dict=dict,
-                null_idx=null_idx,
+                opt=opt, dict=dict, null_idx=null_idx
             )
         else:
             self.encoder_ctxt = self.get_encoder(
-                opt=opt,
-                dict=dict,
-                null_idx=null_idx,
-                reduction_type=None,
+                opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
             )
         self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
@@ -670,9 +663,18 @@ class NewContextWithImageEncoder(TransformerEncoder):
 
         return full_enc, full_mask
 
-    @staticmethod
-    def cat(tensors: List[torch.Tensor]):
-        """Handle cat on None tensors."""
+    def cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+        """
+        Handle concatenation of None tensors.
+
+        Smart concatenation. Concatenates tensors if they are not None.
+
+        :param tensors:
+            A list of torch.Tensor, with at least one non-null object
+
+        :return:
+            The result of concatenating all non-null objects in tensors
+        """
         tensors = [t for t in tensors if t is not None]
         return torch.cat([t for t in tensors], dim=1)
 
