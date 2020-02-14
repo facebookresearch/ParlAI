@@ -59,7 +59,7 @@ except ImportError:
 from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.message import Message
-from parlai.core.metrics import aggregate_named_reports
+from parlai.core.metrics import aggregate_named_reports, aggregate_unnamed_reports
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.utils.batch import Batch
@@ -2159,8 +2159,7 @@ class QueueWorld(World):
         reports: List[Dict] = []
         while len(reports) < self.num_workers:
             reports.append(self.report_queue.get())
-        # TODO: Aggregate correctly
-        report = {'exs': sum(r.get('exs', 0) for r in reports)}
+        report = aggregate_unnamed_reports(reports)
         report.update(self.world.report())
         return report
 

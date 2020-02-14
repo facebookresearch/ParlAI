@@ -1755,8 +1755,13 @@ class TorchAgent(ABC, Agent):
         """
         if not isinstance(observations, Batch):
             batch_size = len(observations)
+            # create a batch from the vectors
+            batch = self.batchify(observations)
         else:
+            # the batch has already been batchified in the background
             batch_size = observations.batchsize
+            batch = observations
+            observations = batch.observations
         # clear local metrics before anything else
         self._local_metrics.clear()
 
@@ -1764,15 +1769,9 @@ class TorchAgent(ABC, Agent):
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False}) for _ in observations
         ]
+
         if batch_size == 0:
             return batch_reply
-
-        # create a batch from the vectors
-        if not isinstance(observations, Batch):
-            batch = self.batchify(observations)
-        else:
-            # the batch has already been batchified in the background
-            batch = observations
 
         if self.use_cuda:
             batch.cuda()
