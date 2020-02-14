@@ -9,7 +9,7 @@ Poly-encoder Agent.
 """
 
 from functools import reduce
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import torch
 from torch import nn
@@ -606,40 +606,71 @@ class NewContextWithImageEncoder(TransformerEncoder):
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
-    def forward(self, src_tokens, image_features):
-        """Encode images with context."""
-        context_encoded = context_mask = None
-        if src_tokens is not None:
-            context_encoded, context_mask = super().forward(src_tokens)
-        if image_features is not None and any(
-            feat is not None for feat in image_features
-        ):
-            # Only encode real image features; concat 0s for non-images
-            valid_inds = [i for i, img in enumerate(image_features) if img is not None]
-            valid_imgs = torch.stack(
-                [img for i, img in enumerate(image_features) if img is not None]
-            )
-            import pdb
+    def encode_images(
+        self, images: List[object]
+    ) -> Tuple[Optional[List[int]], Optional[torch.Tensor]]:
+        """
+        Encode Images.
 
-            pdb.set_trace()
-            # TODO: remove
+        Encodes images given in `images`, if the image can be encoded (i.e. it
+        is a tensor).
+
+        :param images:
+            list of objects of length N, of which some maybe be None
+
+        :return:
+            a (image_encoded, image_mask) tuple, where:
+
+            - image_enc is a torch.Tensor of dim N x self.img_dim,
+              representing the encoded batch of images
+            - image_mask is a torch.Tensor of dim N x 1
+        """
+        image_masks = image_encoded = None
+        valid_inds = [
+            i
+            for i, img in enumerate(images)
+            if img is not None and isinstance(img, torch.Tensor)
+        ]
+
+        if valid_inds:
+            image_masks = []
+            image_encoded = []
+
+            valid_imgs = torch.stack([images[i] for i in valid_inds])
             valid_img_enc = self.image_encoder(valid_imgs)
 
-            extra_masks = []
-            image_encoded = []
             img_num = 0
-            for i in range(len(image_features)):
+            for i in range(len(images)):
                 if i in valid_inds:
-                    extra_masks.append(self.ones_mask)
+                    image_masks.append(self.ones_mask)
                     image_encoded.append(valid_img_enc[img_num, :])
                     img_num += 1
                 else:
-                    extra_masks.append(~self.ones_mask)
+                    image_masks.append(~self.ones_mask)
                     image_encoded.append(self.dummy_image_enc)
-            extra_masks = torch.stack(extra_masks)
+
+            image_masks = torch.stack(image_masks)
             image_encoded = torch.stack(image_encoded).unsqueeze(1)
-        else:
-            extra_masks = image_encoded = None
+
+        return image_encoded, image_masks
+
+    def forward(self, src_tokens, image_features):
+        """Encode images with context."""
+        context_encoded = context_mask = None
+        image_encoded = extra_masks = None
+        if src_tokens is not None:
+            context_encoded, context_mask = super().forward(src_tokens)
+        if image_features is not None:
+            image_encoded, extra_masks = self.encode_images(image_features)
+
+        if all(enc is None for enc in [context_encoded, image_encoded]):
+            raise RuntimeError(
+                'You are providing Image+Seq2Seq with no input.\n'
+                'If you are using a text-based task, make sure the first turn '
+                'has text (e.g. a __SILENCE__ token if the model starts the convo).\n'
+                'If you are using an image-based task, make sure --image-mode is '
+                'set correctly.'
+            )
 
         if self.image_combination_mode == 'add':
             full_enc = self.add([context_encoded, image_encoded])
