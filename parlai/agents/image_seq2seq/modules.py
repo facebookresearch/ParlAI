@@ -231,10 +231,6 @@ class ContextWithImageEncoder(TransformerEncoder):
             full_enc = self.add([context_encoded, image_encoded])
             # image_encoded broadcasted along dim=1
             full_mask = context_mask
-            import pdb
-
-            pdb.set_trace()
-            # TODO: remove
         elif self.image_combination_mode == 'postpend':
             full_enc = self.cat([context_encoded, image_encoded])
             full_mask = self.cat([context_mask, extra_masks])
