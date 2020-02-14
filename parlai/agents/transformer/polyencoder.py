@@ -655,7 +655,22 @@ class NewContextWithImageEncoder(TransformerEncoder):
         return image_encoded, image_masks
 
     def forward(self, src_tokens, image_features):
-        """Encode images with context."""
+        """
+        Encode images with context.
+
+        Encodes tokens (if given) and images (if given) separately.
+        Combines via either addition, prepending, or postpending the image embedding to
+        the context embedding.
+
+        :param src_tokens:
+            A bsz x seq_len tensor of src_tokens; possibly None
+        :param image_features:
+            A list of (torch.tensor)
+
+        :return:
+            A (full_enc, full_mask) tuple, which represents the encoded context
+            and the mask
+        """
         context_encoded = context_mask = None
         image_encoded = extra_masks = None
         if src_tokens is not None:
