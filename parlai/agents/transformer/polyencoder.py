@@ -604,19 +604,6 @@ class NewContextWithImageEncoder(TransformerEncoder):
         )
         self.ones_mask = torch.nn.Parameter(torch.ones(1).bool(), requires_grad=False)
 
-        # If we're prepending image features, create a positional embedding for this
-        # position
-        if self.image_combination_mode == 'prepend':
-            self.image_position_embedding = nn.Embedding(1, self.embedding_size)
-            if not self.learn_positional_embeddings:
-                self._create_prepended_position_codes(
-                    dim=self.embedding_size, out=self.image_position_embedding.weight
-                )
-            else:
-                nn.init.normal_(
-                    self.image_position_embedding.weight, 0, self.embedding_size ** -0.5
-                )
-
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
         for _ in range(self.n_img_layers - 1):
@@ -626,23 +613,6 @@ class NewContextWithImageEncoder(TransformerEncoder):
                 nn.Linear(self.img_dim, self.embedding_size),
             ]
         self.image_encoder = nn.Sequential(*image_layers)
-
-    @staticmethod
-    def _create_prepended_position_codes(dim: int, out: torch.Tensor):
-        """
-        Set the weights in `out` to what
-        parlai.agents.transformer.modules.create_position_codes() *would* have set them
-        to if the positions had extended one position to the left
-        """
-        # TODO: test thoroughly
-        pos = -1  # i.e. one position to the left of the original leftmost position
-        position_enc = np.array(
-            [[pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]]
-        )
-        out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
-        out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
-        out.detach_()
-        out.requires_grad = False
 
     def forward(self, src_tokens, image_features):
         """Encode images with context."""
