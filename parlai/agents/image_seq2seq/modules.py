@@ -54,7 +54,6 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             padding_idx=self.pad_idx,
             learn_positional_embeddings=opt['learn_positional_embeddings'],
             embeddings_scale=opt['embeddings_scale'],
-            reduction_type=None,
             n_positions=n_positions,
             n_segments=opt.get('n_segments', 0),
             activation=opt['activation'],
@@ -69,7 +68,7 @@ class ContextWithImageEncoder(TransformerEncoder):
     """
     ContextWithImage Module.
 
-    Encodes image and context via simple concatenation.
+    Encodes image features and context, and combines by summing or concatenation.
     """
 
     def __init__(
@@ -86,7 +85,6 @@ class ContextWithImageEncoder(TransformerEncoder):
         padding_idx=0,
         learn_positional_embeddings=False,
         embeddings_scale=False,
-        reduction_type='mean',
         n_positions=1024,
         activation='relu',
         variant='aiayn',
@@ -94,6 +92,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         output_scaling=1.0,
         image_encoder_num_layers=1,
         image_features_dim=2048,
+        image_combination_mode='postpend',
     ):
         """
         Override TransformerEncoder __init__.
@@ -101,27 +100,30 @@ class ContextWithImageEncoder(TransformerEncoder):
         Setup the image encoder; create some dummy tensors for inserting image into
         input
         """
+
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
+        self.image_combination_mode = image_combination_mode
+        reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
-            n_heads,
-            n_layers,
-            embedding_size,
-            ffn_size,
-            vocabulary_size,
-            embedding,
-            dropout,
-            attention_dropout,
-            relu_dropout,
-            padding_idx,
-            learn_positional_embeddings,
-            embeddings_scale,
-            reduction_type,
-            n_positions,
-            activation,
-            variant,
-            n_segments,
-            output_scaling,
+            n_heads=n_heads,
+            n_layers=n_layers,
+            embedding_size=embedding_size,
+            ffn_size=ffn_size,
+            vocabulary_size=vocabulary_size,
+            embedding=embedding,
+            dropout=dropout,
+            attention_dropout=attention_dropout,
+            relu_dropout=relu_dropout,
+            padding_idx=padding_idx,
+            learn_positional_embeddings=learn_positional_embeddings,
+            embeddings_scale=embeddings_scale,
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            activation=activation,
+            variant=variant,
+            n_segments=n_segments,
+            output_scaling=output_scaling,
         )
         self._build_image_encoder()
         self.dummy_image_enc = torch.nn.Parameter(
@@ -139,7 +141,9 @@ class ContextWithImageEncoder(TransformerEncoder):
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
-    def encode_images(self, images: List[object]) -> Tuple[List[int], torch.Tensor]:
+    def encode_images(
+        self, images: List[object]
+    ) -> Tuple[Optional[List[int]], Optional[torch.Tensor]]:
         """
         Encode Images.
 
@@ -192,7 +196,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         Encode images with context.
 
         Encodes tokens (if given) and images (if given) separately.
-        Combines via concatenation, where images are added to the end of the tensor.
+        Combines via either addition, prepending, or postpending the image embedding to
+        the context embedding.
 
         :param src_tokens:
             A bsz x seq_len tensor of src_tokens; possibly None
@@ -219,9 +224,43 @@ class ContextWithImageEncoder(TransformerEncoder):
                 'set correctly.'
             )
 
-        full_enc = self.cat([context_encoded, image_encoded])
-        full_mask = self.cat([context_mask, extra_masks])
+        if self.image_combination_mode == 'add':
+            full_enc = self.add([context_encoded, image_encoded])
+            # image_encoded broadcasted along dim=1
+            full_mask = context_mask
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove
+        elif self.image_combination_mode == 'postpend':
+            full_enc = self.cat([context_encoded, image_encoded])
+            full_mask = self.cat([context_mask, extra_masks])
+        elif self.image_combination_mode == 'prepend':
+            full_enc = self.cat([image_encoded, context_encoded])
+            full_mask = self.cat([extra_masks, context_mask])
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove
+        else:
+            raise ValueError('Image combination mode not recognized!')
+
         return full_enc, full_mask
+
+    def add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+        """
+        Handle addition of None tensors.
+
+        Smart addition. Adds tensors if they are not None.
+
+        :param tensors:
+            A list of torch.Tensor, with at least one non-null object
+
+        :return:
+            The result of adding all non-null objects in tensors
+        """
+        tensors = [t for t in tensors if t is not None]
+        return reduce(lambda a, b: a + b, tensors)
 
     def cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
         """
