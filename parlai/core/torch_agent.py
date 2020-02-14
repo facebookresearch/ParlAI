@@ -35,6 +35,7 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
+from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
@@ -42,7 +43,8 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-from parlai.utils.misc import AttrDict, warn_once, round_sigfigs
+from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
+from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, padded_tensor
 
 
@@ -633,6 +635,13 @@ class TorchAgent(ABC, Agent):
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
+        # used for sharing metrics back to the teacher
+        self._local_metrics: Dict[str, List[Metric]] = {}
+        # we may want to temporarily disable local metrics, roughly similar to
+        # `with torch.no_grad`. See TorchGeneratorAgent._init_cuda_buffer for
+        # example
+        self.__local_metrics_enabled = True
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -663,13 +672,10 @@ class TorchAgent(ABC, Agent):
                     for i in range(FP16_PAD_SIZE - len(self.dict) % FP16_PAD_SIZE):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
+            # global_metrics keeps track of batch-level or global-level metrics
+            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1, shared=None)
+            # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
-            # gradient norms
-            self.metrics['gnorm'] = 0.0
-            # gradient clipping rate
-            self.metrics['clip'] = 0.0
-            # number of calls to optimizer.step()
-            self.metrics['updates'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -677,6 +683,9 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
+            self.global_metrics = Metrics(
+                opt.get('numthreads', 1) > 1, shared=shared['global_metrics']
+            )
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -940,28 +949,64 @@ class TorchAgent(ABC, Agent):
                 self.scheduler.get_initial_number_training_updates()
             )
 
+    def _control_local_metrics(self, enabled: bool = False, disabled: bool = False):
+        """
+        Used to temporarily disable local metrics.
+
+        This is useful for things like when you need to call super(), but
+        prevent the parent from recording some metric. For example, if you're
+        forwarding a dummy batch or calling super() but still want to modify
+        the output.
+
+        You can compare this to torch.no_grad in its goal.
+        """
+        if not (enabled ^ disabled):
+            raise ValueError(
+                'You must provide exactly one of enabled or disabled to '
+                '_control_local_metrics.'
+            )
+        self.__local_metrics_enabled = enabled
+
+    def record_local_metric(self, keyname: str, values: List[Metric]):
+        """
+        Record an example-level metric for all items in the batch.
+
+        Local metrics are maybe recorded anywhere within batch act. They will
+        automatically be collated and returned at the end of batch_act. The
+        beginning of batch_act resets these, so you may not use them during
+        observe.
+
+        Example local metrics include ppl, token_acc, any other agent-specific
+        metrics.
+        """
+        if not self.__local_metrics_enabled:
+            return
+        if keyname in self._local_metrics:
+            # we could relax this already
+            raise KeyError(f"Already recorded metrics for {keyname}")
+        self._local_metrics[keyname] = values
+
     def report(self):
         """
         Report metrics.
 
         Report includes learning rate and number of training updates.
         """
-        metrics = {}
+        report = self.global_metrics.report()
+
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
-            metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['total_train_updates'] = self._number_training_updates
-
-        steps = self.metrics['updates']
-        if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
-            metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
-            metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
+            report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
 
         if self.use_cuda:
-            metrics['gpu_mem_percent'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+            report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
 
-        return metrics
+        if is_primary_worker() and self._number_training_updates:
+            # number train updates doesn't work in hogwild sadly, and should only
+            # be done on the primary worker
+            report['total_train_updates'] = FixedMetric(self._number_training_updates)
+
+        return report
 
     def _gpu_usage(self):
         """
@@ -1100,6 +1145,7 @@ class TorchAgent(ABC, Agent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
+        shared['global_metrics'] = self.global_metrics.share()
 
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -1473,6 +1519,7 @@ class TorchAgent(ABC, Agent):
                 continue
             for i, sub_val in zip(valid_inds, v):
                 batch_reply[i][k] = sub_val
+
         return batch_reply
 
     def observe(self, observation):
@@ -1741,9 +1788,7 @@ class TorchAgent(ABC, Agent):
         Reset all TorchAgentMetrics.
         """
         super().reset_metrics()
-        self.metrics['gnorm'] = 0.0
-        self.metrics['clip'] = 0.0
-        self.metrics['updates'] = 0
+        self.global_metrics.clear()
 
     def act(self):
         """
@@ -1766,11 +1811,12 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
-        batch_size = len(observations)
+        # clear local metrics before anything else
+        self._local_metrics.clear()
+
         # initialize a list of replies with this agent's id
         batch_reply = [
-            Message({'id': self.getID(), 'episode_done': False})
-            for _ in range(batch_size)
+            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
         ]
 
         # check if there are any labels available, if so we will train on them
@@ -1779,18 +1825,49 @@ class TorchAgent(ABC, Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            # tokens per batch
+            # we divide by the binary is_primary_worker() so that the numerator is
+            # num_tokens in all workers, and the denominator is 1.
+            tbp = AverageMetric(
+                (batch.label_vec != self.NULL_IDX).sum().item()
+                + (batch.text_vec != self.NULL_IDX).sum().item(),
+                float(is_primary_worker()),
+            )
+            self.global_metrics.add('tokens_per_batch', tbp)
+
         if self.is_training:
             output = self.train_step(batch)
         else:
             with torch.no_grad():
                 # save memory and compute by disabling autograd.
-                # use `with torch.enable_grad()` to gain back graidients.
+                # use `with torch.enable_grad()` to gain back gradients.
                 output = self.eval_step(batch)
 
-        if output is None:
-            return batch_reply
+        if output is not None:
+            # local metrics are automatically matched up
+            self.match_batch(batch_reply, batch.valid_indices, output)
 
-        self.match_batch(batch_reply, batch.valid_indices, output)
+        # broadcast the metrics back
+        for k, values in self._local_metrics.items():
+            if len(values) != len(batch.valid_indices):
+                raise IndexError(
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"expected {len(batch.valid_indices)}"
+                )
+            for i, value in zip(batch.valid_indices, values):
+                if 'metrics' not in batch_reply[i]:
+                    batch_reply[i]['metrics'] = {}
+                batch_reply[i]['metrics'][k] = value
+
+        # Make sure we push all the metrics to main thread in hogwild/workers
+        self.global_metrics.flush()
+
         return batch_reply
 
     @abstractmethod
@@ -1861,14 +1938,19 @@ class TorchAgent(ABC, Agent):
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
-            self.metrics['gnorm'] += grad_norm
-            self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
+            self.global_metrics.add('gnorm', AverageMetric(grad_norm))
+            self.global_metrics.add(
+                'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
+            )
 
-        self.metrics['updates'] += 1
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
+        if is_primary_worker():
+            # in distributed mode, all workers step together, but we need to only
+            # count it once. Only the primary worker gets to make the count
+            self.global_metrics.add('updates', SumMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)

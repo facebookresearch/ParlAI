@@ -7,7 +7,7 @@
 """
 Definitions of general ParlAI types.
 """
-from typing import Any, Dict, TypeVar, Union
+from typing import Any, Dict, TypeVar, Union, List
 
 import torch
 
@@ -31,3 +31,5 @@ ParlAI type to represent an object that is theoretically expressible as a scalar
 Ints and floats are clearly scalars, and torch.Tensors can be represented by a scalar if
 Tensor.numel() == 1. Used as input type for classes derived from Metric.
 """
+
+TVector = Union[List[TScalar], torch.Tensor]

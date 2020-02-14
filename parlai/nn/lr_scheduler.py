@@ -258,13 +258,18 @@ class ParlAILRScheduler(object):
         if (
             # there is already an old LR scheduler saved on disk
             states
+            # and there was a scheduler in the dump
+            and 'lr_scheduler_type' in states
             # and the old LR scheduler is different
             and states.get('lr_scheduler_type') != opt['lr_scheduler']
             # and we're not already using a fresh scheduler
             and not hard_reset
         ):
             # the LR scheduler changed, start things fresh
-            warn_once("LR scheduler is different from saved. Starting fresh!")
+            warn_once(
+                f"LR scheduler ({opt['lr_scheduler']}) is different from saved "
+                f"({states.get('lr_scheduler_type')}). Starting fresh!"
+            )
             hard_reset = True
 
         if not hard_reset:
