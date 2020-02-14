@@ -563,7 +563,7 @@ class PolyEncoderModule(torch.nn.Module):
         :param cand_rep:
             encoded representation of the candidates
         """
-        if ctxt_tokens is not None or cand_tokens is not None:
+        if ctxt_tokens is not None or ctxt_image is not None or cand_tokens is not None:
             return self.encode(
                 ctxt_tokens=ctxt_tokens, ctxt_image=ctxt_image, cand_tokens=cand_tokens
             )
@@ -687,9 +687,9 @@ class NewContextWithImageEncoder(TransformerEncoder):
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
             full_mask = self.cat([image_masks, context_mask])
-            prepended_pos = self.image_position_embedding(
-                context_pos.new_zeros((context_pos.size(0), 1))
-            )
+            prepended_pos = context_pos.new_zeros((context_pos.size(0), 1))
+            # Just pad the position embedding (used with self.attention_keys ==
+            # 'position') with zeros
             full_pos = self.cat([prepended_pos, context_pos])
             import pdb
 
