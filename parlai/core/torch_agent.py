@@ -1421,7 +1421,8 @@ class TorchAgent(ABC, Agent):
         imgs = None
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
-
+            if self.use_cuda:
+                imgs = [img.cuda() if img is not None else None for img in imgs]
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
