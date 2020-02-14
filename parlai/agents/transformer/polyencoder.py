@@ -67,7 +67,7 @@ class PolyencoderAgent(TorchRankerAgent):
             '--polyencoder-image-combination-mode',
             type=str,
             default='postpend',
-            choices=['add', 'prepend', 'postpend'],
+            choices=['add', 'postpend', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
         agent.add_argument(
@@ -684,6 +684,13 @@ class NewContextWithImageEncoder(TransformerEncoder):
 
             pdb.set_trace()
             # TODO: remove
+        elif self.image_combination_mode == 'postpend':
+            full_enc = self.cat([context_encoded, image_encoded])
+            full_mask = self.cat([context_mask, image_masks])
+            postpended_pos = context_pos.new_zeros((context_pos.size(0), 1))
+            # Just pad the position embedding (used with self.attention_keys ==
+            # 'position') with zeros
+            full_pos = self.cat([context_pos, postpended_pos])
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
             full_mask = self.cat([image_masks, context_mask])
