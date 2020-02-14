@@ -8,6 +8,7 @@
 Poly-encoder Agent.
 """
 
+from functools import reduce
 from typing import List, Optional
 
 import torch
@@ -641,7 +642,7 @@ class NewContextWithImageEncoder(TransformerEncoder):
             extra_masks = image_encoded = None
 
         if self.image_combination_mode == 'add':
-            full_enc = context_encoded + image_encoded
+            full_enc = self.add([context_encoded, image_encoded])
             # image_encoded broadcasted along dim=1
             full_mask = context_mask
             import pdb
@@ -662,6 +663,21 @@ class NewContextWithImageEncoder(TransformerEncoder):
             raise ValueError('Image combination mode not recognized!')
 
         return full_enc, full_mask
+
+    def add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+        """
+        Handle addition of None tensors.
+
+        Smart addition. Adds tensors if they are not None.
+
+        :param tensors:
+            A list of torch.Tensor, with at least one non-null object
+
+        :return:
+            The result of adding all non-null objects in tensors
+        """
+        tensors = [t for t in tensors if t is not None]
+        return reduce(lambda a, b: a + b, tensors)
 
     def cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
         """
