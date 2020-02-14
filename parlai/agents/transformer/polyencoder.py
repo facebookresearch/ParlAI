@@ -659,21 +659,21 @@ class NewContextWithImageEncoder(TransformerEncoder):
             # TODO: remove
             valid_img_enc = self.image_encoder(valid_imgs)
 
-            image_masks = []
+            extra_masks = []
             image_encoded = []
             img_num = 0
             for i in range(len(image_features)):
                 if i in valid_inds:
-                    image_masks.append(self.ones_mask)
+                    extra_masks.append(self.ones_mask)
                     image_encoded.append(valid_img_enc[img_num, :])
                     img_num += 1
                 else:
-                    image_masks.append(~self.ones_mask)
+                    extra_masks.append(~self.ones_mask)
                     image_encoded.append(self.dummy_image_enc)
-            image_masks = torch.stack(image_masks)
+            extra_masks = torch.stack(extra_masks)
             image_encoded = torch.stack(image_encoded).unsqueeze(1)
         else:
-            image_masks = image_encoded = None
+            extra_masks = image_encoded = None
 
         if self.image_combination_mode == 'add':
             full_enc = context_encoded + image_encoded
@@ -686,14 +686,14 @@ class NewContextWithImageEncoder(TransformerEncoder):
             # TODO: remove
         elif self.image_combination_mode == 'postpend':
             full_enc = self.cat([context_encoded, image_encoded])
-            full_mask = self.cat([context_mask, image_masks])
+            full_mask = self.cat([context_mask, extra_masks])
             postpended_pos = context_pos.new_zeros((context_pos.size(0), 1))
             # Just pad the position embedding (used with self.attention_keys ==
             # 'position') with zeros
             full_pos = self.cat([context_pos, postpended_pos])
         elif self.image_combination_mode == 'prepend':
             full_enc = self.cat([image_encoded, context_encoded])
-            full_mask = self.cat([image_masks, context_mask])
+            full_mask = self.cat([extra_masks, context_mask])
             prepended_pos = context_pos.new_zeros((context_pos.size(0), 1))
             # Just pad the position embedding (used with self.attention_keys ==
             # 'position') with zeros
