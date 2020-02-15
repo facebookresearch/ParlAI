@@ -244,10 +244,28 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def load_state_dict(self, state_dict):
         """
-        Override to account for codes.
+        Override to account for codes and possibly weights used for image features.
         """
         if self.model.type == 'codes' and 'codes' not in state_dict:
             state_dict['codes'] = self.model.codes
+        for tensor in ['dummy_image_enc', 'ones_mask']:
+            if (
+                hasattr(self.model.encoder_ctxt, tensor)
+                and f'encoder_ctxt.{tensor}' not in state_dict
+            ):
+                state_dict[f'encoder_ctxt.{tensor}'] = getattr(
+                    self.model.encoder_ctxt, tensor
+                )
+        if hasattr(self.model.encoder_ctxt, 'image_encoder'):
+            for tensor in ['weight', 'bias']:
+                if (
+                    hasattr(self.model.encoder_ctxt.image_encoder[0], tensor)
+                    and f'encoder_ctxt.image_encoder.0.{tensor}' not in state_dict
+                ):
+                    state_dict[f'encoder_ctxt.image_encoder.0.{tensor}'] = getattr(
+                        self.model.encoder_ctxt.image_encoder[0], tensor
+                    )
+        # TODO: make this a bit cleaner, probably
         super().load_state_dict(state_dict)
 
 

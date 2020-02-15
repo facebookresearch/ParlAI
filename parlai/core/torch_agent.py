@@ -902,7 +902,12 @@ class TorchAgent(ABC, Agent):
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
-                self.optimizer.optimizer.load_state_dict(optim_states)
+                try:
+                    self.optimizer.optimizer.load_state_dict(optim_states)
+                except ValueError:
+                    print(
+                        'WARNING: not loading optim state since model params changed.'
+                    )
                 return
             else:
                 # previously trained in fp32, loading in fp32.
@@ -1332,10 +1337,7 @@ class TorchAgent(ABC, Agent):
         to pad their input.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=self.fp16,
+            items, pad_idx=self.NULL_IDX, use_cuda=self.use_cuda, fp16friendly=self.fp16
         )
 
     def is_valid(self, obs):
