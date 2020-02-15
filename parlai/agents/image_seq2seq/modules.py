@@ -129,10 +129,10 @@ class ContextWithImageEncoder(TransformerEncoder):
             output_scaling=output_scaling,
         )
         self._build_image_encoder()
-        self.dummy_image_enc = torch.nn.Parameter(
-            torch.zeros((self.embedding_size)), requires_grad=False
+        self.register_buffer(
+            'dummy_image_enc', torch.zeros((self.embedding_size))
         )
-        self.ones_mask = torch.nn.Parameter(torch.ones(1).bool(), requires_grad=False)
+        self.register_buffer('ones_mask', torch.ones(1).bool())
 
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
