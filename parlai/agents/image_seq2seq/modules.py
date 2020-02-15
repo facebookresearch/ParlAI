@@ -8,7 +8,7 @@ Modules for ImageSeq2seqAgent Agent.
 """
 
 from functools import reduce
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 
 import torch
 import torch.nn as nn
@@ -145,7 +145,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.image_encoder = nn.Sequential(*image_layers)
 
     def encode_images(
-        self, images: List[object]
+        self, images: Union[List[object], torch.Tensor]
     ) -> Tuple[Optional[List[int]], Optional[torch.Tensor]]:
         """
         Encode Images.
@@ -154,7 +154,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         is a tensor).
 
         :param images:
-            list of objects of length N, of which some maybe be None
+            either a list of objects of length N, of which some maybe be None, or a
+            tensor of shape (batch size, self.img_dim)
 
         :return:
             a (image_encoded, image_mask) tuple, where:
@@ -193,7 +194,9 @@ class ContextWithImageEncoder(TransformerEncoder):
         return image_encoded, image_masks
 
     def forward(
-        self, src_tokens: torch.Tensor, image_features: List[object]
+        self,
+        src_tokens: Optional[torch.Tensor],
+        image_features: Optional[Union[List[object], torch.Tensor]],
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Encode images with context.
@@ -205,7 +208,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         :param src_tokens:
             A bsz x seq_len tensor of src_tokens; possibly None
         :param image_features:
-            A list of (torch.tensor)
+            Either a list of (torch.tensor) or a tensor of shape (batch_size, 
+            self.img_dim)
 
         :return:
             A (full_enc, full_mask) tuple, which represents the encoded context

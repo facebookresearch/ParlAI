@@ -219,8 +219,10 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
+        ctxt_image = torch.stack(batch.image)
+        # Turn into batchsize x polyencoder_image_features_dim for DataParallel
         ctxt_rep, ctxt_rep_mask, _ = self.model(
-            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
+            ctxt_tokens=batch.text_vec, ctxt_image=ctxt_image
         )
 
         if cand_encs is not None:
@@ -450,7 +452,7 @@ class PolyEncoderModule(torch.nn.Module):
     def encode(
         self,
         ctxt_tokens: Optional[torch.Tensor],
-        ctxt_image: Optional[List[Optional[torch.Tensor]]],
+        ctxt_image: Optional[torch.Tensor],
         cand_tokens: Optional[torch.Tensor],
     ):
         """
@@ -459,7 +461,7 @@ class PolyEncoderModule(torch.nn.Module):
         :param ctxt_tokens:
             2D long tensor, batchsize x sent_len
         :param ctxt_image:
-            List of tensors (or Nones) of length batchsize
+            2D float tensor, batchsize x polyencoder_image_features_dim
         :param cand_tokens:
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
@@ -486,7 +488,7 @@ class PolyEncoderModule(torch.nn.Module):
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
             if self.use_image_features is not None:
-                assert ctxt_image is None or len(ctxt_image) == bsz
+                assert ctxt_image is None or ctxt_image.size(0) == bsz
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
             else:
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
