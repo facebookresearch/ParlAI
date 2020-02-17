@@ -936,3 +936,26 @@ def create_agents(opt):
     else:
         # interactive task has no task agents (they are attached as user agents)
         return []
+
+
+class PersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
+    """
+    Adds personas to WoW data.
+    """
+
+    def __init__(self, opt, shared=None):
+        from parlai_internal.projects.blended_skill_talk.add_personas_topics import (
+            PersonaTopicifier,
+        )
+
+        self.persona_topicifier = PersonaTopicifier(
+            should_have_personas=False, should_have_topics=True
+        )
+        super().__init__(opt, shared=shared)
+
+    def get(self, episode_idx, entry_idx=None):
+        gotten = super().get(episode_idx, entry_idx=entry_idx)
+        if entry_idx == 0:
+            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
+            gotten['text'] = modified_text
+        return gotten
