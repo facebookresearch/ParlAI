@@ -178,7 +178,16 @@ class PolyencoderAgent(TorchRankerAgent):
             images = []
             for img in batch.image:
                 images.append(_process_img(img))
-            batch.image = images
+
+            if any([im is None for im in images]):
+                # Fill in Nones in images
+                first_valid_image = [im for im in images if im is not None][0]
+                zeros_image = first_valid_image.new_zeros(first_valid_image.size())
+                images = [zeros_image if im is None else im for im in images]
+
+            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+            batch.image = torch.stack(images)
+
         return batch
 
     def vectorize_fixed_candidates(self, *args, **kwargs):
@@ -219,13 +228,8 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        if batch.image is not None:
-            ctxt_image = torch.stack(batch.image)
-            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
-        else:
-            ctxt_image = None
         ctxt_rep, ctxt_rep_mask, _ = self.model(
-            ctxt_tokens=batch.text_vec, ctxt_image=ctxt_image
+            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
         )
 
         if cand_encs is not None:
