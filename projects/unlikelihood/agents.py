@@ -207,7 +207,8 @@ class RepetitionUnlikelihoodAgentTrait(object):
                     self.metrics['wcrep_%dgrams' % n] / self.metrics['pred_%dgrams' % n]
                 )
                 report['wocrep_%dgrams' % n] = (
-                    self.metrics['wocrep_%dgrams' % n] / self.metrics['pred_%dgrams' % n]
+                    self.metrics['wocrep_%dgrams' % n]
+                    / self.metrics['pred_%dgrams' % n]
                 )
                 report['hcrep_%dgrams' % n] = (
                     self.metrics['hcrep_%dgrams' % n]
@@ -318,7 +319,7 @@ class RepetitionUnlikelihoodAgentTrait(object):
                     batch, return_output=True
                 )
 
-            mask_loss =  lrep_mask.sum()
+            mask_loss = lrep_mask.sum()
             mask_num_tokens = sum(mask_len)
             self.metrics['mask_loss'] += mask_loss
             self.metrics['mask_num_tokens'] += mask_num_tokens
