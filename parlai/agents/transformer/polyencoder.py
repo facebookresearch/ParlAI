@@ -219,8 +219,11 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_image = torch.stack(batch.image)
-        # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+        if batch.image is not None:
+            ctxt_image = torch.stack(batch.image)
+            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+        else:
+            ctxt_image = None
         ctxt_rep, ctxt_rep_mask, _ = self.model(
             ctxt_tokens=batch.text_vec, ctxt_image=ctxt_image
         )
