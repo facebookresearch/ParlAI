@@ -940,7 +940,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
                 if not b.is_done():
-                    b.advance(score[i])
+                    b.advance(score[i], max_len=max_ts)
             incr_state_inds = torch.cat(
                 [
                     beam_size * i + b.get_backtrack_from_current_step()
@@ -1124,7 +1124,7 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def advance(self, logprobs):
+    def advance(self, logprobs, max_len=100000):
         """
         Advance the beam one step.
         """
@@ -1133,6 +1133,11 @@ class TreeSearch(object):
             # penalize all eos probs to make it decode longer
             for hyp_id in range(logprobs.size(0)):
                 logprobs[hyp_id][self.eos] = neginf(logprobs.dtype)
+
+        if current_length >= max_len -2 :
+            # penalize all eos probs to make it decode shorter
+            for hyp_id in range(logprobs.size(0)):
+                logprobs[hyp_id][self.eos] = -neginf(logprobs.dtype)
 
         if self.scores is None:
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)

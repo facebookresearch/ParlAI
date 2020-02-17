@@ -75,7 +75,7 @@ def setup_args(parser=None):
         default=True,
         help='Compute %% of unique responses from the model',
     )
-    parser.set_defaults(datatype='valid', model='repeat_label')
+    parser.set_defaults(datatype='valid') #, model='repeat_label')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
 
@@ -112,6 +112,7 @@ def eval_wordstat(opt, print_parser=None):
     :param print_parser: if provided, prints the options that are set within the
         model after loading the model
     """
+    print(opt)
     random.seed(42)
 
     # Create model and assign it to the specified task
