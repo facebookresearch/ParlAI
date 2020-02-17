@@ -13,8 +13,8 @@ from nltk import ngrams
 
 from parlai.utils.misc import round_sigfigs
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from parlai.core.torch_agent import TorchAgent, Batch, Output
-
+from parlai.core.torch_agent import Output
+from parlai.core.exceptions import StopTrainException
 from parlai_internal.agents.parlall.agents import ParlallAgent
 
 
@@ -108,8 +108,6 @@ class RewardUnlikelihoodAgentTrait(object):
         ul_loss = (
             -torch.log((1 - ul_scores.exp()).clamp_(1e-6)) * ul_notnull.view(-1).float()
         ).sum()
-        #print(ul_notnull)
-        #import pdb; pdb.set_trace()
         self.metrics['ul_loss'] += ul_loss.item()
         self.metrics['ul_num_tokens'] += ul_target_tokens
         if ul_target_tokens > 0:
@@ -222,22 +220,13 @@ class RepetitionUnlikelihoodAgentTrait(object):
         if not (self.is_training and torch.rand(1).item() < self.opt['seq_ul_ratio']):
             total_loss, model_output = super().compute_loss(batch, return_output=True)
         else:
-            #total_loss, model_output = super().compute_loss(batch, return_output=True)
-            # generate
-            clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
             maxlen = self.label_truncate or 256
             with torch.no_grad():
                 beam_pred_scores, _ = self._generate(batch, self.beam_size, maxlen)
-
             # forward pass to create graph for beam search case
             generations = [g[1:] for (g, s) in beam_pred_scores]
-            # pred_toks = [g[1:] for (g, s) in beam_pred_scores]
-            # pred_toks = torch.nn.utils.rnn.pad_sequence(pred_toks, batch_first=True)
             pred_toks = torch.nn.utils.rnn.pad_sequence(generations, batch_first=True)
-            # import pdb;pdb.set_trace()
-            #pred_toks =  pred_toks[:,1:]
             model_output = self.model(*self._model_input(batch), ys=pred_toks)
-            # print("MODEL OUTPUT", model_output)
             logits, preds, _ = model_output
 
             # construct mask marking repeats
@@ -266,8 +255,7 @@ class RepetitionUnlikelihoodAgentTrait(object):
                     label_ngs[ng] += 1
 
                 xl = x.tolist()
-                joined_ngrams = 0
-                if  self.opt['crep_pen'] == 'bog':
+                if self.opt['crep_pen'] == 'bog':
                     # bog: make everything unlikely except the first
                     # occurrences of the bag of gold tokens
                     seen_ngs = defaultdict(int)
@@ -317,7 +305,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
             mask = ((1 - self.opt['ctxt_beta']) * lrep2_mask) + (
                 self.opt['ctxt_beta'] * crep_mask
             )
-            #mask = lrep2_mask
 
             loss = -torch.log(one_minus_probs) * mask
             ul_loss = loss.sum()
@@ -340,8 +327,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
             minmask_num_tokens = len(mask_min)
             self.metrics['minmask_loss'] += minmask_loss
             self.metrics['minmask_num_tokens'] += minmask_num_tokens
-
-            #import pdb; pdb.set_trace()
 
         if return_output:
             return total_loss, model_output
@@ -559,12 +544,6 @@ class TokenVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
             -torch.log((1 - ul_scores.exp()).clamp_(1e-6))
             * ul_mask.type_as(scores).unsqueeze(-1)
         ).sum()
-
-        # indices = preds[ul_mask]
-        # ul_scores = scores[ul_mask][torch.arange(num_ul).to(ul_mask.device), indices]
-
-        # ul_loss = (-torch.log((1 - ul_scores.exp()).clamp_(1e-6))).sum()
-
         num_ul = ul_mask.sum().item()
         self.metrics['ul_loss'] += ul_loss.item()
         self.metrics['ul_num_tokens'] += num_ul
@@ -765,14 +744,14 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         else:
             raise ValueError
 
-        if self.metrics['steps'] % 50 == 0:
-            print(
-                "weights:",
-                " ".join(
-                    "{}:{:.2g}".format(self.dict.ind2tok[i], v)
-                    for i, v in to_penalize.items()
-                ),
-            )
+        # if self.metrics['steps'] % 50 == 0:
+        #     print(
+        #         "weights:",
+        #         " ".join(
+        #             "{}:{:.2g}".format(self.dict.ind2tok[i], v)
+        #             for i, v in to_penalize.items()
+        #         ),
+        #     )
         self.metrics['hum_toks'] += hum_sum
         self.metrics['gen_toks'] += gen_sum
         self.metrics['num_penalize'] += len(to_penalize)

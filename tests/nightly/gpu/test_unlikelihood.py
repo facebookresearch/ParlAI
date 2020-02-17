@@ -27,7 +27,7 @@ class TestUnlikelihood(unittest.TestCase):
         parser = ParlaiParser()
         # make it much smaller just for testing
         parser.set_params(
-            model='projects.unlikelihood.agents:RepetitionUnlikelihoodParlallAgent'
+            model='projects.unlikelihood.agents:RepetitionUnlikelihoodParlallAgent',
             dict_file='izoo:unlikelihood/repeats/convai2/contextonly/model.dict'
             max_train_time=120,
             validation_max_exs=128,
@@ -60,7 +60,6 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 11.76, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1937, delta=0.0002)
 
-
     def test_repeat_eli5_contextonly(self):
         """
         Check the training script doesn't crash.
@@ -90,17 +89,18 @@ class TestUnlikelihood(unittest.TestCase):
         valid, _ = testing_utils.eval_model(
             {
                 'model_file': 'izoo:unlikelihood/repeats/wiz/contextonly/model',
-                'task': 'wizard_of_wikipedia',
+                'task': 'wizard_of_wikipedia:GeneratorTeacher',
                 'beam_size': 1,
                 'batchsize': 64,
                 'num_examples': NUM_EXAMPLES,
+                'prepend_gold_knowledge': True,
             },
             skip_test=True,
         )
 
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 24.28, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1513, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 8.698, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.3430, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 8.761, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.3456, delta=0.0002)
