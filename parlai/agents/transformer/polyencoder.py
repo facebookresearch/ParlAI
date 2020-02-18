@@ -505,7 +505,7 @@ class PolyEncoderModule(torch.nn.Module):
             assert len(ctxt_tokens.shape) == 2
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
-            if self.use_image_features is not None:
+            if self.use_image_features:
                 if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
                     bsz,
                     self.image_features_dim,
