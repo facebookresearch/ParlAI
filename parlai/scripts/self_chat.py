@@ -21,7 +21,7 @@ def setup_args(parser=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=60)
     parser.add_argument(
         '--display-ignore-fields',
         type=str,
