@@ -3,17 +3,13 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.mturk.tasks.acute_eval.run import main as run_main, add_args
+from parlai.mturk.tasks.acute_eval.run import AcuteEvaluator, add_args
 
 """
 Example script for running ACUTE-EVAL.
-The only arguments that *must* be modified for this to be run are:
-'dialogs_path':  Path to folder containing logs of all model conversations.
-    Each model should have one file named '<modelname>.jsonl'
-'model_comparisons': List of tuples indicating pairs of models to be compared.
-    The model names here should match the names of files in the folder
-'onboarding_tasks': List of tuples in format (id1, id2, name of matchup) where
-    id1, id2 are conversation ids where id2 is the correct conversation's id
+The only argument that *must* be modified for this to be run is:
+'pairings_filepath':  Path to pairings file in the format specified in the README.md
+
 Help strings for the other arguments can be found in run.py
 """
 
@@ -44,9 +40,8 @@ def set_args():
     args['question'] = 'Who would you prefer to talk to for a long conversation?'
 
     args['num_conversations'] = int(
-        len(args['model_comparisons'])
-        * args['pairs_per_matchup']
-        / (args['task_description']['num_subtasks'] - 1)
+        args['pairs_per_matchup']
+        / (args['subtasks_per_hit'] - 1)
     )  # release enough hits to finish all annotations requested
 
     # Task display on MTurk
@@ -61,4 +56,5 @@ def set_args():
 
 if __name__ == '__main__':
     args = set_args()
-    run_main(args)
+    runner = AcuteEvaluator(args)
+    runner.run()
