@@ -40,8 +40,7 @@ def set_args():
     args['question'] = 'Who would you prefer to talk to for a long conversation?'
 
     args['num_conversations'] = int(
-        args['pairs_per_matchup']
-        / (args['subtasks_per_hit'] - 1)
+        args['pairs_per_matchup'] / (args['subtasks_per_hit'] - 1)
     )  # release enough hits to finish all annotations requested
 
     # Task display on MTurk
