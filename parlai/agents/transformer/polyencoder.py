@@ -258,23 +258,16 @@ class PolyencoderAgent(TorchRankerAgent):
         if self.model.type == 'codes' and 'codes' not in state_dict:
             state_dict['codes'] = self.model.codes
         for tensor in ['dummy_image_enc', 'ones_mask']:
-            if (
-                hasattr(self.model.encoder_ctxt, tensor)
-                and f'encoder_ctxt.{tensor}' not in state_dict
-            ):
-                state_dict[f'encoder_ctxt.{tensor}'] = getattr(
-                    self.model.encoder_ctxt, tensor
-                )
+            key = f'encoder_ctxt.{tensor}'
+            val = getattr(self.model.encoder_ctxt, tensor, None)
+            if val is not None and key not in state_dict:
+                state_dict[key] = val
         if hasattr(self.model.encoder_ctxt, 'image_encoder'):
             for tensor in ['weight', 'bias']:
-                if (
-                    hasattr(self.model.encoder_ctxt.image_encoder[0], tensor)
-                    and f'encoder_ctxt.image_encoder.0.{tensor}' not in state_dict
-                ):
-                    state_dict[f'encoder_ctxt.image_encoder.0.{tensor}'] = getattr(
-                        self.model.encoder_ctxt.image_encoder[0], tensor
-                    )
-        # TODO: make this a bit cleaner, probably
+                key = f'encoder_ctxt.image_encoder.0.{tensor}'
+                val = getattr(self.model.encoder_ctxt.image_encoder[0], tensor, None)
+                if val is not None and key not in state_dict:
+                    state_dict[key] = val
         super().load_state_dict(state_dict)
 
 
@@ -300,6 +293,7 @@ class PolyEncoderModule(torch.nn.Module):
         self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
         self.type = opt['polyencoder_type']
+        self.image_features_dim = opt['polyencoder_image_features_dim']
         self.n_codes = opt['poly_n_codes']
         self.attention_type = opt['poly_attention_type']
         self.attention_num_heads = opt['poly_attention_num_heads']
@@ -419,7 +413,7 @@ class PolyEncoderModule(torch.nn.Module):
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
-            image_features_dim=opt['polyencoder_image_features_dim'],
+            image_features_dim=self.image_features_dim,
             image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
 
@@ -495,7 +489,7 @@ class PolyEncoderModule(torch.nn.Module):
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
             if self.use_image_features is not None:
-                assert ctxt_image is None or ctxt_image.size(0) == bsz
+                assert ctxt_image.size() == (bsz, self.image_features_dim)
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
             else:
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
