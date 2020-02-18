@@ -489,7 +489,11 @@ class PolyEncoderModule(torch.nn.Module):
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
             if self.use_image_features is not None:
-                assert ctxt_image.size() == (bsz, self.image_features_dim)
+                if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
+                    bsz,
+                    self.image_features_dim,
+                ):
+                    raise ValueError('Image feature tensor malformed!')
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
             else:
                 ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
