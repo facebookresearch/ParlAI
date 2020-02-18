@@ -26,6 +26,9 @@ from .modules import (
 from .transformer import TransformerRankerAgent
 
 
+DEFAULT_IMAGE_FEATURES_DIM = 2048
+
+
 class PolyencoderAgent(TorchRankerAgent):
     """
     Poly-encoder Agent.
@@ -60,7 +63,7 @@ class PolyencoderAgent(TorchRankerAgent):
         agent.add_argument(
             '--polyencoder-image-features-dim',
             type=int,
-            default=2048,
+            default=DEFAULT_IMAGE_FEATURES_DIM,
             help='For passing in image features of the given dim in the context',
         )
         agent.add_argument(
@@ -120,6 +123,10 @@ class PolyencoderAgent(TorchRankerAgent):
         self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
         if self.use_cuda:
             self.rank_loss.cuda()
+        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
+        self.image_features_dim = opt.get(
+            'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
+        )
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.utils.distributed import is_distributed
@@ -158,35 +165,45 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
-        Override to handle images.
+        Override to handle image features.
         """
         batch = super().batchify(obs_batch, sort)
 
-        def _process_img(img):
-            if img is not None and isinstance(img, torch.Tensor):
-                assert img.dim() == 1
-                if self.use_cuda:
-                    img = img.cuda()
-                if self.opt.get('fp16'):
-                    img = img.half()
+        def _process_features(features: torch.Tensor) -> torch.Tensor:
+            assert features.size() == (self.image_features_dim,)
+            if self.use_cuda:
+                features = features.cuda()
+            if self.opt.get('fp16'):
+                features = features.half()
+            else:
+                features = features.float()
+
+            return features
+
+        if self.use_image_features:
+
+            # Checks/formatting of batch.image
+            bsz = batch.text_vec.size(0)
+            if batch.image is None or len(batch.image) == 0:
+                batch.image = [None] * bsz
+            else:
+                assert len(batch.image) == bsz
+
+            # Process all image feature vectors, or add in zero vectors if missing
+            processed_features_list = []
+            processed_zero_features = _process_features(
+                torch.zeros((self.image_features_dim,))
+            )
+            for orig_features in batch.image:
+                if orig_features is None:
+                    processed_features_list.append(processed_zero_features)
+                elif isinstance(orig_features, torch.Tensor):
+                    processed_features_list.append(_process_features(orig_features))
                 else:
-                    img = img.float()
-
-            return img
-
-        if type(batch.image) == list and any(b is not None for b in batch):
-            images = []
-            for img in batch.image:
-                images.append(_process_img(img))
-
-            if any([im is None for im in images]):
-                # Fill in Nones in images
-                first_valid_image = [im for im in images if im is not None][0]
-                zeros_image = first_valid_image.new_zeros(first_valid_image.size())
-                images = [zeros_image if im is None else im for im in images]
+                    raise ValueError('Unsupported image feature format!')
 
             # Turn into batchsize x polyencoder_image_features_dim for DataParallel
-            batch.image = torch.stack(images)
+            batch.image = torch.stack(processed_features_list)
 
         return batch
 
@@ -282,6 +299,7 @@ class PolyEncoderModule(torch.nn.Module):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
         self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
+        self.image_features_dim = opt['polyencoder_image_features_dim']
         if self.use_image_features:
             self.encoder_ctxt = self.get_context_with_image_encoder(
                 opt=opt, dict=dict, null_idx=null_idx
@@ -293,7 +311,6 @@ class PolyEncoderModule(torch.nn.Module):
         self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
         self.type = opt['polyencoder_type']
-        self.image_features_dim = opt['polyencoder_image_features_dim']
         self.n_codes = opt['poly_n_codes']
         self.attention_type = opt['poly_attention_type']
         self.attention_num_heads = opt['poly_attention_num_heads']
