@@ -88,9 +88,7 @@ def add_args(from_argv=False):
         default=0.75,
         help='minimum accuracy on onboarding tasks, as a float 0-1.0',
     )
-    argparser.add_argument(
-        '--seed', type=int, default=42, help='seed for random'
-    )
+    argparser.add_argument('--seed', type=int, default=42, help='seed for random')
     argparser.add_argument(
         '--softblock-list-path',
         type=str,
@@ -110,6 +108,7 @@ class AcuteEvaluator(object):
 
     Relevant args are parsed in the `setup_args` function above.
     """
+
     def __init__(self, opt):
         random.seed(opt['seed'])
         self.opt = opt
@@ -144,8 +143,8 @@ class AcuteEvaluator(object):
             {
                 'tasks_completed': [],
                 'conversations_seen': [],
-                'onboarding_todo': onboarding_todo
-            }
+                'onboarding_todo': onboarding_todo,
+            },
         )
 
     def _supplement_opt(self):
@@ -159,7 +158,7 @@ class AcuteEvaluator(object):
                 'task': os.path.basename(os.path.dirname(os.path.abspath(__file__))),
                 'task_description': {
                     'num_subtasks': self.opt['subtasks_per_hit'],
-                    'question': self.opt['question']
+                    'question': self.opt['question'],
                 },
                 'frontend_version': 1,
             }
@@ -173,7 +172,10 @@ class AcuteEvaluator(object):
         :param task_group_id:
             task id used to set block qualification, if necessary.
         """
-        if self.opt['block_on_onboarding_fail'] and self.opt['block_qualification'] is None:
+        if (
+            self.opt['block_on_onboarding_fail']
+            and self.opt['block_qualification'] is None
+        ):
             self.opt['block_qualification'] = task_group_id
             warn_once(
                 "No block_qualification set in opt, automatically creating "
@@ -200,10 +202,10 @@ class AcuteEvaluator(object):
                         's2_choice': self.opt['s2_choice'],
                         'question': self.opt['question'],
                         # TODO: make sure this doesn't break javascript
-                        'is_onboarding': convo_pair['is_onboarding']
+                        'is_onboarding': convo_pair['is_onboarding'],
                     },
                     'pairing_dict': convo_pair,
-                    'pair_id': i
+                    'pair_id': i,
                 }
                 if convo_pair.get('is_onboarding'):
                     self.onboarding_tasks.append(task)
@@ -222,7 +224,7 @@ class AcuteEvaluator(object):
 
     def _get_dialogue_ids(self, task: Dict[str, Any]) -> List[int]:
         """
-        Return the ids for the dialogues corresponding to a given task
+        Return the ids for the dialogues corresponding to a given task.
 
         :return dialogue_ids:
             A list of two ids which correspond to the
@@ -262,9 +264,10 @@ class AcuteEvaluator(object):
             pair_id = next_task['pair_id']
             dialogue_ids = self._get_dialogue_ids(next_task)
 
-            if (  # make sure worker has not seen these conversations before
-                pair_id not in worker_data['tasks_completed']
-                and all(d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids)
+            if pair_id not in worker_data[  # make sure worker has not seen these conversations before
+                'tasks_completed'
+            ] and all(
+                d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids
             ):
                 # track tasks and conversations seen
                 worker_data['tasks_completed'].append(pair_id)
@@ -277,10 +280,15 @@ class AcuteEvaluator(object):
         # task queue containing num annotations requested of each pair is exhausted
         # b/c we released enough hits to guarantee reaching the requested num on average
         tasks_still_needed = tasks_per_hit - len(task_data)
-        tasks_remaining = [t_id for t_id in range(len(self.desired_tasks)) if t_id not in worker_data['tasks_completed']]
+        tasks_remaining = [
+            t_id
+            for t_id in range(len(self.desired_tasks))
+            if t_id not in worker_data['tasks_completed']
+        ]
         # get any pairings with conversations this worker has not seen to fill this hit
         tasks_chosen = [
-            t for t in tasks_remaining
+            t
+            for t in tasks_remaining
             if all(
                 d_id not in worker_data['conversations_seen']
                 for d_id in self._get_dialogue_ids(self.desired_tasks[t])
@@ -312,15 +320,11 @@ class AcuteEvaluator(object):
         worker_data = self._get_worker_data(worker_id)
         for subtask_data in task_data:
             if subtask_data['task_specs'].get('is_onboarding', False):
-                worker_data['onboarding_todo'].append(
-                    subtask_data['pair_id']
-                )
+                worker_data['onboarding_todo'].append(subtask_data['pair_id'])
             else:
                 self.task_queue.put(subtask_data)
                 try:
-                    worker_data['tasks_completed'].remove(
-                        subtask_data['pair_id']
-                    )
+                    worker_data['tasks_completed'].remove(subtask_data['pair_id'])
                     for d_id in self._get_dialogue_ids(subtask_data):
                         worker_data['conversations_seen'].remove(d_id)
                 except ValueError:
@@ -350,7 +354,9 @@ class AcuteEvaluator(object):
         worker_data['onboarding_todo'] = onboarding_todo[num_tasks_to_return:]
         return [self.onboarding_tasks[t_id] for t_id in onboarding_tasks_chosen]
 
-    def check_and_update_worker_approval(self, worker_id: int, save_data: Dict[str, Any]):
+    def check_and_update_worker_approval(
+        self, worker_id: int, save_data: Dict[str, Any]
+    ):
         """
         Soft block workers who fail onboarding tasks, keep track of their status.
 
@@ -445,8 +451,7 @@ class AcuteEvaluator(object):
                 elif opt['block_on_onboarding_fail']:
                     # check whether workers failed onboarding
                     self.check_and_update_worker_approval(
-                        workers[0].worker_id,
-                        save_data,
+                        workers[0].worker_id, save_data
                     )
                 return save_data
 
