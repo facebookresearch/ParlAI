@@ -20,11 +20,11 @@ Help strings for the other arguments can be found in run.py
 
 def set_args():
     args = add_args()
-    # task folder containing pairings file
-    args['task_folder'] = 'parlai/mturk/tasks/acute_eval/example/'
+    # pairings file
+    args['pairings_filepath'] = 'parlai/mturk/tasks/acute_eval/example/pairings.jsonl'
 
     # onboarding amd blocking
-    args['block_on_onboarding'] = True
+    args['block_on_onboarding_fail'] = True
     args['block_qualification'] = 'onboarding_qual_name'
 
     # general ParlAI mturk settings

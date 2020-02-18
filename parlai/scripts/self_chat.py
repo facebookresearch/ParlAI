@@ -48,7 +48,10 @@ def setup_args(parser=None):
     )
     parser.add_argument('--outfile', type=str, default='/tmp/selfchat.json')
     parser.add_argument(
-        '--format', type=str, default='json', choices={'parlai', 'json'}
+        '--format', type=str, default='jsonl', choices={'parlai', 'jsonl'}
+    )
+    parser.add_argument(
+        '--indent', type=int, default=4, help='how much to indent jsonl string'
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
@@ -103,7 +106,8 @@ def self_chat(opt, print_parser=None):
     if opt.get('display_examples'):
         print('-- end of episode --')
 
-    logger.write(opt['outfile'], opt['format'])
+    indent = opt['indent'] if opt['indent'] >= 0 else None
+    logger.write(opt['outfile'], opt['format'], indent=indent)
 
 
 if __name__ == '__main__':
