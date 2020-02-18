@@ -59,8 +59,8 @@ class Metadata:
 
     @staticmethod
     def _get_path(datapath):
-        fle, _ = os.path.splittext(datapath)
-        return os.path.join(fle, '.metadata')
+        fle, _ = os.path.splitext(datapath)
+        return fle + '.metadata'
 
     @classmethod
     def save_metadata(
