@@ -227,7 +227,7 @@ class AcuteEvaluator(object):
         Return the ids for the dialogues corresponding to a given task.
 
         :return dialogue_ids:
-            A list of two ids which correspond to the
+            A list of two ids which correspond to the id for each conversation
         """
         return task['pairing_dict']['dialogue_ids']
 

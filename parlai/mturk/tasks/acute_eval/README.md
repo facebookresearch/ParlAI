@@ -38,6 +38,7 @@ This is a template of the expected format with the minimal expected fields:
     {
       "is_onboarding": false,
       "speakers_to_eval": ["first_modelname", "second_modelname"],
+      "dialogue_ids": [dialogue_1_id, dialogue_2_id],
       "dialogue_dicts": [
         {
           "speakers": ["first_modelname", "other_speaker"],
