@@ -31,7 +31,7 @@ def load_openers(opt) -> Optional[List[str]]:
     task_opt['interactive_task'] = False
     task_agent = RepeatLabelAgent(task_opt)
     task_world = create_task(task_opt, task_agent)
-
+    
     # run through task data, collecting all first messages
     openers = set()
     is_first_turn = True
