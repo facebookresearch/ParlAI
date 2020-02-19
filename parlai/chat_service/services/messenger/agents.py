@@ -64,13 +64,13 @@ class MessengerAgent(ChatServiceAgent):
         seq = messenger_message['message'].get('seq', None)
         message = messenger_message['message']
         if 'text' not in message:
-            print(
-                'Msg: {} could not be extracted to text format'.format(
-                    message
-                )
-            )
+            print('Msg: {} could not be extracted to text format'.format(message))
         text = message.get('text', None)
-        img_attempt = True if 'attachments' in message and message['attachments'][0]['type'] == 'image' else False
+        img_attempt = (
+            True
+            if 'attachments' in message and message['attachments'][0]['type'] == 'image'
+            else False
+        )
         if mid not in self.acted_packets:
             self.acted_packets[mid] = {'mid': mid, 'seq': seq, 'text': text}
             # the fields 'report_sender' and 'sticker_sender' below are
