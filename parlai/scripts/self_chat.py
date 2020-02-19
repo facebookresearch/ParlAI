@@ -75,8 +75,8 @@ def self_chat(opt, print_parser=None):
     # Check for `selfchat` in the task name
     if 'selfchat' not in opt['task']:
         warn_once(
-            'You are using self chat with task {}.'.format(opt['task']) +
-            'If your task has an existing self chat world, then run with '
+            'You are using self chat with task {}. '.format(opt['task'])
+            + 'If your task has an existing self chat world, then run with '
             '-t {}:selfchat'.format(opt['task'])
         )
 
@@ -111,7 +111,7 @@ def self_chat(opt, print_parser=None):
     if opt.get('display_examples'):
         print('-- end of episode --')
 
-    logger.reset_world()  # add to logs
+    logger.reset_world()  # flush last episode
     logger.write(opt['outfile'], opt['format'])
     return logger.get_logs()
 
