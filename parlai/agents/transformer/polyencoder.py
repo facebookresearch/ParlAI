@@ -526,7 +526,6 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
         self.image_features_dim = opt.get(
             'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
         )
@@ -554,30 +553,28 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
             return features
 
-        if self.use_image_features:
+        # Checks/formatting of batch.image
+        bsz = batch.text_vec.size(0)
+        if batch.image is None or len(batch.image) == 0:
+            batch.image = [None] * bsz
+        else:
+            assert len(batch.image) == bsz
 
-            # Checks/formatting of batch.image
-            bsz = batch.text_vec.size(0)
-            if batch.image is None or len(batch.image) == 0:
-                batch.image = [None] * bsz
+        # Process all image feature vectors, or add in zero vectors if missing
+        processed_features_list = []
+        processed_zero_features = _process_features(
+            torch.zeros((self.image_features_dim,))
+        )
+        for orig_features in batch.image:
+            if orig_features is None:
+                processed_features_list.append(processed_zero_features)
+            elif isinstance(orig_features, torch.Tensor):
+                processed_features_list.append(_process_features(orig_features))
             else:
-                assert len(batch.image) == bsz
+                raise ValueError('Unsupported image feature format!')
 
-            # Process all image feature vectors, or add in zero vectors if missing
-            processed_features_list = []
-            processed_zero_features = _process_features(
-                torch.zeros((self.image_features_dim,))
-            )
-            for orig_features in batch.image:
-                if orig_features is None:
-                    processed_features_list.append(processed_zero_features)
-                elif isinstance(orig_features, torch.Tensor):
-                    processed_features_list.append(_process_features(orig_features))
-                else:
-                    raise ValueError('Unsupported image feature format!')
-
-            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
-            batch.image = torch.stack(processed_features_list)
+        # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+        batch.image = torch.stack(processed_features_list)
 
         return batch
 
