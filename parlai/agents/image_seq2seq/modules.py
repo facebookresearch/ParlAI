@@ -130,7 +130,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         )
         self._build_image_encoder()
         self.register_buffer(
-            'dummy_image_enc', torch.zeros((self.embedding_size))
+            'dummy_image_enc', torch.zeros((self.embedding_size,))
         )
         self.register_buffer('ones_mask', torch.ones(1).bool())
 
@@ -232,21 +232,21 @@ class ContextWithImageEncoder(TransformerEncoder):
             )
 
         if self.image_combination_mode == 'add':
-            full_enc = self.add([context_encoded, image_encoded])
+            full_enc = self._add([context_encoded, image_encoded])
             # image_encoded broadcasted along dim=1
             full_mask = context_mask
         elif self.image_combination_mode == 'append':
-            full_enc = self.cat([context_encoded, image_encoded])
-            full_mask = self.cat([context_mask, extra_masks])
+            full_enc = self._cat([context_encoded, image_encoded])
+            full_mask = self._cat([context_mask, extra_masks])
         elif self.image_combination_mode == 'prepend':
-            full_enc = self.cat([image_encoded, context_encoded])
-            full_mask = self.cat([extra_masks, context_mask])
+            full_enc = self._cat([image_encoded, context_encoded])
+            full_mask = self._cat([extra_masks, context_mask])
         else:
             raise ValueError('Image combination mode not recognized!')
 
         return full_enc, full_mask
 
-    def add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+    def _add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
         """
         Handle addition of None tensors.
 
@@ -261,7 +261,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         tensors = [t for t in tensors if t is not None]
         return reduce(lambda a, b: a + b, tensors)
 
-    def cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+    def _cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
         """
         Handle concatenation of None tensors.
 
