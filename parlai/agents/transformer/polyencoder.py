@@ -416,11 +416,10 @@ class PolyEncoderModule(torch.nn.Module):
                 'ctxt_tokens' in ctxt_inputs
                 and len(ctxt_inputs['ctxt_tokens'].shape) == 2
             )
+            bsz = ctxt_inputs['ctxt_tokens'].size(0)
+            # get context_representation. Now that depends on the cases.
             ctxt_out, ctxt_mask = self.encoder_ctxt(**ctxt_inputs)
-            bsz, _, dim = ctxt_out.size()
-
-            ctxt_rep = None
-            ctxt_rep_mask = None
+            dim = ctxt_out.size(2)
 
             if self.type == 'codes':
                 ctxt_rep = self.attend(
