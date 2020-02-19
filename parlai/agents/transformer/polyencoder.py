@@ -8,7 +8,7 @@
 Poly-encoder Agent.
 """
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import torch
 
@@ -348,18 +348,13 @@ class PolyEncoderModule(torch.nn.Module):
             raise Exception('Unrecognized type of attention')
 
     def encode(
-        self,
-        ctxt_tokens: Optional[torch.Tensor],
-        ctxt_image: Optional[torch.Tensor],
-        cand_tokens: Optional[torch.Tensor],
+        self, ctxt_tokens: Optional[torch.Tensor], cand_tokens: Optional[torch.Tensor]
     ):
         """
         Encode a text sequence.
 
         :param ctxt_tokens:
             2D long tensor, batchsize x sent_len
-        :param ctxt_image:
-            2D float tensor, batchsize x polyencoder_image_features_dim
         :param cand_tokens:
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
@@ -383,42 +378,51 @@ class PolyEncoderModule(torch.nn.Module):
 
         if ctxt_tokens is not None:
             assert len(ctxt_tokens.shape) == 2
-            bsz = ctxt_tokens.size(0)
-            # get context_representation. Now that depends on the cases.
-            if self.use_image_features:
-                if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
-                    bsz,
-                    self.image_features_dim,
-                ):
-                    raise ValueError('Image feature tensor malformed!')
-                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
-            else:
-                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
-            dim = ctxt_out.size(2)
-
-            if self.type == 'codes':
-                ctxt_rep = self.attend(
-                    self.code_attention,
-                    queries=self.codes.repeat(bsz, 1, 1),
-                    keys=ctxt_out,
-                    values=ctxt_out,
-                    mask=ctxt_mask,
-                )
-                ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
-
-            elif self.type == 'n_first':
-                # Expand the output if it is not long enough
-                if ctxt_out.size(1) < self.n_codes:
-                    difference = self.n_codes - ctxt_out.size(1)
-                    extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
-                    ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                    extra_mask = ctxt_mask.new_zeros(bsz, difference)
-                    ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
-                else:
-                    ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
-                    ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
+            ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
+            ctxt_rep, ctxt_rep_mask = self._get_context_representation(
+                ctxt_out=ctxt_out, ctxt_mask=ctxt_mask
+            )
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
+
+    def _get_context_representation(
+        self, ctxt_out: torch.Tensor, ctxt_mask: torch.Tensor
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Get the final context representation from the encoded context.
+
+        Get context representation either by attending or by selecting the first N
+        codes.
+        """
+
+        bsz, _, dim = ctxt_out.size()
+
+        ctxt_rep = None
+        ctxt_rep_mask = None
+
+        if self.type == 'codes':
+            ctxt_rep = self.attend(
+                self.code_attention,
+                queries=self.codes.repeat(bsz, 1, 1),
+                keys=ctxt_out,
+                values=ctxt_out,
+                mask=ctxt_mask,
+            )
+            ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
+
+        elif self.type == 'n_first':
+            # Expand the output if it is not long enough
+            if ctxt_out.size(1) < self.n_codes:
+                difference = self.n_codes - ctxt_out.size(1)
+                extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
+                ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
+                extra_mask = ctxt_mask.new_zeros(bsz, difference)
+                ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
+            else:
+                ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
+                ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
+
+        return ctxt_rep, ctxt_rep_mask
 
     def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
         """
@@ -667,34 +671,6 @@ class ImagePolyencoderModule(PolyEncoderModule):
             image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
 
-    def attend(self, attention_layer, queries, keys, values, mask):
-        """
-        Apply attention.
-
-        :param attention_layer:
-            nn.Module attention layer to use for the attention
-        :param queries:
-            the queries for attention
-        :param keys:
-            the keys for attention
-        :param values:
-            the values for attention
-        :param mask:
-            mask for the attention keys
-
-        :return:
-            the result of applying attention to the values, with weights computed
-            wrt to the queries and keys.
-        """
-        if keys is None:
-            keys = values
-        if isinstance(attention_layer, PolyBasicAttention):
-            return attention_layer(queries, keys, mask_ys=mask, values=values)
-        elif isinstance(attention_layer, MultiHeadAttention):
-            return attention_layer(queries, keys, values, mask)
-        else:
-            raise Exception('Unrecognized type of attention')
-
     def encode(
         self,
         ctxt_tokens: Optional[torch.Tensor],
@@ -733,15 +709,12 @@ class ImagePolyencoderModule(PolyEncoderModule):
             assert len(ctxt_tokens.shape) == 2
             bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
-            if self.use_image_features:
-                if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
-                    bsz,
-                    self.image_features_dim,
-                ):
-                    raise ValueError('Image feature tensor malformed!')
-                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
-            else:
-                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
+            if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
+                bsz,
+                self.image_features_dim,
+            ):
+                raise ValueError('Image feature tensor malformed!')
+            ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
