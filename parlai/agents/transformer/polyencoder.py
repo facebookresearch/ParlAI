@@ -140,50 +140,6 @@ class PolyencoderAgent(TorchRankerAgent):
             obs['added_start_end_tokens'] = True
         return obs
 
-    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
-        """
-        Override to handle image features.
-        """
-        batch = super().batchify(obs_batch, sort)
-
-        def _process_features(features: torch.Tensor) -> torch.Tensor:
-            assert features.size() == (self.image_features_dim,)
-            if self.use_cuda:
-                features = features.cuda()
-            if self.opt.get('fp16'):
-                features = features.half()
-            else:
-                features = features.float()
-
-            return features
-
-        if self.use_image_features:
-
-            # Checks/formatting of batch.image
-            bsz = batch.text_vec.size(0)
-            if batch.image is None or len(batch.image) == 0:
-                batch.image = [None] * bsz
-            else:
-                assert len(batch.image) == bsz
-
-            # Process all image feature vectors, or add in zero vectors if missing
-            processed_features_list = []
-            processed_zero_features = _process_features(
-                torch.zeros((self.image_features_dim,))
-            )
-            for orig_features in batch.image:
-                if orig_features is None:
-                    processed_features_list.append(processed_zero_features)
-                elif isinstance(orig_features, torch.Tensor):
-                    processed_features_list.append(_process_features(orig_features))
-                else:
-                    raise ValueError('Unsupported image feature format!')
-
-            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
-            batch.image = torch.stack(processed_features_list)
-
-        return batch
-
     def vectorize_fixed_candidates(self, *args, **kwargs):
         """
         Vectorize fixed candidates.
@@ -308,33 +264,6 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
         )
 
-    def build_model(self, states=None):
-        """
-        Return built model.
-        """
-        return PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
-
-    def vectorize(self, *args, **kwargs):
-        """
-        Add the start and end token to the labels.
-        """
-        kwargs['add_start'] = True
-        kwargs['add_end'] = True
-        obs = super().vectorize(*args, **kwargs)
-        return obs
-
-    def _set_text_vec(self, *args, **kwargs):
-        """
-        Add the start and end token to the text.
-        """
-        obs = super()._set_text_vec(*args, **kwargs)
-        if 'text_vec' in obs and 'added_start_end_tokens' not in obs:
-            obs.force_set(
-                'text_vec', self._add_start_end_tokens(obs['text_vec'], True, True)
-            )
-            obs['added_start_end_tokens'] = True
-        return obs
-
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
         Override to handle image features.
@@ -378,36 +307,6 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             batch.image = torch.stack(processed_features_list)
 
         return batch
-
-    def vectorize_fixed_candidates(self, *args, **kwargs):
-        """
-        Vectorize fixed candidates.
-
-        Override to add start and end token when computing the candidate encodings in
-        interactive mode.
-        """
-        kwargs['add_start'] = True
-        kwargs['add_end'] = True
-        return super().vectorize_fixed_candidates(*args, **kwargs)
-
-    def _make_candidate_encs(self, vecs):
-        """
-        Make candidate encs.
-
-        The polyencoder module expects cand vecs to be 3D while torch_ranker_agent
-        expects it to be 2D. This requires a little adjustment (used in interactive mode
-        only)
-        """
-        rep = super()._make_candidate_encs(vecs)
-        return rep.transpose(0, 1).contiguous()
-
-    def encode_candidates(self, padded_cands):
-        """
-        Encode candidates.
-        """
-        padded_cands = padded_cands.unsqueeze(1)
-        _, _, cand_rep = self.model(cand_tokens=padded_cands)
-        return cand_rep
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
