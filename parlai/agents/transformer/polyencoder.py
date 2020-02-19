@@ -208,142 +208,6 @@ class PolyencoderAgent(TorchRankerAgent):
         super().load_state_dict(state_dict)
 
 
-class ImagePolyencoderAgent(PolyencoderAgent):
-    """
-    Poly-encoder Agent that ingests image features.
-
-    Agent that allows encoding image features and adding or concatenating them to the
-    context encoding.
-    """
-
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        """
-        Add command-line arguments specifically for this agent.
-        """
-        super(ImagePolyencoderAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Image Encoder Args')
-        agent.add_argument(
-            '--polyencoder-image-encoder-num-layers',
-            type=int,
-            default=0,
-            help='If >0, number of linear layers to encode image features with in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-features-dim',
-            type=int,
-            default=DEFAULT_IMAGE_FEATURES_DIM,
-            help='For passing in image features of the given dim in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-combination-mode',
-            type=str,
-            default='append',
-            choices=['add', 'append', 'prepend'],
-            help='How to combine image embedding (if used) with context embedding',
-        )
-        return agent
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
-        self.image_features_dim = opt.get(
-            'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
-        )
-
-    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
-        """
-        Override to handle image features.
-        """
-        batch = super().batchify(obs_batch, sort)
-
-        def _process_features(features: torch.Tensor) -> torch.Tensor:
-            assert features.size() == (self.image_features_dim,)
-            if self.use_cuda:
-                features = features.cuda()
-            if self.opt.get('fp16'):
-                features = features.half()
-            else:
-                features = features.float()
-
-            return features
-
-        if self.use_image_features:
-
-            # Checks/formatting of batch.image
-            bsz = batch.text_vec.size(0)
-            if batch.image is None or len(batch.image) == 0:
-                batch.image = [None] * bsz
-            else:
-                assert len(batch.image) == bsz
-
-            # Process all image feature vectors, or add in zero vectors if missing
-            processed_features_list = []
-            processed_zero_features = _process_features(
-                torch.zeros((self.image_features_dim,))
-            )
-            for orig_features in batch.image:
-                if orig_features is None:
-                    processed_features_list.append(processed_zero_features)
-                elif isinstance(orig_features, torch.Tensor):
-                    processed_features_list.append(_process_features(orig_features))
-                else:
-                    raise ValueError('Unsupported image feature format!')
-
-            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
-            batch.image = torch.stack(processed_features_list)
-
-        return batch
-
-    def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        """
-        Score candidates.
-
-        The Poly-encoder encodes the candidate and context independently. Then, the
-        model applies additional attention before ultimately scoring a candidate.
-        """
-        bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(
-            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
-        )
-
-        if cand_encs is not None:
-            if bsz == 1:
-                cand_rep = cand_encs
-            else:
-                cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
-        # bsz x num cands x seq len
-        elif len(cand_vecs.shape) == 3:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
-        # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
-        elif len(cand_vecs.shape) == 2:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
-            num_cands = cand_rep.size(0)  # will be bsz if using batch cands
-            cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-
-        scores = self.model(
-            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
-        )
-        return scores
-
-    def load_state_dict(self, state_dict):
-        """
-        Override to account for codes and possibly weights used for image features.
-        """
-        for tensor in ['dummy_image_enc', 'ones_mask']:
-            key = f'encoder_ctxt.{tensor}'
-            val = getattr(self.model.encoder_ctxt, tensor, None)
-            if val is not None and key not in state_dict:
-                state_dict[key] = val
-        if hasattr(self.model.encoder_ctxt, 'image_encoder'):
-            for tensor in ['weight', 'bias']:
-                key = f'encoder_ctxt.image_encoder.0.{tensor}'
-                val = getattr(self.model.encoder_ctxt.image_encoder[0], tensor, None)
-                if val is not None and key not in state_dict:
-                    state_dict[key] = val
-        super().load_state_dict(state_dict)
-
-
 class PolyEncoderModule(torch.nn.Module):
     """
     Poly-encoder model.
@@ -658,6 +522,142 @@ class PolyEncoderModule(torch.nn.Module):
         ):
             return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation')
+
+
+class ImagePolyencoderAgent(PolyencoderAgent):
+    """
+    Poly-encoder Agent that ingests image features.
+
+    Agent that allows encoding image features and adding or concatenating them to the
+    context encoding.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        """
+        Add command-line arguments specifically for this agent.
+        """
+        super(ImagePolyencoderAgent, cls).add_cmdline_args(argparser)
+        agent = argparser.add_argument_group('Image Encoder Args')
+        agent.add_argument(
+            '--polyencoder-image-encoder-num-layers',
+            type=int,
+            default=0,
+            help='If >0, number of linear layers to encode image features with in the context',
+        )
+        agent.add_argument(
+            '--polyencoder-image-features-dim',
+            type=int,
+            default=DEFAULT_IMAGE_FEATURES_DIM,
+            help='For passing in image features of the given dim in the context',
+        )
+        agent.add_argument(
+            '--polyencoder-image-combination-mode',
+            type=str,
+            default='append',
+            choices=['add', 'append', 'prepend'],
+            help='How to combine image embedding (if used) with context embedding',
+        )
+        return agent
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
+        self.image_features_dim = opt.get(
+            'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
+        )
+
+    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
+        """
+        Override to handle image features.
+        """
+        batch = super().batchify(obs_batch, sort)
+
+        def _process_features(features: torch.Tensor) -> torch.Tensor:
+            assert features.size() == (self.image_features_dim,)
+            if self.use_cuda:
+                features = features.cuda()
+            if self.opt.get('fp16'):
+                features = features.half()
+            else:
+                features = features.float()
+
+            return features
+
+        if self.use_image_features:
+
+            # Checks/formatting of batch.image
+            bsz = batch.text_vec.size(0)
+            if batch.image is None or len(batch.image) == 0:
+                batch.image = [None] * bsz
+            else:
+                assert len(batch.image) == bsz
+
+            # Process all image feature vectors, or add in zero vectors if missing
+            processed_features_list = []
+            processed_zero_features = _process_features(
+                torch.zeros((self.image_features_dim,))
+            )
+            for orig_features in batch.image:
+                if orig_features is None:
+                    processed_features_list.append(processed_zero_features)
+                elif isinstance(orig_features, torch.Tensor):
+                    processed_features_list.append(_process_features(orig_features))
+                else:
+                    raise ValueError('Unsupported image feature format!')
+
+            # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+            batch.image = torch.stack(processed_features_list)
+
+        return batch
+
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
+        """
+        Score candidates.
+
+        The Poly-encoder encodes the candidate and context independently. Then, the
+        model applies additional attention before ultimately scoring a candidate.
+        """
+        bsz = batch.text_vec.size(0)
+        ctxt_rep, ctxt_rep_mask, _ = self.model(
+            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
+        )
+
+        if cand_encs is not None:
+            if bsz == 1:
+                cand_rep = cand_encs
+            else:
+                cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
+        # bsz x num cands x seq len
+        elif len(cand_vecs.shape) == 3:
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
+        # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
+        elif len(cand_vecs.shape) == 2:
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
+            num_cands = cand_rep.size(0)  # will be bsz if using batch cands
+            cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
+
+        scores = self.model(
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
+        )
+        return scores
+
+    def load_state_dict(self, state_dict):
+        """
+        Override to account for codes and possibly weights used for image features.
+        """
+        for tensor in ['dummy_image_enc', 'ones_mask']:
+            key = f'encoder_ctxt.{tensor}'
+            val = getattr(self.model.encoder_ctxt, tensor, None)
+            if val is not None and key not in state_dict:
+                state_dict[key] = val
+        if hasattr(self.model.encoder_ctxt, 'image_encoder'):
+            for tensor in ['weight', 'bias']:
+                key = f'encoder_ctxt.image_encoder.0.{tensor}'
+                val = getattr(self.model.encoder_ctxt.image_encoder[0], tensor, None)
+                if val is not None and key not in state_dict:
+                    state_dict[key] = val
+        super().load_state_dict(state_dict)
 
 
 class PolyBasicAttention(BasicAttention):
