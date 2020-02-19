@@ -452,7 +452,6 @@ class PolyEncoderModule(torch.nn.Module):
     def forward(
         self,
         ctxt_tokens=None,
-        ctxt_image=None,
         cand_tokens=None,
         ctxt_rep=None,
         ctxt_rep_mask=None,
@@ -468,8 +467,6 @@ class PolyEncoderModule(torch.nn.Module):
 
         :param ctxt_tokens:
             tokenized contexts
-        :param ctxt_image:
-            image features in context
         :param cand_tokens:
             tokenized candidates
         :param ctxt_rep:
@@ -482,10 +479,8 @@ class PolyEncoderModule(torch.nn.Module):
         :param cand_rep:
             encoded representation of the candidates
         """
-        if ctxt_tokens is not None or ctxt_image is not None or cand_tokens is not None:
-            return self.encode(
-                ctxt_tokens=ctxt_tokens, ctxt_image=ctxt_image, cand_tokens=cand_tokens
-            )
+        if ctxt_tokens is not None or cand_tokens is not None:
+            return self.encode(ctxt_tokens=ctxt_tokens, cand_tokens=cand_tokens)
         elif (
             ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
         ):
@@ -721,26 +716,6 @@ class ImagePolyencoderModule(PolyEncoderModule):
             )
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
-
-    def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
-        """
-        Score the candidates.
-
-        :param ctxt_rep:
-            3D float tensor, bsz x ctxt_len x dim
-        :param ctxt_rep_mask:
-            2D byte tensor, bsz x ctxt_len, in case there are some elements
-            of the ctxt that we should not take into account.
-        :param cand_embed: 3D float tensor, bsz x num_cands x dim
-
-        :return: scores, 2D float tensor: bsz x num_cands
-        """
-        # reduces the context representation to a 3D tensor bsz x num_cands x dim
-        ctxt_final_rep = self.attend(
-            self.attention, cand_embed, ctxt_rep, ctxt_rep, ctxt_rep_mask
-        )
-        scores = torch.sum(ctxt_final_rep * cand_embed, 2)
-        return scores
 
     def forward(
         self,
