@@ -506,8 +506,8 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         agent.add_argument(
             '--polyencoder-image-encoder-num-layers',
             type=int,
-            default=0,
-            help='If >0, number of linear layers to encode image features with in the context',
+            default=1,
+            help='Number of linear layers to encode image features with in the context',
         )
         agent.add_argument(
             '--polyencoder-image-features-dim',
@@ -518,7 +518,7 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         agent.add_argument(
             '--polyencoder-image-combination-mode',
             type=str,
-            default='append',
+            default='prepend',
             choices=['add', 'append', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
