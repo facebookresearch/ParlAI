@@ -204,6 +204,7 @@ class PolyencoderAgent(TorchRankerAgent):
         """
         bsz = batch.text_vec.size(0)
         ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
+
         if cand_encs is not None:
             if bsz == 1:
                 cand_rep = cand_encs
