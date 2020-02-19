@@ -567,6 +567,12 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
         )
 
+    def build_model(self, states=None):
+        """
+        Return built model.
+        """
+        return ImagePolyencoderModule(self.opt, self.dict, self.NULL_IDX)
+
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
         Override to handle image features.
