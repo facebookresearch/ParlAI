@@ -369,12 +369,10 @@ class PolyEncoderModule(torch.nn.Module):
         cand_embed = None
         ctxt_rep = None
         ctxt_rep_mask = None
+
         if cand_tokens is not None:
             assert len(cand_tokens.shape) == 3
-            bsz = cand_tokens.size(0)
-            num_cands = cand_tokens.size(1)
-            cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
-            cand_embed = cand_embed.view(bsz, num_cands, -1)
+            cand_embed = self._get_candidate_embedding(cand_tokens)
 
         if ctxt_tokens is not None:
             assert len(ctxt_tokens.shape) == 2
@@ -384,6 +382,13 @@ class PolyEncoderModule(torch.nn.Module):
             )
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
+
+    def _get_candidate_embedding(self, cand_tokens: torch.Tensor) -> torch.Tensor:
+        """Embed candidates."""
+        bsz = cand_tokens.size(0)
+        num_cands = cand_tokens.size(1)
+        cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
+        return cand_embed.view(bsz, num_cands, -1)
 
     def _get_context_representation(
         self, ctxt_out: torch.Tensor, ctxt_mask: torch.Tensor
@@ -698,46 +703,22 @@ class ImagePolyencoderModule(PolyEncoderModule):
         cand_embed = None
         ctxt_rep = None
         ctxt_rep_mask = None
+
         if cand_tokens is not None:
             assert len(cand_tokens.shape) == 3
-            bsz = cand_tokens.size(0)
-            num_cands = cand_tokens.size(1)
-            cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
-            cand_embed = cand_embed.view(bsz, num_cands, -1)
+            cand_embed = self._get_candidate_embedding(cand_tokens)
 
         if ctxt_tokens is not None:
             assert len(ctxt_tokens.shape) == 2
-            bsz = ctxt_tokens.size(0)
-            # get context_representation. Now that depends on the cases.
             if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
-                bsz,
+                ctxt_tokens.size(0),
                 self.image_features_dim,
             ):
                 raise ValueError('Image feature tensor malformed!')
             ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
-            dim = ctxt_out.size(2)
-
-            if self.type == 'codes':
-                ctxt_rep = self.attend(
-                    self.code_attention,
-                    queries=self.codes.repeat(bsz, 1, 1),
-                    keys=ctxt_out,
-                    values=ctxt_out,
-                    mask=ctxt_mask,
-                )
-                ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
-
-            elif self.type == 'n_first':
-                # Expand the output if it is not long enough
-                if ctxt_out.size(1) < self.n_codes:
-                    difference = self.n_codes - ctxt_out.size(1)
-                    extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
-                    ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                    extra_mask = ctxt_mask.new_zeros(bsz, difference)
-                    ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
-                else:
-                    ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
-                    ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
+            ctxt_rep, ctxt_rep_mask = self._get_context_representation(
+                ctxt_out=ctxt_out, ctxt_mask=ctxt_mask
+            )
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
 
