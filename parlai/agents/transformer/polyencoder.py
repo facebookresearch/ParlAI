@@ -178,9 +178,7 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(
-            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
-        )
+        ctxt_rep, ctxt_rep_mask, _ = self.model(ctxt_tokens=batch.text_vec)
 
         if cand_encs is not None:
             if bsz == 1:
@@ -203,21 +201,10 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def load_state_dict(self, state_dict):
         """
-        Override to account for codes and possibly weights used for image features.
+        Override to account for codes.
         """
         if self.model.type == 'codes' and 'codes' not in state_dict:
             state_dict['codes'] = self.model.codes
-        for tensor in ['dummy_image_enc', 'ones_mask']:
-            key = f'encoder_ctxt.{tensor}'
-            val = getattr(self.model.encoder_ctxt, tensor, None)
-            if val is not None and key not in state_dict:
-                state_dict[key] = val
-        if hasattr(self.model.encoder_ctxt, 'image_encoder'):
-            for tensor in ['weight', 'bias']:
-                key = f'encoder_ctxt.image_encoder.0.{tensor}'
-                val = getattr(self.model.encoder_ctxt.image_encoder[0], tensor, None)
-                if val is not None and key not in state_dict:
-                    state_dict[key] = val
         super().load_state_dict(state_dict)
 
 
@@ -343,8 +330,6 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         """
         Override to account for codes and possibly weights used for image features.
         """
-        if self.model.type == 'codes' and 'codes' not in state_dict:
-            state_dict['codes'] = self.model.codes
         for tensor in ['dummy_image_enc', 'ones_mask']:
             key = f'encoder_ctxt.{tensor}'
             val = getattr(self.model.encoder_ctxt, tensor, None)
