@@ -225,16 +225,9 @@ class PolyEncoderModule(torch.nn.Module):
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
-        self.image_features_dim = opt['polyencoder_image_features_dim']
-        if self.use_image_features:
-            self.encoder_ctxt = self.get_context_with_image_encoder(
-                opt=opt, dict=dict, null_idx=null_idx
-            )
-        else:
-            self.encoder_ctxt = self.get_encoder(
-                opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
-            )
+        self.encoder_ctxt = self.get_encoder(
+            opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
+        )
         self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
         self.type = opt['polyencoder_type']
@@ -319,46 +312,6 @@ class PolyEncoderModule(torch.nn.Module):
             activation=opt['activation'],
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],
-        )
-
-    def get_context_with_image_encoder(self, opt, dict, null_idx):
-        """
-        Return encoder that allows for image features to be passed in, given options.
-
-        :param opt:
-            opt dict
-        :param dict:
-            dictionary agent
-        :param null_idx:
-            null/pad index into dict
-        :return:
-            a ContextWithImageEncoder, initialized correctly
-        """
-        n_positions = get_n_positions_from_options(opt)
-        embeddings = self._get_embeddings(
-            dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
-        )
-        return ContextWithImageEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict),
-            embedding=embeddings,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
-            padding_idx=null_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            n_positions=n_positions,
-            n_segments=2,
-            activation=opt['activation'],
-            variant=opt['variant'],
-            output_scaling=opt['output_scaling'],
-            image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
-            image_features_dim=self.image_features_dim,
-            image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
 
     def _get_embeddings(self, dict, null_idx, embedding_size):
@@ -670,105 +623,11 @@ class ImagePolyencoderModule(PolyEncoderModule):
     """
 
     def __init__(self, opt, dict, null_idx):
-        super(PolyEncoderModule, self).__init__()
-        self.null_idx = null_idx
-        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
+        super().__init__(opt=opt, dict=dict, null_idx=null_idx)
         self.image_features_dim = opt['polyencoder_image_features_dim']
-        if self.use_image_features:
-            self.encoder_ctxt = self.get_context_with_image_encoder(
-                opt=opt, dict=dict, null_idx=null_idx
-            )
-        else:
-            self.encoder_ctxt = self.get_encoder(
-                opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
-            )
-        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
+        self.encoder_ctxt = self.get_encoder(opt=opt, dict=dict, null_idx=null_idx)
 
-        self.type = opt['polyencoder_type']
-        self.n_codes = opt['poly_n_codes']
-        self.attention_type = opt['poly_attention_type']
-        self.attention_num_heads = opt['poly_attention_num_heads']
-        self.codes_attention_type = opt['codes_attention_type']
-        self.codes_attention_num_heads = opt['codes_attention_num_heads']
-        embed_dim = opt['embedding_size']
-
-        # In case it's a polyencoder with code.
-        if self.type == 'codes':
-            # experimentally it seems that random with size = 1 was good.
-            codes = torch.empty(self.n_codes, embed_dim)
-            codes = torch.nn.init.uniform_(codes)
-            self.codes = torch.nn.Parameter(codes)
-
-            # The attention for the codes.
-            if self.codes_attention_type == 'multihead':
-                self.code_attention = MultiHeadAttention(
-                    self.codes_attention_num_heads, embed_dim, opt['dropout']
-                )
-            elif self.codes_attention_type == 'sqrt':
-                self.code_attention = PolyBasicAttention(
-                    self.type, self.n_codes, dim=2, attn='sqrt', get_weights=False
-                )
-            elif self.codes_attention_type == 'basic':
-                self.code_attention = PolyBasicAttention(
-                    self.type, self.n_codes, dim=2, attn='basic', get_weights=False
-                )
-
-        # The final attention (the one that takes the candidate as key)
-        if self.attention_type == 'multihead':
-            self.attention = MultiHeadAttention(
-                self.attention_num_heads, opt['embedding_size'], opt['dropout']
-            )
-        else:
-            self.attention = PolyBasicAttention(
-                self.type,
-                self.n_codes,
-                dim=2,
-                attn=self.attention_type,
-                get_weights=False,
-            )
-
-    def get_encoder(self, opt, dict, null_idx, reduction_type):
-        """
-        Return encoder, given options.
-
-        :param opt:
-            opt dict
-        :param dict:
-            dictionary agent
-        :param null_idx:
-            null/pad index into dict
-        :reduction_type:
-            reduction type for the encoder
-
-        :return:
-            a TransformerEncoder, initialized correctly
-        """
-        n_positions = get_n_positions_from_options(opt)
-        embeddings = self._get_embeddings(
-            dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
-        )
-        return TransformerEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict),
-            embedding=embeddings,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
-            padding_idx=null_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            reduction_type=reduction_type,
-            n_positions=n_positions,
-            n_segments=2,
-            activation=opt['activation'],
-            variant=opt['variant'],
-            output_scaling=opt['output_scaling'],
-        )
-
-    def get_context_with_image_encoder(self, opt, dict, null_idx):
+    def get_encoder(self, opt, dict, null_idx):
         """
         Return encoder that allows for image features to be passed in, given options.
 
@@ -807,11 +666,6 @@ class ImagePolyencoderModule(PolyEncoderModule):
             image_features_dim=self.image_features_dim,
             image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
-
-    def _get_embeddings(self, dict, null_idx, embedding_size):
-        embeddings = torch.nn.Embedding(len(dict), embedding_size, padding_idx=null_idx)
-        torch.nn.init.normal_(embeddings.weight, 0, embedding_size ** -0.5)
-        return embeddings
 
     def attend(self, attention_layer, queries, keys, values, mask):
         """
