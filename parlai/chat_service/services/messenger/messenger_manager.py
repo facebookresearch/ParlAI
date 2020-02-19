@@ -44,6 +44,7 @@ class MessengerManager(ChatServiceManager):
 
     def parse_additional_args(self, opt):
         self.service_reference_id = self.config['additional_args']['page_id']
+        self.should_load_model = self.config['additional_args'].get('load_model', True)
         if self.service_reference_id == 1:
             raise RuntimeError(
                 'Please configure your own page in order to run this task. '
@@ -68,7 +69,7 @@ class MessengerManager(ChatServiceManager):
         """
         Load model if necessary.
         """
-        if 'model_file' in self.opt or 'model' in self.opt:
+        if ('model_file' in self.opt or 'model' in self.opt) and self.should_load_model:
             self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
