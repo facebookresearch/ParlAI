@@ -905,7 +905,7 @@ class TorchAgent(ABC, Agent):
                 try:
                     self.optimizer.optimizer.load_state_dict(optim_states)
                 except ValueError:
-                    print(
+                    warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
                 return
@@ -918,7 +918,9 @@ class TorchAgent(ABC, Agent):
             try:
                 self.optimizer.load_state_dict(optim_states)
             except ValueError:
-                print('WARNING: not loading optim state since model params changed.')
+                warn_once(
+                    'WARNING: not loading optim state since model params changed.'
+                )
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
