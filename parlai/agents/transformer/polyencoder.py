@@ -55,25 +55,6 @@ class PolyencoderAgent(TorchRankerAgent):
             recommended='codes',
         )
         agent.add_argument(
-            '--polyencoder-image-encoder-num-layers',
-            type=int,
-            default=0,
-            help='If >0, number of linear layers to encode image features with in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-features-dim',
-            type=int,
-            default=DEFAULT_IMAGE_FEATURES_DIM,
-            help='For passing in image features of the given dim in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-combination-mode',
-            type=str,
-            default='append',
-            choices=['add', 'append', 'prepend'],
-            help='How to combine image embedding (if used) with context embedding',
-        )
-        agent.add_argument(
             '--poly-n-codes',
             type=int,
             default=64,
@@ -123,10 +104,6 @@ class PolyencoderAgent(TorchRankerAgent):
         self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
         if self.use_cuda:
             self.rank_loss.cuda()
-        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
-        self.image_features_dim = opt.get(
-            'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
-        )
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.utils.distributed import is_distributed
@@ -301,18 +278,8 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         """
         Add command-line arguments specifically for this agent.
         """
-        TransformerRankerAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Polyencoder Arguments')
-        agent.add_argument(
-            '--polyencoder-type',
-            type=str,
-            default='codes',
-            choices=['codes', 'n_first'],
-            help='Type of polyencoder, either we compute'
-            'vectors using codes + attention, or we '
-            'simply take the first N vectors.',
-            recommended='codes',
-        )
+        super(ImagePolyencoderAgent, cls).add_cmdline_args(argparser)
+        agent = argparser.add_argument_group('Image Encoder Args')
         agent.add_argument(
             '--polyencoder-image-encoder-num-layers',
             type=int,
@@ -332,68 +299,14 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             choices=['add', 'append', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
-        agent.add_argument(
-            '--poly-n-codes',
-            type=int,
-            default=64,
-            help='number of vectors used to represent the context'
-            'in the case of n_first, those are the number'
-            'of vectors that are considered.',
-            recommended=64,
-        )
-        agent.add_argument(
-            '--poly-attention-type',
-            type=str,
-            default='basic',
-            choices=['basic', 'sqrt', 'multihead'],
-            help='Type of the top aggregation layer of the poly-'
-            'encoder (where the candidate representation is'
-            'the key)',
-            recommended='basic',
-        )
-        agent.add_argument(
-            '--poly-attention-num-heads',
-            type=int,
-            default=4,
-            help='In case poly-attention-type is multihead, '
-            'specify the number of heads',
-        )
-
-        # Those arguments are here in case where polyencoder type is 'code'
-        agent.add_argument(
-            '--codes-attention-type',
-            type=str,
-            default='basic',
-            choices=['basic', 'sqrt', 'multihead'],
-            help='Type ',
-            recommended='basic',
-        )
-        agent.add_argument(
-            '--codes-attention-num-heads',
-            type=int,
-            default=4,
-            help='In case codes-attention-type is multihead, '
-            'specify the number of heads',
-        )
         return agent
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
-        if self.use_cuda:
-            self.rank_loss.cuda()
         self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
         self.image_features_dim = opt.get(
             'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
         )
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.utils.distributed import is_distributed
-
-            if is_distributed():
-                raise ValueError('Cannot combine --data-parallel and distributed mode')
-            if shared is None:
-                self.model = torch.nn.DataParallel(self.model)
 
     def build_model(self, states=None):
         """
