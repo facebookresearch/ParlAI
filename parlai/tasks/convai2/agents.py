@@ -105,26 +105,3 @@ def create_agents(opt):
     else:
         # interactive task has no task agents (they are attached as user agents)
         return []
-
-
-class PersonaTopicifierTeacher(SelfOriginalTeacher):
-    """
-    Adds WoW topics to ConvAI2 data.
-    """
-
-    def __init__(self, opt, shared=None):
-        from parlai_internal.projects.blended_skill_talk.add_personas_topics import (
-            PersonaTopicifier,
-        )
-
-        self.persona_topicifier = PersonaTopicifier(
-            should_have_personas=True, should_have_topics=False
-        )
-        super().__init__(opt, shared=shared)
-
-    def get(self, episode_idx, entry_idx=None):
-        gotten = super().get(episode_idx, entry_idx=entry_idx)
-        if entry_idx == 0:
-            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten['text'] = modified_text
-        return gotten
