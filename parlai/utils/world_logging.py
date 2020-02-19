@@ -151,3 +151,6 @@ class WorldLogger:
             self.write_json_format(outfile)
         else:
             self.write_parlai_format(outfile)
+
+    def get_logs(self):
+        return self._logs
