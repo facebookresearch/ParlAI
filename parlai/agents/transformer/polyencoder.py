@@ -14,8 +14,10 @@ import torch
 
 from parlai.agents.image_seq2seq.modules import ContextWithImageEncoder
 from parlai.core.message import Message
+from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.utils.misc import warn_once
 from .biencoder import AddLabelFixedCandsTRA
 from .modules import (
     BasicAttention,
@@ -98,6 +100,29 @@ class PolyencoderAgent(TorchRankerAgent):
             'specify the number of heads',
         )
         return agent
+
+    @classmethod
+    def upgrade_opt(cls, opt_from_disk: Opt):
+        # call the parent upgrades
+        opt_from_disk = super(PolyencoderAgent, cls).upgrade_opt(opt_from_disk)
+
+        polyencoder_attention_keys_value = opt_from_disk.get(
+            'polyencoder_attention_keys'
+        )
+        if polyencoder_attention_keys_value is not None:
+            # 2020-02-19 We are deprecating this flag because it was used for a one-time
+            # set of experiments and won't be used again. This flag was defaulted to
+            # 'context', so throw an exception otherwise.
+            if polyencoder_attention_keys_value == 'context':
+                warn_once(
+                    '--polyencoder-attention-keys has been deprecated and will be ignored.'
+                )
+            else:
+                raise NotImplementedError(
+                    'This --polyencoder-attention-keys mode is no longer supported!'
+                )
+
+        return opt_from_disk
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -349,7 +374,7 @@ class PolyEncoderModule(torch.nn.Module):
 
     def encode(
         self, ctxt_tokens: Optional[torch.Tensor], cand_tokens: Optional[torch.Tensor]
-    ):
+    ) -> Tuple[Optional[torch.tensor], Optional[torch.tensor], Optional[torch.tensor]]:
         """
         Encode a text sequence.
 
@@ -673,7 +698,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
         ctxt_tokens: Optional[torch.Tensor],
         ctxt_image: Optional[torch.Tensor],
         cand_tokens: Optional[torch.Tensor],
-    ):
+    ) -> Tuple[Optional[torch.tensor], Optional[torch.tensor], Optional[torch.tensor]]:
         """
         Encode a text sequence.
 
