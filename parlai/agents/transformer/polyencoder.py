@@ -379,13 +379,16 @@ class PolyEncoderModule(torch.nn.Module):
             raise Exception('Unrecognized type of attention')
 
     def encode(
-        self, ctxt_tokens: Optional[torch.Tensor], cand_tokens: Optional[torch.Tensor]
+        self,
+        cand_tokens: Optional[torch.Tensor],
+        **ctxt_inputs: Dict[str, torch.Tensor],
     ) -> Tuple[Optional[torch.tensor], Optional[torch.tensor], Optional[torch.tensor]]:
         """
         Encode a text sequence.
 
-        :param ctxt_tokens:
-            2D long tensor, batchsize x sent_len
+        :param ctxt_inputs:
+            Dictionary of context inputs. If not empty, should contain at least
+            'ctxt_tokens', a 2D long tensor of shape batchsize x sent_len
         :param cand_tokens:
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
@@ -403,62 +406,45 @@ class PolyEncoderModule(torch.nn.Module):
 
         if cand_tokens is not None:
             assert len(cand_tokens.shape) == 3
-            cand_embed = self._get_candidate_embedding(cand_tokens)
+            bsz = cand_tokens.size(0)
+            num_cands = cand_tokens.size(1)
+            cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
+            cand_embed = cand_embed.view(bsz, num_cands, -1)
 
-        if ctxt_tokens is not None:
-            assert len(ctxt_tokens.shape) == 2
-            ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
-            ctxt_rep, ctxt_rep_mask = self._get_context_representation(
-                ctxt_out=ctxt_out, ctxt_mask=ctxt_mask
+        if len(ctxt_inputs) > 0:
+            assert (
+                'ctxt_tokens' in ctxt_inputs
+                and len(ctxt_inputs['ctxt_tokens'].shape) == 2
             )
+            ctxt_out, ctxt_mask = self.encoder_ctxt(**ctxt_inputs)
+            bsz, _, dim = ctxt_out.size()
+
+            ctxt_rep = None
+            ctxt_rep_mask = None
+
+            if self.type == 'codes':
+                ctxt_rep = self.attend(
+                    self.code_attention,
+                    queries=self.codes.repeat(bsz, 1, 1),
+                    keys=ctxt_out,
+                    values=ctxt_out,
+                    mask=ctxt_mask,
+                )
+                ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
+
+            elif self.type == 'n_first':
+                # Expand the output if it is not long enough
+                if ctxt_out.size(1) < self.n_codes:
+                    difference = self.n_codes - ctxt_out.size(1)
+                    extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
+                    ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
+                    extra_mask = ctxt_mask.new_zeros(bsz, difference)
+                    ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
+                else:
+                    ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
+                    ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
-
-    def _get_candidate_embedding(self, cand_tokens: torch.Tensor) -> torch.Tensor:
-        """Embed candidates."""
-        bsz = cand_tokens.size(0)
-        num_cands = cand_tokens.size(1)
-        cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
-        return cand_embed.view(bsz, num_cands, -1)
-
-    def _get_context_representation(
-        self, ctxt_out: torch.Tensor, ctxt_mask: torch.Tensor
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Get the final context representation from the encoded context.
-
-        Get context representation either by attending or by selecting the first N
-        codes.
-        """
-
-        bsz, _, dim = ctxt_out.size()
-
-        ctxt_rep = None
-        ctxt_rep_mask = None
-
-        if self.type == 'codes':
-            ctxt_rep = self.attend(
-                self.code_attention,
-                queries=self.codes.repeat(bsz, 1, 1),
-                keys=ctxt_out,
-                values=ctxt_out,
-                mask=ctxt_mask,
-            )
-            ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
-
-        elif self.type == 'n_first':
-            # Expand the output if it is not long enough
-            if ctxt_out.size(1) < self.n_codes:
-                difference = self.n_codes - ctxt_out.size(1)
-                extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
-                ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                extra_mask = ctxt_mask.new_zeros(bsz, difference)
-                ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
-            else:
-                ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
-                ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
-
-        return ctxt_rep, ctxt_rep_mask
 
     def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
         """
@@ -482,11 +468,11 @@ class PolyEncoderModule(torch.nn.Module):
 
     def forward(
         self,
-        ctxt_tokens=None,
         cand_tokens=None,
         ctxt_rep=None,
         ctxt_rep_mask=None,
         cand_rep=None,
+        **ctxt_inputs,
     ):
         """
         Forward pass of the model.
@@ -496,8 +482,9 @@ class PolyEncoderModule(torch.nn.Module):
         we need to have one single forward() method.
         Therefore the operation_type can be either 'encode' or 'score'.
 
-        :param ctxt_tokens:
-            tokenized contexts
+        :param ctxt_inputs:
+            Dictionary of context inputs. Will include at least 'ctxt_tokens',
+            containing tokenized contexts
         :param cand_tokens:
             tokenized candidates
         :param ctxt_rep:
@@ -510,8 +497,8 @@ class PolyEncoderModule(torch.nn.Module):
         :param cand_rep:
             encoded representation of the candidates
         """
-        if ctxt_tokens is not None or cand_tokens is not None:
-            return self.encode(ctxt_tokens=ctxt_tokens, cand_tokens=cand_tokens)
+        if len(ctxt_inputs) > 0 or cand_tokens is not None:
+            return self.encode(cand_tokens=cand_tokens, **ctxt_inputs)
         elif (
             ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
         ):
@@ -641,7 +628,6 @@ class ImagePolyencoderModule(PolyEncoderModule):
 
     def __init__(self, opt, dict, null_idx):
         super().__init__(opt=opt, dict=dict, null_idx=null_idx)
-        self.image_features_dim = opt['polyencoder_image_features_dim']
         self.encoder_ctxt = self.get_encoder(opt=opt, dict=dict, null_idx=null_idx)
 
     def get_encoder(self, opt, dict, null_idx):
@@ -680,98 +666,9 @@ class ImagePolyencoderModule(PolyEncoderModule):
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
-            image_features_dim=self.image_features_dim,
+            image_features_dim=opt['polyencoder_image_features_dim'],
             image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
-
-    def encode(
-        self,
-        ctxt_tokens: Optional[torch.Tensor],
-        ctxt_image: Optional[torch.Tensor],
-        cand_tokens: Optional[torch.Tensor],
-    ) -> Tuple[Optional[torch.tensor], Optional[torch.tensor], Optional[torch.tensor]]:
-        """
-        Encode a text sequence.
-
-        :param ctxt_tokens:
-            2D long tensor, batchsize x sent_len
-        :param ctxt_image:
-            2D float tensor, batchsize x polyencoder_image_features_dim
-        :param cand_tokens:
-            3D long tensor, batchsize x num_cands x sent_len
-            Note this will actually view it as a 2D tensor
-        :return:
-            (ctxt_rep, ctxt_mask, cand_rep)
-            - ctxt_rep 3D float tensor, batchsize x n_codes x dim
-            - ctxt_mask byte:  batchsize x n_codes (all 1 in case
-            of polyencoder with code. Which are the vectors to use
-            in the ctxt_rep)
-            - cand_rep (3D float tensor) batchsize x num_cands x dim
-        """
-        cand_embed = None
-        ctxt_rep = None
-        ctxt_rep_mask = None
-
-        if cand_tokens is not None:
-            assert len(cand_tokens.shape) == 3
-            cand_embed = self._get_candidate_embedding(cand_tokens)
-
-        if ctxt_tokens is not None:
-            assert len(ctxt_tokens.shape) == 2
-            if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
-                ctxt_tokens.size(0),
-                self.image_features_dim,
-            ):
-                raise ValueError('Image feature tensor malformed!')
-            ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
-            ctxt_rep, ctxt_rep_mask = self._get_context_representation(
-                ctxt_out=ctxt_out, ctxt_mask=ctxt_mask
-            )
-
-        return ctxt_rep, ctxt_rep_mask, cand_embed
-
-    def forward(
-        self,
-        ctxt_tokens=None,
-        ctxt_image=None,
-        cand_tokens=None,
-        ctxt_rep=None,
-        ctxt_rep_mask=None,
-        cand_rep=None,
-    ):
-        """
-        Forward pass of the model.
-
-        Due to a limitation of parlai, we have to have one single model
-        in the agent. And because we want to be able to use data-parallel,
-        we need to have one single forward() method.
-        Therefore the operation_type can be either 'encode' or 'score'.
-
-        :param ctxt_tokens:
-            tokenized contexts
-        :param ctxt_image:
-            image features in context
-        :param cand_tokens:
-            tokenized candidates
-        :param ctxt_rep:
-            (bsz x num_codes x hsz)
-            encoded representation of the context. If self.type == 'codes', these
-            are the context codes. Otherwise, they are the outputs from the
-            encoder
-        :param ctxt_rep_mask:
-            mask for ctxt rep
-        :param cand_rep:
-            encoded representation of the candidates
-        """
-        if ctxt_tokens is not None or ctxt_image is not None or cand_tokens is not None:
-            return self.encode(
-                ctxt_tokens=ctxt_tokens, ctxt_image=ctxt_image, cand_tokens=cand_tokens
-            )
-        elif (
-            ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
-        ):
-            return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
-        raise Exception('Unsupported operation')
 
 
 class PolyBasicAttention(BasicAttention):

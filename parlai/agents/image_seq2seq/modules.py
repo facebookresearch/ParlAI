@@ -129,9 +129,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             output_scaling=output_scaling,
         )
         self._build_image_encoder()
-        self.register_buffer(
-            'dummy_image_enc', torch.zeros((self.embedding_size,))
-        )
+        self.register_buffer('dummy_image_enc', torch.zeros((self.embedding_size,)))
         self.register_buffer('ones_mask', torch.ones(1).bool())
 
     def _build_image_encoder(self):
@@ -217,6 +215,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         context_encoded = context_mask = None
         image_encoded = extra_masks = None
+        if src_tokens is not None and image_features is not None:
+            assert src_tokens.size(0) == len(image_features)
         if src_tokens is not None:
             context_encoded, context_mask = super().forward(src_tokens)
         if image_features is not None:
