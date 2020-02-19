@@ -179,7 +179,18 @@ class PolyencoderAgent(TorchRankerAgent):
         """
         bsz = batch.text_vec.size(0)
         ctxt_rep, ctxt_rep_mask, _ = self.model(ctxt_tokens=batch.text_vec)
+        cand_rep = self._get_candidate_representation(
+            bsz=bsz, cand_vecs=cand_vecs, cand_encs=cand_encs
+        )
+        scores = self.model(
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
+        )
+        return scores
 
+    def _get_candidate_representation(
+        self, bsz: int, cand_vecs: torch.Tensor, cand_encs: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        """Encode candidates."""
         if cand_encs is not None:
             if bsz == 1:
                 cand_rep = cand_encs
@@ -193,11 +204,7 @@ class PolyencoderAgent(TorchRankerAgent):
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             num_cands = cand_rep.size(0)  # will be bsz if using batch cands
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-
-        scores = self.model(
-            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
-        )
-        return scores
+        return cand_rep
 
     def load_state_dict(self, state_dict):
         """
@@ -628,21 +635,9 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         ctxt_rep, ctxt_rep_mask, _ = self.model(
             ctxt_tokens=batch.text_vec, ctxt_image=batch.image
         )
-
-        if cand_encs is not None:
-            if bsz == 1:
-                cand_rep = cand_encs
-            else:
-                cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
-        # bsz x num cands x seq len
-        elif len(cand_vecs.shape) == 3:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
-        # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
-        elif len(cand_vecs.shape) == 2:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
-            num_cands = cand_rep.size(0)  # will be bsz if using batch cands
-            cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-
+        cand_rep = self._get_candidate_representation(
+            bsz=bsz, cand_vecs=cand_vecs, cand_encs=cand_encs
+        )
         scores = self.model(
             ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
