@@ -660,6 +660,323 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         super().load_state_dict(state_dict)
 
 
+class ImagePolyencoderModule(PolyEncoderModule):
+    """
+    Poly-encoder model with image features.
+
+    Model that allows encoding image features and adding or concatenating them to the
+    context encoding.
+    """
+
+    def __init__(self, opt, dict, null_idx):
+        super(PolyEncoderModule, self).__init__()
+        self.null_idx = null_idx
+        self.use_image_features = opt.get('polyencoder_image_encoder_num_layers', 0) > 0
+        self.image_features_dim = opt['polyencoder_image_features_dim']
+        if self.use_image_features:
+            self.encoder_ctxt = self.get_context_with_image_encoder(
+                opt=opt, dict=dict, null_idx=null_idx
+            )
+        else:
+            self.encoder_ctxt = self.get_encoder(
+                opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
+            )
+        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
+
+        self.type = opt['polyencoder_type']
+        self.n_codes = opt['poly_n_codes']
+        self.attention_type = opt['poly_attention_type']
+        self.attention_num_heads = opt['poly_attention_num_heads']
+        self.codes_attention_type = opt['codes_attention_type']
+        self.codes_attention_num_heads = opt['codes_attention_num_heads']
+        embed_dim = opt['embedding_size']
+
+        # In case it's a polyencoder with code.
+        if self.type == 'codes':
+            # experimentally it seems that random with size = 1 was good.
+            codes = torch.empty(self.n_codes, embed_dim)
+            codes = torch.nn.init.uniform_(codes)
+            self.codes = torch.nn.Parameter(codes)
+
+            # The attention for the codes.
+            if self.codes_attention_type == 'multihead':
+                self.code_attention = MultiHeadAttention(
+                    self.codes_attention_num_heads, embed_dim, opt['dropout']
+                )
+            elif self.codes_attention_type == 'sqrt':
+                self.code_attention = PolyBasicAttention(
+                    self.type, self.n_codes, dim=2, attn='sqrt', get_weights=False
+                )
+            elif self.codes_attention_type == 'basic':
+                self.code_attention = PolyBasicAttention(
+                    self.type, self.n_codes, dim=2, attn='basic', get_weights=False
+                )
+
+        # The final attention (the one that takes the candidate as key)
+        if self.attention_type == 'multihead':
+            self.attention = MultiHeadAttention(
+                self.attention_num_heads, opt['embedding_size'], opt['dropout']
+            )
+        else:
+            self.attention = PolyBasicAttention(
+                self.type,
+                self.n_codes,
+                dim=2,
+                attn=self.attention_type,
+                get_weights=False,
+            )
+
+    def get_encoder(self, opt, dict, null_idx, reduction_type):
+        """
+        Return encoder, given options.
+
+        :param opt:
+            opt dict
+        :param dict:
+            dictionary agent
+        :param null_idx:
+            null/pad index into dict
+        :reduction_type:
+            reduction type for the encoder
+
+        :return:
+            a TransformerEncoder, initialized correctly
+        """
+        n_positions = get_n_positions_from_options(opt)
+        embeddings = self._get_embeddings(
+            dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
+        )
+        return TransformerEncoder(
+            n_heads=opt['n_heads'],
+            n_layers=opt['n_layers'],
+            embedding_size=opt['embedding_size'],
+            ffn_size=opt['ffn_size'],
+            vocabulary_size=len(dict),
+            embedding=embeddings,
+            dropout=opt['dropout'],
+            attention_dropout=opt['attention_dropout'],
+            relu_dropout=opt['relu_dropout'],
+            padding_idx=null_idx,
+            learn_positional_embeddings=opt['learn_positional_embeddings'],
+            embeddings_scale=opt['embeddings_scale'],
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            n_segments=2,
+            activation=opt['activation'],
+            variant=opt['variant'],
+            output_scaling=opt['output_scaling'],
+        )
+
+    def get_context_with_image_encoder(self, opt, dict, null_idx):
+        """
+        Return encoder that allows for image features to be passed in, given options.
+
+        :param opt:
+            opt dict
+        :param dict:
+            dictionary agent
+        :param null_idx:
+            null/pad index into dict
+        :return:
+            a ContextWithImageEncoder, initialized correctly
+        """
+        n_positions = get_n_positions_from_options(opt)
+        embeddings = self._get_embeddings(
+            dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
+        )
+        return ContextWithImageEncoder(
+            n_heads=opt['n_heads'],
+            n_layers=opt['n_layers'],
+            embedding_size=opt['embedding_size'],
+            ffn_size=opt['ffn_size'],
+            vocabulary_size=len(dict),
+            embedding=embeddings,
+            dropout=opt['dropout'],
+            attention_dropout=opt['attention_dropout'],
+            relu_dropout=opt['relu_dropout'],
+            padding_idx=null_idx,
+            learn_positional_embeddings=opt['learn_positional_embeddings'],
+            embeddings_scale=opt['embeddings_scale'],
+            n_positions=n_positions,
+            n_segments=2,
+            activation=opt['activation'],
+            variant=opt['variant'],
+            output_scaling=opt['output_scaling'],
+            image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
+            image_features_dim=self.image_features_dim,
+            image_combination_mode=opt['polyencoder_image_combination_mode'],
+        )
+
+    def _get_embeddings(self, dict, null_idx, embedding_size):
+        embeddings = torch.nn.Embedding(len(dict), embedding_size, padding_idx=null_idx)
+        torch.nn.init.normal_(embeddings.weight, 0, embedding_size ** -0.5)
+        return embeddings
+
+    def attend(self, attention_layer, queries, keys, values, mask):
+        """
+        Apply attention.
+
+        :param attention_layer:
+            nn.Module attention layer to use for the attention
+        :param queries:
+            the queries for attention
+        :param keys:
+            the keys for attention
+        :param values:
+            the values for attention
+        :param mask:
+            mask for the attention keys
+
+        :return:
+            the result of applying attention to the values, with weights computed
+            wrt to the queries and keys.
+        """
+        if keys is None:
+            keys = values
+        if isinstance(attention_layer, PolyBasicAttention):
+            return attention_layer(queries, keys, mask_ys=mask, values=values)
+        elif isinstance(attention_layer, MultiHeadAttention):
+            return attention_layer(queries, keys, values, mask)
+        else:
+            raise Exception('Unrecognized type of attention')
+
+    def encode(
+        self,
+        ctxt_tokens: Optional[torch.Tensor],
+        ctxt_image: Optional[torch.Tensor],
+        cand_tokens: Optional[torch.Tensor],
+    ):
+        """
+        Encode a text sequence.
+
+        :param ctxt_tokens:
+            2D long tensor, batchsize x sent_len
+        :param ctxt_image:
+            2D float tensor, batchsize x polyencoder_image_features_dim
+        :param cand_tokens:
+            3D long tensor, batchsize x num_cands x sent_len
+            Note this will actually view it as a 2D tensor
+        :return:
+            (ctxt_rep, ctxt_mask, cand_rep)
+            - ctxt_rep 3D float tensor, batchsize x n_codes x dim
+            - ctxt_mask byte:  batchsize x n_codes (all 1 in case
+            of polyencoder with code. Which are the vectors to use
+            in the ctxt_rep)
+            - cand_rep (3D float tensor) batchsize x num_cands x dim
+        """
+        cand_embed = None
+        ctxt_rep = None
+        ctxt_rep_mask = None
+        if cand_tokens is not None:
+            assert len(cand_tokens.shape) == 3
+            bsz = cand_tokens.size(0)
+            num_cands = cand_tokens.size(1)
+            cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
+            cand_embed = cand_embed.view(bsz, num_cands, -1)
+
+        if ctxt_tokens is not None:
+            assert len(ctxt_tokens.shape) == 2
+            bsz = ctxt_tokens.size(0)
+            # get context_representation. Now that depends on the cases.
+            if self.use_image_features:
+                if not isinstance(ctxt_image, torch.Tensor) or ctxt_image.size() != (
+                    bsz,
+                    self.image_features_dim,
+                ):
+                    raise ValueError('Image feature tensor malformed!')
+                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens, ctxt_image)
+            else:
+                ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
+            dim = ctxt_out.size(2)
+
+            if self.type == 'codes':
+                ctxt_rep = self.attend(
+                    self.code_attention,
+                    queries=self.codes.repeat(bsz, 1, 1),
+                    keys=ctxt_out,
+                    values=ctxt_out,
+                    mask=ctxt_mask,
+                )
+                ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
+
+            elif self.type == 'n_first':
+                # Expand the output if it is not long enough
+                if ctxt_out.size(1) < self.n_codes:
+                    difference = self.n_codes - ctxt_out.size(1)
+                    extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
+                    ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
+                    extra_mask = ctxt_mask.new_zeros(bsz, difference)
+                    ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
+                else:
+                    ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
+                    ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
+
+        return ctxt_rep, ctxt_rep_mask, cand_embed
+
+    def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
+        """
+        Score the candidates.
+
+        :param ctxt_rep:
+            3D float tensor, bsz x ctxt_len x dim
+        :param ctxt_rep_mask:
+            2D byte tensor, bsz x ctxt_len, in case there are some elements
+            of the ctxt that we should not take into account.
+        :param cand_embed: 3D float tensor, bsz x num_cands x dim
+
+        :return: scores, 2D float tensor: bsz x num_cands
+        """
+        # reduces the context representation to a 3D tensor bsz x num_cands x dim
+        ctxt_final_rep = self.attend(
+            self.attention, cand_embed, ctxt_rep, ctxt_rep, ctxt_rep_mask
+        )
+        scores = torch.sum(ctxt_final_rep * cand_embed, 2)
+        return scores
+
+    def forward(
+        self,
+        ctxt_tokens=None,
+        ctxt_image=None,
+        cand_tokens=None,
+        ctxt_rep=None,
+        ctxt_rep_mask=None,
+        cand_rep=None,
+    ):
+        """
+        Forward pass of the model.
+
+        Due to a limitation of parlai, we have to have one single model
+        in the agent. And because we want to be able to use data-parallel,
+        we need to have one single forward() method.
+        Therefore the operation_type can be either 'encode' or 'score'.
+
+        :param ctxt_tokens:
+            tokenized contexts
+        :param ctxt_image:
+            image features in context
+        :param cand_tokens:
+            tokenized candidates
+        :param ctxt_rep:
+            (bsz x num_codes x hsz)
+            encoded representation of the context. If self.type == 'codes', these
+            are the context codes. Otherwise, they are the outputs from the
+            encoder
+        :param ctxt_rep_mask:
+            mask for ctxt rep
+        :param cand_rep:
+            encoded representation of the candidates
+        """
+        if ctxt_tokens is not None or ctxt_image is not None or cand_tokens is not None:
+            return self.encode(
+                ctxt_tokens=ctxt_tokens, ctxt_image=ctxt_image, cand_tokens=cand_tokens
+            )
+        elif (
+            ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
+        ):
+            return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
+        raise Exception('Unsupported operation')
+
+
 class PolyBasicAttention(BasicAttention):
     """
     Override basic attention to account for edge case for polyencoder.
