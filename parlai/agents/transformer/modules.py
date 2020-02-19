@@ -547,8 +547,7 @@ class TransformerEncoder(nn.Module):
             output = tensor.sum(dim=1) / divisor
             return output
         elif self.reduction_type is None or 'none' in self.reduction_type:
-            output = tensor
-            return output, mask
+            return tensor, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
