@@ -8,7 +8,7 @@
 Poly-encoder Agent.
 """
 
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 
@@ -203,19 +203,7 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(ctxt_tokens=batch.text_vec)
-        cand_rep = self._get_candidate_representation(
-            bsz=bsz, cand_vecs=cand_vecs, cand_encs=cand_encs
-        )
-        scores = self.model(
-            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
-        )
-        return scores
-
-    def _get_candidate_representation(
-        self, bsz: int, cand_vecs: torch.Tensor, cand_encs: Optional[torch.Tensor]
-    ) -> torch.Tensor:
-        """Encode candidates."""
+        ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
         if cand_encs is not None:
             if bsz == 1:
                 cand_rep = cand_encs
@@ -229,7 +217,24 @@ class PolyencoderAgent(TorchRankerAgent):
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             num_cands = cand_rep.size(0)  # will be bsz if using batch cands
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-        return cand_rep
+        scores = self.model(
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
+        )
+        return scores
+
+    def _model_context_input(self, batch) -> Dict[str, Any]:
+        """
+        Create the input context value for the model.
+
+        Must return a dictionary.  This will be passed directly into the model via
+        `**kwargs`, i.e.,
+
+        >>> model(**_model_context_input(batch))
+
+        This is intentionally overridable so that richer models can pass the
+        additional inputs.
+        """
+        return {'ctxt_tokens': batch.text_vec}
 
     def load_state_dict(self, state_dict):
         """
@@ -603,24 +608,9 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
         return batch
 
-    def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        """
-        Score candidates.
-
-        The Poly-encoder encodes the candidate and context independently. Then, the
-        model applies additional attention before ultimately scoring a candidate.
-        """
-        bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(
-            ctxt_tokens=batch.text_vec, ctxt_image=batch.image
-        )
-        cand_rep = self._get_candidate_representation(
-            bsz=bsz, cand_vecs=cand_vecs, cand_encs=cand_encs
-        )
-        scores = self.model(
-            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
-        )
-        return scores
+    def _model_context_input(self, batch) -> Dict[str, Any]:
+        """Override PolyencoderAgent's context inputs into the model."""
+        return {'ctxt_tokens': batch.text_vec, 'ctxt_image': batch.image}
 
     def load_state_dict(self, state_dict):
         """
