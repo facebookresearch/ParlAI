@@ -69,8 +69,8 @@ class PolyencoderAgent(TorchRankerAgent):
         agent.add_argument(
             '--polyencoder-image-combination-mode',
             type=str,
-            default='postpend',
-            choices=['add', 'postpend', 'prepend'],
+            default='append',
+            choices=['add', 'append', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
         agent.add_argument(

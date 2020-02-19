@@ -95,7 +95,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         output_scaling=1.0,
         image_encoder_num_layers=1,
         image_features_dim=2048,
-        image_combination_mode='postpend',
+        image_combination_mode='append',
     ):
         """
         Override TransformerEncoder __init__.
@@ -202,7 +202,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         Encode images with context.
 
         Encodes tokens (if given) and images (if given) separately.
-        Combines via either addition, prepending, or postpending the image embedding to
+        Combines via either addition, prepending, or appending the image embedding to
         the context embedding.
 
         :param src_tokens:
@@ -235,7 +235,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             full_enc = self.add([context_encoded, image_encoded])
             # image_encoded broadcasted along dim=1
             full_mask = context_mask
-        elif self.image_combination_mode == 'postpend':
+        elif self.image_combination_mode == 'append':
             full_enc = self.cat([context_encoded, image_encoded])
             full_mask = self.cat([context_mask, extra_masks])
         elif self.image_combination_mode == 'prepend':
