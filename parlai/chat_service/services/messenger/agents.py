@@ -56,13 +56,13 @@ class MessengerAgent(ChatServiceAgent):
         """
         self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
-    def put_data(self, messenger_message):
+    def put_data(self, messenger_data):
         """
         Put data into the message queue if it hasn't already been seen.
         """
-        mid = messenger_message['message']['mid']
-        seq = messenger_message['message'].get('seq', None)
-        message = messenger_message['message']
+        mid = messenger_data['message']['mid']
+        seq = messenger_data['message'].get('seq', None)
+        message = messenger_data['message']
         if 'text' not in message:
             print('Msg: {} could not be extracted to text format'.format(message))
         text = message.get('text', None)
@@ -80,13 +80,13 @@ class MessengerAgent(ChatServiceAgent):
                 'text': text,
                 'id': self.disp_id,
                 'report_sender': message.get('report_sender', None),
-                'sticker_sender': messenger_message.get('sticker_sender', None),
+                'sticker_sender': messenger_data.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }
             if img_attempt and self.data.get('allow_images', False):
                 action['image_url'] = message.get('image_url')
                 action['attachment_url'] = message.get('attachment_url')
-                if action['image_url'] is None and 'attachments' in message:
+                if action['image_url'] is None:
                     payload = message['attachments'][0].get('payload', {})
                     action['image_url'] = payload.get('url')
                 action['image'] = action['image_url'] or action['attachment_url']
