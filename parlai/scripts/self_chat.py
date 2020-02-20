@@ -10,7 +10,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
-from parlai.utils.misc import TimeLogger
+from parlai.utils.misc import TimeLogger, warn_once
 
 import random
 
@@ -21,7 +21,7 @@ def setup_args(parser=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=60)
     parser.add_argument(
         '--display-ignore-fields',
         type=str,
@@ -75,6 +75,14 @@ def self_chat(opt, print_parser=None):
     if hasattr(agent2, 'id'):
         agent2.id = agent2.id + "2"
 
+    # Check for `selfchat` in the task name
+    if 'selfchat' not in opt['task']:
+        warn_once(
+            'You are using self chat with task {}. '.format(opt['task'])
+            + 'If your task has an existing self chat world, then run with '
+            '-t {}:selfchat'.format(opt['task'])
+        )
+
     world = create_task(opt, [agent1, agent2])
 
     if print_parser:
@@ -106,8 +114,10 @@ def self_chat(opt, print_parser=None):
     if opt.get('display_examples'):
         print('-- end of episode --')
 
+    logger.reset_world()  # flush last episode
     indent = opt['indent'] if opt['indent'] >= 0 else None
     logger.write(opt['outfile'], opt['format'], indent=indent)
+    return logger.get_logs()
 
 
 if __name__ == '__main__':

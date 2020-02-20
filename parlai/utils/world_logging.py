@@ -151,3 +151,6 @@ class WorldLogger:
             self.write_jsonl_format(outfile, indent=indent)
         else:
             self.write_parlai_format(outfile)
+
+    def get_logs(self):
+        return self._logs
