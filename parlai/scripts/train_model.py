@@ -457,6 +457,7 @@ class TrainLoop:
                     'best_valid': self.best_valid,
                 },
                 f,
+                indent=4,
             )
 
     def validate(self):
