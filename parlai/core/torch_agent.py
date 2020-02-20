@@ -1835,8 +1835,7 @@ class TorchAgent(ABC, Agent):
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
             tbp = AverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item()
-                + (batch.text_vec != self.NULL_IDX).sum().item(),
+                (batch.label_vec != self.NULL_IDX).sum().item(),
                 float(is_primary_worker()),
             )
             self.global_metrics.add('tokens_per_batch', tbp)
@@ -1941,6 +1940,10 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('gnorm', AverageMetric(grad_norm))
             self.global_metrics.add(
                 'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
+            )
+        if self.fp16:
+            self.global_metrics.add(
+                'fp16_loss_scalar', AverageMetric(self.optimizer.loss_scale)
             )
 
         self.optimizer.step()
