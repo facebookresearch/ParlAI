@@ -55,7 +55,7 @@ except ImportError:
 
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
-from parlai.core.metrics import aggregate_metrics
+from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
@@ -364,20 +364,22 @@ class DialogPartnerWorld(World):
         """
         Report all metrics of all subagents.
         """
+        from parlai.core.metrics import Metric, LegacyMetric
 
-        # DEPRECATIONDAY: should we get rid of this option?
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
                 m = a.report()
                 for k, v in m.items():
+                    if not isinstance(v, Metric):
+                        v = LegacyMetric(v)
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
     @lru_cache(maxsize=1)
     def num_examples(self):
@@ -402,6 +404,19 @@ class DialogPartnerWorld(World):
         """
         for a in self.agents:
             a.shutdown()
+
+    def update_counters(self):
+        """
+        Ensure all counters are synchronized across threads.
+        """
+        super().update_counters()
+        for a in self.agents:
+            if hasattr(a, 'update_counters'):
+                a.update_counters()
+            if hasattr(a, 'global_metrics'):
+                # torch agent has "global metrics" that might get backed up on OS X,
+                # see the SystemError exception in Metrics.
+                a.global_metrics.sync()
 
 
 class MultiAgentDialogWorld(World):
@@ -481,9 +496,9 @@ class MultiAgentDialogWorld(World):
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
     def shutdown(self):
         """
@@ -721,8 +736,9 @@ class MultiWorld(World):
         """
         Report aggregate metrics across all subworlds.
         """
-        metrics = aggregate_metrics(self.worlds)
-        self.total_exs += metrics.get('exs', 0)
+        metrics = aggregate_named_reports({w.getID(): w.report() for w in self.worlds})
+        if 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
         return metrics
 
     def reset(self):
@@ -745,6 +761,11 @@ class MultiWorld(World):
         """
         # Assumes all worlds have same agents, picks first to save.
         self.worlds[0].save_agents()
+
+    def update_counters(self):
+        super().update_counters()
+        for w in self.worlds:
+            w.update_counters()
 
 
 def _override_opts_in_shared(table, overrides):
@@ -846,10 +867,7 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
-        if hasattr(a, 'batch_act') and not (
-            hasattr(a, 'use_batch_act')  # TODO: remove use_batch_act
-            and not a.use_batch_act
-        ):
+        if hasattr(a, 'batch_act'):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
@@ -1175,7 +1193,7 @@ class DynamicBatchWorld(World):
             this_width = self._ceil(sum(self._scores[index]))
             new_width = max(width, this_width)
             # compute the cost of the new batch
-            new_bsz = self._ceil(len(batch) + 1)
+            new_bsz = len(batch) + 1
             new_words = new_width * new_bsz
             if new_words <= self.max_words and new_bsz <= self.max_batch_size:
                 # cool, this one fits, let's add it
@@ -1193,8 +1211,9 @@ class DynamicBatchWorld(World):
             batch.pop(-1)
 
         # double check our assumed invariant
-        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_words
-        assert self._ceil(len(batch)) <= self.max_batch_size
+        assert self._ceil(width) * len(batch) <= self.max_words
+        assert len(batch) > 0
+        assert len(batch) <= self.max_batch_size
 
         # great, this batch is good to go! let's run it!
         acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
@@ -1387,6 +1406,14 @@ class HogwildWorld(World):
         self.sync['threads_sem'].acquire()
         self.update_counters()
 
+    def update_counters(self):
+        super().update_counters()
+        # some unix systems have a system max of how big the kernel can get. OS X
+        # has one, and so does CI. It's very easy to hit this max, so we need to
+        # flush the hogwild metrics queue every parley, to keep it from filling
+        # up and causing a deadlock.
+        self.inner_world.update_counters()
+
     def getID(self):
         """
         Return the inner world's ID.
@@ -1495,7 +1522,7 @@ class HogwildWorld(World):
 
         # wait for threads to close
         for t in self.threads:
-            t.join()
+            t.terminate()
         self.inner_world.shutdown()
 
 

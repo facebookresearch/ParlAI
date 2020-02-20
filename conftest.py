@@ -14,7 +14,6 @@ We use this to split up tests into different circleci runs.
 import os
 import pathlib
 import random
-import pytest
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have
@@ -39,6 +38,8 @@ def pytest_collection_modifyitems(config, items):
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
         if not parallel:
             deselected.append(item)
+        elif "parlai_internal" in rel_path:
+            item.add_marker("internal")
         elif "nightly/gpu/" in rel_path:
             item.add_marker("nightly_gpu")
         elif "nightly/cpu/" in rel_path:

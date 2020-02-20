@@ -69,9 +69,14 @@ def _build_encoder(
     n_positions=1024,
     n_segments=0,
 ):
+    n_layers = (
+        opt['n_encoder_layers']
+        if opt.get('n_encoder_layers', -1) > 0
+        else opt['n_layers']
+    )
     return TransformerEncoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=n_layers,
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
@@ -94,9 +99,14 @@ def _build_encoder(
 def _build_decoder(
     opt, dictionary, embedding=None, padding_idx=None, n_positions=1024, n_segments=0
 ):
+    n_layers = (
+        opt['n_decoder_layers']
+        if opt.get('n_decoder_layers', -1) > 0
+        else opt['n_layers']
+    )
     return TransformerDecoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=n_layers,
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
@@ -1149,7 +1159,7 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
+        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)

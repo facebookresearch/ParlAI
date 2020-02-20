@@ -102,6 +102,20 @@ def add_common_cmdline_args(argparser):
         help='Share word embeddings table for candidate and context'
         'in the memory network',
     )
+    argparser.add_argument(
+        '-nel',
+        '--n-encoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
+    argparser.add_argument(
+        '-ndl',
+        '--n-decoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
 
 
 class Transformer(Agent):
@@ -216,12 +230,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
-
-    def build_criterion(self):
-        """
-        Build and return criterion, favoring average instead of sum for the loss.
-        """
-        return torch.nn.CrossEntropyLoss(reduction='mean')
 
     def batchify(self, obs_batch, sort=False):
         """

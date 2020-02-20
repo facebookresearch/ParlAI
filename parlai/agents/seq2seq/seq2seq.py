@@ -206,9 +206,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='none')
         else:
-            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def batchify(self, *args, **kwargs):
         """

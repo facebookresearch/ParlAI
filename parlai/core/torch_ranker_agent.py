@@ -23,8 +23,9 @@ import torch
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.utils.misc import warn_once
 from parlai.utils.torch import padded_3d
+from parlai.core.metrics import AverageMetric
 
 
 class TorchRankerAgent(TorchAgent):
@@ -165,12 +166,6 @@ class TorchRankerAgent(TorchAgent):
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics['loss'] = 0.0
-            self.metrics['examples'] = 0
-            self.metrics['rank'] = 0.0
-            self.metrics['mrr'] = 0.0
-            self.metrics['train_accuracy'] = 0.0
-
             self.criterion = self.build_criterion()
             self.model = self.build_model()
             if self.model is None or self.criterion is None:
@@ -220,7 +215,7 @@ class TorchRankerAgent(TorchAgent):
 
         By default torch.nn.CrossEntropyLoss.
         """
-        return torch.nn.CrossEntropyLoss(reduction='sum')
+        return torch.nn.CrossEntropyLoss(reduction='none')
 
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
@@ -289,14 +284,14 @@ class TorchRankerAgent(TorchAgent):
         # get accuracy
         targets = scores.new_empty(batchsize).long()
         targets = torch.arange(batchsize, out=targets)
-        nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
-        self.metrics['train_accuracy'] += nb_ok
+        nb_ok = (scores.max(dim=1)[1] == targets).float()
+        self.record_local_metric('train_accuracy', AverageMetric.many(nb_ok))
         # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
         ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
         mrr = 1.0 / (ranks + 0.00001)
-        self.metrics['rank'] += torch.sum(ranks).item()
-        self.metrics['mrr'] += torch.sum(mrr).item()
+        self.record_local_metric('rank', AverageMetric.many(ranks))
+        self.record_local_metric('mrr', AverageMetric.many(mrr))
 
     def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
         """
@@ -310,11 +305,15 @@ class TorchRankerAgent(TorchAgent):
             )
         else:
             _, ranks = scores.sort(1, descending=True)
+        ranks_m = []
+        mrrs_m = []
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero()
             rank = rank.item() if len(rank) == 1 else scores.size(1)
-            self.metrics['rank'] += 1 + rank
-            self.metrics['mrr'] += 1.0 / (1 + rank)
+            ranks_m.append(1 + rank)
+            mrrs_m.append(1.0 / (1 + rank))
+        self.record_local_metric('rank', AverageMetric.many(ranks_m))
+        self.record_local_metric('mrr', AverageMetric.many(mrrs_m))
 
         ranks = ranks.cpu()
         # Here we get the top prediction for each example, but do not
@@ -372,11 +371,6 @@ class TorchRankerAgent(TorchAgent):
         self._maybe_invalidate_fixed_encs_cache()
         if batch.text_vec is None and batch.image is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
         self.model.train()
         self.zero_grad()
 
@@ -386,6 +380,8 @@ class TorchRankerAgent(TorchAgent):
         try:
             scores = self.score_candidates(batch, cand_vecs)
             loss = self.criterion(scores, label_inds)
+            self.record_local_metric('mean_loss', AverageMetric.many(loss))
+            loss = loss.mean()
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -399,10 +395,6 @@ class TorchRankerAgent(TorchAgent):
                 return Output()
             else:
                 raise e
-
-        # Update loss
-        self.metrics['loss'] += loss.item()
-        self.metrics['examples'] += batchsize
 
         # Get train predictions
         if self.candidates == 'batch':
@@ -457,13 +449,16 @@ class TorchRankerAgent(TorchAgent):
         # Update metrics
         if label_inds is not None:
             loss = self.criterion(scores, label_inds)
-            self.metrics['loss'] += loss.item()
-            self.metrics['examples'] += batchsize
+            self.record_local_metric('loss', AverageMetric.many(loss))
+            ranks_m = []
+            mrrs_m = []
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero()
                 rank = rank.item() if len(rank) == 1 else scores.size(1)
-                self.metrics['rank'] += 1 + rank
-                self.metrics['mrr'] += 1.0 / (1 + rank)
+                ranks_m.append(1 + rank)
+                mrrs_m.append(1.0 / (1 + rank))
+            self.record_local_metric('rank', AverageMetric.many(ranks_m))
+            self.record_local_metric('mrr', AverageMetric.many(mrrs_m))
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -754,41 +749,6 @@ class TorchRankerAgent(TorchAgent):
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
         shared['optimizer'] = self.optimizer
         return shared
-
-    def reset_metrics(self):
-        """
-        Reset metrics.
-        """
-        super().reset_metrics()
-        # Note: we cannot change the type of metrics ahead of time, so you
-        # should correctly initialize to floats or ints here
-        self.metrics['examples'] = 0
-        self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0.0
-        self.metrics['mrr'] = 0.0
-        self.metrics['train_accuracy'] = 0.0
-
-    def report(self):
-        """
-        Report loss and mean_rank from model's perspective.
-        """
-        base = super().report()
-        m = {}
-        examples = self.metrics['examples']
-        if examples > 0:
-            m['examples'] = examples
-            m['loss'] = self.metrics['loss']
-            m['mean_loss'] = self.metrics['loss'] / examples
-            batch_train = self.candidates == 'batch' and self.is_training
-            if not self.is_training or self.opt.get('train_predict') or batch_train:
-                m['mean_rank'] = self.metrics['rank'] / examples
-                m['mrr'] = self.metrics['mrr'] / examples
-            if batch_train:
-                m['train_accuracy'] = self.metrics['train_accuracy'] / examples
-        for k, v in m.items():
-            # clean up: rounds to sigfigs and converts tensors to floats
-            base[k] = round_sigfigs(v, 4)
-        return base
 
     def set_vocab_candidates(self, shared):
         """
