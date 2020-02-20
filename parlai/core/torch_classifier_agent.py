@@ -293,7 +293,7 @@ class TorchClassifierAgent(TorchAgent):
             return Output(preds, probs=probs.cpu())
         else:
             return Output(preds)
-        
+
     def reset_metrics(self):
         """
         Reset metrics.
