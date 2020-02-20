@@ -112,7 +112,6 @@ def eval_wordstat(opt, print_parser=None):
     :param print_parser: if provided, prints the options that are set within the
         model after loading the model
     """
-    print(opt)
     random.seed(42)
 
     # Create model and assign it to the specified task
