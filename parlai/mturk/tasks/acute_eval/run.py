@@ -3,7 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from typing import Dict, List, Set, Any, Optional
+from typing import Dict, List, Set, Any, Optional, Union
 import json
 import os
 from queue import Queue
@@ -110,6 +110,22 @@ class AcuteEvaluator(object):
     """
 
     def __init__(self, opt):
+        """
+        Initialize the AcuteEvaluator.
+
+        The following object attributes are used in running ACUTE Eval:
+
+        ``onboarding_tasks``: A list of ALL available _onboarding_ comparison tasks
+
+        ``desired_tasks``: A list of ALL available comparison tasks
+
+        ``task_queue``: A queue of REMAINING tasks, from which HITs are constructed.
+
+        ``worker_data``: A mapping from worker ID to data about the worker, including
+        their tasks completed, conversations seen, and onboarding todo
+
+        ``failed_onboard``:   The set of workers who have failed onboarding
+        """
         random.seed(opt['seed'])
         self.opt = opt
 
@@ -117,11 +133,11 @@ class AcuteEvaluator(object):
         self._supplement_opt()
 
         # class attributes
-        self.task_queue: Queue = Queue()
         self.onboarding_tasks: List[Dict] = []
         self.desired_tasks: List[Dict] = []
-        self.worker_data: Dict[int, Dict[int, List]] = {}
-        self.onboarding_failed_workers: Set = set()
+        self.task_queue: Queue = Queue()
+        self.worker_data: Dict[str, Dict[str, Union[List, int]]] = {}
+        self.failed_onboard: Set = set()
 
         # read in conversations data
         self._load_conversation_data()
@@ -132,20 +148,22 @@ class AcuteEvaluator(object):
         # instantiate Manager
         self.manager = StaticMTurkManager(opt=self.opt)
 
-    def _get_worker_data(self, worker_id: int) -> Dict[str, Optional[List]]:
+    def _get_worker_data(self, worker_id: str) -> Dict[str, Optional[List]]:
         """
         Return worker data if present, else a default dict.
         """
         onboarding_todo = list(range(len(self.onboarding_tasks)))
         random.shuffle(onboarding_todo)
-        return self.worker_data.get(
+        self.worker_data[worker_id] = self.worker_data.get(
             worker_id,
             {
                 'tasks_completed': [],
                 'conversations_seen': [],
                 'onboarding_todo': onboarding_todo,
+                'hits_completed': 0,
             },
         )
+        return self.worker_data[worker_id]
 
     def _supplement_opt(self):
         """
@@ -195,6 +213,14 @@ class AcuteEvaluator(object):
         with open(pairs_path) as pf:
             for i, l in enumerate(pf.readlines()):
                 convo_pair = json.loads(l.strip())
+                eval_speakers = [
+                    s
+                    for d in convo_pair['dialogue_dicts']
+                    for s in d['speakers']
+                    if s in convo_pair['speakers_to_eval']
+                ]
+                # make sure order is preserved
+                assert eval_speakers == convo_pair['speakers_to_eval']
                 task = {
                     'task_specs': {
                         'conversation_order': random.choice([[0, 1], [1, 0]]),
@@ -231,7 +257,98 @@ class AcuteEvaluator(object):
         """
         return task['pairing_dict']['dialogue_ids']
 
-    def get_new_task_data(self, worker_id: int) -> List[Dict[str, Any]]:
+    def _poll_task_queue(
+        self, worker_id: str, task_data: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Poll task queue for tasks for a worker.
+
+        :param worker_id:
+            id for worker
+
+        :param task_data:
+            list of potential tasks already for worker
+
+        :return task_data:
+            a list of tasks for a worker to complete
+        """
+        worker_data = self._get_worker_data(worker_id)
+        num_attempts = 0
+        while (not self.task_queue.empty()) and num_attempts < self.task_queue.qsize():
+            try:
+                next_task = self.task_queue.get()
+            except Queue.Empty:
+                break
+            num_attempts += 1
+
+            pair_id = next_task['pair_id']
+            dialogue_ids = self._get_dialogue_ids(next_task)
+
+            if pair_id not in worker_data[  # make sure worker has not seen these conversations before
+                'tasks_completed'
+            ] and all(
+                d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids
+            ):
+                # track tasks and conversations seen
+                worker_data['tasks_completed'].append(pair_id)
+                worker_data['conversations_seen'].extend(dialogue_ids)
+                task_data.append(next_task)
+                if len(task_data) == self.opt['subtasks_per_hit']:
+                    return task_data
+            else:
+                self.task_queue.put(next_task)
+
+        return task_data
+
+    def _top_up_task_data(
+        self, worker_id: str, task_data: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        """
+        Top up worker task data.
+
+        This function is called if ``self.task_queue`` is exhausted but
+        task_data for the worker is less than the `tasks_per_hit`.
+
+        Make sure that all added tasks have not been seen by the worker.
+
+        :param worker_id:
+            id for worker
+
+        :param task_data:
+            list of potential tasks already for worker
+
+        :return task_data:
+            a list of tasks for a worker to complete
+        """
+        worker_data = self._get_worker_data(worker_id)
+        tasks_still_needed = self.opt['subtasks_per_hit'] - len(task_data)
+        tasks_remaining = [
+            t_id
+            for t_id in range(len(self.desired_tasks))
+            if t_id not in worker_data['tasks_completed']
+        ]
+        # get any pairings with conversations this worker has not seen to fill this hit
+        additional_tasks = [
+            t
+            for t in tasks_remaining
+            if all(
+                d_id not in worker_data['conversations_seen']
+                for d_id in self._get_dialogue_ids(self.desired_tasks[t])
+            )
+        ]
+        if tasks_still_needed < len(additional_tasks):
+            additional_tasks = random.sample(additional_tasks, tasks_still_needed)
+        worker_data['tasks_completed'].extend(additional_tasks)
+
+        for t in additional_tasks:
+            worker_data['conversations_seen'].extend(
+                self._get_dialogue_ids(self.desired_tasks[t])
+            )
+            task_data.extend(self.desired_tasks[t])
+
+        return task_data
+
+    def get_new_task_data(self, worker_id: str) -> List[Dict[str, Any]]:
         """
         Get next task for worker.
 
@@ -247,64 +364,22 @@ class AcuteEvaluator(object):
         :return task_data:
             A list of tasks for the worker to complete
         """
-        worker_data = self._get_worker_data(worker_id)
         tasks_per_hit = self.opt['subtasks_per_hit']
+        # first add onboarding tasks
         task_data = self.get_onboarding_tasks(worker_id)
         if len(task_data) == tasks_per_hit:
             return task_data
-        tries = 0
 
-        while (not self.task_queue.empty()) and tries < self.task_queue.qsize():
-            try:
-                next_task = self.task_queue.get()
-            except Queue.Empty:
-                break
-            tries += 1
+        # poll the task queue for more tasks
+        task_data = self._poll_task_queue(worker_id, task_data)
+        if len(task_data) == tasks_per_hit:
+            return task_data
 
-            pair_id = next_task['pair_id']
-            dialogue_ids = self._get_dialogue_ids(next_task)
-
-            if pair_id not in worker_data[  # make sure worker has not seen these conversations before
-                'tasks_completed'
-            ] and all(
-                d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids
-            ):
-                # track tasks and conversations seen
-                worker_data['tasks_completed'].append(pair_id)
-                worker_data['conversations_seen'].extend(dialogue_ids)
-                task_data.append(next_task)
-                if len(task_data) == tasks_per_hit:
-                    return task_data
-            else:
-                self.task_queue.put(next_task)
-        # task queue containing num annotations requested of each pair is exhausted
-        # b/c we released enough hits to guarantee reaching the requested num on average
-        tasks_still_needed = tasks_per_hit - len(task_data)
-        tasks_remaining = [
-            t_id
-            for t_id in range(len(self.desired_tasks))
-            if t_id not in worker_data['tasks_completed']
-        ]
-        # get any pairings with conversations this worker has not seen to fill this hit
-        tasks_chosen = [
-            t
-            for t in tasks_remaining
-            if all(
-                d_id not in worker_data['conversations_seen']
-                for d_id in self._get_dialogue_ids(self.desired_tasks[t])
-            )
-        ]
-        if tasks_still_needed < len(tasks_chosen):
-            tasks_chosen = random.sample(tasks_chosen, tasks_still_needed)
-        worker_data['tasks_completed'].extend(tasks_chosen)
-        for t in tasks_chosen:
-            worker_data['conversations_seen'].extend(
-                self._get_dialogue_ids(self.desired_tasks[t])
-            )
-            task_data.extend(self.desired_tasks[t])
+        # top up the task_data if we don't hit the desired tasks_per_hit
+        task_data = self._top_up_task_data(worker_id, task_data)
         return task_data
 
-    def requeue_task_data(self, worker_id: int, task_data: List[Dict[str, Any]]):
+    def requeue_task_data(self, worker_id: str, task_data: List[Dict[str, Any]]):
         """
         Return task to task_queue.
 
@@ -330,7 +405,7 @@ class AcuteEvaluator(object):
                 except ValueError:
                     print("WARNING: couldn't remove task from worker's history")
 
-    def get_onboarding_tasks(self, worker_id: int) -> List[Dict[str, Any]]:
+    def get_onboarding_tasks(self, worker_id: str) -> List[Dict[str, Any]]:
         """
         Get next onboarding task for given worker.
 
@@ -355,7 +430,7 @@ class AcuteEvaluator(object):
         return [self.onboarding_tasks[t_id] for t_id in onboarding_tasks_chosen]
 
     def check_and_update_worker_approval(
-        self, worker_id: int, save_data: Dict[str, Any]
+        self, worker_id: str, save_data: Dict[str, Any]
     ):
         """
         Soft block workers who fail onboarding tasks, keep track of their status.
@@ -384,16 +459,16 @@ class AcuteEvaluator(object):
                 num_correct += 1
         if num_onboarding_tasks == 0:
             # no onboarding tasks found
-            if worker_id in self.onboarding_failed_workers:
+            if worker_id in self.failed_onboard:
                 # worker already failed onboarding, add pairings back to queue
                 self.requeue_task_data(worker_id, all_task_data)
             return
         if (num_correct / num_onboarding_tasks) >= self.opt['onboarding_threshold']:
-            # worker did not fail onboarding
+            # worker passed onboarding
             return
         # worker failed onboarding, soft block and record
         self.manager.soft_block_worker(worker_id)
-        self.onboarding_failed_workers.add(worker_id)
+        self.failed_onboard.add(worker_id)
 
     def softblock_workers(self):
         """
@@ -429,7 +504,9 @@ class AcuteEvaluator(object):
             self.manager.create_hits()
 
             def check_worker_eligibility(worker):
-                return True
+                data = self._get_worker_data(worker.worker_id)
+                max_hits = self.opt.get('max_hits_per_worker', -1)
+                return max_hits > 0 and data['hits_completed'] < max_hits
 
             def assign_worker_roles(workers):
                 workers[0].id = AGENT_DISPLAY_NAME
@@ -448,11 +525,14 @@ class AcuteEvaluator(object):
 
                 if not world.did_complete():
                     self.requeue_task_data(workers[0].worker_id, task_data)
-                elif opt['block_on_onboarding_fail']:
-                    # check whether workers failed onboarding
-                    self.check_and_update_worker_approval(
-                        workers[0].worker_id, save_data
-                    )
+                else:
+                    worker_data = self._get_worker_data(workers[0].worker_id)
+                    worker_data['hits_completed'] += 1
+                    if opt['block_on_onboarding_fail']:
+                        # check whether workers failed onboarding
+                        self.check_and_update_worker_approval(
+                            workers[0].worker_id, save_data
+                        )
                 return save_data
 
             # Soft-block all chosen workers
@@ -466,8 +546,6 @@ class AcuteEvaluator(object):
                 assign_role_function=assign_worker_roles,
                 task_function=run_conversation,
             )
-        except Exception as e:
-            raise e
         finally:
             self.manager.expire_all_unassigned_hits()
             self.manager.shutdown()

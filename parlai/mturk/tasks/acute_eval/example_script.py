@@ -8,16 +8,25 @@ from parlai.mturk.tasks.acute_eval.run import AcuteEvaluator, add_args
 """
 Example script for running ACUTE-EVAL.
 The only argument that *must* be modified for this to be run is:
-'pairings_filepath':  Path to pairings file in the format specified in the README.md
+``pairings_filepath``:  Path to pairings file in the format specified in the README.md
 
-Help strings for the other arguments can be found in run.py
+The following args are useful to tweak to fit your specific needs;
+    - ``annotations_per_pair``: A useful arg if you'd like to evaluate a given conversation pair
+                                more than once.
+    - ``pairs_per_matchup``:    Essentially, how many pairs of conversations you would like to evaluate
+    - ``subtasks_per_hit``:     How many comparisons you'd like a turker to complete in one HIT
+
+Help strings for the other arguments can be found in run.py.
 """
 
 
 def set_args():
     args = add_args()
     # pairings file
-    args['pairings_filepath'] = 'parlai/mturk/tasks/acute_eval/example/pairings.jsonl'
+    # args['pairings_filepath'] = 'parlai/mturk/tasks/acute_eval/example/pairings.jsonl'
+    args[
+        'pairings_filepath'
+    ] = '/checkpoint/parlai/acute_evals/pairings_files/multitask_ft_aio_1.internal_blended_skill_talk_selfchat___vs___test_pretrained_polyencoder.internal_blended_skill_talk_selfchat'
 
     # onboarding amd blocking
     args['block_on_onboarding_fail'] = True
@@ -26,12 +35,12 @@ def set_args():
     # general ParlAI mturk settings
     args['assignment_duration_in_seconds'] = 600
     args['reward'] = 0.5  # amount to pay workers per hit
-    args['max_hits_per_worker'] = 1  # max # hits a worker may complete
+    args['max_hits_per_worker'] = 2  # max # hits a worker may complete
     args['is_sandbox'] = True  # set to False to release real hits
 
     args['annotations_per_pair'] = 1  # num times to use the same conversation pair
-    args['pairs_per_matchup'] = 160  # num pairs of conversations per pair of models
-    args['seed'] = 42  # np and torch random seed
+    args['pairs_per_matchup'] = 2  # num pairs of conversations per pair of models
+    args['seed'] = 42  # random seed
     args['subtasks_per_hit'] = 2  # num comparisons to show within one hit
 
     # question phrasing
@@ -40,7 +49,7 @@ def set_args():
     args['question'] = 'Who would you prefer to talk to for a long conversation?'
 
     args['num_conversations'] = int(
-        args['pairs_per_matchup'] / (args['subtasks_per_hit'] - 1)
+        args['pairs_per_matchup'] / max((args['subtasks_per_hit'] - 1), 1)
     )  # release enough hits to finish all annotations requested
 
     # Task display on MTurk
