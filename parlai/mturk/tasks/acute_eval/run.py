@@ -493,6 +493,7 @@ class AcuteEvaluator(object):
             task_directory_path=os.path.dirname(os.path.abspath(__file__))
         )
         self.manager.set_onboard_function(onboard_function=None)
+        task_group_id: str = None
 
         try:
             # Initialize run information
@@ -549,7 +550,8 @@ class AcuteEvaluator(object):
         finally:
             self.manager.expire_all_unassigned_hits()
             self.manager.shutdown()
-            return task_group_id
+
+        return task_group_id
 
 
 if __name__ == '__main__':
