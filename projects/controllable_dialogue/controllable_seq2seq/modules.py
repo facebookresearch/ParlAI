@@ -12,7 +12,6 @@ import math
 import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
 from parlai.utils.torch import NEAR_INF
@@ -552,17 +551,7 @@ class RNNEncoder(nn.Module):
         xs = self.input_dropout(xs)
         xes = self.dropout(self.lt(xs))
         attn_mask = xs.ne(0)
-        try:
-            x_lens = torch.sum(attn_mask.int(), dim=1)
-            xes = pack_padded_sequence(xes, x_lens, batch_first=True)
-            packed = True
-        except ValueError:
-            # packing failed, don't pack then
-            packed = False
-
         encoder_output, hidden = self.rnn(xes)
-        if packed:
-            encoder_output, _ = pad_packed_sequence(encoder_output, batch_first=True)
         if self.dirs > 1:
             # project to decoder dimension by taking sum of forward and back
             if isinstance(self.rnn, nn.LSTM):

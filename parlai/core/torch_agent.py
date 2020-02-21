@@ -45,7 +45,7 @@ from parlai.utils.fp16 import (
 )
 from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import padded_tensor
 
 
 class Batch(AttrDict):
@@ -1390,7 +1390,7 @@ class TorchAgent(ABC, Agent):
         """
         return 'text_vec' in obs or 'image' in obs
 
-    def batchify(self, obs_batch, sort=False):
+    def batchify(self, obs_batch):
         """
         Create a batch of valid observations from an unchecked batch.
 
@@ -1411,11 +1411,6 @@ class TorchAgent(ABC, Agent):
 
         :param obs_batch:
             List of vectorized observations
-
-        :param sort:
-            Default False, orders the observations by length of vectors. Set to
-            true when using torch.nn.utils.rnn.pack_padded_sequence.  Uses the text
-            vectors if available, otherwise uses the label vectors if available.
         """
         if len(obs_batch) == 0:
             return Batch()
@@ -1432,11 +1427,6 @@ class TorchAgent(ABC, Agent):
         if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
-            if sort:
-                sort = False  # now we won't sort on labels
-                xs, x_lens, valid_inds, exs = argsort(
-                    x_lens, xs, x_lens, valid_inds, exs, descending=True
-                )
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
@@ -1451,11 +1441,6 @@ class TorchAgent(ABC, Agent):
             y_lens = [y.shape[0] for y in label_vecs]
 
             ys, y_lens = self._pad_tensor(label_vecs)
-
-            if sort and xs is None:
-                ys, valid_inds, label_vecs, labels, y_lens = argsort(
-                    y_lens, ys, valid_inds, label_vecs, labels, y_lens, descending=True
-                )
 
         # LABEL_CANDIDATES
         cands, cand_vecs = None, None
@@ -1480,47 +1465,6 @@ class TorchAgent(ABC, Agent):
             image=imgs,
             observations=exs,
         )
-
-    def match_batch(self, batch_reply, valid_inds, output=None):
-        """
-        Match sub-batch of predictions to the original batch indices.
-
-        Batches may be only partially filled (i.e when completing the remainder
-        at the end of the validation or test set), or we may want to sort by
-        e.g the length of the input sequences if using pack_padded_sequence.
-
-        This matches rows back with their original row in the batch for
-        calculating metrics like accuracy.
-
-        If output is None (model choosing not to provide any predictions), we
-        will just return the batch of replies.
-
-        Otherwise, output should be a parlai.core.torch_agent.Output object.
-        This is a namedtuple, which can provide text predictions and/or
-        text_candidates predictions. If you would like to map additional
-        fields into the batch_reply, you can override this method as well as
-        providing your own namedtuple with additional fields.
-
-        :param batch_reply:
-            Full-batchsize list of message dictionaries to put responses into.
-
-        :param valid_inds:
-            Original indices of the predictions.
-
-        :param output:
-            Output namedtuple which contains sub-batchsize list of text outputs
-            from model. May be None (default) if model chooses not to answer.
-            This method will check for ``text`` and ``text_candidates`` fields.
-        """
-        if output is None:
-            return batch_reply
-        for k, v in output.items():
-            if v is None:
-                continue
-            for i, sub_val in zip(valid_inds, v):
-                batch_reply[i][k] = sub_val
-
-        return batch_reply
 
     def observe(self, observation):
         """
@@ -1848,9 +1792,15 @@ class TorchAgent(ABC, Agent):
                 # use `with torch.enable_grad()` to gain back gradients.
                 output = self.eval_step(batch)
 
+        # match up items of output to their corresponding Message
+        # e.g. we're transposing a {key -> [value1, value2, ...]} to
+        # [{key: value1}, {key: value2}, ...]
         if output is not None:
-            # local metrics are automatically matched up
-            self.match_batch(batch_reply, batch.valid_indices, output)
+            for k, v in output.items():
+                if v is None:
+                    continue
+                for i, sub_val in zip(batch.valid_inds, v):
+                    batch_reply[i][k] = sub_val
 
         # broadcast the metrics back
         for k, values in self._local_metrics.items():

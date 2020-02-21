@@ -214,7 +214,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """
         Override batchify options for seq2seq.
         """
-        kwargs['sort'] = True  # need sorted for pack_padded
+        kwargs['sort'] = False  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
     def state_dict(self):
