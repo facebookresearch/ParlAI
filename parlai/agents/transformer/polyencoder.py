@@ -601,7 +601,7 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
     def load_state_dict(self, state_dict):
         """
-        Override to account for codes and possibly weights used for image features.
+        Override to account for weights used for image features.
         """
         for tensor in ['dummy_image_enc', 'ones_mask']:
             key = f'encoder_ctxt.{tensor}'
