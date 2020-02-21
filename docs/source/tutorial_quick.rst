@@ -66,7 +66,7 @@ Train a Transformer on Twitter
 ------------------------------
 
 Now let's try training a Transformer (Vaswani, et al 2017) ranker model.
-Make sure to complete this section on a GPU with PyTorch installed.
+*Make sure to complete this section on a GPU with PyTorch installed.*
 
 We'll be training on the Twitter task, which is a dataset of tweets and replies.
 There's more information on tasks in these docs,
@@ -86,7 +86,7 @@ Now, we'll train the model. This will take a while to reach convergence.
 .. code-block:: bash
 
   # train transformer ranker
-  python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
+  python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 16 -vtim 3600 -cands batch -ecands batch --data-parallel True
 
 You can modify some of the command line arguments we use here -
 we set batch size to 10, run validation every 3600 seconds,
