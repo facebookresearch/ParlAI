@@ -263,10 +263,6 @@ class ControllableSeq2seqAgent(TorchAgent):
     def model_version():
         """
         Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions. Version 1 split from
-        version 0 on Aug 29, 2018. To use version 0, use --model legacy:seq2seq:0
-        (legacy agent code is located in parlai/agents/legacy_agents).
         """
         return 1
 
