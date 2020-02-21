@@ -197,7 +197,7 @@ class PolyencoderAgent(TorchRankerAgent):
         model applies additional attention before ultimately scoring a candidate.
         """
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(*self._model_context_input(batch))
+        ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
 
         if cand_encs is not None:
             if bsz == 1:
@@ -217,19 +217,19 @@ class PolyencoderAgent(TorchRankerAgent):
         )
         return scores
 
-    def _model_context_input(self, batch) -> tuple:
+    def _model_context_input(self, batch) -> Dict[str, Any]:
         """
-        Create the input context value(s) for the model.
+        Create the input context value for the model.
 
-        Must return a tuple.  This will be passed directly into the model via `*args`,
-        i.e.,
+        Must return a dictionary.  This will be passed directly into the model via
+        `**kwargs`, i.e.,
 
-        >>> model(*_model_context_input(batch))
+        >>> model(**_model_context_input(batch))
 
         This is intentionally overridable so that richer models can pass the
         additional inputs.
         """
-        return (batch.text_vec,)
+        return {'ctxt_tokens': batch.text_vec}
 
     def load_state_dict(self, state_dict):
         """
