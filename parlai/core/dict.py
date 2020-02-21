@@ -874,10 +874,10 @@ class DictionaryAgent(Agent):
         if self.tokenizer != 'bytelevelbpe':
             return
         special_tokens = [
+            self.null_token,
             self.start_token,
             self.end_token,
             self.unk_token,
-            self.null_token,
         ]
         self.byte_level_bpe.tokenizer.add_special_tokens(special_tokens)
         self.ind2tok = {}

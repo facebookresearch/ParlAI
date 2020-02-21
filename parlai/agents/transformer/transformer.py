@@ -116,6 +116,13 @@ def add_common_cmdline_args(argparser):
         default=-1,
         help='This will overide the n-layers for asymmetrical transformers',
     )
+    argparser.add_argument(
+        '-pln',
+        '--place-layer-norm',
+        type=str,
+        default='after',
+        help='Where we put the layernorm inside transfomer layers',
+    )
 
 
 class Transformer(Agent):

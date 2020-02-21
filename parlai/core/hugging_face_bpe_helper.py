@@ -18,6 +18,12 @@ class HuggingFaceBpeHelper(object):
         parser.add_argument(
             '--bpe-merge', type=str, help='path to pre-trained tokenizer merge'
         )
+        parser.add_argument(
+            '--bpe-add-prefix-space',
+            type='bool',
+            hidden=True,
+            help='add prefix space before encoding',
+        )
         return parser
 
     def __init__(self, opt: Opt, shared=None):
@@ -32,9 +38,13 @@ class HuggingFaceBpeHelper(object):
             raise ValueError('--bpe-vocab is required for loading pretrained tokenizer')
         if 'bpe_merge' not in opt:
             raise ValueError('--bpe-merge is required for loading pretrained tokenizer')
+
         self.vocab_path = opt['bpe_vocab']
         self.merge_path = opt['bpe_merge']
-        self.tokenizer = ByteLevelBPETokenizer(self.vocab_path, self.merge_path)
+        self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
+        self.tokenizer = ByteLevelBPETokenizer(
+            self.vocab_path, self.merge_path, add_prefix_space=self.add_prefix_space
+        )
 
     def encode(self, text: str) -> List[str]:
         return self.tokenizer.encode(text).tokens
