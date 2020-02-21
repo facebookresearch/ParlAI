@@ -23,12 +23,9 @@ Help strings for the other arguments can be found in run.py.
 def set_args():
     args = add_args()
     # pairings file
-    # args['pairings_filepath'] = 'parlai/mturk/tasks/acute_eval/example/pairings.jsonl'
-    args[
-        'pairings_filepath'
-    ] = '/checkpoint/parlai/acute_evals/pairings_files/multitask_ft_aio_1.internal_blended_skill_talk_selfchat___vs___test_pretrained_polyencoder.internal_blended_skill_talk_selfchat'
+    args['pairings_filepath'] = 'parlai/mturk/tasks/acute_eval/example/pairings.jsonl'
 
-    # onboarding amd blocking
+    # onboarding and blocking
     args['block_on_onboarding_fail'] = True
     args['block_qualification'] = 'onboarding_qual_name'
 

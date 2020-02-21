@@ -226,7 +226,6 @@ class AcuteEvaluator(object):
                         's1_choice': self.opt['s1_choice'],
                         's2_choice': self.opt['s2_choice'],
                         'question': self.opt['question'],
-                        # TODO: make sure this doesn't break javascript
                         'is_onboarding': convo_pair['is_onboarding'],
                     },
                     'pairing_dict': convo_pair,
@@ -402,6 +401,8 @@ class AcuteEvaluator(object):
                     for d_id in self._get_dialogue_ids(subtask_data):
                         worker_data['conversations_seen'].remove(d_id)
                 except ValueError:
+                    # Task may have shown up in worker's task queue twice
+                    # due to some unfortunate race condition
                     print("WARNING: couldn't remove task from worker's history")
 
     def get_onboarding_tasks(self, worker_id: str) -> List[Dict[str, Any]]:
