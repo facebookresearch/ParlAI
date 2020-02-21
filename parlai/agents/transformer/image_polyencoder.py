@@ -54,6 +54,8 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             choices=['add', 'append', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
+        agent.set_defaults(reduction_type=None)
+        # This agent doesn't support any encoder output reductions
         return agent
 
     def __init__(self, opt, shared=None):
@@ -144,7 +146,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
         super().__init__(opt=opt, dict_=dict_, null_idx=null_idx)
         self.encoder_ctxt = self.get_encoder(opt=opt, dict_=dict_, null_idx=null_idx)
 
-    def get_encoder(self, opt, dict_, null_idx):
+    def get_encoder(self, opt, dict_, null_idx, reduction_type=None):
         """
         Return encoder that allows for image features to be passed in, given options.
 
@@ -154,9 +156,12 @@ class ImagePolyencoderModule(PolyEncoderModule):
             dictionary agent
         :param null_idx:
             null/pad index into dict
+        :param reduction_type: only used for compatibility with the superclass method
         :return:
             a ContextWithImageEncoder, initialized correctly
         """
+        if reduction_type is not None:
+            raise NotImplementedError('No encoder output reductions supported!')
         n_positions = get_n_positions_from_options(opt)
         embeddings = self._get_embeddings(
             dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']

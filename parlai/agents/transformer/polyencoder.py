@@ -254,7 +254,10 @@ class PolyEncoderModule(torch.nn.Module):
             opt=opt, dict_=dict_, null_idx=null_idx, reduction_type=None
         )
         self.encoder_cand = self.get_encoder(
-            opt, dict_, null_idx, opt['reduction_type']
+            opt=opt,
+            dict_=dict_,
+            null_idx=null_idx,
+            reduction_type=opt['reduction_type'],
         )
 
         self.type = opt['polyencoder_type']
