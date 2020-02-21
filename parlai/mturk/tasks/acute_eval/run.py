@@ -3,10 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from typing import Dict, List, Set, Any, Optional, Union
+from typing import Dict, List, Set, Any
 import json
 import os
-from queue import Queue
+import queue
 import random
 import time
 
@@ -135,8 +135,8 @@ class AcuteEvaluator(object):
         # class attributes
         self.onboarding_tasks: List[Dict] = []
         self.desired_tasks: List[Dict] = []
-        self.task_queue: Queue = Queue()
-        self.worker_data: Dict[str, Dict[str, Union[List, int]]] = {}
+        self.task_queue: queue.Queue = queue.Queue()
+        self.worker_data: Dict[str, Dict[str, List]] = {}
         self.failed_onboard: Set = set()
 
         # read in conversations data
@@ -148,7 +148,7 @@ class AcuteEvaluator(object):
         # instantiate Manager
         self.manager = StaticMTurkManager(opt=self.opt)
 
-    def _get_worker_data(self, worker_id: str) -> Dict[str, Optional[List]]:
+    def _get_worker_data(self, worker_id: str) -> Dict[str, List]:
         """
         Return worker data if present, else a default dict.
         """
@@ -160,7 +160,6 @@ class AcuteEvaluator(object):
                 'tasks_completed': [],
                 'conversations_seen': [],
                 'onboarding_todo': onboarding_todo,
-                'hits_completed': 0,
             },
         )
         return self.worker_data[worker_id]
@@ -277,7 +276,7 @@ class AcuteEvaluator(object):
         while (not self.task_queue.empty()) and num_attempts < self.task_queue.qsize():
             try:
                 next_task = self.task_queue.get()
-            except Queue.Empty:
+            except queue.Empty:
                 break
             num_attempts += 1
 
@@ -505,9 +504,7 @@ class AcuteEvaluator(object):
             self.manager.create_hits()
 
             def check_worker_eligibility(worker):
-                data = self._get_worker_data(worker.worker_id)
-                max_hits = self.opt.get('max_hits_per_worker', -1)
-                return max_hits > 0 and data['hits_completed'] < max_hits
+                return True
 
             def assign_worker_roles(workers):
                 workers[0].id = AGENT_DISPLAY_NAME
@@ -527,8 +524,6 @@ class AcuteEvaluator(object):
                 if not world.did_complete():
                     self.requeue_task_data(workers[0].worker_id, task_data)
                 else:
-                    worker_data = self._get_worker_data(workers[0].worker_id)
-                    worker_data['hits_completed'] += 1
                     if opt['block_on_onboarding_fail']:
                         # check whether workers failed onboarding
                         self.check_and_update_worker_approval(
