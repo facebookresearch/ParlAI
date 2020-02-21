@@ -18,7 +18,6 @@ from collections import deque
 
 SKIP_TESTS = False
 try:
-    from parlai.core.torch_agent import Output
     from parlai.agents.test_agents.dummy_torch_agent import MockTorchAgent, MockDict
     import torch
 except ImportError:
@@ -384,47 +383,6 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
             self.assertEqual(list(batch.valid_indices), [0, 1, 2])
 
-            # now sort the batch, make sure fields are in sorted order
-            batch = agent.batchify(obs_vecs, sort=True)
-            self.assertEqual(
-                batch.text_vec.tolist(),
-                [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 0], [1, 2, 0, 0, 0, 0]],
-            )
-            self.assertEqual(batch.text_lengths, [6, 5, 2])
-            self.assertEqual(
-                batch.label_vec.tolist(),
-                [[1, 2, 3, 4, 5], [1, 0, 0, 0, 0], [1, 2, 0, 0, 0]],
-            )
-            self.assertEqual(batch.label_lengths, [5, 1, 2])
-            labs = [o[lab_key][0] for o in obs_batch]
-            self.assertEqual(batch.labels, [labs[i] for i in [1, 0, 2]])
-            self.assertEqual(list(batch.valid_indices), [1, 0, 2])
-
-            # now sort just on ys
-            new_vecs = [vecs.copy() for vecs in obs_vecs]
-            for vec in new_vecs:
-                vec.pop('text')
-                vec.pop('text_vec')
-
-            def is_valid(obs):
-                return 'labels_vec' in obs or 'eval_labels_vec' in obs
-
-            agent.is_valid = is_valid
-
-            batch = agent.batchify(new_vecs, sort=True)
-            self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
-            self.assertIsNotNone(batch.label_vec)
-            self.assertIsNotNone(batch.label_lengths)
-            self.assertEqual(
-                batch.label_vec.tolist(),
-                [[1, 2, 3, 4, 5], [1, 2, 0, 0, 0], [1, 0, 0, 0, 0]],
-            )
-            self.assertEqual(batch.label_lengths, [5, 2, 1])
-            labs = [o[lab_key][0] for o in new_vecs]
-            self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
-            self.assertEqual(list(batch.valid_indices), [1, 2, 0])
-
             # test is_valid
             def is_valid(obs):
                 return 'text_vec' in obs and len(obs['text_vec']) < 3
@@ -477,117 +435,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(len(batch.candidate_vecs), len(obs_cands))
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
-
-    def test_match_batch(self):
-        """
-        Make sure predictions are correctly aligned when available.
-        """
-        agent = get_agent()
-
-        # first try empty outputs
-        reply = agent.match_batch([{}, {}, {}], [0, 1, 2], Output())
-        self.assertEqual([{}, {}, {}], reply)
-        reply = agent.match_batch([{}, {}, {}], [0, 1, 2], None)
-        self.assertEqual([{}, {}, {}], reply)
-
-        # try text in order
-        reply = agent.match_batch(
-            [{}, {}, {}], [0, 1, 2], Output(['E.T.', 'Phone', 'Home'])
-        )
-        self.assertEqual([{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
-
-        # try text out of order
-        reply = agent.match_batch(
-            [{}, {}, {}], [2, 0, 1], Output(['Home', 'E.T.', 'Phone'])
-        )
-        self.assertEqual([{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
-
-        # try text_candidates in order
-        reply = agent.match_batch(
-            [{}, {}],
-            [0, 1],
-            Output(
-                None,
-                [
-                    ['More human than human.', 'Less human than human'],
-                    ['Just walk into Mordor', 'Just QWOP into Mordor.'],
-                ],
-            ),
-        )
-        self.assertEqual(
-            reply[0]['text_candidates'],
-            ['More human than human.', 'Less human than human'],
-        )
-        self.assertEqual(
-            reply[1]['text_candidates'],
-            ['Just walk into Mordor', 'Just QWOP into Mordor.'],
-        )
-        # try text_candidates out of order
-        reply = agent.match_batch(
-            [{}, {}],
-            [1, 0],
-            Output(
-                None,
-                [
-                    ['More human than human.', 'Less human than human'],
-                    ['Just walk into Mordor', 'Just QWOP into Mordor.'],
-                ],
-            ),
-        )
-        self.assertEqual(
-            reply[0]['text_candidates'],
-            ['Just walk into Mordor', 'Just QWOP into Mordor.'],
-        )
-        self.assertEqual(
-            reply[1]['text_candidates'],
-            ['More human than human.', 'Less human than human'],
-        )
-
-        # try both text and text_candidates in order
-        reply = agent.match_batch(
-            [{}, {}],
-            [0, 1],
-            Output(
-                ['You shall be avenged...', 'Man creates dinosaurs...'],
-                [
-                    ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-                    ['Dinosaurs eat man.', 'Woman inherits the earth.'],
-                ],
-            ),
-        )
-        self.assertEqual(reply[0]['text'], 'You shall be avenged...')
-        self.assertEqual(
-            reply[0]['text_candidates'],
-            ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-        )
-        self.assertEqual(reply[1]['text'], 'Man creates dinosaurs...')
-        self.assertEqual(
-            reply[1]['text_candidates'],
-            ['Dinosaurs eat man.', 'Woman inherits the earth.'],
-        )
-
-        # try both text and text_candidates out of order
-        reply = agent.match_batch(
-            [{}, {}],
-            [1, 0],
-            Output(
-                ['You shall be avenged...', 'Man creates dinosaurs...'],
-                [
-                    ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-                    ['Dinosaurs eat man.', 'Woman inherits the earth.'],
-                ],
-            ),
-        )
-        self.assertEqual(reply[0]['text'], 'Man creates dinosaurs...')
-        self.assertEqual(
-            reply[0]['text_candidates'],
-            ['Dinosaurs eat man.', 'Woman inherits the earth.'],
-        )
-        self.assertEqual(reply[1]['text'], 'You shall be avenged...')
-        self.assertEqual(
-            reply[1]['text_candidates'],
-            ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-        )
 
     def test__add_person_tokens(self):
         """
