@@ -1799,7 +1799,7 @@ class TorchAgent(ABC, Agent):
             for k, v in output.items():
                 if v is None:
                     continue
-                for i, sub_val in zip(batch.valid_inds, v):
+                for i, sub_val in zip(batch.valid_indices, v):
                     batch_reply[i][k] = sub_val
 
         # broadcast the metrics back
