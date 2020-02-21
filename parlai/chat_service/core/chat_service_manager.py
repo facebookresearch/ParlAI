@@ -355,6 +355,7 @@ class ChatServiceManager(ABC):
                     'World {} had error {}'.format(task_id, repr(e)),
                     should_print=True,
                 )
+                traceback.print_exc(file=sys.stdout)
                 if self.debug:
                     raise e
 

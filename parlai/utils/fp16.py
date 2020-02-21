@@ -402,6 +402,13 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                 param = id_map[k]
                 self.optimizer.state[param] = v
 
+    @property
+    def loss_scale(self):
+        """
+        Convenience function which TorchAgent calls to get current scale value.
+        """
+        return self.scaler.loss_scale
+
     def zero_grad(self):
         """
         Clears the gradients of all optimized parameters.
