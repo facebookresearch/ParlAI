@@ -247,13 +247,15 @@ class PolyEncoderModule(torch.nn.Module):
     See https://arxiv.org/abs/1905.01969 for more details
     """
 
-    def __init__(self, opt, dict, null_idx):
+    def __init__(self, opt, dict_, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
         self.encoder_ctxt = self.get_encoder(
-            opt=opt, dict=dict, null_idx=null_idx, reduction_type=None
+            opt=opt, dict_=dict_, null_idx=null_idx, reduction_type=None
         )
-        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
+        self.encoder_cand = self.get_encoder(
+            opt, dict_, null_idx, opt['reduction_type']
+        )
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
@@ -298,13 +300,13 @@ class PolyEncoderModule(torch.nn.Module):
                 get_weights=False,
             )
 
-    def get_encoder(self, opt, dict, null_idx, reduction_type):
+    def get_encoder(self, opt, dict_, null_idx, reduction_type):
         """
         Return encoder, given options.
 
         :param opt:
             opt dict
-        :param dict:
+        :param dict_:
             dictionary agent
         :param null_idx:
             null/pad index into dict
@@ -316,14 +318,14 @@ class PolyEncoderModule(torch.nn.Module):
         """
         n_positions = get_n_positions_from_options(opt)
         embeddings = self._get_embeddings(
-            dict=dict, null_idx=null_idx, embedding_size=opt['embedding_size']
+            dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
         )
         return TransformerEncoder(
             n_heads=opt['n_heads'],
             n_layers=opt['n_layers'],
             embedding_size=opt['embedding_size'],
             ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict),
+            vocabulary_size=len(dict_),
             embedding=embeddings,
             dropout=opt['dropout'],
             attention_dropout=opt['attention_dropout'],
@@ -339,8 +341,10 @@ class PolyEncoderModule(torch.nn.Module):
             output_scaling=opt['output_scaling'],
         )
 
-    def _get_embeddings(self, dict, null_idx, embedding_size):
-        embeddings = torch.nn.Embedding(len(dict), embedding_size, padding_idx=null_idx)
+    def _get_embeddings(self, dict_, null_idx, embedding_size):
+        embeddings = torch.nn.Embedding(
+            len(dict_), embedding_size, padding_idx=null_idx
+        )
         torch.nn.init.normal_(embeddings.weight, 0, embedding_size ** -0.5)
         return embeddings
 

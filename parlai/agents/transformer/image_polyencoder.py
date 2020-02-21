@@ -141,7 +141,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
     """
 
     def __init__(self, opt, dict_, null_idx):
-        super().__init__(opt=opt, dict=dict_, null_idx=null_idx)
+        super().__init__(opt=opt, dict_=dict_, null_idx=null_idx)
         self.encoder_ctxt = self.get_encoder(opt=opt, dict_=dict_, null_idx=null_idx)
 
     def get_encoder(self, opt, dict_, null_idx):
@@ -159,7 +159,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
         """
         n_positions = get_n_positions_from_options(opt)
         embeddings = self._get_embeddings(
-            dict=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
+            dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
         )
         return ContextWithImageEncoder(
             n_heads=opt['n_heads'],
