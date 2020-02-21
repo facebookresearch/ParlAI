@@ -13,7 +13,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import AverageMetric, Metric
+from parlai.core.metrics import AverageMetric
 from collections import defaultdict
 
 import torch
@@ -297,7 +297,6 @@ class TorchClassifierAgent(TorchAgent):
         """
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
-        self.metrics['examples'] = 0
 
     def _report_prec_recall_metrics(self, confmat, class_name, metrics):
         """
@@ -341,36 +340,29 @@ class TorchClassifierAgent(TorchAgent):
         Report loss as well as precision, recall, and F1 metrics.
         """
         m = super().report()
-        examples = self.metrics['examples']
-        if examples > 0:
-            # TODO: upgrade the confusion matrix to newer metrics
-            # get prec/recall metrics
-            confmat = self.metrics['confusion_matrix']
-            if self.opt.get('get_all_metrics'):
-                metrics_list = self.class_list
-            else:
-                # only give prec/recall metrics for ref class
-                metrics_list = [self.ref_class]
+        # TODO: upgrade the confusion matrix to newer metrics
+        # get prec/recall metrics
+        confmat = self.metrics['confusion_matrix']
+        if self.opt.get('get_all_metrics'):
+            metrics_list = self.class_list
+        else:
+            # only give prec/recall metrics for ref class
+            metrics_list = [self.ref_class]
 
-            examples_per_class = []
-            for class_i in metrics_list:
-                class_total = self._report_prec_recall_metrics(confmat, class_i, m)
-                examples_per_class.append(class_total)
+        examples_per_class = []
+        for class_i in metrics_list:
+            class_total = self._report_prec_recall_metrics(confmat, class_i, m)
+            examples_per_class.append(class_total)
 
-            if len(examples_per_class) > 1:
-                # get weighted f1
-                f1 = 0
-                total_exs = sum(examples_per_class)
-                for i in range(len(self.class_list)):
-                    f1 += (examples_per_class[i] / total_exs) * m[
-                        'class_{}_f1'.format(self.class_list[i])
-                    ]
-                m['weighted_f1'] = f1
-
-        for k, v in m.items():
-            if isinstance(v, Metric):
-                v = v.value()
-            m[k] = round_sigfigs(v, 4)
+        if len(examples_per_class) > 1:
+            # get weighted f1
+            f1 = 0
+            total_exs = sum(examples_per_class)
+            for i in range(len(self.class_list)):
+                f1 += (examples_per_class[i] / total_exs) * m[
+                    'class_{}_f1'.format(self.class_list[i])
+                ]
+            m['weighted_f1'] = f1
 
         return m
 
