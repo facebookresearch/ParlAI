@@ -231,11 +231,11 @@ class TransformerRankerAgent(TorchRankerAgent):
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
 
-    def batchify(self, obs_batch, sort=False):
+    def batchify(self, obs_batch):
         """
         Override so that we can add memories to the Batch object.
         """
-        batch = super().batchify(obs_batch, sort)
+        batch = super().batchify(obs_batch)
         if self.opt['use_memories']:
             valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
             valid_inds, exs = zip(*valid_obs)

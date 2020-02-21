@@ -109,11 +109,11 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
             personalities=torch.ones(batchsize, self.opt.get('embedding_size')).cuda(),
         )
 
-    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
+    def batchify(self, obs_batch: List[Message]) -> Batch:
         """
         Override to handle images.
         """
-        batch = super().batchify(obs_batch, sort)
+        batch = super().batchify(obs_batch)
 
         def _process_img(img):
             if img is not None and isinstance(img, torch.Tensor):

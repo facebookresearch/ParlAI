@@ -210,13 +210,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
         else:
             return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
-    def batchify(self, *args, **kwargs):
-        """
-        Override batchify options for seq2seq.
-        """
-        kwargs['sort'] = False  # need sorted for pack_padded
-        return super().batchify(*args, **kwargs)
-
     def state_dict(self):
         """
         Get the model states for saving.

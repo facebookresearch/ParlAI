@@ -20,7 +20,7 @@ for the paper, we have kept this file mostly the same.
 
 from parlai.core.torch_agent import TorchAgent, Output, Batch
 from parlai.utils.misc import round_sigfigs
-from parlai.utils.torch import padded_tensor, argsort, neginf
+from parlai.utils.torch import padded_tensor, neginf
 from parlai.utils.thread import SharedTable
 from .modules import Seq2seq, opt_to_kwargs
 from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn
@@ -654,12 +654,10 @@ class ControllableSeq2seqAgent(TorchAgent):
         """
         Override batchify options for seq2seq.
         """
-        kwargs['sort'] = True  # need sorted for pack_padded
         batch = super().batchify(*args, **kwargs)
 
         # Get some args needed for batchify
         obs_batch = args[0]
-        sort = kwargs['sort']
         is_valid = (
             lambda obs: 'text_vec' in obs or 'image' in obs
         )  # from TorchAgent.batchify
@@ -676,17 +674,6 @@ class ControllableSeq2seqAgent(TorchAgent):
             return Batch()
 
         valid_inds, exs = zip(*valid_obs)
-
-        # TEXT
-        xs, x_lens = None, None
-        if any('text_vec' in ex for ex in exs):
-            _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
-            if sort:
-                sort = False  # now we won't sort on labels
-                xs, x_lens, valid_inds, exs = argsort(
-                    x_lens, xs, x_lens, valid_inds, exs, descending=True
-                )
 
         # ======== END COPIED FROM TORCHAGENT ========
 
