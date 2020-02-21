@@ -13,7 +13,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import AverageMetric
+from parlai.core.metrics import AverageMetric, Metric
 from collections import defaultdict
 
 import torch
@@ -368,6 +368,8 @@ class TorchClassifierAgent(TorchAgent):
                 m['weighted_f1'] = f1
 
         for k, v in m.items():
+            if isinstance(v, Metric):
+                v = v.value()
             m[k] = round_sigfigs(v, 4)
 
         return m
