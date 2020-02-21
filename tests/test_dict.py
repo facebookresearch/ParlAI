@@ -85,10 +85,10 @@ class TestDictionary(unittest.TestCase):
         )
 
     def test_byte_level_bpe_tokenize(self):
-        # test loading
-        import parlai.scripts.train_model as tms
-
-        parser = tms.setup_args()
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
         parser.set_params(
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,

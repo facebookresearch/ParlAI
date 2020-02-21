@@ -11,7 +11,7 @@ from typing import List
 class HuggingFaceBpeHelper(object):
     @staticmethod
     def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('HuggingFaceBpeHelper Arguments')
+        parser = argparser.add_argument_group('ByteLevelBPE Arguments')
         parser.add_argument(
             '--bpe-vocab', type=str, help='path to pre-trained tokenizer vocab'
         )
@@ -25,15 +25,15 @@ class HuggingFaceBpeHelper(object):
             from tokenizers import ByteLevelBPETokenizer
         except ImportError:
             raise ImportError(
-                'Please install huggingface tokenizer with: pip install tokenizers'
+                'Please install HuggingFace tokenizer with: pip install tokenizers'
             )
 
-        if opt.get('bpe_vocab', None) is None:
+        if 'bpe_vocab' in opt:
             raise ValueError('--bpe-vocab is required for loading pretrained tokenizer')
-        if opt.get('bpe_merge', None) is None:
+        if 'bpe_merge' in opt:
             raise ValueError('--bpe-merge is required for loading pretrained tokenizer')
-        self.vocab_path = opt.get('bpe_vocab')
-        self.merge_path = opt.get('bpe_merge')
+        self.vocab_path = opt['bpe_vocab']
+        self.merge_path = opt['bpe_merge']
         self.tokenizer = ByteLevelBPETokenizer(self.vocab_path, self.merge_path)
 
     def encode(self, text: str) -> List[str]:

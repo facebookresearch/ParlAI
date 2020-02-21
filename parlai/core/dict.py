@@ -351,12 +351,11 @@ class DictionaryAgent(Agent):
             opt_for_byte_level_bpe = copy.copy(opt)
             if loaded:
                 dict_basename = os.path.splitext(opt['dict_file'])[0]
-                if os.path.isfile(
-                    '{}-merges.txt'.format(dict_basename)
-                ) and os.path.isfile('{}-vocab.json'.format(dict_basename)):
+                if os.path.isfile('{}-merges.txt'.format(dict_basename)):
                     opt_for_byte_level_bpe['bpe_vocab'] = '{}-vocab.json'.format(
                         dict_basename
                     )
+                if os.path.isfile('{}-vocab.json'.format(dict_basename)):
                     opt_for_byte_level_bpe['bpe_merge'] = '{}-merges.txt'.format(
                         dict_basename
                     )
@@ -728,6 +727,7 @@ class DictionaryAgent(Agent):
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
         if self.tokenizer == 'bytelevelbpe':
+            # This saves filename-vocab.json and finlename-merges.txt as hugging face tokenizer do
             self.byte_level_bpe.tokenizer.save(
                 os.path.dirname(filename), os.path.splitext(filename)[0]
             )
