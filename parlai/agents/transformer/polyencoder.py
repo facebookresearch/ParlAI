@@ -559,7 +559,7 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         """
         batch = super().batchify(obs_batch, sort)
 
-        def _process_features(features: torch.Tensor) -> torch.Tensor:
+        def _process_image_features(features: torch.Tensor) -> torch.Tensor:
             assert features.size() == (self.image_features_dim,)
             if self.use_cuda:
                 features = features.cuda()
@@ -579,14 +579,14 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
         # Process all image feature vectors, or add in zero vectors if missing
         processed_features_list = []
-        processed_zero_features = _process_features(
+        processed_zero_features = _process_image_features(
             torch.zeros((self.image_features_dim,))
         )
         for orig_features in batch.image:
             if orig_features is None:
                 processed_features_list.append(processed_zero_features)
             elif isinstance(orig_features, torch.Tensor):
-                processed_features_list.append(_process_features(orig_features))
+                processed_features_list.append(_process_image_features(orig_features))
             else:
                 raise ValueError('Unsupported image feature format!')
 
