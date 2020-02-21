@@ -280,7 +280,7 @@ class TorchClassifierAgent(TorchAgent):
 
         if batch.labels is None:
             # interactive mode
-            if self.opt.get('print_scores', False):
+            if self.opt.get('interactive_mode', False):
                 preds = self._format_interactive_output(probs, prediction_id)
         else:
             labels = self._get_labels(batch)
@@ -289,7 +289,10 @@ class TorchClassifierAgent(TorchAgent):
             loss = loss.mean()
             self._update_confusion_matrix(batch, preds)
 
-        return Output(preds)
+        if self.opt.get('print_scores', False):
+            return Output(preds, probs=probs.cpu())
+        else:
+            return Output(preds)
 
     def reset_metrics(self):
         """
