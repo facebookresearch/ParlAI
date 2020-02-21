@@ -110,9 +110,9 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
         return batch
 
-    def _model_context_input(self, batch) -> Dict[str, Any]:
+    def _model_context_input(self, batch) -> tuple:
         """Override PolyencoderAgent's context inputs into the model."""
-        return {'ctxt_tokens': batch.text_vec, 'ctxt_image': batch.image}
+        return (batch.text_vec, batch.image)
 
     def load_state_dict(self, state_dict):
         """
