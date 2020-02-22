@@ -955,6 +955,9 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         """
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
+        # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
+        # we need to force their probability of generation to be 0.
+        output[:, :, self.start_idx] = neginf(output.dtype)
         return output
 
 
