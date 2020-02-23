@@ -251,13 +251,18 @@ class PolyEncoderModule(torch.nn.Module):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
         self.encoder_ctxt = self.get_encoder(
-            opt=opt, dict_=dict_, null_idx=null_idx, reduction_type=None
+            opt=opt,
+            dict_=dict_,
+            null_idx=null_idx,
+            reduction_type=None,
+            for_context=True,
         )
         self.encoder_cand = self.get_encoder(
             opt=opt,
             dict_=dict_,
             null_idx=null_idx,
             reduction_type=opt['reduction_type'],
+            for_context=False,
         )
 
         self.type = opt['polyencoder_type']
@@ -303,19 +308,21 @@ class PolyEncoderModule(torch.nn.Module):
                 get_weights=False,
             )
 
-    def get_encoder(self, opt, dict_, null_idx, reduction_type):
+    def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """
         Return encoder, given options.
 
         :param opt:
-            opt dict
+            opt dictionary
         :param dict_:
             dictionary agent
         :param null_idx:
             null/pad index into dict
-        :reduction_type:
+        :param reduction_type:
             reduction type for the encoder
-
+        :param for_context:
+            whether this is the context encoder (as opposed to the candidate encoder). 
+            Useful for subclasses.
         :return:
             a TransformerEncoder, initialized correctly
         """

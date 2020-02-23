@@ -206,7 +206,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         :param src_tokens:
             A bsz x seq_len tensor of src_tokens; possibly None
         :param image_features:
-            Either a list of (torch.tensor) or a tensor of shape (batch_size, 
+            Either a list of (torch.tensor) or a tensor of shape (batch_size,
             self.img_dim)
 
         :return:

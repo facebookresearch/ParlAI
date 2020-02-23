@@ -146,48 +146,61 @@ class ImagePolyencoderModule(PolyEncoderModule):
         super().__init__(opt=opt, dict_=dict_, null_idx=null_idx)
         self.encoder_ctxt = self.get_encoder(opt=opt, dict_=dict_, null_idx=null_idx)
 
-    def get_encoder(self, opt, dict_, null_idx, reduction_type=None):
+    def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """
         Return encoder that allows for image features to be passed in, given options.
 
         :param opt:
-            opt dict
+            opt dictionary
         :param dict_:
             dictionary agent
         :param null_idx:
             null/pad index into dict
         :param reduction_type: only used for compatibility with the superclass method
+        :param for_context:
+            whether this is the context encoder (as opposed to the candidate encoder)
         :return:
-            a ContextWithImageEncoder, initialized correctly
+            either a TransformerEncoder or a ContextWithImageEncoder, initialized
+            correctly
         """
-        if reduction_type is not None:
-            raise NotImplementedError('No encoder output reductions supported!')
-        n_positions = get_n_positions_from_options(opt)
-        embeddings = self._get_embeddings(
-            dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
-        )
-        return ContextWithImageEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict_),
-            embedding=embeddings,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
-            padding_idx=null_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            n_positions=n_positions,
-            n_segments=2,
-            activation=opt['activation'],
-            variant=opt['variant'],
-            output_scaling=opt['output_scaling'],
-            image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
-            image_features_dim=opt['polyencoder_image_features_dim'],
-            image_combination_mode=opt['polyencoder_image_combination_mode'],
-        )
+        if for_context:
+            if reduction_type is not None:
+                raise NotImplementedError('No encoder output reductions supported!')
+            n_positions = get_n_positions_from_options(opt)
+            embeddings = self._get_embeddings(
+                dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
+            )
+            return ContextWithImageEncoder(
+                n_heads=opt['n_heads'],
+                n_layers=opt['n_layers'],
+                embedding_size=opt['embedding_size'],
+                ffn_size=opt['ffn_size'],
+                vocabulary_size=len(dict_),
+                embedding=embeddings,
+                dropout=opt['dropout'],
+                attention_dropout=opt['attention_dropout'],
+                relu_dropout=opt['relu_dropout'],
+                padding_idx=null_idx,
+                learn_positional_embeddings=opt['learn_positional_embeddings'],
+                embeddings_scale=opt['embeddings_scale'],
+                n_positions=n_positions,
+                n_segments=2,
+                activation=opt['activation'],
+                variant=opt['variant'],
+                output_scaling=opt['output_scaling'],
+                image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
+                image_features_dim=opt['polyencoder_image_features_dim'],
+                image_combination_mode=opt['polyencoder_image_combination_mode'],
+            )
+        else:
+            # The candidate encoder is the same as for PolyEncoderModule
+            return super().get_encoder(
+                opt=opt,
+                dict_=dict_,
+                null_idx=null_idx,
+                reduction_type=reduction_type,
+                for_context=for_context,
+            )
 
     def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Override PolyEncoderModule's inputs into the context encoder."""
