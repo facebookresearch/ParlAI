@@ -142,10 +142,6 @@ class ImagePolyencoderModule(PolyEncoderModule):
     context encoding.
     """
 
-    def __init__(self, opt, dict_, null_idx):
-        super().__init__(opt=opt, dict_=dict_, null_idx=null_idx)
-        self.encoder_ctxt = self.get_encoder(opt=opt, dict_=dict_, null_idx=null_idx)
-
     def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """
         Return encoder that allows for image features to be passed in, given options.
