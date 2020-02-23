@@ -226,8 +226,8 @@ class PolyencoderAgent(TorchRankerAgent):
 
         >>> model(**_model_context_input(batch))
 
-        This is intentionally overridable so that richer models can pass the
-        additional inputs.
+        This is intentionally overridable so that richer models can pass additional
+        inputs.
         """
         return {'ctxt_tokens': batch.text_vec}
 
@@ -419,7 +419,9 @@ class PolyEncoderModule(torch.nn.Module):
             )
             bsz = ctxt_inputs['ctxt_tokens'].size(0)
             # get context_representation. Now that depends on the cases.
-            ctxt_out, ctxt_mask = self.encoder_ctxt(**ctxt_inputs)
+            ctxt_out, ctxt_mask = self.encoder_ctxt(
+                **self._context_encoder_input(ctxt_inputs)
+            )
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
@@ -445,6 +447,22 @@ class PolyEncoderModule(torch.nn.Module):
                     ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
+
+    def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Return the inputs to the context encoder as a dictionary.
+
+        Must return a dictionary.  This will be passed directly into the model via
+        `**kwargs`, i.e.,
+
+        >>> encoder_ctxt(**_context_encoder_input(ctxt_inputs))
+
+        This is needed because the context encoder's forward function may have different
+        argument names than that of the model itself. This is intentionally overridable
+        so that richer models can pass additional inputs.
+        """
+        assert set(ctxt_inputs.keys()) == {'ctxt_tokens'}
+        return {'input': ctxt_inputs['ctxt_tokens']}
 
     def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
         """

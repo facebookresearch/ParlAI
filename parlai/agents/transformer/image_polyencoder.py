@@ -188,3 +188,11 @@ class ImagePolyencoderModule(PolyEncoderModule):
             image_features_dim=opt['polyencoder_image_features_dim'],
             image_combination_mode=opt['polyencoder_image_combination_mode'],
         )
+
+    def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Override PolyEncoderModule's inputs into the context encoder."""
+        assert set(ctxt_inputs.keys()) == {'ctxt_tokens', 'ctxt_image'}
+        return {
+            'src_tokens': ctxt_inputs['ctxt_tokens'],
+            'image_features': ctxt_inputs['ctxt_image'],
+        }
