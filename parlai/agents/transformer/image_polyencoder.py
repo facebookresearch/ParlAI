@@ -7,7 +7,8 @@
 """
 Poly-encoder agent that ingests image features.
 """
-from typing import List, Dict, Any
+
+from typing import Any, Dict, List
 
 import torch
 
@@ -122,15 +123,14 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         """
         for tensor in ['dummy_image_enc', 'ones_mask']:
             key = f'encoder_ctxt.{tensor}'
-            val = getattr(self.model.encoder_ctxt, tensor, None)
-            if val is not None and key not in state_dict:
-                state_dict[key] = val
+            if hasattr(self.model.encoder_ctxt, tensor) and key not in state_dict:
+                state_dict[key] = getattr(self.model.encoder_ctxt, tensor)
         if hasattr(self.model.encoder_ctxt, 'image_encoder'):
             for tensor in ['weight', 'bias']:
                 key = f'encoder_ctxt.image_encoder.0.{tensor}'
-                val = getattr(self.model.encoder_ctxt.image_encoder[0], tensor, None)
-                if val is not None and key not in state_dict:
-                    state_dict[key] = val
+                encoder_layer = self.model.encoder_ctxt.image_encoder[0]
+                if hasattr(encoder_layer, tensor) and key not in state_dict:
+                    state_dict[key] = getattr(encoder_layer, tensor)
         super().load_state_dict(state_dict)
 
 
