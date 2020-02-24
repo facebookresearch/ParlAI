@@ -93,6 +93,12 @@ class TorchClassifierAgent(TorchAgent):
             default=None,
             help='loads the list of classes from a file',
         )
+        parser.add_argument(
+            '--ignore-labels',
+            type='bool',
+            default=None,
+            help='Ignore labels provided to model',
+        )
 
     def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
@@ -200,8 +206,9 @@ class TorchClassifierAgent(TorchAgent):
         try:
             labels_indices_list = [self.class_dict[label] for label in batch.labels]
         except KeyError as e:
-            print('One of your labels is not in the class list.')
+            warn_once('One of your labels is not in the class list.')
             raise e
+
         labels_tensor = torch.LongTensor(labels_indices_list)
         if self.use_cuda:
             labels_tensor = labels_tensor.cuda()
@@ -278,7 +285,7 @@ class TorchClassifierAgent(TorchAgent):
             prediction_id = ref_prob <= self.threshold
         preds = [self.class_list[idx] for idx in prediction_id]
 
-        if batch.labels is None:
+        if batch.labels is None or self.opt['ignore_labels']:
             # interactive mode
             if self.opt.get('print_scores', False):
                 preds = self._format_interactive_output(probs, prediction_id)
