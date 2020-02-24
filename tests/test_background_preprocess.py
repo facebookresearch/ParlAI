@@ -168,9 +168,7 @@ class TestBackgroundPreprocess(unittest.TestCase):
                 assertion = self.assertLess if short_final_eval else self.assertEqual
                 assertion(rep['exs'], NUM_TEST + NUM_TEST * 4, f'args: {args}')
                 assertion(
-                    rep['integration_tests:nocandidate/exs'],
-                    NUM_TEST,
-                    f'args: {args}',
+                    rep['integration_tests:nocandidate/exs'], NUM_TEST, f'args: {args}'
                 )
                 assertion(
                     rep['integration_tests:multiturn_nocandidate/exs'],
