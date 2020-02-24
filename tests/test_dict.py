@@ -19,6 +19,30 @@ import os
 import shutil
 import unittest
 
+DEFAULT_BYTELEVEL_BPE_VOCAB = (
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
+)
+DEFAULT_BYTELEVEL_BPE_MERGE = (
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-merges.txt'
+)
+BYTELEVEL_BPE_RESULT = [
+    'H',
+    'ello',
+    ',',
+    'Ġ',
+    'P',
+    'ar',
+    'l',
+    'A',
+    'I',
+    '!',
+    'Ġ',
+    'ð',
+    'Ł',
+    'ĺ',
+    'Ģ',
+]
+
 
 class TestDictionary(unittest.TestCase):
     """
@@ -58,6 +82,86 @@ class TestDictionary(unittest.TestCase):
             ),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
+        )
+
+    def test_byte_level_bpe_tokenize(self):
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            bpe_add_prefix_space=False,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
+        vocab_size = agent.byte_level_bpe.tokenizer.get_vocab_size()
+        with testing_utils.tempdir() as tmpdir:
+            path = os.path.join(tmpdir, 'dict-checkpoint')
+            agent.save(filename=path)
+            agent.load(filename=path)
+        # Test loading / saving
+        self.assertEqual(vocab_size, agent.byte_level_bpe.tokenizer.get_vocab_size())
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
+        # Test special token
+        self.assertEqual(
+            agent.txt2vec(agent.start_token), [agent.tok2ind[agent.start_token]]
+        )
+
+    def test_byte_level_bpe_tokenize_prefix_space(self):
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            ['Ġ'] + BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT],
         )
 
     def test_space_tokenize(self):
