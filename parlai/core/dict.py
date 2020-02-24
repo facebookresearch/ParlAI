@@ -810,10 +810,16 @@ class DictionaryAgent(Agent):
         if self.tokenizer == 'gpt2' and not self.opt.get('bpe_debug', False):
             return self.gpt2_bpe.decode(self[int(idx)] for idx in vector)
         if self.tokenizer == 'bytelevelbpe' and not self.opt.get('bpe_debug', False):
+            # We add special tokens in the beginning of ParlAI dict but in the
+            # end of Hugging Face dict,there is an offset of 4 between them.
             vector = [
                 idx + len(self.tok2ind) - 4 if idx < 4 else idx - 4 for idx in vector
             ]
-            return self.byte_level_bpe.tokenizer.decode(vector)
+            text = self.byte_level_bpe.tokenizer.decode(vector)
+            if self.byte_level_bpe.add_prefix_space:
+                assert text.startswith(' ')
+                text = text.lstrip(' ')
+            return text
         # if we want to debug into this gpt2 bpe, you will get next line
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings

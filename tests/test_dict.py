@@ -93,6 +93,7 @@ class TestDictionary(unittest.TestCase):
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            bpe_add_prefix_space=False,
         )
         opt = parser.parse_args([], print_args=False)
         agent = DictionaryAgent(opt)
@@ -134,6 +135,33 @@ class TestDictionary(unittest.TestCase):
         # Test special token
         self.assertEqual(
             agent.txt2vec(agent.start_token), [agent.tok2ind[agent.start_token]]
+        )
+
+    def test_byte_level_bpe_tokenize_prefix_space(self):
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            ['Ġ'] + BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT],
         )
 
     def test_space_tokenize(self):
