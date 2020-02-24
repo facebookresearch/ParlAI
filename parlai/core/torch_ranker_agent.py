@@ -156,7 +156,7 @@ class TorchRankerAgent(TorchAgent):
             '--return-scores',
             type='bool',
             default=False,
-            help='Return sorted utterance scores from eval_step'
+            help='Return sorted utterance scores from eval_step',
         )
 
     def __init__(self, opt: Opt, shared=None):
