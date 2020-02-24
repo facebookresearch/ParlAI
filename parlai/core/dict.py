@@ -810,6 +810,9 @@ class DictionaryAgent(Agent):
         if self.tokenizer == 'gpt2' and not self.opt.get('bpe_debug', False):
             return self.gpt2_bpe.decode(self[int(idx)] for idx in vector)
         if self.tokenizer == 'bytelevelbpe' and not self.opt.get('bpe_debug', False):
+            vector = [
+                idx + len(self.tok2ind) - 4 if idx < 4 else idx - 4 for idx in vector
+            ]
             return self.byte_level_bpe.tokenizer.decode(vector)
         # if we want to debug into this gpt2 bpe, you will get next line
         text = delimiter.join(self[int(idx)] for idx in vector)
@@ -874,15 +877,13 @@ class DictionaryAgent(Agent):
         if self.tokenizer != 'bytelevelbpe':
             return
         special_tokens = [
+            self.unk_token,
             self.start_token,
             self.end_token,
-            self.unk_token,
             self.null_token,
         ]
         self.byte_level_bpe.tokenizer.add_special_tokens(special_tokens)
-        self.ind2tok = {}
-        self.tok2ind = {}
-        for i in range(self.byte_level_bpe.tokenizer.get_vocab_size()):
+        for i in range(self.byte_level_bpe.tokenizer.get_vocab_size() - 4):
             token = self.byte_level_bpe.tokenizer.id_to_token(i)
             self.add_token(token)
             # We don't have access to the hugging face word frequency table, just set it to 1 instead

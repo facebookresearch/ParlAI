@@ -106,6 +106,31 @@ class TestDictionary(unittest.TestCase):
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
+        vocab_size = agent.byte_level_bpe.tokenizer.get_vocab_size()
+        with testing_utils.tempdir() as tmpdir:
+            path = os.path.join(tmpdir, 'dict-checkpoint')
+            agent.save(filename=path)
+            agent.load(filename=path)
+        # Test loading / saving
+        self.assertEqual(vocab_size, agent.byte_level_bpe.tokenizer.get_vocab_size())
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
 
     def test_space_tokenize(self):
         """
