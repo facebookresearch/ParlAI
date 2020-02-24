@@ -114,7 +114,9 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         return batch
 
     def _model_context_input(self, batch) -> Dict[str, Any]:
-        """Override PolyencoderAgent's context inputs into the model."""
+        """
+        Override PolyencoderAgent's context inputs into the model.
+        """
         return {'ctxt_tokens': batch.text_vec, 'ctxt_image': batch.image}
 
     def load_state_dict(self, state_dict):
@@ -147,8 +149,8 @@ class ImagePolyencoderModule(PolyEncoderModule):
         Return encoder that allows for image features to be passed in, given options.
 
         :param opt:
-            opt dictionary
-        :param dict_:
+            option dictionary
+        :param dict:
             dictionary agent
         :param null_idx:
             null/pad index into dict
@@ -199,7 +201,9 @@ class ImagePolyencoderModule(PolyEncoderModule):
             )
 
     def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Override PolyEncoderModule's inputs into the context encoder."""
+        """
+        Override PolyEncoderModule's inputs into the context encoder.
+        """
         assert set(ctxt_inputs.keys()) == {'ctxt_tokens', 'ctxt_image'}
         return {
             'src_tokens': ctxt_inputs['ctxt_tokens'],

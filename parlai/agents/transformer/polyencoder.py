@@ -313,15 +313,15 @@ class PolyEncoderModule(torch.nn.Module):
         Return encoder, given options.
 
         :param opt:
-            opt dictionary
-        :param dict_:
+            option dictionary
+        :param dict:
             dictionary agent
         :param null_idx:
             null/pad index into dict
         :param reduction_type:
             reduction type for the encoder
         :param for_context:
-            whether this is the context encoder (as opposed to the candidate encoder). 
+            whether this is the context encoder (as opposed to the candidate encoder).
             Useful for subclasses.
         :return:
             a TransformerEncoder, initialized correctly
