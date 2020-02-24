@@ -314,12 +314,14 @@ def distributed_train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if 'dict_file' not in opt:
             opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
 
-        parser = mp_train.setup_args()
-        popt = _forced_parse(parser, opt)
-
         # we need a prebuilt dictionary
         parser = build_dict.setup_args()
+        popt = _forced_parse(parser, opt)
         build_dict.build_dict(popt)
+
+        # now we can train
+        parser = mp_train.setup_args()
+        popt = _forced_parse(parser, opt)
 
         valid, test = mp_train.launch_and_train(popt, 31338)
 

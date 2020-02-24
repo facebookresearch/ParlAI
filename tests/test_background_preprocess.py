@@ -134,12 +134,12 @@ class TestBackgroundPreprocess(unittest.TestCase):
                         rep['exs'], num_no_cand + num_multiturn, f'args: {args}'
                     )
                     self.assertEqual(
-                        rep['tasks']['integration_tests:nocandidate']['exs'],
+                        rep['integration_tests:nocandidate/exs'],
                         num_no_cand,
                         f'args: {args}',
                     )
                     self.assertEqual(
-                        rep['tasks']['integration_tests:multiturn_nocandidate']['exs'],
+                        rep['integration_tests:multiturn_nocandidate/exs'],
                         num_multiturn,
                         f'args: {args}',
                     )
@@ -168,29 +168,17 @@ class TestBackgroundPreprocess(unittest.TestCase):
                 assertion = self.assertLess if short_final_eval else self.assertEqual
                 assertion(rep['exs'], NUM_TEST + NUM_TEST * 4, f'args: {args}')
                 assertion(
-                    rep['tasks']['integration_tests:nocandidate']['exs'],
+                    rep['integration_tests:nocandidate/exs'],
                     NUM_TEST,
                     f'args: {args}',
                 )
                 assertion(
-                    rep['tasks']['integration_tests:multiturn_nocandidate']['exs'],
+                    rep['integration_tests:multiturn_nocandidate/exs'],
                     NUM_TEST * 4,
                     f'args: {args}',
                 )
 
             self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
-
-    @unittest.skipIf(True, 'Currently Skipping because of MP Train Testing Bug')
-    def test_singletask_distributed(self):
-        """
-        Distributed Training.
-        """
-        args = BASE_ARGS.copy()
-        args.update(MULTIPROCESS_ARGS)
-        valid, test = testing_utils.distributed_train_model(args)
-        for report in [valid, test]:
-            self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
-        self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
 
     def test_stream(self):
         """
@@ -201,6 +189,17 @@ class TestBackgroundPreprocess(unittest.TestCase):
         args['batchsize'] = 8
         args['datatype'] = 'train:stream'
         valid, test = testing_utils.train_model(args)
+        for report in [valid, test]:
+            self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
+        self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
+
+    def test_singletask_distributed(self):
+        """
+        Distributed Training.
+        """
+        args = BASE_ARGS.copy()
+        args.update(MULTIPROCESS_ARGS)
+        valid, test = testing_utils.distributed_train_model(args)
         for report in [valid, test]:
             self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
         self.assertEqual(valid['total_train_updates'], test['total_train_updates'])

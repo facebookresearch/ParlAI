@@ -84,7 +84,11 @@ def multiprocess_train(
         distributed_utils.sync_object(None)
 
         # Run the actual training
-        return single_train.TrainLoop(opt).train()
+        retval = single_train.TrainLoop(opt).train()
+
+        dist.destroy_process_group()
+
+        return retval
 
 
 def launch_and_train(opt, port):
@@ -103,7 +107,11 @@ def launch_and_train(opt, port):
 
     try:
         retval = multiprocess_train(0, opt, port)
-        spawncontext.join()
+        if opt.get('num_workers', 1) > 1:
+            for p in spawncontext.processes:
+                p.terminate()
+        else:
+            spawncontext.join()
         return retval
     except KeyboardInterrupt:
         # tell the subprocesses to stop too
