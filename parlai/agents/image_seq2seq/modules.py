@@ -137,8 +137,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         for _ in range(self.n_img_layers - 1):
             image_layers += [
                 nn.ReLU(),
-                nn.Dropout(p=self.opt['dropout']),
-                nn.Linear(self.img_dim, self.embedding_size),
+                nn.Dropout(p=self.dropout_frac),
+                nn.Linear(self.embedding_size, self.embedding_size),
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 

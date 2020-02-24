@@ -429,7 +429,8 @@ class TransformerEncoder(nn.Module):
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout = nn.Dropout(p=dropout)
+        self.dropout_frac = dropout
+        self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
 

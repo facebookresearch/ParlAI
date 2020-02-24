@@ -128,11 +128,11 @@ class ImagePolyencoderAgent(PolyencoderAgent):
             if hasattr(self.model.encoder_ctxt, tensor) and key not in state_dict:
                 state_dict[key] = getattr(self.model.encoder_ctxt, tensor)
         if hasattr(self.model.encoder_ctxt, 'image_encoder'):
-            for tensor in ['weight', 'bias']:
-                key = f'encoder_ctxt.image_encoder.0.{tensor}'
-                encoder_layer = self.model.encoder_ctxt.image_encoder[0]
-                if hasattr(encoder_layer, tensor) and key not in state_dict:
-                    state_dict[key] = getattr(encoder_layer, tensor)
+            for layer_idx, layer in enumerate(self.model.encoder_ctxt.image_encoder):
+                for tensor in ['weight', 'bias']:
+                    key = f'encoder_ctxt.image_encoder.{layer_idx}.{tensor}'
+                    if hasattr(layer, tensor) and key not in state_dict:
+                        state_dict[key] = getattr(layer, tensor)
         super().load_state_dict(state_dict)
 
 
