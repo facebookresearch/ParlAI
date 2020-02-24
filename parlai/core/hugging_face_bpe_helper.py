@@ -28,9 +28,9 @@ class HuggingFaceBpeHelper(object):
                 'Please install HuggingFace tokenizer with: pip install tokenizers'
             )
 
-        if 'bpe_vocab' in opt:
+        if 'bpe_vocab' not in opt:
             raise ValueError('--bpe-vocab is required for loading pretrained tokenizer')
-        if 'bpe_merge' in opt:
+        if 'bpe_merge' not in opt:
             raise ValueError('--bpe-merge is required for loading pretrained tokenizer')
         self.vocab_path = opt['bpe_vocab']
         self.merge_path = opt['bpe_merge']
