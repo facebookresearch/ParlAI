@@ -204,7 +204,10 @@ def download(url, path, fname, redownload=False):
                                 pbar.total = total_size
                             pbar.update(len(chunk))
                     break
-            except requests.exceptions.ConnectionError:
+            except (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.ReadTimeout,
+            ):
                 retry -= 1
                 pbar.clear()
                 if retry >= 0:

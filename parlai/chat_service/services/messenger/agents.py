@@ -56,23 +56,21 @@ class MessengerAgent(ChatServiceAgent):
         """
         self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
-    def put_data(self, message):
+    def put_data(self, messenger_data):
         """
         Put data into the message queue if it hasn't already been seen.
         """
-        mid = message['message']['mid']
-        seq = message['message'].get('seq', None)
-        if 'text' not in message['message']:
-            print(
-                'Msg: {} could not be extracted to text format'.format(
-                    message['message']
-                )
-            )
-            return
-        text = message['message'].get('text')
-        if text is None:
-            text = message['message']['payload']
-        img_attempt = True if 'image' in message['message'] else False
+        mid = messenger_data['message']['mid']
+        seq = messenger_data['message'].get('seq', None)
+        message = messenger_data['message']
+        if 'text' not in message:
+            print('Msg: {} could not be extracted to text format'.format(message))
+        text = message.get('text', None)
+        img_attempt = (
+            True
+            if 'attachments' in message and message['attachments'][0]['type'] == 'image'
+            else False
+        )
         if mid not in self.acted_packets:
             self.acted_packets[mid] = {'mid': mid, 'seq': seq, 'text': text}
             # the fields 'report_sender' and 'sticker_sender' below are
@@ -81,13 +79,17 @@ class MessengerAgent(ChatServiceAgent):
                 'episode_done': False,
                 'text': text,
                 'id': self.disp_id,
-                'report_sender': message['message'].get('report_sender', None),
-                'sticker_sender': message.get('sticker_sender', None),
+                'report_sender': message.get('report_sender', None),
+                'sticker_sender': messenger_data.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }
             if img_attempt and self.data.get('allow_images', False):
-                action['image_url'] = message['message'].get('image_url')
-                action['attachment_url'] = message['message'].get('attachment_url')
+                action['image_url'] = message.get('image_url')
+                action['attachment_url'] = message.get('attachment_url')
+                if action['image_url'] is None:
+                    payload = message['attachments'][0].get('payload', {})
+                    action['image_url'] = payload.get('url')
+                action['image'] = action['image_url'] or action['attachment_url']
             self.msg_queue.put(action)
 
     def mark_inactive(self):

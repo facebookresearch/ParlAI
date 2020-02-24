@@ -13,16 +13,15 @@ processes.
 import re
 from abc import ABC, abstractmethod
 from collections import Counter
-from numbers import Number
 import queue
 import functools
-from typing import Union, List, Optional, Tuple, Set, Any
+from typing import Union, List, Optional, Tuple, Set, Any, Dict
 
 import torch
 
 from parlai.core.message import Message
-from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.utils.typing import TScalar
+from parlai.utils.misc import warn_once
+from parlai.utils.typing import TScalar, TVector
 
 try:
     import torch.multiprocessing as multiprocessing
@@ -42,6 +41,11 @@ except ImportError:
     # User doesn't have nltk installed, so we can't use it for bleu
     # We'll just turn off things, but we might want to warn the user
     nltkbleu = None
+
+try:
+    from fairseq import bleu as fairseqbleu
+except ImportError:
+    fairseqbleu = None
 
 try:
     import rouge
@@ -69,10 +73,14 @@ class Metric(ABC):
         """
         pass
 
+    @abstractmethod
+    def __add__(self, other: Any) -> 'Metric':
+        raise NotImplementedError
+
     def __iadd__(self, other):
         return self.__radd__(other)
 
-    def __radd__(self, other):
+    def __radd__(self, other: Any):
         if other is None:
             return self
         return self.__add__(other)
@@ -84,7 +92,10 @@ class Metric(ABC):
         return f'{self.__class__.__name__}({self.value():.4g})'
 
     def __float__(self) -> float:
-        return self.value()
+        return float(self.value())
+
+    def __int__(self) -> int:
+        return int(self.value())
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Metric):
@@ -97,6 +108,14 @@ class Metric(ABC):
             return self.value() < other.value()
         else:
             return self.value() < other
+
+    def __sub__(self, other: Any) -> float:
+        """
+        Used heavily for assertAlmostEqual.
+        """
+        if not isinstance(other, float):
+            raise TypeError('Metrics.__sub__ is intentionally limited to floats.')
+        return self.value() - other
 
     @classmethod
     def as_number(cls, obj: TScalar) -> Union[int, float]:
@@ -114,6 +133,39 @@ class Metric(ABC):
     @classmethod
     def as_int(cls, obj: TScalar) -> int:
         return int(cls.as_number(obj))
+
+    @classmethod
+    def many(cls, *objs: List[TVector]) -> List['Metric']:
+        """
+        Construct many of a Metric from the base parts.
+
+        Useful if you separately compute numerators and denomenators, etc.
+        """
+        lengths = [len(o) for o in objs]
+        if len(set(lengths)) != 1:
+            raise IndexError(f'Uneven {cls.__name__} constructions: {lengths}')
+        return [cls(*items) for items in zip(*objs)]
+
+
+class FixedMetric(Metric):
+    """
+    Fixed metrics are verified to be the same when combined, or throw an error.
+    """
+
+    __slots__ = ('_value',)
+
+    def __init__(self, value: TScalar):
+        self._value = self.as_number(value)
+
+    def __add__(self, other: Optional['FixedMetric']) -> 'FixedMetric':
+        if other is None:
+            return self
+        if self != other:
+            raise ValueError(f"FixedMetrics not the same: {self} and {other}")
+        return self
+
+    def value(self) -> float:
+        return self._value
 
 
 class SumMetric(Metric):
@@ -136,7 +188,8 @@ class SumMetric(Metric):
         if other is None:
             return self
         full_sum = self._sum + other._sum
-        return SumMetric(sum_=full_sum)
+        # always keep the same return type
+        return type(self)(sum_=full_sum)
 
     def value(self) -> float:
         return self._sum
@@ -160,10 +213,24 @@ class AverageMetric(Metric):
             return self
         full_numer: TScalar = self._numer + other._numer
         full_denom: TScalar = self._denom + other._denom
-        return AverageMetric(numer=full_numer, denom=full_denom)
+        # always keep the same return type
+        return type(self)(numer=full_numer, denom=full_denom)
 
     def value(self) -> float:
+        if self._numer == 0 and self._denom == 0:
+            # don't nan out if we haven't counted anything
+            return 0.0
+        if self._denom == 0:
+            return float('nan')
         return self._numer / self._denom
+
+
+class LegacyMetric(AverageMetric):
+    """
+    Legacy Metrics are reported by agent as float.
+    """
+
+    pass
 
 
 class F1Metric(AverageMetric):
@@ -239,6 +306,23 @@ class BleuMetric(AverageMetric):
         return BleuMetric(score)
 
 
+class FairseqBleuMetric(AverageMetric):
+    @staticmethod
+    def compute_many(
+        guess: torch.Tensor, answers: torch.Tensor, pad_idx, end_idx, unk_idx
+    ):
+        """
+        Return BLEU-1..4 using fairseq and tokens.
+        """
+        if fairseqbleu is None:
+            return None
+        scorer = fairseqbleu.Scorer(pad_idx, end_idx, unk_idx)
+        answers = answers.cpu().int()
+        guess = guess.cpu().int()
+        scorer.add(answers, guess)
+        return [FairseqBleuMetric(scorer.score(i) / 100.0) for i in range(1, 5)]
+
+
 class RougeMetric(AverageMetric):
     _evaluator = None
 
@@ -300,92 +384,30 @@ def normalize_answer(s):
     return s
 
 
-def aggregate_task_reports(reports, tasks, micro=False):
-    """
-    Aggregate separate task reports into a single report.
-
-    :param reports: list of report dicts from separate tasks
-    :param tasks: list of tasks
-    :param micro: average per example if True, else average over t
-
-    :return: aggregated report dicts
-    """
-    if len(reports) == 1:
-        # singular task
-        return reports[0]
-    # multiple tasks, aggregate metrics
-    metrics = {}
-    exs = {}
-    total_report = {'tasks': {}}
-    # collect metrics from all reports
-    for i, report in enumerate(reports):
-        total_report['tasks'][tasks[i]] = report
-        for metric, val in report.items():
-            if metric == 'exs':
-                exs[tasks[i]] = val
-            else:
-                metrics.setdefault(metric, {})[tasks[i]] = val
-    # now aggregate
-    total_exs = sum(exs.values())
-    total_report['exs'] = total_exs
-    for metric, task_vals in metrics.items():
-        if all([isinstance(v, Number) for v in task_vals.values()]):
-            if micro:
-                # average over the number of examples
-                vals = [task_vals[task] * exs[task] for task in tasks]
-                total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
-            else:  # macro
-                # average over tasks
-                vals = task_vals.values()
-                total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
-    # add a warning describing how metrics were averaged across tasks.
-    total_report['warning'] = 'metrics are averaged across tasks'
-    if micro:
-        total_report['warning'] += ' and weighted by the number of examples ' 'per task'
-    return total_report
-
-
-def aggregate_metrics(reporters):
+def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     """
     Aggregate metrics from multiple reports.
+
+    :param reports: Dict of tasks -> metrics.
     """
     # reporters is a list of teachers or worlds
-    m = {}
-    m['tasks'] = {}
-    sums = {}
-    num_tasks = 0
-    total = 0
-    for i in range(len(reporters)):
-        task_id = reporters[i].getID()
-        task_report = reporters[i].report()
+    m: Dict[str, Metric] = {}
+    for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
-            if isinstance(value, float):
-                sums[each_metric] = 0.0
-                m[each_metric] = 0.0
-            elif isinstance(value, Number):
-                sums[each_metric] = 0
-                m[each_metric] = 0
+            m[each_metric] = m.get(each_metric, None) + value
+            if len(named_reports) > 1:
+                m[f'{task_id}/{each_metric}'] = value
+    return m
 
-    for i in range(len(reporters)):
-        task_id = reporters[i].getID()
-        task_report = reporters[i].report()
-        while task_id in m['tasks']:
-            # prevent name clobbering if using multiple tasks with same ID
-            task_id += '_'
-        m['tasks'][task_id] = task_report
-        total += task_report.get('exs', 0)
-        found_any = False
-        for k in sums.keys():
-            if k in task_report:
-                sums[k] += task_report[k]
-                found_any = True
-        if found_any:
-            num_tasks += 1
-    m['exs'] = total
-    m['accuracy'] = 0
-    if num_tasks > 0:
-        for k in sums.keys():
-            m[k] = round_sigfigs(sums[k] / num_tasks, 4)
+
+def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]):
+    """
+    Combines metrics without regard for tracking provenence.
+    """
+    m: Dict[str, Metric] = {}
+    for task_report in reports:
+        for each_metric, value in task_report.items():
+            m[each_metric] = m.get(each_metric) + value
     return m
 
 
@@ -394,54 +416,81 @@ class Metrics(object):
     Threadsafe metrics container focused on aggregation.
     """
 
-    def __init__(self, threadsafe=False):
-        self._metrics = {}
+    def __init__(self, threadsafe=False, shared=None):
         self._threadsafe = threadsafe
-        if self._threadsafe:
+        if self._threadsafe and shared is None:
             # Threadsafe metrics tracking works by keeping a queue that workers can
             # push updates to. the main worker works through the queue at report
             # time. We could add some buffering to improve performance, but we
             # are deprioritizing hogwild performance at this time.
-            self._queue = multiprocessing.Queue()
+            self._buffer = None
+            self._queue = multiprocessing.SimpleQueue()
+            self._worker = False
+            self._data = {}
+        elif shared and 'queue' in shared:
+            # This is a clone, in threadsafe mode
+            self._buffer = {}
+            self._queue = shared['queue']
+            self._worker = True
+            self._data = None
+        elif shared and 'data' in shared:
+            # This is a clone, in non-threadsafe mode
+            self._buffer = None
+            self._queue = None
+            self._worker = False
+            self._data = shared['data']
+        else:
+            # The original in non-threadsafe mode
+            self._buffer = None
+            self._queue = None
+            self._worker = False
+            self._data = {}
 
     def __str__(self):
-        return str(self._metrics)
+        return str(self._data)
 
     def __repr__(self):
-        return f'Metrics({repr(self._metrics)})'
+        return f'Metrics({repr(self._data)})'
 
     def add(self, key: str, value: Optional[Metric]) -> None:
         """
         Record an accumulation to a metric.
         """
-        if self._threadsafe:
-            self._queue.put((key, value))
+        if self._threadsafe and self._worker:
+            self._buffer[key] = self._buffer.get(key) + value
         else:
-            self._metrics[key] = self._metrics.get(key) + value
+            self._data[key] = self._data.get(key) + value
+
+    def flush(self):
+        """
+        Clear the local buffer and push it on.
+        """
+        if self._threadsafe and self._buffer:
+            self._queue.put(self._buffer)
+            self._buffer.clear()
 
     def report(self):
         """
         Report the metrics over all data seen so far.
         """
-        self._sync()
-        return {
-            k: v.value() if isinstance(v, Metric) else v
-            for k, v in self._metrics.items()
-        }
+        self.sync()
+        return {k: v for k, v in self._data.items()}
 
-    def _sync(self):
+    def sync(self):
         """
         Process all items on the queue to ensure it is up to date.
         """
-        for key, value in self._drain_queue():
-            self._metrics[key] = self._metrics.get(key) + value
+        if self._worker:
+            self.flush()
+        elif self._threadsafe and not self._worker:
+            for buffer_ in self._drain_queue():
+                for key, value in buffer_.items():
+                    self._data[key] = self._data.get(key) + value
 
     def _drain_queue(self):
         """
         Drain the queue, yielding all items in it.
         """
-        if not self._threadsafe:
-            return
         while not self._queue.empty():
             try:
                 yield self._queue.get()
@@ -452,9 +501,19 @@ class Metrics(object):
         """
         Clear all the metrics.
         """
-        for _ in self._drain_queue():
-            pass
-        self._metrics.clear()
+        if self._worker:
+            self._buffer.clear()
+        elif self._threadsafe and not self._worker:
+            for _ in self._drain_queue():
+                pass
+        if self._data:
+            self._data.clear()
+
+    def share(self):
+        if self._threadsafe:
+            return {'queue': self._queue}
+        else:
+            return {'data': self._data}
 
 
 class TeacherMetrics(Metrics):
@@ -462,8 +521,13 @@ class TeacherMetrics(Metrics):
     Helper container which encapsulates standard metrics (F1, BLEU, ...).
     """
 
-    def __init__(self, threadsafe: bool = False, metrics_list: str = "default") -> None:
-        super().__init__(threadsafe=threadsafe)
+    def __init__(
+        self,
+        threadsafe: bool = False,
+        metrics_list: str = "default",
+        shared: Dict[str, Any] = None,
+    ) -> None:
+        super().__init__(threadsafe=threadsafe, shared=shared)
         self._metrics_list = self._infer_metrics(metrics_list)
         self.eval_pr = [1, 5, 10, 100]
 
@@ -550,3 +614,6 @@ class TeacherMetrics(Metrics):
                     v = AverageMetric(v)
                 assert isinstance(v, Metric)
                 self.add(uk, v)
+
+        # always flush at the end of processing this response
+        self.flush()

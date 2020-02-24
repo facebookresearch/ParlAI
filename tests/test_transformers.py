@@ -518,6 +518,44 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.30)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
+    def test_compute_tokenized_bleu(self):
+        """
+        Test that the model outputs self-computed bleu correctly.
+        """
+        valid, _ = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=20,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='greedy',
+                beam_size=1,
+                variant='xlm',
+                activation='gelu',
+                compute_tokenized_bleu=True,
+            )
+        )
+        try:
+            import fairseq  # noqa: F401
+
+            assert valid['fairseq_bleu1'] > 0.9
+        except ImportError:
+            # fairseq not installed, let's just move on
+            pass
+        try:
+            import nltk  # noqa: F401
+
+            assert valid['nltk_bleu1'] > 0.9
+        except ImportError:
+            # nltk not installed, let's just move on
+            pass
+
     def test_asymmetry(self):
         opt = Opt({'model': 'transformer/generator', 'n_layers': 1})
         agent = create_agent(opt)
@@ -601,7 +639,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             self.assertEqual(
                 valid3['lr'],
                 valid1['lr'],
-                'Finetuning LR scheduler reset failed ' '(lr).',
+                'Finetuning LR scheduler reset failed (lr).',
             )
             # and make sure we're not loading the scheduler if it changes
             valid4, test4 = testing_utils.train_model(

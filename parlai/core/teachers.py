@@ -35,7 +35,7 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
-from parlai.core.metrics import TeacherMetrics, aggregate_metrics
+from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -113,13 +113,11 @@ class Teacher(Agent):
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
-            if shared and shared.get('metrics'):
-                self.metrics = shared['metrics']
-            else:
-                self.metrics = TeacherMetrics(
-                    threadsafe=opt.get('numthreads', 1) > 1,
-                    metrics_list=opt.get('metrics', 'default'),
-                )
+            self.metrics = TeacherMetrics(
+                threadsafe=(opt.get('numthreads', 1) > 1),
+                metrics_list=opt.get('metrics', 'default'),
+                shared=shared['metrics'] if shared is not None else None,
+            )
         self.epochDone = False
 
     # return state/action dict based upon passed state
@@ -179,8 +177,14 @@ class Teacher(Agent):
         In addition to default Agent shared parameters, share metrics.
         """
         shared = super().share()
-        shared['metrics'] = self.metrics
+        shared['metrics'] = self.metrics.share()
         return shared
+
+    def update_counters(self):
+        """
+        Ensure counters are synchronized.
+        """
+        self.metrics.sync()
 
 
 class FixedDialogTeacher(Teacher):
@@ -262,8 +266,6 @@ class FixedDialogTeacher(Teacher):
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
-        self.batchindex = opt.get('batchindex', 0)
-        self.use_batch_act = False  # Batch act disabled by default
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
@@ -313,10 +315,6 @@ class FixedDialogTeacher(Teacher):
         Share the data and dataloader.
         """
         shared = super().share()
-
-        if hasattr(self, 'lastYs'):
-            # share lastYs to communicate between batch_act and observe
-            shared['lastYs'] = self.lastYs
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
@@ -442,47 +440,10 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
-        if self.use_batch_act:
-            self.lastY = self.lastYs[self.batchindex]
-            self.lastYs[self.batchindex] = None
-
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.lastY = None
         return observation
-
-    def batch_act(self, observations):
-        """
-        Return an entire batch of examples.
-
-        Note: Currently used by PytorchDataTeacher.
-        """
-        # DEPRECATEDAY: looks like this isn't used anymore
-        # we ignore observations
-        if not hasattr(self, 'epochDone'):
-            # reset if haven't yet
-            self.reset()
-
-        batch = self.next_batch()
-        # pad batch
-        if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (
-                self.bsz - len(batch)
-            )
-
-        # remember correct answer if available (for padding, None)
-        for i, ex in enumerate(batch):
-            if 'labels' in ex:
-                labels = ex['labels']
-                self.lastYs[i] = labels
-                if not self.datatype.startswith('train') or 'evalmode' in self.datatype:
-                    del ex['labels']
-                    if not self.opt.get('hide_labels', False):
-                        ex['eval_labels'] = labels
-            else:
-                self.lastYs[i] = ex.get('eval_labels', None)
-
-        return batch
 
     def act(self):
         """
@@ -548,26 +509,25 @@ class DialogTeacher(FixedDialogTeacher):
         )
         self.stream = 'stream' in self.datatype
 
-        if not self.use_batch_act:
-            # first initialize any shared objects
-            data_class = StreamDialogData if self.stream else DialogData
-            kwargs = (
-                # never cycle if "ordered" is in the datatype. this is used by
-                # build_dict to enumerate through the data exactly once while still
-                # marking examples as training examples.
-                {'cycle': self.training and 'ordered' not in self.datatype}
-                if self.stream
-                else {}
+        # first initialize any shared objects
+        data_class = StreamDialogData if self.stream else DialogData
+        kwargs = (
+            # never cycle if "ordered" is in the datatype. this is used by
+            # build_dict to enumerate through the data exactly once while still
+            # marking examples as training examples.
+            {'cycle': self.training and 'ordered' not in self.datatype}
+            if self.stream
+            else {}
+        )
+        if shared and shared.get('data'):
+            self.data = data_class(opt, shared=shared['data'], **kwargs)
+        else:
+            self.data = data_class(
+                opt,
+                data_loader=self.setup_data,
+                cands=self.label_candidates(),
+                **kwargs,
             )
-            if shared and shared.get('data'):
-                self.data = data_class(opt, shared=shared['data'], **kwargs)
-            else:
-                self.data = data_class(
-                    opt,
-                    data_loader=self.setup_data,
-                    cands=self.label_candidates(),
-                    **kwargs,
-                )
 
         self.reset()
 
@@ -1903,7 +1863,7 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
-        return aggregate_metrics(self.tasks)
+        return aggregate_named_reports({t.getID(): t.report() for t in self.tasks})
 
     def reset(self):
         """
@@ -1942,6 +1902,10 @@ class MultiTaskTeacher(Teacher):
         """
         for t in self.tasks:
             t.shutdown()
+
+    def update_counters(self):
+        for t in self.tasks:
+            t.update_counters()
 
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
@@ -2172,12 +2136,12 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
                 value = False
             else:
                 try:
-                    value = int(raw_value)
+                    value = int(raw_value)  # type: ignore
                 except ValueError:
                     try:
-                        value = float(raw_value)
+                        value = float(raw_value)  # type: ignore
                     except ValueError:
-                        value = raw_value
+                        value = raw_value  # type: ignore
 
             opt[key] = value
         else:

@@ -49,13 +49,13 @@ class TestTransresnet(unittest.TestCase):
         self.assertAlmostEqual(test['hits@10'], 0.7667, places=4)
 
         # First round
-        self.assertAlmostEqual(test['first_round']['hits@1/100'], 0.2, places=4)
+        self.assertAlmostEqual(test['first_round/hits@1/100'], 0.2, places=4)
 
         # Second round
-        self.assertAlmostEqual(test['second_round']['hits@1/100'], 0.5, places=4)
+        self.assertAlmostEqual(test['second_round/hits@1/100'], 0.5, places=4)
 
         # Third round
-        self.assertAlmostEqual(test['third_round+']['hits@1/100'], 0.4, places=4)
+        self.assertAlmostEqual(test['third_round+/hits@1/100'], 0.4, places=4)
 
 
 if __name__ == '__main__':

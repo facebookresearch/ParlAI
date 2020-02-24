@@ -678,7 +678,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--dynamic-batching',
             default=None,
             type='nonestr',
-            choices={'none', 'full', 'batchsort'},
+            choices={None, 'full', 'batchsort'},
             help='Use dynamic batching',
         )
         self.add_parlai_data_path(parlai)
