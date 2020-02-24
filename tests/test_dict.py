@@ -131,6 +131,10 @@ class TestDictionary(unittest.TestCase):
             agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
             [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
         )
+        # Test special token
+        self.assertEqual(
+            agent.txt2vec(agent.start_token), [agent.tok2ind[agent.start_token]]
+        )
 
     def test_space_tokenize(self):
         """
