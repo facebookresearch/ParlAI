@@ -8,20 +8,18 @@
 Poly-encoder agent that ingests image features.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import torch
 
 from parlai.agents.image_seq2seq.modules import ContextWithImageEncoder
 from parlai.agents.transformer.modules import get_n_positions_from_options
 from parlai.agents.transformer.polyencoder import PolyencoderAgent, PolyEncoderModule
-from parlai.core.message import Message
 from parlai.core.torch_agent import Batch
+from parlai.core.torch_image_agent import TorchImageAgent
 
-DEFAULT_IMAGE_FEATURES_DIM = 2048
 
-
-class ImagePolyencoderAgent(PolyencoderAgent):
+class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
     """
     Poly-encoder Agent that ingests image features.
 
@@ -37,19 +35,7 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         super(ImagePolyencoderAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Image Encoder Args')
         agent.add_argument(
-            '--polyencoder-image-encoder-num-layers',
-            type=int,
-            default=1,
-            help='Number of linear layers to encode image features with in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-features-dim',
-            type=int,
-            default=DEFAULT_IMAGE_FEATURES_DIM,
-            help='For passing in image features of the given dim in the context',
-        )
-        agent.add_argument(
-            '--polyencoder-image-combination-mode',
+            '--image-combination-mode',
             type=str,
             default='prepend',
             choices=['add', 'append', 'prepend'],
@@ -59,34 +45,18 @@ class ImagePolyencoderAgent(PolyencoderAgent):
         # This agent doesn't support any encoder output reductions
         return agent
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.image_features_dim = opt.get(
-            'polyencoder_image_features_dim', DEFAULT_IMAGE_FEATURES_DIM
-        )
-
     def build_model(self, states=None):
         """
         Return built model.
         """
         return ImagePolyencoderModule(self.opt, self.dict, self.NULL_IDX)
 
-    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
+    def batchify_image_features(self, batch: Batch) -> Batch:
         """
-        Override to handle image features.
+        Return the image features as a Tensor of the correct type.
+
+        Fill in missing feature vectors.
         """
-        batch = super().batchify(obs_batch, sort)
-
-        def _process_image_features(features: torch.Tensor) -> torch.Tensor:
-            assert features.size() == (self.image_features_dim,)
-            if self.use_cuda:
-                features = features.cuda()
-            if self.opt.get('fp16'):
-                features = features.half()
-            else:
-                features = features.float()
-
-            return features
 
         # Checks/formatting of batch.image
         bsz = batch.text_vec.size(0)
@@ -97,18 +67,20 @@ class ImagePolyencoderAgent(PolyencoderAgent):
 
         # Process all image feature vectors, or add in zero vectors if missing
         processed_features_list = []
-        processed_zero_features = _process_image_features(
+        processed_zero_features = self._process_image_features(
             torch.zeros((self.image_features_dim,))
         )
         for orig_features in batch.image:
             if orig_features is None:
                 processed_features_list.append(processed_zero_features)
             elif isinstance(orig_features, torch.Tensor):
-                processed_features_list.append(_process_image_features(orig_features))
+                processed_features_list.append(
+                    self._process_image_features(orig_features)
+                )
             else:
                 raise ValueError('Unsupported image feature format!')
 
-        # Turn into batchsize x polyencoder_image_features_dim for DataParallel
+        # Turn into batchsize x image_features_dim for DataParallel
         batch.image = torch.stack(processed_features_list)
 
         return batch
@@ -186,9 +158,9 @@ class ImagePolyencoderModule(PolyEncoderModule):
                 activation=opt['activation'],
                 variant=opt['variant'],
                 output_scaling=opt['output_scaling'],
-                image_encoder_num_layers=opt['polyencoder_image_encoder_num_layers'],
-                image_features_dim=opt['polyencoder_image_features_dim'],
-                image_combination_mode=opt['polyencoder_image_combination_mode'],
+                image_encoder_num_layers=opt['image_encoder_num_layers'],
+                image_features_dim=opt['image_features_dim'],
+                image_combination_mode=opt['image_combination_mode'],
             )
         else:
             # The candidate encoder is the same as for PolyEncoderModule
