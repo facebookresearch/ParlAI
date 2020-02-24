@@ -45,7 +45,8 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         """
         Override to add one arg.
         """
-        super(ImageSeq2seqAgent, cls).add_cmdline_args(argparser)
+        TransformerGeneratorAgent.add_cmdline_args(argparser)
+        TorchImageAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Image Encoder Args')
         group.add_argument(
             '--include-image-token',

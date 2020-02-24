@@ -32,7 +32,8 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         """
         Add command-line arguments specifically for this agent.
         """
-        super(ImagePolyencoderAgent, cls).add_cmdline_args(argparser)
+        PolyencoderAgent.add_cmdline_args(argparser)
+        TorchImageAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Image Encoder Args')
         agent.add_argument(
             '--image-combination-mode',
