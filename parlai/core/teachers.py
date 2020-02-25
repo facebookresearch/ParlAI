@@ -645,7 +645,7 @@ class DialogData(object):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
-        self.id = random.randint(0, 10000)
+
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -655,9 +655,12 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
-        self.dt = opt['datatype']
+
         self.rank = get_rank()
         self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = is_distributed() and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
 
         self.addedCands = []
         self.copied_cands = False
@@ -783,9 +786,7 @@ class DialogData(object):
             single-entry episodes, so this defaults to zero.
         """
         next_episode_idx_for_rank = episode_idx + 1
-        if is_distributed() and any(
-            x in self.dt for x in ('valid', 'test', 'train:evalmode')
-        ):
+        if self.is_distributed_and_is_eval:
             raw_episode_idx = episode_idx
             episode_idx = raw_episode_idx * self.num_workers + self.rank
             next_episode_idx_for_rank = episode_idx + self.num_workers
@@ -891,7 +892,6 @@ class StreamDialogData(DialogData):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
-        self.id = random.randint(0, 10000)
 
         if shared:
             # auxiliary instances hold pointer to main datastream in self.data
@@ -920,7 +920,7 @@ class StreamDialogData(DialogData):
 
         self.rank = get_rank()
         self.num_workers = num_workers()
-        self.is_distributed_and_eval = self.num_workers > 1 and any(
+        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
             x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
         )
 
@@ -953,7 +953,7 @@ class StreamDialogData(DialogData):
         idx = 0
         while True:
             for episode in self._read_episode(data_loader(datafile)):
-                if not self.is_distributed_and_eval or (
+                if not self.is_distributed_and_is_eval or (
                     idx % self.num_workers == self.rank
                 ):
                     yield episode
