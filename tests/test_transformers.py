@@ -182,6 +182,35 @@ class TestTransformerRanker(unittest.TestCase):
         self.assertGreaterEqual(test['hits@1'], 0.90)
 
     @testing_utils.retry(ntries=3)
+    def test_layernormbefore(self):
+        """
+        Test --variant xlm.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:candidate',
+                model='transformer/ranker',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=16,
+                validation_every_n_epochs=5,
+                validation_patience=2,
+                n_layers=1,
+                n_heads=4,
+                ffn_size=64,
+                embedding_size=32,
+                candidates='batch',
+                eval_candidates='inline',
+                gradient_clip=0.5,
+                variant='layernormbefore',
+                activation='gelu',
+            )
+        )
+
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
+
+    @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
         """
         Test a transformer ranker reduction method other than `mean`.
