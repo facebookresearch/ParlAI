@@ -189,6 +189,13 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self.global_end_token = opt['history_add_global_end_token']
+        if self.global_end_token is not None:
+            self.global_end_token = (
+                self.dict[self.dict.start_token]
+                if self.global_end_token == 'start'
+                else self.dict[self.dict.end_token]
+            )
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
@@ -291,6 +298,8 @@ class History(object):
                 history.extend(vec)
                 history.extend(self.delimiter_tok)
             history.extend(self.history_vecs[-1])
+            if self.global_end_token is not None:
+                history.extend([self.global_end_token])
         else:
             # vec type is a list
             history = []
@@ -298,7 +307,8 @@ class History(object):
                 history += vec
                 history += self.delimiter_tok
             history += self.history_vecs[-1]
-
+            if self.global_end_token is not None:
+                history += [self.global_end_token]
         return history
 
     def get_history_vec_list(self):
@@ -605,6 +615,13 @@ class TorchAgent(ABC, Agent):
             type=str,
             default='\n',
             help='Join history lines with this token, defaults to newline',
+        )
+        agent.add_argument(
+            '--history-add-global-end-token',
+            type='nonestr',
+            default=None,
+            choices=[None, 'start', 'end'],
+            help='Add a special token at the end of the history block,',
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
