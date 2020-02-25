@@ -467,7 +467,7 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm':
+        if self.variant == 'xlm' or self.variant == 'layernormbefore':
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -536,7 +536,8 @@ class TransformerEncoder(nn.Module):
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
-
+        if self.variant == 'layernormbefore':
+            tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
@@ -596,11 +597,20 @@ class TransformerEncoderLayer(nn.Module):
         """
         Forward pass.
         """
+
+        residual = tensor
+        if self.variant == 'layernormbefore':
+            tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
-        tensor = tensor + self.dropout(attended_tensor)
-        tensor = _normalize(tensor, self.norm1)
-        tensor = tensor + self.dropout(self.ffn(tensor))
-        tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(attended_tensor)
+        if self.variant != 'layernormbefore':
+            tensor = _normalize(tensor, self.norm1)
+        residual = tensor
+        if self.variant == 'layernormbefore':
+            tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(self.ffn(tensor))
+        if self.variant != 'layernormbefore':
+            tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -657,6 +667,7 @@ class TransformerDecoder(nn.Module):
         self.dim = embedding_size
         self.activation = activation
         self.variant = variant
+
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
 
@@ -749,6 +760,8 @@ class TransformerDecoder(nn.Module):
                 encoder_mask=encoder_mask,
                 incr_state=incr_state[idx],
             )
+        if self.variant == 'layernormbefore':
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
 
@@ -810,6 +823,9 @@ class TransformerDecoderLayer(nn.Module):
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
+        if self.variant == 'layernormbefore':
+            x = _normalize(x, self.norm1)
+
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
             query=x,
@@ -819,9 +835,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
-        x = _normalize(x, self.norm1)
+        if self.variant != 'layernormbefore':
+            x = _normalize(x, self.norm1)
 
         residual = x
+        # encoder_attn_layer_norm norm 2
+        if self.variant == 'layernormbefore':
+            x = _normalize(x, self.norm2)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -832,14 +852,18 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm2)
+        if self.variant != 'layernormbefore':
+            x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
+        if self.variant == 'layernormbefore':
+            x = _normalize(x, self.norm3)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm3)
+        if self.variant != 'layernormbefore':
+            x = _normalize(x, self.norm3)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
