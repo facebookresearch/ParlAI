@@ -30,8 +30,9 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import neginf, FP16SafeCrossEntropy
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
+from parlai.utils.fp16 import FP16SafeCrossEntropy
+from parlai.utils.torch import neginf
 
 
 try:
@@ -564,7 +565,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
-        self.record_local_metric('nll_loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
@@ -807,6 +808,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
+    def _get_context(self, batch, batch_idx):
+        """
+        Set the beam context for n-gram context blocking.
+
+        Intentionally overridable for more complex model histories.
+        """
+        return batch.text_vec[batch_idx]
+
     def _generate(self, batch, beam_size, max_ts):
         """
         Generate an output with beam search.
@@ -845,8 +854,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else len(batch.image)
         )
         if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(ctx) for ctx in batch.text_vec
+                self._treesearch_factory(dev).set_context(
+                    self._get_context(batch, batch_idx)
+                )
+                for batch_idx in range(batchsize)
             ]
         else:
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]

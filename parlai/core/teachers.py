@@ -512,7 +512,6 @@ class DialogTeacher(FixedDialogTeacher):
 
         # first initialize any shared objects
         data_class = StreamDialogData if self.stream else DialogData
-
         kwargs = (
             # never cycle if "ordered" is in the datatype. this is used by
             # build_dict to enumerate through the data exactly once while still

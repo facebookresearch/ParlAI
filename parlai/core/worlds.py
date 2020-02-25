@@ -1193,7 +1193,7 @@ class DynamicBatchWorld(World):
             this_width = self._ceil(sum(self._scores[index]))
             new_width = max(width, this_width)
             # compute the cost of the new batch
-            new_bsz = self._ceil(len(batch) + 1)
+            new_bsz = len(batch) + 1
             new_words = new_width * new_bsz
             if new_words <= self.max_words and new_bsz <= self.max_batch_size:
                 # cool, this one fits, let's add it
@@ -1211,8 +1211,9 @@ class DynamicBatchWorld(World):
             batch.pop(-1)
 
         # double check our assumed invariant
-        assert self._ceil(width) * self._ceil(len(batch)) <= self.max_words
-        assert self._ceil(len(batch)) <= self.max_batch_size
+        assert self._ceil(width) * len(batch) <= self.max_words
+        assert len(batch) > 0
+        assert len(batch) <= self.max_batch_size
 
         # great, this batch is good to go! let's run it!
         acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
@@ -1232,6 +1233,9 @@ class DynamicBatchWorld(World):
         # update metrics
         self.total_parleys += 1
         self.total_exs += len(batch)
+
+    def get_total_exs(self):
+        return self.total_exs
 
     def get_total_epochs(self):
         return self.total_exs / self.num_examples()
