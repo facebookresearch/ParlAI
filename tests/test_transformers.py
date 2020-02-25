@@ -94,6 +94,7 @@ class TestTransformerRanker(unittest.TestCase):
     def test_resuming_reduce_on_plateau(self):
         """
         Reduce on Plateau can be tricky when combined with warmup.
+
         See: https://github.com/facebookresearch/ParlAI/pull/1812
         """
         with testing_utils.tempdir() as tmpdir:
@@ -343,6 +344,7 @@ class TestTransformerGenerator(unittest.TestCase):
     def test_beamsearch_contextblocking(self):
         """
         Test beamsearch context blocking.
+
         General strategy: train a parrot model, then block it from doing the parroting
         well. Measure how much context blocking affects performance.
         """
