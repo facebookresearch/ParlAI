@@ -182,9 +182,9 @@ class TestTransformerRanker(unittest.TestCase):
         self.assertGreaterEqual(test['hits@1'], 0.90)
 
     @testing_utils.retry(ntries=3)
-    def test_layernormbefore(self):
+    def test_prelayernorm(self):
         """
-        Test --variant layernormbefore.
+        Test --variant prelayernorm.
         """
         valid, test = testing_utils.train_model(
             dict(
@@ -202,7 +202,7 @@ class TestTransformerRanker(unittest.TestCase):
                 candidates='batch',
                 eval_candidates='inline',
                 gradient_clip=0.5,
-                variant='layernormbefore',
+                variant='prelayernorm',
                 activation='gelu',
             )
         )
