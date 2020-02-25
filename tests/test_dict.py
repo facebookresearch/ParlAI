@@ -132,10 +132,20 @@ class TestDictionary(unittest.TestCase):
             agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
             [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
         )
-        # Test special token
-        self.assertEqual(
-            agent.txt2vec(agent.start_token), [agent.tok2ind[agent.start_token]]
-        )
+        # Test special token ids are mapped correctly
+        # 4 special tokens are added in ParlAI dict in the begining and at the end for Hugging Face
+        # null token would be 0 in ParlAI dict and original_vocab in Hugging Face
+        special_tokens = [
+            agent.null_token,
+            agent.start_token,
+            agent.end_token,
+            agent.unk_token,
+        ]
+        for each_token in special_tokens:
+            self.assertEqual(
+                agent.byte_level_bpe.tokenizer.token_to_id(each_token),
+                agent.tok2ind[each_token] - 4 + vocab_size,
+            )
 
     def test_byte_level_bpe_tokenize_prefix_space(self):
         """
