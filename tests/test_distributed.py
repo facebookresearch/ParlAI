@@ -32,7 +32,7 @@ class TestDistributed(unittest.TestCase):
         model='transformer/generator',
         optimizer='adamax',
         learningrate=7e-3,
-        batchsize=32,
+        batchsize=7,
         validation_every_n_epochs=5,
         num_epochs=20,
         n_layers=1,
@@ -40,11 +40,19 @@ class TestDistributed(unittest.TestCase):
         ffn_size=32,
         embedding_size=32,
         beam_size=1,
+        verbose=True
     )
+
+    def setUp(self):
+        print(f'[Setting up test {self._testMethodName}]')
+
+    def tearDown(self):
+        # we need to de-initialize the distributed world, otherwise other
+        # tests will they're we're distributed when we're really not.
+        dist.destroy_process_group()
 
     def _distributed_train_model(self, opt):
         with testing_utils.tempdir() as tmpdir:
-            opt['verbose'] = True
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
             if 'dict_file' not in opt:
@@ -60,14 +68,6 @@ class TestDistributed(unittest.TestCase):
             valid, test = mp_train.launch_and_train(popt, 31337)
 
         return (valid, test)
-
-    def setUp(self):
-        print(f'[Setting up test {self._testMethodName}]')
-
-    def tearDown(self):
-        # we need to de-initialize the distributed world, otherwise other
-        # tests will they're we're distributed when we're really not.
-        dist.destroy_process_group()
 
     def xtest_generator_distributed(self):
         valid, test = self._distributed_train_model(self._base_config)
@@ -87,7 +87,6 @@ class TestDistributed(unittest.TestCase):
         config = copy.deepcopy(self._base_config)
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
-        config['batchsize'] = 7
         valid, test = self._distributed_train_model(config)
 
         # Tests that DialogData.get() is doing the right thing
@@ -117,7 +116,6 @@ class TestDistributed(unittest.TestCase):
         config['datatype'] = 'train:stream'
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
-        config['batchsize'] = 7
 
         valid, test = self._distributed_train_model(config)
 

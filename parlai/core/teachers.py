@@ -657,8 +657,8 @@ class DialogData(object):
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
         self.dt = opt['datatype']
-        self._rank = get_rank()
-        self._num_workers = num_workers()
+        self.rank = get_rank()
+        self.num_workers = num_workers()
 
         self.addedCands = []
         self.copied_cands = False
@@ -682,6 +682,7 @@ class DialogData(object):
             an iterable which returns tuples in the format described in the
             class docstring.
         """
+
         episode = []
         last_cands = None
         for entry, new in data_loader:
@@ -787,11 +788,9 @@ class DialogData(object):
             x in self.dt for x in ('valid', 'test', 'train:evalmode')
         ):
             raw_episode_idx = episode_idx
-            episode_idx = raw_episode_idx * self._num_workers + self._rank
-            next_episode_idx_for_rank = (
-                raw_episode_idx + 1
-            ) * self._num_workers + self._rank
-            print(f'DialogData{self.id}, raw_episode_idx: {raw_episode_idx}, episode_idx: {episode_idx}, next_episode_idx_for_rank: {next_episode_idx_for_rank}')
+            episode_idx = raw_episode_idx * self.num_workers + self.rank
+            next_episode_idx_for_rank = episode_idx + self.num_workers
+
             if episode_idx >= len(self.data):
                 # This can occur in spite of the check below if epoch ends
                 # mid-batch b/c BatchWorld calls act() on all the worlds without
@@ -891,14 +890,19 @@ class StreamDialogData(DialogData):
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # super() call initiates stream in self.data by calling _load()
+        self.dt = opt['datatype']
         super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+        self.id = random.randint(0, 10000)
+        self.episode_idx = 0
+
         if shared:
             # auxiliary instances hold pointer to main datastream in self.data
             self.reset_data = shared['reset']
             # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
             self.data_loader = shared['data_loader']
+            self.episode_idx = shared['episode_idx']
             if 'lock' in shared:
                 self.lock = shared['lock']
         else:
@@ -917,6 +921,11 @@ class StreamDialogData(DialogData):
         self.cur_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_eval = self.num_workers > 1 and any(
+            x in self.dt for x in ('valid', 'test', 'train:evalmode')
+        )
 
     def share(self):
         """
@@ -927,6 +936,7 @@ class StreamDialogData(DialogData):
         shared['reset'] = self.reset
         # share datafile and data for loading length if necessary
         shared['datafile'] = self.datafile
+        shared['episode_idx'] = self.episode_idx
         shared['data_loader'] = self.data_loader
         if hasattr(self, 'lock'):
             shared['lock'] = self.lock
@@ -945,6 +955,7 @@ class StreamDialogData(DialogData):
         """
         self.is_reset = False
         while True:
+            print(f'StreamDialogData{self.id} within while True in _data_generator')
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
             while not self.cycle:
@@ -1000,21 +1011,45 @@ class StreamDialogData(DialogData):
 
         When episode is done returns first entry of next episode.
         """
+
         if self.cur_episode is self._FIRST_PASS:
             # first go around, always read off the episode
             # maybe lock this line
-            self.cur_episode = next(self.data)
+            next_count = self.rank + 1 if self.is_distributed_and_eval else 1
+            cnt = 0
+            while cnt < next_count:
+                self.cur_episode = next(self.data)
+                cnt += 1
+            self.episode_idx += next_count
+            # self.cur_episode = next(self.data)
+            # self.episode_idx += 1
+            print(f'StreamDialogData{self.id}: START episode_idx: {self.episode_idx}, cur_episode: {self.cur_episode}')
+
+
         if self.cur_episode == self._END_OF_EPOCH:
             # we're done here
             return {'episode_done': True}, True
         entry = self.cur_episode[self.entry_idx]
+        # print(
+        #     f'StreamDialogData{self.id} got episode; episode_idx: {self.episode_idx}, entry: {entry}, entry_idx: {self.entry_idx}'
+        # )
         table = self.build_table(entry)
         episode_done = self.entry_idx == len(self.cur_episode) - 1
         table['episode_done'] = episode_done
         if episode_done:
             # maybe lock this line
-            self.cur_episode = next(self.data)
+            cnt = 0
+            next_count = self.num_workers if self.is_distributed_and_eval else 1
+            while cnt < next_count:
+                self.cur_episode = next(self.data)
+                cnt += 1
+            self.episode_idx += next_count
+            # self.cur_episode = next(self.data)
+            # self.episode_idx += 1
+            print(f'StreamDialogData{self.id}: episode_idx: {self.episode_idx}, cur_episode: {self.cur_episode}')
+
             self.entry_idx = 0
+            # print(f'self.episode_idx is now: {self.episode_idx}, next_count was: {next_count}')
         else:
             self.entry_idx += 1
         return table, self.cur_episode == self._END_OF_EPOCH
