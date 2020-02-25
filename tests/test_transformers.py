@@ -184,7 +184,7 @@ class TestTransformerRanker(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_layernormbefore(self):
         """
-        Test --variant xlm.
+        Test --variant layernormbefore.
         """
         valid, test = testing_utils.train_model(
             dict(
