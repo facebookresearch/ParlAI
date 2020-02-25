@@ -40,7 +40,7 @@ class TestDistributed(unittest.TestCase):
         ffn_size=32,
         embedding_size=32,
         beam_size=1,
-        verbose=True
+        verbose=True,
     )
 
     def setUp(self):
@@ -69,7 +69,7 @@ class TestDistributed(unittest.TestCase):
 
         return (valid, test)
 
-    def xtest_generator_distributed(self):
+    def test_generator_distributed(self):
         valid, test = self._distributed_train_model(self._base_config)
 
         self.assertLessEqual(valid['ppl'], 1.20)
@@ -83,7 +83,7 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(valid['exs'].value(), 100)
         self.assertEqual(test['exs'].value(), 100)
 
-    def xtest_distributed_eval_max_exs(self):
+    def test_distributed_eval_max_exs(self):
         config = copy.deepcopy(self._base_config)
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
@@ -94,7 +94,7 @@ class TestDistributed(unittest.TestCase):
         # It would be 200 if each worker did all the examples
         # Note: we decided that it was OK for the total count to be slightly off
         # when using validation_max_exs and distributed.
-        # It's off b/c there are two workers, told to do 45 each, and BatchWorld
+        # It's > 90 b/c there are two workers, told to do 45 each, & BatchWorld
         # parley() does batchsize examples each time, so each worker will do 49
         # examples.
         self.assertEqual(valid['exs'].value(), 98)
@@ -111,7 +111,7 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(valid['exs'].value(), 100)
         self.assertEqual(test['exs'].value(), 100)
 
-    def xtest_distributed_eval_stream_mode_max_exs(self):
+    def test_distributed_eval_stream_mode_max_exs(self):
         config = copy.deepcopy(self._base_config)
         config['datatype'] = 'train:stream'
         config['validation_max_exs'] = 90
@@ -122,6 +122,10 @@ class TestDistributed(unittest.TestCase):
         # Tests that StreamDialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         # It would be 200 if each worker did all the examples
+        # As in the test above:
+        # It does 98 instead of 90 b/c there are two workers, told to do 45
+        # each, and BatchWorld parley() does batchsize examples each time, so
+        # each worker will do 49 examples.
         self.assertEqual(valid['exs'].value(), 98)
         self.assertEqual(test['exs'].value(), 98)
 
