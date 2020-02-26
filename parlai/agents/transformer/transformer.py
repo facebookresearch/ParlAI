@@ -358,7 +358,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         """
         Add the start and end token to the text.
         """
-        kwargs['add_start'] = True
+        kwargs['add_start'] = False
         kwargs['add_end'] = True
         obs = super().vectorize(*args, **kwargs)
         return obs
