@@ -1767,7 +1767,7 @@ class TorchAgent(ABC, Agent):
 
         # initialize a list of replies with this agent's id
         batch_reply = [
-            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
+            Message({'id': self.getID(), 'episode_done': False}) for _ in range(max(batch.valid_indices) + 1)
         ]
 
         if batch_size == 0:

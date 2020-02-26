@@ -14,10 +14,12 @@ The corpora are all randomly, but deterministically generated
 from parlai.core.teachers import (
     FixedDialogTeacher,
     DialogTeacher,
+    FbDialogTeacher,
     AbstractImageTeacher,
     Teacher,
 )
 from parlai.core.opt import Opt
+from parlai.utils.typing import TShared
 from torch.utils.data import Dataset
 import copy
 import random
@@ -61,8 +63,10 @@ class CandidateBaseTeacher(Teacher, ABC):
         :param int num_test: size of the valid/test sets
         """
         self.opt = opt
-        opt['datafile'] = opt['datatype'].split(':')[0]
-        self.datafile = opt['datafile']
+        datatype = opt['datatype'].split(':')[0]
+        self.datatype = datatype
+        self.datafile = opt.get('datafile', datatype)
+        opt['datafile'] = self.datafile
 
         self.vocab_size = vocab_size
         self.example_size = example_size
@@ -81,7 +85,7 @@ class CandidateBaseTeacher(Teacher, ABC):
         return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def num_episodes(self) -> int:
-        if self.datafile == 'train':
+        if self.datatype == 'train':
             return self.num_train
         else:
             return self.num_test
@@ -164,6 +168,42 @@ class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
             'labels': [self.corpus[episode_idx]],
             'label_candidates': self.cands[episode_idx],
         }
+
+
+class NoCandidateFbDialogTeacher(CandidateBaseTeacher, FbDialogTeacher):
+    """
+    Teacher for streaming.
+    """
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt['datafile'] = self._get_datafile(opt)
+        CandidateBaseTeacher.__init__(self, opt, shared=shared)
+        self._prepare_data(opt)
+        FbDialogTeacher.__init__(self, opt, shared=shared)
+
+    def _get_datafile(self, opt: Opt) -> str:
+        dt = opt['datatype'].split(':')[0]
+        return os.path.join(opt['datapath'], 'integration_tests', f'{dt}.txt')
+
+    def _prepare_data(self, opt: Opt) -> str:
+        """
+        Return datafile.
+
+        Save data to disk if not already there.
+
+        :return datafile:
+            the datafile with data
+        """
+        # build data if it doesn't exist
+        dt = opt['datatype'].split(':')[0]
+        super()._setup_data(dt)
+        datafile = self._get_datafile(opt)
+        if not os.path.exists(datafile):
+            os.makedirs(os.path.join(opt['datapath'], 'integration_tests'), exist_ok=True)
+            with open(datafile, 'w') as f:
+                for text in self.corpus:
+                    f.write(f'1 {text}\t{text}\n')
+        return datafile
 
 
 class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):

@@ -88,6 +88,8 @@ def multiprocess_train(
 
         dist.destroy_process_group()
 
+        print("Distributed group destroyed")
+
         return retval
 
 

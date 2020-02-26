@@ -32,6 +32,8 @@ BASE_ARGS = {
 
 SINGLETASK_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 0.1}
 
+SINGLETASK_STREAM_ARGS = {'task': 'integration_tests:no_candidate_fb_dialog', 'num_epochs': 0.1}
+
 SINGLETASK_MULTIVALID_ARGS = {
     'task': 'integration_tests:nocandidate',
     'num_epochs': 0.2,
@@ -52,7 +54,7 @@ MULTITASK_MULTIVALID_ARGS = {
 }
 
 MULTIPROCESS_ARGS = {
-    'task': 'integration_tests:nocandidate',
+    'task': 'integration_tests:no_candidate_fb_dialog',
     'num_epochs': 1,
     'batchsize': 16,
 }
@@ -183,7 +185,7 @@ class TestBackgroundPreprocess(unittest.TestCase):
         Test Streaming.
         """
         args = BASE_ARGS.copy()
-        args.update(SINGLETASK_ARGS)
+        args.update(SINGLETASK_STREAM_ARGS)
         args['batchsize'] = 8
         args['datatype'] = 'train:stream'
         valid, test = testing_utils.train_model(args)
@@ -191,16 +193,19 @@ class TestBackgroundPreprocess(unittest.TestCase):
             self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
         self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
 
+    @testing_utils.skipUnlessGPU
     def test_singletask_distributed(self):
         """
         Distributed Training.
         """
         args = BASE_ARGS.copy()
         args.update(MULTIPROCESS_ARGS)
-        valid, test = testing_utils.distributed_train_model(args)
-        for report in [valid, test]:
-            self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
-        self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
+        for dt in ['train', 'train:stream']:
+            args['datatype'] = dt
+            valid, test = testing_utils.distributed_train_model(args)
+            for report in [valid, test]:
+                self.assertEqual(report['exs'], NUM_TEST, f'args: {args}')
+            self.assertEqual(valid['total_train_updates'], test['total_train_updates'])
 
 
 if __name__ == "__main__":

@@ -53,8 +53,10 @@ from typing import List, Dict, Any, Union, Tuple, Optional
 
 try:
     from torch.multiprocessing import Process, Value, Semaphore, Queue
+    import torch.multiprocessing as mp
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Queue  # noqa: F401
+    import multiprocessing as mp
 
 from parlai.core.agents import create_agents_from_shared, Agent
 from parlai.core.loader import load_task_module, load_world_module
@@ -1580,7 +1582,7 @@ class QueueSignal(Enum):
     TERMINATE = auto()
 
 
-class PWorldProcess(Process):
+class PWorldProcess(object):
     """
     Process that runs a PWorld.
     """
@@ -1595,7 +1597,6 @@ class PWorldProcess(Process):
         consume_queue: Queue = None,
         worker_idx: int = None,
     ):
-        super().__init__(daemon=True)
         self.p_world: PWorld = pworld_class(
             opt, world, produce_queue, report_queue, consume_queue, worker_idx
         )
@@ -1886,17 +1887,26 @@ class QueueWorld(World):
 
         self.world: World = world
         self.agents: List[Agent] = world.get_agents()
-        self.processes: List[Process] = []
-        self.consume_queues: List[Queue] = []
         self.worlds: List[World] = []
-        self.produce_queue: Queue = Queue()
-        self.report_queue: Queue = Queue()
+
+        # process bookkeeping
+        self.context = mp.get_context('fork')
+        self.processes: List[Process] = []
         self.buffers: List[Dict[str, Tensor]] = []
         self.finished_workers: List[int] = []
+
+        # queues
+        self.consume_queues: List[Queue] = []
+        self.produce_queue: Queue = Queue()
+        self.report_queue: Queue = Queue()
+
+        # other
         self.training = 'train' in opt['datatype'] and 'evalmode' not in opt['datatype']
         self.num_workers = opt['num_workers'] if self.training else 1
         self.init_parley = True
         self.num_consume = 0
+
+        # start workers
         self._init_workers(opt, world, pworld_class)
 
     def num_examples(self):
@@ -1977,19 +1987,30 @@ class QueueWorld(World):
         :param pworld_class:
             Which PWorld to use.
         """
+        def _run_pworld_process(**kwargs):
+            """
+            Run a PWorldProcess to completion.
+            """
+            process = PWorldProcess(**kwargs)
+            process.run()
+
         for worker_idx in range(self.num_workers):
             consume_queue: Queue = Queue()
             shared = world.share()
             subworld = shared['world_class'](opt, None, shared)
             self.processes.append(
-                PWorldProcess(
-                    opt=opt,
-                    world=subworld,
-                    pworld_class=pworld_class,
-                    produce_queue=self.produce_queue,
-                    report_queue=self.report_queue,
-                    consume_queue=consume_queue,
-                    worker_idx=worker_idx,
+                self.context.Process(
+                    target=_run_pworld_process,
+                    kwargs=dict(
+                        opt=opt,
+                        world=subworld,
+                        pworld_class=pworld_class,
+                        produce_queue=self.produce_queue,
+                        report_queue=self.report_queue,
+                        consume_queue=consume_queue,
+                        worker_idx=worker_idx,
+                    ),
+                    daemon=False
                 )
             )
             self.worlds.append(subworld)
