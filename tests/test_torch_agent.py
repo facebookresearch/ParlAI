@@ -743,12 +743,6 @@ class TestTorchAgent(unittest.TestCase):
 
         # test global_end_token, this will append a selected token to the end
         # of history block
-        agent = get_agent(history_add_global_end_token='start')
-        agent.history.reset()
-        agent.history.update_history(obs)
-        vec = agent.history.get_history_vec()
-        self.assertEqual(vec, deque([1, 2, 3, MockDict.BEG_IDX]))
-
         agent = get_agent(history_add_global_end_token='end')
         agent.history.reset()
         agent.history.update_history(obs)
