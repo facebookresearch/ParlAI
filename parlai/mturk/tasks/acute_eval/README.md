@@ -43,16 +43,16 @@ This is a template of the expected format with the minimal expected fields:
         {
           "speakers": ["first_modelname", "other_speaker"],
           "dialogue": [
-            {"speaker": "model1", "text": "Hi"},
-            {"speaker": "other_speaker", "text": "Hi back"},
+            {"id": "model1", "text": "Hi"},
+            {"id": "other_speaker", "text": "Hi back"},
             ...
           ]
         },
         {
           "speakers": ["other_speaker", "second_modelname"],
           "dialogue": [
-            {"speaker": "model1", "text": "Hi"},
-            {"speaker": "other_speaker", "text": "Hi back"},
+            {"id": "model1", "text": "Hi"},
+            {"id": "other_speaker", "text": "Hi back"},
             ...
           ]
         }

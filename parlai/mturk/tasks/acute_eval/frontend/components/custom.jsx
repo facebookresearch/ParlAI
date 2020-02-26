@@ -123,7 +123,7 @@ class MessageList extends React.Component {
       <div key={model + "_" + idx} onClick={() => onClickMessage(idx)}>
         <XChatMessage
           message={m.text}
-          is_primary_speaker={m.speaker == primary_speaker}
+          is_primary_speaker={m.id == primary_speaker}
           model={model}
         />
       </div>
