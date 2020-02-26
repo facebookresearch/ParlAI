@@ -153,10 +153,10 @@ class TorchRankerAgent(TorchAgent):
             help='K used in Top K sampling inference, when selected',
         )
         agent.add_argument(
-            '--return-scores',
+            '--return-cand-scores',
             type='bool',
             default=False,
-            help='Return sorted utterance scores from eval_step',
+            help='Return sorted candidate scores from eval_step',
         )
 
     def __init__(self, opt: Opt, shared=None):
@@ -452,7 +452,7 @@ class TorchRankerAgent(TorchAgent):
         else:
             sorted_scores, ranks = scores.sort(1, descending=True)
 
-        if self.opt.get('return_scores', False):
+        if self.opt.get('return_cand_scores', False):
             sorted_scores = sorted_scores.cpu()
         else:
             sorted_scores = None
