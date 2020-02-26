@@ -229,12 +229,16 @@ class AcuteEvaluator(object):
                         'is_onboarding': convo_pair['is_onboarding'],
                         'model_left': {
                             'name': eval_speakers[model_left_idx],
-                            'dialogue': convo_pair['dialogue_dicts'][model_left_idx]['dialogue']
+                            'dialogue': convo_pair['dialogue_dicts'][model_left_idx][
+                                'dialogue'
+                            ],
                         },
                         'model_right': {
                             'name': eval_speakers[1 - model_left_idx],
-                            'dialogue': convo_pair['dialogue_dicts'][1 - model_left_idx]['dialogue']
-                        }
+                            'dialogue': convo_pair['dialogue_dicts'][
+                                1 - model_left_idx
+                            ]['dialogue'],
+                        },
                     },
                     'pairing_dict': convo_pair,
                     'pair_id': i,
@@ -291,9 +295,7 @@ class AcuteEvaluator(object):
             dialogue_ids = self._get_dialogue_ids(next_task)
 
             # make sure worker has not seen these conversations before
-            if pair_id not in worker_data[
-                'tasks_completed'
-            ] and all(
+            if pair_id not in worker_data['tasks_completed'] and all(
                 d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids
             ):
                 # track tasks and conversations seen
