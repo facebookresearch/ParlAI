@@ -64,7 +64,7 @@ installdeps: &installdeps
       pip3 install --progress-bar off coverage
       pip3 install --progress-bar off codecov
       mkdir -p ~/ParlAI/test-results
-      pip install -q -r requirements.txt
+      pip install -v -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
