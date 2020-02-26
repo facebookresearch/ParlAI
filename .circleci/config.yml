@@ -15,7 +15,8 @@ standard_cpu36: &standard_cpu36
 
 osx_cpu37: &osx_cpu37
   macos:
-    xcode: "10.1.0"
+      # https://circleci.com/docs/2.0/testing-ios/
+    xcode: "11.3.1"
   environment:
     PYTHON: 3.7.1
     HOMEBREW_NO_AUTO_UPDATE: 1
