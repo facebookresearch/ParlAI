@@ -10,7 +10,6 @@ import parlai.utils.testing as testing_utils
 
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
-
     def test_generator_distributed(self):
         valid, test = testing_utils.distributed_train_model(
             dict(
