@@ -147,26 +147,22 @@ class WorldLogger:
                 json_episode = json.dumps(dialog, indent=4)
                 of.write(json_episode + '\n')
 
-    def write_conversations_format(self, outfile):
-        import pdb; pdb.set_trace()
-        # Conversations.save_conversations(
-        #     self._logs,
-        #     datapath=outfile,
-        #     self.opt,
-        #     fle_name=None,
-        #     self_chat=True,
-        # )
-        # with open(outfile, 'w') as of:
-        #     for episode in tqdm(self._logs):
-        #         dialog = {'dialog': episode}
-        #         json_episode = json.dumps(dialog, indent=4)
-        #         of.write(json_episode + '\n')
+    def write_conversations_format(self, outfile, world):
+        ids = [agent.id for agent in world.agents]
+        Conversations.save_conversations(
+            self._logs,
+            outfile,
+            world.opt,
+            self_chat=world.opt.get('selfchat_task', False),
+            speaker_1=ids[0],
+            speaker_2=ids[1],
+        )
 
-    def write(self, outfile, file_format='jsonl'):
+    def write(self, outfile, world, file_format='jsonl'):
         if file_format == 'jsonl':
-            self.write_json_format(outfile)
+            self.write_jsonl_format(outfile)
         elif file_format == 'conversations':
-            self.write_conversations_format(outfile)
+            self.write_conversations_format(outfile, world)
         else:
             # ParlAI format
             self.write_parlai_format(outfile)

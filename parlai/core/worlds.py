@@ -309,9 +309,7 @@ class DialogPartnerWorld(World):
             self.agents = create_agents_from_shared(shared['agents'])
         else:
             if len(agents) != 2:
-                raise RuntimeError(
-                    'There must be exactly two agents for this world.'
-                )
+                raise RuntimeError('There must be exactly two agents for this world.')
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)

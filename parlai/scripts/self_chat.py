@@ -10,7 +10,6 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
-from parlai.utils.misc import TimeLogger
 
 import math
 import random
@@ -35,10 +34,7 @@ def setup_args(parser=None):
         help='Create a self chat version of the task',
     )
     parser.add_argument(
-        '--num-self-chats',
-        type=int,
-        default=1,
-        help='Number of self chats to run'
+        '--num-self-chats', type=int, default=1, help='Number of self chats to run'
     )
     parser.add_argument(
         '--selfchat-max-turns',
@@ -52,17 +48,14 @@ def setup_args(parser=None):
         help='Automatically seed conversation with messages from task dataset.',
     )
     parser.add_argument(
-        '--outfile',
-        type=str,
-        default=None,
-        help='File to save self chat logs'
+        '--outfile', type=str, default=None, help='File to save self chat logs'
     )
     parser.add_argument(
         '--save-format',
         type=str,
         default='conversations',
         choices=['conversations', 'parlai', 'json'],
-        help='Format to save logs in'
+        help='Format to save logs in',
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
@@ -95,8 +88,9 @@ def self_chat(opt):
     agent2 = agent1.clone()
 
     # Set IDs
-    agent1.id = agent1.id + "_1"
-    agent2.id = agent2.id + "_2"
+    model_id = agent1.id
+    agent1.id = model_id + "_1"
+    agent2.id = model_id + "_2"
 
     world = create_task(opt, user_agents=[agent1, agent2])
 
@@ -107,7 +101,20 @@ def self_chat(opt):
     for _ in range(opt['num_self_chats']):
         _run_self_chat_episode(opt, world, logger)
 
-    logger.write(opt['outfile'], opt['save_format'])
+    # Save chats
+    if opt['outfile'] is None:
+        outfile = '/tmp/{}_selfchat'.format(model_id)
+    else:
+        outfile = opt['outfile']
+
+    if opt['save_format'] == 'conversations' and hasattr(world, 'write'):
+        # use self chat specific world to write conversation
+        # this might be useful for logging extra contextual
+        # information (like personas)
+        world.write(logger, outfile)
+    else:
+        # use default logger write function
+        logger.write(outfile, world, opt['save_format'])
 
     return logger.get_logs()
 

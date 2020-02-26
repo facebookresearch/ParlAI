@@ -767,7 +767,9 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add arguments specific to the world.
         """
-        world_class = load_world_module(task, interactive_task=interactive_task, selfchat_task=selfchat_task)
+        world_class = load_world_module(
+            task, interactive_task=interactive_task, selfchat_task=selfchat_task
+        )
         if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
             try:
                 world_class.add_cmdline_args(self)

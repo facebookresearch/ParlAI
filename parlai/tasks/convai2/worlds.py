@@ -23,6 +23,7 @@ def load_personas(opt):
     if convai2_opt['datatype'].startswith('train'):
         convai2_opt['datatype'] = 'train:evalmode'
     convai2_opt['interactive_task'] = False
+    convai2_opt['selfchat_task'] = False
     convai2_agent = RepeatLabelAgent(convai2_opt)
     convai2_world = create_task(convai2_opt, convai2_agent)
     personas = set()

@@ -106,7 +106,7 @@ class Conversations:
     a JSON of the following form:
     {
         'possible_conversation_level_info': True,
-        'dialogue':
+        'dialog':
             [
                 {
                     'id': 'speaker_1',
@@ -189,13 +189,13 @@ class Conversations:
         convo = self.conversations[idx]
         print(BAR)
 
-        high_level = [k for k in convo.keys() if k != 'dialogue']
+        high_level = [k for k in convo.keys() if k != 'dialog']
         if high_level:
             for key in high_level:
                 print(f'{key}: {convo[key]}')
             print(SMALL_BAR)
 
-        for turn in convo:
+        for turn in convo['dialog']:
             turn_id = turn['id']
             text = turn['text']
             print(f'{turn_id}: {text}')
@@ -210,30 +210,26 @@ class Conversations:
         self.iterator_idx = 0
 
     @staticmethod
+    def _get_path(datapath):
+        fle, _ = os.path.splitext(datapath)
+        return fle + '.jsonl'
+
+    @classmethod
     def save_conversations(
+        cls,
         act_list,
         datapath,
         opt,
-        fle_name=None,
         save_keys='text',
         self_chat=False,
-        speaker_1='human',
+        speaker_1=None,
         speaker_2=None,
         **kwargs,
     ):
         """
         Write Conversations to file from an act list.
         """
-
-        if fle_name is None:
-            fle_name = ''
-            if opt.get('model') is not None:
-                fle_name += opt['model']
-            if self_chat:
-                fle_name += '_selfchat'
-            fle_name += f'_{datetime.date.today()}'
-
-        to_save = os.path.join(datapath, fle_name + '.jsonl')
+        to_save = cls._get_path(datapath)
 
         # save conversations
         with open(to_save, 'w') as f:
@@ -241,30 +237,33 @@ class Conversations:
                 if not ep:
                     continue
                 convo = {}
+                convo['context'] = []
                 convo['dialog'] = []
                 for act_pair in ep:
                     for i, ex in enumerate(act_pair):
-                        speaker = _get_speaker(i, ex)
+                        ex_id = ex.get('id')
+                        # possibly set speaker vars
+                        if i == 0 and speaker_1 is None and ex_id is not None:
+                            speaker_1 = ex_id
+                        elif i == 1 and speaker_2 is None and ex_id is not None:
+                            speaker_2 = ex_id
 
-                        # possibly set speaker keys
-                        if (
-                            i % 2 == 0
-                            and speaker_1 is None
-                            and ex.get('id') is not None
+                        # check if act is from speaker 1 or speaker 2
+                        context = False
+                        if (i % 2 == 0 and ex_id != speaker_1) or (
+                            i % 2 == 1 and ex_id != speaker_2
                         ):
-                            speaker_1 = ex['id']
-                        if (
-                            i % 2 == 1
-                            and speaker_2 is None
-                            and ex.get('id') is not None
-                        ):
-                            speaker_2 = ex['id']
+                            context = True
+
                         # set turn
                         turn = {}
                         for key in save_keys.split(','):
                             turn[key] = ex.get(key, '')
                         turn['id'] = speaker_1 if i % 2 == 0 else speaker_2
-                        convo['dialog'].append(turn)
+                        if context:
+                            convo['context'].append(turn)
+                        else:
+                            convo['dialog'].append(turn)
                 json_convo = json.dumps(convo)
                 f.write(json_convo + '\n')
         print(f' [ Conversations saved to file: {to_save} ]')
