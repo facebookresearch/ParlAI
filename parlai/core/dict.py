@@ -348,18 +348,13 @@ class DictionaryAgent(Agent):
                     'You should not filter vocabulary with using --dict-tokenizer bytelevelbpe'
                     ' (no --dict-minfreq or --dict-maxtokens).'
                 )
-            opt_for_byte_level_bpe = copy.copy(opt)
             if loaded:
-                dict_basename = os.path.splitext(opt['dict_file'])[0]
-                if os.path.isfile('{}-merges.txt'.format(dict_basename)):
-                    opt_for_byte_level_bpe['bpe_vocab'] = '{}-vocab.json'.format(
-                        dict_basename
-                    )
-                if os.path.isfile('{}-vocab.json'.format(dict_basename)):
-                    opt_for_byte_level_bpe['bpe_merge'] = '{}-merges.txt'.format(
-                        dict_basename
-                    )
-            self.byte_level_bpe = HuggingFaceBpeHelper(opt_for_byte_level_bpe)
+                dfname = opt['dict_file']
+                if os.path.isfile(f'{dfname}-merges.txt'):
+                    opt['bpe_vocab'] = f'{dfname}-vocab.json'
+                if os.path.isfile(f'{dfname}-vocab.json'):
+                    opt['bpe_merge'] = f'{dfname}-merges.txt'
+            self.byte_level_bpe = HuggingFaceBpeHelper(opt)
             self._sync_bytelevelbpe_dict()
 
         if not shared:
@@ -707,7 +702,8 @@ class DictionaryAgent(Agent):
             # never remove or sort tokens from gpt2
             pass
         elif self.tokenizer == 'bytelevelbpe':
-            # never remove or sort tokens from bytelevelbpe, it should be the same as the hugging face tokenizer
+            # never remove or sort tokens from bytelevelbpe, it should be the
+            # same as the hugging face tokenizer
             pass
         elif sort:
             self.sort(trim=True)
@@ -727,9 +723,10 @@ class DictionaryAgent(Agent):
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
         if self.tokenizer == 'bytelevelbpe':
-            # This saves filename-vocab.json and finlename-merges.txt as hugging face tokenizer do
+            # This saves filename-vocab.json and finlename-merges.txt as
+            # hugging face tokenizer do
             self.byte_level_bpe.tokenizer.save(
-                os.path.dirname(filename), os.path.splitext(filename)[0]
+                os.path.dirname(filename), os.path.basename(filename),
             )
 
     def sort(self, trim=True):
@@ -892,7 +889,8 @@ class DictionaryAgent(Agent):
         for i in range(self.byte_level_bpe.tokenizer.get_vocab_size() - 4):
             token = self.byte_level_bpe.tokenizer.id_to_token(i)
             self.add_token(token)
-            # We don't have access to the hugging face word frequency table, just set it to 1 instead
+            # We don't have access to the hugging face word frequency table,
+            # just set it to 1 instead
             self.freq[token] = 1
 
 
