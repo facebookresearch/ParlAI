@@ -184,7 +184,7 @@ class TestTransformerRanker(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_prelayernorm(self):
         """
-        Test --variant prelayernorm.
+        Test --variant prelayernorm with history_add_global_end_token option
         """
         valid, test = testing_utils.train_model(
             dict(
@@ -204,6 +204,7 @@ class TestTransformerRanker(unittest.TestCase):
                 gradient_clip=0.5,
                 variant='prelayernorm',
                 activation='gelu',
+                history_add_global_end_token='end',
             )
         )
 

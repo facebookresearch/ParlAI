@@ -603,13 +603,13 @@ class TransformerEncoderLayer(nn.Module):
             tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
         tensor = residual + self.dropout(attended_tensor)
-        if self.variant != 'prelayernorm':
+        if self.variant == 'aiayn' or self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm1)
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm2)
         tensor = residual + self.dropout(self.ffn(tensor))
-        if self.variant != 'prelayernorm':
+        if self.variant == 'aiayn' or self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
@@ -835,7 +835,7 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
-        if self.variant != 'prelayernorm':
+        if self.variant == 'aiayn' or self.variant == 'xlm':
             x = _normalize(x, self.norm1)
 
         residual = x
@@ -852,7 +852,7 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
-        if self.variant != 'prelayernorm':
+        if self.variant == 'aiayn' or self.variant == 'xlm':
             x = _normalize(x, self.norm2)
 
         # finally the ffn
@@ -862,7 +862,7 @@ class TransformerDecoderLayer(nn.Module):
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
-        if self.variant != 'prelayernorm':
+        if self.variant == 'aiayn' or self.variant == 'xlm':
             x = _normalize(x, self.norm3)
 
         new_incr_state = {
