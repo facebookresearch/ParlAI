@@ -184,7 +184,7 @@ class TestTransformerRanker(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_prelayernorm(self):
         """
-        Test --variant prelayernorm with history_add_global_end_token option
+        Test --variant prelayernorm with history_add_global_end_token option.
         """
         valid, test = testing_utils.train_model(
             dict(
@@ -537,6 +537,36 @@ class TestTransformerGenerator(unittest.TestCase):
                 inference='greedy',
                 beam_size=1,
                 variant='xlm',
+                activation='gelu',
+                n_segments=8,  # doesn't do anything but still good to test
+                adam_eps=1e-6,  # just to test another flag simultaneously
+            )
+        )
+
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
+
+    def test_prelayernorm(self):
+        """
+        Test --variant prelayernorm.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=20,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='greedy',
+                beam_size=1,
+                variant='prelayernorm',
                 activation='gelu',
                 n_segments=8,  # doesn't do anything but still good to test
                 adam_eps=1e-6,  # just to test another flag simultaneously
