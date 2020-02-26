@@ -96,7 +96,8 @@ class TestDistributed(unittest.TestCase):
         # when using validation_max_exs and distributed.
         # It's > 90 b/c there are two workers, told to do 45 each, & BatchWorld
         # parley() does batchsize examples each time, so each worker will do 49
-        # examples.
+        # example. In the future, if we fix VME, this assert should be changed
+        # to exactly 90.
         self.assertEqual(valid['exs'].value(), 98)
         self.assertEqual(test['exs'].value(), 98)
 
@@ -126,6 +127,8 @@ class TestDistributed(unittest.TestCase):
         # It does 98 instead of 90 b/c there are two workers, told to do 45
         # each, and BatchWorld parley() does batchsize examples each time, so
         # each worker will do 49 examples.
+        # In the future, if we fix VME, this assert should be changed to
+        # exactly 90.
         self.assertEqual(valid['exs'].value(), 98)
         self.assertEqual(test['exs'].value(), 98)
 

@@ -407,7 +407,7 @@ class TrainLoop:
             self.valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
-        valid_report = self.run_eval(
+        valid_report = self._run_eval(
             self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
         v = valid_report.copy()
@@ -483,7 +483,7 @@ class TrainLoop:
         return False
 
     def _run_single_eval(self, opt, valid_world, max_exs):
-        print(f'run_single_eval max_exs: {max_exs}')
+
         # run evaluation on a single world
         valid_world.reset()
 
@@ -501,7 +501,7 @@ class TrainLoop:
 
         return valid_report
 
-    def run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
+    def _run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         """
         Eval on validation/test data.
 
@@ -518,7 +518,6 @@ class TrainLoop:
         """
 
         print('[ running eval: ' + datatype + ' ]')
-        print(f'eval max exs: {max_exs}')
         timer = Timer()
         reports = []
 
@@ -712,9 +711,9 @@ class TrainLoop:
 
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
-        v_report = self.run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
+        v_report = self._run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
         test_worlds = load_eval_worlds(self.agent, opt, 'test')
-        t_report = self.run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
+        t_report = self._run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
         if valid_worlds:
             for valid_world in valid_worlds:
                 valid_world.shutdown()
