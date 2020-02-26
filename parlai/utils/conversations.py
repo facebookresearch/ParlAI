@@ -12,8 +12,8 @@ import os
 import random
 
 
-BAR = '=' * 75
-SMALL_BAR = '-' * 75
+BAR = '=' * 60
+SMALL_BAR = '-' * 60
 
 
 class Metadata:
@@ -44,7 +44,7 @@ class Metadata:
         self.speaker_2 = metadata['speaker_2']
         self.extra_data = {}
         for k, v in metadata.items():
-            if k not in ['date', 'opt', 'speaker_1', 'speaker_2']:
+            if k not in ['date', 'opt', 'speaker_1', 'speaker_2', 'self_chat']:
                 self.extra_data[k] = v
 
     def read(self):
