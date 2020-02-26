@@ -1987,6 +1987,7 @@ class QueueWorld(World):
         :param pworld_class:
             Which PWorld to use.
         """
+
         def _run_pworld_process(**kwargs):
             """
             Run a PWorldProcess to completion.
@@ -2010,7 +2011,7 @@ class QueueWorld(World):
                         consume_queue=consume_queue,
                         worker_idx=worker_idx,
                     ),
-                    daemon=False
+                    daemon=False,
                 )
             )
             self.worlds.append(subworld)

@@ -199,7 +199,9 @@ class NoCandidateFbDialogTeacher(CandidateBaseTeacher, FbDialogTeacher):
         super()._setup_data(dt)
         datafile = self._get_datafile(opt)
         if not os.path.exists(datafile):
-            os.makedirs(os.path.join(opt['datapath'], 'integration_tests'), exist_ok=True)
+            os.makedirs(
+                os.path.join(opt['datapath'], 'integration_tests'), exist_ok=True
+            )
             with open(datafile, 'w') as f:
                 for text in self.corpus:
                     f.write(f'1 {text}\t{text}\n')

@@ -32,7 +32,10 @@ BASE_ARGS = {
 
 SINGLETASK_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 0.1}
 
-SINGLETASK_STREAM_ARGS = {'task': 'integration_tests:no_candidate_fb_dialog', 'num_epochs': 0.1}
+SINGLETASK_STREAM_ARGS = {
+    'task': 'integration_tests:no_candidate_fb_dialog',
+    'num_epochs': 0.1,
+}
 
 SINGLETASK_MULTIVALID_ARGS = {
     'task': 'integration_tests:nocandidate',
