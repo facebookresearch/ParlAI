@@ -220,13 +220,21 @@ class AcuteEvaluator(object):
                 ]
                 # make sure order is preserved
                 assert eval_speakers == convo_pair['speakers_to_eval']
+                model_left_idx = random.choice([0, 1])
                 task = {
                     'task_specs': {
-                        'conversation_order': random.choice([[0, 1], [1, 0]]),
                         's1_choice': self.opt['s1_choice'],
                         's2_choice': self.opt['s2_choice'],
                         'question': self.opt['question'],
                         'is_onboarding': convo_pair['is_onboarding'],
+                        'model_left': {
+                            'name': eval_speakers[model_left_idx],
+                            'dialogue': convo_pair['dialogue_dicts'][model_left_idx]['dialogue']
+                        },
+                        'model_right': {
+                            'name': eval_speakers[1 - model_left_idx],
+                            'dialogue': convo_pair['dialogue_dicts'][1 - model_left_idx]['dialogue']
+                        }
                     },
                     'pairing_dict': convo_pair,
                     'pair_id': i,
@@ -282,7 +290,8 @@ class AcuteEvaluator(object):
             pair_id = next_task['pair_id']
             dialogue_ids = self._get_dialogue_ids(next_task)
 
-            if pair_id not in worker_data[  # make sure worker has not seen these conversations before
+            # make sure worker has not seen these conversations before
+            if pair_id not in worker_data[
                 'tasks_completed'
             ] and all(
                 d_id not in worker_data['conversations_seen'] for d_id in dialogue_ids
@@ -403,7 +412,7 @@ class AcuteEvaluator(object):
                 except ValueError:
                     # Task may have shown up in worker's task queue twice
                     # due to some unfortunate race condition
-                    print("WARNING: couldn't remove task from worker's history")
+                    warn_once(f'could not remove task from worker {worker_id} history')
 
     def get_onboarding_tasks(self, worker_id: str) -> List[Dict[str, Any]]:
         """

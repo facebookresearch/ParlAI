@@ -13,7 +13,7 @@ The only argument that *must* be modified for this to be run is:
 The following args are useful to tweak to fit your specific needs;
     - ``annotations_per_pair``: A useful arg if you'd like to evaluate a given conversation pair
                                 more than once.
-    - ``pairs_per_matchup``:    Essentially, how many pairs of conversations you would like to evaluate
+    - ``num_matchup_pairs``:    Essentially, how many pairs of conversations you would like to evaluate
     - ``subtasks_per_hit``:     How many comparisons you'd like a turker to complete in one HIT
 
 Help strings for the other arguments can be found in run.py.
@@ -36,7 +36,7 @@ def set_args():
     args['is_sandbox'] = True  # set to False to release real hits
 
     args['annotations_per_pair'] = 1  # num times to use the same conversation pair
-    args['pairs_per_matchup'] = 2  # num pairs of conversations per pair of models
+    args['num_matchup_pairs'] = 2  # num pairs of conversations to be compared
     args['seed'] = 42  # random seed
     args['subtasks_per_hit'] = 2  # num comparisons to show within one hit
 
@@ -46,7 +46,7 @@ def set_args():
     args['question'] = 'Who would you prefer to talk to for a long conversation?'
 
     args['num_conversations'] = int(
-        args['pairs_per_matchup'] / max((args['subtasks_per_hit'] - 1), 1)
+        args['num_matchup_pairs'] / max((args['subtasks_per_hit'] - 1), 1)
     )  # release enough hits to finish all annotations requested
 
     # Task display on MTurk
