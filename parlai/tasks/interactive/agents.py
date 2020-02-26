@@ -13,8 +13,3 @@ class DefaultTeacher:
 class InteractiveTeacher:
     # Dummy class to add arguments for interactive world.
     pass
-
-
-def create_agents(opt):
-    # interactive task has no task agents (they are attached as user agents)
-    return []

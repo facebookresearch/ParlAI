@@ -267,6 +267,7 @@ def _get_default_world(default_world=None, num_agents=None):
 def load_world_module(
     taskname: str,
     interactive_task: bool = False,
+    selfchat_task: bool = False,
     num_agents: int = None,  # a priori may not know the number of agents
     default_world=None,
 ):
@@ -305,9 +306,13 @@ def load_world_module(
         world_name = task_path_list[1] + "World"
         if interactive_task:
             world_name = "Interactive" + world_name
+        elif selfchat_task:
+            world_name = "SelfChat" + world_name
     else:
         if interactive_task:
             world_name = "InteractiveWorld"
+        elif selfchat_task:
+            world_name = "SelfChatWorld"
         else:
             world_name = "DefaultWorld"
     module_name = "%s.tasks.%s.worlds" % (repo, task)

@@ -47,7 +47,7 @@ def load_openers(opt) -> Optional[List[str]]:
     return list(openers)
 
 
-class SelfChatBaseWorld(DialogPartnerWorld):
+class SelfChatWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.init_contexts()
@@ -92,8 +92,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         return None
 
     def display(self):
-        s = ''
-        s += super().display()
+        s = super().display()
         if self.turn_cnt == 0:
             s += '\n==============================\n'
         return s
@@ -174,7 +173,3 @@ class SelfChatBaseWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.turn_cnt += 1
-
-
-class InteractiveWorld(SelfChatBaseWorld):
-    pass

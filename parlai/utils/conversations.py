@@ -12,6 +12,10 @@ import os
 import random
 
 
+BAR = '=' * 75
+SMALL_BAR = '-' * 75
+
+
 class Metadata:
     """
     Utility class for conversation metadata.
@@ -120,6 +124,7 @@ class Conversations:
     def __init__(self, datapath):
         self.conversations = self._load_conversations(datapath)
         self.metadata = self._load_metadata(datapath)
+        self.iterator_idx = 0
 
     @property
     def num_conversations(self):
@@ -159,30 +164,117 @@ class Conversations:
             metadata = Metadata(datapath)
             return metadata
         except RuntimeError:
-            print('Metadata does not exist. Please double check ' 'your datapath.')
+            print('Metadata does not exist. Please double check your datapath.')
             return None
 
     def read_metadata(self):
         if self.metadata is not None:
             self.metadata.read()
 
+    def next(self):
+        """
+        Return the next conversation.
+        """
+        if self.iterator_idx >= self.num_conversations:
+            print('You reached the end of the conversations.')
+            self.reset()  # return the iterator idx to 0
+            return None
+
+        conv = self.conversations[self.iterator_idx]
+        self.iterator_idx += 1
+
+        return conv
+
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        print('=' * 75)
+        print(BAR)
 
         high_level = [k for k in convo.keys() if k != 'dialogue']
         if high_level:
             for key in high_level:
                 print(f'{key}: {convo[key]}')
-            print('-' * 75)
+            print(SMALL_BAR)
 
         for turn in convo:
             turn_id = turn['id']
             text = turn['text']
             print(f'{turn_id}: {text}')
 
-        print('=' * 75)
+        print(BAR)
 
     def read_rand_conv(self):
         idx = random.choice(range(self.num_conversations))
         self.read_conv_idx(idx)
+
+    def reset(self):
+        self.iterator_idx = 0
+
+    @staticmethod
+    def save_conversations(
+        act_list,
+        datapath,
+        opt,
+        fle_name=None,
+        save_keys='text',
+        self_chat=False,
+        speaker_1='human',
+        speaker_2=None,
+        **kwargs,
+    ):
+        """
+        Write Conversations to file from an act list.
+        """
+
+        if fle_name is None:
+            fle_name = ''
+            if opt.get('model') is not None:
+                fle_name += opt['model']
+            if self_chat:
+                fle_name += '_selfchat'
+            fle_name += f'_{datetime.date.today()}'
+
+        to_save = os.path.join(datapath, fle_name + '.jsonl')
+
+        # save conversations
+        with open(to_save, 'w') as f:
+            for ep in act_list:
+                if not ep:
+                    continue
+                convo = {}
+                convo['dialog'] = []
+                for act_pair in ep:
+                    for i, ex in enumerate(act_pair):
+                        speaker = _get_speaker(i, ex)
+
+                        # possibly set speaker keys
+                        if (
+                            i % 2 == 0
+                            and speaker_1 is None
+                            and ex.get('id') is not None
+                        ):
+                            speaker_1 = ex['id']
+                        if (
+                            i % 2 == 1
+                            and speaker_2 is None
+                            and ex.get('id') is not None
+                        ):
+                            speaker_2 = ex['id']
+                        # set turn
+                        turn = {}
+                        for key in save_keys.split(','):
+                            turn[key] = ex.get(key, '')
+                        turn['id'] = speaker_1 if i % 2 == 0 else speaker_2
+                        convo['dialog'].append(turn)
+                json_convo = json.dumps(convo)
+                f.write(json_convo + '\n')
+        print(f' [ Conversations saved to file: {to_save} ]')
+
+        # save metadata
+        Metadata.save_metadata(
+            to_save,
+            opt,
+            self_chat=self_chat,
+            speaker_1=speaker_1,
+            speaker_2=speaker_2,
+            **kwargs,
+        )

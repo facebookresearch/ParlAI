@@ -9,7 +9,7 @@ from copy import deepcopy
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.tasks.self_chat.worlds import SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 import random
 from typing import List
@@ -115,7 +115,7 @@ class InteractiveWorld(DialogPartnerWorld):
             self.cnt = 0
 
 
-class InteractiveSelfchatWorld(SelfChatBaseWorld):
+class SelfChatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         self.personas_list = load_personas(self.opt)
 
