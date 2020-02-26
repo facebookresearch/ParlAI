@@ -457,6 +457,7 @@ class TrainLoop:
                     'best_valid': self.best_valid,
                 },
                 f,
+                indent=4,
             )
 
     def validate(self):
@@ -483,6 +484,7 @@ class TrainLoop:
         self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
+            valid_report['total_exs'] = self._total_exs
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
             # flush on a validation
             self.tb_logger.flush()
@@ -642,13 +644,11 @@ class TrainLoop:
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
-                self._total_epochs = (
-                    self._preempted_epochs
-                    + num_workers() * self.world.get_total_epochs()
+                self._total_epochs = self._preempted_epochs + sum(
+                    all_gather_list(world.get_total_epochs())
                 )
-                exs_per_epoch = self.world.num_examples()
+                exs_per_epoch = world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
-
                 # and use the primary worker's timings for everything
                 train_time, log_time, validate_time = sync_object(
                     (
@@ -678,17 +678,23 @@ class TrainLoop:
                     >= self.val_every_n_epochs
                 ):
                     try:
+                        # log before we validate
+                        self.log()
+                        world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
                         if is_distributed():
                             raise RuntimeError(
-                                "StopTrainException not "
-                                "supported for distributed mode"
+                                "StopTrainException not supported for distributed mode"
                             )
                         break
+                    # reset the log time because we logged right before validating
+                    self.log_time.reset()
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break
+                    # make sure metrics are clean before we log
+                    world.reset_metrics()
                 if (
                     self.save_time.time() > self.save_every_n_secs
                     and opt.get('model_file')
@@ -699,6 +705,8 @@ class TrainLoop:
                             opt['model_file']
                         )
                     )
+                    if opt['tensorboard_log'] and is_primary_worker():
+                        self.tb_logger.flush()
                     self.save_model('.checkpoint')
                     self.save_time.reset()
 

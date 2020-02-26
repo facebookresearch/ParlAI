@@ -93,6 +93,12 @@ class TorchClassifierAgent(TorchAgent):
             default=None,
             help='loads the list of classes from a file',
         )
+        parser.add_argument(
+            '--ignore-labels',
+            type='bool',
+            default=None,
+            help='Ignore labels provided to model',
+        )
 
     def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
@@ -200,8 +206,9 @@ class TorchClassifierAgent(TorchAgent):
         try:
             labels_indices_list = [self.class_dict[label] for label in batch.labels]
         except KeyError as e:
-            print('One of your labels is not in the class list.')
+            warn_once('One of your labels is not in the class list.')
             raise e
+
         labels_tensor = torch.LongTensor(labels_indices_list)
         if self.use_cuda:
             labels_tensor = labels_tensor.cuda()
@@ -278,7 +285,7 @@ class TorchClassifierAgent(TorchAgent):
             prediction_id = ref_prob <= self.threshold
         preds = [self.class_list[idx] for idx in prediction_id]
 
-        if batch.labels is None:
+        if batch.labels is None or self.opt['ignore_labels']:
             # interactive mode
             if self.opt.get('print_scores', False):
                 preds = self._format_interactive_output(probs, prediction_id)
@@ -289,7 +296,10 @@ class TorchClassifierAgent(TorchAgent):
             loss = loss.mean()
             self._update_confusion_matrix(batch, preds)
 
-        return Output(preds)
+        if self.opt.get('print_scores', False):
+            return Output(preds, probs=probs.cpu())
+        else:
+            return Output(preds)
 
     def reset_metrics(self):
         """
@@ -297,7 +307,6 @@ class TorchClassifierAgent(TorchAgent):
         """
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
-        self.metrics['examples'] = 0
 
     def _report_prec_recall_metrics(self, confmat, class_name, metrics):
         """
@@ -341,34 +350,29 @@ class TorchClassifierAgent(TorchAgent):
         Report loss as well as precision, recall, and F1 metrics.
         """
         m = super().report()
-        examples = self.metrics['examples']
-        if examples > 0:
-            # TODO: upgrade the confusion matrix to newer metrics
-            # get prec/recall metrics
-            confmat = self.metrics['confusion_matrix']
-            if self.opt.get('get_all_metrics'):
-                metrics_list = self.class_list
-            else:
-                # only give prec/recall metrics for ref class
-                metrics_list = [self.ref_class]
+        # TODO: upgrade the confusion matrix to newer metrics
+        # get prec/recall metrics
+        confmat = self.metrics['confusion_matrix']
+        if self.opt.get('get_all_metrics'):
+            metrics_list = self.class_list
+        else:
+            # only give prec/recall metrics for ref class
+            metrics_list = [self.ref_class]
 
-            examples_per_class = []
-            for class_i in metrics_list:
-                class_total = self._report_prec_recall_metrics(confmat, class_i, m)
-                examples_per_class.append(class_total)
+        examples_per_class = []
+        for class_i in metrics_list:
+            class_total = self._report_prec_recall_metrics(confmat, class_i, m)
+            examples_per_class.append(class_total)
 
-            if len(examples_per_class) > 1:
-                # get weighted f1
-                f1 = 0
-                total_exs = sum(examples_per_class)
-                for i in range(len(self.class_list)):
-                    f1 += (examples_per_class[i] / total_exs) * m[
-                        'class_{}_f1'.format(self.class_list[i])
-                    ]
-                m['weighted_f1'] = f1
-
-        for k, v in m.items():
-            m[k] = round_sigfigs(v, 4)
+        if len(examples_per_class) > 1:
+            # get weighted f1
+            f1 = 0
+            total_exs = sum(examples_per_class)
+            for i in range(len(self.class_list)):
+                f1 += (examples_per_class[i] / total_exs) * m[
+                    'class_{}_f1'.format(self.class_list[i])
+                ]
+            m['weighted_f1'] = f1
 
         return m
 

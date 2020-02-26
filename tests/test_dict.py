@@ -19,6 +19,30 @@ import os
 import shutil
 import unittest
 
+DEFAULT_BYTELEVEL_BPE_VOCAB = (
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
+)
+DEFAULT_BYTELEVEL_BPE_MERGE = (
+    'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-merges.txt'
+)
+BYTELEVEL_BPE_RESULT = [
+    'H',
+    'ello',
+    ',',
+    'Ġ',
+    'P',
+    'ar',
+    'l',
+    'A',
+    'I',
+    '!',
+    'Ġ',
+    'ð',
+    'Ł',
+    'ĺ',
+    'Ģ',
+]
+
 
 class TestDictionary(unittest.TestCase):
     """
@@ -161,6 +185,192 @@ class TestDictionary(unittest.TestCase):
         popt = parser.parse_args([], print_args=False)
         with self.assertRaises(RuntimeError):
             tms.TrainLoop(popt)
+
+
+class TestByteLevelBPE(unittest.TestCase):
+    """
+    Test ByteLevelBPE is well-behaved.
+    """
+
+    def test_tokenize_prefix_space(self):
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            ['Ġ'] + BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in ['Ġ'] + BYTELEVEL_BPE_RESULT],
+        )
+
+    def test_byte_level_bpe_tokenize(self):
+        """
+        Tests a bytelevel bpe tokenizer inside ParlAI.
+        """
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            bpe_add_prefix_space=False,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
+        vocab_size = agent.byte_level_bpe.tokenizer.get_vocab_size()
+        with testing_utils.tempdir() as tmpdir:
+            path = os.path.join(tmpdir, 'dict-checkpoint')
+            agent.save(filename=path)
+            agent.load(filename=path)
+        # Test loading / saving
+        self.assertEqual(vocab_size, agent.byte_level_bpe.tokenizer.get_vocab_size())
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            BYTELEVEL_BPE_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt([agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
+        )
+        # Test special token ids are mapped correctly:
+        # 4 special tokens are added in ParlAI dict in the begining and at the
+        # end for Hugging Face null token would be 0 in ParlAI dict and
+        # original_vocab in Hugging Face
+        assert agent.txt2vec("__null__") == [0]
+        assert agent.txt2vec("__start__") == [1]
+        assert agent.txt2vec("__end__") == [2]
+        assert agent.txt2vec("__unk__") == [3]
+
+    def test_nofile(self):
+        pp = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(pp)
+        with self.assertRaises(IOError):
+            # did not specify bpe merge or vocab
+            DictionaryAgent(pp.parse_args(['--dict-tokenizer', 'bytelevelbpe']))
+
+        with self.assertRaises(IOError):
+            # specified one
+            DictionaryAgent(
+                pp.parse_args(
+                    [
+                        '--dict-tokenizer',
+                        'bytelevelbpe',
+                        '--bpe-merge',
+                        DEFAULT_BYTELEVEL_BPE_MERGE,
+                    ]
+                )
+            )
+
+        with self.assertRaises(IOError):
+            # specified the other
+            DictionaryAgent(
+                pp.parse_args(
+                    [
+                        '--dict-tokenizer',
+                        'bytelevelbpe',
+                        '--bpe-vocab',
+                        DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    ]
+                )
+            )
+
+        with self.assertRaises(IOError):
+            # intentionally missing file
+            DictionaryAgent(
+                pp.parse_args(
+                    [
+                        '--dict-tokenizer',
+                        'bytelevelbpe',
+                        '--bpe-merge',
+                        'foobar',  # intentionally wrong
+                        '--bpe-vocab',
+                        DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    ]
+                )
+            )
+
+        with self.assertRaises(IOError):
+            # intentionally missing file
+            DictionaryAgent(
+                pp.parse_args(
+                    [
+                        '--dict-tokenizer',
+                        'bytelevelbpe',
+                        '--bpe-merge',
+                        DEFAULT_BYTELEVEL_BPE_MERGE,
+                        '--bpe-vocab',
+                        'foobar',  # intentionally wrong
+                    ]
+                )
+            )
+
+    def test_save_reload(self):
+        """
+        Save and reload an existing BL-BPE dictionary.
+        """
+        pp = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(pp)
+        da = DictionaryAgent(
+            pp.parse_args(
+                [
+                    '--dict-tokenizer',
+                    'bytelevelbpe',
+                    '--bpe-merge',
+                    DEFAULT_BYTELEVEL_BPE_MERGE,
+                    '--bpe-vocab',
+                    DEFAULT_BYTELEVEL_BPE_VOCAB,
+                ]
+            )
+        )
+        # poor behavior if we failed to load
+        assert da.txt2vec("hello") != []
+
+        with testing_utils.tempdir() as tmpdir:
+            newdf = os.path.join(tmpdir, "dict")
+            da.save(newdf)
+
+            # now load it
+            da2 = DictionaryAgent(
+                pp.parse_args(
+                    ['--dict-tokenizer', 'bytelevelbpe', '--dict-file', newdf]
+                )
+            )
+            assert da2.txt2vec("hello") == da.txt2vec("hello")
 
 
 if __name__ == '__main__':

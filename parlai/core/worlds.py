@@ -1234,6 +1234,9 @@ class DynamicBatchWorld(World):
         self.total_parleys += 1
         self.total_exs += len(batch)
 
+    def get_total_exs(self):
+        return self.total_exs
+
     def get_total_epochs(self):
         return self.total_exs / self.num_examples()
 
