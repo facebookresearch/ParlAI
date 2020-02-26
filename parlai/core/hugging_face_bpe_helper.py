@@ -4,6 +4,8 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
+import os
 from parlai.core.opt import Opt
 from typing import List
 
@@ -22,6 +24,7 @@ class HuggingFaceBpeHelper(object):
             '--bpe-add-prefix-space',
             type='bool',
             hidden=True,
+            default=True,
             help='add prefix space before encoding',
         )
         return parser
@@ -41,6 +44,22 @@ class HuggingFaceBpeHelper(object):
 
         self.vocab_path = opt['bpe_vocab']
         self.merge_path = opt['bpe_merge']
+
+        if not self.vocab_path or not self.merge_path:
+            raise IOError(
+                '--bpe-vocab and --bpe-merge are mandatory with '
+                '--dict-tokenizer bytelevelbpe'
+            )
+
+        if not os.path.isfile(self.vocab_path):
+            raise IOError(
+                f'File {self.vocab_path} does not exist. --bpe-vocab must be pretrained.'
+            )
+        if not os.path.isfile(self.merge_path):
+            raise IOError(
+                f'File {self.merge_path} does not exist. --bpe-merge must be pretrained.'
+            )
+
         self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
         self.tokenizer = ByteLevelBPETokenizer(
             self.vocab_path, self.merge_path, self.add_prefix_space
