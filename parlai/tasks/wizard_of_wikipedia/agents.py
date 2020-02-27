@@ -309,7 +309,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
                 labels = ['{} {}'.format(title, sentence)]
 
         # finally, get label_candidates
-        label_cands = [TOKEN_NOCHOSEN + ' ' + TOKEN_NOCHOSEN]
+        label_cands = ['{} {}'.format(TOKEN_NOCHOSEN, TOKEN_NOCHOSEN)]
         knowledge_str = ''
         for title, passage in knowledge_dict.items():
             for p in passage:
