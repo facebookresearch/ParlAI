@@ -303,10 +303,13 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             labels = [wizard_entry['text']]
         else:
             title, sentence = _get_chosen_title_and_sent(wizard_entry, knowledge_dict)
-            labels = ['{} {}'.format(title, sentence)]
+            if self.knowledge_separator and title != TOKEN_NOCHOSEN:
+                labels = ['{} {} {}'.format(title, TOKEN_KNOWLEDGE, sentence)]
+            else:
+                labels = ['{} {}'.format(title, sentence)]
 
         # finally, get label_candidates
-        label_cands = [TOKEN_NOCHOSEN + ' ' + TOKEN_NOCHOSEN]
+        label_cands = ['{} {}'.format(TOKEN_NOCHOSEN, TOKEN_NOCHOSEN)]
         knowledge_str = ''
         for title, passage in knowledge_dict.items():
             for p in passage:
