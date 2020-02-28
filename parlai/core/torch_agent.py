@@ -35,6 +35,7 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
+from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.fp16 import (
     fp16_apex_available,
@@ -1898,9 +1899,23 @@ class TorchAgent(ABC, Agent):
         It is recommended you use this instead of loss.backward(), for integration with
         distributed training and FP16 training.
         """
-        if self.opt.get('update_freq', 1) > 1:
+        update_freq = self.opt.get('update_freq', 1)
+
+        if update_freq > 1:
             # gradient accumulation, but still need to average across the minibatches
-            loss = loss / self.opt['update_freq']
+            loss = loss / update_freq
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+
+            # we're doing gradient accumulation, so we don't need to sync gradients
+            # amoung GPUs
+            if self._number_grad_accum != 0 and is_distributed():
+                # accumulate without syncing
+                with self.model.no_sync():
+                    if self.fp16:
+                        self.optimizer.backward(loss, update_master_grads=False)
+                    else:
+                        loss.backward()
+                return
 
         if self.fp16:
             self.optimizer.backward(loss, update_master_grads=False)
@@ -1921,7 +1936,7 @@ class TorchAgent(ABC, Agent):
         if update_freq > 1:
             # we're doing gradient accumulation, so we don't only want to step
             # every N updates instead
-            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            # self._number_grad_accum is updated in backward function
             if self._number_grad_accum != 0:
                 return
 
