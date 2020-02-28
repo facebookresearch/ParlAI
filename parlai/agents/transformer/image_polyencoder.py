@@ -46,7 +46,10 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
             '--num-image-tokens',
             type=int,
             default=1,
-            help='Number of time steps that the image encoding will consist of (when adding or prepending)',
+            help=(
+                'Number of tokens that the image encoding will consist of (when adding '
+                'or prepending)'
+            ),
         )
         agent.set_defaults(reduction_type=None)
         # This agent doesn't support any encoder output reductions
