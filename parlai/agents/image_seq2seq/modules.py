@@ -96,6 +96,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_encoder_num_layers=1,
         image_features_dim=2048,
         image_combination_mode='append',
+        num_image_tokens=1,
     ):
         """
         Override TransformerEncoder __init__.
@@ -107,6 +108,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
+        self.num_image_tokens = num_image_tokens
         reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
             n_heads=n_heads,
@@ -128,17 +130,22 @@ class ContextWithImageEncoder(TransformerEncoder):
             n_segments=n_segments,
             output_scaling=output_scaling,
         )
+        self.full_embedding_size = self.embedding_size * self.num_image_tokens
+        # Images will be embedded to this size, and then the embedding will be folded
+        # into however many tokens are needed
         self._build_image_encoder()
-        self.register_buffer('dummy_image_enc', torch.zeros((self.embedding_size,)))
-        self.register_buffer('ones_mask', torch.ones(1).bool())
+        self.register_buffer(
+            'dummy_image_enc', torch.zeros((self.full_embedding_size,))
+        )
+        self.register_buffer('ones_mask', torch.ones(self.num_image_tokens).bool())
 
     def _build_image_encoder(self):
-        image_layers = [nn.Linear(self.img_dim, self.embedding_size)]
+        image_layers = [nn.Linear(self.img_dim, self.full_embedding_size)]
         for _ in range(self.n_img_layers - 1):
             image_layers += [
                 nn.ReLU(),
                 nn.Dropout(p=self.dropout_frac),
-                nn.Linear(self.embedding_size, self.embedding_size),
+                nn.Linear(self.full_embedding_size, self.full_embedding_size),
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
@@ -158,9 +165,9 @@ class ContextWithImageEncoder(TransformerEncoder):
         :return:
             a (image_encoded, image_mask) tuple, where:
 
-            - image_enc is a torch.Tensor of dim N x self.img_dim,
-              representing the encoded batch of images
-            - image_mask is a torch.Tensor of dim N x 1
+            - image_encoded is a torch.Tensor of dim N x self.num_image_tokens x
+              self.embedding_size, representing the encoded batch of images
+            - image_mask is a torch.Tensor of dim N x self.num_image_tokens
         """
         image_masks = image_encoded = None
         valid_inds = [
@@ -170,8 +177,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         ]
 
         if valid_inds:
-            image_masks = []
-            image_encoded = []
+            image_mask_list = []
+            image_encoded_list = []
 
             valid_imgs = torch.stack([images[i] for i in valid_inds])
             valid_img_enc = self.image_encoder(valid_imgs)
@@ -179,15 +186,18 @@ class ContextWithImageEncoder(TransformerEncoder):
             img_num = 0
             for i in range(len(images)):
                 if i in valid_inds:
-                    image_masks.append(self.ones_mask)
-                    image_encoded.append(valid_img_enc[img_num, :])
+                    image_mask_list.append(self.ones_mask)
+                    image_encoded_list.append(valid_img_enc[img_num, :])
                     img_num += 1
                 else:
-                    image_masks.append(~self.ones_mask)
-                    image_encoded.append(self.dummy_image_enc)
+                    image_mask_list.append(~self.ones_mask)
+                    image_encoded_list.append(self.dummy_image_enc)
 
-            image_masks = torch.stack(image_masks)
-            image_encoded = torch.stack(image_encoded).unsqueeze(1)
+            image_masks = torch.stack(image_mask_list)
+            image_encoded = torch.stack(image_encoded_list).reshape(
+                (len(images), self.num_image_tokens, self.embedding_size)
+            )
+            assert image_masks.shape == image_encoded.shape[:2]
 
         return image_encoded, image_masks
 
