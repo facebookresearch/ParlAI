@@ -637,7 +637,9 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Finetuning LR scheduler reset failed (total_train_updates).',
             )
             self.assertEqual(
-                valid3['lr'], valid1['lr'], 'Finetuning LR scheduler reset failed (lr).'
+                valid3['lr'],
+                valid1['lr'],
+                'Finetuning LR scheduler reset failed (lr).',
             )
             # and make sure we're not loading the scheduler if it changes
             valid4, test4 = testing_utils.train_model(
