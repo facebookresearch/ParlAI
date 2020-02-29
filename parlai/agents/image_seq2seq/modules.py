@@ -96,7 +96,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_encoder_num_layers=1,
         image_features_dim=2048,
         image_combination_mode='append',
-        num_image_tokens=1,
+        n_image_tokens=1,
     ):
         """
         Override TransformerEncoder __init__.
@@ -108,7 +108,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
-        self.num_image_tokens = num_image_tokens
+        self.n_image_tokens = n_image_tokens
         reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
             n_heads=n_heads,
@@ -130,14 +130,14 @@ class ContextWithImageEncoder(TransformerEncoder):
             n_segments=n_segments,
             output_scaling=output_scaling,
         )
-        self.full_embedding_size = self.embedding_size * self.num_image_tokens
+        self.full_embedding_size = self.embedding_size * self.n_image_tokens
         # Images will be embedded to this size, and then the embedding will be folded
         # into however many tokens are needed
         self._build_image_encoder()
         self.register_buffer(
             'dummy_image_enc', torch.zeros((self.full_embedding_size,))
         )
-        self.register_buffer('ones_mask', torch.ones(self.num_image_tokens).bool())
+        self.register_buffer('ones_mask', torch.ones(self.n_image_tokens).bool())
 
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.full_embedding_size)]
@@ -165,9 +165,9 @@ class ContextWithImageEncoder(TransformerEncoder):
         :return:
             a (image_encoded, image_mask) tuple, where:
 
-            - image_encoded is a torch.Tensor of dim N x self.num_image_tokens x
+            - image_encoded is a torch.Tensor of dim N x self.n_image_tokens x
               self.embedding_size, representing the encoded batch of images
-            - image_mask is a torch.Tensor of dim N x self.num_image_tokens
+            - image_mask is a torch.Tensor of dim N x self.n_image_tokens
         """
         image_masks = image_encoded = None
         valid_inds = [
@@ -195,7 +195,7 @@ class ContextWithImageEncoder(TransformerEncoder):
 
             image_masks = torch.stack(image_mask_list)
             image_encoded = torch.stack(image_encoded_list).reshape(
-                (len(images), self.num_image_tokens, self.embedding_size)
+                (len(images), self.n_image_tokens, self.embedding_size)
             )
             assert image_masks.shape == image_encoded.shape[:2]
 

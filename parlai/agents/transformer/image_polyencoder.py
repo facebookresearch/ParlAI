@@ -43,7 +43,7 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
             help='How to combine image embedding (if used) with context embedding',
         )
         agent.add_argument(
-            '--num-image-tokens',
+            '--n-image-tokens',
             type=int,
             default=1,
             help=(
@@ -171,7 +171,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
                 image_encoder_num_layers=opt['image_encoder_num_layers'],
                 image_features_dim=opt['image_features_dim'],
                 image_combination_mode=opt['image_combination_mode'],
-                num_image_tokens=opt['num_image_tokens'],
+                n_image_tokens=opt['n_image_tokens'],
             )
         else:
             # The candidate encoder is the same as for PolyEncoderModule
