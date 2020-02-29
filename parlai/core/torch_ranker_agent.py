@@ -180,6 +180,7 @@ class TorchRankerAgent(TorchAgent):
                 )
             if self.use_cuda:
                 self.model.cuda()
+                self.model.parallelize()
                 self.criterion.cuda()
 
             print("Total parameters: {}".format(self._total_parameters()))

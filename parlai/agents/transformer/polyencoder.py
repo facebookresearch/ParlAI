@@ -215,6 +215,10 @@ class PolyEncoderModule(torch.nn.Module):
     See https://arxiv.org/abs/1905.01969 for more details
     """
 
+    def parallelize(self):
+        self.encoder_ctxt.parallelize()
+        self.encoder_cand.parallelize()
+
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
@@ -301,7 +305,7 @@ class PolyEncoderModule(torch.nn.Module):
             embeddings_scale=opt['embeddings_scale'],
             reduction_type=reduction_type,
             n_positions=n_positions,
-            n_segments=2,
+            n_segments=opt.get('n_segments', 2),
             activation=opt['activation'],
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],

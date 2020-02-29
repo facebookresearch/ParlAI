@@ -29,6 +29,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf
 
 try:
+    raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
@@ -46,8 +47,7 @@ def _normalize(tensor, norm_layer):
     """
     if not APEX_LAYER_NORM:
         warn_once("Installing APEX can give a significant speed boost.")
-    size = tensor.size()
-    return norm_layer(tensor.view(-1, size[-1])).view(size)
+    return norm_layer(tensor)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
@@ -493,6 +493,16 @@ class TransformerEncoder(nn.Module):
                 )
             )
         self.output_scaling = output_scaling
+        self._parallelized = False
+
+    def parallelize(self):
+        self._parallelized = True
+        for i in range(self.n_layers):
+            device = self._layer_device(i)
+            self.layers[i] = self.layers[i].to(f'cuda:{device}')
+
+    def _layer_device(self, layerno):
+        return int((2 + layerno) / 3.2)
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -534,8 +544,20 @@ class TransformerEncoder(nn.Module):
         tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
+        from torch.utils.checkpoint import checkpoint
+
         for i in range(self.n_layers):
-            tensor = self.layers[i](tensor, mask)
+            if self._parallelized:
+                device = self._layer_device(i)
+                tensor = tensor.to(f'cuda:{device}')
+                mask = mask.to(f'cuda:{device}')
+            tensor = checkpoint(self.layers[i], tensor, mask)
+            #tensor = self.layers[i](tensor, mask)
+
+        if self._parallelized:
+            tensor = tensor.to('cuda:0')
+            mask = mask.to('cuda:0')
+
         if self.variant == 'layernormbefore':
             tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
@@ -593,6 +615,16 @@ class TransformerEncoderLayer(nn.Module):
         self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
+    def _normalize(self, tensor, norm_layer):
+        """
+        Broadcast layer norm.
+        """
+        if not APEX_LAYER_NORM:
+            warn_once("Installing APEX can give a significant speed boost.")
+        size = tensor.size()
+        return norm_layer(tensor.view(-1, size[-1])).view(size)
+
+
     def forward(self, tensor, mask):
         """
         Forward pass.
@@ -602,13 +634,13 @@ class TransformerEncoderLayer(nn.Module):
         if self.variant == 'layernormbefore':
             tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
-        tensor = residual + self.dropout(attended_tensor)
+        tensor = residual + (attended_tensor)
         if self.variant != 'layernormbefore':
             tensor = _normalize(tensor, self.norm1)
         residual = tensor
         if self.variant == 'layernormbefore':
             tensor = _normalize(tensor, self.norm2)
-        tensor = residual + self.dropout(self.ffn(tensor))
+        tensor = residual + (self.ffn(tensor))
         if self.variant != 'layernormbefore':
             tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
@@ -989,7 +1021,6 @@ class BasicAttention(nn.Module):
 
     def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
-        self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
@@ -1023,8 +1054,8 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill_(attn_mask, -float('inf'))
-        l2 = self.softmax(l1)
+            l1.masked_fill_(attn_mask, neginf(l1.dtype))
+        l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
         lhs_emb = torch.bmm(l2, values)

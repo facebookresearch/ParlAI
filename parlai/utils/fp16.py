@@ -249,7 +249,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     def __init__(
         self,
         init_optimizer: torch.optim.Optimizer,  # type: ignore
-        loss_initial_scale: float = 2.0 ** 17,
+        loss_initial_scale: float = 2.0 ** 12,
         min_loss_scale: float = 1e-4,
     ):
         self.optimizer = init_optimizer
