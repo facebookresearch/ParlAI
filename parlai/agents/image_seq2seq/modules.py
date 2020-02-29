@@ -254,6 +254,20 @@ class ContextWithImageEncoder(TransformerEncoder):
         else:
             raise ValueError('Image combination mode not recognized!')
 
+        # In fp16 mode, either remove extra tokens or add new ones on to get to a
+        # multiple of 8
+        if full_enc.dtype == torch.half:
+            num_tokens_to_remove = full_enc.size(1) % 8
+            if (~full_mask[:, -num_tokens_to_remove:].all()).item():
+                # Subtract padding tokens from the end
+                full_enc = full_enc[:, :-1, :]
+                full_mask = full_mask[:, :-1]
+            else:
+                # We can't subtract that many padding tokens, so add some
+                num_tokens_to_add = 8 - num_tokens_to_remove
+                raise NotImplementedError('Add this!')
+                # TODO: use TorchAgent.NULL_IDX
+
         return full_enc, full_mask
 
     def _add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
