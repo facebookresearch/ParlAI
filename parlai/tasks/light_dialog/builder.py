@@ -151,7 +151,6 @@ def write_dialog(opt, fw, d, label_type, split):
             if (
                 use_feat(opt, 'light_use_current_self_output', 'speech')
                 and label_type != 'speech'
-                #and use_feat(opt, 'light_use_speech', 'self')
                 and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
