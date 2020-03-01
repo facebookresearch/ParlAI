@@ -228,7 +228,7 @@ class SimpleMultiTeacher(DefaultTeacher):
         agent.add_argument('--light_use_cands', type=int, default=20)
         agent.add_argument('--light_use_clip_cands', type=int, default=10000)
         agent.add_argument('--light_use_speech_prefix', type='bool', default=False)
-        
+
 
 class SelfchatTeacher(SimpleTeacher):
     """
