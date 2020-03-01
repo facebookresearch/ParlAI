@@ -149,9 +149,9 @@ def write_dialog(opt, fw, d, label_type, split):
             used_current = False
             shown = {}
             if (
-                use_feat(opt, 'light_use_current_self_output', 'all')
+                use_feat(opt, 'light_use_current_self_output', 'speech')
                 and label_type != 'speech'
-                and use_feat(opt, 'light_use_speech', 'self')
+                #and use_feat(opt, 'light_use_speech', 'self')
                 and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
@@ -223,6 +223,7 @@ def write_dialog(opt, fw, d, label_type, split):
     if len(msgs) > 0:
         msgs[-1]['episode_done'] = True
         for m in msgs:
+            m['text'] = m['text'].rstrip('\n')
             # print(m.replace('\n', '\\n'))
             fix_labels(m, opt)
             global mx

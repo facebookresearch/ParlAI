@@ -215,7 +215,7 @@ class SimpleMultiTeacher(DefaultTeacher):
         agent.add_argument(
             '--light_use_current_self_output',
             type=str,
-            default="none",
+            default="all",
             choices=['none', 'all', 'all_filtered', 'all_filtered_remove'],
         )
         agent.add_argument(
