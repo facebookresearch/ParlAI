@@ -105,6 +105,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         input
         """
 
+        self.padding_idx = padding_idx
         self.n_img_layers = image_encoder_num_layers
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
@@ -259,14 +260,23 @@ class ContextWithImageEncoder(TransformerEncoder):
         if full_enc.dtype == torch.half:
             num_tokens_to_remove = full_enc.size(1) % 8
             if (~full_mask[:, -num_tokens_to_remove:].all()).item():
-                # Subtract padding tokens from the end
+                # The tokens we'd like to remove are all padding, so subtract them from
+                # the end
                 full_enc = full_enc[:, :-1, :]
                 full_mask = full_mask[:, :-1]
             else:
-                # We can't subtract that many padding tokens, so add some
+                # We can't subtract that many padding tokens, so add some to the end
                 num_tokens_to_add = 8 - num_tokens_to_remove
-                raise NotImplementedError('Add this!')
-                # TODO: use TorchAgent.NULL_IDX
+                enc_extension = full_enc.new_full(
+                    size=(full_enc.size(0), num_tokens_to_add, full_enc.size(2)),
+                    fill_value=self.padding_idx,
+                )
+                mask_extension = full_mask.new_full(
+                    size=(full_mask.size(0), num_tokens_to_add),
+                    fill_value=self.padding_idx,
+                )
+                full_enc = torch.cat([full_enc, enc_extension], dim=1)
+                full_mask = torch.cat([full_mask, mask_extension], dim=1)
 
         return full_enc, full_mask
 
