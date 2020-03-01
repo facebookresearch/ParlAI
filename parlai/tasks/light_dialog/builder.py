@@ -83,7 +83,9 @@ def gen_no_affordance_actions_for_dialogue(d):
 def write_dialog(opt, fw, d, label_type, split):
     l = len(d['speech'])
     msgs = []
-    text = '_task_' + label_type + '\n'
+    text = ''
+    if opt.get('light_use_taskname', True):
+        text = '_task_' + label_type + '\n'
     if opt['light_use_setting']:
         text += (
             '_setting_name '
