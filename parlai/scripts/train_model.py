@@ -28,6 +28,7 @@ import json
 import numpy as np
 import os
 import signal
+import torch
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
@@ -715,6 +716,8 @@ class TrainLoop:
             self.save_model()
         elif opt.get('model_file'):
             # reload best validation model
+            del self.agent
+            torch.cuda.empty_cache()
             self.agent = create_agent(opt)
 
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
