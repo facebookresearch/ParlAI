@@ -189,7 +189,7 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
-        self._global_end_token = opt['history_add_global_end_token']
+        self._global_end_token = opt.get('history_add_global_end_token', None)
         if self._global_end_token is not None:
             self._global_end_token = self.dict[self.dict.end_token]
 
@@ -616,6 +616,7 @@ class TorchAgent(ABC, Agent):
             '--history-add-global-end-token',
             type='nonestr',
             default=None,
+            hidden=True,
             choices=[None, 'end'],
             help='Add special token to the end of history encoding.',
         )

@@ -548,6 +548,7 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.30)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
+    @testing_utils.retry(ntries=3)
     def test_prelayernorm(self):
         """
         Test --variant prelayernorm.
@@ -568,8 +569,6 @@ class TestTransformerGenerator(unittest.TestCase):
                 beam_size=1,
                 variant='prelayernorm',
                 activation='gelu',
-                n_segments=8,  # doesn't do anything but still good to test
-                adam_eps=1e-6,  # just to test another flag simultaneously
             )
         )
 
