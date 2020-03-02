@@ -495,6 +495,13 @@ class TorchAgent(ABC, Agent):
             recommended='1e-30,1e-3',
         )
         optim_group.add_argument(
+            '--adafactor-scale-parameter',
+            default=True,
+            type='bool',
+            help='Rescale the lr by model parameters, used in adafactor.',
+            recommended='True',
+        )
+        optim_group.add_argument(
             '-mom',
             '--momentum',
             default=0,
@@ -839,6 +846,7 @@ class TorchAgent(ABC, Agent):
             # adafactor params
             kwargs['beta1'] = opt.get('betas', (0.9, 0.999))[0]
             kwargs['eps'] = opt['adafactor_eps']
+            kwargs['scale_parameter'] = opt['adafactor_scale_parameter']
             kwargs['warmup_init'] = opt.get('warmup_updates', -1) > 0
 
         if opt['optimizer'] in [
