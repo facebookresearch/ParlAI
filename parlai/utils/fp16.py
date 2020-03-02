@@ -523,9 +523,6 @@ class Adafactor(torch.optim.Optimizer):
     :param scale_parameter (bool):
         if true, learning rate is scaled by root mean square of parameter
         (default: True)
-    :param relative_step (bool):
-        if true, time-dependent learning rate is computed instead of external
-        learning rate (default: True)
     :param warmup_init (bool):
         time-dependent learning rate computation depends on whether warm-up
         initialization is being used (default: False)
@@ -541,7 +538,6 @@ class Adafactor(torch.optim.Optimizer):
         beta1=None,
         weight_decay=0.0,
         scale_parameter=True,
-        relative_step=True,
         warmup_init=False,
     ):
         defaults = dict(
@@ -552,20 +548,15 @@ class Adafactor(torch.optim.Optimizer):
             beta1=beta1,
             weight_decay=weight_decay,
             scale_parameter=scale_parameter,
-            relative_step=relative_step,
             warmup_init=warmup_init,
         )
         super(Adafactor, self).__init__(params, defaults)
 
     def _get_lr(self, param_group, param_state):
         rel_step_sz = param_group['lr']
-        if param_group['relative_step']:
-            min_step = (
-                1e-6 * param_state['step'] if param_group['warmup_init'] else 1e-2
-            )
-            rel_step_sz = min(min_step, 1.0 / math.sqrt(param_state['step']))
         param_scale = 1.0
         if param_group['scale_parameter']:
+            warn_once('Lr is rescaled by Adafactor optimizer.')
             param_scale = max(param_group['eps'][1], param_state['RMS'])
         return param_scale * rel_step_sz
 
