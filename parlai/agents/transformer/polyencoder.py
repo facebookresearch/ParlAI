@@ -216,8 +216,8 @@ class PolyEncoderModule(torch.nn.Module):
     """
 
     def parallelize(self):
-        self.encoder_ctxt.parallelize()
-        self.encoder_cand.parallelize()
+        self.encoder_ctxt.parallelize('ctxt')
+        self.encoder_cand.parallelize('cand')
 
     def __init__(self, opt, dict, null_idx):
         super(PolyEncoderModule, self).__init__()

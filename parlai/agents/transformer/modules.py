@@ -18,11 +18,13 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 
 import math
 from typing import Dict, Tuple, Optional
+from itertools import groupby
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -494,15 +496,79 @@ class TransformerEncoder(nn.Module):
             )
         self.output_scaling = output_scaling
         self._parallelized = False
+        self._use_checkpointing = True
+        self._num_gpus = torch.cuda.device_count()
+        self_parallelize_version = -1
 
-    def parallelize(self):
+    def parallelize(self, version):
+        self._parallelize_version = version
         self._parallelized = True
         for i in range(self.n_layers):
             device = self._layer_device(i)
             self.layers[i] = self.layers[i].to(f'cuda:{device}')
 
+    def _gpu_groups(self):
+        return [
+            list(g) for _, g in groupby(range(self.n_layers), key=self._layer_device)
+        ]
+
     def _layer_device(self, layerno):
-        return int((2 + layerno) / 3.2)
+        if self._parallelize_version == 'ctxt':
+            if layerno == 0:
+                return 0
+            elif layerno in (1, 2, 3, 4):
+                return 1
+            elif layerno in (5, 6, 7, 8):
+                return 2
+            elif layerno in (9, 10, 11):
+                return 3
+            elif layerno in (12, 13, 14):
+                return 4
+            elif layerno in (15, 16, 17):
+                return 5
+            elif layerno in (18, 19, 20):
+                return 6
+            elif layerno in (21, 22, 23):
+                return 7
+        elif self._parallelize_version == 'cand':
+            if layerno == 0:
+                return 0
+            elif layerno in (1, 2):
+                return 1
+            elif layerno in (3, 4):
+                return 2
+            elif layerno in (5, 6, 7, 8):
+                return 3
+            elif layerno in (9, 10, 11, 12):
+                return 4
+            elif layerno in (13, 14, 15, 16):
+                return 5
+            elif layerno in (17, 18, 19):
+                return 6
+            elif layerno in (20, 21, 22, 23):
+                return 7
+
+    def _exec_layer_group(self, x, mask, gpu, layer_nos):
+        """
+        Execute a series of layers all grouped on the same GPU.
+
+        This is done so that we can pipeline and efficiently execute computations
+        on all GPUs simultaneously.
+        """
+
+        def _run(x_, mask_):
+            for layer_no in layer_nos:
+                x_ = self.layers[layer_no](x_, mask_)
+            return x_
+
+        if self.training and self._use_checkpointing:
+            x = checkpoint(_run, x, mask)
+        else:
+            x = _run(x, mask)
+        new_gpu = (gpu + 1) % self._num_gpus
+        x = x.to(f'cuda:{new_gpu}')
+        mask = mask.to(f'cuda:{new_gpu}')
+        return x, mask
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -544,19 +610,36 @@ class TransformerEncoder(nn.Module):
         tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
-        from torch.utils.checkpoint import checkpoint
-
-        for i in range(self.n_layers):
-            if self._parallelized:
-                device = self._layer_device(i)
-                tensor = tensor.to(f'cuda:{device}')
-                mask = mask.to(f'cuda:{device}')
-            tensor = checkpoint(self.layers[i], tensor, mask)
-            #tensor = self.layers[i](tensor, mask)
 
         if self._parallelized:
-            tensor = tensor.to('cuda:0')
-            mask = mask.to('cuda:0')
+            # We want to pipeline our computations so that each GPU is working
+            # on chunks at the same time. The load of GPUs will look like this
+            # (for 4 GPUs). Chunks are alphabetized.
+
+            #          TIMESTEP
+            #        1 2 3 4 5 6 7 8 9
+            #     -+------------------
+            #     0| a b c d e f
+            # GPU 1|   a b c d e f
+            #     2|     a b c d e f
+            #     3|       a b c d e f
+            split_size = 64
+            tensors = list(torch.split(tensor, split_size))
+            masks = list(torch.split(mask, split_size))
+            num_splits = len(tensors)
+            layer_groups = self._gpu_groups()
+            for timestep in range(num_splits + self._num_gpus):
+                for split_idx in range(num_splits):
+                    gpu = timestep - split_idx
+                    if gpu >= 0 and gpu < self._num_gpus:
+                        tensors[split_idx], masks[split_idx] = self._exec_layer_group(
+                            tensors[split_idx], masks[split_idx], gpu, layer_groups[gpu]
+                        )
+            tensor = torch.cat(tensors)
+            masks = torch.cat(masks)
+        else:
+            for i in range(self.n_layers):
+                tensor = self.layers[i](tensor, mask)
 
         if self.variant == 'layernormbefore':
             tensor = _normalize(tensor, self.norm_embeddings)
@@ -623,7 +706,6 @@ class TransformerEncoderLayer(nn.Module):
             warn_once("Installing APEX can give a significant speed boost.")
         size = tensor.size()
         return norm_layer(tensor.view(-1, size[-1])).view(size)
-
 
     def forward(self, tensor, mask):
         """
