@@ -715,7 +715,7 @@ class TrainLoop:
             self.save_model()
         elif opt.get('model_file'):
             # reload best validation model
-            self.agent = create_agent(opt)
+            self.agent.load(opt['model_file'])
 
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
