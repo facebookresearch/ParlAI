@@ -385,7 +385,7 @@ def nice_report(report) -> str:
     try:
         import pandas as pd
 
-        use_pandas = False
+        use_pandas = True
     except ImportError:
         use_pandas = False
 
