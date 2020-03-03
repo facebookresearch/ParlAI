@@ -384,7 +384,7 @@ def nice_report(report) -> str:
     try:
         import pandas as pd
 
-        use_pandas = False
+        use_pandas = True
     except ImportError:
         use_pandas = False
 
@@ -412,13 +412,12 @@ def nice_report(report) -> str:
         df = df.stack().transpose().droplevel(0, axis=1)
         return "   " + df.to_string(
             na_rep="",
-            line_width=line_width,
+            line_width=line_width - 3,  # -3 for the extra spaces we add
             float_format=_float_format,
             index=df.shape[0] > 1,
-            col_space=3,
         ).replace("\n\n", "\n").replace("\n", "\n   ")
     else:
-        return json.dumps(output)
+        return json.dumps({k: round_sigfigs(v, 4) for k, v in output.items()})
 
 
 def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
