@@ -367,7 +367,6 @@ def float_formatter(f):
         return ""
     if isinstance(f, int):
         return str(f)
-    # s = str(round_sigfigs(f, 4))
     if f >= 1000:
         s = f'{f:.0f}'
     else:
@@ -391,7 +390,7 @@ def nice_report(report) -> str:
         use_pandas = False
 
     sorted_keys = sorted(report.keys(), key=_report_sort_key)
-    output = OrderedDict()
+    output: OrderedDict[Union[str, Tuple[str, str]], float] = OrderedDict()
     for k in sorted_keys:
         v = report[k]
         if isinstance(v, Metric):
@@ -403,8 +402,8 @@ def nice_report(report) -> str:
 
     if use_pandas:
         try:
-            _, line_width = os.popen('stty size', 'r').read().split()
-            line_width = int(line_width)
+            _, line_width_ = os.popen('stty size', 'r').read().split()
+            line_width = int(line_width_)
         except Exception:
             raise
             line_width = 88
@@ -419,7 +418,12 @@ def nice_report(report) -> str:
             index=df.shape[0] > 1,
         ).replace("\n\n", "\n").replace("\n", "\n   ")
     else:
-        return json.dumps({k: round_sigfigs(v, 4) for k, v in output.items()})
+        return json.dumps(
+            {
+                k: round_sigfigs(v, 4) if isinstance(v, float) else v
+                for k, v in output.items()
+            }
+        )
 
 
 def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:

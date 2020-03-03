@@ -418,7 +418,7 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     :param reports: Dict of tasks -> metrics.
     """
     # reporters is a list of teachers or worlds
-    m: Dict[str, Union[Metric, Dict[str, Metric]]] = {}
+    m: Dict[str, Metric] = {}
     for task_id, task_report in named_reports.items():
         for each_metric in list(task_report.keys()):
             value = task_report[each_metric]
