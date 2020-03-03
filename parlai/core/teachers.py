@@ -1314,7 +1314,9 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         else:
             self.episodes = shared['episodes']
             self.num_exs = sum(len(e) for e in self.episodes)
-        self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
+
+        self.id = opt['task']
+
         self.reset()
 
     def share(self):
