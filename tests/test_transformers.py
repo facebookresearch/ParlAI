@@ -736,5 +736,59 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
 
 
+# TODO: revise from here
+@testing_utils.skipUnlessTorch14
+class TestImageSeq2Seq(unittest.TestCase):
+    """
+    Unit tests for the ImageSeq2Seq Agent.
+
+    Mostly testing that the agent cooperates with tasks accordingly.
+    """
+
+    @testing_utils.retry(ntries=3)
+    def test_text_task(self):
+        """
+        Test that model correctly handles text task.
+        """
+        args = BASE_ARGS.copy()
+        args.update(TEXT_ARGS)
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task'
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_image_task(self):
+        """
+        Test that model correctly handles image task.
+
+        No training, only eval
+        """
+        args = BASE_ARGS.copy()
+        args.update(IMAGE_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task'
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_multitask(self):
+        """
+        Test that model can handle multiple inputs.
+        """
+        args = BASE_ARGS.copy()
+        args.update(MULTITASK_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'], 5.0, f'failed to train image_seq2seq on image+text task',
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
