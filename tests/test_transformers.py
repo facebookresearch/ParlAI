@@ -637,9 +637,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Finetuning LR scheduler reset failed (total_train_updates).',
             )
             self.assertEqual(
-                valid3['lr'],
-                valid1['lr'],
-                'Finetuning LR scheduler reset failed (lr).',
+                valid3['lr'], valid1['lr'], 'Finetuning LR scheduler reset failed (lr).'
             )
             # and make sure we're not loading the scheduler if it changes
             valid4, test4 = testing_utils.train_model(
@@ -736,57 +734,49 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
 
 
-# TODO: revise from here
 @testing_utils.skipUnlessTorch14
-class TestImageSeq2Seq(unittest.TestCase):
+class TestImagePolyencoder(unittest.TestCase):
     """
-    Unit tests for the ImageSeq2Seq Agent.
+    Unit tests for the ImagePolyencoderAgent.
 
-    Mostly testing that the agent cooperates with tasks accordingly.
+    Test that the model is able to handle simple train tasks.
     """
-
-    @testing_utils.retry(ntries=3)
-    def test_text_task(self):
-        """
-        Test that model correctly handles text task.
-        """
-        args = BASE_ARGS.copy()
-        args.update(TEXT_ARGS)
-        valid, test = testing_utils.train_model(args)
-        self.assertLessEqual(
-            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task'
-        )
 
     @testing_utils.retry(ntries=3)
     @testing_utils.skipUnlessTorch
     @testing_utils.skipUnlessGPU
     def test_image_task(self):
         """
-        Test that model correctly handles image task.
-
-        No training, only eval
+        Test that model correctly handles basic image training task.
         """
-        args = BASE_ARGS.copy()
-        args.update(IMAGE_ARGS)
-
-        valid, test = testing_utils.train_model(args)
-        self.assertLessEqual(
-            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task'
+        args = Opt(
+            {
+                'model': 'transformer/image_polyencoder',
+                'embedding_size': 32,
+                'n_heads': 2,
+                'n_layers': 2,
+                'n_positions': 128,
+                'truncate': 128,
+                'ffn_size': 128,
+                'variant': 'xlm',
+                'activation': 'gelu',
+                'embeddings_scale': False,
+                'gradient_clip': 0.1,
+                'learningrate': 3e-5,
+                'batchsize': 16,
+                'optimizer': 'adamax',
+                'learn_positional_embeddings': True,
+                'image_features_dim': 2048,
+                'image_encoder_num_layers': 1,
+            }
         )
-
-    @testing_utils.retry(ntries=3)
-    @testing_utils.skipUnlessTorch
-    @testing_utils.skipUnlessGPU
-    def test_multitask(self):
-        """
-        Test that model can handle multiple inputs.
-        """
-        args = BASE_ARGS.copy()
-        args.update(MULTITASK_ARGS)
-
         valid, test = testing_utils.train_model(args)
+        import pdb
+
+        pdb.set_trace()
+        # TODO: revise from here
         self.assertLessEqual(
-            valid['ppl'], 5.0, f'failed to train image_seq2seq on image+text task',
+            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task'
         )
 
 
