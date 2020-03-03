@@ -601,7 +601,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
-                self.global_metrics.update('skipped_batches', SumMetric(1))
+                self.global_metrics.add('skipped_batches', SumMetric(1))
                 # gradients are synced on backward, now this model is going to be
                 # out of sync! catch up with the other workers
                 self._init_cuda_buffer(8, 8, True)
