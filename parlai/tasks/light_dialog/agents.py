@@ -222,7 +222,7 @@ class SimpleMultiTeacher(DefaultTeacher):
             '--light_label_type',
             type=str,
             default='speech',
-            choices=['speech', 'action', 'emote'],
+            choices=['speech', 'action', 'emote', 'which'],
             help='type of target in light dialogues',
         )
         agent.add_argument('--light_use_cands', type=int, default=20)
