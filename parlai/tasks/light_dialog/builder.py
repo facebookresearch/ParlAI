@@ -88,9 +88,9 @@ def write_dialog(opt, fw, d, label_type, split):
     d['which'] = []
     for i in range(0, len(d['emote'])):
         lab = 'none'
-        if d['emote'][i] != None:
+        if d['emote'][i] is not None:
             lab = 'emote'
-        if d['action'][i] != None:
+        if d['action'][i] is not None:
             lab = 'action'
         d['which'].append(lab)
 
