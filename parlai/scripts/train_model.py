@@ -529,19 +529,21 @@ class TrainLoop:
         tasks = [world.getID() for world in valid_worlds]
         named_reports = dict(zip(tasks, reports))
         report = aggregate_named_reports(named_reports)
+        # get the results from all workers
+        report = self._sync_metrics(report)
 
         metrics = f'{datatype}:{nice_report(report)}'
         print(f'[ eval completed in {timer.time():.2f}s ]')
         print(metrics)
 
         # write to file
-        if write_log and opt.get('model_file'):
+        if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
             f = open(opt['model_file'] + '.' + datatype, 'a+')
             f.write(f'{metrics}\n')
             f.close()
 
-        return self._sync_metrics(report)
+        return report
 
     def _sync_metrics(self, metrics):
         """
