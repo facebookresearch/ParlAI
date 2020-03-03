@@ -362,7 +362,7 @@ def _report_sort_key(report_key: str) -> Tuple[str, str]:
     return (sub_key or 'all', main_key)
 
 
-def _float_format(f):
+def float_formatter(f):
     if f != f:
         return ""
     if isinstance(f, int):
@@ -372,9 +372,11 @@ def _float_format(f):
         s = f'{f:.0f}'
     else:
         s = f'{f:.4g}'
-    s = s.replace('-0.', ' -.')
+    s = s.replace('-0.', '-.')
     if s.startswith('0.'):
-        s = ' ' + s[1:]
+        s = s[1:]
+    if s[0] == '.' and len(s) < 5:
+        s += '0' * (5 - len(s))
     return s
 
 
@@ -384,7 +386,7 @@ def nice_report(report) -> str:
     try:
         import pandas as pd
 
-        use_pandas = True
+        use_pandas = False
     except ImportError:
         use_pandas = False
 
@@ -413,7 +415,7 @@ def nice_report(report) -> str:
         return "   " + df.to_string(
             na_rep="",
             line_width=line_width - 3,  # -3 for the extra spaces we add
-            float_format=_float_format,
+            float_format=float_formatter,
             index=df.shape[0] > 1,
         ).replace("\n\n", "\n").replace("\n", "\n   ")
     else:
