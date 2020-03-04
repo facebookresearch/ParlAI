@@ -58,6 +58,7 @@ def build(opt):
         opt['light_use_speech_prefix'] = True
     # create particular instance of dataset depending on flags..
     fields = [
+        'taskname',
         'setting',
         'objects',
         'person_names',
