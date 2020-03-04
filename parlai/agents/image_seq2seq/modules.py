@@ -110,6 +110,10 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
         self.n_image_tokens = n_image_tokens
+        if self.image_combination_mode == 'add' and self.n_image_tokens > 1:
+            raise ValueError(
+                'Image encoding cannot be added to context encoding if there is more than one image token!'
+            )
         reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
             n_heads=n_heads,
