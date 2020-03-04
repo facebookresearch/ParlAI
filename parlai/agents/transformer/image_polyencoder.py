@@ -69,7 +69,7 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         """
 
         # Checks/formatting of batch.image
-        bsz = batch.text_vec.size(0)
+        bsz = self._get_batch_size(batch)
         if batch.image is None or len(batch.image) == 0:
             batch.image = [None] * bsz
         else:
@@ -94,6 +94,18 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         batch.image = torch.stack(processed_features_list)
 
         return batch
+
+    def _get_batch_size(self, batch) -> int:
+        """
+        Return the size of the batch.
+
+        Use the size of the text vec if it exists; otherwise, use the length of the
+        image feature list.
+        """
+        if batch.text_vec is not None:
+            return batch.text_vec.size(0)
+        else:
+            return len(batch.image)
 
     def _model_context_input(self, batch) -> Dict[str, Any]:
         """
@@ -192,3 +204,12 @@ class ImagePolyencoderModule(PolyEncoderModule):
             'src_tokens': ctxt_inputs['ctxt_tokens'],
             'image_features': ctxt_inputs['ctxt_image'],
         }
+
+    def _get_context_batch_size(self, **ctxt_inputs: Dict[str, torch.Tensor]) -> int:
+        """
+        Return the batch size of the context.
+        """
+        if ctxt_inputs['ctxt_tokens'] is not None:
+            return ctxt_inputs['ctxt_tokens'].size(0)
+        else:
+            return ctxt_inputs['ctxt_image'].size(0)

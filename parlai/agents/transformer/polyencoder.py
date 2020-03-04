@@ -196,7 +196,7 @@ class PolyencoderAgent(TorchRankerAgent):
         The Poly-encoder encodes the candidate and context independently. Then, the
         model applies additional attention before ultimately scoring a candidate.
         """
-        bsz = batch.text_vec.size(0)
+        bsz = self._get_batch_size(batch)
         ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
 
         if cand_encs is not None:
@@ -216,6 +216,14 @@ class PolyencoderAgent(TorchRankerAgent):
             ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
         return scores
+
+    def _get_batch_size(self, batch) -> int:
+        """
+        Return the size of the batch.
+
+        Can be overridden by subclasses that do not always have text input.
+        """
+        return batch.text_vec.size(0)
 
     def _model_context_input(self, batch) -> Dict[str, Any]:
         """
@@ -420,11 +428,10 @@ class PolyEncoderModule(torch.nn.Module):
             cand_embed = cand_embed.view(bsz, num_cands, -1)
 
         if len(ctxt_inputs) > 0:
-            assert (
-                'ctxt_tokens' in ctxt_inputs
-                and len(ctxt_inputs['ctxt_tokens'].shape) == 2
-            )
-            bsz = ctxt_inputs['ctxt_tokens'].size(0)
+            assert 'ctxt_tokens' in ctxt_inputs
+            if ctxt_inputs['ctxt_tokens'] is not None:
+                assert len(ctxt_inputs['ctxt_tokens'].shape) == 2
+            bsz = self._get_context_batch_size(**ctxt_inputs)
             # get context_representation. Now that depends on the cases.
             ctxt_out, ctxt_mask = self.encoder_ctxt(
                 **self._context_encoder_input(ctxt_inputs)
@@ -454,6 +461,15 @@ class PolyEncoderModule(torch.nn.Module):
                     ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
+
+    def _get_context_batch_size(self, **ctxt_inputs: Dict[str, torch.Tensor]) -> int:
+        """
+        Return the batch size of the context.
+
+        Can be overridden by subclasses that do not always have text tokens in the
+        context.
+        """
+        return ctxt_inputs['ctxt_tokens'].size(0)
 
     def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
         """

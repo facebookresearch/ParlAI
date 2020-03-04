@@ -760,14 +760,22 @@ class TestImagePolyencoder(unittest.TestCase):
                 'ffn_size': 128,
                 'variant': 'xlm',
                 'activation': 'gelu',
+                'candidates': 'batch',
+                'eval_candidates': 'batch',  # No inline cands
                 'embeddings_scale': False,
                 'gradient_clip': 0.1,
                 'learningrate': 3e-5,
                 'batchsize': 16,
                 'optimizer': 'adamax',
                 'learn_positional_embeddings': True,
+                'reduction_type': 'first',
+                'task': 'integration_tests:ImageTeacher',
+                'num_epochs': 200,
+                'image_mode': 'resnet152',
                 'image_features_dim': 2048,
                 'image_encoder_num_layers': 1,
+                'image_combination_mode': 'prepend',
+                'n_image_tokens': 1,
             }
         )
         valid, test = testing_utils.train_model(args)
