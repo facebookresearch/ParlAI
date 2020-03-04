@@ -779,12 +779,10 @@ class TestImagePolyencoder(unittest.TestCase):
             }
         )
         valid, test = testing_utils.train_model(args)
-        import pdb
-
-        pdb.set_trace()
-        # TODO: revise from here
-        self.assertLessEqual(
-            valid['ppl'], 1.5, f'failed to train image_seq2seq on text task'
+        self.assertEqual(
+            valid['accuracy'],
+            1.0,
+            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
         )
 
 
