@@ -13,6 +13,7 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger, warn_once
 
 import random
+import tqdm
 
 
 def setup_args(parser=None):
@@ -98,9 +99,9 @@ def self_chat(opt, print_parser=None):
     logger = WorldLogger(opt)
 
     # Run some self chats.
-    max_cnt = opt['num_examples']
+    max_cnt = int(opt['num_examples'] * opt.get('selfchat_max_turns') / opt.get('batchsize'))
     cnt = 0
-    while cnt < max_cnt:
+    for _ in tqdm.trange(max_cnt):
         cnt += opt.get('batchsize', 1)
         world.parley()
         logger.log(world)
