@@ -420,8 +420,7 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
     for task_id, task_report in named_reports.items():
-        for each_metric in list(task_report.keys()):
-            value = task_report[each_metric]
+        for each_metric, value in task_report.items():
             if value.is_global():
                 # just take the first one we saw
                 if each_metric not in m:

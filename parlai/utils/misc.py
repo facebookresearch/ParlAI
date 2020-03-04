@@ -8,10 +8,11 @@ File for miscellaneous utility functions and constants.
 """
 
 from collections import deque, OrderedDict
+from typing import Union, Optional, Set, Any, Dict, List, Tuple
 import math
 import random
 import time
-from typing import Union, Optional, Set, Any, Dict, List, Tuple
+import re
 import os
 import warnings
 import json
@@ -404,19 +405,20 @@ def nice_report(report) -> str:
         try:
             _, line_width_ = os.popen('stty size', 'r').read().split()
             line_width = int(line_width_)
-        except Exception:
-            raise
+        except ValueError:
             line_width = 88
 
         df = pd.DataFrame([output])
         df.columns = pd.MultiIndex.from_tuples(df.columns)
         df = df.stack().transpose().droplevel(0, axis=1)
-        return "   " + df.to_string(
+        result = "   " + df.to_string(
             na_rep="",
             line_width=line_width - 3,  # -3 for the extra spaces we add
             float_format=float_formatter,
             index=df.shape[0] > 1,
         ).replace("\n\n", "\n").replace("\n", "\n   ")
+        result = re.sub(r"\s+$", "", result)
+        return result
     else:
         return json.dumps(
             {
