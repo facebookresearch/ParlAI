@@ -751,6 +751,9 @@ class TestImagePolyencoder(unittest.TestCase):
         """
         args = Opt(
             {
+                'log_every_n_secs': 5,
+                'validation_every_n_secs': 30,
+                'validation_patience': 10,
                 'model': 'transformer/image_polyencoder',
                 'embedding_size': 32,
                 'n_heads': 2,
@@ -770,7 +773,6 @@ class TestImagePolyencoder(unittest.TestCase):
                 'learn_positional_embeddings': True,
                 'reduction_type': 'first',
                 'task': 'integration_tests:ImageTeacher',
-                'num_epochs': 200,
                 'image_mode': 'resnet152',
                 'image_features_dim': 2048,
                 'image_encoder_num_layers': 1,
