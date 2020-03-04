@@ -221,7 +221,10 @@ class TorchRankerAgent(TorchAgent):
 
         By default torch.nn.CrossEntropyLoss.
         """
-        return torch.nn.CrossEntropyLoss(reduction='none')
+        if self.fp16:
+            return FP16SafeCrossEntropy(reduction='none')
+        else:
+            return torch.nn.CrossEntropyLoss(reduction='none')
 
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
