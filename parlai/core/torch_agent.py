@@ -35,6 +35,7 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
+from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.fp16 import (
     fp16_apex_available,
@@ -188,6 +189,9 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self._global_end_token = opt.get('history_add_global_end_token', None)
+        if self._global_end_token is not None:
+            self._global_end_token = self.dict[self.dict.end_token]
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
@@ -290,6 +294,8 @@ class History(object):
                 history.extend(vec)
                 history.extend(self.delimiter_tok)
             history.extend(self.history_vecs[-1])
+            if self._global_end_token is not None:
+                history.extend([self._global_end_token])
         else:
             # vec type is a list
             history = []
@@ -297,7 +303,8 @@ class History(object):
                 history += vec
                 history += self.delimiter_tok
             history += self.history_vecs[-1]
-
+            if self._global_end_token is not None:
+                history += [self._global_end_token]
         return history
 
     def get_history_vec_list(self):
@@ -604,6 +611,14 @@ class TorchAgent(ABC, Agent):
             type=str,
             default='\n',
             help='Join history lines with this token, defaults to newline',
+        )
+        agent.add_argument(
+            '--history-add-global-end-token',
+            type='nonestr',
+            default=None,
+            hidden=True,
+            choices=[None, 'end'],
+            help='Add special token to the end of history encoding.',
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -1898,9 +1913,23 @@ class TorchAgent(ABC, Agent):
         It is recommended you use this instead of loss.backward(), for integration with
         distributed training and FP16 training.
         """
-        if self.opt.get('update_freq', 1) > 1:
+        update_freq = self.opt.get('update_freq', 1)
+
+        if update_freq > 1:
             # gradient accumulation, but still need to average across the minibatches
-            loss = loss / self.opt['update_freq']
+            loss = loss / update_freq
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+
+            # we're doing gradient accumulation, so we don't need to sync gradients
+            # amoung GPUs
+            if self._number_grad_accum != 0 and is_distributed():
+                # accumulate without syncing
+                with self.model.no_sync():
+                    if self.fp16:
+                        self.optimizer.backward(loss, update_master_grads=False)
+                    else:
+                        loss.backward()
+                return
 
         if self.fp16:
             self.optimizer.backward(loss, update_master_grads=False)
@@ -1921,7 +1950,7 @@ class TorchAgent(ABC, Agent):
         if update_freq > 1:
             # we're doing gradient accumulation, so we don't only want to step
             # every N updates instead
-            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            # self._number_grad_accum is updated in backward function
             if self._number_grad_accum != 0:
                 return
 

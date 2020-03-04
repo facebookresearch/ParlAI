@@ -182,6 +182,36 @@ class TestTransformerRanker(unittest.TestCase):
         self.assertGreaterEqual(test['hits@1'], 0.90)
 
     @testing_utils.retry(ntries=3)
+    def test_prelayernorm(self):
+        """
+        Test --variant prelayernorm with history_add_global_end_token option.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:candidate',
+                model='transformer/ranker',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=16,
+                validation_every_n_epochs=5,
+                validation_patience=2,
+                n_layers=1,
+                n_heads=4,
+                ffn_size=64,
+                embedding_size=32,
+                candidates='batch',
+                eval_candidates='inline',
+                gradient_clip=0.5,
+                variant='prelayernorm',
+                activation='gelu',
+                history_add_global_end_token='end',
+            )
+        )
+
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
+
+    @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
         """
         Test a transformer ranker reduction method other than `mean`.
@@ -518,6 +548,35 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.30)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
+    @testing_utils.retry(ntries=3)
+    def test_prelayernorm(self):
+        """
+        Test --variant prelayernorm.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=20,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='greedy',
+                beam_size=1,
+                variant='prelayernorm',
+                activation='gelu',
+            )
+        )
+
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
+
     def test_compute_tokenized_bleu(self):
         """
         Test that the model outputs self-computed bleu correctly.
@@ -637,9 +696,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Finetuning LR scheduler reset failed (total_train_updates).',
             )
             self.assertEqual(
-                valid3['lr'],
-                valid1['lr'],
-                'Finetuning LR scheduler reset failed (lr).',
+                valid3['lr'], valid1['lr'], 'Finetuning LR scheduler reset failed (lr).'
             )
             # and make sure we're not loading the scheduler if it changes
             valid4, test4 = testing_utils.train_model(
