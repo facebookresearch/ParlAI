@@ -27,7 +27,7 @@ def setup_args(parser=None):
         help='Do not display these fields',
     )
     parser.add_argument(
-        '-it',
+        '-st',
         '--selfchat-task',
         type='bool',
         default=True,
