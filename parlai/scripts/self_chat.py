@@ -54,7 +54,7 @@ def setup_args(parser=None):
         '--save-format',
         type=str,
         default='conversations',
-        choices=['conversations', 'parlai', 'json'],
+        choices=['conversations', 'parlai', 'jsonl'],
         help='Format to save logs in',
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')

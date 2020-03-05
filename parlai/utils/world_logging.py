@@ -148,14 +148,11 @@ class WorldLogger:
                 of.write(json_episode + '\n')
 
     def write_conversations_format(self, outfile, world):
-        ids = [agent.id for agent in world.agents]
         Conversations.save_conversations(
             self._logs,
             outfile,
             world.opt,
             self_chat=world.opt.get('selfchat_task', False),
-            speaker_1=ids[0],
-            speaker_2=ids[1],
         )
 
     def write(self, outfile, world, file_format='jsonl'):

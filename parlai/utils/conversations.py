@@ -40,11 +40,10 @@ class Metadata:
         self.datetime = metadata['date']
         self.opt = metadata['opt']
         self.self_chat = metadata['self_chat']
-        self.speaker_1 = metadata['speaker_1']
-        self.speaker_2 = metadata['speaker_2']
+        self.speakers = metadata['speakers']
         self.extra_data = {}
         for k, v in metadata.items():
-            if k not in ['date', 'opt', 'speaker_1', 'speaker_2', 'self_chat']:
+            if k not in ['date', 'opt', 'speakers', 'self_chat']:
                 self.extra_data[k] = v
 
     def read(self):
@@ -53,8 +52,7 @@ class Metadata:
         """
         print(f'Saved at: {self.datetime}')
         print(f'Self chat: {self.self_chat}')
-        print(f'Speaker 1: {self.speaker_1}')
-        print(f'Speaker 2: {self.speaker_2}')
+        print(f'Speakers: {self.speakers}')
         print('Opt:')
         for k, v in self.opt.items():
             print(f'\t{k}: {v}')
@@ -68,13 +66,7 @@ class Metadata:
 
     @classmethod
     def save_metadata(
-        cls,
-        datapath,
-        opt,
-        self_chat=False,
-        speaker_1='human',
-        speaker_2=None,
-        **kwargs,
+        cls, datapath, opt, self_chat=False, speakers=None, **kwargs,
     ):
         """
         Dump conversation metadata to file.
@@ -83,11 +75,7 @@ class Metadata:
         metadata['date'] = str(datetime.datetime.now())
         metadata['opt'] = opt
         metadata['self_chat'] = self_chat
-        metadata['speaker_1'] = speaker_1
-        if speaker_2 is not None:
-            metadata['speaker_2'] = speaker_2
-        else:
-            metadata['speaker_2'] = opt.get('model')
+        metadata['speakers'] = speakers
 
         for k, v in kwargs.items():
             metadata[k] = metadata[v]
@@ -154,8 +142,7 @@ class Conversations:
         {
             'date': <date collected>,
             'opt': <opt used to collect the data,
-            'speaker_1': <identity of speaker 1>,
-            'speaker_2': <identify of speaker 2>,
+            'speakers': <identity of speakers>,
             ...
             Other arguments.
         }
@@ -171,7 +158,10 @@ class Conversations:
         if self.metadata is not None:
             self.metadata.read()
 
-    def next(self):
+    def __getitem__(self, index):
+        return self.conversations[index]
+
+    def __next__(self):
         """
         Return the next conversation.
         """
@@ -221,9 +211,8 @@ class Conversations:
         datapath,
         opt,
         save_keys='text',
+        context_ids='context',
         self_chat=False,
-        speaker_1=None,
-        speaker_2=None,
         **kwargs,
     ):
         """
@@ -231,49 +220,39 @@ class Conversations:
         """
         to_save = cls._get_path(datapath)
 
+        context_ids = context_ids.split(',')
         # save conversations
+        speakers = []
         with open(to_save, 'w') as f:
             for ep in act_list:
                 if not ep:
                     continue
                 convo = {}
-                convo['context'] = []
                 convo['dialog'] = []
+                convo['context'] = []
                 for act_pair in ep:
-                    for i, ex in enumerate(act_pair):
+                    for ex in act_pair:
                         ex_id = ex.get('id')
-                        # possibly set speaker vars
-                        if i == 0 and speaker_1 is None and ex_id is not None:
-                            speaker_1 = ex_id
-                        elif i == 1 and speaker_2 is None and ex_id is not None:
-                            speaker_2 = ex_id
-
-                        # check if act is from speaker 1 or speaker 2
-                        context = False
-                        if (i % 2 == 0 and ex_id != speaker_1) or (
-                            i % 2 == 1 and ex_id != speaker_2
-                        ):
+                        if ex_id in context_ids:
                             context = True
-
+                        else:
+                            context = False
+                            if ex_id not in speakers:
+                                speakers.append(ex_id)
                         # set turn
                         turn = {}
                         for key in save_keys.split(','):
                             turn[key] = ex.get(key, '')
-                        turn['id'] = speaker_1 if i % 2 == 0 else speaker_2
-                        if context:
-                            convo['context'].append(turn)
-                        else:
+                        turn['id'] = ex_id
+                        if not context:
                             convo['dialog'].append(turn)
+                        else:
+                            convo['context'].append(turn)
                 json_convo = json.dumps(convo)
                 f.write(json_convo + '\n')
         print(f' [ Conversations saved to file: {to_save} ]')
 
         # save metadata
         Metadata.save_metadata(
-            to_save,
-            opt,
-            self_chat=self_chat,
-            speaker_1=speaker_1,
-            speaker_2=speaker_2,
-            **kwargs,
+            to_save, opt, self_chat=self_chat, speakers=speakers, **kwargs,
         )
