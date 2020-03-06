@@ -266,7 +266,8 @@ class ContextWithImageEncoder(TransformerEncoder):
             # tokens to add/remove to get a multiple of 8
             num_tokens_to_remove = full_enc.size(1) % 8
             if num_tokens_to_remove == 0:
-                continue
+                # Tensor already divisible by 8
+                pass
             elif (~full_mask[:, -num_tokens_to_remove:].all()).item():
                 # The tokens we'd like to remove are all padding, so subtract them from
                 # the end
