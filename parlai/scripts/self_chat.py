@@ -52,18 +52,11 @@ def setup_args(parser=None):
         '--outfile', type=str, default=None, help='File to save self chat logs'
     )
     parser.add_argument(
-<<<<<<< HEAD
         '--save-format',
         type=str,
         default='conversations',
         choices=['conversations', 'parlai', 'jsonl'],
         help='Format to save logs in',
-=======
-        '--format', type=str, default='jsonl', choices={'parlai', 'jsonl'}
-    )
-    parser.add_argument(
-        '--indent', type=int, default=4, help='how much to indent jsonl string'
->>>>>>> 0a229d20be8b313e9fe46cc664156fed6e208936
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
@@ -95,22 +88,10 @@ def self_chat(opt):
     agent1 = create_agent(opt, requireModelExists=True)
     agent2 = agent1.clone()
 
-<<<<<<< HEAD
     # Set IDs
     model_id = agent1.id
     agent1.id = model_id + "_1"
     agent2.id = model_id + "_2"
-=======
-    # Run some self chats.
-    max_cnt = int(
-        opt['num_examples'] * opt.get('selfchat_max_turns') / opt.get('batchsize')
-    )
-    cnt = 0
-    for _ in tqdm.trange(max_cnt):
-        cnt += opt.get('batchsize', 1)
-        world.parley()
-        logger.log(world)
->>>>>>> 0a229d20be8b313e9fe46cc664156fed6e208936
 
     world = create_task(opt, user_agents=[agent1, agent2])
 
@@ -136,12 +117,6 @@ def self_chat(opt):
         # use default logger write function
         logger.write(outfile, world, opt['save_format'])
 
-<<<<<<< HEAD
-=======
-    logger.reset_world()  # flush last episode
-    indent = opt['indent'] if opt['indent'] >= 0 else None
-    logger.write(opt['outfile'], opt['format'], indent=indent)
->>>>>>> 0a229d20be8b313e9fe46cc664156fed6e208936
     return logger.get_logs()
 
 
