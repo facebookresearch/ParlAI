@@ -426,10 +426,11 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
                 if each_metric not in m:
                     m[each_metric] = value
             else:
-                m[each_metric] = m.get(each_metric, None) + value
+                # none + a => a from implementation of Metric.__add__
+                m[each_metric] = m.get(each_metric) + value
                 if len(named_reports) > 1:
                     task_metric = f'{task_id}/{each_metric}'
-                    m[task_metric] = m.get(task_metric, None) + value
+                    m[task_metric] = m.get(task_metric) + value
     return m
 
 
