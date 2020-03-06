@@ -261,9 +261,13 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         # In fp16 mode, either remove extra tokens or add new ones on to get to a
         # multiple of 8
-        if full_enc.dtype == torch.half:
+        if full_enc.dtype == torch.half and full_mask is not None:
+            # full_mask is None corresponds to no input tokens, and in case there are no
+            # tokens to add/remove to get a multiple of 8
             num_tokens_to_remove = full_enc.size(1) % 8
-            if (~full_mask[:, -num_tokens_to_remove:].all()).item():
+            if num_tokens_to_remove == 0:
+                continue
+            elif (~full_mask[:, -num_tokens_to_remove:].all()).item():
                 # The tokens we'd like to remove are all padding, so subtract them from
                 # the end
                 full_enc = full_enc[:, :-1, :]
