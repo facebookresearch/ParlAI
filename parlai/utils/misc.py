@@ -357,6 +357,11 @@ def _report_sort_key(report_key: str) -> Tuple[str, str]:
 
     Sorts by main metric alphabetically, then by task.
     """
+    # if metric is on its own, like "f1", we will return ('', 'f1')
+    # if metric is from multitask, we denote it.
+    # e.g. "convai2/f1" -> ('convai2', 'f1')
+    # we handle multiple cases of / because sometimes teacher IDs have
+    # filenames.
     fields = report_key.split("/")
     main_key = fields.pop(-1)
     sub_key = '/'.join(fields)
