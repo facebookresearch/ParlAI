@@ -55,9 +55,9 @@ const otherspeaker_style = {
 class ChatMessage extends React.Component {
   render() {
     let message = this.props.message;
-    let primary_speaker_color = this.props.conv_ind
-      ? speaker2_color
-      : speaker1_color;
+    let primary_speaker_color = this.props.model === "model_left"
+      ? speaker1_color
+      : speaker2_color;
     let message_container_style = {
       display: "block",
       width: "100%",
@@ -109,27 +109,22 @@ class MessageList extends React.Component {
       );
     }
     let task_data = this.props.task_data;
-    let conv_order_ind =
-      task_data.task_specs.conversation_order[this.props.index];
-    let messages =
-      task_data.pairing_dict.dialogue_dicts[conv_order_ind].dialogue;
-    console.log("MESSAGES");
-    console.log(task_data.pairing_dict.dialogue_dicts[conv_order_ind]);
-    console.log(messages);
-    let primary_speaker =
-      task_data.pairing_dict.speakers_to_eval[conv_order_ind];
-
+    let model = this.props.index === 0
+      ? "model_left"
+      : "model_right";
+    let messages = task_data.task_specs[model]["dialogue"];
+    let primary_speaker = task_data.task_specs[model]["name"];
     let XChatMessage = getCorrectComponent("XChatMessage", this.props.v_id);
     let onClickMessage = this.props.onClickMessage;
     if (typeof onClickMessage !== "function") {
       onClickMessage = idx => {};
     }
     return messages.map((m, idx) => (
-      <div key={conv_order_ind + "_" + idx} onClick={() => onClickMessage(idx)}>
+      <div key={model + "_" + idx} onClick={() => onClickMessage(idx)}>
         <XChatMessage
           message={m.text}
-          is_primary_speaker={m.speaker == primary_speaker}
-          conv_ind={this.props.index}
+          is_primary_speaker={m.id == primary_speaker}
+          model={model}
         />
       </div>
     ));
@@ -290,14 +285,8 @@ class EvalResponse extends React.Component {
     let s2_choice = this.props.task_data.task_specs.s2_choice.split(
       "<Speaker 2>"
     );
-    let s1_name, s2_name;
-    if (this.props.task_data.task_specs.conversation_order[0] == 0) {
-      s1_name = this.props.task_data.pairing_dict.speakers_to_eval[0];
-      s2_name = this.props.task_data.pairing_dict.speakers_to_eval[1];
-    } else {
-      s1_name = this.props.task_data.pairing_dict.speakers_to_eval[1];
-      s2_name = this.props.task_data.pairing_dict.speakers_to_eval[0];
-    }
+    let s1_name = this.props.task_data.task_specs.model_left.name;
+    let s2_name = this.props.task_data.task_specs.model_right.name;
     let form_question = this.props.task_data.task_specs.question;
     let text_question =
       "Please provide a brief justification for your choice (a few words or a sentence)";
