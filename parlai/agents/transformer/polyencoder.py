@@ -301,7 +301,7 @@ class PolyEncoderModule(torch.nn.Module):
             embeddings_scale=opt['embeddings_scale'],
             reduction_type=reduction_type,
             n_positions=n_positions,
-            n_segments=2,
+            n_segments=opt.get('n_segments', 2),
             activation=opt['activation'],
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],

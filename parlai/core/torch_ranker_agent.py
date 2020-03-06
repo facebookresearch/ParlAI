@@ -25,6 +25,7 @@ from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import padded_3d
+from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
 
@@ -221,7 +222,10 @@ class TorchRankerAgent(TorchAgent):
 
         By default torch.nn.CrossEntropyLoss.
         """
-        return torch.nn.CrossEntropyLoss(reduction='none')
+        if self.fp16:
+            return FP16SafeCrossEntropy(reduction='none')
+        else:
+            return torch.nn.CrossEntropyLoss(reduction='none')
 
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)

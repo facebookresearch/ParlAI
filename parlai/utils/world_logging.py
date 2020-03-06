@@ -139,14 +139,15 @@ class WorldLogger:
                     fw.write(txt + '\n')
                 fw.write('\n')
 
-    def write_jsonl_format(self, outfile):
+    def write_jsonl_format(self, outfile, indent=4):
         print('[ Saving log to {} in jsonl format ]'.format(outfile))
         with open(outfile, 'w') as of:
             for episode in tqdm(self._logs):
                 dialog = {'dialog': episode}
-                json_episode = json.dumps(dialog, indent=4)
+                json_episode = json.dumps(dialog, indent=indent)
                 of.write(json_episode + '\n')
 
+<<<<<<< HEAD
     def write_conversations_format(self, outfile, world):
         Conversations.save_conversations(
             self._logs,
@@ -160,6 +161,11 @@ class WorldLogger:
             self.write_jsonl_format(outfile)
         elif file_format == 'conversations':
             self.write_conversations_format(outfile, world)
+=======
+    def write(self, outfile, file_format='jsonl', indent=4):
+        if file_format == 'jsonl':
+            self.write_jsonl_format(outfile, indent=indent)
+>>>>>>> 0a229d20be8b313e9fe46cc664156fed6e208936
         else:
             # ParlAI format
             self.write_parlai_format(outfile)
