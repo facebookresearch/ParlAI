@@ -262,11 +262,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         List of compatible optimizers.
         """
-        return [
-            'adam',
-            'mem_eff_adam',
-            'adafactor',
-        ]
+        return ['adam', 'mem_eff_adam', 'adafactor']
 
     @property
     def params(self):
@@ -638,7 +634,7 @@ class Adafactor(torch.optim.Optimizer):
 
                 state['step'] += 1
                 state['RMS'] = self._rms(p_data_fp32)
-                group['lr'] = self._get_lr(group, state)
+                effective_lr = self._get_lr(group, state)
 
                 beta2t = 1.0 - math.pow(state['step'], group['decay_rate'])
                 update = (grad ** 2) + group['eps'][0]
@@ -659,7 +655,7 @@ class Adafactor(torch.optim.Optimizer):
                     torch.rsqrt(exp_avg_sq, out=update).mul_(grad)
 
                 update.div_(max(1.0, self._rms(update) / group['clip_threshold']))
-                update.mul_(group['lr'])
+                update.mul_(effective_lr)
 
                 if use_first_moment:
                     exp_avg = state['exp_avg']
@@ -667,7 +663,7 @@ class Adafactor(torch.optim.Optimizer):
                     update = exp_avg
 
                 if group['weight_decay'] != 0:
-                    p_data_fp32.add_(-group['weight_decay'] * group['lr'], p_data_fp32)
+                    p_data_fp32.add_(-group['weight_decay'] * effective_lr, p_data_fp32)
 
                 p_data_fp32.add_(-update)
 
