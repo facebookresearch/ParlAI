@@ -1857,11 +1857,11 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tbp = GlobalAverageMetric(
+            tpb = GlobalAverageMetric(
                 (batch.label_vec != self.NULL_IDX).sum().item(),
                 float(is_primary_worker()),
             )
-            self.global_metrics.add('tpb', tbp)
+            self.global_metrics.add('tpb', tpb)
 
         if self.is_training:
             output = self.train_step(batch)

@@ -363,24 +363,51 @@ def _report_sort_key(report_key: str) -> Tuple[str, str]:
     return (sub_key or 'all', main_key)
 
 
-def float_formatter(f):
+def float_formatter(f: Union[float, int]) -> str:
+    """
+    Format a float as a pretty string.
+    """
     if f != f:
+        # instead of returning nan, return "" so it shows blank in table
         return ""
     if isinstance(f, int):
+        # don't do any rounding of integers, leave them alone
         return str(f)
     if f >= 1000:
+        # numbers > 1000 just round to the nearest integer
         s = f'{f:.0f}'
     else:
+        # otherwise show 4 significant figures, regardless of decimal spot
         s = f'{f:.4g}'
+    # replace leading 0's with blanks for easier reading
+    # example:  -0.32 to -.32
     s = s.replace('-0.', '-.')
     if s.startswith('0.'):
         s = s[1:]
+    # Add the trailing 0's to always show 4 digits
+    # example: .32 to .3200
     if s[0] == '.' and len(s) < 5:
         s += '0' * (5 - len(s))
     return s
 
 
 def nice_report(report) -> str:
+    """
+    Render an agent Report as a beautiful string.
+
+    If pandas is installed,  we will use it to render as a table. Multitask
+    metrics will be shown per row, e.g.
+
+    ```
+              f1   ppl
+    all     .410  27.0
+    task1   .400  32.0
+    task2   .420  22.0
+    ```
+
+    If pandas is not available, we will use a dict with like-metrics placed
+    next to each other.
+    """
     from parlai.core.metrics import Metric
 
     try:
