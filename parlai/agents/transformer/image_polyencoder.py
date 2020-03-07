@@ -17,6 +17,7 @@ from parlai.agents.transformer.modules import get_n_positions_from_options
 from parlai.agents.transformer.polyencoder import PolyencoderAgent, PolyEncoderModule
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_image_agent import TorchImageAgent
+from parlai.utils.misc import warn_once
 
 
 class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
@@ -81,14 +82,16 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
             torch.zeros((self.image_features_dim,))
         )
         for orig_features in batch.image:
-            if orig_features is None:
-                processed_features_list.append(processed_zero_features)
-            elif isinstance(orig_features, torch.Tensor):
+            if isinstance(orig_features, torch.Tensor):
                 processed_features_list.append(
                     self._process_image_features(orig_features)
                 )
             else:
-                raise ValueError('Unsupported image feature format!')
+                if orig_features is not None:
+                    warn_once(
+                        'Unsupported image feature format. Image features will be ignored!'
+                    )
+                processed_features_list.append(processed_zero_features)
 
         # Turn into batchsize x image_features_dim for DataParallel
         batch.image = torch.stack(processed_features_list)
