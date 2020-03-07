@@ -306,7 +306,7 @@ class TimeLogger:
 
         int_time = int(self.tot_time)
         report_s = nice_report(log)
-        text = f'{int_time}s elapsed: {report_s}'
+        text = f'{int_time}s elapsed:\n{report_s}'
         return text, log
 
 
@@ -403,12 +403,11 @@ def nice_report(report) -> str:
     If pandas is installed,  we will use it to render as a table. Multitask
     metrics will be shown per row, e.g.
 
-    ```
-              f1   ppl
-    all     .410  27.0
-    task1   .400  32.0
-    task2   .420  22.0
-    ```
+    .. code-block:
+                 f1   ppl
+       all     .410  27.0
+       task1   .400  32.0
+       task2   .420  22.0
 
     If pandas is not available, we will use a dict with like-metrics placed
     next to each other.
