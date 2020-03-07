@@ -28,6 +28,7 @@ import json
 import numpy as np
 import os
 import signal
+from typing import Dict
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
@@ -74,7 +75,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
-    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     train.add_argument(
         '-vtim',
         '--validation-every-n-secs',
@@ -368,7 +369,7 @@ class TrainLoop:
             except KeyboardInterrupt:
                 pass
 
-    def _safe_report(self, report):
+    def _safe_report(self, report: Dict[str, Metric]):
         return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
 
     def _save_train_stats(self, suffix=None):
@@ -444,10 +445,10 @@ class TrainLoop:
             or self.valid_optim * new_valid > self.valid_optim * self.best_valid
         ):
             print(
-                '[ new best {}: {}{} ]'.format(
+                '[ new best {}: {:.4g}{} ]'.format(
                     opt['validation_metric'],
                     new_valid,
-                    ' (previous best was {})'.format(self.best_valid)
+                    ' (previous best was {:.4g})'.format(self.best_valid)
                     if self.best_valid is not None
                     else '',
                 )
@@ -532,7 +533,7 @@ class TrainLoop:
         # get the results from all workers
         report = self._sync_metrics(report)
 
-        metrics = f'{datatype}:{nice_report(report)}'
+        metrics = f'{datatype}:\n{nice_report(report)}\n'
         print(f'[ eval completed in {timer.time():.2f}s ]')
         print(metrics)
 
@@ -608,7 +609,7 @@ class TrainLoop:
         if time_left is not None:
             logs.append('time_left:{}s'.format(max(0, np.ceil(time_left))))
 
-        log = '[ {} ] {}'.format(' '.join(logs), nice_report(train_report))
+        log = '[ {} ]\n{}\n'.format(' '.join(logs), nice_report(train_report))
         print(log)
         self.log_time.reset()
 

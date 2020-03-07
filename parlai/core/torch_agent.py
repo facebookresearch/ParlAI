@@ -44,7 +44,13 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
+from parlai.core.metrics import (
+    Metrics,
+    Metric,
+    GlobalAverageMetric,
+    GlobalSumMetric,
+    GlobalFixedMetric,
+)
 from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, padded_tensor
 
@@ -1011,15 +1017,17 @@ class TorchAgent(ABC, Agent):
 
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
+            report['lr'] = GlobalAverageMetric(self.optimizer.param_groups[0]['lr'])
 
         if self.use_cuda:
-            report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
+            report['gpu_mem'] = GlobalAverageMetric(self._gpu_usage())
 
         if is_primary_worker() and self._number_training_updates:
             # number train updates doesn't work in hogwild sadly, and should only
             # be done on the primary worker
-            report['total_train_updates'] = FixedMetric(self._number_training_updates)
+            report['total_train_updates'] = GlobalFixedMetric(
+                self._number_training_updates
+            )
 
         return report
 
@@ -1849,11 +1857,11 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tbp = AverageMetric(
+            tpb = GlobalAverageMetric(
                 (batch.label_vec != self.NULL_IDX).sum().item(),
                 float(is_primary_worker()),
             )
-            self.global_metrics.add('tokens_per_batch', tbp)
+            self.global_metrics.add('tpb', tpb)
 
         if self.is_training:
             output = self.train_step(batch)
@@ -1966,23 +1974,25 @@ class TorchAgent(ABC, Agent):
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
-            self.global_metrics.add('gnorm', AverageMetric(grad_norm))
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
             self.global_metrics.add(
-                'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
+                'clip',
+                GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
             )
         if self.fp16:
             self.global_metrics.add(
-                'fp16_loss_scalar', AverageMetric(self.optimizer.loss_scale)
+                'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )
 
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
+
+        # in distributed mode, all workers step together, but we need to only
+        # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            # in distributed mode, all workers step together, but we need to only
-            # count it once. Only the primary worker gets to make the count
-            self.global_metrics.add('updates', SumMetric(1))
+            self.global_metrics.add('updates', GlobalSumMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
