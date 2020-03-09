@@ -66,6 +66,12 @@ class Metric(ABC):
     Subclasses should define .value().
     """
 
+    def is_global(self) -> bool:
+        """
+        Indicates whether this metric should be reported globally or per-task.
+        """
+        return False
+
     @abstractmethod
     def value(self) -> float:
         """
@@ -225,7 +231,28 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
-class LegacyMetric(AverageMetric):
+class GlobalMetric:
+    """
+    A global metric is one that should not be aggregated across different tasks.
+    """
+
+    def is_global(self) -> bool:
+        return True
+
+
+class GlobalFixedMetric(GlobalMetric, FixedMetric):
+    pass
+
+
+class GlobalSumMetric(GlobalMetric, SumMetric):
+    pass
+
+
+class GlobalAverageMetric(GlobalMetric, AverageMetric):
+    pass
+
+
+class LegacyMetric(GlobalAverageMetric):
     """
     Legacy Metrics are reported by agent as float.
     """
@@ -394,9 +421,16 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     m: Dict[str, Metric] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
-            m[each_metric] = m.get(each_metric, None) + value
-            if len(named_reports) > 1:
-                m[f'{task_id}/{each_metric}'] = value
+            if value.is_global():
+                # just take the first one we saw
+                if each_metric not in m:
+                    m[each_metric] = value
+            else:
+                # none + a => a from implementation of Metric.__add__
+                m[each_metric] = m.get(each_metric) + value
+                if len(named_reports) > 1:
+                    task_metric = f'{task_id}/{each_metric}'
+                    m[task_metric] = m.get(task_metric) + value
     return m
 
 
