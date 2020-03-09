@@ -14,6 +14,7 @@ import random
 import time
 import re
 import os
+import shutil
 import warnings
 import json
 
@@ -433,11 +434,7 @@ def nice_report(report) -> str:
             output[k] = v
 
     if use_pandas:
-        try:
-            _, line_width_ = os.popen('stty size', 'r').read().split()
-            line_width = int(line_width_)
-        except ValueError:
-            line_width = 88
+        line_width = shutil.get_terminal_size((88, 24)).columns
 
         df = pd.DataFrame([output])
         df.columns = pd.MultiIndex.from_tuples(df.columns)
