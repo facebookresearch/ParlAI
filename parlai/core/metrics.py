@@ -263,10 +263,10 @@ class GlobalMetric:
     """
     A global metric is one that should not be aggregated across different tasks.
 
-    Key to it is the notion that any one worker or any one task already has a
-    global view of the value, and so no combinations should be done. Note this
-    is different then a FixedMetric, in that a GlobalMetric can be still
-    averaged across multiple parleys(), but a FixedMetric is always fixed.
+    Key to it is the notion that any one worker or any one task already has a global
+    view of the value, and so no combinations should be done. Note this is different
+    then a FixedMetric, in that a GlobalMetric can be still averaged across multiple
+    parleys(), but a FixedMetric is always fixed.
     """
 
     def is_global(self) -> bool:
