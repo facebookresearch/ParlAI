@@ -457,7 +457,7 @@ def aggregate_named_reports(
         raise ValueError("Cannot aggregate empty reports.")
     if len(named_reports) == 1:
         # no real aggregation to be done
-        return next(named_reports.values())
+        return next(iter(named_reports.values()))
 
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
