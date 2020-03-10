@@ -287,7 +287,7 @@ class TorchClassifierAgent(TorchAgent):
 
         if batch.labels is None or self.opt['ignore_labels']:
             # interactive mode
-            if self.opt.get('interactive_mode', False):
+            if self.opt.get('print_scores', False):
                 preds = self._format_interactive_output(probs, prediction_id)
         else:
             labels = self._get_labels(batch)

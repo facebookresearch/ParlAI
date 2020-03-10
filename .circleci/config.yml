@@ -15,7 +15,8 @@ standard_cpu36: &standard_cpu36
 
 osx_cpu37: &osx_cpu37
   macos:
-    xcode: "10.1.0"
+      # https://circleci.com/docs/2.0/testing-ios/
+    xcode: "11.3.1"
   environment:
     PYTHON: 3.7.1
     HOMEBREW_NO_AUTO_UPDATE: 1
@@ -64,7 +65,7 @@ installdeps: &installdeps
       pip3 install --progress-bar off coverage
       pip3 install --progress-bar off codecov
       mkdir -p ~/ParlAI/test-results
-      pip install -q -r requirements.txt
+      pip install -v -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
@@ -140,11 +141,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-dt-{{ checksum "requirements.txt" }}
+          key: deps-v4-dt-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v3-dt-{{ checksum "requirements.txt" }}
+          key: deps-v4-dt-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -164,12 +165,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-osx-{{ checksum "requirements.txt" }}
+          key: deps-v4-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-v3-osx-{{ checksum "requirements.txt" }}
+          key: deps-v4-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -191,12 +192,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v4-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v3-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v4-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -215,12 +216,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v4-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v3-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v4-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -239,19 +240,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v4-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu13
       - save_cache:
-          key: deps-v3-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v4-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -270,19 +271,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v4-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v3-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v4-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -301,19 +302,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v3
+          key: nvidia-downloads-v4
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v4-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v3-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v4-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -335,11 +336,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v3-mturk-{{ checksum "requirements.txt" }}
+          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -357,7 +358,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-bw-{{ checksum "requirements.txt" }}
+          key: deps-v4-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -368,7 +369,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-v3-bw-{{ checksum "requirements.txt" }}
+          key: deps-v4-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -388,12 +389,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v3-dw-{{ checksum "requirements.txt" }}
+          key: deps-v4-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v3-dw-{{ checksum "requirements.txt" }}
+          key: deps-v4-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"

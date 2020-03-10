@@ -17,7 +17,7 @@ You can see the full validation set leaderboard here:
 """
 
 
-@testing_utils.skipUnlessGPU
+@unittest.skip("Disabled due to LSTM CUDNN bug. (#2436)")
 class TestConvai2Seq2Seq(unittest.TestCase):
     """
     Checks that the Convai2 seq2seq model produces correct results.

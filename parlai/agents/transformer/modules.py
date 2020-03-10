@@ -468,7 +468,7 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm':
+        if self.variant == 'xlm' or self.variant == 'prelayernorm':
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -537,7 +537,8 @@ class TransformerEncoder(nn.Module):
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
-
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
@@ -593,11 +594,20 @@ class TransformerEncoderLayer(nn.Module):
         """
         Forward pass.
         """
+
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
-        tensor = tensor + self.dropout(attended_tensor)
-        tensor = _normalize(tensor, self.norm1)
-        tensor = tensor + self.dropout(self.ffn(tensor))
-        tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(attended_tensor)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm1)
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(self.ffn(tensor))
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -654,6 +664,7 @@ class TransformerDecoder(nn.Module):
         self.dim = embedding_size
         self.activation = activation
         self.variant = variant
+
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
 
@@ -665,7 +676,7 @@ class TransformerDecoder(nn.Module):
 
         self.embeddings = embedding
 
-        if self.variant == 'xlm':
+        if self.variant == 'xlm' or self.variant == 'prelayernorm':
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -746,6 +757,8 @@ class TransformerDecoder(nn.Module):
                 encoder_mask=encoder_mask,
                 incr_state=incr_state[idx],
             )
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
 
@@ -807,6 +820,9 @@ class TransformerDecoderLayer(nn.Module):
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm1)
+
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
             query=x,
@@ -816,9 +832,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
-        x = _normalize(x, self.norm1)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm1)
 
         residual = x
+        # encoder_attn_layer_norm norm 2
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm2)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -829,14 +849,18 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm2)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm3)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm3)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm3)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
@@ -952,6 +976,9 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         """
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
+        # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
+        # we need to force their probability of generation to be 0.
+        output[:, :, self.start_idx] = neginf(output.dtype)
         return output
 
 
@@ -962,7 +989,6 @@ class BasicAttention(nn.Module):
 
     def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
-        self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
@@ -996,8 +1022,8 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill_(attn_mask, -float('inf'))
-        l2 = self.softmax(l1)
+            l1.masked_fill(attn_mask, neginf(l1.dtype))
+        l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
         lhs_emb = torch.bmm(l2, values)

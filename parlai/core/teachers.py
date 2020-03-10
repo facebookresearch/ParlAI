@@ -38,6 +38,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.distributed import get_rank, num_workers, is_distributed
 
 from functools import lru_cache
 from abc import ABC, abstractmethod
@@ -644,6 +645,7 @@ class DialogData(object):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
+
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -653,6 +655,13 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
+
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = is_distributed() and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
+
         self.addedCands = []
         self.copied_cands = False
 
@@ -675,6 +684,7 @@ class DialogData(object):
             an iterable which returns tuples in the format described in the
             class docstring.
         """
+
         episode = []
         last_cands = None
         for entry, new in data_loader:
@@ -775,11 +785,24 @@ class DialogData(object):
             which example to return from the episode. Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        next_episode_idx_for_rank = episode_idx + 1
+        if self.is_distributed_and_is_eval:
+            raw_episode_idx = episode_idx
+            episode_idx = raw_episode_idx * self.num_workers + self.rank
+            next_episode_idx_for_rank = episode_idx + self.num_workers
+
+            if episode_idx >= len(self.data):
+                # This can occur in spite of the check below if epoch ends
+                # mid-batch b/c BatchWorld calls act() on all the worlds without
+                # checking if epochDone
+                return {'episode_done': True}, True
+
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
         episode_done = entry_idx == len(episode) - 1
-        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        end_of_data = episode_done and next_episode_idx_for_rank >= len(self.data)
 
         # now pack it in a action-observation dictionary
         table = self.build_table(entry)
@@ -869,6 +892,7 @@ class StreamDialogData(DialogData):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+
         if shared:
             # auxiliary instances hold pointer to main datastream in self.data
             self.reset_data = shared['reset']
@@ -893,6 +917,12 @@ class StreamDialogData(DialogData):
         self.cur_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
+
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
 
     def share(self):
         """
@@ -920,9 +950,16 @@ class StreamDialogData(DialogData):
         Generate data using the iterator over tuples constructed by data_loader.
         """
         self.is_reset = False
+        idx = 0
         while True:
             for episode in self._read_episode(data_loader(datafile)):
-                yield episode
+                # We only shard the data set at evaluation time, as training is
+                # done using sampling-with-replacement.
+                if not self.is_distributed_and_is_eval or (
+                    idx % self.num_workers == self.rank
+                ):
+                    yield episode
+                idx += 1
             while not self.cycle:
                 yield self._END_OF_EPOCH
 
@@ -1314,7 +1351,9 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         else:
             self.episodes = shared['episodes']
             self.num_exs = sum(len(e) for e in self.episodes)
-        self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
+
+        self.id = opt['task']
+
         self.reset()
 
     def share(self):
