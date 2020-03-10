@@ -319,7 +319,7 @@ class PolyEncoderModule(torch.nn.Module):
         Return encoder, given options.
 
         :param opt:
-            option dictionary
+            opt dict
         :param dict:
             dictionary agent
         :param null_idx:

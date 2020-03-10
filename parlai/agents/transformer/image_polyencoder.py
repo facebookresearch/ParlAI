@@ -146,7 +146,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
         Return encoder that allows for image features to be passed in, given options.
 
         :param opt:
-            option dictionary
+            opt dict
         :param dict:
             dictionary agent
         :param null_idx:
