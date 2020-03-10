@@ -719,7 +719,11 @@ class TrainLoop:
         if not self.saved and is_primary_worker():
             # save agent
             self.save_model()
-        elif opt.get('model_file'):
+        # there's a rare edge case where the we never saved the model, and we try
+        # to reload it. This sync_object ensures all workers wait for the primary
+        # worker to finish flushing before loading from disk.
+        sync_object(None)
+        if opt.get('model_file'):
             # reload best validation model
             self.agent = create_agent(opt)
 
