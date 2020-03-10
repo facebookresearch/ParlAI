@@ -1405,6 +1405,7 @@ class TorchAgent(ABC, Agent):
             pad_idx=self.NULL_IDX,
             use_cuda=self.use_cuda,
             fp16friendly=self.fp16,
+            device=self.opt['gpu'],
         )
 
     def is_valid(self, obs):
