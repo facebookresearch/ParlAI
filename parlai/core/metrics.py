@@ -471,7 +471,7 @@ def aggregate_named_reports(
             else:
                 task_metric = f'{task_id}/{each_metric}'
                 m[task_metric] = m.get(task_metric) + value
-                if micro_average or isinstance(value, (SumMetric, FixedMetric)):
+                if micro_average or not isinstance(value, AverageMetric):
                     # none + a => a from implementation of Metric.__add__
                     m[each_metric] = m.get(each_metric) + value
                 else:

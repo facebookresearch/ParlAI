@@ -98,6 +98,11 @@ class TestMetric(unittest.TestCase):
             self.assertAlmostEqual(actual_output, output, places=6)
             self.assertIsInstance(actual_output, float)
 
+    def test_fixedmetric(self):
+        assert (FixedMetric(3) + FixedMetric(3)).value() == 3
+        with self.assertRaises(ValueError):
+            _ = FixedMetric(3) + FixedMetric(4)
+
     def test_macroaverage_additions(self):
         m1 = AverageMetric(1, 3)
         m2 = AverageMetric(3, 4)
