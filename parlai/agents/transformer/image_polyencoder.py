@@ -179,7 +179,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
                 learn_positional_embeddings=opt['learn_positional_embeddings'],
                 embeddings_scale=opt['embeddings_scale'],
                 n_positions=n_positions,
-                n_segments=2,
+                n_segments=opt['n_segments'],
                 activation=opt['activation'],
                 variant=opt['variant'],
                 output_scaling=opt['output_scaling'],
