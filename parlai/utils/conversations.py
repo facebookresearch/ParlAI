@@ -27,29 +27,31 @@ class Metadata:
         self._load(datapath)
 
     def _load(self, datapath):
-        metadata_path = self._get_path(datapath)
-        if not os.path.isfile(metadata_path):
+        self.metadata_path = self._get_path(datapath)
+        if not os.path.isfile(self.metadata_path):
             raise RuntimeError(
-                f'Metadata at path {metadata_path} not found. '
+                f'Metadata at path {self.metadata_path} not found. '
                 'Double check your path.'
             )
 
-        with open(metadata_path, 'rb') as f:
+        with open(self.metadata_path, 'rb') as f:
             metadata = json.load(f)
 
         self.datetime = metadata['date']
         self.opt = metadata['opt']
         self.self_chat = metadata['self_chat']
         self.speakers = metadata['speakers']
+        self.version_num = metadata['version']
         self.extra_data = {}
         for k, v in metadata.items():
-            if k not in ['date', 'opt', 'speakers', 'self_chat']:
+            if k not in ['date', 'opt', 'speakers', 'self_chat', 'version']:
                 self.extra_data[k] = v
 
     def read(self):
         """
         Read the relevant metadata.
         """
+        print(f'Metadata version {self.version_num}')
         print(f'Saved at: {self.datetime}')
         print(f'Self chat: {self.self_chat}')
         print(f'Speakers: {self.speakers}')
@@ -64,6 +66,10 @@ class Metadata:
         fle, _ = os.path.splitext(datapath)
         return fle + '.metadata'
 
+    @staticmethod
+    def version():
+        return '0.1'
+
     @classmethod
     def save_metadata(
         cls, datapath, opt, self_chat=False, speakers=None, **kwargs,
@@ -76,9 +82,10 @@ class Metadata:
         metadata['opt'] = opt
         metadata['self_chat'] = self_chat
         metadata['speakers'] = speakers
+        metadata['version'] = cls.version()
 
         for k, v in kwargs.items():
-            metadata[k] = metadata[v]
+            metadata[k] = v
 
         metadata_path = cls._get_path(datapath)
         print(f'[ Writing metadata to file {metadata_path} ]')
@@ -95,15 +102,18 @@ class Conversations:
     {
         'possible_conversation_level_info': True,
         'dialog':
-            [
-                {
-                    'id': 'speaker_1',
-                    'text': <first utterance>,
-                },
-                {
-                    'id': 'speaker_2',
-                    'text': <second utterance>,
-                },
+            [   [
+                    {
+                        'id': 'speaker_1',
+                        'text': <first utterance>,
+                    },
+                    {
+                        'id': 'speaker_2',
+                        'text': <second utterance>,
+                    },
+                    ...
+                ],
+                ...
             ]
         ...
     }
@@ -185,10 +195,11 @@ class Conversations:
                 print(f'{key}: {convo[key]}')
             print(SMALL_BAR)
 
-        for turn in convo['dialog']:
-            turn_id = turn['id']
-            text = turn['text']
-            print(f'{turn_id}: {text}')
+        for act_pair in convo['dialog']:
+            for turn in act_pair:
+                turn_id = turn['id']
+                text = turn['text']
+                print(f'{turn_id}: {text}')
 
         print(BAR)
 
@@ -227,10 +238,13 @@ class Conversations:
             for ep in act_list:
                 if not ep:
                     continue
-                convo = {}
-                convo['dialog'] = []
-                convo['context'] = []
+                convo = {
+                    'dialog': [],
+                    'context': [],
+                    'metadata_path': Metadata._get_path(to_save),
+                }
                 for act_pair in ep:
+                    new_pair = []
                     for ex in act_pair:
                         ex_id = ex.get('id')
                         if ex_id in context_ids:
@@ -245,9 +259,11 @@ class Conversations:
                             turn[key] = ex.get(key, '')
                         turn['id'] = ex_id
                         if not context:
-                            convo['dialog'].append(turn)
+                            new_pair.append(turn)
                         else:
                             convo['context'].append(turn)
+                    if new_pair:
+                        convo['dialog'].append(new_pair)
                 json_convo = json.dumps(convo)
                 f.write(json_convo + '\n')
         print(f' [ Conversations saved to file: {to_save} ]')

@@ -13,7 +13,6 @@ from parlai.utils.world_logging import WorldLogger
 
 import math
 import random
-import tqdm
 
 
 def setup_args(parser=None):
