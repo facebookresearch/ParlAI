@@ -1902,7 +1902,10 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
-        return aggregate_named_reports({t.getID(): t.report() for t in self.tasks})
+        return aggregate_named_reports(
+            {t.getID(): t.report() for t in self.tasks},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
 
     def reset(self):
         """

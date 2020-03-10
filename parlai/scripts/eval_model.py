@@ -62,6 +62,14 @@ def setup_args(parser=None):
         'ppl,f1,accuracy,hits@1,rouge,bleu'
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
+    parser.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=False,
+        help='Report micro-averaged metrics instead of macro averaged metrics.',
+        recommended=False,
+    )
     WorldLogger.add_cmdline_args(parser)
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')

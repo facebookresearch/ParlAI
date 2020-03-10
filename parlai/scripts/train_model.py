@@ -182,7 +182,16 @@ def setup_args(parser=None) -> ParlaiParser:
         'ppl,f1,accuracy,hits@1,rouge,bleu'
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
+    train.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=False,
+        help='Report micro-averaged metrics instead of macro averaged metrics.',
+        recommended=False,
+    )
     TensorboardLogger.add_cmdline_args(parser)
+
     parser = setup_dict_args(parser)
     return parser
 
@@ -529,7 +538,9 @@ class TrainLoop:
 
         tasks = [world.getID() for world in valid_worlds]
         named_reports = dict(zip(tasks, reports))
-        report = aggregate_named_reports(named_reports)
+        report = aggregate_named_reports(
+            named_reports, micro_average=self.opt.get('aggregate_micro', False)
+        )
         # get the results from all workers
         report = self._sync_metrics(report)
 

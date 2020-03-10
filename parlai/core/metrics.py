@@ -231,9 +231,42 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
+class MacroAverageMetric(Metric):
+    """
+    Class that represents the macro average of several numbers.
+
+    Used for aggregating task level metrics.
+    """
+
+    __slots__ = ('_values',)
+
+    def __init__(self, metrics: List[Metric]) -> None:
+        self._values = metrics
+
+    def __add__(self, other: Optional['MacroAverageMetric']) -> 'MacroAverageMetric':
+        if other is None:
+            return self
+        if len(self._values) != len(other._values):
+            raise AssertionError(
+                "MacroAverage keeping track of an uneven number of submetrics. "
+                "There should be exactly one per task."
+            )
+        return MacroAverageMetric([a + b for a, b in zip(self._values, other._values)])
+
+    def value(self) -> float:
+        sum_ = sum(v.value() for v in self._values)
+        n = len(self._values)
+        return sum_ / n
+
+
 class GlobalMetric:
     """
     A global metric is one that should not be aggregated across different tasks.
+
+    Key to it is the notion that any one worker or any one task already has a
+    global view of the value, and so no combinations should be done. Note this
+    is different then a FixedMetric, in that a GlobalMetric can be still
+    averaged across multiple parleys(), but a FixedMetric is always fixed.
     """
 
     def is_global(self) -> bool:
@@ -411,14 +444,24 @@ def normalize_answer(s):
     return s
 
 
-def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
+def aggregate_named_reports(
+    named_reports: Dict[str, Dict[str, Metric]], micro_average: bool = False
+):
     """
     Aggregate metrics from multiple reports.
 
     :param reports: Dict of tasks -> metrics.
+    :param micro_average: If true, top level metrics will be the macro average.
     """
+    if len(named_reports) == 0:
+        raise ValueError("Cannot aggregate empty reports.")
+    if len(named_reports) == 1:
+        # no real aggregation to be done
+        return next(named_reports.values())
+
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
+    macro_averages = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
             if value.is_global():
@@ -426,11 +469,18 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
                 if each_metric not in m:
                     m[each_metric] = value
             else:
-                # none + a => a from implementation of Metric.__add__
-                m[each_metric] = m.get(each_metric) + value
-                if len(named_reports) > 1:
-                    task_metric = f'{task_id}/{each_metric}'
-                    m[task_metric] = m.get(task_metric) + value
+                task_metric = f'{task_id}/{each_metric}'
+                m[task_metric] = m.get(task_metric) + value
+                if micro_average or isinstance(value, (SumMetric, FixedMetric)):
+                    # none + a => a from implementation of Metric.__add__
+                    m[each_metric] = m.get(each_metric) + value
+                else:
+                    # macro average
+                    if each_metric not in macro_averages:
+                        macro_averages[each_metric] = []
+                    macro_averages[each_metric].append(value)
+    for key, values in macro_averages.items():
+        m[key] = MacroAverageMetric(values)
     return m
 
 
