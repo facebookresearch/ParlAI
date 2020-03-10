@@ -113,7 +113,7 @@ class PolyencoderAgent(TorchRankerAgent):
                 )
             else:
                 raise NotImplementedError(
-                    'This --polyencoder-attention-keys mode is no longer supported!'
+                    'This --polyencoder-attention-keys mode (found in commit 06f0d9f) is no longer supported!'
                 )
 
         return opt_from_disk
