@@ -38,6 +38,10 @@ class Unpickler(pickle._Unpickler):  # type: ignore
                 # user doesn't have apex installed. We'll deal with this later.
                 return FakeAPEXClass
             else:
+                if module == 'parlai.core.utils' and name == 'Opt':
+                    from parlai.core.opt import Opt
+
+                    return Opt
                 raise
 
 

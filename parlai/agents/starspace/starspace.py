@@ -596,7 +596,11 @@ class StarspaceAgent(Agent):
         Return opt and model states.
         """
         print('Loading existing model params from ' + path)
-        data = torch.load(path, map_location=lambda cpu, _: cpu)
+        import parlai.utils.pickle
+
+        data = torch.load(
+            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+        )
         self.model.load_state_dict(data['model'])
         self.reset()
         self.optimizer.load_state_dict(data['optimizer'])
