@@ -806,8 +806,10 @@ class TestImagePolyencoder(unittest.TestCase):
     @testing_utils.skipUnlessGPU
     def test_image_task(self):
         """
-        Test that model correctly handles a basic image training task. Random chance is
-        10%, so this should be able to get much better than that very quickly.
+        Test that model correctly handles a basic image training task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
         """
         args = Opt(
             {
