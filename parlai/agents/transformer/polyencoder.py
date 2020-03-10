@@ -14,7 +14,6 @@ import torch
 
 from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.utils.misc import warn_once
 from .biencoder import AddLabelFixedCandsTRA
 from .modules import (
     BasicAttention,
@@ -396,7 +395,7 @@ class PolyEncoderModule(torch.nn.Module):
         self,
         cand_tokens: Optional[torch.Tensor],
         **ctxt_inputs: Dict[str, torch.Tensor],
-    ) -> Tuple[Optional[torch.tensor], Optional[torch.tensor], Optional[torch.tensor]]:
+    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode a text sequence.
 
