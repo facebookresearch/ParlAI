@@ -108,9 +108,7 @@ class PolyencoderAgent(TorchRankerAgent):
             # set of experiments and won't be used again. This flag was defaulted to
             # 'context', so throw an exception otherwise.
             if polyencoder_attention_keys_value == 'context':
-                warn_once(
-                    '--polyencoder-attention-keys has been deprecated and will be ignored.'
-                )
+                del opt_from_disk['polyencoder_attention_keys']
             else:
                 raise NotImplementedError(
                     'This --polyencoder-attention-keys mode (found in commit 06f0d9f) is no longer supported!'
