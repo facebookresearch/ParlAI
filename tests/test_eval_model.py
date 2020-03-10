@@ -109,13 +109,55 @@ class TestEvalModel(unittest.TestCase):
         self.assertNotIn('bleu-4', valid)
         self.assertNotIn('bleu-4', test)
 
-    def test_multitasking_metrics(self):
+    def test_multitasking_metrics_macro(self):
         valid, test = testing_utils.eval_model(
             {
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
                 'num_epochs': 0.5,
+                'aggregate_micro': False,
+            }
+        )
+
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
+        total_acc = valid['accuracy']
+        # task 2 is 4 times the size of task 1
+        self.assertEqual(
+            total_acc,
+            (task1_acc.value() + task2_acc.value()) * 0.5,
+            'Task accuracy is averaged incorrectly',
+        )
+
+        valid, test = testing_utils.eval_model(
+            {
+                'task': 'integration_tests:candidate,'
+                'integration_tests:multiturnCandidate',
+                'model': 'random_candidate',
+                'num_epochs': 0.5,
+                'aggregate_micro': False,
+            }
+        )
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
+        total_acc = valid['accuracy']
+
+        # metrics are combined correctly
+        self.assertEqual(
+            total_acc,
+            (task1_acc.value() + task2_acc.value()) * 0.5,
+            'Task accuracy is averaged incorrectly',
+        )
+
+    def test_multitasking_metrics_micro(self):
+        valid, test = testing_utils.eval_model(
+            {
+                'task': 'integration_tests:candidate,'
+                'integration_tests:multiturnCandidate',
+                'model': 'random_candidate',
+                'num_epochs': 0.5,
+                'aggregate_micro': True,
             }
         )
 
@@ -133,6 +175,7 @@ class TestEvalModel(unittest.TestCase):
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
                 'num_epochs': 0.5,
+                'aggregate_micro': True,
             }
         )
         task1_acc = valid['integration_tests:candidate/accuracy']
