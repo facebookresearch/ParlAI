@@ -221,7 +221,7 @@ class Conversations:
         act_list,
         datapath,
         opt,
-        save_keys='text',
+        save_keys='text,labels,eval_labels',
         context_ids='context',
         self_chat=False,
         **kwargs,
