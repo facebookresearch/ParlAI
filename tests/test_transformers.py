@@ -872,7 +872,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.image_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.2
+            valid['accuracy'] > 0.15
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
