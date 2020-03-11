@@ -491,6 +491,7 @@ workflows:
     jobs:
       - unittests_gpu13
       - unittests_gpu14
+      - unittests_38
       - unittests_37
       - unittests_36
       - mturk_tests
