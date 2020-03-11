@@ -822,7 +822,9 @@ class TestImagePolyencoder(unittest.TestCase):
         'optimizer': 'adamax',
         'learn_positional_embeddings': True,
         'reduction_type': 'first',
+        'num_epochs': 30,
     }
+    text_args = {'task': 'integration_tests:nocandidate'}
     image_args = {
         'task': 'integration_tests:ImageTeacher',
         'image_mode': 'resnet152',
@@ -830,7 +832,34 @@ class TestImagePolyencoder(unittest.TestCase):
         'image_encoder_num_layers': 1,
         'image_combination_mode': 'prepend',
         'n_image_tokens': 1,
+        'num_epochs': 1000,
     }
+    multitask_args = {
+        'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+        'multitask_weights': [1, 1],
+        'num_epochs': 100,
+    }
+
+    @testing_utils.retry(ntries=3)
+    def test_text_task(self):
+        """
+        Test that model correctly handles text task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.text_args})
+        valid, test = testing_utils.train_model(args)
+        self.assertGreater(
+            valid['accuracy'],
+            0.5,
+            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
+        )
 
     @testing_utils.retry(ntries=3)
     @testing_utils.skipUnlessTorch
@@ -842,7 +871,25 @@ class TestImagePolyencoder(unittest.TestCase):
         Random chance is 10%, so this should be able to get much better than that very
         quickly.
         """
-        args = Opt({**self.base_args, **self.image_args, 'num_epochs': 2000})
+        args = Opt({**self.base_args, **self.image_args})
+        valid, test = testing_utils.train_model(args)
+        self.assertGreater(
+            valid['accuracy'],
+            0.5,
+            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_multitask(self):
+        """
+        Test that model correctly handles multiple inputs.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.multitask_args})
         valid, test = testing_utils.train_model(args)
         self.assertGreater(
             valid['accuracy'],

@@ -156,7 +156,7 @@ class ContextWithImageEncoder(TransformerEncoder):
 
     def encode_images(
         self, images: Union[List[object], torch.Tensor]
-    ) -> Tuple[Optional[List[int]], Optional[torch.Tensor]]:
+    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode Images.
 
