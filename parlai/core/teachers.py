@@ -1388,8 +1388,15 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.num_exs = 0
         eps = []
         with open(path, newline='\n') as read:
-            for line in read:
+            for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
+                if 'eval_labels' in msg:
+                    raise ValueError(
+                        f"It looks like you've written eval_labels as a key in your "
+                        f"data file. This is not appropriate; labels will be converted "
+                        f"for you automatically. This is happening on Line {line_no} "
+                        f"in {path}. The line is:\n\t{line}"
+                    )
                 if msg:
                     self.num_exs += 1
                     eps.append(msg)
