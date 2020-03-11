@@ -832,7 +832,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'image_encoder_num_layers': 1,
         'image_combination_mode': 'prepend',
         'n_image_tokens': 1,
-        'num_epochs': 30,
+        'num_epochs': 60,
     }
     multitask_args = {
         'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
