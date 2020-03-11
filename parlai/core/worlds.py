@@ -734,7 +734,10 @@ class MultiWorld(World):
         """
         Report aggregate metrics across all subworlds.
         """
-        metrics = aggregate_named_reports({w.getID(): w.report() for w in self.worlds})
+        metrics = aggregate_named_reports(
+            {w.getID(): w.report() for w in self.worlds},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
         if 'exs' in metrics:
             self.total_exs += metrics['exs'].value()
         return metrics
