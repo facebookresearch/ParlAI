@@ -35,7 +35,7 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         """
         PolyencoderAgent.add_cmdline_args(argparser)
         TorchImageAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Image Encoder Args')
+        agent = argparser.add_argument_group('ImagePolyencoder Args')
         agent.add_argument(
             '--image-combination-mode',
             type=str,
@@ -43,6 +43,8 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
             choices=['add', 'append', 'prepend'],
             help='How to combine image embedding (if used) with context embedding',
         )
+        # TODO: more thoroughly test out whether one of these choices is best. 'add' and
+        #  'prepend' seem to be roughly similar in performance
         agent.add_argument(
             '--n-image-tokens',
             type=int,
