@@ -903,8 +903,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # get all finilized candidates for each sample (and validate them)
+        # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+        if hasattr(self, '_rerank_beams'):
+            n_best_beam_preds_scores = self._rerank_beams(
+                batch, n_best_beam_preds_scores
+            )
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
