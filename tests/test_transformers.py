@@ -793,5 +793,104 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
 
 
+@testing_utils.skipUnlessTorch14
+class TestImagePolyencoder(unittest.TestCase):
+    """
+    Unit tests for the ImagePolyencoderAgent.
+
+    Test that the model is able to handle simple train tasks.
+    """
+
+    base_args = {
+        'log_every_n_secs': 5,
+        'validation_every_n_secs': 30,
+        'model': 'transformer/image_polyencoder',
+        'embedding_size': 32,
+        'n_heads': 2,
+        'n_layers': 2,
+        'n_positions': 128,
+        'truncate': 128,
+        'ffn_size': 128,
+        'variant': 'xlm',
+        'activation': 'gelu',
+        'candidates': 'batch',
+        'eval_candidates': 'batch',  # No inline cands
+        'embeddings_scale': False,
+        'gradient_clip': 0.1,
+        'learningrate': 3e-5,
+        'batchsize': 16,
+        'optimizer': 'adamax',
+        'learn_positional_embeddings': True,
+        'reduction_type': 'first',
+        'num_epochs': 30,
+    }
+    text_args = {'task': 'integration_tests:nocandidate'}
+    image_args = {
+        'task': 'integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+        'num_epochs': 60,
+    }
+    multitask_args = {
+        'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+        'multitask_weights': [1, 1],
+        'num_epochs': 30,
+    }
+
+    @testing_utils.retry(ntries=3)
+    def test_text_task(self):
+        """
+        Test that model correctly handles text task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.text_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.2
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_image_task(self):
+        """
+        Test that model correctly handles a basic image training task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.image_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.15
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_multitask(self):
+        """
+        Test that model correctly handles multiple inputs.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.multitask_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.2
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+
 if __name__ == '__main__':
     unittest.main()

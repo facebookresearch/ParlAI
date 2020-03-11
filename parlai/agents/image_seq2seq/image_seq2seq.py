@@ -6,23 +6,23 @@
 """
 Image+Seq2Seq Agent.
 """
-import torch
+
 from typing import Dict, List, Tuple
+
+import torch
 
 from .modules import ImageSeq2seqModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.message import Message
 from parlai.core.torch_agent import Batch
-
-# from parlai.utils.typing import Dict, List
+from parlai.core.torch_image_agent import TorchImageAgent
 
 
 TOKEN_IMAGE = '__image__'
 TOKEN_NO_IMAGE = '__no_image__'
 
 
-class ImageSeq2seqAgent(TransformerGeneratorAgent):
+class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
     """
     ImageSeq2seqAgent Agent.
 
@@ -45,18 +45,9 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         """
         Override to add one arg.
         """
-        super(ImageSeq2seqAgent, cls).add_cmdline_args(argparser)
+        TransformerGeneratorAgent.add_cmdline_args(argparser)
+        TorchImageAgent.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Image Encoder Args')
-        group.add_argument(
-            '--image-features-dim', type=int, default=2048, help='dim for image feats'
-        )
-        group.add_argument(
-            '--image-encoder-num-layers',
-            type=int,
-            default=1,
-            recommended=1,
-            help='Number of layers for image encoder',
-        )
         group.add_argument(
             '--include-image-token',
             type='bool',
@@ -105,33 +96,22 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent):
         return Batch(
             text_vec=torch.ones(batchsize, maxlen).long().cuda(),
             label_vec=torch.ones(batchsize, 2).long().cuda(),
-            image=torch.ones(batchsize, self.opt.get('image_features_dim')).cuda(),
+            image=torch.ones(batchsize, self.image_features_dim).cuda(),
             personalities=torch.ones(batchsize, self.opt.get('embedding_size')).cuda(),
         )
 
-    def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
+    def batchify_image_features(self, batch: Batch) -> Batch:
         """
-        Override to handle images.
+        Format and return the batched image features.
+
+        Image features represented by tensors will set to the right type.
         """
-        batch = super().batchify(obs_batch, sort)
-
-        def _process_img(img):
-            if img is not None and isinstance(img, torch.Tensor):
-                if img.dim() == 4:
-                    img = img[0, :, 0, 0]
-                if self.use_cuda:
-                    img = img.cuda()
-                if self.opt.get('fp16'):
-                    img = img.half()
-                else:
-                    img = img.float()
-
-            return img
-
         if type(batch.image) == list and any(b is not None for b in batch):
             images = []
             for img in batch.image:
-                images.append(_process_img(img))
+                if isinstance(img, torch.Tensor):
+                    img = self._process_image_features(img)
+                images.append(img)
             batch.image = images
         return batch
 

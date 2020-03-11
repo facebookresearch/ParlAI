@@ -7,13 +7,21 @@
 """
 Poly-encoder Agent.
 """
-from .biencoder import AddLabelFixedCandsTRA
-from .modules import TransformerEncoder
-from .modules import get_n_positions_from_options
-from parlai.core.torch_ranker_agent import TorchRankerAgent
-from .transformer import TransformerRankerAgent
-from .modules import BasicAttention, MultiHeadAttention
+
+from typing import Any, Dict, Optional, Tuple
+
 import torch
+
+from parlai.core.opt import Opt
+from parlai.core.torch_ranker_agent import TorchRankerAgent
+from .biencoder import AddLabelFixedCandsTRA
+from .modules import (
+    BasicAttention,
+    MultiHeadAttention,
+    TransformerEncoder,
+    get_n_positions_from_options,
+)
+from .transformer import TransformerRankerAgent
 
 
 class PolyencoderAgent(TorchRankerAgent):
@@ -61,16 +69,6 @@ class PolyencoderAgent(TorchRankerAgent):
             recommended='basic',
         )
         agent.add_argument(
-            '--polyencoder-attention-keys',
-            type=str,
-            default='context',
-            choices=['context', 'position'],
-            help='Input emb vectors for the first level of attention. '
-            'Context refers to the context outputs; position refers to the '
-            'computed position embeddings.',
-            recommended='context',
-        )
-        agent.add_argument(
             '--poly-attention-num-heads',
             type=int,
             default=4,
@@ -95,6 +93,27 @@ class PolyencoderAgent(TorchRankerAgent):
             'specify the number of heads',
         )
         return agent
+
+    @classmethod
+    def upgrade_opt(cls, opt_from_disk: Opt):
+        # call the parent upgrades
+        opt_from_disk = super(PolyencoderAgent, cls).upgrade_opt(opt_from_disk)
+
+        polyencoder_attention_keys_value = opt_from_disk.get(
+            'polyencoder_attention_keys'
+        )
+        if polyencoder_attention_keys_value is not None:
+            # 2020-02-19 We are deprecating this flag because it was used for a one-time
+            # set of experiments and won't be used again. This flag was defaulted to
+            # 'context', so throw an exception otherwise.
+            if polyencoder_attention_keys_value == 'context':
+                del opt_from_disk['polyencoder_attention_keys']
+            else:
+                raise NotImplementedError(
+                    'This --polyencoder-attention-keys mode (found in commit 06f0d9f) is no longer supported!'
+                )
+
+        return opt_from_disk
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -164,7 +183,7 @@ class PolyencoderAgent(TorchRankerAgent):
         Encode candidates.
         """
         padded_cands = padded_cands.unsqueeze(1)
-        _, _, _, cand_rep = self.model(cand_tokens=padded_cands)
+        _, _, cand_rep = self.model(cand_tokens=padded_cands)
         return cand_rep
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
@@ -174,8 +193,8 @@ class PolyencoderAgent(TorchRankerAgent):
         The Poly-encoder encodes the candidate and context independently. Then, the
         model applies additional attention before ultimately scoring a candidate.
         """
-        bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, ctxt_pos, _ = self.model(ctxt_tokens=batch.text_vec)
+        bsz = self._get_batch_size(batch)
+        ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
 
         if cand_encs is not None:
             if bsz == 1:
@@ -184,20 +203,38 @@ class PolyencoderAgent(TorchRankerAgent):
                 cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
         # bsz x num cands x seq len
         elif len(cand_vecs.shape) == 3:
-            _, _, _, cand_rep = self.model(cand_tokens=cand_vecs)
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
         elif len(cand_vecs.shape) == 2:
-            _, _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             num_cands = cand_rep.size(0)  # will be bsz if using batch cands
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-
         scores = self.model(
-            ctxt_rep=ctxt_rep,
-            ctxt_rep_mask=ctxt_rep_mask,
-            cand_rep=cand_rep,
-            ctxt_pos=ctxt_pos,
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
         return scores
+
+    def _get_batch_size(self, batch) -> int:
+        """
+        Return the size of the batch.
+
+        Can be overridden by subclasses that do not always have text input.
+        """
+        return batch.text_vec.size(0)
+
+    def _model_context_input(self, batch) -> Dict[str, Any]:
+        """
+        Create the input context value for the model.
+
+        Must return a dictionary.  This will be passed directly into the model via
+        `**kwargs`, i.e.,
+
+        >>> model(**_model_context_input(batch))
+
+        This is intentionally overridable so that richer models can pass additional
+        inputs.
+        """
+        return {'ctxt_tokens': batch.text_vec}
 
     def load_state_dict(self, state_dict):
         """
@@ -215,16 +252,27 @@ class PolyEncoderModule(torch.nn.Module):
     See https://arxiv.org/abs/1905.01969 for more details
     """
 
-    def __init__(self, opt, dict, null_idx):
+    def __init__(self, opt, dict_, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.encoder_ctxt = self.get_encoder(opt, dict, null_idx, 'none_with_pos_embs')
-        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
+        self.encoder_ctxt = self.get_encoder(
+            opt=opt,
+            dict_=dict_,
+            null_idx=null_idx,
+            reduction_type=None,
+            for_context=True,
+        )
+        self.encoder_cand = self.get_encoder(
+            opt=opt,
+            dict_=dict_,
+            null_idx=null_idx,
+            reduction_type=opt['reduction_type'],
+            for_context=False,
+        )
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
         self.attention_type = opt['poly_attention_type']
-        self.attention_keys = opt.get('polyencoder_attention_keys', 'context')
         self.attention_num_heads = opt['poly_attention_num_heads']
         self.codes_attention_type = opt['codes_attention_type']
         self.codes_attention_num_heads = opt['codes_attention_num_heads']
@@ -265,7 +313,7 @@ class PolyEncoderModule(torch.nn.Module):
                 get_weights=False,
             )
 
-    def get_encoder(self, opt, dict, null_idx, reduction_type):
+    def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """
         Return encoder, given options.
 
@@ -275,23 +323,24 @@ class PolyEncoderModule(torch.nn.Module):
             dictionary agent
         :param null_idx:
             null/pad index into dict
-        :reduction_type:
+        :param reduction_type:
             reduction type for the encoder
-
+        :param for_context:
+            whether this is the context encoder (as opposed to the candidate encoder).
+            Useful for subclasses.
         :return:
             a TransformerEncoder, initialized correctly
         """
         n_positions = get_n_positions_from_options(opt)
-        embeddings = torch.nn.Embedding(
-            len(dict), opt['embedding_size'], padding_idx=null_idx
+        embeddings = self._get_embeddings(
+            dict_=dict_, null_idx=null_idx, embedding_size=opt['embedding_size']
         )
-        torch.nn.init.normal_(embeddings.weight, 0, opt['embedding_size'] ** -0.5)
         return TransformerEncoder(
             n_heads=opt['n_heads'],
             n_layers=opt['n_layers'],
             embedding_size=opt['embedding_size'],
             ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dict),
+            vocabulary_size=len(dict_),
             embedding=embeddings,
             dropout=opt['dropout'],
             attention_dropout=opt['attention_dropout'],
@@ -306,6 +355,13 @@ class PolyEncoderModule(torch.nn.Module):
             variant=opt['variant'],
             output_scaling=opt['output_scaling'],
         )
+
+    def _get_embeddings(self, dict_, null_idx, embedding_size):
+        embeddings = torch.nn.Embedding(
+            len(dict_), embedding_size, padding_idx=null_idx
+        )
+        torch.nn.init.normal_(embeddings.weight, 0, embedding_size ** -0.5)
+        return embeddings
 
     def attend(self, attention_layer, queries, keys, values, mask):
         """
@@ -335,28 +391,30 @@ class PolyEncoderModule(torch.nn.Module):
         else:
             raise Exception('Unrecognized type of attention')
 
-    def encode(self, ctxt_tokens, cand_tokens):
+    def encode(
+        self, cand_tokens: Optional[torch.Tensor], **ctxt_inputs: torch.Tensor
+    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode a text sequence.
 
-        :param ctxt_tokens:
-            2D long tensor, batchsize x sent_len
+        :param ctxt_inputs:
+            Dictionary of context inputs. If not empty, should contain at least
+            'ctxt_tokens', a 2D long tensor of shape batchsize x sent_len
         :param cand_tokens:
             3D long tensor, batchsize x num_cands x sent_len
             Note this will actually view it as a 2D tensor
         :return:
-            (ctxt_rep, ctxt_mask, ctxt_pos, cand_rep)
+            (ctxt_rep, ctxt_mask, cand_rep)
             - ctxt_rep 3D float tensor, batchsize x n_codes x dim
             - ctxt_mask byte:  batchsize x n_codes (all 1 in case
             of polyencoder with code. Which are the vectors to use
             in the ctxt_rep)
-            - ctxt_pos 3D float tensor, batchsize x sent_len x dim
             - cand_rep (3D float tensor) batchsize x num_cands x dim
         """
         cand_embed = None
         ctxt_rep = None
         ctxt_rep_mask = None
-        ctxt_pos = None
+
         if cand_tokens is not None:
             assert len(cand_tokens.shape) == 3
             bsz = cand_tokens.size(0)
@@ -364,23 +422,25 @@ class PolyEncoderModule(torch.nn.Module):
             cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
             cand_embed = cand_embed.view(bsz, num_cands, -1)
 
-        if ctxt_tokens is not None:
-            assert len(ctxt_tokens.shape) == 2
-            bsz = ctxt_tokens.size(0)
+        if len(ctxt_inputs) > 0:
+            assert 'ctxt_tokens' in ctxt_inputs
+            if ctxt_inputs['ctxt_tokens'] is not None:
+                assert len(ctxt_inputs['ctxt_tokens'].shape) == 2
+            bsz = self._get_context_batch_size(**ctxt_inputs)
             # get context_representation. Now that depends on the cases.
-            ctxt_out, ctxt_mask, ctxt_pos = self.encoder_ctxt(ctxt_tokens)
-            att_keys = ctxt_out if self.attention_keys == 'context' else ctxt_pos
+            ctxt_out, ctxt_mask = self.encoder_ctxt(
+                **self._context_encoder_input(ctxt_inputs)
+            )
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
                 ctxt_rep = self.attend(
                     self.code_attention,
                     queries=self.codes.repeat(bsz, 1, 1),
-                    keys=att_keys,
+                    keys=ctxt_out,
                     values=ctxt_out,
                     mask=ctxt_mask,
                 )
-                ctxt_pos = None  # we don't need this anymore
                 ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
 
             elif self.type == 'n_first':
@@ -389,17 +449,40 @@ class PolyEncoderModule(torch.nn.Module):
                     difference = self.n_codes - ctxt_out.size(1)
                     extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
                     ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                    ctxt_pos = torch.cat([ctxt_pos, extra_rep], dim=1)
                     extra_mask = ctxt_mask.new_zeros(bsz, difference)
                     ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
                 else:
                     ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
-                    ctxt_pos = ctxt_pos[:, 0 : self.n_codes, :]
                     ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
-        return ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed
+        return ctxt_rep, ctxt_rep_mask, cand_embed
 
-    def score(self, ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_embed):
+    def _get_context_batch_size(self, **ctxt_inputs: torch.Tensor) -> int:
+        """
+        Return the batch size of the context.
+
+        Can be overridden by subclasses that do not always have text tokens in the
+        context.
+        """
+        return ctxt_inputs['ctxt_tokens'].size(0)
+
+    def _context_encoder_input(self, ctxt_inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Return the inputs to the context encoder as a dictionary.
+
+        Must return a dictionary.  This will be passed directly into the model via
+        `**kwargs`, i.e.,
+
+        >>> encoder_ctxt(**_context_encoder_input(ctxt_inputs))
+
+        This is needed because the context encoder's forward function may have different
+        argument names than that of the model itself. This is intentionally overridable
+        so that richer models can pass additional inputs.
+        """
+        assert set(ctxt_inputs.keys()) == {'ctxt_tokens'}
+        return {'input': ctxt_inputs['ctxt_tokens']}
+
+    def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
         """
         Score the candidates.
 
@@ -408,29 +491,24 @@ class PolyEncoderModule(torch.nn.Module):
         :param ctxt_rep_mask:
             2D byte tensor, bsz x ctxt_len, in case there are some elements
             of the ctxt that we should not take into account.
-        :param ctx_pos: 3D float tensor, bsz x sent_len x dim
         :param cand_embed: 3D float tensor, bsz x num_cands x dim
 
         :return: scores, 2D float tensor: bsz x num_cands
         """
-        # Attention keys determined by self.attention_keys
-        # 'context' == use context final rep; otherwise use context position embs
-        keys = ctxt_rep if self.attention_keys == 'context' else ctxt_pos
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
         ctxt_final_rep = self.attend(
-            self.attention, cand_embed, keys, ctxt_rep, ctxt_rep_mask
+            self.attention, cand_embed, ctxt_rep, ctxt_rep, ctxt_rep_mask
         )
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
         return scores
 
     def forward(
         self,
-        ctxt_tokens=None,
         cand_tokens=None,
         ctxt_rep=None,
         ctxt_rep_mask=None,
-        ctxt_pos=None,
         cand_rep=None,
+        **ctxt_inputs,
     ):
         """
         Forward pass of the model.
@@ -440,8 +518,9 @@ class PolyEncoderModule(torch.nn.Module):
         we need to have one single forward() method.
         Therefore the operation_type can be either 'encode' or 'score'.
 
-        :param ctxt_tokens:
-            tokenized contexts
+        :param ctxt_inputs:
+            Dictionary of context inputs. Will include at least 'ctxt_tokens',
+            containing tokenized contexts
         :param cand_tokens:
             tokenized candidates
         :param ctxt_rep:
@@ -451,19 +530,15 @@ class PolyEncoderModule(torch.nn.Module):
             encoder
         :param ctxt_rep_mask:
             mask for ctxt rep
-        :param ctxt_pos:
-            position embeddings for the ctxt_rep. If self.type == 'codes', these
-            are None, as their use is earlier in the pipeline.
         :param cand_rep:
             encoded representation of the candidates
         """
-        if ctxt_tokens is not None or cand_tokens is not None:
-            return self.encode(ctxt_tokens, cand_tokens)
+        if len(ctxt_inputs) > 0 or cand_tokens is not None:
+            return self.encode(cand_tokens=cand_tokens, **ctxt_inputs)
         elif (
             ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
         ):
-            # ctxt_pos can be none, if we are using codes (not first M)
-            return self.score(ctxt_rep, ctxt_rep_mask, ctxt_pos, cand_rep)
+            return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation')
 
 

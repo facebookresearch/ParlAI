@@ -932,7 +932,12 @@ class TorchAgent(ABC, Agent):
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
-                self.optimizer.optimizer.load_state_dict(optim_states)
+                try:
+                    self.optimizer.optimizer.load_state_dict(optim_states)
+                except ValueError:
+                    warn_once(
+                        'WARNING: not loading optim state since model params changed.'
+                    )
                 return
             else:
                 # previously trained in fp32, loading in fp32.
@@ -943,7 +948,9 @@ class TorchAgent(ABC, Agent):
             try:
                 self.optimizer.load_state_dict(optim_states)
             except ValueError:
-                print('WARNING: not loading optim state since model params changed.')
+                warn_once(
+                    'WARNING: not loading optim state since model params changed.'
+                )
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
