@@ -801,6 +801,37 @@ class TestImagePolyencoder(unittest.TestCase):
     Test that the model is able to handle simple train tasks.
     """
 
+    base_args = {
+        'log_every_n_secs': 5,
+        'validation_every_n_secs': 30,
+        'model': 'transformer/image_polyencoder',
+        'embedding_size': 32,
+        'n_heads': 2,
+        'n_layers': 2,
+        'n_positions': 128,
+        'truncate': 128,
+        'ffn_size': 128,
+        'variant': 'xlm',
+        'activation': 'gelu',
+        'candidates': 'batch',
+        'eval_candidates': 'batch',  # No inline cands
+        'embeddings_scale': False,
+        'gradient_clip': 0.1,
+        'learningrate': 3e-5,
+        'batchsize': 16,
+        'optimizer': 'adamax',
+        'learn_positional_embeddings': True,
+        'reduction_type': 'first',
+    }
+    image_args = {
+        'task': 'integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+    }
+
     @testing_utils.retry(ntries=3)
     @testing_utils.skipUnlessTorch
     @testing_utils.skipUnlessGPU
@@ -811,37 +842,7 @@ class TestImagePolyencoder(unittest.TestCase):
         Random chance is 10%, so this should be able to get much better than that very
         quickly.
         """
-        args = Opt(
-            {
-                'log_every_n_secs': 5,
-                'validation_every_n_secs': 30,
-                'num_epochs': 2000,
-                'model': 'transformer/image_polyencoder',
-                'embedding_size': 32,
-                'n_heads': 2,
-                'n_layers': 2,
-                'n_positions': 128,
-                'truncate': 128,
-                'ffn_size': 128,
-                'variant': 'xlm',
-                'activation': 'gelu',
-                'candidates': 'batch',
-                'eval_candidates': 'batch',  # No inline cands
-                'embeddings_scale': False,
-                'gradient_clip': 0.1,
-                'learningrate': 3e-5,
-                'batchsize': 16,
-                'optimizer': 'adamax',
-                'learn_positional_embeddings': True,
-                'reduction_type': 'first',
-                'task': 'integration_tests:ImageTeacher',
-                'image_mode': 'resnet152',
-                'image_features_dim': 2048,
-                'image_encoder_num_layers': 1,
-                'image_combination_mode': 'prepend',
-                'n_image_tokens': 1,
-            }
-        )
+        args = Opt({**self.base_args, **self.image_args, 'num_epochs': 2000})
         valid, test = testing_utils.train_model(args)
         self.assertGreater(
             valid['accuracy'],
