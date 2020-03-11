@@ -97,6 +97,11 @@ class TestConversations(unittest.TestCase):
         )
         self.assertIn(str_version, out.getvalue())
 
+        # test getting a specific turn
+        first = convos[0]  # Conversation
+        self.assertEqual(first[0].id, 'Emily')
+        self.assertEqual(first[3].text, 'Yes, I will do it right now!')
+
     def tearDown(self):
         # remove conversations
         shutil.rmtree(self.datapath)

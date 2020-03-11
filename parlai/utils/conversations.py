@@ -11,6 +11,8 @@ import json
 import os
 import random
 
+from parlai.utils.misc import AttrDict
+
 
 BAR = '=' * 60
 SMALL_BAR = '-' * 60
@@ -93,6 +95,72 @@ class Metadata:
             f.write(json.dumps(metadata))
 
 
+class Turn(AttrDict):
+    """
+    Utility class for a dialog turn.
+    """
+    def __init__(self, id=None, text=None, **kwargs):
+        super().__init__(self, id=id, text=text, **kwargs)
+
+
+class Conversation:
+    """
+    Utility class for iterating through a single episode.
+
+    Used in the context of the Conversations class.
+    """
+    def __init__(self, episode):
+        self.episode = episode
+        self.context = episode.get('context')
+        self.metadata_path = episode.get('metadata_path')
+        self.turns = self._build_turns(episode)
+        self.iterator_idx = 0
+
+    def _build_turns(self, episode):
+        turns = []
+        for act_pair in episode['dialog']:
+            for act in act_pair:
+                turns.append(Turn(**act))
+        return turns
+
+    def read(self):
+        print(BAR)
+        high_level = [k for k in self.episode.keys() if k != 'dialog']
+        if high_level:
+            for key in high_level:
+                print(f'{key}: {self.episode[key]}')
+            print(SMALL_BAR)
+
+        for turn in self.turns:
+            print(f'{turn.id}: {turn.text}')
+
+        print(BAR)
+
+    @property
+    def num_turns(self):
+        return len(self.turns)
+
+    def __getitem__(self, index):
+        return self.turns[index]
+
+    def __next__(self):
+        """
+        Return the next conversation.
+        """
+        if self.iterator_idx >= len(self.turns):
+            print('You reached the end of the conversation.')
+            self.reset()  # return the iterator idx to 0
+            return None
+
+        conv = self.turns[self.iterator_idx]
+        self.iterator_idx += 1
+
+        return conv
+
+    def reset(self):
+        self.iterator_idx = 0
+
+
 class Conversations:
     """
     Utility class for reading and writing from ParlAI Conversations format.
@@ -139,7 +207,7 @@ class Conversations:
         with open(datapath, 'r') as f:
             lines = f.read().splitlines()
             for line in lines:
-                conversations.append(json.loads(line))
+                conversations.append(Conversation(json.loads(line)))
 
         return conversations
 
@@ -187,21 +255,7 @@ class Conversations:
 
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        print(BAR)
-
-        high_level = [k for k in convo.keys() if k != 'dialog']
-        if high_level:
-            for key in high_level:
-                print(f'{key}: {convo[key]}')
-            print(SMALL_BAR)
-
-        for act_pair in convo['dialog']:
-            for turn in act_pair:
-                turn_id = turn['id']
-                text = turn['text']
-                print(f'{turn_id}: {text}')
-
-        print(BAR)
+        convo.read()
 
     def read_rand_conv(self):
         idx = random.choice(range(self.num_conversations))
