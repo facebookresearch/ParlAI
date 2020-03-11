@@ -855,11 +855,9 @@ class TestImagePolyencoder(unittest.TestCase):
         """
         args = Opt({**self.base_args, **self.text_args})
         valid, test = testing_utils.train_model(args)
-        self.assertGreater(
-            valid['accuracy'],
-            0.5,
-            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
-        )
+        assert (
+            valid['accuracy'] > 0.5
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
     @testing_utils.skipUnlessTorch
@@ -873,11 +871,9 @@ class TestImagePolyencoder(unittest.TestCase):
         """
         args = Opt({**self.base_args, **self.image_args})
         valid, test = testing_utils.train_model(args)
-        self.assertGreater(
-            valid['accuracy'],
-            0.5,
-            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
-        )
+        assert (
+            valid['accuracy'] > 0.5
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
     @testing_utils.skipUnlessTorch
@@ -891,11 +887,9 @@ class TestImagePolyencoder(unittest.TestCase):
         """
         args = Opt({**self.base_args, **self.multitask_args})
         valid, test = testing_utils.train_model(args)
-        self.assertGreater(
-            valid['accuracy'],
-            0.5,
-            f'ImagePolyencoderAgent val-set accuracy on a trivally simple task was {valid["accuracy"].value():0.2f}.',
-        )
+        assert (
+            valid['accuracy'] > 0.5
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
 
 if __name__ == '__main__':
