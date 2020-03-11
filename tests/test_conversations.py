@@ -26,24 +26,12 @@ class TestConversations(unittest.TestCase):
         act_list = [
             [
                 [
-                    {
-                        'id': 'Emily',
-                        'text': 'Hello, do you like this test?',
-                    },
-                    {
-                        'id': 'Stephen',
-                        'text': 'Why yes! I love this test!',
-                    },
+                    {'id': 'Emily', 'text': 'Hello, do you like this test?'},
+                    {'id': 'Stephen', 'text': 'Why yes! I love this test!'},
                 ],
                 [
-                    {
-                        'id': 'Emily',
-                        'text': 'So will you stamp this diff?',
-                    },
-                    {
-                        'id': 'Stephen',
-                        'text': 'Yes, I will do it right now!'
-                    }
+                    {'id': 'Emily', 'text': 'So will you stamp this diff?'},
+                    {'id': 'Stephen', 'text': 'Yes, I will do it right now!'},
                 ],
             ],
             [
@@ -52,20 +40,14 @@ class TestConversations(unittest.TestCase):
                         'id': 'A',
                         'text': 'Somebody once told me the world is gonna roll me',
                     },
-                    {
-                        'id': 'B',
-                        'text': 'I aint the sharpest tool in the shed',
-                    },
+                    {'id': 'B', 'text': 'I aint the sharpest tool in the shed'},
                 ],
                 [
                     {
                         'id': 'A',
                         'text': 'She was looking kind of dumb with her finger and her thumb',
                     },
-                    {
-                        'id': 'B',
-                        'text': 'In the shape of an L on her forehead'
-                    }
+                    {'id': 'B', 'text': 'In the shape of an L on her forehead'},
                 ],
             ],
         ]
@@ -93,23 +75,16 @@ class TestConversations(unittest.TestCase):
 
         # test speakers saved
         speakers = {'Stephen', 'Emily', 'A', 'B'}
-        self.assertEqual(
-            set(convos.metadata.speakers),
-            speakers
-        )
+        self.assertEqual(set(convos.metadata.speakers), speakers)
 
         # test opt saved
         for x in ['A', 'C', 'E']:
             self.assertEqual(
-                self.opt[x],
-                convos.metadata.opt[x],
+                self.opt[x], convos.metadata.opt[x],
             )
 
         # test kwargs
-        self.assertEqual(
-            {'other_info': 'Blah blah blah'},
-            convos.metadata.extra_data
-        )
+        self.assertEqual({'other_info': 'Blah blah blah'}, convos.metadata.extra_data)
 
         # test reading conversations
         with testing_utils.capture_output() as out:
