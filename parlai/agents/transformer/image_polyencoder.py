@@ -69,7 +69,9 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         """
         Return the image features as a Tensor of the correct type.
 
-        Fill in missing feature vectors.
+        Fill in missing feature vectors. Here, we require image features to be saved in
+        `batch` as a Tensor for passing through the image encoder. This is required
+        for data_parallel.
         """
 
         # Checks/formatting of batch.image

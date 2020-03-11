@@ -303,12 +303,12 @@ class ContextWithImageEncoder(TransformerEncoder):
         In fp16 mode, either remove extra tokens or add new ones on to get to a multiple
         of 8.
         """
-        
+
         if full_mask is None:
             # full_mask is None corresponds to no input tokens, and in case there are no
             # tokens to add/remove to get a multiple of 8
             return full_enc, full_mask
-        
+
         num_tokens_to_remove = full_enc.size(1) % 8
         if num_tokens_to_remove == 0:
             # Tensor already divisible by 8
