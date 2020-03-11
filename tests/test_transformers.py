@@ -822,7 +822,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'optimizer': 'adamax',
         'learn_positional_embeddings': True,
         'reduction_type': 'first',
-        'num_epochs': 100,
+        'num_epochs': 30,
     }
     text_args = {'task': 'integration_tests:nocandidate'}
     image_args = {
@@ -832,7 +832,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'image_encoder_num_layers': 1,
         'image_combination_mode': 'prepend',
         'n_image_tokens': 1,
-        'num_epochs': 1000,
+        'num_epochs': 30,
     }
     multitask_args = {
         'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
@@ -842,7 +842,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'image_combination_mode': 'prepend',
         'n_image_tokens': 1,
         'multitask_weights': [1, 1],
-        'num_epochs': 100,
+        'num_epochs': 30,
     }
 
     @testing_utils.retry(ntries=3)
@@ -856,7 +856,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.text_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.5
+            valid['accuracy'] > 0.2
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
@@ -872,7 +872,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.image_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.5
+            valid['accuracy'] > 0.2
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
@@ -888,7 +888,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.multitask_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.5
+            valid['accuracy'] > 0.2
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
 

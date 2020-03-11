@@ -392,9 +392,7 @@ class PolyEncoderModule(torch.nn.Module):
             raise Exception('Unrecognized type of attention')
 
     def encode(
-        self,
-        cand_tokens: Optional[torch.Tensor],
-        **ctxt_inputs: torch.Tensor,
+        self, cand_tokens: Optional[torch.Tensor], **ctxt_inputs: torch.Tensor
     ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode a text sequence.
