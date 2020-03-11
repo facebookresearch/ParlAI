@@ -910,7 +910,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             n_best_beam_preds_scores = self._rerank_beams(
                 batch, n_best_beam_preds_scores
             )
-            
+
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
 
