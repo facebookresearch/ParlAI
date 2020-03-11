@@ -394,7 +394,7 @@ class PolyEncoderModule(torch.nn.Module):
     def encode(
         self,
         cand_tokens: Optional[torch.Tensor],
-        **ctxt_inputs: Dict[str, torch.Tensor],
+        **ctxt_inputs: torch.Tensor,
     ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode a text sequence.
@@ -459,7 +459,7 @@ class PolyEncoderModule(torch.nn.Module):
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
 
-    def _get_context_batch_size(self, **ctxt_inputs: Dict[str, torch.Tensor]) -> int:
+    def _get_context_batch_size(self, **ctxt_inputs: torch.Tensor) -> int:
         """
         Return the batch size of the context.
 

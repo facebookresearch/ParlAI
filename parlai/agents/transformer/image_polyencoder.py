@@ -213,7 +213,7 @@ class ImagePolyencoderModule(PolyEncoderModule):
             'image_features': ctxt_inputs['ctxt_image'],
         }
 
-    def _get_context_batch_size(self, **ctxt_inputs: Dict[str, torch.Tensor]) -> int:
+    def _get_context_batch_size(self, **ctxt_inputs: torch.Tensor) -> int:
         """
         Return the batch size of the context.
         """

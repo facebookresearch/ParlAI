@@ -210,7 +210,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self,
         src_tokens: Optional[torch.Tensor],
         image_features: Optional[Union[List[object], torch.Tensor]],
-    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
         Encode images with context.
 
@@ -266,7 +266,7 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         return full_enc, full_mask
 
-    def _add(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+    def _add(self, tensors: List[Optional[torch.Tensor]]) -> torch.Tensor:
         """
         Handle addition of None tensors.
 
@@ -281,7 +281,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         tensors = [t for t in tensors if t is not None]
         return reduce(lambda a, b: a + b, tensors)
 
-    def _cat(self, tensors: List[torch.Tensor]) -> torch.Tensor:
+    def _cat(self, tensors: List[Optional[torch.Tensor]]) -> torch.Tensor:
         """
         Handle concatenation of None tensors.
 
@@ -297,8 +297,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         return torch.cat([t for t in tensors], dim=1)
 
     def _fix_for_fp16(
-        self, full_enc: Optional[torch.Tensor], full_mask: Optional[torch.Tensor]
-    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        self, full_enc: torch.Tensor, full_mask: Optional[torch.Tensor]
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
         In fp16 mode, either remove extra tokens or add new ones on to get to a multiple
         of 8.
