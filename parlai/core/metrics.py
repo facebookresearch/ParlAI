@@ -478,12 +478,17 @@ def normalize_answer(s):
 
 def aggregate_named_reports(
     named_reports: Dict[str, Dict[str, Metric]], micro_average: bool = False
-):
+) -> Dict[str, Metric]:
     """
     Aggregate metrics from multiple reports.
 
-    :param reports: Dict of tasks -> metrics.
-    :param micro_average: If true, top level metrics will be the macro average.
+    :param reports:
+        Dict of tasks -> metrics.
+    :param micro_average:
+        If true, top level metrics will be the micro average. By default, we
+        use macro average.
+    :return:
+        The aggregated report
     """
     if len(named_reports) == 0:
         raise ValueError("Cannot aggregate empty reports.")
@@ -516,7 +521,7 @@ def aggregate_named_reports(
     return m
 
 
-def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]):
+def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]) -> Dict[str, Metric]:
     """
     Combines metrics without regard for tracking provenence.
     """
