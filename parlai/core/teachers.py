@@ -1390,7 +1390,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         with open(path, newline='\n') as read:
             for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
-                if 'eval_labels' in msg:
+                if msg and 'eval_labels' in msg:
                     raise ValueError(
                         f"It looks like you've written eval_labels as a key in your "
                         f"data file. This is not appropriate; labels will be converted "

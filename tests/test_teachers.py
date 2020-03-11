@@ -65,7 +65,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.txt")
             with open(fp, "w") as f:
-                f.write('id:test_file\ttext:input\tlabels:good label')
+                f.write('id:test_file\ttext:input\tlabels:good label\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp}
             testing_utils.display_data(opt)
 
@@ -76,7 +76,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
             with open(fp, "w") as f:
-                f.write('id:test_file\ttext:input\teval_labels:bad label')
+                f.write('id:test_file\ttext:input\teval_labels:bad label\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp}
             with self.assertRaises(ValueError):
                 testing_utils.display_data(opt)
