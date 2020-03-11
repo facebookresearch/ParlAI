@@ -210,7 +210,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self,
         src_tokens: Optional[torch.Tensor],
         image_features: Optional[Union[List[object], torch.Tensor]],
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode images with context.
 
@@ -259,33 +259,10 @@ class ContextWithImageEncoder(TransformerEncoder):
         else:
             raise ValueError('Image combination mode not recognized!')
 
-        # In fp16 mode, either remove extra tokens or add new ones on to get to a
-        # multiple of 8
-        if full_enc.dtype == torch.half and full_mask is not None:
-            # full_mask is None corresponds to no input tokens, and in case there are no
-            # tokens to add/remove to get a multiple of 8
-            num_tokens_to_remove = full_enc.size(1) % 8
-            if num_tokens_to_remove == 0:
-                # Tensor already divisible by 8
-                pass
-            elif (~full_mask[:, -num_tokens_to_remove:].all()).item():
-                # The tokens we'd like to remove are all padding, so subtract them from
-                # the end
-                full_enc = full_enc[:, :-1, :]
-                full_mask = full_mask[:, :-1]
-            else:
-                # We can't subtract that many padding tokens, so add some to the end
-                num_tokens_to_add = 8 - num_tokens_to_remove
-                enc_extension = full_enc.new_full(
-                    size=(full_enc.size(0), num_tokens_to_add, full_enc.size(2)),
-                    fill_value=self.padding_idx,
-                )
-                mask_extension = full_mask.new_full(
-                    size=(full_mask.size(0), num_tokens_to_add),
-                    fill_value=self.padding_idx,
-                )
-                full_enc = torch.cat([full_enc, enc_extension], dim=1)
-                full_mask = torch.cat([full_mask, mask_extension], dim=1)
+        if full_enc.dtype == torch.half:
+            full_enc, full_mask = self._fix_for_fp16(
+                full_enc=full_enc, full_mask=full_mask
+            )
 
         return full_enc, full_mask
 
@@ -318,3 +295,39 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         tensors = [t for t in tensors if t is not None]
         return torch.cat([t for t in tensors], dim=1)
+
+    def _fix_for_fp16(
+        self, full_enc: Optional[torch.Tensor], full_mask: Optional[torch.Tensor]
+    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+        """
+        In fp16 mode, either remove extra tokens or add new ones on to get to a multiple
+        of 8.
+        """
+        
+        if full_mask is None:
+            # full_mask is None corresponds to no input tokens, and in case there are no
+            # tokens to add/remove to get a multiple of 8
+            return full_enc, full_mask
+        
+        num_tokens_to_remove = full_enc.size(1) % 8
+        if num_tokens_to_remove == 0:
+            # Tensor already divisible by 8
+            pass
+        elif (~full_mask[:, -num_tokens_to_remove:].all()).item():
+            # The tokens we'd like to remove are all padding, so subtract them from
+            # the end
+            full_enc = full_enc[:, :-1, :]
+            full_mask = full_mask[:, :-1]
+        else:
+            # We can't subtract that many padding tokens, so add some to the end
+            num_tokens_to_add = 8 - num_tokens_to_remove
+            enc_extension = full_enc.new_full(
+                size=(full_enc.size(0), num_tokens_to_add, full_enc.size(2)),
+                fill_value=self.padding_idx,
+            )
+            mask_extension = full_mask.new_full(
+                size=(full_mask.size(0), num_tokens_to_add), fill_value=self.padding_idx
+            )
+            full_enc = torch.cat([full_enc, enc_extension], dim=1)
+            full_mask = torch.cat([full_mask, mask_extension], dim=1)
+        return full_enc, full_mask

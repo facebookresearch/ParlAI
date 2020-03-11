@@ -822,7 +822,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'optimizer': 'adamax',
         'learn_positional_embeddings': True,
         'reduction_type': 'first',
-        'num_epochs': 30,
+        'num_epochs': 100,
     }
     text_args = {'task': 'integration_tests:nocandidate'}
     image_args = {
