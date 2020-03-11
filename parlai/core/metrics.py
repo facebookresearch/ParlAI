@@ -63,7 +63,7 @@ class Metric(ABC):
     """
     Base class for storing metrics.
 
-    Subclasses should define .value().
+    Subclasses should define .value(). Examples are provided for each subclass.
     """
 
     def is_global(self) -> bool:
@@ -156,6 +156,9 @@ class Metric(ABC):
 class FixedMetric(Metric):
     """
     Fixed metrics are verified to be the same when combined, or throw an error.
+
+    FixedMetric is used for things like total_train_updates, which should not be
+    combined across different multitasks or different workers.
     """
 
     __slots__ = ('_value',)
@@ -177,6 +180,9 @@ class FixedMetric(Metric):
 class SumMetric(Metric):
     """
     Class that keeps a running sum of some metric.
+
+    Examples of SumMetric include things like "exs", the number of examples seen since
+    the last report, which depends exactly on a teacher.
     """
 
     __slots__ = ('_sum',)
@@ -204,6 +210,9 @@ class SumMetric(Metric):
 class AverageMetric(Metric):
     """
     Class that keeps a running average of some metric.
+
+    Examples of AverageMetrics include hits@1, F1, accuracy, etc. These metrics all have
+    per-example values that can be directly mapped back to a teacher.
     """
 
     __slots__ = ('_numer', '_denom')
@@ -235,7 +244,8 @@ class MacroAverageMetric(Metric):
     """
     Class that represents the macro average of several numbers.
 
-    Used for aggregating task level metrics.
+    Used for aggregating task level metrics. It is only used for things that are
+    AverageMetrics already.
     """
 
     __slots__ = ('_values',)
@@ -263,6 +273,10 @@ class GlobalMetric:
     """
     A global metric is one that should not be aggregated across different tasks.
 
+    Examples of global metric include things like learning rate and updates.
+    These need to be accumulated or averaged over multiple parleys, but cannot
+    be correlated with a single task.
+
     Key to it is the notion that any one worker or any one task already has a global
     view of the value, and so no combinations should be done. Note this is different
     then a FixedMetric, in that a GlobalMetric can be still averaged across multiple
@@ -274,14 +288,32 @@ class GlobalMetric:
 
 
 class GlobalFixedMetric(GlobalMetric, FixedMetric):
+    """
+    Global fixed metric.
+
+    Used for things like total_train_updates.
+    """
+
     pass
 
 
 class GlobalSumMetric(GlobalMetric, SumMetric):
+    """
+    Global sum metric.
+
+    Used for 'exs' and 'updates'.
+    """
+
     pass
 
 
 class GlobalAverageMetric(GlobalMetric, AverageMetric):
+    """
+    Global Average metric.
+
+    Used for things like learning rate, and many agent-specific metrics.
+    """
+
     pass
 
 
