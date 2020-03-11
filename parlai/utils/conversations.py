@@ -99,6 +99,7 @@ class Turn(AttrDict):
     """
     Utility class for a dialog turn.
     """
+
     def __init__(self, id=None, text=None, **kwargs):
         super().__init__(self, id=id, text=text, **kwargs)
 
@@ -109,6 +110,7 @@ class Conversation:
 
     Used in the context of the Conversations class.
     """
+
     def __init__(self, episode):
         self.episode = episode
         self.context = episode.get('context')
