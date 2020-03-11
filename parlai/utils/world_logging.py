@@ -155,9 +155,9 @@ class WorldLogger:
             self_chat=world.opt.get('selfchat_task', False),
         )
 
-    def write(self, outfile, world, file_format='jsonl'):
+    def write(self, outfile, world, file_format='jsonl', indent=4):
         if file_format == 'jsonl':
-            self.write_jsonl_format(outfile)
+            self.write_jsonl_format(outfile, indent=indent)
         elif file_format == 'conversations':
             self.write_conversations_format(outfile, world)
         else:
