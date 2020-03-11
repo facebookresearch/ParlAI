@@ -6,7 +6,7 @@
 
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
-from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
 from copy import deepcopy

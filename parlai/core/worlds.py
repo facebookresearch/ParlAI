@@ -309,9 +309,7 @@ class DialogPartnerWorld(World):
             self.agents = create_agents_from_shared(shared['agents'])
         else:
             if len(agents) != 2:
-                raise RuntimeError(
-                    'There must be exactly two agents for this ' 'world.'
-                )
+                raise RuntimeError('There must be exactly two agents for this world.')
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
@@ -1541,6 +1539,10 @@ def _create_task_agents(opt: Opt):
     defined by the task name directly.  (This saves the task creator bothering to define
     the create_agents function when it is not needed.)
     """
+    if opt.get('interactive_task', False) or opt.get('selfchat_task', False):
+        # do not need task agents in interactive or self chat settings
+        return []
+
     my_module = load_task_module(opt['task'])
     try:
         # Tries to call the create_agent function in agents.py
@@ -1563,8 +1565,9 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
     world_class = load_world_module(
         opt['task'],
-        opt.get('interactive_task', False),
-        len(user_agents + task_agents),
+        interactive_task=opt.get('interactive_task', False),
+        selfchat_task=opt.get('selfchat_task', False),
+        num_agents=len(user_agents + task_agents),
         default_world=default_world,
     )
 

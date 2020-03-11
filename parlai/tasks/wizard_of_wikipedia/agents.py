@@ -16,11 +16,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 import copy
-from parlai.core.teachers import (
-    FixedDialogTeacher,
-    MultiTaskTeacher,
-    create_task_agent_from_taskname,
-)
+from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import json
@@ -931,11 +927,3 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     """
 
     pass
-
-
-def create_agents(opt):
-    if not opt.get('interactive_task', False):
-        return create_task_agent_from_taskname(opt)
-    else:
-        # interactive task has no task agents (they are attached as user agents)
-        return []

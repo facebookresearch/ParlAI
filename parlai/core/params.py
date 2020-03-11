@@ -763,11 +763,13 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_world_args(self, task, interactive_task):
+    def add_world_args(self, task, interactive_task, selfchat_task):
         """
         Add arguments specific to the world.
         """
-        world_class = load_world_module(task, interactive_task)
+        world_class = load_world_module(
+            task, interactive_task=interactive_task, selfchat_task=selfchat_task
+        )
         if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
             try:
                 world_class.add_cmdline_args(self)
@@ -829,7 +831,11 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # add world args, if we know a priori which world is being used
         if task is not None:
-            self.add_world_args(task, parsed.get('interactive_task', False))
+            self.add_world_args(
+                task,
+                parsed.get('interactive_task', False),
+                parsed.get('selfchat_task', False),
+            )
 
         # reset parser-level defaults over any model-level defaults
         try:

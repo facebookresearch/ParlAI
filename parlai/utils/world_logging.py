@@ -10,6 +10,7 @@ Useful utilities for logging actions/observations in a world.
 
 from parlai.core.worlds import BatchWorld
 from parlai.utils.misc import msg_to_str
+from parlai.utils.conversations import Conversations
 
 import copy
 import json
@@ -146,10 +147,21 @@ class WorldLogger:
                 json_episode = json.dumps(dialog, indent=indent)
                 of.write(json_episode + '\n')
 
-    def write(self, outfile, file_format='jsonl', indent=4):
+    def write_conversations_format(self, outfile, world):
+        Conversations.save_conversations(
+            self._logs,
+            outfile,
+            world.opt,
+            self_chat=world.opt.get('selfchat_task', False),
+        )
+
+    def write(self, outfile, world, file_format='jsonl', indent=4):
         if file_format == 'jsonl':
             self.write_jsonl_format(outfile, indent=indent)
+        elif file_format == 'conversations':
+            self.write_conversations_format(outfile, world)
         else:
+            # ParlAI format
             self.write_parlai_format(outfile)
 
     def get_logs(self):
