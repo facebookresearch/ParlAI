@@ -66,6 +66,7 @@ class Metric(ABC):
     Subclasses should define .value().
     """
 
+    @property
     def is_global(self) -> bool:
         """
         Indicates whether this metric should be reported globally or per-task.
@@ -236,6 +237,7 @@ class GlobalMetric:
     A global metric is one that should not be aggregated across different tasks.
     """
 
+    @property
     def is_global(self) -> bool:
         return True
 
@@ -421,7 +423,7 @@ def aggregate_named_reports(named_reports: Dict[str, Dict[str, Metric]]):
     m: Dict[str, Metric] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
-            if value.is_global():
+            if value.is_global:
                 # just take the first one we saw
                 if each_metric not in m:
                     m[each_metric] = value
