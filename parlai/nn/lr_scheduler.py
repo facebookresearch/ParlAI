@@ -68,7 +68,8 @@ class ParlAILRScheduler(object):
         Check if we're warming up the learning rate.
         """
         return (
-            self.warmup_scheduler is not None
+            hasattr(self, 'warmup_scheduler')
+            and self.warmup_scheduler is not None
             and self._number_training_updates <= self.warmup_updates
         )
 
@@ -91,6 +92,7 @@ class ParlAILRScheduler(object):
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         self._number_training_updates = states.get('number_training_updates', 0)
+        self.step(self._number_training_updates)
 
     def get_initial_number_training_updates(self):
         return self._number_training_updates
