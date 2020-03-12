@@ -374,6 +374,14 @@ class TorchClassifierAgent(TorchAgent):
                 ]
             m['weighted_f1'] = f1
 
+            # get weighted accuracy
+            wacc = 0
+            for i in range(len(self.class_list)):
+                wacc += (1.0 / len(self.class_list)) * m[
+                    'class_{}_recall'.format(self.class_list[i])
+                ]
+            m['weighted_acc'] = wacc
+
         return m
 
     def score(self, batch):
