@@ -87,10 +87,13 @@ class SelfRevisedTeacher(FbDialogTeacher):
 
 
 class NormalizedTeacher(SelfOriginalTeacher):
-    def __init__(self, opt, shared=None):
-        opt['fbdialog_normalized'] = True
-        super().__init__(opt, shared)
-
+    def normalize_replies(self, x):
+        xs = x.split('\n')
+        xs2 = []
+        for x in xs:
+            xs2.append(normalize_reply(x))
+        return '\n'.join(xs2)
+        
     def setup_data(self, path):
         print("[loading normalized fbdialog data:" + path + "]")
         with open(path) as read:
@@ -132,18 +135,13 @@ class NormalizedTeacher(SelfOriginalTeacher):
                 if last_conv_id is None or conv_id <= last_conv_id:
                     x = x.strip()
                     if x:
-                        if self.opt['fbdialog_normalized']:
-                            x = normalize_reply(x)
+                        x = self.normalize_replies(x)
+                        import pdb; pdb.set_trace()
                         yield [x, None, reward], start
                     start = True
                     reward = 0
                     # start a new episode
-                    if self.cloze:
-                        x = 'Fill in the blank in the last sentence.\n{x}'.format(
-                            x=split[0]
-                        )
-                    else:
-                        x = split[0]
+                    x = split[0]
                 else:
                     if x:
                         # otherwise add current x to what we have so far
@@ -166,12 +164,12 @@ class NormalizedTeacher(SelfOriginalTeacher):
                         split[2] = reward
                     else:
                         split.append(reward)
-                    if self.opt['fbdialog_normalized']:
-                        split[0] = normalize_reply(split[0])
-                        for i, c in enumerate(split[1]):
-                            split[1][i] = normalize_reply(split[1][i])
-                        for i, c in enumerate(split[3]):
-                            split[3][i] = normalize_reply(split[3][i])
+                    # normalize 
+                    split[0] = self.normalize_replies(split[0])
+                    for i, c in enumerate(split[1]):
+                        split[1][i] = self.normalize_replies(split[1][i])
+                    for i, c in enumerate(split[3]):
+                        split[3][i] = self.normalize_replies(split[3][i])
                     if start:
                         yield split, True
                         start = False
@@ -181,8 +179,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
                     x = ''
                     reward = 0
             if x:
-                #if self.opt['fbdialog_normalized']:
-                #    x = normalize_reply(x)
+                x = self.normalize_replies(x)
                 yield [x, None, reward], start
         
 
