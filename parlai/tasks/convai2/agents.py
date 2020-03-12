@@ -93,7 +93,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
         for x in xs:
             xs2.append(normalize_reply(x))
         return '\n'.join(xs2)
-        
+
     def setup_data(self, path):
         print("[loading normalized fbdialog data:" + path + "]")
         with open(path) as read:
@@ -136,7 +136,9 @@ class NormalizedTeacher(SelfOriginalTeacher):
                     x = x.strip()
                     if x:
                         x = self.normalize_replies(x)
-                        import pdb; pdb.set_trace()
+                        import pdb
+
+                        pdb.set_trace()
                         yield [x, None, reward], start
                     start = True
                     reward = 0
@@ -164,7 +166,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
                         split[2] = reward
                     else:
                         split.append(reward)
-                    # normalize 
+                    # normalize
                     split[0] = self.normalize_replies(split[0])
                     for i, c in enumerate(split[1]):
                         split[1][i] = self.normalize_replies(split[1][i])
@@ -181,7 +183,6 @@ class NormalizedTeacher(SelfOriginalTeacher):
             if x:
                 x = self.normalize_replies(x)
                 yield [x, None, reward], start
-        
 
 
 class DefaultTeacher(SelfOriginalTeacher):
