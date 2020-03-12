@@ -117,6 +117,12 @@ def add_common_cmdline_args(argparser):
         default=-1,
         help='This will overide the n-layers for asymmetrical transformers',
     )
+    argparser.add_argument(
+        '--model-parallel',
+        type='bool',
+        default=False,
+        help='Shard the layers across multiple GPUs.',
+    )
 
 
 class Transformer(Agent):

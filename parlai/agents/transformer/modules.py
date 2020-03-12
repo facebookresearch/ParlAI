@@ -21,6 +21,7 @@ from typing import Dict, Tuple, Optional
 
 import numpy as np
 import torch
+import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -395,6 +396,8 @@ class TransformerEncoder(nn.Module):
         Future versions may support things like GPT-2, ...
     :param output_scaling:
         Scale the outputs by a given scalar
+    :param bool model_parallel:
+        Whether to split the model over multiple GPUs.
     """
 
     def __init__(
@@ -417,6 +420,7 @@ class TransformerEncoder(nn.Module):
         variant='aiayn',
         n_segments=0,
         output_scaling=1.0,
+        model_parallel: bool = False,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -433,6 +437,7 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
+        self.is_model_parallel = model_parallel
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
@@ -480,19 +485,18 @@ class TransformerEncoder(nn.Module):
 
         # build the model
         self.layers = nn.ModuleList()
-        for _ in range(self.n_layers):
-            self.layers.append(
-                TransformerEncoderLayer(
-                    n_heads,
-                    embedding_size,
-                    ffn_size,
-                    attention_dropout=attention_dropout,
-                    relu_dropout=relu_dropout,
-                    dropout=dropout,
-                    variant=variant,
-                    activation=activation,
-                )
+        for layer_no in range(self.n_layers):
+            layer = TransformerEncoderLayer(
+                n_heads,
+                embedding_size,
+                ffn_size,
+                attention_dropout=attention_dropout,
+                relu_dropout=relu_dropout,
+                dropout=dropout,
+                variant=variant,
+                activation=activation,
             )
+            self.layers.append(layer)
         self.output_scaling = output_scaling
 
     def forward(self, input, positions=None, segments=None):
@@ -535,8 +539,15 @@ class TransformerEncoder(nn.Module):
         tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
-        for i in range(self.n_layers):
-            tensor = self.layers[i](tensor, mask)
+
+        if self.is_model_parallel:
+            # factored out for readability here. It is equivalent to the lines
+            # below
+            tensor = self._apply_model_parallel(tensor, mask)
+        else:
+            for i in range(self.n_layers):
+                tensor = self.layers[i](tensor, mask)
+
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
@@ -554,6 +565,66 @@ class TransformerEncoder(nn.Module):
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
+
+    def model_parallel(self):
+        """
+        Move the model to multiple devices.
+        """
+        for i in range(self.n_layers):
+            self.layers[i].to(self._layerno_to_device(i))
+        return self
+
+    def _layerno_to_device(self, layerno):
+        """
+        Map layers to GPUs.
+        """
+        # more sophisticated algorithms can push a higher batchsize or model
+        # size by ensuring GPU-0 is under-utilized (since it holds the
+        # optimizer) and that multiple layers of model parallel are staggered.
+        # In this initial implementation, we use the simplest thing possible,
+        # evenly dispersing the layers.
+        return 'cuda:{}'.format(layerno // torch.cuda.num_devices())
+
+    def _apply_model_parallel(self, tensor, mask):
+        """
+        Pipeline application of model parallelism.
+        """
+        # We want to pipeline our computations so that each GPU is working on
+        # chunks of the problem at the same of the time. The load of the will
+        # look like this, assuming there are 5 chunks (A, B, C, D, E) and 4
+        # GPUs. Each slot fill means that gpu is working on that chunk.
+
+        #                 |   GPU
+        #                 | 0 1 2 3
+        #             ----+----------
+        #               0 | A
+        #               1 | B A
+        #            T  2 | C B A
+        #            I  3 | D C B A
+        #            M  4 | E D C B
+        #            E  5 |   E D C
+        #               6 |     E D
+        #               7 |       E
+
+        # Note that some GPUs will be idle mos of the time. In reality, we will
+        # use 1.5 * num_gpus as the number of chunks, to minimize idle time.
+
+        num_devices = torch.cuda.num_devices()
+        num_splits = int(num_devices * 1.5)
+        split_size = tensor.size(0) // num_splits
+
+        split_tensor = list(torch.split(tensor, split_size))
+        split_mask = list(torch.split(mask, split_size))
+
+        # split doesn't always give us the number we asked for
+        num_splits = len(split_tensor)
+
+        
+        for timestep in range(num_splits + num_devices):
+            for split_idx in range(num_splits):
+                device = timestep - split_idx
+                if device >= 0 and gpu < num_devices:
+                    split_tensor[split_index], masks[split_idx] = 
 
 
 class TransformerEncoderLayer(nn.Module):

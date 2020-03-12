@@ -252,6 +252,14 @@ class PolyEncoderModule(torch.nn.Module):
     See https://arxiv.org/abs/1905.01969 for more details
     """
 
+    def cuda(self, device=None):
+        def _lambda(t):
+            print(t)
+            __import__("ipdb").set_trace()  # FIXME
+            return t.cuda(device)
+
+        return self.apply(_lambda)
+
     def __init__(self, opt, dict_, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
