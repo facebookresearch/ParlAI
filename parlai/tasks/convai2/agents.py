@@ -168,9 +168,9 @@ class NormalizedTeacher(SelfOriginalTeacher):
                         split.append(reward)
                     # normalize
                     split[0] = self.normalize_replies(split[0])
-                    for i, c in enumerate(split[1]):
+                    for i, _c in enumerate(split[1]):
                         split[1][i] = self.normalize_replies(split[1][i])
-                    for i, c in enumerate(split[3]):
+                    for i, _c in enumerate(split[3]):
                         split[3][i] = self.normalize_replies(split[3][i])
                     if start:
                         yield split, True
