@@ -1134,8 +1134,10 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if (self.scores[hypid] == neginf(self.scores.dtype)
-                    or self.scores[hypid].item() == -math.inf):
+                if (
+                    self.scores[hypid] == neginf(self.scores.dtype)
+                    or self.scores[hypid].item() == -math.inf
+                ):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
