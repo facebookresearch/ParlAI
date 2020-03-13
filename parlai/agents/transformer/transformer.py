@@ -347,7 +347,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             help='load model from base transformer ranking model '
             '(used for pretraining)',
         )
-        parser.set_params(reduction_type='first')
+        parser.set_defaults(reduction_type='first')
 
     def build_model(self):
         num_classes = len(self.class_list)
