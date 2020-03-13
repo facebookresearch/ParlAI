@@ -1099,12 +1099,6 @@ class TreeSearch(object):
         if self.scores is None:
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
-        # penalize hypotheses ending in EOS on the prior scores (self.scores) level
-        # this is related to search which uses prior scores (self.scores) (e.g. beam)
-        for hyp_id, token in enumerate(self.outputs[-1]):
-            if token == self.eos:
-                self.scores[hyp_id] = neginf(self.scores.dtype)
-
         # beam blocking
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
@@ -1119,6 +1113,13 @@ class TreeSearch(object):
             )
 
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
+
+        # penalize hypotheses ending in EOS on the prior scores (self.scores) level
+        # this is related to search which uses prior scores (self.scores) (e.g. beam)
+        for hyp_id, token in enumerate(self.outputs[-1]):
+            if token == self.eos:
+                self.scores[hyp_id] = neginf(self.scores.dtype)
+
         # use clone() here to ensure that self.all_scores will not be changed
         # later due to any penalties to self.scores
         self.all_scores.append(self.scores.clone())
@@ -1133,7 +1134,8 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if self.scores[hypid] == neginf(self.scores.dtype):
+                if (self.scores[hypid] == neginf(self.scores.dtype)
+                    or self.scores[hypid].item() == -math.inf):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
@@ -1369,4 +1371,6 @@ class NucleusSampling(TreeSearch):
         # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
+        # In the case that any value of scores is very low, we may overflow
+        best_scores.clamp_min_(min=neginf(best_scores.dtype))
         return (hyp_ids, tok_ids, best_scores)
