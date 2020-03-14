@@ -652,6 +652,23 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertEqual(agent.model.encoder.n_layers, 2)
         self.assertEqual(agent.model.decoder.n_layers, 2)
 
+    def test_temperature(self):
+        """
+        Test temperature.
+        """
+        # Just ensuring no crash.
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:multiturn_candidate',
+                model='transformer/generator',
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=32,
+                inference='beam',
+                beam_size=5,
+                temperature=0.99,
+            )
+        )
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """
