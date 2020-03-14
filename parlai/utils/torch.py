@@ -7,7 +7,7 @@
 Utility methods for dealing with torch code.
 """
 
-from typing import Union, Optional, Tuple, Any, List, Sized
+from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 
 
 try:
@@ -235,3 +235,90 @@ class IdentityLayer(torch.nn.Module):
         Identity.
         """
         return xs
+
+
+Chunk = TypeVar('Chunk')
+
+
+class PipelineHelper(object):
+    """
+    PipelineHelper assists with implementing pipelining in model parallelism.
+
+    For a tutorial on model parallelism, as it's implemented in parts of ParlAI,
+    see https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html.
+    """
+
+    @classmethod
+    def guess_split_size(
+        cls, item: Chunk, num_gpus: Optional[int] = None, dim=0
+    ) -> int:
+        """
+        Estimate the number of chunks we should split the batch into.
+
+        Uses some silly heuristics.
+        """
+        if num_gpus is None:
+            num_gpus = torch.cuda.num_devices()  # type: ignore
+        if isinstance(item, torch.Tensor):
+            return item.size(dim) // (num_gpus * num_gpus)
+        elif isinstance(item, tuple):
+            return cls.guess_split_size(item[0], num_gpus)
+        elif isinstance(item, dict):
+            return cls.guess_split_size(list(item.values())[0], num_gpus)
+        raise TypeError(f'Cannot determine split size for {type(item)}')
+
+    @classmethod
+    def split(cls, split_size: int, item: Chunk, dim=0) -> List[Chunk]:
+        """
+        Split a tensor or group of tensors into smaller chunks of the same type.
+
+        :param split_size:
+            The maximum size of each output chunk.
+        :param item:
+            The item being split. May be a Tensor, a tuple of Tensors, or a
+            dictionary mapping str -> Tensor.
+        :param dim:
+            The dimension to split along.
+        """
+        if isinstance(item, torch.Tensor):
+            # base case, just split the tensor
+            return list(torch.split(item, split_size, dim))
+        elif isinstance(item, tuple):
+            # We start with Tuple[Tensor] and we return List[Tuple[Tensor]]
+            return list(zip(*(cls.split(split_size, i, dim) for i in item)))
+        elif isinstance(item, dict):
+            # we start with Dict[key,tensor]
+            # we map it to d: Dict[key, List[Tensor]], where we have split each mapping
+            d = {k: cls.split(split_size, v, dim) for k, v in item.items()}
+            # now we transpose it and return List[Dict[key, Tensor]]
+            return [
+                dict(zip(d.keys(), values))  # type: ignore
+                for values in zip(*(d[k] for k in d.keys()))
+            ]
+        else:
+            raise TypeError(f"Cannot split type {type(item)}")
+
+    @classmethod
+    def join(cls, items: List[Chunk], dim=0) -> Chunk:
+        """
+        Join chunks back together, the inverse of split.
+
+        :param items:
+            All the output chunks. Each chunk may be a tensor or a group of
+            tensors.
+        :param dim:
+            The dimension to join along.
+        """
+        if len(items) == 0:
+            raise IndexError("Cannot rejoin an empty list of chunks.")
+        item0 = items[0]
+        if isinstance(item0, torch.Tensor):
+            # base case
+            return torch.cat(items, dim=dim)  # type: ignore
+        elif isinstance(item0, tuple):
+            return tuple(cls.join(x, dim=dim) for x in zip(*items))  # type: ignore
+        elif isinstance(item0, dict):
+            keys = item0.keys()
+            return {k: cls.join([c[k] for c in items], dim=dim) for k in keys}
+        else:
+            raise TypeError(f'Cannot join list of type {type(item0)}')
