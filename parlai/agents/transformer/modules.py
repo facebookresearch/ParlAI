@@ -27,7 +27,7 @@ import torch.nn.functional as F
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import neginf
+from parlai.utils.torch import neginf, PipelineHelper
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
@@ -593,33 +593,24 @@ class TransformerEncoder(nn.Module):
         # chunks of the problem at the same of the time. The load of the will
         # look like this, assuming there are 5 chunks (A, B, C, D, E) and 4
         # GPUs. Each slot fill means that gpu is working on that chunk.
+        #
+        #         +-----------------+
+        #         |       Time      |
+        #         | 1 2 3 4 5 6 7 8 |
+        # +-------+-----------------+
+        # |  G  0 | A B C D E       |
+        # |  P  1 |   A B C D E     |
+        # |  U  2 |     A B C D E   |
+        # |     3 |       A B C D E |
+        # +-------+-----------------+
+        #
+        # Note that some GPUs will be idle much of the time. In reality, we
+        # will use 1.5 * num_gpus as the number of chunks, to minimize idle
+        # time.
 
-        #                 |   GPU
-        #                 | 0 1 2 3
-        #             ----+----------
-        #               0 | A
-        #               1 | B A
-        #            T  2 | C B A
-        #            I  3 | D C B A
-        #            M  4 | E D C B
-        #            E  5 |   E D C
-        #               6 |     E D
-        #               7 |       E
+        s_tensor, s_mask = PipelineHelper.split((s_tensor, s_mask))
+        num_splits = len(s_tensor)
 
-        # Note that some GPUs will be idle mos of the time. In reality, we will
-        # use 1.5 * num_gpus as the number of chunks, to minimize idle time.
-
-        num_devices = torch.cuda.num_devices()
-        num_splits = int(num_devices * 1.5)
-        split_size = tensor.size(0) // num_splits
-
-        split_tensor = list(torch.split(tensor, split_size))
-        split_mask = list(torch.split(mask, split_size))
-
-        # split doesn't always give us the number we asked for
-        num_splits = len(split_tensor)
-
-        
         for timestep in range(num_splits + num_devices):
             for split_idx in range(num_splits):
                 device = timestep - split_idx

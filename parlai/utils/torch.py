@@ -248,10 +248,8 @@ class PipelineHelper(object):
     see https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html.
     """
 
-    @classmethod
-    def guess_split_size(
-        cls, item: Chunk, num_gpus: Optional[int] = None, dim=0
-    ) -> int:
+    @staticmethod
+    def guess_split_size(item: Chunk, num_gpus: Optional[int] = None, dim=0) -> int:
         """
         Estimate the number of chunks we should split the batch into.
 
@@ -262,34 +260,38 @@ class PipelineHelper(object):
         if isinstance(item, torch.Tensor):
             return item.size(dim) // (num_gpus * num_gpus)
         elif isinstance(item, tuple):
-            return cls.guess_split_size(item[0], num_gpus)
+            return PipelineHelper.guess_split_size(item[0], num_gpus)
         elif isinstance(item, dict):
-            return cls.guess_split_size(list(item.values())[0], num_gpus)
+            return PipelineHelper.guess_split_size(list(item.values())[0], num_gpus)
         raise TypeError(f'Cannot determine split size for {type(item)}')
 
-    @classmethod
-    def split(cls, split_size: int, item: Chunk, dim=0) -> List[Chunk]:
+    @staticmethod
+    def split(item: Chunk, split_size: Optional[int], dim=0) -> List[Chunk]:
         """
         Split a tensor or group of tensors into smaller chunks of the same type.
 
-        :param split_size:
-            The maximum size of each output chunk.
         :param item:
             The item being split. May be a Tensor, a tuple of Tensors, or a
             dictionary mapping str -> Tensor.
+        :param split_size:
+            The maximum size of each output chunk. If None, we will guess using
+            heuristics
         :param dim:
             The dimension to split along.
         """
+        if split_size is None:
+            split_size = PipelineHelper.guess_split_size(item)
+
         if isinstance(item, torch.Tensor):
             # base case, just split the tensor
             return list(torch.split(item, split_size, dim))
         elif isinstance(item, tuple):
             # We start with Tuple[Tensor] and we return List[Tuple[Tensor]]
-            return list(zip(*(cls.split(split_size, i, dim) for i in item)))
+            return list(zip(*(PipelineHelper.split(i, split_size, dim) for i in item)))
         elif isinstance(item, dict):
             # we start with Dict[key,tensor]
             # we map it to d: Dict[key, List[Tensor]], where we have split each mapping
-            d = {k: cls.split(split_size, v, dim) for k, v in item.items()}
+            d = {k: PipelineHelper.split(v, split_size, dim) for k, v in item.items()}
             # now we transpose it and return List[Dict[key, Tensor]]
             return [
                 dict(zip(d.keys(), values))  # type: ignore
@@ -298,8 +300,8 @@ class PipelineHelper(object):
         else:
             raise TypeError(f"Cannot split type {type(item)}")
 
-    @classmethod
-    def join(cls, items: List[Chunk], dim=0) -> Chunk:
+    @staticmethod
+    def join(items: List[Chunk], dim=0) -> Chunk:
         """
         Join chunks back together, the inverse of split.
 
@@ -316,9 +318,12 @@ class PipelineHelper(object):
             # base case
             return torch.cat(items, dim=dim)  # type: ignore
         elif isinstance(item0, tuple):
-            return tuple(cls.join(x, dim=dim) for x in zip(*items))  # type: ignore
+            return tuple(PipelineHelper.join(x, dim=dim) for x in zip(*items))  # type: ignore
         elif isinstance(item0, dict):
             keys = item0.keys()
-            return {k: cls.join([c[k] for c in items], dim=dim) for k in keys}
+            return {  # type: ignore
+                k: PipelineHelper.join([c[k] for c in items], dim=dim)  # type: ignore
+                for k in keys
+            }
         else:
             raise TypeError(f'Cannot join list of type {type(item0)}')

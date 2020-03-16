@@ -62,16 +62,16 @@ class TestPipelineHelper(unittest.TestCase):
 
     def test_split_tensor(self):
         t = torch.randn(32, 5)
-        for st in PipelineHelper.split(8, t):
+        for st in PipelineHelper.split(t, 8):
             assert st.shape == (8, 5)
-        a, b = PipelineHelper.split(17, t)
+        a, b = PipelineHelper.split(t, 17)
         assert a.shape == (17, 5)
         assert b.shape == (15, 5)
 
     def test_split_tuple(self):
         t = torch.randn(32, 5)
         tup = (t, t, t)
-        for stup in PipelineHelper.split(8, tup):
+        for stup in PipelineHelper.split(tup, 8):
             assert isinstance(stup, tuple)
             assert len(stup) == 3
             for i in range(3):
@@ -80,7 +80,7 @@ class TestPipelineHelper(unittest.TestCase):
     def test_split_dict(self):
         t = torch.randn(32, 5)
         d = {'x': t, 'y': t}
-        for sd in PipelineHelper.split(8, d):
+        for sd in PipelineHelper.split(d, 8):
             assert isinstance(sd, dict)
             assert 'x' in sd
             assert 'y' in sd
@@ -90,7 +90,7 @@ class TestPipelineHelper(unittest.TestCase):
     def test_split_complex(self):
         t = torch.randn(32, 5)
         item = (t, {'x': t, 'y': t})
-        for sitem in PipelineHelper.split(8, item):
+        for sitem in PipelineHelper.split(item, 8):
             assert isinstance(sitem, tuple)
             assert len(sitem) == 2
             left, right = sitem
