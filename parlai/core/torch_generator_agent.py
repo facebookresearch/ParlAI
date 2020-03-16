@@ -894,7 +894,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = score.view(bsz, beam_size, -1)
             if self.temperature != 1.0:
                 score.div_(self.temperature)
-            score = F.log_softmax(score, dim=-1)
+            # force to fp32 to avoid overflow issues during search calculations
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -1133,10 +1134,7 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if (
-                    self.scores[hypid] == neginf(self.scores.dtype)
-                    or self.scores[hypid].item() == -math.inf
-                ):
+                if self.scores[hypid] <= neginf(self.scores.dtype):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
@@ -1372,6 +1370,4 @@ class NucleusSampling(TreeSearch):
         # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
-        # In the case that any value of scores is very low, we may overflow
-        best_scores.clamp_min_(min=neginf(best_scores.dtype))
         return (hyp_ids, tok_ids, best_scores)
