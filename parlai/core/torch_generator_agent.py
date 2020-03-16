@@ -1227,7 +1227,7 @@ class TreeSearch(object):
         for finished_item in self.finished:
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
-            length_penalty = math.pow((1 + current_length) / 6, self.length_penalty)
+            length_penalty = math.pow((5 + current_length) / 6, self.length_penalty)
             rescored_finished.append(
                 _HypothesisTail(
                     timestep=finished_item.timestep,
