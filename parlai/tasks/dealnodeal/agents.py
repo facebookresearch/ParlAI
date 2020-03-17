@@ -108,7 +108,7 @@ class NegotiationTeacher(Teacher):
         Process observation for metrics.
         """
         if self.expected_reponse is not None:
-            self.metrics.update(observation, self.expected_reponse)
+            self.metrics.evaluate_response(observation, self.expected_reponse)
             self.expected_reponse = None
         return observation
 
