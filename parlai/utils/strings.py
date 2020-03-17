@@ -46,7 +46,7 @@ def normalize_reply(text: str, version=1) -> str:
     new_text = new_text.strip()
     new_text = new_text.replace('  ', ' ')
 
-    if version > 1 and new_text and and new_text[-1] not in '!.?)"\''
+    if version > 1 and new_text and new_text[-1] not in '!.?)"\'':
         new_text += '.'
 
     return new_text
