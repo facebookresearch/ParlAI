@@ -267,7 +267,7 @@ def create_agent_from_model_file(model_file, opt_overides=None):
     opt = {}
     opt['model_file'] = model_file
     if opt_overides is None:
-            opt_overrides = {}
+        opt_overrides = {}
     opt['overrride'] = opt_overides
     return create_agent_from_opt_file(opt)
 
