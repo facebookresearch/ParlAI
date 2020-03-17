@@ -12,9 +12,8 @@ def normalize_reply(text: str, version=1) -> str:
     """
     Standardize the capitalization and punctuation spacing of the input text.
 
-    Version 1: Fix sentence start casing, and punctuation.
-    Version 2: Add trailing period, if missing.
-
+    Version 1: Fix sentence start casing, and punctuation. Version 2: Add trailing
+    period, if missing.
     """
 
     switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
