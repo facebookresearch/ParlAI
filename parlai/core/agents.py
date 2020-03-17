@@ -263,7 +263,10 @@ def create_agent_from_model_file(model_file, opt_overides=None):
     """
     Load agent from model file if it exists.
 
-    An optional dict of option overrides can also be provided.
+    :param opt_overrides:
+        An optional dict of option overrides can also be provided.
+    :return:
+        The agent
     """
     opt = {}
     opt['model_file'] = model_file
