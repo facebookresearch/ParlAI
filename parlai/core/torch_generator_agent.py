@@ -894,7 +894,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = score.view(bsz, beam_size, -1)
             if self.temperature != 1.0:
                 score.div_(self.temperature)
-            score = F.log_softmax(score, dim=-1)
+            # force to fp32 to avoid overflow issues during search calculations
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -1133,7 +1134,7 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if self.scores[hypid] == neginf(self.scores.dtype):
+                if self.scores[hypid] <= neginf(self.scores.dtype):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
