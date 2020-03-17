@@ -33,7 +33,6 @@ This directory also contains subfolders for some of the projects which are house
   _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._  
   
   
-
 ## Chit-chat
 
 - **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
@@ -94,3 +93,9 @@ _QA task with a series of interconnected questions. Task built with ParlAI Mturk
 
 - **DrQA** [[parlai agent]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/drqa) [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/drqa) [[external website]](https://github.com/facebookresearch/DrQA) [[paper]](https://arxiv.org/abs/1704.00051).
 _QA model for answering questions by retrieving and reading knowledge._
+
+## Evaluation
+
+- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
+_ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
+
