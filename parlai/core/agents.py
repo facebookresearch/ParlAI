@@ -265,7 +265,7 @@ def create_agent_from_model_file(model_file, opt_overides={}):
     opt['overrride'] = opt_overides
     return create_agent_from_opt_file(opt)
 
-        
+
 def create_agent_from_opt_file(opt: Opt):
     """
     Load agent options and module from file if opt file exists.
