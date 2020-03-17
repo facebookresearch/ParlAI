@@ -71,7 +71,7 @@ class TestConversations(unittest.TestCase):
         convos = Conversations(self.convo_datapath + '.jsonl')
 
         # test conversations loaded
-        self.assertEqual(convos.num_conversations, 2)
+        self.assertEqual(len(convos), 2)
 
         # test speakers saved
         speakers = {'Stephen', 'Emily', 'A', 'B'}
