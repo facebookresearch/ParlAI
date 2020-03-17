@@ -30,6 +30,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
 try:
+    raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
@@ -333,6 +334,10 @@ class TransformerResponseWrapper(nn.Module):
             nn.Linear(hdim, dim),
         )
 
+    def model_parallel(self):
+        self.transformer.model_parallel()
+        return self
+
     def forward(self, *args):
         """
         Forward pass.
@@ -396,8 +401,6 @@ class TransformerEncoder(nn.Module):
         Future versions may support things like GPT-2, ...
     :param output_scaling:
         Scale the outputs by a given scalar
-    :param bool model_parallel:
-        Whether to split the model over multiple GPUs.
     """
 
     def __init__(
@@ -420,7 +423,6 @@ class TransformerEncoder(nn.Module):
         variant='aiayn',
         n_segments=0,
         output_scaling=1.0,
-        model_parallel: bool = False,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -437,7 +439,7 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
-        self.is_model_parallel = model_parallel
+        self.is_model_parallel = False
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
@@ -485,7 +487,7 @@ class TransformerEncoder(nn.Module):
 
         # build the model
         self.layers = nn.ModuleList()
-        for layer_no in range(self.n_layers):
+        for _ in range(self.n_layers):
             layer = TransformerEncoderLayer(
                 n_heads,
                 embedding_size,
@@ -540,9 +542,9 @@ class TransformerEncoder(nn.Module):
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
 
-        if self.is_model_parallel:
-            # factored out for readability here. It is equivalent to the lines
-            # below
+        if self._is_model_parallel:
+            # factored out for readability. It is equivalent the other
+            # condition
             tensor = self._apply_model_parallel(tensor, mask)
         else:
             for i in range(self.n_layers):
@@ -570,52 +572,25 @@ class TransformerEncoder(nn.Module):
         """
         Move the model to multiple devices.
         """
-        for i in range(self.n_layers):
-            self.layers[i].to(self._layerno_to_device(i))
-        return self
-
-    def _layerno_to_device(self, layerno):
-        """
-        Map layers to GPUs.
-        """
-        # more sophisticated algorithms can push a higher batchsize or model
-        # size by ensuring GPU-0 is under-utilized (since it holds the
-        # optimizer) and that multiple layers of model parallel are staggered.
-        # In this initial implementation, we use the simplest thing possible,
-        # evenly dispersing the layers.
-        return 'cuda:{}'.format(layerno // torch.cuda.num_devices())
+        PipelineHelper.make_parallel(self.layers)
+        self._is_model_parallel = True
+        return True
 
     def _apply_model_parallel(self, tensor, mask):
         """
         Pipeline application of model parallelism.
         """
-        # We want to pipeline our computations so that each GPU is working on
-        # chunks of the problem at the same of the time. The load of the will
-        # look like this, assuming there are 5 chunks (A, B, C, D, E) and 4
-        # GPUs. Each slot fill means that gpu is working on that chunk.
-        #
-        #         +-----------------+
-        #         |       Time      |
-        #         | 1 2 3 4 5 6 7 8 |
-        # +-------+-----------------+
-        # |  G  0 | A B C D E       |
-        # |  P  1 |   A B C D E     |
-        # |  U  2 |     A B C D E   |
-        # |     3 |       A B C D E |
-        # +-------+-----------------+
-        #
-        # Note that some GPUs will be idle much of the time. In reality, we
-        # will use 1.5 * num_gpus as the number of chunks, to minimize idle
-        # time.
+        chunks = PipelineHelper.split((tensor, mask))
+        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
-        s_tensor, s_mask = PipelineHelper.split((s_tensor, s_mask))
-        num_splits = len(s_tensor)
+        for chunk_idx, layers, next_device in work_items:
+            s_tensor, s_mask = chunks[chunk_idx]
+            for layer in layers:
+                s_tensor = layer(s_tensor, s_mask)
+            chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
 
-        for timestep in range(num_splits + num_devices):
-            for split_idx in range(num_splits):
-                device = timestep - split_idx
-                if device >= 0 and gpu < num_devices:
-                    split_tensor[split_index], masks[split_idx] = 
+        tensor_out, mask_out = PipelineHelper.join(chunks)
+        return tensor_out
 
 
 class TransformerEncoderLayer(nn.Module):

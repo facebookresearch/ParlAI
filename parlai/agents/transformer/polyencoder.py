@@ -120,7 +120,12 @@ class PolyencoderAgent(TorchRankerAgent):
         self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
         if self.use_cuda:
             self.rank_loss.cuda()
+
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        self.model_parallel = opt.get('model_parallel') and self.use_cuda
+        if self.data_parallel and self.model_parallel:
+            raise RuntimeError('Cannot combine --model-parallel and --data-parallel')
+
         if self.data_parallel:
             from parlai.utils.distributed import is_distributed
 
@@ -129,11 +134,15 @@ class PolyencoderAgent(TorchRankerAgent):
             if shared is None:
                 self.model = torch.nn.DataParallel(self.model)
 
+        if self.model_parallel and shared is None:
+            self.model.model_parallel()
+
     def build_model(self, states=None):
         """
         Return built model.
         """
-        return PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
+        model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
+        return model
 
     def vectorize(self, *args, **kwargs):
         """
@@ -252,14 +261,6 @@ class PolyEncoderModule(torch.nn.Module):
     See https://arxiv.org/abs/1905.01969 for more details
     """
 
-    def cuda(self, device=None):
-        def _lambda(t):
-            print(t)
-            __import__("ipdb").set_trace()  # FIXME
-            return t.cuda(device)
-
-        return self.apply(_lambda)
-
     def __init__(self, opt, dict_, null_idx):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
@@ -320,6 +321,11 @@ class PolyEncoderModule(torch.nn.Module):
                 attn=self.attention_type,
                 get_weights=False,
             )
+
+    def model_parallel(self):
+        self.encoder_ctxt.model_parallel()
+        self.encoder_cand.model_parallel()
+        return self
 
     def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """

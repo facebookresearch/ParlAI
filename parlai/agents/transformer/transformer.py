@@ -212,12 +212,17 @@ class TransformerRankerAgent(TorchRankerAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        self.model_parallel = opt.get('model_parallel') and self.use_cuda
+        if self.data_parallel and self.model_parallel:
+            raise RuntimeError('Cannot combine --model-parallel and --data-parallel')
         if self.data_parallel:
             from parlai.utils.distributed import is_distributed
 
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')
             self.model = torch.nn.DataParallel(self.model)
+        elif self.model_parallel and shared is None:
+            self.model.model_parallel()
 
     def _score(self, output, cands):
         if cands.dim() == 2:
@@ -325,6 +330,12 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
 
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        if self.model_parallel and shared is None:
+            self.model.model_parallel()
+
     def build_model(self, states=None):
         """
         Build and return model.
@@ -354,6 +365,14 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             '(used for pretraining)',
         )
         parser.set_params(reduction_type='first')
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.model_parallel = opt.get('model_parallel') and self.use_cuda
+        if self.data_parallel and self.model_parallel:
+            raise RuntimeError('Cannot combine --model-parallel and --data-parallel')
+        if self.model_parallel and shared is None:
+            self.base_model.model_parallel()
 
     def build_model(self):
         num_classes = len(self.class_list)

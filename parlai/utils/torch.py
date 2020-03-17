@@ -8,6 +8,8 @@ Utility methods for dealing with torch code.
 """
 
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
+import itertools
+from collections import namedtuple
 
 
 try:
@@ -240,6 +242,9 @@ class IdentityLayer(torch.nn.Module):
 Chunk = TypeVar('Chunk')
 
 
+PipelineWork = namedtuple('PipelineWork', ['chunk_idx', 'layers', 'next_device'])
+
+
 class PipelineHelper(object):
     """
     PipelineHelper assists with implementing pipelining in model parallelism.
@@ -256,9 +261,9 @@ class PipelineHelper(object):
         Uses some silly heuristics.
         """
         if num_gpus is None:
-            num_gpus = torch.cuda.num_devices()  # type: ignore
+            num_gpus = torch.cuda.device_count()  # type: ignore
         if isinstance(item, torch.Tensor):
-            return item.size(dim) // (num_gpus * num_gpus)
+            return min(1, item.size(dim) // (num_gpus * num_gpus))
         elif isinstance(item, tuple):
             return PipelineHelper.guess_split_size(item[0], num_gpus)
         elif isinstance(item, dict):
@@ -266,7 +271,7 @@ class PipelineHelper(object):
         raise TypeError(f'Cannot determine split size for {type(item)}')
 
     @staticmethod
-    def split(item: Chunk, split_size: Optional[int], dim=0) -> List[Chunk]:
+    def split(item: Chunk, split_size: Optional[int] = None, dim=0) -> List[Chunk]:
         """
         Split a tensor or group of tensors into smaller chunks of the same type.
 
@@ -327,3 +332,108 @@ class PipelineHelper(object):
             }
         else:
             raise TypeError(f'Cannot join list of type {type(item0)}')
+
+    @staticmethod
+    def layer_assignment(
+        layer_no: int, num_layers: int, num_gpus: Optional[int] = None
+    ) -> str:
+        """
+        Determine which device a layer should be on.
+
+        :param layer_no:
+            0-indexed layer number
+        :param num_layers:
+            Total number of layers to parallelize
+        :param num_gpus:
+            Number of gpus to distribute over. If None, use all available devices.
+        :returns:
+            A specific device, e.g. "cuda:0" or "cuda:3".
+        """
+        if num_gpus is None:
+            num_gpus = torch.cuda.device_count()  # type: ignore
+        assert isinstance(num_gpus, int)
+        device_no = layer_no // int(num_layers / num_gpus + 0.5)
+        return f'cuda:{device_no}'
+
+    @staticmethod
+    def make_parallel(layers: torch.nn.ModuleList) -> torch.nn.ModuleList:
+        """
+        Make a list of modules model parallel.
+        """
+        for layer_no, layer in enumerate(layers):
+            layer_gpu = PipelineHelper.layer_assignment(layer_no, len(layers))
+            layer._mp_gpu = layer_gpu  # type: ignore
+            layers[layer_no] = layer.to(layer_gpu)
+        return layers
+
+    @staticmethod
+    def chunk_to(chunk: Chunk, device: str) -> Chunk:
+        """
+        Move the chunk to the device.
+
+        Handles chunks which are groups of tensors.
+        """
+        if isinstance(chunk, torch.Tensor):
+            return chunk.to(device)  # type: ignore
+        elif isinstance(chunk, tuple):
+            return tuple(PipelineHelper.chunk_to(c, device) for c in chunk)  # type: ignore
+        elif isinstance(chunk, dict):
+            return {k: PipelineHelper.chunk_to(v, device) for k, v in chunk.items()}  # type: ignore
+        else:
+            raise TypeError('chunk_to only compatible with tensors, tuples or dicts.')
+
+    @staticmethod
+    def schedule_work_items(layers: torch.nn.ModuleList, chunks: List[Chunk]):
+        """
+        Iterate through chunks and layers that should be pipelined.
+
+        Each iteration of this generator yields the following properties:
+
+            - layers: the group of like layers to be fed through.
+            - chunk_idx: the index of the chunk we are manipulating. Use this
+              if you need to update chunk representations.
+            - next_device: where the chunk should be moved to AFTER the layer
+              computation is done.
+        """
+        # We want to pipeline our computations so that each GPU is working on
+        # chunks of the problem at the same of the time. The load of the will
+        # look like this, assuming there are 5 chunks (A, B, C, D, E) and 4
+        # GPUs. Each slot fill means that gpu is working on that chunk.
+        #
+        #         +-----------------+
+        #         |       Time      |
+        #         | 1 2 3 4 5 6 7 8 |
+        # +-------+-----------------+
+        # |  G  0 | A B C D E       |
+        # |  P  1 |   A B C D E     |
+        # |  U  2 |     A B C D E   |
+        # |     3 |       A B C D E |
+        # +-------+-----------------+
+        #
+        # Note that some GPUs will be idle much of the time. In reality, we
+        # will use 1.5 * num_gpus as the number of chunks, to minimize idle
+        # time.
+        num_chunks = len(chunks)
+        for l in layers:
+            if not hasattr(l, '_mp_gpu'):
+                raise RuntimeError(
+                    'You must run PipelineHelper.make_parallel on the ModuleList '
+                    'before you can use iterate_layers_chunks.'
+                )
+        devices = {
+            device_idx: (dev, list(grp))
+            for device_idx, (dev, grp) in enumerate(
+                itertools.groupby(layers, lambda x: x._mp_gpu)
+            )
+        }
+        num_timesteps = len(devices) + num_chunks
+        for timestep in range(num_timesteps):
+            for chunk_idx in range(num_chunks):
+                device_idx = timestep - chunk_idx
+                if device_idx >= 0 and device_idx < len(devices):
+                    dev, layers_now = devices[device_idx]
+                    next_device, _ = devices[(device_idx + 1) % len(devices)]
+                    assert device_idx in devices
+                    yield PipelineWork(
+                        chunk_idx=chunk_idx, layers=layers_now, next_device=next_device
+                    )
