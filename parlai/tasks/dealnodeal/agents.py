@@ -46,7 +46,7 @@ class NegotiationTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype'].split(':')[0]
-        self.random = self.datatype == 'train'
+        self.random = self.datatype == 'train' and 'ordered' not in opt['datatype']
         build(opt)
 
         filename = 'val' if self.datatype == 'valid' else self.datatype
@@ -85,6 +85,9 @@ class NegotiationTeacher(Teacher):
             len([d for d in dialogue if YOU_TOKEN in d]) + 1 for dialogue in dialogues
         )
         return num_exs
+
+    def num_episodes(self):
+        return len(self.episodes)
 
     def reset(self):
         super().reset()
