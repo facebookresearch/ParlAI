@@ -71,7 +71,7 @@ class TestConversations(unittest.TestCase):
         convos = Conversations(self.convo_datapath + '.jsonl')
 
         # test conversations loaded
-        self.assertEqual(convos.num_conversations, 2)
+        self.assertEqual(len(convos), 2)
 
         # test speakers saved
         speakers = {'Stephen', 'Emily', 'A', 'B'}
@@ -96,6 +96,11 @@ class TestConversations(unittest.TestCase):
             'Stephen: Yes, I will do it right now!\n'
         )
         self.assertIn(str_version, out.getvalue())
+
+        # test getting a specific turn
+        first = convos[0]  # Conversation
+        self.assertEqual(first[0].id, 'Emily')
+        self.assertEqual(first[3].text, 'Yes, I will do it right now!')
 
     def tearDown(self):
         # remove conversations
