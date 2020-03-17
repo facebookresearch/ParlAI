@@ -3,6 +3,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
+standard_cpu38: &standard_cpu38
+  docker:
+    - image: circleci/python:3.8.0-buster-node
+  resource_class: large
+
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
@@ -203,6 +208,30 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
+      - <<: *codecov
+      - store_test_results:
+          path: test-results
+
+  unittests_38:
+    <<: *standard_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-v4-ut38-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
+      - save_cache:
+          key: deps-v4-ut38-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          name: Unit tests (py38)
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -462,6 +491,7 @@ workflows:
     jobs:
       - unittests_gpu13
       - unittests_gpu14
+      - unittests_38
       - unittests_37
       - unittests_36
       - mturk_tests

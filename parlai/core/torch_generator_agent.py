@@ -335,6 +335,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             '--topp', type=float, default=0.9, help='p used in nucleus sampling'
         )
         agent.add_argument(
+            '--temperature',
+            type=float,
+            default=1.0,
+            help='temperature to add during decoding',
+        )
+        agent.add_argument(
             '--compute-tokenized-bleu',
             type='bool',
             default=False,
@@ -352,6 +358,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
+        self.temperature = opt.get('temperature', 1.0)
+        assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
 
@@ -884,6 +892,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
+            if self.temperature != 1.0:
+                score.div_(self.temperature)
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
                 if not b.is_done():
