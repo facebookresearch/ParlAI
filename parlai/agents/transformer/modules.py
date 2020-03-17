@@ -439,7 +439,7 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
-        self.is_model_parallel = False
+        self._is_model_parallel = False
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
@@ -574,7 +574,7 @@ class TransformerEncoder(nn.Module):
         """
         PipelineHelper.make_parallel(self.layers)
         self._is_model_parallel = True
-        return True
+        return self
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -583,10 +583,10 @@ class TransformerEncoder(nn.Module):
         chunks = PipelineHelper.split((tensor, mask))
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
-        for chunk_idx, layers, next_device in work_items:
+        for chunk_idx, layer_nos, next_device in work_items:
             s_tensor, s_mask = chunks[chunk_idx]
-            for layer in layers:
-                s_tensor = layer(s_tensor, s_mask)
+            for layer_no in layer_nos:
+                s_tensor = self.layers[layer_no](s_tensor, s_mask)
             chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
@@ -701,6 +701,7 @@ class TransformerDecoder(nn.Module):
         self.dim = embedding_size
         self.activation = activation
         self.variant = variant
+        self._is_model_parallel = False
 
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
@@ -745,6 +746,11 @@ class TransformerDecoder(nn.Module):
                 )
             )
 
+    def model_parallel(self):
+        PipelineHelper.make_parallel(self.layers)
+        self._is_model_parallel = True
+        return self
+
     def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
@@ -787,17 +793,52 @@ class TransformerDecoder(nn.Module):
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
-        for idx, layer in enumerate(self.layers):
-            tensor, new_incr_state[idx] = layer(
-                x=tensor,
-                encoder_output=encoder_output,
-                encoder_mask=encoder_mask,
-                incr_state=incr_state[idx],
+        if self._is_model_parallel:
+            tensor, new_incr_state = self._apply_model_parallel(
+                tensor, encoder_output, encoder_mask, incr_state
             )
+        else:
+            for idx, layer in enumerate(self.layers):
+                tensor, new_incr_state[idx] = layer(
+                    x=tensor,
+                    encoder_output=encoder_output,
+                    encoder_mask=encoder_mask,
+                    incr_state=incr_state[idx],
+                )
+
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
+
+    def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
+        """
+        Pipeline application of model parallelism.
+        """
+        chunks = PipelineHelper.split(
+            (tensor, encoder_output, encoder_mask, incr_state)
+        )
+        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
+
+        new_incr_state = [{} for _ in chunks]
+
+        for chunk_idx, layer_nos, next_device in work_items:
+            s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
+            for layer_no in layer_nos:
+                s_tensor, new_incr_state[chunk_idx][layer_no] = self.layers[layer_no](
+                    x=s_tensor,
+                    encoder_output=s_enc_out,
+                    encoder_mask=s_enc_mask,
+                    incr_state=s_incr_state[layer_no],
+                )
+            chunks[chunk_idx] = PipelineHelper.chunk_to(
+                (s_tensor, s_enc_out, s_enc_mask, s_incr_state), next_device
+            )
+
+        tensor_out = PipelineHelper.join([c[0] for c in chunks])
+        new_incr_state = PipelineHelper.join(new_incr_state)
+
+        return tensor_out, new_incr_state
 
 
 class TransformerDecoderLayer(nn.Module):
@@ -977,6 +1018,11 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         self.decoder = _build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx, n_positions=n_positions
         )
+
+    def model_parallel(self):
+        self.encoder.model_parallel()
+        self.decoder.model_parallel()
+        return self
 
     def reorder_encoder_states(self, encoder_states, indices):
         """

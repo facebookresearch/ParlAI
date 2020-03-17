@@ -9,6 +9,7 @@ Utility methods for dealing with torch code.
 
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 import itertools
+import math
 from collections import namedtuple
 
 
@@ -242,7 +243,9 @@ class IdentityLayer(torch.nn.Module):
 Chunk = TypeVar('Chunk')
 
 
-PipelineWork = namedtuple('PipelineWork', ['chunk_idx', 'layers', 'next_device'])
+PipelineWorkItem = namedtuple(
+    'PipelineWorkItem', ['chunk_idx', 'layer_nos', 'next_device']
+)
 
 
 class PipelineHelper(object):
@@ -263,7 +266,7 @@ class PipelineHelper(object):
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
         if isinstance(item, torch.Tensor):
-            return min(1, item.size(dim) // (num_gpus * num_gpus))
+            return max(1, item.size(dim) // (num_gpus * num_gpus))
         elif isinstance(item, tuple):
             return PipelineHelper.guess_split_size(item[0], num_gpus)
         elif isinstance(item, dict):
@@ -294,6 +297,10 @@ class PipelineHelper(object):
             # We start with Tuple[Tensor] and we return List[Tuple[Tensor]]
             return list(zip(*(PipelineHelper.split(i, split_size, dim) for i in item)))
         elif isinstance(item, dict):
+            if item == {}:
+                # terrible edge case: the empty dict. return an infinite list
+                # of empty dicts and we'll figure out its correct size later
+                return itertools.repeat({})
             # we start with Dict[key,tensor]
             # we map it to d: Dict[key, List[Tensor]], where we have split each mapping
             d = {k: PipelineHelper.split(v, split_size, dim) for k, v in item.items()}
@@ -352,7 +359,7 @@ class PipelineHelper(object):
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
         assert isinstance(num_gpus, int)
-        device_no = layer_no // int(num_layers / num_gpus + 0.5)
+        device_no = layer_no // int(math.ceil(num_layers / num_gpus))
         return f'cuda:{device_no}'
 
     @staticmethod
@@ -389,7 +396,7 @@ class PipelineHelper(object):
 
         Each iteration of this generator yields the following properties:
 
-            - layers: the group of like layers to be fed through.
+            - layer_nos: a list of indices of layers for you to forward through
             - chunk_idx: the index of the chunk we are manipulating. Use this
               if you need to update chunk representations.
             - next_device: where the chunk should be moved to AFTER the layer
@@ -420,10 +427,17 @@ class PipelineHelper(object):
                     'You must run PipelineHelper.make_parallel on the ModuleList '
                     'before you can use iterate_layers_chunks.'
                 )
+
+        # devices maps device_idx -> (device, [(i, layers[i], ...])
+        # for example, if devices is 2 and there are 4 layers, we will have
+        # devices = {
+        #   0: ('cuda:0', [0, 1j]),
+        #   1: ('cuda:1', [2, 3]]),
+        # }
         devices = {
             device_idx: (dev, list(grp))
             for device_idx, (dev, grp) in enumerate(
-                itertools.groupby(layers, lambda x: x._mp_gpu)
+                itertools.groupby(range(len(layers)), lambda x: layers[x]._mp_gpu)
             )
         }
         num_timesteps = len(devices) + num_chunks
@@ -431,9 +445,11 @@ class PipelineHelper(object):
             for chunk_idx in range(num_chunks):
                 device_idx = timestep - chunk_idx
                 if device_idx >= 0 and device_idx < len(devices):
-                    dev, layers_now = devices[device_idx]
+                    dev, layers_nos = devices[device_idx]
                     next_device, _ = devices[(device_idx + 1) % len(devices)]
                     assert device_idx in devices
-                    yield PipelineWork(
-                        chunk_idx=chunk_idx, layers=layers_now, next_device=next_device
+                    yield PipelineWorkItem(
+                        chunk_idx=chunk_idx,
+                        layer_nos=layers_nos,
+                        next_device=next_device,
                     )

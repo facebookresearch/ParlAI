@@ -102,6 +102,37 @@ class TestPipelineHelper(unittest.TestCase):
             assert right['x'].shape == (8, 5)
             assert right['y'].shape == (8, 5)
 
+    def test_split_emptydict(self):
+        # test a horrible edge case where d is an empty dict, and we need to
+        # return a BUNCH of empty dicts
+        t = torch.randn(32, 5)
+        d = {}
+        tup = (t, d)
+        items = PipelineHelper.split(tup, 8)
+        assert len(items) == 4
+        for item in items:
+            assert isinstance(item, tuple)
+            a, b = item
+            assert isinstance(a, torch.Tensor)
+            assert a.shape == (8, 5)
+            assert isinstance(b, dict)
+            assert b == {}
+
+    def test_split_emptydict(self):
+        # test an even worse edge case, where we have a dict of empty dicts
+        t = torch.randn(32, 5)
+        d = {'x': {}}
+        tup = (t, d)
+        items = PipelineHelper.split(tup, 8)
+        assert len(items) == 4
+        for item in items:
+            assert isinstance(item, tuple)
+            a, b = item
+            assert isinstance(a, torch.Tensor)
+            assert a.shape == (8, 5)
+            assert isinstance(b, dict)
+            assert b == {}
+
     def test_join_tensor(self):
         t = torch.randn(8, 5)
         j = PipelineHelper.join([t, t, t, t])
