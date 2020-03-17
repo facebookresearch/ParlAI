@@ -262,12 +262,13 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
 def create_agent_from_model_file(model_file, opt_overides=None):
     """
     Load agent from model file if it exists.
+
     An optional dict of option overrides can also be provided.
     """
     opt = {}
     opt['model_file'] = model_file
     if opt_overides is None:
-        opt_overrides = {}
+        opt_overides = {}
     opt['overrride'] = opt_overides
     return create_agent_from_opt_file(opt)
 
