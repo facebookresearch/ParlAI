@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from typing import List
+from typing import Any, List
 
 import numpy as np
 
@@ -182,8 +182,10 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         )
 
     def _select_dialogues_to_add(
-        self, experiencer_text_dialogue: List[list], responder_text_dialogue: List[list]
-    ) -> List[List[list]]:
+        self,
+        experiencer_text_dialogue: List[List[Any]],
+        responder_text_dialogue: List[List[Any]],
+    ) -> List[List[List[Any]]]:
         """
         Return conversation halves to add to self.data.
 
