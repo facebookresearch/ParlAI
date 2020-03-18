@@ -9,7 +9,6 @@ Utility methods for dealing with torch code.
 
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 import itertools
-import math
 from collections import namedtuple
 
 
@@ -289,13 +288,18 @@ class PipelineHelper(object):
     @staticmethod
     def guess_split_size(item: Chunk, num_gpus: Optional[int] = None, dim=0) -> int:
         """
-        Estimate the number of chunks we should split the batch into.
-
-        Uses some silly heuristics.
+        Estimate the number of chunks we should split the batch into via heuristics.
         """
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
-        if isinstance(item, torch.Tensor):
+        if num_gpus == 1:
+            # no point in chunking if we're not really doing model parallel
+            return item.size(dim)
+        elif isinstance(item, torch.Tensor):
+            # heuristic: use the same number of chunks as 2 * num_gpus.  this
+            # isn't perfect (it ideally would be tuned differently for every model
+            # and number of GPUs), but it seems to work reasonably wellenough in several
+            # architectures tested.
             return max(1, item.size(dim) // int(num_gpus * 2))
         elif isinstance(item, tuple):
             return PipelineHelper.guess_split_size(item[0], num_gpus)

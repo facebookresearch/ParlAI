@@ -9,8 +9,6 @@ from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
 from copy import deepcopy
 import time
 import unittest
-import torch
-import numpy as np
 
 
 class TestUtils(unittest.TestCase):

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 Unit tests for parlai.utils.torch.
 """
@@ -48,16 +52,16 @@ class TestPipelineHelper(unittest.TestCase):
 
     def test_guess_split(self):
         t = torch.randn(128, 5)
-        assert PipelineHelper.guess_split_size(t, 8) == 2
-        assert PipelineHelper.guess_split_size(t, 4) == 8
+        assert PipelineHelper.guess_split_size(t, 8) == 8
+        assert PipelineHelper.guess_split_size(t, 4) == 16
         assert PipelineHelper.guess_split_size(t, 1) == 128
         t = torch.randn(129, 5)
-        assert PipelineHelper.guess_split_size(t, 8) == 2
-        assert PipelineHelper.guess_split_size(t, 4) == 8
+        assert PipelineHelper.guess_split_size(t, 8) == 8
+        assert PipelineHelper.guess_split_size(t, 4) == 16
         assert PipelineHelper.guess_split_size(t, 1) == 129
         t = torch.randn(5, 128)
-        assert PipelineHelper.guess_split_size(t, 8, dim=1) == 2
-        assert PipelineHelper.guess_split_size(t, 4, dim=1) == 8
+        assert PipelineHelper.guess_split_size(t, 8, dim=1) == 8
+        assert PipelineHelper.guess_split_size(t, 4, dim=1) == 16
         assert PipelineHelper.guess_split_size(t, 1, dim=1) == 128
 
     def test_split_tensor(self):
