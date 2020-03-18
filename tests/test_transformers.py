@@ -459,6 +459,23 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
+    def test_beamdelay(self):
+        """
+        Test delayedbeam generation.
+        """
+        # Delayed Beam is inherently stochastic, just ensure no crash.
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:multiturn_candidate',
+                model='transformer/generator',
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=32,
+                inference='delayedbeam',
+                topk=10,
+                beam_delay=5,
+            )
+        )
+
     def test_topk(self):
         """
         Test topk generation.
