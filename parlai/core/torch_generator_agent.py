@@ -366,6 +366,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.criterion = self.build_criterion()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
+            self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
@@ -373,6 +374,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
             if self.use_cuda:
                 self.model.cuda()
+                if self.model_parallel:
+                    self.model.model_parallel()
                 self.criterion.cuda()
 
             sync_parameters(self.model)

@@ -747,6 +747,9 @@ class TransformerDecoder(nn.Module):
             )
 
     def model_parallel(self):
+        """
+        Move the model to multiple devices.
+        """
         PipelineHelper.make_parallel(self.layers)
         self._is_model_parallel = True
         return self
@@ -775,7 +778,7 @@ class TransformerDecoder(nn.Module):
             if positions is not None:
                 positions = positions[:, -1:]
         else:
-            incr_state = {idx: {} for idx in range(len(self.layers))}
+            incr_state = {}
 
         tensor = self.embeddings(input)
         if self.embeddings_scale:
@@ -803,7 +806,7 @@ class TransformerDecoder(nn.Module):
                     x=tensor,
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
-                    incr_state=incr_state[idx],
+                    incr_state=incr_state.get(idx),
                 )
 
         if self.variant == 'prelayernorm':
@@ -829,7 +832,7 @@ class TransformerDecoder(nn.Module):
                     x=s_tensor,
                     encoder_output=s_enc_out,
                     encoder_mask=s_enc_mask,
-                    incr_state=s_incr_state[layer_no],
+                    incr_state=s_incr_state.get(layer_no),
                 )
             chunks[chunk_idx] = PipelineHelper.chunk_to(
                 (s_tensor, s_enc_out, s_enc_mask, s_incr_state), next_device
@@ -1288,7 +1291,7 @@ class MultiHeadAttention(nn.Module):
         Reorder the input incremental-state tensors.
         """
         return {
-            key: torch.index_select(val, 0, inds).contiguous()
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
             for key, val in incremental_state.items()
         }
 

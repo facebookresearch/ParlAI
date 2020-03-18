@@ -266,7 +266,7 @@ class PipelineHelper(object):
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
         if isinstance(item, torch.Tensor):
-            return max(1, item.size(dim) // (num_gpus * num_gpus))
+            return max(1, item.size(dim) // int(num_gpus * 2))
         elif isinstance(item, tuple):
             return PipelineHelper.guess_split_size(item[0], num_gpus)
         elif isinstance(item, dict):

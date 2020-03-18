@@ -212,7 +212,7 @@ class TransformerRankerAgent(TorchRankerAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        self.model_parallel = opt.get('model_parallel') and self.use_cuda
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
         if self.data_parallel and self.model_parallel:
             raise RuntimeError('Cannot combine --model-parallel and --data-parallel')
         if self.data_parallel:
@@ -221,8 +221,8 @@ class TransformerRankerAgent(TorchRankerAgent):
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')
             self.model = torch.nn.DataParallel(self.model)
-        elif self.model_parallel and shared is None:
-            self.model.model_parallel()
+        # elif self.model_parallel and shared is None:
+        #     self.model.model_parallel()
 
     def _score(self, output, cands):
         if cands.dim() == 2:
@@ -332,9 +332,9 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
-        if self.model_parallel and shared is None:
-            self.model.model_parallel()
+        # self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        # if self.model_parallel and shared is None:
+        #     self.model.model_parallel()
 
     def build_model(self, states=None):
         """
