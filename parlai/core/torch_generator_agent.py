@@ -379,8 +379,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.criterion.cuda()
 
             sync_parameters(self.model)
-            print("Total parameters: {}".format(total_parameters(self.model)))
-            print("Trainable parameters:  {}".format(trainable_parameters(self.model)))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()

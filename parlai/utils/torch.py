@@ -413,7 +413,7 @@ class PipelineHelper(object):
         # optimizer and embeddings are not quite as expensive as the
         # activations (which scale via batchsize), Empirically, I found this
         # heuristic works well enough.
-        cls.__device_allocations['cuda:0'] += trainable_parameters(layers)
+        cls.__device_allocations['cuda:0'] += 3 * trainable_parameters(layers) // 4
 
         # next, let's figure out how many parameters we can assign to each GPU,
         # but not make actual assignments yet. Assignments come later because we

@@ -488,17 +488,18 @@ class TransformerEncoder(nn.Module):
         # build the model
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            layer = TransformerEncoderLayer(
-                n_heads,
-                embedding_size,
-                ffn_size,
-                attention_dropout=attention_dropout,
-                relu_dropout=relu_dropout,
-                dropout=dropout,
-                variant=variant,
-                activation=activation,
+            self.layers.append(
+                TransformerEncoderLayer(
+                    n_heads,
+                    embedding_size,
+                    ffn_size,
+                    attention_dropout=attention_dropout,
+                    relu_dropout=relu_dropout,
+                    dropout=dropout,
+                    variant=variant,
+                    activation=activation,
+                )
             )
-            self.layers.append(layer)
         self.output_scaling = output_scaling
 
     def forward(self, input, positions=None, segments=None):

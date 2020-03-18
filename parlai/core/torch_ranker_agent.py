@@ -15,6 +15,7 @@ from abc import abstractmethod
 from itertools import islice
 import os
 from tqdm import tqdm
+import locale
 import random
 
 import torch
@@ -24,7 +25,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import padded_3d
+from parlai.utils.torch import padded_3d, total_parameters, trainable_parameters
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
@@ -183,8 +184,9 @@ class TorchRankerAgent(TorchAgent):
                 self.model.cuda()
                 self.criterion.cuda()
 
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()
@@ -204,7 +206,8 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif 'train' in opt.get('datatype', ''):
+            # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(
                 optim_params, states.get('optimizer'), states.get('optimizer_type')

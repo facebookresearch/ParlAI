@@ -141,8 +141,7 @@ class PolyencoderAgent(TorchRankerAgent):
         """
         Return built model.
         """
-        model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
-        return model
+        return PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
 
     def vectorize(self, *args, **kwargs):
         """

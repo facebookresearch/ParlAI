@@ -11,7 +11,15 @@ Unit tests for parlai.utils.torch.
 import torch
 import numpy as np
 import unittest
-from parlai.utils.torch import padded_tensor, argsort, PipelineHelper, neginf
+from parlai.utils.torch import (
+    padded_tensor,
+    argsort,
+    PipelineHelper,
+    neginf,
+    IdentityLayer,
+    trainable_parameters,
+    total_parameters,
+)
 
 
 class TestTorchUtils(unittest.TestCase):
@@ -43,6 +51,26 @@ class TestTorchUtils(unittest.TestCase):
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
         assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
+
+    def test_trainable_parameters(self):
+        ident = IdentityLayer()
+        emb = torch.nn.Embedding(32, 8)  # 32 * 8 = 256
+        emb2 = torch.nn.Embedding(32, 16)  # 32 * 16 = 128
+        emb2.weight.requires_grad = False
+        assert trainable_parameters(emb) == 256
+        assert trainable_parameters(ident) == 0
+        assert trainable_parameters(emb2) == 0
+        assert trainable_parameters(torch.nn.ModuleList([ident, emb, emb2])) == 256
+
+    def test_total_parameters(self):
+        ident = IdentityLayer()
+        emb = torch.nn.Embedding(32, 8)  # 32 * 8 = 256
+        emb2 = torch.nn.Embedding(32, 16)  # 32 * 16 = 128
+        emb2.weight.requires_grad = False
+        assert total_parameters(emb) == 256
+        assert total_parameters(ident) == 0
+        assert total_parameters(emb2) == 512
+        assert total_parameters(torch.nn.ModuleList([ident, emb, emb2])) == 768
 
 
 class TestPipelineHelper(unittest.TestCase):
@@ -181,5 +209,32 @@ class TestPipelineHelper(unittest.TestCase):
         assert right['x'].shape == (16, 5)
         assert right['y'].shape == (16, 2)
 
-    def chunk_layer_iterator(self):
-        pass
+    def test_schedule_work_items(self):
+        # test that we schedule things correctly
+        # pretend we have 8 layers and 4 gpus, and they are unevenly distributed
+        model = torch.nn.ModuleList()
+        for i in range(8):
+            layer = IdentityLayer()
+            if i == 0:
+                layer._mp_gpu = 'cuda:0'
+            elif i in (1, 2, 3):
+                layer._mp_gpu = 'cuda:1'
+            elif i in (4, 5):
+                layer._mp_gpu = 'cuda:2'
+            elif i in (6, 7):
+                layer._mp_gpu = 'cuda:3'
+            model.append(layer)
+
+        # there are 2 chunks, each 16 x 7 in size
+        chunks = PipelineHelper.split(torch.randn(32, 7), 16)
+
+        work_items = list(PipelineHelper.schedule_work_items(model, chunks))
+        assert len(work_items) == 8
+        assert work_items[0].layer_nos == [0] and work_items[0].chunk_idx == 0
+        assert work_items[1].layer_nos == [1, 2, 3] and work_items[1].chunk_idx == 0
+        assert work_items[2].layer_nos == [0] and work_items[2].chunk_idx == 1
+        assert work_items[3].layer_nos == [4, 5] and work_items[3].chunk_idx == 0
+        assert work_items[4].layer_nos == [1, 2, 3] and work_items[4].chunk_idx == 1
+        assert work_items[5].layer_nos == [6, 7] and work_items[5].chunk_idx == 0
+        assert work_items[6].layer_nos == [4, 5] and work_items[6].chunk_idx == 1
+        assert work_items[7].layer_nos == [6, 7] and work_items[7].chunk_idx == 1
