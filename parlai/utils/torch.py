@@ -240,6 +240,32 @@ class IdentityLayer(torch.nn.Module):
         return xs
 
 
+def total_parameters(model: torch.nn.Module) -> int:
+    """
+    Count the total number of parameters in the model.
+
+    :param model:
+        the model whose parameters we wish to count.
+
+    :return:
+        total number of parameters in the model.
+    """
+    return sum(p.numel() for p in model.parameters())
+
+
+def trainable_parameters(model: torch.nn.Module) -> int:
+    """
+    Count the total number of trainable parameters in the model.
+
+    :param model:
+        the model whose parameters we wish to count.
+
+    :return:
+        total number of trainable parameters in the model.
+    """
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 Chunk = TypeVar('Chunk')
 
 
@@ -255,6 +281,10 @@ class PipelineHelper(object):
     For a tutorial on model parallelism, as it's implemented in parts of ParlAI,
     see https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html.
     """
+
+    # device_allocations keep track of the number of parameters assigned to all
+    # GPUs.
+    __device_allocations = {}
 
     @staticmethod
     def guess_split_size(item: Chunk, num_gpus: Optional[int] = None, dim=0) -> int:
@@ -298,9 +328,21 @@ class PipelineHelper(object):
             return list(zip(*(PipelineHelper.split(i, split_size, dim) for i in item)))
         elif isinstance(item, dict):
             if item == {}:
-                # terrible edge case: the empty dict. return an infinite list
-                # of empty dicts and we'll figure out its correct size later
+                # Terrible edge case: the empty dict. We handle by returning an
+                # infinite list of empty dicts and we'll figure out its correct
+                # size later. This happens for the incremental_state in
+                # MultiheadAttention.
                 return itertools.repeat({})
+            # we can't handle dicts with empty objects in them, due to how we handle
+            # the case above
+            if {} in item.values():
+                raise ValueError(
+                    'Cannot handle a dictionary with an empty dictionary inside.'
+                )
+            if () in item.values():
+                raise ValueError(
+                    'Cannot handle a dictionary with an empty tuple inside.'
+                )
             # we start with Dict[key,tensor]
             # we map it to d: Dict[key, List[Tensor]], where we have split each mapping
             d = {k: PipelineHelper.split(v, split_size, dim) for k, v in item.items()}
@@ -340,48 +382,61 @@ class PipelineHelper(object):
         else:
             raise TypeError(f'Cannot join list of type {type(item0)}')
 
-    @staticmethod
-    def layer_assignment(
-        layer_no: int, num_layers: int, num_gpus: Optional[int] = None
-    ) -> str:
-        """
-        Determine which device a layer should be on.
-
-        :param layer_no:
-            0-indexed layer number
-        :param num_layers:
-            Total number of layers to parallelize
-        :param num_gpus:
-            Number of gpus to distribute over. If None, use all available devices.
-        :returns:
-            A specific device, e.g. "cuda:0" or "cuda:3".
-        """
-        if num_gpus is None:
-            num_gpus = torch.cuda.device_count()  # type: ignore
-        assert isinstance(num_gpus, int)
-        # device_no = layer_no // int(math.ceil(num_layers / num_gpus))
-        # return f'cuda:{device_no}'
-        if layer_no == 0:
-            return 'cuda:0'
-        elif num_layers < num_gpus:
-            return f'cuda:{layer_no}'
-        else:
-            assert isinstance(num_gpus, int)
-            device_no = 1 + (layer_no - 1) // int(
-                math.ceil((num_layers - 1) / (num_gpus - 1))
-            )
-            return f'cuda:{device_no}'
-
-    @staticmethod
-    def make_parallel(layers: torch.nn.ModuleList) -> torch.nn.ModuleList:
+    @classmethod
+    def make_parallel(cls, layers: torch.nn.ModuleList) -> torch.nn.ModuleList:
         """
         Make a list of modules model parallel.
+
+        Uses some heuristics to attempt to evenly distribute layers across
+        GPUs, in order to balance memory usage. They are:
+
+        - Assume the 0th GPU will host the optimizer, word embeddings, etc.
+        - Assume activation memory is linear with the number of parameters.
+        - All layers are approximately equal in size.
         """
+
+        # first, make sure we're looking at all GPUs, and have a full registry
+        # of them all
+        num_devices = torch.cuda.device_count()
+        devices = []
+        for i in range(num_devices):
+            d = f'cuda:{i}'
+            devices.append(d)
+            if d not in cls.__device_allocations:
+                cls.__device_allocations[d] = 0
+
+        # first assume all layers will go onto gpu 0 as an optimizer. The
+        # optimizer and embeddings are not quite as expensive as the
+        # activations (which scale via batchsize), Empirically, I found this
+        # heuristic works well enough.
+        cls.__device_allocations['cuda:0'] += trainable_parameters(layers)
+
+        # next, let's figure out how many parameters we can assign to each GPU,
+        # but not make actual assignments yet. Assignments come later because we
+        # want consecutive layers to be collocated
+        keyfunc = cls.__device_allocations.__getitem__
+        layer_assignments = {k: 0 for k in devices}
         for layer_no, layer in enumerate(layers):
-            layer_gpu = PipelineHelper.layer_assignment(layer_no, len(layers))
-            layer._mp_gpu = layer_gpu  # type: ignore
+            if layer_no == 0:
+                # hard code the first layer to be 0.
+                mostfree = 'cuda:0'
+            else:
+                # otherwise dynamic allocation
+                mostfree = min(devices, key=keyfunc)
+            cls.__device_allocations[mostfree] += trainable_parameters(layer)
+            # mark a layer as going to the given element
+            layer_assignments[mostfree] += 1
+
+        for layer_no, layer in enumerate(layers):
+            layer_gpu = devices[0]
+            assert layer_assignments[layer_gpu] > 0
+            print(f"Assigning {layer_no} to {layer_gpu}")
+            layer._mp_gpu = layer_gpu
             layers[layer_no] = layer.to(layer_gpu)
-            print(f"Putting {layer_no} on {layer_gpu}")
+            layer_assignments[layer_gpu] -= 1
+            if layer_assignments[layer_gpu] == 0:
+                devices.pop(0)
+
         return layers
 
     @staticmethod
@@ -439,12 +494,13 @@ class PipelineHelper(object):
                     'before you can use iterate_layers_chunks.'
                 )
 
-        # devices maps device_idx -> (device, [(i, layers[i], ...])
-        # for example, if devices is 2 and there are 4 layers, we will have
-        # devices = {
-        #   0: ('cuda:0', [0, 1j]),
-        #   1: ('cuda:1', [2, 3]]),
-        # }
+        # devices maps device_idx -> (device, [layer_idx, layer_idx, ...])
+        # for example, if devices is 2 and there are 4 layers, we might have
+        #   devices = {
+        #     0: ('cuda:0', [0]),
+        #     1: ('cuda:1', [1, 2, 3]),
+        #   }
+        # This means layers 0 is on cuda:0, but layers 1-3 are on cuda:1.
         devices = {
             device_idx: (dev, list(grp))
             for device_idx, (dev, grp) in enumerate(

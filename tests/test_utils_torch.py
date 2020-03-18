@@ -118,20 +118,13 @@ class TestPipelineHelper(unittest.TestCase):
             assert isinstance(b, dict)
             assert b == {}
 
-    def test_split_emptydict(self):
-        # test an even worse edge case, where we have a dict of empty dicts
+    def test_split_badcases(self):
+        # test some cases that cause infinite loops if we don't catch them.
         t = torch.randn(32, 5)
-        d = {'x': {}}
-        tup = (t, d)
-        items = PipelineHelper.split(tup, 8)
-        assert len(items) == 4
-        for item in items:
-            assert isinstance(item, tuple)
-            a, b = item
-            assert isinstance(a, torch.Tensor)
-            assert a.shape == (8, 5)
-            assert isinstance(b, dict)
-            assert b == {}
+        with self.assertRaises(ValueError):
+            PipelineHelper.split((t, {'x': {}}), 8)
+        with self.assertRaises(ValueError):
+            PipelineHelper.split((t, {'y': ()}))
 
     def test_join_tensor(self):
         t = torch.randn(8, 5)
