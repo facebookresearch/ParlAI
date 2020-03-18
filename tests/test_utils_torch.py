@@ -156,7 +156,7 @@ class TestPipelineHelper(unittest.TestCase):
         with self.assertRaises(ValueError):
             PipelineHelper.split((t, {'x': {}}), 8)
         with self.assertRaises(ValueError):
-            PipelineHelper.split((t, {'y': ()}))
+            PipelineHelper.split((t, {'y': ()}), 8)
 
     def test_join_tensor(self):
         t = torch.randn(8, 5)
