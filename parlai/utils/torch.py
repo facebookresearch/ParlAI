@@ -359,8 +359,18 @@ class PipelineHelper(object):
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
         assert isinstance(num_gpus, int)
-        device_no = layer_no // int(math.ceil(num_layers / num_gpus))
-        return f'cuda:{device_no}'
+        # device_no = layer_no // int(math.ceil(num_layers / num_gpus))
+        # return f'cuda:{device_no}'
+        if layer_no == 0:
+            return 'cuda:0'
+        elif num_layers < num_gpus:
+            return f'cuda:{layer_no}'
+        else:
+            assert isinstance(num_gpus, int)
+            device_no = 1 + (layer_no - 1) // int(
+                math.ceil((num_layers - 1) / (num_gpus - 1))
+            )
+            return f'cuda:{device_no}'
 
     @staticmethod
     def make_parallel(layers: torch.nn.ModuleList) -> torch.nn.ModuleList:
@@ -371,6 +381,7 @@ class PipelineHelper(object):
             layer_gpu = PipelineHelper.layer_assignment(layer_no, len(layers))
             layer._mp_gpu = layer_gpu  # type: ignore
             layers[layer_no] = layer.to(layer_gpu)
+            print(f"Putting {layer_no} on {layer_gpu}")
         return layers
 
     @staticmethod
