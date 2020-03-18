@@ -1352,7 +1352,6 @@ class DelayedBeamSearch(TreeSearch):
             )
         else:
             return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
-        return (hyp_ids, tok_ids, best_scores)
 
 
 class TopKSampling(TreeSearch):
