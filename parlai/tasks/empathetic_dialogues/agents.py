@@ -5,12 +5,16 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+from typing import List
+
+import numpy as np
+
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
-import numpy as np
 
 
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
+DEFAULT_REMOVE_POLITICAL_CONVOS = False
 
 
 class EmpatheticDialoguesTeacher(FixedDialogTeacher):
@@ -31,6 +35,9 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         print(
             f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
             f'{self.experiencer_side_only}, datatype: {self.datatype}'
+        )
+        self.remove_political_convos = opt.get(
+            'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
         )
 
         if shared:
@@ -54,6 +61,12 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             # (responder) utterance would be the text and the Speaker (experiencer)
             # utterance would be the label
             help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
+        )
+        agent.add_argument(
+            '--remove-political-convos',
+            type='bool',
+            default=DEFAULT_REMOVE_POLITICAL_CONVOS,
+            help='Remove all conversations containing an utterance marked as political',
         )
 
     def num_episodes(self):
@@ -153,18 +166,39 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
 
                 # We've finished the previous episode, so add it to the data
                 turn_idx = 1
-                if len(experiencer_text_dialogue) > 0:
-                    self.data.append(experiencer_text_dialogue)
-                if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
-                    self.data.append(responder_text_dialogue)
+                self.data += self._select_dialogues_to_add(
+                    experiencer_text_dialogue, responder_text_dialogue
+                )
                 experiencer_text_dialogue = []
                 responder_text_dialogue = []
 
         # Add in the final episode
+        self.data += self._select_dialogues_to_add(
+            experiencer_text_dialogue, responder_text_dialogue
+        )
+
+    def _select_dialogues_to_add(
+        self, experiencer_text_dialogue: List[list], responder_text_dialogue: List[list]
+    ) -> List[List[list]]:
+        """
+        Return conversation halves to add to self.data.
+
+        Given lists corresponding to the conversation turns from both sides of the conversation, return only the list(s) that will be added to self.data.
+        """
+        selected_dialogues = []
         if len(experiencer_text_dialogue) > 0:
-            self.data.append(experiencer_text_dialogue)
+            if not (
+                self.remove_political_convos
+                and self.is_political(experiencer_text_dialogue)
+            ):
+                selected_dialogues.append(experiencer_text_dialogue)
         if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
-            self.data.append(responder_text_dialogue)
+            if not (
+                self.remove_political_convos
+                and self.is_political(responder_text_dialogue)
+            ):
+                selected_dialogues.append(responder_text_dialogue)
+        return selected_dialogues
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
