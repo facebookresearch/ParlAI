@@ -1136,7 +1136,9 @@ class TreeSearch(object):
                 self.context_block_ngram, logprobs, self.context
             )
 
-        hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores, current_length)
+        hyp_ids, tok_ids, self.scores = self.select_paths(
+            logprobs, self.scores, current_length
+        )
         # use clone() here to ensure that self.all_scores will not be changed
         # later due to any penalties to self.scores
         self.all_scores.append(self.scores.clone())
@@ -1337,7 +1339,7 @@ class DelayedBeamSearch(TreeSearch):
 
     See https://arxiv.org/abs/1911.03587 for details.
     """
-    
+
     def __init__(self, k, delay, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.k = k
@@ -1345,11 +1347,13 @@ class DelayedBeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores, current_length):
         if current_length < self.delay:
-            return TopKSampling.select_paths(self, logprobs, prior_scores, current_length)
+            return TopKSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
         else:
             return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
         return (hyp_ids, tok_ids, best_scores)
-    
+
 
 class TopKSampling(TreeSearch):
     """
