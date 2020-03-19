@@ -398,7 +398,7 @@ class ClassifierTeacher(CandidateTeacher):
             letters[0] = str(int(int(t[0]) % 2))
             label = 'one' if letters[0] == '1' else 'zero'
             text = ' '.join(letters)
-            yield (text, [label]), e
+            yield (text, [label], 0, ['one', 'zero']), e
 
 
 class BadExampleTeacher(CandidateTeacher):
