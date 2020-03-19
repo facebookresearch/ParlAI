@@ -40,7 +40,6 @@ from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 
-from functools import lru_cache
 from abc import ABC, abstractmethod
 
 import concurrent.futures
