@@ -56,6 +56,7 @@ def setup_args(parser=None):
 
 
 def interactive(opt, print_parser=None):
+
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
