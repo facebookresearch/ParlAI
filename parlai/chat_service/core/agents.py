@@ -32,10 +32,25 @@ class ChatServiceAgent(Agent, ABC):
 
     @property
     def data(self):
+        """
+        ChatServiceAgent data property.
+        """
         return self._data
 
     @data.setter
     def data(self, value):
+        """
+        Setter for ChatServiceAgent.data.
+
+        The data within a ChatServiceAgent is persistent, in the sense that keys
+        _cannot_ be removed from the data. This is important to ensure persistence
+        of agent state across various parts of the ChatService pipeline.
+
+        To ensure this property, we call `agent._data.update(value)` when explicitly
+        setting the `data` property of an agent. This protects against cases where,
+        e.g., the `__init__` function sets a property for the agent, and then
+        later someone manually sets `agent.data = new_data`.
+        """
         self._data.update(value)
 
     @abstractmethod
