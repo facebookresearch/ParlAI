@@ -379,7 +379,6 @@ class DialogPartnerWorld(World):
             self.total_exs += metrics['exs'].value()
         return metrics
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return number of examples.
@@ -1424,12 +1423,14 @@ class HogwildWorld(World):
         """
         return self.inner_world.getID()
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return the number of examples.
         """
-        return self.inner_world.num_examples()
+        if hasattr(self, '_num_examples'):
+            return self._num_examples_cache
+        self._num_examples_cache = self.inner_world.num_examples()
+        return self._num_examples_cache
 
     def num_episodes(self):
         """
