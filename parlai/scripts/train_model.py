@@ -719,14 +719,22 @@ class TrainLoop:
         if not self.saved and is_primary_worker():
             # save agent
             self.save_model()
+
         # there's a rare edge case where the we never saved the model, and we try
         # # to reload it. This sync_object ensures all workers wait for the primary
         # worker to finish flushing before loading from disk.
         sync_object(None)
         if opt.get('model_file'):
+            # clean up all our memory, just to make sure we don't OOM on GPU when
+            # reloading the world
+            del world
+            del self.world
+            del self.agent
+            del self.valid_worlds
             # reload best validation model
             self.agent = create_agent(opt)
 
+        # perform final validation/testing
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
         v_report = self._run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
