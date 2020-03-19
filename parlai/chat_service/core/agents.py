@@ -21,7 +21,7 @@ class ChatServiceAgent(Agent, ABC):
         self.id = receiver_id
         self.task_id = task_id
         self.acted_packets = {}
-        self.data = {}
+        self._data = {}
         self.msg_queue = Queue()
         self.observed_packets = {}
         self.message_request_time = None
@@ -29,6 +29,14 @@ class ChatServiceAgent(Agent, ABC):
         self.message_partners = []
         # initialize stored data
         self.set_stored_data()
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data.update(value)
 
     @abstractmethod
     def observe(self, act):

@@ -20,6 +20,7 @@ class MessengerAgent(ChatServiceAgent):
         self.disp_id = 'NewUser'
         self.message_partners = []
         self.page_id = page_id
+        self.data['allow_images'] = opt.get('allow_images', False)
 
     def observe(self, act):
         """
