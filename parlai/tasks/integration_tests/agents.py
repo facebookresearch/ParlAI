@@ -392,7 +392,7 @@ class ClassifierTeacher(CandidateTeacher):
 
     def setup_data(self, fold):
         raw = super().setup_data(fold)
-        for (t, a, _r, _c), e in raw:
+        for (t, _a, _r, _c), e in raw:
             letters = t.split(' ')
             # everything starts with 0 or 1
             letters[0] = str(int(int(t[0]) % 2))
