@@ -40,7 +40,6 @@ from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 
-from functools import lru_cache
 from abc import ABC, abstractmethod
 
 import concurrent.futures
@@ -766,14 +765,16 @@ class DialogData(object):
         """
         return len(self.data)
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return total number of entries available.
 
         Each episode has at least one entry, but might have many more.
         """
-        return sum(len(episode) for episode in self.data)
+        if hasattr(self, '_num_examples_cache'):
+            return self._num_examples_cache
+        self._num_examples_cache = sum(len(episode) for episode in self.data)
+        return self._num_examples_cache
 
     def get(self, episode_idx, entry_idx=0):
         """
