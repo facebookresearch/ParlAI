@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.utils.testing as testing_utils
 from parlai.chat_service.core.shared_utils import WorldConfig
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.services.messenger.messenger_manager import MessengerManager
@@ -29,14 +28,12 @@ OPT = {
                 task_name='MessengerEchoTaskWorld',
                 max_time_in_pool=180,
                 agents_required=1,
-                backup_task=None
+                backup_task=None,
             )
         },
-        'additional_args': {
-            'page_id': PAGE_ID
-        }
+        'additional_args': {'page_id': PAGE_ID},
     },
-    'bypass_server_setup': True
+    'bypass_server_setup': True,
 }
 
 
@@ -44,6 +41,7 @@ class TestChatServiceAgent(unittest.TestCase):
     """
     Tests for chat service agent functionality.
     """
+
     def _get_args(self):
         parser = ParlaiParser(False, False)
         parser.add_parlai_data_path()
@@ -52,8 +50,8 @@ class TestChatServiceAgent(unittest.TestCase):
 
     def test_data_persistence(self):
         """
-        Test to make sure that assigning the `data` attribute of
-        a MessengerAgent does not overwrite values already in `data`.
+        Test to make sure that assigning the `data` attribute of a MessengerAgent does
+        not overwrite values already in `data`.
         """
         opt = self._get_args()
         opt.update(OPT)
@@ -62,19 +60,12 @@ class TestChatServiceAgent(unittest.TestCase):
 
         self.assertEqual(agent.data, {'allow_images': False})
         agent.data = {'second_arg': False}
-        self.assertEqual(
-            agent.data,
-            {'allow_images': False, 'second_arg': False}
-        )
+        self.assertEqual(agent.data, {'allow_images': False, 'second_arg': False})
         agent.data['allow_images'] = True
-        self.assertEqual(
-            agent.data,
-            {'allow_images': True, 'second_arg': False}
-        ),
+        self.assertEqual(agent.data, {'allow_images': True, 'second_arg': False}),
         agent.data = {'third_arg': 1, 'second_arg': True}
         self.assertEqual(
-            agent.data,
-            {'allow_images': True, 'second_arg': True, 'third_arg': 1}
+            agent.data, {'allow_images': True, 'second_arg': True, 'third_arg': 1}
         )
 
 
