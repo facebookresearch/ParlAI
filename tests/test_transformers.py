@@ -670,6 +670,31 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
 
+class TestClassifier(unittest.TestCase):
+    """
+    Test transformer/classifier.
+    """
+
+    @testing_utils.retry()
+    def test_simple(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:classifier',
+                model='transformer/classifier',
+                classes=['one', 'zero'],
+                optimizer='adamax',
+                truncate=8,
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=5,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+            )
+        )
+
+
 class TestLearningRateScheduler(unittest.TestCase):
     """
     Test learning rate scheduler for both generative and ranking transformers.
