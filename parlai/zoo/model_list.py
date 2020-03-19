@@ -325,7 +325,7 @@ model_list = [
         "example": (
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/poly_model_huge_reddit/model "
-            "-t convai2 --shuffle true "
+            "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
             "--warmup_updates 100 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 "
             "-lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 "
@@ -360,7 +360,7 @@ model_list = [
         "example": (
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/poly_model_huge_wikito/model "
-            "-t convai2 --shuffle true "
+            "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
             "--warmup_updates 100 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 "
             "-lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 "
@@ -396,7 +396,7 @@ model_list = [
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/bi_model_huge_reddit/model "
             "--batchsize 512 -t convai2 "
-            "--shuffle true --model transformer/biencoder --eval-batchsize 6 "
+            "--model transformer/biencoder --eval-batchsize 6 "
             "--warmup_updates 100 --lr-scheduler-patience 0 "
             "--lr-scheduler-decay 0.4 -lr 5e-05 --data-parallel True "
             "--history-size 20 --label-truncate 72 --text-truncate 360 "
@@ -433,7 +433,7 @@ model_list = [
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/bi_model_huge_wikito/model "
             "--batchsize 512 -t convai2 "
-            "--shuffle true --model transformer/biencoder --eval-batchsize 6 "
+            "--model transformer/biencoder --eval-batchsize 6 "
             "--warmup_updates 100 --lr-scheduler-patience 0 "
             "--lr-scheduler-decay 0.4 -lr 5e-05 --data-parallel True "
             "--history-size 20 --label-truncate 72 --text-truncate 360 "
@@ -469,7 +469,7 @@ model_list = [
         "example": (
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/cross_model_huge_reddit/model "
-            "-t convai2 --shuffle true "
+            "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "
             "--warmup_updates 1000 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 "
             "-lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 "
@@ -503,7 +503,7 @@ model_list = [
         "example": (
             "python -u examples/train_model.py "
             "--init-model zoo:pretrained_transformers/cross_model_huge_wikito/model "
-            "-t convai2 --shuffle true "
+            "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "
             "--warmup_updates 1000 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 "
             "-lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 "

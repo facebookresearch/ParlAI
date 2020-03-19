@@ -3,6 +3,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
+standard_cpu38: &standard_cpu38
+  docker:
+    - image: circleci/python:3.8.0-buster-node
+  resource_class: large
+
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
@@ -165,12 +170,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-osx-{{ checksum "requirements.txt" }}
+          key: deps-v5-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-v4-osx-{{ checksum "requirements.txt" }}
+          key: deps-v5-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -192,17 +197,41 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v4-ut36-{{ checksum "requirements.txt" }}
+          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
+      - <<: *codecov
+      - store_test_results:
+          path: test-results
+
+  unittests_38:
+    <<: *standard_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
+      - save_cache:
+          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          name: Unit tests (py38)
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -216,12 +245,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
       - save_cache:
-          key: deps-v4-ut37-{{ checksum "requirements.txt" }}
+          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -247,12 +276,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v4-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu13
       - save_cache:
-          key: deps-v4-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -278,12 +307,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v4-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v4-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -309,12 +338,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v4-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v4-nightly-{{ checksum "requirements.txt" }}
+          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -462,6 +491,7 @@ workflows:
     jobs:
       - unittests_gpu13
       - unittests_gpu14
+      - unittests_38
       - unittests_37
       - unittests_36
       - mturk_tests

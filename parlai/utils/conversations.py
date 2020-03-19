@@ -11,6 +11,8 @@ import json
 import os
 import random
 
+from parlai.utils.misc import AttrDict
+
 
 BAR = '=' * 60
 SMALL_BAR = '-' * 60
@@ -51,15 +53,17 @@ class Metadata:
         """
         Read the relevant metadata.
         """
-        print(f'Metadata version {self.version_num}')
-        print(f'Saved at: {self.datetime}')
-        print(f'Self chat: {self.self_chat}')
-        print(f'Speakers: {self.speakers}')
-        print('Opt:')
+        string = f'Metadata version {self.version_num}\n'
+        string += f'Saved at: {self.datetime}\n'
+        string += f'Self chat: {self.self_chat}\n'
+        string += f'Speakers: {self.speakers}\n'
+        string += 'Opt:\n'
         for k, v in self.opt.items():
-            print(f'\t{k}: {v}')
+            string += f'\t{k}: {v}\n'
         for k, v in self.extra_data.items():
-            print(f'{k}: {v}')
+            string += f'{k}: {v}\n'
+
+        return string
 
     @staticmethod
     def _get_path(datapath):
@@ -93,6 +97,72 @@ class Metadata:
             f.write(json.dumps(metadata))
 
 
+class Turn(AttrDict):
+    """
+    Utility class for a dialog turn.
+    """
+
+    def __init__(self, id=None, text=None, **kwargs):
+        super().__init__(self, id=id, text=text, **kwargs)
+
+
+class Conversation:
+    """
+    Utility class for iterating through a single episode.
+
+    Used in the context of the Conversations class.
+    """
+
+    def __init__(self, episode):
+        self.episode = episode
+        self.context = episode.get('context')
+        self.metadata_path = episode.get('metadata_path')
+        self.turns = self._build_turns(episode)
+
+    def _build_turns(self, episode):
+        turns = []
+        for act_pair in episode['dialog']:
+            for act in act_pair:
+                turns.append(Turn(**act))
+        return turns
+
+    def __str__(self):
+        string = BAR + '\n'
+        high_level = [k for k in self.episode.keys() if k != 'dialog']
+        if high_level:
+            for key in high_level:
+                string += f'{key}: {self.episode[key]}\n'
+            string += SMALL_BAR + '\n'
+
+        for turn in self.turns:
+            string += f'{turn.id}: {turn.text}\n'
+
+        string += BAR + '\n'
+        return string
+
+    def __len__(self):
+        return len(self.turns)
+
+    def __getitem__(self, index):
+        return self.turns[index]
+
+    def __iter__(self):
+        self.iterator_idx = 0
+        return self
+
+    def __next__(self):
+        """
+        Return the next conversation.
+        """
+        if self.iterator_idx >= len(self.turns):
+            raise StopIteration
+
+        conv = self.turns[self.iterator_idx]
+        self.iterator_idx += 1
+
+        return conv
+
+
 class Conversations:
     """
     Utility class for reading and writing from ParlAI Conversations format.
@@ -122,10 +192,8 @@ class Conversations:
     def __init__(self, datapath):
         self.conversations = self._load_conversations(datapath)
         self.metadata = self._load_metadata(datapath)
-        self.iterator_idx = 0
 
-    @property
-    def num_conversations(self):
+    def __len__(self):
         return len(self.conversations)
 
     def _load_conversations(self, datapath):
@@ -139,7 +207,7 @@ class Conversations:
         with open(datapath, 'r') as f:
             lines = f.read().splitlines()
             for line in lines:
-                conversations.append(json.loads(line))
+                conversations.append(Conversation(json.loads(line)))
 
         return conversations
 
@@ -166,19 +234,23 @@ class Conversations:
 
     def read_metadata(self):
         if self.metadata is not None:
-            self.metadata.read()
+            print(self.metadata)
+        else:
+            print('No metadata available.')
 
     def __getitem__(self, index):
         return self.conversations[index]
+
+    def __iter__(self):
+        self.iterator_idx = 0
+        return self
 
     def __next__(self):
         """
         Return the next conversation.
         """
-        if self.iterator_idx >= self.num_conversations:
-            print('You reached the end of the conversations.')
-            self.reset()  # return the iterator idx to 0
-            return None
+        if self.iterator_idx >= len(self):
+            raise StopIteration
 
         conv = self.conversations[self.iterator_idx]
         self.iterator_idx += 1
@@ -187,28 +259,11 @@ class Conversations:
 
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        print(BAR)
-
-        high_level = [k for k in convo.keys() if k != 'dialog']
-        if high_level:
-            for key in high_level:
-                print(f'{key}: {convo[key]}')
-            print(SMALL_BAR)
-
-        for act_pair in convo['dialog']:
-            for turn in act_pair:
-                turn_id = turn['id']
-                text = turn['text']
-                print(f'{turn_id}: {text}')
-
-        print(BAR)
+        print(convo)
 
     def read_rand_conv(self):
-        idx = random.choice(range(self.num_conversations))
+        idx = random.choice(range(len(self)))
         self.read_conv_idx(idx)
-
-    def reset(self):
-        self.iterator_idx = 0
 
     @staticmethod
     def _get_path(datapath):
@@ -221,13 +276,17 @@ class Conversations:
         act_list,
         datapath,
         opt,
-        save_keys='text,labels,eval_labels',
+        save_keys='all',
         context_ids='context',
         self_chat=False,
         **kwargs,
     ):
         """
         Write Conversations to file from an act list.
+
+        Conversations assume the act list is of the following form: a list of episodes,
+        each of which is comprised of a list of act pairs (i.e. a list dictionaries
+        returned from one parley)
         """
         to_save = cls._get_path(datapath)
 
@@ -253,9 +312,14 @@ class Conversations:
                             context = False
                             if ex_id not in speakers:
                                 speakers.append(ex_id)
+
                         # set turn
                         turn = {}
-                        for key in save_keys.split(','):
+                        if save_keys != 'all':
+                            save_keys_lst = save_keys.split(',')
+                        else:
+                            save_keys_lst = ex.keys()
+                        for key in save_keys_lst:
                             turn[key] = ex.get(key, '')
                         turn['id'] = ex_id
                         if not context:

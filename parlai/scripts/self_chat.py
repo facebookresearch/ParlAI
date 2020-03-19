@@ -77,6 +77,7 @@ def _run_self_chat_episode(opt, world, world_logger):
     if opt['display_examples']:
         print('-- end of episode --')
 
+    world.reset()
     world_logger.reset_world()  # flush this episode
 
 

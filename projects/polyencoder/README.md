@@ -55,7 +55,7 @@ Execute this to train a biencoder scoring 86+ on Convai2 valid set
 python -u examples/train_model.py \
     --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model \
     --batchsize 512 -t convai2 \
-    --shuffle true --model transformer/biencoder --eval-batchsize 6 \
+    --model transformer/biencoder --eval-batchsize 6 \
     --warmup_updates 100 --lr-scheduler-patience 0 \
     --lr-scheduler-decay 0.4 -lr 5e-05 --data-parallel True \
     --history-size 20 --label-truncate 72 --text-truncate 360 \
@@ -81,7 +81,7 @@ Execute this to train a poly-encoder scoring 89+ on Convai2 valid set
 ```
 python -u examples/train_model.py \
   --init-model zoo:pretrained_transformers/poly_model_huge_reddit/model \
-  -t convai2 --shuffle true \
+  -t convai2 \
   --model transformer/polyencoder --batchsize 256 --eval-batchsize 10 \
   --warmup_updates 100 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 \
   -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 \
@@ -98,7 +98,7 @@ python -u examples/train_model.py \
   --model-file <YOUR MODEL FILE>
 ```
 
-### cross-encoder
+### Cross-encoder
 
 Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
@@ -106,7 +106,7 @@ Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 ```
 python -u examples/train_model.py \
   --init-model zoo:pretrained_transformers/cross_model_huge_reddit/model \
-  -t convai2 --shuffle true \
+  -t convai2 \
   --model transformer/crossencoder --batchsize 16 --eval-batchsize 10 \
   --warmup_updates 1000 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 \
   -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 \
