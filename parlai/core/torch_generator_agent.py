@@ -32,7 +32,12 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import warn_once
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
-from parlai.utils.torch import neginf, total_parameters, trainable_parameters
+from parlai.utils.torch import (
+    neginf,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 
 
 try:
@@ -375,7 +380,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.use_cuda:
                 self.model.cuda()
                 if self.model_parallel:
-                    self.model.model_parallel()
+                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
 
             sync_parameters(self.model)

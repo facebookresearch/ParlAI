@@ -159,18 +159,29 @@ class TorchClassifierAgent(TorchAgent):
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
+            self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+            self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
+            if self.data_parallel and is_distributed():
+                raise RuntimeError(
+                    'Cannot combine --data-parallel and distributed mode.'
+                )
+            if self.model_parallel and self.data_parallel:
+                raise RuntimeError(
+                    'Cannot combine --data-parallel and --model-parallel.'
+                )
+
             if self.use_cuda:
                 self.model.cuda()
+                if self.data_parallel:
+                    self.model = torch.nn.DataParallel(self.model)
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
             if self.use_cuda:
                 if self.opt['data_parallel']:
-                    if is_distributed():
-                        raise ValueError(
-                            'Cannot combine --data-parallel and distributed mode'
-                        )
                     self.model = torch.nn.DataParallel(self.model)
         if shared:
             # We don't use get here because hasattr is used on optimizer later.

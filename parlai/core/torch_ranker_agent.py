@@ -24,7 +24,12 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import padded_3d, total_parameters, trainable_parameters
+from parlai.utils.torch import (
+    padded_3d,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
@@ -167,6 +172,12 @@ class TorchRankerAgent(TorchAgent):
         opt['rank_candidates'] = True
         super().__init__(opt, shared)
 
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
+        if self.data_parallel and is_distributed():
+            raise RuntimeError('Cannot combine --data-parallel and distributed mode.')
+        if self.model_parallel and self.data_parallel:
+            raise RuntimeError('Cannot combine --data-parallel and --model-parallel.')
         states: Dict[str, Any]
         if shared:
             states = {}
@@ -175,12 +186,16 @@ class TorchRankerAgent(TorchAgent):
             # should correctly initialize to floats or ints here
             self.criterion = self.build_criterion()
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
-                    'build_model() and build_criterion() need to return the model or criterion'
+                    'build_model() and build_criterion() need to return the model '
+                    'or criterion'
                 )
             if self.use_cuda:
                 self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
 
             train_params = trainable_parameters(self.model)

@@ -334,10 +334,6 @@ class TransformerResponseWrapper(nn.Module):
             nn.Linear(hdim, dim),
         )
 
-    def model_parallel(self):
-        self.transformer.model_parallel()
-        return self
-
     def forward(self, *args):
         """
         Forward pass.
@@ -439,7 +435,6 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
-        self._is_model_parallel = False
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
@@ -543,7 +538,7 @@ class TransformerEncoder(nn.Module):
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
 
-        if self._is_model_parallel:
+        if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent the other
             # condition
             tensor = self._apply_model_parallel(tensor, mask)
@@ -568,14 +563,6 @@ class TransformerEncoder(nn.Module):
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
-
-    def model_parallel(self):
-        """
-        Move the model to multiple devices.
-        """
-        PipelineHelper.make_parallel(self.layers)
-        self._is_model_parallel = True
-        return self
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -702,7 +689,6 @@ class TransformerDecoder(nn.Module):
         self.dim = embedding_size
         self.activation = activation
         self.variant = variant
-        self._is_model_parallel = False
 
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
@@ -747,14 +733,6 @@ class TransformerDecoder(nn.Module):
                 )
             )
 
-    def model_parallel(self):
-        """
-        Move the model to multiple devices.
-        """
-        PipelineHelper.make_parallel(self.layers)
-        self._is_model_parallel = True
-        return self
-
     def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
@@ -797,7 +775,7 @@ class TransformerDecoder(nn.Module):
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
-        if self._is_model_parallel:
+        if getattr(self.layers, 'is_model_parallel', False):
             tensor, new_incr_state = self._apply_model_parallel(
                 tensor, encoder_output, encoder_mask, incr_state
             )
@@ -1022,11 +1000,6 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         self.decoder = _build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx, n_positions=n_positions
         )
-
-    def model_parallel(self):
-        self.encoder.model_parallel()
-        self.decoder.model_parallel()
-        return self
 
     def reorder_encoder_states(self, encoder_states, indices):
         """

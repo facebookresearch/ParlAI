@@ -279,11 +279,82 @@ class PipelineHelper(object):
 
     For a tutorial on model parallelism, as it's implemented in parts of ParlAI,
     see https://pytorch.org/tutorials/intermediate/model_parallel_tutorial.html.
+
+    Usage:
+    >>> my_model = PipelineHelper().make_parallel(my_model)
+
+    Note that you will need to manually implement logic which handles the
+    moved layers.
     """
 
-    # device_allocations keep track of the number of parameters assigned to all
-    # GPUs.
-    __device_allocations = {}
+    def __init__(self):
+        self.__device_allocations = {}
+        self.num_devices = torch.cuda.device_count()
+        self.devices = []
+        for i in range(self.num_devices):
+            d = f'cuda:{i}'
+            self.devices.append(d)
+            self.__device_allocations[d] = 0
+
+    def make_parallel(self, model: torch.nn.Module) -> torch.nn.Module:
+        """
+        Allocate specific layers in a model to be ModelParallel.
+
+        Limited to only ModuleLists within the model.  Uses some heuristics to
+        attempt to evenly distribute layers across GPUs, in order to balance
+        memory usage. They are:
+
+        - Assume the 0th GPU will host the optimizer, word embeddings, etc.
+        - Assume activation memory is linear with the number of parameters.
+        - All layers are approximately equal in size.
+        """
+
+        # first assume all layers will go onto gpu 0 as an optimizer. The
+        # optimizer and embeddings are not quite as expensive as the
+        # activations (which scale via batchsize), Empirically, I found this
+        # heuristic works well enough.
+        self.__device_allocations['cuda:0'] += trainable_parameters(model) * 3
+
+        model.apply(self._place_modulelist)
+        return model
+
+    def _place_modulelist(self, submodule: torch.nn.Module) -> None:
+        if not isinstance(submodule, torch.nn.ModuleList):
+            # not a ModuleList, leave it untouched
+            return
+
+        assert isinstance(submodule, torch.nn.ModuleList)  # for typechecker
+        layers = submodule
+
+        # mark this section as MP
+        layers.is_model_parallel = True  # type: ignore
+
+        # next, let's figure out how many parameters we can assign to each GPU,
+        # but not make actual assignments yet. Assignments come later because we
+        # want consecutive layers to be collocated
+        keyfunc = self.__device_allocations.__getitem__
+        layer_assignments = {k: 0 for k in self.devices}
+        for layer_no, layer in enumerate(layers):
+            if layer_no == 0:
+                # hard code the first layer to be 0.
+                mostfree = 'cuda:0'
+            else:
+                # otherwise dynamic allocation
+                mostfree = min(self.devices, key=keyfunc)
+            self.__device_allocations[mostfree] += trainable_parameters(layer) * 32
+            # mark a layer as going to the given element
+            layer_assignments[mostfree] += 1
+
+        devices = self.devices[:]
+        for layer_no, layer in enumerate(layers):
+            layer_gpu = devices[0]
+            assert layer_assignments[layer_gpu] > 0
+            print(f"Assigning {layer_no} to {layer_gpu}")
+            layer._mp_gpu = layer_gpu
+            layers[layer_no] = layer.to(layer_gpu)
+            layer_assignments[layer_gpu] -= 1
+            if layer_assignments[layer_gpu] == 0:
+                devices.pop(0)
 
     @staticmethod
     def guess_split_size(item: Chunk, num_gpus: Optional[int] = None, dim=0) -> int:
@@ -292,10 +363,11 @@ class PipelineHelper(object):
         """
         if num_gpus is None:
             num_gpus = torch.cuda.device_count()  # type: ignore
-        if num_gpus == 1:
-            # no point in chunking if we're not really doing model parallel
-            return item.size(dim)
-        elif isinstance(item, torch.Tensor):
+
+        if isinstance(item, torch.Tensor):
+            if num_gpus == 1:
+                # no point in chunking if we're not really doing model parallel
+                return item.size(dim)
             # heuristic: use the same number of chunks as 2 * num_gpus.  this
             # isn't perfect (it ideally would be tuned differently for every model
             # and number of GPUs), but it seems to work reasonably wellenough in several
@@ -336,7 +408,7 @@ class PipelineHelper(object):
                 # infinite list of empty dicts and we'll figure out its correct
                 # size later. This happens for the incremental_state in
                 # MultiheadAttention.
-                return itertools.repeat({})
+                return itertools.repeat({})  # type: ignore
             # we can't handle dicts with empty objects in them, due to how we handle
             # the case above
             if {} in item.values():
@@ -385,63 +457,6 @@ class PipelineHelper(object):
             }
         else:
             raise TypeError(f'Cannot join list of type {type(item0)}')
-
-    @classmethod
-    def make_parallel(cls, layers: torch.nn.ModuleList) -> torch.nn.ModuleList:
-        """
-        Make a list of modules model parallel.
-
-        Uses some heuristics to attempt to evenly distribute layers across
-        GPUs, in order to balance memory usage. They are:
-
-        - Assume the 0th GPU will host the optimizer, word embeddings, etc.
-        - Assume activation memory is linear with the number of parameters.
-        - All layers are approximately equal in size.
-        """
-
-        # first, make sure we're looking at all GPUs, and have a full registry
-        # of them all
-        num_devices = torch.cuda.device_count()
-        devices = []
-        for i in range(num_devices):
-            d = f'cuda:{i}'
-            devices.append(d)
-            if d not in cls.__device_allocations:
-                cls.__device_allocations[d] = 0
-
-        # first assume all layers will go onto gpu 0 as an optimizer. The
-        # optimizer and embeddings are not quite as expensive as the
-        # activations (which scale via batchsize), Empirically, I found this
-        # heuristic works well enough.
-        cls.__device_allocations['cuda:0'] += 3 * trainable_parameters(layers) // 4
-
-        # next, let's figure out how many parameters we can assign to each GPU,
-        # but not make actual assignments yet. Assignments come later because we
-        # want consecutive layers to be collocated
-        keyfunc = cls.__device_allocations.__getitem__
-        layer_assignments = {k: 0 for k in devices}
-        for layer_no, layer in enumerate(layers):
-            if layer_no == 0:
-                # hard code the first layer to be 0.
-                mostfree = 'cuda:0'
-            else:
-                # otherwise dynamic allocation
-                mostfree = min(devices, key=keyfunc)
-            cls.__device_allocations[mostfree] += trainable_parameters(layer)
-            # mark a layer as going to the given element
-            layer_assignments[mostfree] += 1
-
-        for layer_no, layer in enumerate(layers):
-            layer_gpu = devices[0]
-            assert layer_assignments[layer_gpu] > 0
-            print(f"Assigning {layer_no} to {layer_gpu}")
-            layer._mp_gpu = layer_gpu
-            layers[layer_no] = layer.to(layer_gpu)
-            layer_assignments[layer_gpu] -= 1
-            if layer_assignments[layer_gpu] == 0:
-                devices.pop(0)
-
-        return layers
 
     @staticmethod
     def chunk_to(chunk: Chunk, device: str) -> Chunk:
