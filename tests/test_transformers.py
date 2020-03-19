@@ -693,6 +693,8 @@ class TestClassifier(unittest.TestCase):
                 embedding_size=32,
             )
         )
+        assert valid['accuracy'] > 0.97
+        assert test['accuracy'] > 0.97
 
 
 class TestLearningRateScheduler(unittest.TestCase):
