@@ -234,22 +234,23 @@ class MessengerManager(ChatServiceManager):
         """
         Set up socket to start communicating to workers.
         """
-        if not self.bypass_server_setup:
-            shared_utils.print_and_log(
-                logging.INFO, 'Local: Setting up WebSocket...', should_print=True
-            )
+        if self.bypass_server_setup:
+            return
+
+        shared_utils.print_and_log(
+            logging.INFO, 'Local: Setting up WebSocket...', should_print=True
+        )
 
         self.app_token = self.get_app_token()
         self.sender = MessageSender(self.app_token)
 
         # Set up receive
-        if not self.bypass_server_setup:
-            socket_use_url = self.server_url
-            if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = 'https://localhost'
-            self.socket = ChatServiceMessageSocket(
-                socket_use_url, self.port, self._handle_webhook_event
-            )
+        socket_use_url = self.server_url
+        if self.opt['local']:  # skip some hops for local stuff
+            socket_use_url = 'https://localhost'
+        self.socket = ChatServiceMessageSocket(
+            socket_use_url, self.port, self._handle_webhook_event
+        )
         shared_utils.print_and_log(
             logging.INFO, 'done with websocket', should_print=True
         )
