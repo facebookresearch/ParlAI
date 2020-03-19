@@ -1065,7 +1065,7 @@ class TreeSearch(object):
             a (beamsize) tensor of weights with the cumulative running
             log-probability of each beam. If the first turn, it will be a (1) tensor.
         :param current_length:
-            the current length in tokens    
+            the current length in tokens
         :return:
             a (hypothesis_ids, token_id, scores) tuple, where:
 
