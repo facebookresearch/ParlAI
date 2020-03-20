@@ -8,8 +8,9 @@ Utility functions and classes for detecting offensive language.
 """
 
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
+from parlai.utils.typing import TShared
 
 import os
 
@@ -23,9 +24,16 @@ class OffensiveLanguageClassifier:
     <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
-    def __init__(self):
-        self.model = self._create_safety_model()
+    def __init__(self, shared: TShared = None):
+        if not shared:
+            self.model = self._create_safety_model()
+        else:
+            self.model = create_agent_from_shared(shared['model'])
         self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
+
+    def share(self):
+        shared = {'model': self.model.share()}
+        return shared
 
     def _create_safety_model(self):
         from parlai.core.params import ParlaiParser

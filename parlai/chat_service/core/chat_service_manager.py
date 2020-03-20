@@ -12,9 +12,10 @@ import threading
 import time
 import traceback
 from parlai.chat_service.core.agents import ChatServiceAgent
-import parlai.chat_service.core.server_utils as server_utils
-import parlai.chat_service.core.shared_utils as shared_utils
-from parlai.chat_service.core.manager_utils import ChatServiceWorldRunner
+import parlai.chat_service.utils.logging as log_utils
+import parlai.chat_service.utils.misc as utils
+import parlai.chat_service.utils.server as server_utils
+from parlai.chat_service.core.world_runner import ChatServiceWorldRunner
 from abc import ABC, abstractmethod
 
 
@@ -157,7 +158,7 @@ class ChatServiceManager(ABC):
 
     def _log_debug(self, text):
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
+        log_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def _parse_config(self, opt):
         """
@@ -166,16 +167,17 @@ class ChatServiceManager(ABC):
         Use this to parse all options and settings necessary to set the variables for
         the conversation
         """
-
+        self.debug = opt['is_debug']
         self.config = opt['config']
         self.overworld = self.config['overworld']
         self.world_path = self.config['world_path']
-        self.world_module = shared_utils.get_world_module(self.world_path)
+        self.world_module = utils.get_world_module(self.world_path)
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
         # Deepcopy the opts so the manager opts aren't changed by the world runner
-        self.runner_opt = copy.deepcopy(opt)
+        # self.runner_opt = copy.deepcopy(opt)
+        self.runner_opt = opt.copy()
         self.world_runner = ChatServiceWorldRunner(
             self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
@@ -267,7 +269,7 @@ class ChatServiceManager(ABC):
         """
         valid_pools = {}
         for world_type, agent_pool in self.agent_pool.items():
-            eligibility_function = shared_utils.get_eligibility_fn(
+            eligibility_function = utils.get_eligibility_fn(
                 self.world_module, world_type
             )
             if eligibility_function is not None:
@@ -350,7 +352,7 @@ class ChatServiceManager(ABC):
         def _done_callback(fut):
             e = fut.exception()
             if e is not None:
-                shared_utils.print_and_log(
+                log_utils.print_and_log(
                     logging.ERROR,
                     'World {} had error {}'.format(task_id, repr(e)),
                     should_print=True,
@@ -610,7 +612,7 @@ class ChatServiceManager(ABC):
             """
             e = fut.exception()
             if e is not None:
-                shared_utils.print_and_log(
+                log_utils.print_and_log(
                     logging.ERROR,
                     'World {} had error {}'.format(world_type, repr(e)),
                     should_print=True,
@@ -621,7 +623,7 @@ class ChatServiceManager(ABC):
                         agent.id, 'Sorry, this world closed. Returning to overworld.'
                     )
             else:
-                shared_utils.print_and_log(
+                log_utils.print_and_log(
                     logging.INFO,
                     'World {} had no error'.format(world_type),
                     should_print=True,
@@ -631,7 +633,7 @@ class ChatServiceManager(ABC):
                 self.after_agent_removed(agent.id)
                 agent_state = self.get_agent_state(agent.id)
                 next_task = agent.data.get("next_task")
-                shared_utils.print_and_log(
+                log_utils.print_and_log(
                     logging.INFO, "Next task: {}".format(next_task)
                 )
                 if next_task is None:
@@ -671,7 +673,7 @@ class ChatServiceManager(ABC):
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
-                        shared_utils.print_and_log(
+                        log_utils.print_and_log(
                             logging.INFO, 'starting pool', should_print=True
                         )
                         # enough agents in pool to start new conversation
@@ -689,11 +691,11 @@ class ChatServiceManager(ABC):
                             agents.append(agent)
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
-                        assign_role_function = shared_utils.get_assign_roles_fn(
+                        assign_role_function = utils.get_assign_roles_fn(
                             self.world_module, self.taskworld_map[world_type]
                         )
                         if assign_role_function is None:
-                            assign_role_function = shared_utils.default_assign_roles_fn
+                            assign_role_function = utils.default_assign_roles_fn
                         assign_role_function(agents)
                         # Allow task creator to filter out workers and run
                         # versions of the task that require fewer agents
@@ -721,7 +723,7 @@ class ChatServiceManager(ABC):
                         future.add_done_callback(done_callback)
                         self.active_worlds[task_id] = future
 
-            time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
+            time.sleep(utils.THREAD_MEDIUM_SLEEP)
 
     def shutdown(self):
         """
@@ -734,7 +736,7 @@ class ChatServiceManager(ABC):
                 self.socket.keep_running = False
             self._expire_all_conversations()
         except BaseException as e:
-            shared_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
+            log_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
 
         finally:
             if not self.bypass_server_setup:

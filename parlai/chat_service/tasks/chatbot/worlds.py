@@ -31,6 +31,7 @@ class MessengerBotChatTaskWorld(World):
     """
 
     MAX_AGENTS = 1
+    MODEL_KEY = 'legacy_seq2seq'
 
     def __init__(self, opt, agent, bot):
         self.agent = agent
@@ -43,7 +44,7 @@ class MessengerBotChatTaskWorld(World):
         if opt['model'] is None and opt['model_file'] is None:
             raise RuntimeError("Model must be specified")
         return MessengerBotChatTaskWorld(
-            opt, agents[0], create_agent_from_shared(opt['shared_bot_params'])
+            opt, agents[0], create_agent_from_shared(opt['shared_bot_params'][MessengerBotChatTaskWorld.MODEL_KEY])
         )
 
     @staticmethod
