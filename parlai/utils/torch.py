@@ -503,7 +503,7 @@ class PipelineHelper(object):
         # +-------+-----------------+
         #
         # Note that some GPUs will be idle much of the time. In reality, we
-        # will use 1.5 * num_gpus as the number of chunks, to minimize idle
+        # will use 2 * num_gpus as the number of chunks, to minimize idle
         # time.
         num_chunks = len(chunks)
         for l in layers:
