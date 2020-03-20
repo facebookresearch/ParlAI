@@ -21,6 +21,29 @@ MODEL_OPTS = {
 
 @testing_utils.skipUnlessGPU
 class TestModelParallel(unittest.TestCase):
+    def test_polyencoder(self):
+        testing_utils.train_model(
+            {
+                'task': 'integration_tests',
+                'model': 'transformer/polyencoder',
+                'candidates': 'batch',
+                'poly_n_codes': 4,
+                **MODEL_OPTS,
+            }
+        )
+
+        with self.assertRaises(RuntimeError):
+            testing_utils.train_model(
+                {
+                    'task': 'integration_tests',
+                    'model': 'transformer/polyencoder',
+                    'data_parallel': True,
+                    'candidates': 'batch',
+                    'poly_n_codes': 4,
+                    **MODEL_OPTS,
+                }
+            )
+
     def test_ranker(self):
         testing_utils.train_model(
             {
