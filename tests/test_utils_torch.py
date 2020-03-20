@@ -102,6 +102,10 @@ class TestPipelineHelper(unittest.TestCase):
         assert PipelineHelper.guess_split_size({'x': t, 'y': t}, 8) == 8
         assert PipelineHelper.guess_split_size({'x': t, 'y': t}, 1) == 128
 
+        with self.assertRaises(TypeError):
+            t = torch.randn(128, 5)
+            PipelineHelper.guess_split_size([t,], 1)
+
     def test_split_tensor(self):
         t = torch.randn(32, 5)
         for st in PipelineHelper.split(t, 8):
