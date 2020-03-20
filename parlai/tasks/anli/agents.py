@@ -11,9 +11,10 @@ import json
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
 from .build import build
 
-from .anli_constants import ANLI, ANLI_VERSION, ANLI_ANSWER_KEY, ANLI_LABEL_DICT, ANLI_HYPO_KEY, \
+from .anli_constants import ANLI, ANLI_ANSWER_KEY, ANLI_LABEL_DICT, ANLI_HYPO_KEY, \
     ANLI_HYPO_PREFIX, ANLI_LABELS, ANLI_PREFIX, ANLI_PREMISE_KEY, ANLI_PREMISE_PREFIX, ANLI_ROUNDS
 
+ANLI_VERSION = 'v0.1'
 
 def _path(opt):
     build(opt)
@@ -40,30 +41,14 @@ def _path(opt):
     return data_path
 
 
-def setup_data(path):
-    print('loading: ' + path)
-    with open(path, 'r') as data_file:
-        for pair_line in data_file:
-            pair = json.loads(pair_line)
-            premise = ANLI_PREMISE_PREFIX + pair[ANLI_PREMISE_KEY]
-            hypo = ANLI_HYPO_PREFIX + pair[ANLI_HYPO_KEY]
-            answer = [ANLI_LABEL_DICT[pair[ANLI_ANSWER_KEY]]]
-
-            if answer == ['-']:
-                continue
-
-            question = premise + '\n' + hypo
-
-            yield (question, answer, None, ANLI_LABELS), True
-
-
 class RoundBaseTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['round'] = opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else opt['task']
+        opt['round'] = opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else 1
         opt['round'] = opt['round'].upper()
 
-        assert opt['round'] in ANLI_ROUNDS, print('Undefined task round: ', opt['round'])
+        if not opt['round'] in ANLI_ROUNDS:
+            raise KeyError(f"Undefined task round: {opt['round']}.")
 
         data_path = _path(opt)
         opt['datafile'] = data_path
@@ -75,7 +60,20 @@ class RoundBaseTeacher(DialogTeacher):
         return ANLI_LABELS
 
     def setup_data(self, path):
-        return setup_data(path)
+        print('loading: ' + path)
+        with open(path, 'r') as data_file:
+            for pair_line in data_file:
+                pair = json.loads(pair_line)
+                premise = ANLI_PREMISE_PREFIX + pair[ANLI_PREMISE_KEY]
+                hypo = ANLI_HYPO_PREFIX + pair[ANLI_HYPO_KEY]
+                answer = [ANLI_LABEL_DICT[pair[ANLI_ANSWER_KEY]]]
+
+                if answer == ['-']:
+                    continue
+
+                question = premise + '\n' + hypo
+
+                yield (question, answer, None, ANLI_LABELS), True
 
 
 class R1Teacher(RoundBaseTeacher):
@@ -98,5 +96,5 @@ class DefaultTeacher(MultiTaskTeacher):
             'anli:r3',
         ]
         opt = copy.deepcopy(opt)
-        opt['task'] = ', '.join(anli_tasks)
+        opt['task'] = ','.join(anli_tasks)
         super().__init__(opt, shared)

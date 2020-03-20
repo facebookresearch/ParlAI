@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 ANLI = 'ANLI'
-ANLI_VERSION = 'v0.1'
 ANLI_PREFIX = 'anli_'
 ANLI_PREMISE_PREFIX = 'Premise: '
 ANLI_HYPO_PREFIX = 'Hypothesis: '

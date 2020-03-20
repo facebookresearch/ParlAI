@@ -8,7 +8,9 @@
 import os
 import parlai.core.build_data as build_data
 from parlai.core.build_data import DownloadableFile
-from .anli_constants import ANLI, ANLI_VERSION
+from .anli_constants import ANLI
+
+ANLI_VERSION = 'v0.1'
 
 RESOURCES = [
     DownloadableFile(
