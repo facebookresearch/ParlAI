@@ -8,7 +8,6 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 MODEL_OPTS = {
-    'task': 'integration_tests',
     'n_layers': 4,
     'embedding_size': 16,
     'ffn_size': 32,
@@ -24,12 +23,18 @@ MODEL_OPTS = {
 class TestModelParallel(unittest.TestCase):
     def test_ranker(self):
         testing_utils.train_model(
-            {'model': 'transformer/ranker', 'candidates': 'batch', **MODEL_OPTS}
+            {
+                'task': 'integration_tests',
+                'model': 'transformer/ranker',
+                'candidates': 'batch',
+                **MODEL_OPTS,
+            }
         )
 
         with self.assertRaises(RuntimeError):
             testing_utils.train_model(
                 {
+                    'task': 'integration_tests',
                     'model': 'transformer/ranker',
                     'data_parallel': True,
                     'candidates': 'batch',
@@ -40,15 +45,16 @@ class TestModelParallel(unittest.TestCase):
     def test_classifier(self):
         testing_utils.train_model(
             {
+                'task': 'integration_tests:classifier',
                 'classes': ['one', 'zero'],
                 'model': 'transformer/classifier',
-                'data_parallel': True,
                 **MODEL_OPTS,
             }
         )
         with self.assertRaises(RuntimeError):
             testing_utils.train_model(
                 {
+                    'task': 'integration_tests:classifier',
                     'classes': ['one', 'zero'],
                     'model': 'transformer/classifier',
                     'data_parallel': True,
@@ -57,4 +63,10 @@ class TestModelParallel(unittest.TestCase):
             )
 
     def test_transformer_generator(self):
-        testing_utils.train_model({'model': 'transformer/generator', **MODEL_OPTS})
+        testing_utils.train_model(
+            {
+                'task': 'integration_tests',
+                'model': 'transformer/generator',
+                **MODEL_OPTS,
+            }
+        )

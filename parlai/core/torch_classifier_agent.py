@@ -11,6 +11,7 @@ Torch Classifier Agents classify text into a fixed set of labels.
 
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
+from parlai.utils.torch import PipelineHelper
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import AverageMetric
