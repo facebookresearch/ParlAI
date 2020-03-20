@@ -7,6 +7,7 @@
 from parlai.core.opt import Opt
 from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
 from parlai.utils.torch import padded_tensor, argsort
+import parlai.utils.strings as string_utils
 from copy import deepcopy
 import time
 import unittest
@@ -132,6 +133,26 @@ class TestUtils(unittest.TestCase):
         history = opt_copy.history['x']
         self.assertEqual(history[0][1], 1, 'Deepcopy history not set properly')
         self.assertEqual(history[1][1], 10, 'Deepcopy history not set properly')
+
+
+class TestStrings(unittest.TestCase):
+    def test_normalize_reply_version1(self):
+        assert string_utils.normalize_reply("I ' ve a cat .") == "I've a cat."
+        assert (
+            string_utils.normalize_reply("do you think i can dance?")
+            == "Do you think I can dance?"
+        )
+        assert string_utils.normalize_reply("I ' m silly '") == "I'm silly'"
+
+    def test_normalize_reply_version2(self):
+        assert string_utils.normalize_reply("Add a period", 2) == "Add a period."
+        assert string_utils.normalize_reply("Add a period?", 2) == "Add a period?"
+        assert string_utils.normalize_reply("Add a period!", 2) == "Add a period!"
+        assert string_utils.normalize_reply('"Add a period"', 2) == '"add a period"'
+
+    def test_uppercase(self):
+        assert string_utils.uppercase("this is a test") == "This is a test"
+        assert string_utils.uppercase("tEst") == "TEst"
 
 
 if __name__ == '__main__':
