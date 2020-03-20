@@ -38,8 +38,12 @@ class LocalHumanAgent(Agent):
         super().__init__(opt)
         self.id = 'localHuman'
         self.episodeDone = False
+        self.finished = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-        print("Enter [DONE] if you want to end the episode.\n")
+        print("Enter [DONE] if you want to end the episode, [EXIT] to quit.\n")
+
+    def epoch_done(self):
+        return self.finished
 
     def observe(self, msg):
         print(
@@ -64,6 +68,8 @@ class LocalHumanAgent(Agent):
             self.episodeDone = True
             reply_text = reply_text.replace('[DONE]', '')
         reply['text'] = reply_text
+        if '[EXIT]' in reply_text:
+            self.finished = True
         return reply
 
     def episode_done(self):

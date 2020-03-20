@@ -8,7 +8,7 @@ from copy import deepcopy
 
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 import random
@@ -24,7 +24,7 @@ def load_personas(opt):
         convai2_opt['datatype'] = 'train:evalmode'
     convai2_opt['interactive_task'] = False
     convai2_opt['selfchat_task'] = False
-    convai2_agent = RepeatLabelAgent(convai2_opt)
+    convai2_agent = FixedResponseAgent({'fixed_response': None})
     convai2_world = create_task(convai2_opt, convai2_agent)
     personas = set()
     while not convai2_world.epoch_done():
