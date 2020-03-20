@@ -459,6 +459,23 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
+    def test_beamdelay(self):
+        """
+        Test delayedbeam generation.
+        """
+        # Delayed Beam is inherently stochastic, just ensure no crash.
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:multiturn_candidate',
+                model='transformer/generator',
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=32,
+                inference='delayedbeam',
+                topk=10,
+                beam_delay=5,
+            )
+        )
+
     def test_topk(self):
         """
         Test topk generation.
@@ -668,6 +685,33 @@ class TestTransformerGenerator(unittest.TestCase):
                 temperature=0.99,
             )
         )
+
+
+class TestClassifier(unittest.TestCase):
+    """
+    Test transformer/classifier.
+    """
+
+    @testing_utils.retry()
+    def test_simple(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:classifier',
+                model='transformer/classifier',
+                classes=['one', 'zero'],
+                optimizer='adamax',
+                truncate=8,
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=5,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+            )
+        )
+        assert valid['accuracy'] > 0.97
+        assert test['accuracy'] > 0.97
 
 
 class TestLearningRateScheduler(unittest.TestCase):
