@@ -30,7 +30,6 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
 try:
-    raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
@@ -40,16 +39,6 @@ except ImportError:
     APEX_LAYER_NORM = False
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
-
-
-def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm.
-    """
-    if not APEX_LAYER_NORM:
-        warn_once("Installing APEX can give a significant speed boost.")
-    size = tensor.size()
-    return norm_layer(tensor.view(-1, size[-1])).view(size)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
@@ -531,7 +520,7 @@ class TransformerEncoder(nn.Module):
             tensor = tensor + self.segment_embeddings(segments)
 
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -547,7 +536,7 @@ class TransformerEncoder(nn.Module):
                 tensor = self.layers[i](tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
@@ -622,17 +611,17 @@ class TransformerEncoderLayer(nn.Module):
 
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         attended_tensor, _ = self.attention(tensor, mask=mask)
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -763,7 +752,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -789,7 +778,7 @@ class TransformerDecoder(nn.Module):
                 )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 
@@ -881,7 +870,7 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
@@ -893,12 +882,12 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         residual = x
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -910,17 +899,17 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
 
         # finally the ffn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
