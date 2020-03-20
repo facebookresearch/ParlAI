@@ -104,7 +104,7 @@ class TestPipelineHelper(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             t = torch.randn(128, 5)
-            PipelineHelper.guess_split_size([t,], 1)
+            PipelineHelper.guess_split_size([t, t], 1)
 
     def test_split_tensor(self):
         t = torch.randn(32, 5)

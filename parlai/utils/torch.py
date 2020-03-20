@@ -410,8 +410,9 @@ class PipelineHelper(object):
                 # MultiheadAttention.
                 return itertools.repeat({})  # type: ignore
             # we can't handle dicts with empty objects in them, due to how we handle
-            # the case above
-            if {} in item.values():
+            # the case above.  awkward syntax because pytorch 1.3 doesn't like
+            # comparing tensors to dicts.
+            if {} in [x for x in item.values() if isinstance(x, dict)]:
                 raise ValueError(
                     'Cannot handle a dictionary with an empty dictionary inside.'
                 )

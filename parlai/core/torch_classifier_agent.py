@@ -10,7 +10,6 @@ Torch Classifier Agents classify text into a fixed set of labels.
 
 
 from parlai.core.opt import Opt
-from parlai.utils.distributed import is_distributed
 from parlai.utils.torch import PipelineHelper
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
@@ -160,17 +159,6 @@ class TorchClassifierAgent(TorchAgent):
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
-            self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
-            self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
-            if self.data_parallel and is_distributed():
-                raise RuntimeError(
-                    'Cannot combine --data-parallel and distributed mode.'
-                )
-            if self.model_parallel and self.data_parallel:
-                raise RuntimeError(
-                    'Cannot combine --data-parallel and --model-parallel.'
-                )
-
             if self.use_cuda:
                 self.model.cuda()
                 if self.data_parallel:

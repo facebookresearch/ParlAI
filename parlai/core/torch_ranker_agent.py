@@ -172,12 +172,6 @@ class TorchRankerAgent(TorchAgent):
         opt['rank_candidates'] = True
         super().__init__(opt, shared)
 
-        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
-        self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
-        if self.data_parallel and is_distributed():
-            raise RuntimeError('Cannot combine --data-parallel and distributed mode.')
-        if self.model_parallel and self.data_parallel:
-            raise RuntimeError('Cannot combine --data-parallel and --model-parallel.')
         states: Dict[str, Any]
         if shared:
             states = {}
