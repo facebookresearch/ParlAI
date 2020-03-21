@@ -61,7 +61,10 @@ def main():
         )
         main_host = hostnames.split()[0].decode('utf-8')
         distributed_rank = int(os.environ['SLURM_PROCID'])
-        device_id = int(os.environ['SLURM_LOCALID'])
+        if opt.get('model_parallel'):
+            device_id = -1
+        else:
+            device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
         print(
             'Initializing host {} as rank {}, main is {}'.format(

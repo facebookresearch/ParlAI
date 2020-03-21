@@ -223,8 +223,9 @@ class TorchRankerAgent(TorchAgent):
             self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
     def build_criterion(self):

@@ -172,3 +172,27 @@ class ParlaiLogger(logging.Logger):
 # Forming the logger                #
 # -----------------------------------
 logger = ParlaiLogger(name=__name__)
+
+
+def info(*args, **kwargs):
+    return logger.info(*args, **kwargs)
+
+
+def critical(*args, **kwargs):
+    return logger.critical(*args, **kwargs)
+
+
+def log(*args, **kwargs):
+    return logger.log(*args, **kwargs)
+
+
+def debug(*args, **kwargs):
+    return logger.debug(*args, **kwargs)
+
+
+def error(*args, **kwargs):
+    return logger.error(*args, **kwargs)
+
+
+def warn(*args, **kwargs):
+    return logger.warn(*args, **kwargs)
